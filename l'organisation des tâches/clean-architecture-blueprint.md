@@ -1,16 +1,23 @@
 # Clean Architecture Blueprint
 
-This blueprint defines the structural skeleton for the **Event Manager** multi-tenant SaaS platform. It evolves from the original repository layout by introducing Clean Architecture layers, hexagonal (ports & adapters) boundaries within each bounded context, and first-class multi-tenancy support.
+This blueprint defines the structural skeleton for the **Event Manager** multi-tenant SaaS platform. It evolves from the
+original repository layout by introducing Clean Architecture layers, hexagonal (ports & adapters) boundaries within each
+bounded context, and first-class multi-tenancy support.
 
-> **Reference:** See the [Architectural Audit Report](file:///C:/Users/Hajar/.gemini/antigravity-ide/brain/9024f939-3693-4a5c-93c1-6cc32aabd9bc/architectural_audit_report.md) for full rationale behind every structural change.
+> **Reference:** See
+> the [Architectural Audit Report](file:///C:/Users/Hajar/.gemini/antigravity-ide/brain/9024f939-3693-4a5c-93c1-6cc32aabd9bc/architectural_audit_report.md)
+> for full rationale behind every structural change.
 
 ## Project Overview
 
-Event Manager is an event management application that helps users create and organize weddings, birthdays, private parties, conferences, seminars, corporate events, and other celebrations. It simplifies digital invitations, RSVP tracking, guest management, seating arrangements, menu selection, and dietary restrictions, all from a single platform.
+Event Manager is an event management application that helps users create and organize weddings, birthdays, private
+parties, conferences, seminars, corporate events, and other celebrations. It simplifies digital invitations, RSVP
+tracking, guest management, seating arrangements, menu selection, and dietary restrictions, all from a single platform.
 
 ## Actors & Roles
 
 ### Admin (Platform)
+
 * Gérer les comptes et abonnements (facturation SaaS)
 * Consulter les statistiques globales de la plateforme
 * Gérer les modèles d'invitation et les canaux d'envoi
@@ -19,6 +26,7 @@ Event Manager is an event management application that helps users create and org
 * Gérer les rôles et permissions
 
 ### Organisateur (propriétaire du compte)
+
 * Créer un compte
 * Créer un Événement (pour soi-même ou pour un Client)
 * Consulter le Tableau de Bord
@@ -26,6 +34,7 @@ Event Manager is an event management application that helps users create and org
 * Accéder à l'espace Événement du Client (pour assistance)
 
 ### Organisateur & Clients (accès partagé à l'espace Événement)
+
 * Importer et gérer la liste des invités (recherche, filtres, groupes)
 * Choisir un modèle ou personnaliser l'invitation
 * Choisir le(s) canal(aux) d'envoi et planifier l'envoi
@@ -36,15 +45,18 @@ Event Manager is an event management application that helps users create and org
 * Gérer les modifications de dernière minute/annulations
 
 ### L'Invité
+
 * Recevoir l'invitation
 * Répondre au RSVP (includes: Choisir le Menu & Déclarer les Allergies)
 
 ### Personnel d'Accueil
+
 * Scanner le QR Code à l'arrivée et confirmer la présence
 
 ## Project Organization (Tâches Principales)
 
 ### 1. Planning, Analyse & Design
+
 * Création du diagramme de cas d'utilisation
 * Définition des acteurs du système et des interactions principales
 * Création du diagramme de classes
@@ -53,12 +65,14 @@ Event Manager is an event management application that helps users create and org
 * Choix du design UI/UX, thème et identité visuelle
 
 ### 2. Préparation du Projet & Environnement
+
 * Initialisation du dépôt Git
 * Ajout des membres de l'équipe et configuration des accès
 * Préparation de la structure du projet et configuration initiale
 * Configuration des environnements Dev, Test et Production
 
 ### 3. Environnement de Démonstration & Suivi d'Avancement
+
 * Préparation du serveur de démonstration
 * Configuration des accès serveur et paramètres de déploiement
 * Préparation de la configuration Docker
@@ -67,11 +81,13 @@ Event Manager is an event management application that helps users create and org
 * Validation de la disponibilité et de la stabilité de l'application
 
 ### 4. CI/CD & Workflow de Développement
+
 * Mise en place du pipeline CI/CD
 * Configuration du build et du déploiement automatique
 * Définition de la gestion des versions et du processus de release
 
 ### 5. Développement MVP
+
 * Début du développement des fonctionnalités principales
 * Implémentation des modèles de données selon le diagramme de classes
 * Développement des workflows métier principaux
@@ -79,6 +95,7 @@ Event Manager is an event management application that helps users create and org
 * Tests continus et validation des fonctionnalités
 
 ### 6. Release MVP
+
 * Préparation de la première version MVP
 * Déploiement de la version MVP sur l'environnement de démonstration
 * Validation des fonctionnalités implémentées
@@ -108,18 +125,19 @@ Event Manager is an event management application that helps users create and org
 - Runtime: TypeScript 5.9, RxJS 7.8
 - **UI foundation: OneUI 5.12** (Bootstrap 5.3.8 admin dashboard template by pixelcave)
 - OneUI bundled plugins (used directly, **do not replace with alternatives** unless noted):
-  - Layout & navigation: Bootstrap 5, Popper.js, SimpleBar (custom scrollbars)
-  - **Data tables: AG Grid** (replaces OneUI's DataTables.net — AG Grid is the mandatory default for all tables)
-  - Charts: Chart.js, Easy Pie Chart
-  - Calendar: FullCalendar
-  - Forms: Flatpickr (date/time), ng-select (replaces Select2), Bootstrap Datepicker, Bootstrap Maxlength, Dropzone (file upload), CropperJS (image cropping)
-  - Rich text: CKEditor 5 (classic + inline)
-  - Notifications: SweetAlert2, Bootstrap Notify
-  - Media: Magnific Popup (lightbox), Slick Carousel
-  - Maps: jVectorMap
-  - Misc: Ion RangeSlider, Raty.js (ratings), Highlight.js, SimpleMDE (markdown)
-  - Icons: Font Awesome 7
-  - Export: jsPDF (via pdfmake), JSZip
+    - Layout & navigation: Bootstrap 5, Popper.js, SimpleBar (custom scrollbars)
+    - **Data tables: AG Grid** (replaces OneUI's DataTables.net — AG Grid is the mandatory default for all tables)
+    - Charts: Chart.js, Easy Pie Chart
+    - Calendar: FullCalendar
+    - Forms: Flatpickr (date/time), ng-select (replaces Select2), Bootstrap Datepicker, Bootstrap Maxlength, Dropzone (
+      file upload), CropperJS (image cropping)
+    - Rich text: CKEditor 5 (classic + inline)
+    - Notifications: SweetAlert2, Bootstrap Notify
+    - Media: Magnific Popup (lightbox), Slick Carousel
+    - Maps: jVectorMap
+    - Misc: Ion RangeSlider, Raty.js (ratings), Highlight.js, SimpleMDE (markdown)
+    - Icons: Font Awesome 7
+    - Export: jsPDF (via pdfmake), JSZip
 - i18n: @ngx-translate/core, @ngx-translate/http-loader
 - State management: Angular Signals (built-in) for component state; NgRx (optional, complex features)
 - Tooling: Angular CLI, Angular build tooling, Vitest, jsdom
@@ -135,54 +153,65 @@ Event Manager is an event management application that helps users create and org
 
 OneUI is an HTML/SCSS/JS template. Integration into Angular follows this approach:
 
-1. **SCSS integration:** Import OneUI's `_scss/main.scss` into Angular's `styles.scss`. Use OneUI's SCSS variables (`_variables.scss`, `_variables-bootstrap.scss`, `_variables-themes.scss`) for all custom styling. Never override OneUI's design tokens — extend via `_scss/custom/`.
-2. **Layout wrapping:** Adapt OneUI's HTML layout shells (`be_layout_*`, `gs_backend.html`) into Angular layout components (`layout/dashboard-layout/`, `layout/public-layout/`). The sidebar, header, and side-overlay structures come directly from OneUI.
-3. **Page templates:** Each feature page is built by adapting an existing OneUI page template (e.g., `be_pages_dashboard.html` → `features/dashboard/`, `be_pages_ecom_orders.html` → `features/guests/guest-list/`, `be_pages_generic_invoice.html` → `features/billing/`).
-4. **JS plugins:** OneUI's bundled JS plugins (Chart.js, Flatpickr, SweetAlert2, etc.) are consumed via Angular wrappers or direct initialization in `AfterViewInit` lifecycle hooks. **AG Grid replaces DataTables.net** for all table/grid needs — use `ag-grid-angular` directly. **jQuery is NOT used** — jQuery-dependent plugins (DataTables, Select2, jQuery Sparkline) are replaced with Angular-native alternatives (AG Grid, ng-select, Chart.js).
-5. **Blocks system:** Use OneUI's block system (`be_blocks_*`) for all content panels. Blocks provide built-in loading states, fullscreen, pin, close, and refresh capabilities.
-6. **Authentication pages:** Use OneUI's `op_auth_signin*.html`, `op_auth_signup*.html`, `op_auth_reminder*.html` templates for login, registration, and password reset.
+1. **SCSS integration:** Import OneUI's `_scss/main.scss` into Angular's `styles.scss`. Use OneUI's SCSS variables (
+   `_variables.scss`, `_variables-bootstrap.scss`, `_variables-themes.scss`) for all custom styling. Never override
+   OneUI's design tokens — extend via `_scss/custom/`.
+2. **Layout wrapping:** Adapt OneUI's HTML layout shells (`be_layout_*`, `gs_backend.html`) into Angular layout
+   components (`layout/dashboard-layout/`, `layout/public-layout/`). The sidebar, header, and side-overlay structures
+   come directly from OneUI.
+3. **Page templates:** Each feature page is built by adapting an existing OneUI page template (e.g.,
+   `be_pages_dashboard.html` → `features/dashboard/`, `be_pages_ecom_orders.html` → `features/guests/guest-list/`,
+   `be_pages_generic_invoice.html` → `features/billing/`).
+4. **JS plugins:** OneUI's bundled JS plugins (Chart.js, Flatpickr, SweetAlert2, etc.) are consumed via Angular wrappers
+   or direct initialization in `AfterViewInit` lifecycle hooks. **AG Grid replaces DataTables.net** for all table/grid
+   needs — use `ag-grid-angular` directly. **jQuery is NOT used** — jQuery-dependent plugins (DataTables, Select2,
+   jQuery Sparkline) are replaced with Angular-native alternatives (AG Grid, ng-select, Chart.js).
+5. **Blocks system:** Use OneUI's block system (`be_blocks_*`) for all content panels. Blocks provide built-in loading
+   states, fullscreen, pin, close, and refresh capabilities.
+6. **Authentication pages:** Use OneUI's `op_auth_signin*.html`, `op_auth_signup*.html`, `op_auth_reminder*.html`
+   templates for login, registration, and password reset.
 7. **Error pages:** Use OneUI's `op_error_*.html` templates for 400, 401, 403, 404, 500, 503 error pages.
 8. **Dark mode:** OneUI has built-in dark mode support. Use it via the layout API, not a custom implementation.
 9. **RTL support:** OneUI has built-in RTL support (`_rtl-support.scss`, `gs_rtl_*`). Use it for Arabic/Hebrew locales.
 
 ### OneUI Page Template → Feature Mapping
 
-| OneUI Template | Maps To Feature | Usage |
-|---|---|---|
-| `be_pages_dashboard.html` / `be_pages_dashboard_v1.html` | `features/dashboard/` | Organizer dashboard |
-| `be_tables_datatables.html` (layout only, use AG Grid) | `features/guests/guest-list/` | Guest list with search, filter, sort |
-| `be_forms_elements.html` / `be_forms_layouts.html` | `features/events/event-create/` | Event creation form |
-| `be_comp_calendar.html` | `features/events/event-detail/` | Event timeline / calendar view |
-| `be_pages_generic_inbox.html` | `features/invitations/` | Invitation management list |
-| `be_pages_blog_story.html` | `features/invitations/invitation-editor/` | Rich invitation content editor |
-| `be_pages_ecom_orders.html` (layout only, use AG Grid) | `features/rsvp/rsvp-tracking/` | RSVP response tracking table |
-| `be_comp_charts.html` | `features/menus/` | Menu/allergy statistical reports |
-| `be_pages_ecom_dashboard.html` | `features/admin/platform-stats/` | Platform-wide analytics |
-| `be_pages_generic_pricing_plans.html` | `features/billing/plan-selection/` | Subscription plan picker |
-| `be_pages_generic_invoice.html` | `features/billing/billing-history/` | Invoice detail view |
-| `be_pages_generic_profile.html` | `features/admin/tenant-management/` | Tenant profile / detail |
-| `be_pages_generic_team.html` | `features/admin/user-management/` | Team / user list management |
-| `be_pages_generic_search.html` | `shared/components/global-search/` | Global search results |
-| `be_pages_auth_all.html` / `op_auth_signin*.html` | `core/auth/login/` | Authentication pages |
-| `be_pages_error_all.html` / `op_error_*.html` | `core/error-handling/` | Error pages |
-| `be_pages_generic_contact.html` | `features/print/` | Hybrid print request form |
-| `be_pages_generic_blank_block.html` | Scaffold template | Starting point for new pages |
-| `be_widgets_stats.html` / `be_widgets_tiles.html` | `shared/components/` | Reusable stat/tile widgets |
-| `be_comp_notifications.html` | `features/notifications/` | Notification center |
-| `op_checkout.html` | `features/billing/` | Checkout / payment flow |
+| OneUI Template                                           | Maps To Feature                           | Usage                                |
+|----------------------------------------------------------|-------------------------------------------|--------------------------------------|
+| `be_pages_dashboard.html` / `be_pages_dashboard_v1.html` | `features/dashboard/`                     | Organizer dashboard                  |
+| `be_tables_datatables.html` (layout only, use AG Grid)   | `features/guests/guest-list/`             | Guest list with search, filter, sort |
+| `be_forms_elements.html` / `be_forms_layouts.html`       | `features/events/event-create/`           | Event creation form                  |
+| `be_comp_calendar.html`                                  | `features/events/event-detail/`           | Event timeline / calendar view       |
+| `be_pages_generic_inbox.html`                            | `features/invitations/`                   | Invitation management list           |
+| `be_pages_blog_story.html`                               | `features/invitations/invitation-editor/` | Rich invitation content editor       |
+| `be_pages_ecom_orders.html` (layout only, use AG Grid)   | `features/rsvp/rsvp-tracking/`            | RSVP response tracking table         |
+| `be_comp_charts.html`                                    | `features/menus/`                         | Menu/allergy statistical reports     |
+| `be_pages_ecom_dashboard.html`                           | `features/admin/platform-stats/`          | Platform-wide analytics              |
+| `be_pages_generic_pricing_plans.html`                    | `features/billing/plan-selection/`        | Subscription plan picker             |
+| `be_pages_generic_invoice.html`                          | `features/billing/billing-history/`       | Invoice detail view                  |
+| `be_pages_generic_profile.html`                          | `features/admin/tenant-management/`       | Tenant profile / detail              |
+| `be_pages_generic_team.html`                             | `features/admin/user-management/`         | Team / user list management          |
+| `be_pages_generic_search.html`                           | `shared/components/global-search/`        | Global search results                |
+| `be_pages_auth_all.html` / `op_auth_signin*.html`        | `core/auth/login/`                        | Authentication pages                 |
+| `be_pages_error_all.html` / `op_error_*.html`            | `core/error-handling/`                    | Error pages                          |
+| `be_pages_generic_contact.html`                          | `features/print/`                         | Hybrid print request form            |
+| `be_pages_generic_blank_block.html`                      | Scaffold template                         | Starting point for new pages         |
+| `be_widgets_stats.html` / `be_widgets_tiles.html`        | `shared/components/`                      | Reusable stat/tile widgets           |
+| `be_comp_notifications.html`                             | `features/notifications/`                 | Notification center                  |
+| `op_checkout.html`                                       | `features/billing/`                       | Checkout / payment flow              |
 
 ### New Dependencies (vs. original)
 
-| Dependency | Purpose | Justification |
-|---|---|---|
-| OneUI 5.12 | **Mandatory** UI foundation (Bootstrap 5 admin template) | All frontend UI built on this |
-| AG Grid (Community) | **Mandatory** default table/grid component | Replaces DataTables.net — no jQuery dependency, Angular-native |
-| ng-select | Angular-native select component | Replaces Select2 — no jQuery dependency |
-| Micrometer | Metrics export (Prometheus, CloudWatch) | Observability gap |
-| OpenTelemetry | Distributed tracing | Cross-service tracing |
-| Caffeine / Redis | Caching | No caching existed |
-| MapStruct | Bean mapping (domain ↔ persistence ↔ DTO) | Replaces manual mappers |
-| Spring AMQP or Kafka client | Async messaging (future) | Domain event evolution path |
+| Dependency                  | Purpose                                                  | Justification                                                  |
+|-----------------------------|----------------------------------------------------------|----------------------------------------------------------------|
+| OneUI 5.12                  | **Mandatory** UI foundation (Bootstrap 5 admin template) | All frontend UI built on this                                  |
+| AG Grid (Community)         | **Mandatory** default table/grid component               | Replaces DataTables.net — no jQuery dependency, Angular-native |
+| ng-select                   | Angular-native select component                          | Replaces Select2 — no jQuery dependency                        |
+| Micrometer                  | Metrics export (Prometheus, CloudWatch)                  | Observability gap                                              |
+| OpenTelemetry               | Distributed tracing                                      | Cross-service tracing                                          |
+| Caffeine / Redis            | Caching                                                  | No caching existed                                             |
+| MapStruct                   | Bean mapping (domain ↔ persistence ↔ DTO)                | Replaces manual mappers                                        |
+| Spring AMQP or Kafka client | Async messaging (future)                                 | Domain event evolution path                                    |
 
 ### Starter Notes
 
@@ -191,9 +220,11 @@ OneUI is an HTML/SCSS/JS template. Integration into Angular follows this approac
 - Preserve standalone Angular composition; do not reintroduce modules.
 - **All UI must be built using OneUI 5.12 templates and components. Never create custom UI from scratch.**
 - OneUI's SCSS variables and design system are the single source of truth for styling.
-- **jQuery is NOT permitted.** All jQuery-based OneUI plugins (DataTables, Select2, jQuery Sparkline, etc.) are replaced with Angular-native alternatives (AG Grid, ng-select, Chart.js).
+- **jQuery is NOT permitted.** All jQuery-based OneUI plugins (DataTables, Select2, jQuery Sparkline, etc.) are replaced
+  with Angular-native alternatives (AG Grid, ng-select, Chart.js).
 - AG Grid is the **mandatory default** for all data tables and grids.
-- Introduce new dependencies only when they close a structural gap and are not already covered by OneUI or the approved replacements.
+- Introduce new dependencies only when they close a structural gap and are not already covered by OneUI or the approved
+  replacements.
 
 ---
 
@@ -217,7 +248,8 @@ OneUI is an HTML/SCSS/JS template. Integration into Angular follows this approac
 └─────────────────────────────────────────────────┘
 ```
 
-**Dependency rule:** Dependencies point inward. Domain has zero framework imports. Application defines ports; Infrastructure implements them.
+**Dependency rule:** Dependencies point inward. Domain has zero framework imports. Application defines ports;
+Infrastructure implements them.
 
 ### Hexagonal Architecture (Ports & Adapters)
 
@@ -251,7 +283,8 @@ context-name/
     └── mapper/       ← Presentation ↔ Application DTO mappers
 ```
 
-> **Note:** This replaces the original flat `entity/service/repository/resource/dto/` layout. The original convention names are preserved within the appropriate layer (e.g., `resource/` stays as the controller package name).
+> **Note:** This replaces the original flat `entity/service/repository/resource/dto/` layout. The original convention
+> names are preserved within the appropriate layer (e.g., `resource/` stays as the controller package name).
 
 ---
 
@@ -259,11 +292,14 @@ context-name/
 
 ### Strategy: Shared Database, Discriminator Column (ADR-002)
 
-All tenant-scoped entities include a `tenant_id` column. Data isolation is enforced at the ORM level via Hibernate `@Filter` + `@FilterDef`, activated automatically by a servlet filter on every request.
+All tenant-scoped entities include a `tenant_id` column. Data isolation is enforced at the ORM level via Hibernate
+`@Filter` + `@FilterDef`, activated automatically by a servlet filter on every request.
 
 ### Tenant Context Propagation Pipeline
 
-> See [Tenant Filter Security Redesign](file:///C:/Users/Hajar/.gemini/antigravity-ide/brain/9024f939-3693-4a5c-93c1-6cc32aabd9bc/tenant_filter_security_redesign.md) for full implementation details, threat model, and test suite.
+>
+See [Tenant Filter Security Redesign](file:///C:/Users/Hajar/.gemini/antigravity-ide/brain/9024f939-3693-4a5c-93c1-6cc32aabd9bc/tenant_filter_security_redesign.md)
+for full implementation details, threat model, and test suite.
 
 ```
 HTTP Request
@@ -307,11 +343,11 @@ HTTP Request
 
 **Tenant source trust hierarchy (ADR-002-A):**
 
-| Source | Trust Level | Used For |
-|---|---|---|
-| JWT `tenant_id` claim | **Authoritative** — cryptographically verified | Sets `TenantContext`, activates Hibernate filter |
-| `X-Tenant-ID` HTTP header | **Advisory** — client-controlled, untrusted | Logging, mismatch detection (triggers 403 on conflict) |
-| Subdomain (Host header) | **Untrusted at request time** | Token issuance only, never at request time |
+| Source                    | Trust Level                                    | Used For                                               |
+|---------------------------|------------------------------------------------|--------------------------------------------------------|
+| JWT `tenant_id` claim     | **Authoritative** — cryptographically verified | Sets `TenantContext`, activates Hibernate filter       |
+| `X-Tenant-ID` HTTP header | **Advisory** — client-controlled, untrusted    | Logging, mismatch detection (triggers 403 on conflict) |
+| Subdomain (Host header)   | **Untrusted at request time**                  | Token issuance only, never at request time             |
 
 ### Tenant Package Structure
 
@@ -383,7 +419,9 @@ public abstract class SoftDeletableEntity extends TenantScopedEntity {
 }
 ```
 
-> **Important:** The JPA annotations (`@MappedSuperclass`, `@Entity`, etc.) belong on the **infrastructure persistence models only**, not on these domain base classes. The mapping between domain and persistence models is handled by the persistence mapper in each bounded context.
+> **Important:** The JPA annotations (`@MappedSuperclass`, `@Entity`, etc.) belong on the **infrastructure persistence
+models only**, not on these domain base classes. The mapping between domain and persistence models is handled by the
+> persistence mapper in each bounded context.
 
 ---
 
@@ -659,12 +697,12 @@ com.eventmanager/
 
 ### Backend Layer Rules
 
-| Layer | May Import | Must NOT Import |
-|---|---|---|
-| `domain/` | Java stdlib, sharedkernel domain | Spring, JPA, any framework |
-| `application/` | domain, sharedkernel | Infrastructure, presentation |
-| `infrastructure/` | domain, application (ports), Spring, JPA | presentation |
-| `presentation/` | application (ports/DTOs), Spring Web | domain models directly, infrastructure |
+| Layer             | May Import                               | Must NOT Import                        |
+|-------------------|------------------------------------------|----------------------------------------|
+| `domain/`         | Java stdlib, sharedkernel domain         | Spring, JPA, any framework             |
+| `application/`    | domain, sharedkernel                     | Infrastructure, presentation           |
+| `infrastructure/` | domain, application (ports), Spring, JPA | presentation                           |
+| `presentation/`   | application (ports/DTOs), Spring Web     | domain models directly, infrastructure |
 
 ### Backend Linkage Notes (Preserved + Extended)
 
@@ -677,32 +715,35 @@ com.eventmanager/
 - `presentation/mapper/` converts between presentation DTOs and application DTOs.
 - `identity/infrastructure/security/` groups JWT, API key, filter, and authentication support.
 - `config/` centralizes framework configuration such as CORS, Flyway, locale, async, caching, and API docs.
-- `config/AsyncConfig` registers `TenantAwareTaskDecorator` for tenant context propagation to `@Async` threads (ADR-008).
-- `jobs/base/TenantIteratingJob` is the base class for all scheduled jobs — iterates active tenants from the database (ADR-008).
-- `subscription/infrastructure/entitlement/` provides `@RequiresEntitlement` annotation and AOP interceptor for plan-based feature gating (ADR-009).
+- `config/AsyncConfig` registers `TenantAwareTaskDecorator` for tenant context propagation to `@Async` threads (
+  ADR-008).
+- `jobs/base/TenantIteratingJob` is the base class for all scheduled jobs — iterates active tenants from the database (
+  ADR-008).
+- `subscription/infrastructure/entitlement/` provides `@RequiresEntitlement` annotation and AOP interceptor for
+  plan-based feature gating (ADR-009).
 
 ### Cross-Cutting Backend Concerns
 
-| Concern | Location | Mechanism |
-|---|---|---|
-| Authentication | `identity/infrastructure/security/` | JWT filter + Spring Security filter chain |
-| Authorization | `identity/` + per-context `@PreAuthorize` | RBAC with method-level security |
-| Multi-tenancy | `tenant/infrastructure/context/` | `TenantFilter` → `TenantContext` → Hibernate `@Filter` (ADR-002-A: JWT-only) |
-| Tenant propagation (@Async) | `tenant/infrastructure/context/` | `TenantAwareTaskDecorator` via `AsyncConfig` (ADR-008) |
-| Tenant propagation (@Scheduled) | `jobs/base/` | `TenantIteratingJob` — iterates tenants from DB (ADR-008) |
-| Feature gating | `subscription/infrastructure/entitlement/` | `@RequiresEntitlement` + AOP interceptor (ADR-009) |
-| Audit logging | `auditing/` | JPA entity listener + `TenantContext` |
-| Exception handling | `config/` + `sharedkernel/domain/exception/` | `@ControllerAdvice` global handler |
-| Validation | `sharedkernel/application/validation/` | Bean Validation + self-validating commands |
-| Localization (i18n) | `config/LocaleConfig` + message bundles | `MessageSource` with `Accept-Language` header |
-| API versioning | URL path prefix `/api/v1/` | Defined in controller `@RequestMapping` |
-| Rate limiting | `infrastructure/ratelimit/` | Servlet filter with configurable per-tenant limits |
-| Idempotency | `infrastructure/idempotency/` | Idempotency-Key header filter |
-| Caching | `infrastructure/cache/` + `config/CacheConfig` | Spring Cache + tenant-partitioned keys |
-| Soft delete | `sharedkernel/domain/model/SoftDeletableEntity` | `@SQLRestriction("deleted = false")` |
-| Pagination | Standardized `PageRequest` / `PageResponse` DTOs | Consistent across all list endpoints |
-| Observability | `config/ObservabilityConfig` | Micrometer metrics + OpenTelemetry tracing |
-| Background jobs | `jobs/` | `TenantIteratingJob` + Spring `@Scheduled` + async task executor |
+| Concern                         | Location                                         | Mechanism                                                                    |
+|---------------------------------|--------------------------------------------------|------------------------------------------------------------------------------|
+| Authentication                  | `identity/infrastructure/security/`              | JWT filter + Spring Security filter chain                                    |
+| Authorization                   | `identity/` + per-context `@PreAuthorize`        | RBAC with method-level security                                              |
+| Multi-tenancy                   | `tenant/infrastructure/context/`                 | `TenantFilter` → `TenantContext` → Hibernate `@Filter` (ADR-002-A: JWT-only) |
+| Tenant propagation (@Async)     | `tenant/infrastructure/context/`                 | `TenantAwareTaskDecorator` via `AsyncConfig` (ADR-008)                       |
+| Tenant propagation (@Scheduled) | `jobs/base/`                                     | `TenantIteratingJob` — iterates tenants from DB (ADR-008)                    |
+| Feature gating                  | `subscription/infrastructure/entitlement/`       | `@RequiresEntitlement` + AOP interceptor (ADR-009)                           |
+| Audit logging                   | `auditing/`                                      | JPA entity listener + `TenantContext`                                        |
+| Exception handling              | `config/` + `sharedkernel/domain/exception/`     | `@ControllerAdvice` global handler                                           |
+| Validation                      | `sharedkernel/application/validation/`           | Bean Validation + self-validating commands                                   |
+| Localization (i18n)             | `config/LocaleConfig` + message bundles          | `MessageSource` with `Accept-Language` header                                |
+| API versioning                  | URL path prefix `/api/v1/`                       | Defined in controller `@RequestMapping`                                      |
+| Rate limiting                   | `infrastructure/ratelimit/`                      | Servlet filter with configurable per-tenant limits                           |
+| Idempotency                     | `infrastructure/idempotency/`                    | Idempotency-Key header filter                                                |
+| Caching                         | `infrastructure/cache/` + `config/CacheConfig`   | Spring Cache + tenant-partitioned keys                                       |
+| Soft delete                     | `sharedkernel/domain/model/SoftDeletableEntity`  | `@SQLRestriction("deleted = false")`                                         |
+| Pagination                      | Standardized `PageRequest` / `PageResponse` DTOs | Consistent across all list endpoints                                         |
+| Observability                   | `config/ObservabilityConfig`                     | Micrometer metrics + OpenTelemetry tracing                                   |
+| Background jobs                 | `jobs/`                                          | `TenantIteratingJob` + Spring `@Scheduled` + async task executor             |
 
 ---
 
@@ -893,17 +934,25 @@ src/app/
 ### Frontend Linkage Notes (Preserved + Extended)
 
 - The app is organized around standalone components and lazy-loaded routes.
-- `app.config.ts` bootstraps providers such as HTTP interception, translations, notifications, tenant resolution, OneUI initialization, and app-wide initializers.
-- `app.routes.ts` owns route composition and lazy loading. Routes are split by feature with per-feature `.routes.ts` files.
-- `core/auth/` holds authentication state, guards, login, and role checks. Login pages adapt OneUI's `op_auth_signin*.html` templates.
-- `core/tenant/` **[NEW]** manages tenant context: resolves current tenant, provides branding/config, injects tenant header into API calls.
+- `app.config.ts` bootstraps providers such as HTTP interception, translations, notifications, tenant resolution, OneUI
+  initialization, and app-wide initializers.
+- `app.routes.ts` owns route composition and lazy loading. Routes are split by feature with per-feature `.routes.ts`
+  files.
+- `core/auth/` holds authentication state, guards, login, and role checks. Login pages adapt OneUI's
+  `op_auth_signin*.html` templates.
+- `core/tenant/` **[NEW]** manages tenant context: resolves current tenant, provides branding/config, injects tenant
+  header into API calls.
 - `core/permissions/` **[NEW]** provides a `*hasPermission` structural directive for role-based UI rendering.
 - `core/error-handling/` **[NEW]** provides global error handler and error pages adapted from OneUI's `op_error_*.html`.
 - `core/oneui/` **[NEW]** provides the Angular ↔ OneUI bridge: layout API service, block directive, and app initializer.
-- `core/interceptors/` is the place for HTTP cross-cutting concerns such as auth headers, tenant headers, loading states, and error handling.
-- `shared/` contains Angular wrappers around OneUI plugins (SweetAlert2, Dropzone, Flatpickr) and Angular-native replacements (AG Grid, ng-select) plus reusable directives, pipes, services, constants, models, and utilities.
-- `features/` is domain-oriented and split by bounded context. Each feature adapts specific OneUI page templates (see mapping table above).
-- `layout/` contains OneUI layout shells adapted as Angular components: dashboard layout (sidebar + header + content area), public layout (guest-facing), and side overlay.
+- `core/interceptors/` is the place for HTTP cross-cutting concerns such as auth headers, tenant headers, loading
+  states, and error handling.
+- `shared/` contains Angular wrappers around OneUI plugins (SweetAlert2, Dropzone, Flatpickr) and Angular-native
+  replacements (AG Grid, ng-select) plus reusable directives, pipes, services, constants, models, and utilities.
+- `features/` is domain-oriented and split by bounded context. Each feature adapts specific OneUI page templates (see
+  mapping table above).
+- `layout/` contains OneUI layout shells adapted as Angular components: dashboard layout (sidebar + header + content
+  area), public layout (guest-facing), and side overlay.
 
 ### OneUI Integration Rules
 
@@ -913,15 +962,18 @@ src/app/
 4. **Use OneUI's built-in responsive breakpoints.** Do not define custom breakpoints.
 5. **Use OneUI's color themes.** Do not introduce new color palettes.
 6. **Use OneUI's built-in JS API** for layout operations (sidebar toggle, dark mode, side overlay).
-7. **jQuery is NOT permitted.** All jQuery-dependent plugins are replaced with Angular-native alternatives (AG Grid, ng-select).
-8. **AG Grid is the default table component.** Use `ag-grid-angular` for all data grids. Style it with OneUI's table classes for visual consistency.
+7. **jQuery is NOT permitted.** All jQuery-dependent plugins are replaced with Angular-native alternatives (AG Grid,
+   ng-select).
+8. **AG Grid is the default table component.** Use `ag-grid-angular` for all data grids. Style it with OneUI's table
+   classes for visual consistency.
 
 ### Standalone-Only Guidance (Preserved)
 
 - This blueprint intentionally excludes module-based organization.
 - For a new project, keep features as standalone routes and components.
 - Place singleton technical services under `core/` and reusable building blocks under `shared/`.
-- Keep UI implementation details, CSS, HTML templates, and design assets out of the architectural skeleton when documenting the layout.
+- Keep UI implementation details, CSS, HTML templates, and design assets out of the architectural skeleton when
+  documenting the layout.
 
 ---
 
@@ -976,21 +1028,22 @@ Flyway (preserved from original). All migrations in `src/main/resources/db/migra
 
 ### Multi-Tenant Indexes
 
-Every tenant-scoped table must have a composite index on `(tenant_id, id)` and `(tenant_id, {primary_query_column})` to ensure efficient tenant-filtered queries.
+Every tenant-scoped table must have a composite index on `(tenant_id, id)` and `(tenant_id, {primary_query_column})` to
+ensure efficient tenant-filtered queries.
 
 ### Aggregate Boundaries
 
-| Aggregate Root | Owned Entities | Rationale |
-|---|---|---|
-| `Event` | `EventConfiguration` | Event is the central organizing concept |
-| `Guest` | `DietaryRestriction` | Guest owns their own dietary data |
-| `Invitation` | `InvitationTemplate`, `SendSchedule` | Invitation controls its delivery lifecycle |
-| `RsvpResponse` | `MenuChoice`, `AllergyDeclaration` | RSVP is a self-contained response unit |
-| `SeatingPlan` | `Table`, `SeatAssignment` | Seating plan is managed as a whole |
-| `CheckIn` | `QrCode` | Check-in owns its QR artifact |
-| `Tenant` | `TenantConfiguration` | Tenant owns its settings |
-| `Subscription` | `Plan`, `BillingCycle`, `UsageQuota` | Subscription manages billing lifecycle |
-| `User` | `Role`, `Permission` | User is the identity aggregate |
+| Aggregate Root | Owned Entities                       | Rationale                                  |
+|----------------|--------------------------------------|--------------------------------------------|
+| `Event`        | `EventConfiguration`                 | Event is the central organizing concept    |
+| `Guest`        | `DietaryRestriction`                 | Guest owns their own dietary data          |
+| `Invitation`   | `InvitationTemplate`, `SendSchedule` | Invitation controls its delivery lifecycle |
+| `RsvpResponse` | `MenuChoice`, `AllergyDeclaration`   | RSVP is a self-contained response unit     |
+| `SeatingPlan`  | `Table`, `SeatAssignment`            | Seating plan is managed as a whole         |
+| `CheckIn`      | `QrCode`                             | Check-in owns its QR artifact              |
+| `Tenant`       | `TenantConfiguration`                | Tenant owns its settings                   |
+| `Subscription` | `Plan`, `BillingCycle`, `UsageQuota` | Subscription manages billing lifecycle     |
+| `User`         | `Role`, `Permission`                 | User is the identity aggregate             |
 
 ---
 
@@ -1013,11 +1066,11 @@ src/test/java/com/eventmanager/
 
 ### Test Categories
 
-| Category | Scope | Speed | Framework |
-|---|---|---|---|
-| Unit | Domain logic, application services (mocked ports) | Fast | JUnit 5, Mockito |
-| Integration | Persistence adapters, API endpoints | Medium | `@SpringBootTest`, `@DataJpaTest`, TestContainers |
-| E2E | Full user flows | Slow | REST Assured / Playwright |
+| Category    | Scope                                             | Speed  | Framework                                         |
+|-------------|---------------------------------------------------|--------|---------------------------------------------------|
+| Unit        | Domain logic, application services (mocked ports) | Fast   | JUnit 5, Mockito                                  |
+| Integration | Persistence adapters, API endpoints               | Medium | `@SpringBootTest`, `@DataJpaTest`, TestContainers |
+| E2E         | Full user flows                                   | Slow   | REST Assured / Playwright                         |
 
 ---
 
@@ -1027,122 +1080,189 @@ src/test/java/com/eventmanager/
 
 **Status:** Accepted
 **Context:** The original structure uses a flat package-per-feature layout that conflates all layers.
-**Decision:** Each bounded context contains internal layers: `domain/`, `application/`, `infrastructure/`, `presentation/`. Dependencies point inward. Infrastructure implements ports defined by the application layer.
+**Decision:** Each bounded context contains internal layers: `domain/`, `application/`, `infrastructure/`,
+`presentation/`. Dependencies point inward. Infrastructure implements ports defined by the application layer.
 **Consequences:** More packages, but enforceable dependency rules. Domain is testable in isolation.
 
 ### ADR-002: Shared Database with Discriminator Column for Multi-Tenancy
 
 **Status:** Accepted
 **Context:** The platform requires multi-tenancy. Three strategies were evaluated.
-**Decision:** Use a shared database with a `tenant_id` discriminator column on all tenant-scoped entities. Enforce isolation via Hibernate `@Filter` activated by a `TenantFilter` servlet filter.
-**Consequences:** Simpler ops, lower cost. Must enforce tenant context at every data access point. Cross-tenant queries require explicit opt-in.
+**Decision:** Use a shared database with a `tenant_id` discriminator column on all tenant-scoped entities. Enforce
+isolation via Hibernate `@Filter` activated by a `TenantFilter` servlet filter.
+**Consequences:** Simpler ops, lower cost. Must enforce tenant context at every data access point. Cross-tenant queries
+require explicit opt-in.
 
 #### ADR-002-A: JWT-Only Tenant Trust Rule (Security Addendum)
 
 **Status:** Accepted
 **Date:** 2026-07-13
-**Supersedes:** The original ADR-002 text which described tenant_id resolution from "JWT claim / header / subdomain" without stating precedence or trust hierarchy.
+**Supersedes:** The original ADR-002 text which described tenant_id resolution from "JWT claim / header / subdomain"
+without stating precedence or trust hierarchy.
 
-**Threat closed:** Cross-tenant Insecure Direct Object Reference (IDOR) via `X-Tenant-ID` header spoofing. A valid user of Tenant A could set `X-Tenant-ID: <tenant-B-id>` and, if the filter trusted the header, read or write Tenant B's data. CVSS 9.1 (Critical).
+**Threat closed:** Cross-tenant Insecure Direct Object Reference (IDOR) via `X-Tenant-ID` header spoofing. A valid user
+of Tenant A could set `X-Tenant-ID: <tenant-B-id>` and, if the filter trusted the header, read or write Tenant B's data.
+CVSS 9.1 (Critical).
 
 **Decision:**
 
-1. **Single authoritative source.** The tenant ID used for authorization is derived **exclusively** from the `tenant_id` claim inside the validated JWT. The JWT signature guarantees this value was set by the server at token issuance and has not been tampered with.
-2. **X-Tenant-ID header is advisory-only.** If the Angular frontend sends the header, it is used for logging and mismatch detection. It is **never** read into `TenantContext` and **never** used to activate the Hibernate tenant filter.
-3. **Mismatch rejection.** If `X-Tenant-ID` is present and its value differs from the JWT's `tenant_id` claim, the request is rejected with HTTP 403 and a `TENANT_SPOOFING_ATTEMPT` event is written to the security audit log.
-4. **Subdomain resolution** (if used in future) must resolve through a server-side signed mapping — the raw subdomain string from the Host header is never directly trusted as a tenant identifier at request time.
-5. **TenantContext immutability.** Once `TenantContext.setTenantId()` is called by `TenantFilter`, it is locked for the remainder of the request. Downstream code cannot mutate the tenant context.
-6. **Platform admin bypass.** Requests from users with `ROLE_PLATFORM_ADMIN` authority may operate without a tenant scope (cross-tenant queries). The tenant context remains null for these requests.
+1. **Single authoritative source.** The tenant ID used for authorization is derived **exclusively** from the `tenant_id`
+   claim inside the validated JWT. The JWT signature guarantees this value was set by the server at token issuance and
+   has not been tampered with.
+2. **X-Tenant-ID header is advisory-only.** If the Angular frontend sends the header, it is used for logging and
+   mismatch detection. It is **never** read into `TenantContext` and **never** used to activate the Hibernate tenant
+   filter.
+3. **Mismatch rejection.** If `X-Tenant-ID` is present and its value differs from the JWT's `tenant_id` claim, the
+   request is rejected with HTTP 403 and a `TENANT_SPOOFING_ATTEMPT` event is written to the security audit log.
+4. **Subdomain resolution** (if used in future) must resolve through a server-side signed mapping — the raw subdomain
+   string from the Host header is never directly trusted as a tenant identifier at request time.
+5. **TenantContext immutability.** Once `TenantContext.setTenantId()` is called by `TenantFilter`, it is locked for the
+   remainder of the request. Downstream code cannot mutate the tenant context.
+6. **Platform admin bypass.** Requests from users with `ROLE_PLATFORM_ADMIN` authority may operate without a tenant
+   scope (cross-tenant queries). The tenant context remains null for these requests.
 
 **Precedence rule (definitive):**
 
-| Source | Trust Level | Used For |
-|---|---|---|
-| JWT `tenant_id` claim | **Authoritative** — cryptographically verified | Sets `TenantContext`, activates Hibernate filter |
-| `X-Tenant-ID` HTTP header | **Advisory** — client-controlled, untrusted | Logging, mismatch detection (triggers 403 on conflict) |
-| Subdomain (Host header) | **Untrusted at request time** | Token issuance only, never at request time |
+| Source                    | Trust Level                                    | Used For                                               |
+|---------------------------|------------------------------------------------|--------------------------------------------------------|
+| JWT `tenant_id` claim     | **Authoritative** — cryptographically verified | Sets `TenantContext`, activates Hibernate filter       |
+| `X-Tenant-ID` HTTP header | **Advisory** — client-controlled, untrusted    | Logging, mismatch detection (triggers 403 on conflict) |
+| Subdomain (Host header)   | **Untrusted at request time**                  | Token issuance only, never at request time             |
 
-**Consequences:** No client-controlled input can influence which tenant's data a request accesses. Frontend bugs (stale JWT, tenant switch without re-auth) are detected immediately. JWT must be refreshed when a user switches tenants. Security audit log enables detection of spoofing campaigns.
+**Consequences:** No client-controlled input can influence which tenant's data a request accesses. Frontend bugs (stale
+JWT, tenant switch without re-auth) are detected immediately. JWT must be refreshed when a user switches tenants.
+Security audit log enables detection of spoofing campaigns.
 
-> See [Tenant Filter Security Redesign](file:///C:/Users/Hajar/.gemini/antigravity-ide/brain/9024f939-3693-4a5c-93c1-6cc32aabd9bc/tenant_filter_security_redesign.md) for full implementation (TenantFilter.java, TenantContext.java, tenant.interceptor.ts, TenantFilterSecurityTest.java).
+>
+See [Tenant Filter Security Redesign](file:///C:/Users/Hajar/.gemini/antigravity-ide/brain/9024f939-3693-4a5c-93c1-6cc32aabd9bc/tenant_filter_security_redesign.md)
+for full implementation (TenantFilter.java, TenantContext.java, tenant.interceptor.ts, TenantFilterSecurityTest.java).
 
 ### ADR-003: Domain Events for Inter-Context Communication
 
 **Status:** Accepted
-**Context:** Bounded contexts (Events, Guests, Invitations, RSVP) need to react to each other's state changes without tight coupling.
-**Decision:** Use Spring Application Events for in-process domain events. Introduce `DomainEvent` as a base type in the shared kernel. Evolve to a message broker (RabbitMQ/Kafka) when scaling beyond a single instance.
+**Context:** Bounded contexts (Events, Guests, Invitations, RSVP) need to react to each other's state changes without
+tight coupling.
+**Decision:** Use Spring Application Events for in-process domain events. Introduce `DomainEvent` as a base type in the
+shared kernel. Evolve to a message broker (RabbitMQ/Kafka) when scaling beyond a single instance.
 **Consequences:** Loose coupling between contexts. Eventual consistency must be accepted for cross-context operations.
 
 ### ADR-004: Separate Domain Entities from Persistence Models
 
 **Status:** Accepted
 **Context:** JPA-annotated entities in the original `entity/` serve as both domain objects and persistence models.
-**Decision:** Domain entities (in `domain/model/`) are plain Java objects. JPA entities (in `infrastructure/persistence/entity/`) are mapped via `infrastructure/persistence/mapper/`.
+**Decision:** Domain entities (in `domain/model/`) are plain Java objects. JPA entities (in
+`infrastructure/persistence/entity/`) are mapped via `infrastructure/persistence/mapper/`.
 **Consequences:** More mapping code, but domain remains framework-independent and testable.
 
 ### ADR-005: Feature-Aligned Frontend Structure with Named Bounded Contexts
 
 **Status:** Accepted
 **Context:** The original frontend has 22 placeholder `domain-*` folders with no semantic meaning.
-**Decision:** Replace with named feature folders aligned to business domains: `events/`, `guests/`, `invitations/`, `rsvp/`, `seating/`, `menus/`, `check-in/`, `dashboard/`, `admin/`, `billing/`.
+**Decision:** Replace with named feature folders aligned to business domains: `events/`, `guests/`, `invitations/`,
+`rsvp/`, `seating/`, `menus/`, `check-in/`, `dashboard/`, `admin/`, `billing/`.
 **Consequences:** Self-documenting code. New developers understand the domain from the folder structure.
 
 ### ADR-006: OneUI 5.12 as Mandatory UI Foundation
 
 **Status:** Accepted
-**Context:** The project includes a licensed copy of OneUI 5.12, a comprehensive Bootstrap 5 admin dashboard template with 155+ page templates, extensive SCSS theming, dark mode, RTL support, and 25+ bundled JS plugins.
-**Decision:** All frontend UI must be built exclusively by adapting OneUI 5.12 HTML templates into Angular standalone components. No custom UI is to be created from scratch. OneUI's SCSS design system is the single source of truth for all styling. OneUI's bundled plugins are used directly except where jQuery-dependent plugins are replaced by Angular-native alternatives: **AG Grid** replaces DataTables.net, **ng-select** replaces Select2. jQuery is not used.
-**Consequences:** Consistent, premium visual quality with zero design effort. Faster development by adapting proven templates. No jQuery dependency — all interactive components are Angular-native, improving testability and change detection integration.
+**Context:** The project includes a licensed copy of OneUI 5.12, a comprehensive Bootstrap 5 admin dashboard template
+with 155+ page templates, extensive SCSS theming, dark mode, RTL support, and 25+ bundled JS plugins.
+**Decision:** All frontend UI must be built exclusively by adapting OneUI 5.12 HTML templates into Angular standalone
+components. No custom UI is to be created from scratch. OneUI's SCSS design system is the single source of truth for all
+styling. OneUI's bundled plugins are used directly except where jQuery-dependent plugins are replaced by Angular-native
+alternatives: **AG Grid** replaces DataTables.net, **ng-select** replaces Select2. jQuery is not used.
+**Consequences:** Consistent, premium visual quality with zero design effort. Faster development by adapting proven
+templates. No jQuery dependency — all interactive components are Angular-native, improving testability and change
+detection integration.
 
 ### ADR-007: AG Grid as Default Table Component (No jQuery)
 
 **Status:** Accepted
-**Context:** OneUI 5.12 bundles DataTables.net which depends on jQuery. jQuery introduces global state, conflicts with Angular's change detection, and increases bundle size. The project needs rich table features (server-side pagination, filtering, sorting, column resizing, row selection, export).
-**Decision:** Replace DataTables.net with **AG Grid Community** (`ag-grid-angular`) as the mandatory default table/grid component. Replace Select2 with **ng-select**. Remove jQuery entirely from the project. Style AG Grid to match OneUI's table aesthetics using custom AG Grid themes that reference OneUI SCSS variables.
-**Consequences:** Zero jQuery dependency. Full Angular integration (native change detection, typed APIs, tree-shakable). AG Grid Community covers all required table features. Custom theme CSS is needed to match OneUI's visual style.
+**Context:** OneUI 5.12 bundles DataTables.net which depends on jQuery. jQuery introduces global state, conflicts with
+Angular's change detection, and increases bundle size. The project needs rich table features (server-side pagination,
+filtering, sorting, column resizing, row selection, export).
+**Decision:** Replace DataTables.net with **AG Grid Community** (`ag-grid-angular`) as the mandatory default table/grid
+component. Replace Select2 with **ng-select**. Remove jQuery entirely from the project. Style AG Grid to match OneUI's
+table aesthetics using custom AG Grid themes that reference OneUI SCSS variables.
+**Consequences:** Zero jQuery dependency. Full Angular integration (native change detection, typed APIs, tree-shakable).
+AG Grid Community covers all required table features. Custom theme CSS is needed to match OneUI's visual style.
 
 ### ADR-008: Tenant Context Propagation for Async and Scheduled Execution
 
 **Status:** Accepted
-**Context:** `TenantContext` uses `ThreadLocal`, which does not propagate to `@Async` worker threads or `@Scheduled` jobs. Jobs like `InvitationSendJob` and `RsvpReminderJob` run without an HTTP request or JWT, yet must read/write tenant-scoped data with correct Hibernate filter activation.
+**Context:** `TenantContext` uses `ThreadLocal`, which does not propagate to `@Async` worker threads or `@Scheduled`
+jobs. Jobs like `InvitationSendJob` and `RsvpReminderJob` run without an HTTP request or JWT, yet must read/write
+tenant-scoped data with correct Hibernate filter activation.
 **Decision:**
-1. **`@Async` tasks** (spawned from HTTP requests): Use a `TenantAwareTaskDecorator` registered in `AsyncConfig` that captures the caller's tenant ID and re-establishes it on the worker thread. The propagated tenant ID was originally verified from a JWT by `TenantFilter`.
-2. **`@Scheduled` jobs** (no HTTP request): Use a `TenantIteratingJob` base class that loads active tenant IDs from the database (a server-controlled source) and processes each tenant in a `setTenantId()` → `execute` → `clear()` loop. This is the job-world equivalent of the JWT-only trust rule: the tenant identity comes from the database, not from any client input.
-3. **Domain event listeners** running on the same thread inherit `TenantContext` automatically. Async event listeners use the same `TaskDecorator` mechanism as `@Async`.
+
+1. **`@Async` tasks** (spawned from HTTP requests): Use a `TenantAwareTaskDecorator` registered in `AsyncConfig` that
+   captures the caller's tenant ID and re-establishes it on the worker thread. The propagated tenant ID was originally
+   verified from a JWT by `TenantFilter`.
+2. **`@Scheduled` jobs** (no HTTP request): Use a `TenantIteratingJob` base class that loads active tenant IDs from the
+   database (a server-controlled source) and processes each tenant in a `setTenantId()` → `execute` → `clear()` loop.
+   This is the job-world equivalent of the JWT-only trust rule: the tenant identity comes from the database, not from
+   any client input.
+3. **Domain event listeners** running on the same thread inherit `TenantContext` automatically. Async event listeners
+   use the same `TaskDecorator` mechanism as `@Async`.
 4. `TenantContext.clear()` resets the set-once lock, enabling the per-iteration pattern.
 
-**Consequences:** All execution contexts (HTTP, async, scheduled) have a defined tenant propagation story. No execution path can operate on tenant-scoped data without an explicitly set `TenantContext`. The trust source for each context is:
+**Consequences:** All execution contexts (HTTP, async, scheduled) have a defined tenant propagation story. No execution
+path can operate on tenant-scoped data without an explicitly set `TenantContext`. The trust source for each context is:
 
-| Context | Tenant Source | Trust Level |
-|---|---|---|
-| HTTP request | JWT `tenant_id` claim | Cryptographically verified |
-| `@Async` task | Propagated from calling HTTP thread | Inherited verified identity |
-| `@Scheduled` job | Database `tenants` table | Server-controlled |
+| Context          | Tenant Source                       | Trust Level                 |
+|------------------|-------------------------------------|-----------------------------|
+| HTTP request     | JWT `tenant_id` claim               | Cryptographically verified  |
+| `@Async` task    | Propagated from calling HTTP thread | Inherited verified identity |
+| `@Scheduled` job | Database `tenants` table            | Server-controlled           |
 
-> See [Blueprint Critical Fixes](file:///C:/Users/Hajar/.gemini/antigravity-ide/brain/9024f939-3693-4a5c-93c1-6cc32aabd9bc/blueprint_critical_fixes.md) for full `TenantAwareTaskDecorator`, `TenantIteratingJob`, and `AsyncConfig` implementation.
+>
+See [Blueprint Critical Fixes](file:///C:/Users/Hajar/.gemini/antigravity-ide/brain/9024f939-3693-4a5c-93c1-6cc32aabd9bc/blueprint_critical_fixes.md)
+for full `TenantAwareTaskDecorator`, `TenantIteratingJob`, and `AsyncConfig` implementation.
 
 ### ADR-009: Entitlement-Based Feature Gating in Subscription Context
 
 **Status:** Accepted
-**Context:** The `subscription/` bounded context defines Plans and billing but has no mechanism to enforce which features each plan unlocks. Without this, all tenants can access all features regardless of their subscription tier.
+**Context:** The `subscription/` bounded context defines Plans and billing but has no mechanism to enforce which
+features each plan unlocks. Without this, all tenants can access all features regardless of their subscription tier.
 **Decision:**
-1. Introduce `Feature` (enum of gatable capabilities: `GUEST_IMPORT`, `SEATING_PLAN`, `HYBRID_PRINT`, `SMS_CHANNEL`, `WHATSAPP_CHANNEL`, `CUSTOM_BRANDING`, `ANALYTICS_ADVANCED`, `MULTI_EVENT`, `API_ACCESS`, `UNLIMITED_GUESTS`), `PlanFeature` (plan → feature mapping with optional limits), and `Entitlement` (runtime check result: entitled/not, remaining quota, reason).
-2. `CheckEntitlementUseCase` resolves whether a tenant is entitled to a given feature based on their active subscription's plan.
-3. `@RequiresEntitlement(Feature.X)` annotation provides declarative feature gating at the use-case or controller level, enforced by `EntitlementInterceptor` (Spring AOP).
-4. `EntitlementChangedEvent` is emitted when a subscription upgrade/downgrade changes entitlements, allowing other contexts to react (e.g., disable seating plan UI).
+
+1. Introduce `Feature` (enum of gatable capabilities: `GUEST_IMPORT`, `SEATING_PLAN`, `HYBRID_PRINT`, `SMS_CHANNEL`,
+   `WHATSAPP_CHANNEL`, `CUSTOM_BRANDING`, `ANALYTICS_ADVANCED`, `MULTI_EVENT`, `API_ACCESS`, `UNLIMITED_GUESTS`),
+   `PlanFeature` (plan → feature mapping with optional limits), and `Entitlement` (runtime check result: entitled/not,
+   remaining quota, reason).
+2. `CheckEntitlementUseCase` resolves whether a tenant is entitled to a given feature based on their active
+   subscription's plan.
+3. `@RequiresEntitlement(Feature.X)` annotation provides declarative feature gating at the use-case or controller level,
+   enforced by `EntitlementInterceptor` (Spring AOP).
+4. `EntitlementChangedEvent` is emitted when a subscription upgrade/downgrade changes entitlements, allowing other
+   contexts to react (e.g., disable seating plan UI).
 5. Entitlement checks are cached per tenant (invalidated on plan change) to avoid per-request database lookups.
 
-**Consequences:** Feature access is enforced at the application layer. New features can be gated by adding an enum value and annotating the relevant use case. Plan changes automatically reflect in entitlements via event-driven cache invalidation. The frontend can query `GetTenantEntitlementsUseCase` to hide/show UI features based on plan.
+**Consequences:** Feature access is enforced at the application layer. New features can be gated by adding an enum value
+and annotating the relevant use case. Plan changes automatically reflect in entitlements via event-driven cache
+invalidation. The frontend can query `GetTenantEntitlementsUseCase` to hide/show UI features based on plan.
 
-> See [Blueprint Critical Fixes](file:///C:/Users/Hajar/.gemini/antigravity-ide/brain/9024f939-3693-4a5c-93c1-6cc32aabd9bc/blueprint_critical_fixes.md) for full `Feature`, `PlanFeature`, `Entitlement`, `@RequiresEntitlement`, and `EntitlementInterceptor` implementation.
+>
+See [Blueprint Critical Fixes](file:///C:/Users/Hajar/.gemini/antigravity-ide/brain/9024f939-3693-4a5c-93c1-6cc32aabd9bc/blueprint_critical_fixes.md)
+for full `Feature`, `PlanFeature`, `Entitlement`, `@RequiresEntitlement`, and `EntitlementInterceptor` implementation.
 
 ---
 
 ## Reuse Summary (Updated)
 
-- **Backend:** Hexagonal architecture within a modular monolith, organized by bounded context. Each context has explicit domain/application/infrastructure/presentation layers with enforced dependency rules. Java packages use lowercase concatenated words (no hyphens).
-- **Frontend:** Standalone Angular structure with `core/`, `shared/`, `layout/`, and `features/` boundaries. Features are named by business domain, not generic placeholders. **All UI is built exclusively from OneUI 5.12 templates — no custom UI creation.**
-- **UI foundation:** OneUI 5.12 (Bootstrap 5.3.8 admin template) provides all layouts, pages, blocks, forms, tables, charts, notifications, auth pages, error pages, dark mode, and RTL support. Angular components adapt these templates; they do not replace them.
-- **Tenant support:** First-class architectural concern with dedicated `tenant/` context, discriminator column strategy, JWT-only trust rule (ADR-002-A), async propagation via `TenantAwareTaskDecorator` (ADR-008), and scheduled job propagation via `TenantIteratingJob` (ADR-008).
-- **SaaS support:** Subscription/billing with **entitlement-based feature gating** (ADR-009), notifications, background jobs, file storage, and observability are integrated as dedicated packages with port/adapter boundaries.
-- **Original conventions preserved:** `resource/` for controllers, `service/` for business logic, `repository/` for persistence — now placed within the correct architectural layer.
+- **Backend:** Hexagonal architecture within a modular monolith, organized by bounded context. Each context has explicit
+  domain/application/infrastructure/presentation layers with enforced dependency rules. Java packages use lowercase
+  concatenated words (no hyphens).
+- **Frontend:** Standalone Angular structure with `core/`, `shared/`, `layout/`, and `features/` boundaries. Features
+  are named by business domain, not generic placeholders. **All UI is built exclusively from OneUI 5.12 templates — no
+  custom UI creation.**
+- **UI foundation:** OneUI 5.12 (Bootstrap 5.3.8 admin template) provides all layouts, pages, blocks, forms, tables,
+  charts, notifications, auth pages, error pages, dark mode, and RTL support. Angular components adapt these templates;
+  they do not replace them.
+- **Tenant support:** First-class architectural concern with dedicated `tenant/` context, discriminator column strategy,
+  JWT-only trust rule (ADR-002-A), async propagation via `TenantAwareTaskDecorator` (ADR-008), and scheduled job
+  propagation via `TenantIteratingJob` (ADR-008).
+- **SaaS support:** Subscription/billing with **entitlement-based feature gating** (ADR-009), notifications, background
+  jobs, file storage, and observability are integrated as dedicated packages with port/adapter boundaries.
+- **Original conventions preserved:** `resource/` for controllers, `service/` for business logic, `repository/` for
+  persistence — now placed within the correct architectural layer.

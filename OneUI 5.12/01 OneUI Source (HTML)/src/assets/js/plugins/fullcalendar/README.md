@@ -1,4 +1,3 @@
-
 # FullCalendar Standard Bundle
 
 Easily render a full-sized drag & drop calendar with a combination of standard plugins
@@ -19,23 +18,23 @@ Load the `index.global.min.js` file and use the `FullCalendar` global namespace:
 ```html
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar/index.global.min.js'></script>
     <script>
 
-      document.addEventListener('DOMContentLoaded', function() {
-        const calendarEl = document.getElementById('calendar')
-        const calendar = new FullCalendar.Calendar(calendarEl, {
-          initialView: 'dayGridMonth'
+        document.addEventListener('DOMContentLoaded', function() {
+          const calendarEl = document.getElementById('calendar')
+          const calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth'
+          })
+          calendar.render()
         })
-        calendar.render()
-      })
 
     </script>
-  </head>
-  <body>
-    <div id='calendar'></div>
-  </body>
+</head>
+<body>
+<div id='calendar'></div>
+</body>
 </html>
 ```
 
