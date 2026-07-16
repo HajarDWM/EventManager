@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectJdkTable">
+    <jdk version="2">
+      <name value="21" />
+      <type value="JavaSDK" />
+      <version value="java version &quot;21.0.8&quot; 2025-07-15 LTS" />
+      <homePath value="C:\Program Files\Java\jdk-21" />
+      <roots>
+        <annotationsPath>
+          <root type="composite">
+            <root type="simple" url="jar://C:/Program Files/Java/jdk-21/lib/src.zip!/java.base" />
+          </root>
+        </annotationsPath>
+        <classPath>
+          <root type="composite">
+            <root type="simple" url="jar://C:/Program Files/Java/jdk-21/lib/modules!/" />
+          </root>
+        </classPath>
+        <javadocPath>
+          <root type="composite" />
+        </javadocPath>
+        <sourcePath>
+          <root type="composite">
+            <root type="simple" url="file://C:/Program Files/Java/jdk-21/lib/src.zip" />
+          </root>
+        </sourcePath>
+      </roots>
+      <additional jdk-version="21" />
+    </jdk>
+  </component>
+</project>
+
+

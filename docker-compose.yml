@@ -1,0 +1,25 @@
+services:
+  event-db:
+    image: mysql:8.0
+    container_name: event-mysql-db
+    restart: always
+    environment:
+      MYSQL_DATABASE: event_manager_db
+      MYSQL_ROOT_PASSWORD: rootpassword
+    ports:
+      - "3307:3306" # استعملنا 3307 باش ما يوقعش تعارض
+    volumes:
+      - db_data:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: event-phpmyadmin
+    restart: always
+    ports:
+      - "8082:80"
+    environment:
+      PMA_HOST: event-db
+      MYSQL_ROOT_PASSWORD: rootpassword
+
+volumes:
+  db_data:

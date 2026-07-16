@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ExternalStorageConfigurationManager">
+    <state>
+      <storage>
+        <file id="30b02e44:162c4cff87f:-7fbc" path="$PROJECT_DIR$/.idea/encodings.xml" fileType="text/xml">
+          <storageClassPathItem>
+            <option name="path" value="$PROJECT_DIR$" />
+          </storageClassPathItem>
+        </file>
+      </storage>
+    </state>
+  </component>
+  <component name="JavaProjectRuntimeSettings">
+    <option name="operatingSystemName" value="Windows" />
+  </component>
+  <component name="MavenProjectsManager">
+    <option name="originalFiles">
+      <list>
+        <option value="$PROJECT_DIR$/pom.xml" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_21" default="true" project-jdk-name="21" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/out" />
+  </component>
+</project>
