@@ -1,54 +1,41 @@
 package com.example.eventmanager.application.mapper;
 
 import com.example.eventmanager.application.dto.CatererDTO;
-import com.example.eventmanager.infrastructure.persistence.entity.CatererEntity;
+import com.example.eventmanager.domain.model.Caterer;
+import com.example.eventmanager.domain.model.CatererStatus;
 import org.springframework.stereotype.Component;
 
 @Component
 public class CatererMapper {
 
-    public CatererDTO toDTO(CatererEntity entity) {
-        if (entity == null) {
+    public CatererDTO toDTO(Caterer domain) {
+        if (domain == null) {
             return null;
         }
 
         return CatererDTO.builder()
-                .id(entity.getId())
-                .businessName(entity.getBusinessName())
-                .email(entity.getEmail())
-                .password(entity.getPassword())
-                .stripeCustomerId(entity.getStripeCustomerId())
-                .accountStatus(entity.getAccountStatus())
+                .id(domain.getId())
+                .businessName(domain.getBusinessName())
+                .email(domain.getEmail())
+                .password(domain.getPassword())
+                .stripeCustomerId(domain.getStripeCustomerId())
+                .accountStatus(domain.getAccountStatus() != null ? domain.getAccountStatus().name() : null)
                 .build();
     }
 
-    public CatererEntity toEntity(CatererDTO dto) {
+    public Caterer toDomain(CatererDTO dto) {
         if (dto == null) {
             return null;
         }
 
-        return CatererEntity.builder()
+        return Caterer.builder()
                 .id(dto.getId())
                 .businessName(dto.getBusinessName())
                 .email(dto.getEmail())
                 .password(dto.getPassword())
                 .stripeCustomerId(dto.getStripeCustomerId())
-                .accountStatus(dto.getAccountStatus() != null ? dto.getAccountStatus() : "ACTIVE")
+                .accountStatus(dto.getAccountStatus() != null ? CatererStatus.valueOf(dto.getAccountStatus()) : CatererStatus.ACTIVE)
                 .build();
-    }
-
-    public void updateEntityFromDTO(CatererDTO dto, CatererEntity entity) {
-        if (dto == null || entity == null) {
-            return;
-        }
-
-        entity.setBusinessName(dto.getBusinessName());
-        entity.setEmail(dto.getEmail());
-        entity.setPassword(dto.getPassword());
-        entity.setStripeCustomerId(dto.getStripeCustomerId());
-        if (dto.getAccountStatus() != null) {
-            entity.setAccountStatus(dto.getAccountStatus());
-        }
     }
 }
 
