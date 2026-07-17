@@ -22,10 +22,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         Caterer caterer = catererRepositoryPort.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Traiteur introuvable avec l'email: " + email));
 
-        return new User(
+        return new com.example.eventmanager.infrastructure.security.model.CatererUserDetails(
                 caterer.getEmail(),
                 caterer.getPassword(),
-                Collections.emptyList() // Pas de rôles pour l'instant
+                Collections.emptyList(), // Pas de rôles pour l'instant
+                caterer.getId()
         );
     }
 }

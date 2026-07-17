@@ -29,4 +29,11 @@ public class EventRepositoryAdapter implements EventRepositoryPort {
         return eventRepository.findById(id)
                 .map(eventPersistenceMapper::toDomain);
     }
+
+    @Override
+    public java.util.List<Event> findAllByCatererId(Long catererId) {
+        return eventRepository.findByCatererId(catererId).stream()
+                .map(eventPersistenceMapper::toDomain)
+                .toList();
+    }
 }

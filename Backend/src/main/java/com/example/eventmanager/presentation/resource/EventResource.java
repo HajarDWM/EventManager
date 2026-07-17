@@ -27,4 +27,9 @@ public class EventResource {
         EventDTO eventDTO = getEventUseCase.getEventById(id);
         return ResponseEntity.ok(eventDTO);
     }
+
+    @GetMapping
+    public ResponseEntity<java.util.List<EventDTO>> getAllEvents() {
+        return ResponseEntity.ok(getEventUseCase.getAllEvents());
+    }
 }

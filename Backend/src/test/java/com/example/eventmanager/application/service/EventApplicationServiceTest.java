@@ -3,7 +3,9 @@ package com.example.eventmanager.application.service;
 import com.example.eventmanager.application.dto.EventDTO;
 import com.example.eventmanager.application.mapper.EventMapper;
 import com.example.eventmanager.application.port.out.EventRepositoryPort;
+import com.example.eventmanager.application.port.out.SecurityContextPort;
 import com.example.eventmanager.domain.exception.EventNotFoundException;
+import com.example.eventmanager.domain.exception.UnauthorizedAccessException;
 import com.example.eventmanager.domain.model.Event;
 import com.example.eventmanager.domain.model.EventStatus;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,6 +30,9 @@ class EventApplicationServiceTest {
 
     @Mock
     private EventMapper eventMapper;
+
+    @Mock
+    private SecurityContextPort securityContextPort;
 
     @InjectMocks
     private EventApplicationService eventApplicationService;
@@ -59,6 +64,7 @@ class EventApplicationServiceTest {
     @Test
     void createEvent_ShouldSetStatusToDraft_WhenStatusIsNull() {
         // Arrange
+        when(securityContextPort.getCurrentCatererId()).thenReturn(1L);
         when(eventMapper.toDomain(eventDTO)).thenReturn(event);
         when(eventRepositoryPort.save(any(Event.class))).thenReturn(event);
         
@@ -73,11 +79,13 @@ class EventApplicationServiceTest {
         assertEquals("DRAFT", result.getStatus());
         verify(eventRepositoryPort, times(1)).save(event);
         assertEquals(EventStatus.DRAFT, event.getStatus());
+        assertEquals(1L, event.getCatererId());
     }
 
     @Test
-    void getEventById_ShouldReturnEvent_WhenEventExists() {
+    void getEventById_ShouldReturnEvent_WhenEventExistsAndBelongsToCaterer() {
         // Arrange
+        when(securityContextPort.getCurrentCatererId()).thenReturn(1L);
         when(eventRepositoryPort.findById(1L)).thenReturn(Optional.of(event));
         when(eventMapper.toDTO(event)).thenReturn(eventDTO);
 
@@ -91,8 +99,21 @@ class EventApplicationServiceTest {
     }
 
     @Test
+    void getEventById_ShouldThrowUnauthorized_WhenEventBelongsToAnotherCaterer() {
+        // Arrange
+        when(securityContextPort.getCurrentCatererId()).thenReturn(2L); // Different caterer
+        when(eventRepositoryPort.findById(1L)).thenReturn(Optional.of(event)); // Event belongs to caterer 1
+
+        // Act & Assert
+        assertThrows(UnauthorizedAccessException.class, () -> eventApplicationService.getEventById(1L));
+        verify(eventRepositoryPort, times(1)).findById(1L);
+        verify(eventMapper, never()).toDTO(any());
+    }
+
+    @Test
     void getEventById_ShouldThrowException_WhenEventDoesNotExist() {
         // Arrange
+        when(securityContextPort.getCurrentCatererId()).thenReturn(1L);
         when(eventRepositoryPort.findById(99L)).thenReturn(Optional.empty());
 
         // Act & Assert
