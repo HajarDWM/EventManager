@@ -1,0 +1,9 @@
+package com.example.eventmanager.domain.model;
+
+import lombok.Value;
+
+@Value
+public class AuthCredentials {
+    String email;
+    String password;
+}

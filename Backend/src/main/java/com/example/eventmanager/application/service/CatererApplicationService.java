@@ -5,6 +5,7 @@ import com.example.eventmanager.application.mapper.CatererMapper;
 import com.example.eventmanager.application.port.in.CreateCatererUseCase;
 import com.example.eventmanager.application.port.in.GetCatererUseCase;
 import com.example.eventmanager.application.port.out.CatererRepositoryPort;
+import com.example.eventmanager.application.port.out.PasswordEncoderPort;
 import com.example.eventmanager.domain.exception.CatererAlreadyExistsException;
 import com.example.eventmanager.domain.exception.CatererNotFoundException;
 import com.example.eventmanager.domain.model.Caterer;
@@ -18,6 +19,7 @@ public class CatererApplicationService implements CreateCatererUseCase, GetCater
 
     private final CatererRepositoryPort catererRepositoryPort;
     private final CatererMapper catererMapper;
+    private final PasswordEncoderPort passwordEncoderPort;
 
     @Override
     @Transactional
@@ -25,6 +27,10 @@ public class CatererApplicationService implements CreateCatererUseCase, GetCater
         if (catererRepositoryPort.existsByEmail(catererDTO.getEmail())) {
             throw new CatererAlreadyExistsException(catererDTO.getEmail());
         }
+
+        // Hacher le mot de passe avant de créer l'objet domaine
+        String encodedPassword = passwordEncoderPort.encode(catererDTO.getPassword());
+        catererDTO.setPassword(encodedPassword);
 
         Caterer catererToSave = catererMapper.toDomain(catererDTO);
         
