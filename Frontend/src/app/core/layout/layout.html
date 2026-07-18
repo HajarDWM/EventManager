@@ -1,0 +1,156 @@
+<div id="page-container" [ngClass]="{
+  'sidebar-o': isSidebarOpen(),
+  'sidebar-o-xs': isSidebarMobileOpen(),
+  'sidebar-mini': isSidebarMini(),
+  'sidebar-dark': true,
+  'enable-page-overlay': true,
+  'side-scroll': true,
+  'page-header-fixed': true,
+  'main-content-narrow': true
+}">
+  <!-- Sidebar -->
+  <nav id="sidebar" aria-label="Main Navigation">
+    <!-- Side Header -->
+    <div class="content-header">
+      <!-- Logo -->
+      <a class="fw-semibold text-dual" routerLink="/dashboard">
+        <span class="smini-visible">
+          <i class="fa fa-circle-notch text-primary"></i>
+        </span>
+        <span class="smini-hide fs-5 tracking-wider">Event<span class="text-primary">Manager</span></span>
+      </a>
+      <!-- END Logo -->
+
+      <!-- Extra Controls -->
+      <div class="d-flex align-items-center gap-1">
+        <!-- Layout API, toggle sidebar mini -->
+        <button type="button" class="btn btn-sm btn-alt-secondary d-none d-lg-inline-block" (click)="toggleSidebarMini()">
+          <i class="fa fa-fw fa-ellipsis-v"></i>
+        </button>
+
+        <!-- Close Sidebar, Visible only on mobile screens -->
+        <button type="button" class="d-lg-none btn btn-sm btn-alt-secondary ms-1" (click)="closeSidebarMobile()">
+          <i class="fa fa-fw fa-times"></i>
+        </button>
+      </div>
+    </div>
+    <!-- END Side Header -->
+
+    <!-- Sidebar Scrolling -->
+    <div class="js-sidebar-scroll">
+      <!-- Side Navigation -->
+      <div class="content-side">
+        <ul class="nav-main">
+          <li class="nav-main-item">
+            <a class="nav-main-link" routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+              <i class="nav-main-link-icon si si-speedometer"></i>
+              <span class="nav-main-link-name">Tableau de bord</span>
+            </a>
+          </li>
+          
+          <li class="nav-main-heading">Prestations</li>
+          <li class="nav-main-item">
+            <a class="nav-main-link" routerLink="/events" routerLinkActive="active">
+              <i class="nav-main-link-icon si si-calendar"></i>
+              <span class="nav-main-link-name">Événements</span>
+            </a>
+          </li>
+          
+          <li class="nav-main-heading">Paramètres</li>
+          <li class="nav-main-item">
+            <a class="nav-main-link" routerLink="/profile" routerLinkActive="active">
+              <i class="nav-main-link-icon si si-user"></i>
+              <span class="nav-main-link-name">Profil Traiteur</span>
+            </a>
+          </li>
+          <li class="nav-main-item">
+            <a class="nav-main-link" href="javascript:void(0)" (click)="logout()">
+              <i class="nav-main-link-icon si si-logout"></i>
+              <span class="nav-main-link-name">Déconnexion</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+      <!-- END Side Navigation -->
+    </div>
+    <!-- END Sidebar Scrolling -->
+  </nav>
+  <!-- END Sidebar -->
+
+  <!-- Header -->
+  <header id="page-header">
+    <div class="content-header">
+      <!-- Left Section -->
+      <div class="d-flex align-items-center gap-2">
+        <!-- Toggle Sidebar Button -->
+        <button type="button" class="btn btn-sm btn-alt-secondary" (click)="toggleSidebar()">
+          <i class="fa fa-fw fa-bars"></i>
+        </button>
+      </div>
+      <!-- END Left Section -->
+
+      <!-- Right Section -->
+      <div class="d-flex align-items-center gap-2">
+        <!-- User Dropdown -->
+        <div class="dropdown d-inline-block" [class.show]="isUserDropdownOpen()">
+          <button type="button" class="btn btn-sm btn-alt-secondary d-flex align-items-center gap-2" 
+                  id="page-header-user-dropdown" (click)="toggleUserDropdown()">
+            <span class="d-none d-sm-inline-block fw-semibold">{{ userBusinessName() }}</span>
+            <i class="fa fa-fw fa-angle-down opacity-50"></i>
+          </button>
+          
+          <div class="dropdown-menu dropdown-menu-md dropdown-menu-end p-0 border-0" 
+               [class.show]="isUserDropdownOpen()"
+               aria-labelledby="page-header-user-dropdown"
+               style="position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate3d(0px, 33px, 0px);">
+            <div class="p-3 text-center bg-body-light border-bottom rounded-top">
+              <p class="mt-2 mb-0 fw-semibold">{{ userBusinessName() }}</p>
+              <p class="mb-0 text-muted fs-sm">{{ userEmail() }}</p>
+            </div>
+            <div class="p-2">
+              <a class="dropdown-item d-flex align-items-center justify-content-between" routerLink="/profile" (click)="isUserDropdownOpen.set(false)">
+                <span class="fs-sm fw-medium">Mon Profil</span>
+                <i class="si si-user opacity-50 ms-2"></i>
+              </a>
+            </div>
+            <div class="p-2 border-top">
+              <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="logout(); isUserDropdownOpen.set(false)">
+                <span class="fs-sm fw-medium">Se déconnecter</span>
+                <i class="si si-logout opacity-50 ms-2"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <!-- END User Dropdown -->
+      </div>
+      <!-- END Right Section -->
+    </div>
+  </header>
+  <!-- END Header -->
+
+  <!-- Main Container -->
+  <main id="main-container">
+    <div class="content">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+  <!-- END Main Container -->
+
+  <!-- Footer -->
+  <footer id="page-footer" class="bg-body-light">
+    <div class="content py-3">
+      <div class="row fs-sm fw-medium">
+        <div class="col-sm-6 order-sm-2 py-1 text-center text-sm-end">
+          Créé avec <i class="fa fa-heart text-danger"></i> pour EventManager
+        </div>
+        <div class="col-sm-6 order-sm-1 py-1 text-center text-sm-start">
+          EventManager &copy; 2026
+        </div>
+      </div>
+    </div>
+  </footer>
+  <!-- END Footer -->
+</div>
+
+<!-- Mobile Page Overlay -->
+<div id="page-overlay" *ngIf="isSidebarMobileOpen()" (click)="closeSidebarMobile()"></div>
