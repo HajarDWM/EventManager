@@ -1,6 +1,7 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { AuthService } from '../auth/services/auth.service';
 
 @Component({
   selector: 'app-layout',
@@ -10,6 +11,8 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
   styleUrl: './layout.scss'
 })
 export class Layout {
+  private readonly authService = inject(AuthService);
+
   // Signaux réactifs pour contrôler le layout
   protected readonly isSidebarOpen = signal(true);
   protected readonly isSidebarMobileOpen = signal(false);
@@ -41,7 +44,6 @@ export class Layout {
   }
 
   protected logout(): void {
-    // Action de déconnexion à implémenter
-    console.log('Logout clicked');
+    this.authService.logout();
   }
 }

@@ -1,0 +1,70 @@
+<div class="hero-static d-flex align-items-center bg-body-extra-light">
+  <div class="content">
+    <div class="row justify-content-center push">
+      <div class="col-md-8 col-lg-6 col-xl-4">
+        <!-- Sign In Block -->
+        <div class="block block-rounded mb-0 shadow-sm border border-light">
+          <div class="block-header block-header-default bg-body-light border-bottom border-light">
+            <h3 class="block-title">Connexion</h3>
+            <div class="block-options">
+              <a class="btn-block-option" routerLink="/register" data-bs-toggle="tooltip"
+                 data-bs-placement="left" title="Créer un compte">
+                <i class="fa fa-user-plus"></i> S'inscrire
+              </a>
+            </div>
+          </div>
+          <div class="block-content">
+            <div class="p-sm-3 px-lg-4 py-lg-4">
+              <h1 class="h2 mb-1 text-center">Event<span class="text-primary">Manager</span></h1>
+              <p class="fw-medium text-muted text-center mb-4">
+                Accédez à votre espace traiteur.
+              </p>
+
+              <!-- Error Alert -->
+              <div class="alert alert-danger d-flex align-items-center gap-2" role="alert" *ngIf="errorMessage()">
+                <i class="fa fa-exclamation-circle"></i>
+                <div class="fs-sm fw-medium">{{ errorMessage() }}</div>
+              </div>
+
+              <!-- Sign In Form -->
+              <form (ngSubmit)="onSubmit()">
+                <div class="py-2">
+                  <div class="mb-4">
+                    <label class="form-label fs-sm fw-semibold" for="login-email">Adresse Email</label>
+                    <input type="email" class="form-control form-control-alt form-control-lg fs-sm"
+                           id="login-email" name="login-email" placeholder="caterer@example.com"
+                           [ngModel]="email()" (ngModelChange)="email.set($event)" required>
+                  </div>
+                  <div class="mb-4">
+                    <label class="form-label fs-sm fw-semibold" for="login-password">Mot de passe</label>
+                    <input type="password" class="form-control form-control-alt form-control-lg fs-sm"
+                           id="login-password" name="login-password" placeholder="••••••••"
+                           [ngModel]="password()" (ngModelChange)="password.set($event)" required>
+                  </div>
+                </div>
+                
+                <div class="row mb-4">
+                  <div class="col-12">
+                    <button type="submit" class="btn w-100 btn-alt-primary py-2" [disabled]="isLoading()">
+                      <span *ngIf="!isLoading()">
+                        <i class="fa fa-fw fa-sign-in-alt me-1 opacity-50"></i> Se connecter
+                      </span>
+                      <span *ngIf="isLoading()">
+                        <i class="fa fa-fw fa-circle-notch fa-spin me-1"></i> Connexion...
+                      </span>
+                    </button>
+                  </div>
+                </div>
+              </form>
+              <!-- END Sign In Form -->
+            </div>
+          </div>
+        </div>
+        <!-- END Sign In Block -->
+      </div>
+    </div>
+    <div class="fs-sm text-muted text-center mt-3">
+      <strong>EventManager</strong> &copy; 2026
+    </div>
+  </div>
+</div>
