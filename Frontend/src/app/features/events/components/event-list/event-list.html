@@ -1,0 +1,85 @@
+<!-- Hero -->
+<div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-2 text-center text-md-start">
+  <div class="flex-grow-1 mb-1 mb-md-0">
+    <h1 class="h3 fw-bold mb-2">
+      Événements
+    </h1>
+    <h2 class="h6 fw-medium text-muted mb-0">
+      Visualisez et gérez toutes vos prestations de traiteur.
+    </h2>
+  </div>
+  <div class="mt-3 mt-md-0 ms-md-3">
+    <a class="btn btn-primary" routerLink="/events/create">
+      <i class="fa fa-fw fa-plus me-1"></i> Planifier un événement
+    </a>
+  </div>
+</div>
+<!-- END Hero -->
+
+<div class="block block-rounded mt-3 shadow-sm border border-light">
+  <div class="block-header block-header-default bg-body-light border-bottom border-light">
+    <h3 class="block-title">Liste de mes Prestations</h3>
+  </div>
+  
+  <div class="block-content">
+    <!-- Error Alert -->
+    <div class="alert alert-danger d-flex align-items-center gap-2" role="alert" *ngIf="errorMessage()">
+      <i class="fa fa-exclamation-circle"></i>
+      <div class="fs-sm fw-medium">{{ errorMessage() }}</div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div class="text-center py-5" *ngIf="isLoading()">
+      <i class="fa fa-fw fa-circle-notch fa-spin text-primary fs-2"></i>
+      <p class="mt-2 text-muted fs-sm">Chargement des événements...</p>
+    </div>
+
+    <!-- Empty State -->
+    <div class="text-center py-5" *ngIf="!isLoading() && events().length === 0">
+      <i class="far fa-calendar-times text-muted fs-1 mb-3"></i>
+      <h3 class="h5 fw-bold mb-1">Aucun événement planifié</h3>
+      <p class="text-muted fs-sm mb-4">Commencez par planifier votre première prestation de traiteur.</p>
+      <a class="btn btn-sm btn-alt-primary" routerLink="/events/create">
+        <i class="fa fa-plus me-1"></i> Créer un événement
+      </a>
+    </div>
+
+    <!-- Events Table -->
+    <div class="table-responsive" *ngIf="!isLoading() && events().length > 0">
+      <table class="table table-bordered table-striped table-vcenter fs-sm">
+        <thead class="table-light">
+          <tr>
+            <th>Titre</th>
+            <th>Date & Heure</th>
+            <th>Lieu</th>
+            <th class="text-center" style="width: 15%;">Invités</th>
+            <th class="text-center" style="width: 15%;">Statut</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let event of events()">
+            <td class="fw-semibold text-primary">
+              {{ event.title }}
+            </td>
+            <td>
+              {{ event.eventDate | date:'dd/MM/yyyy HH:mm' }}
+            </td>
+            <td>
+              {{ event.location }}
+            </td>
+            <td class="text-center">
+              <span class="badge bg-body-dark text-dark fw-bold px-3 py-2 rounded-pill">
+                {{ event.guestCount }}
+              </span>
+            </td>
+            <td class="text-center">
+              <span class="badge px-3 py-2 rounded" [ngClass]="getStatusBadgeClass(event.status)">
+                {{ getStatusLabel(event.status) }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
