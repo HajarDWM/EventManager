@@ -7,6 +7,7 @@ import { authGuard } from './core/auth/guards/auth.guard';
 import { EventList } from './features/events/components/event-list/event-list';
 import { EventCreate } from './features/events/components/event-create/event-create';
 import { EventEdit } from './features/events/components/event-edit/event-edit';
+import { Profile } from './features/profile/profile';
 
 export const routes: Routes = [
   {
@@ -37,6 +38,10 @@ export const routes: Routes = [
       {
         path: 'events/edit/:id',
         component: EventEdit
+      },
+      {
+        path: 'profile',
+        component: Profile
       },
       {
         path: '',

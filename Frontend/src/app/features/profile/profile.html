@@ -1,0 +1,149 @@
+<!-- Hero -->
+<div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-2 text-center text-md-start">
+  <div class="flex-grow-1 mb-1 mb-md-0">
+    <h1 class="h3 fw-bold mb-2">
+      Mon Profil Traiteur
+    </h1>
+    <h2 class="h6 fw-medium text-muted mb-0">
+      Gérez les informations de votre entreprise et votre sécurité.
+    </h2>
+  </div>
+</div>
+<!-- END Hero -->
+
+<div class="row mt-3">
+  <!-- Left Column: Informations Générales -->
+  <div class="col-md-6 mb-4">
+    <div class="block block-rounded shadow-sm border border-light h-100">
+      <div class="block-header block-header-default bg-body-light border-bottom border-light">
+        <h3 class="block-title">
+          <i class="fa fa-user-circle me-1 text-primary"></i> Informations de l'entreprise
+        </h3>
+      </div>
+      <div class="block-content">
+        <!-- Success Alert -->
+        <div class="alert alert-success d-flex align-items-center gap-2" role="alert" *ngIf="profileSuccessMessage()">
+          <i class="fa fa-check-circle"></i>
+          <div class="fs-sm fw-medium">{{ profileSuccessMessage() }}</div>
+        </div>
+
+        <!-- Error Alert -->
+        <div class="alert alert-danger d-flex align-items-center gap-2" role="alert" *ngIf="profileErrorMessage()">
+          <i class="fa fa-exclamation-circle"></i>
+          <div class="fs-sm fw-medium">{{ profileErrorMessage() }}</div>
+        </div>
+
+        <!-- Loading Spinner -->
+        <div class="text-center py-4" *ngIf="isLoading()">
+          <i class="fa fa-fw fa-circle-notch fa-spin text-primary fs-3"></i>
+          <p class="mt-2 text-muted fs-sm">Chargement du profil...</p>
+        </div>
+
+        <form (ngSubmit)="onUpdateProfile()" *ngIf="!isLoading()">
+          <!-- Email (Read-only) -->
+          <div class="mb-4">
+            <label class="form-label fs-sm fw-semibold" for="profile-email">Adresse Email (Identifiant)</label>
+            <input type="email" class="form-control form-control-alt fs-sm bg-body"
+                   id="profile-email" [value]="email()" readonly disabled>
+            <div class="form-text fs-xs">L'adresse email ne peut pas être modifiée directement.</div>
+          </div>
+
+          <!-- Business Name -->
+          <div class="mb-4">
+            <label class="form-label fs-sm fw-semibold" for="profile-business">Nom de l'entreprise / Traiteur <span class="text-danger">*</span></label>
+            <input type="text" class="form-control form-control-alt fs-sm"
+                   id="profile-business" name="profile-business" placeholder="Ex: Gourmet Events"
+                   [ngModel]="businessName()" (ngModelChange)="businessName.set($event)" required>
+          </div>
+
+          <!-- Account Status -->
+          <div class="mb-4">
+            <label class="form-label fs-sm fw-semibold">Statut du Compte</label>
+            <div>
+              <span class="badge bg-success-light text-success px-3 py-2 rounded-pill fw-bold" *ngIf="accountStatus() === 'ACTIVE'">
+                <i class="fa fa-check-circle me-1"></i> Compte Actif
+              </span>
+              <span class="badge bg-danger-light text-danger px-3 py-2 rounded-pill fw-bold" *ngIf="accountStatus() !== 'ACTIVE'">
+                <i class="fa fa-ban me-1"></i> {{ accountStatus() }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <div class="mb-4">
+            <button type="submit" class="btn btn-primary fs-sm px-4" [disabled]="isSavingProfile()">
+              <span *ngIf="!isSavingProfile()">
+                <i class="fa fa-save me-1"></i> Mettre à jour le profil
+              </span>
+              <span *ngIf="isSavingProfile()">
+                <i class="fa fa-circle-notch fa-spin me-1"></i> Enregistrement...
+              </span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Column: Mot de passe & Sécurité -->
+  <div class="col-md-6 mb-4">
+    <div class="block block-rounded shadow-sm border border-light h-100">
+      <div class="block-header block-header-default bg-body-light border-bottom border-light">
+        <h3 class="block-title">
+          <i class="fa fa-lock me-1 text-primary"></i> Sécurité & Mot de passe
+        </h3>
+      </div>
+      <div class="block-content">
+        <!-- Success Alert -->
+        <div class="alert alert-success d-flex align-items-center gap-2" role="alert" *ngIf="passwordSuccessMessage()">
+          <i class="fa fa-check-circle"></i>
+          <div class="fs-sm fw-medium">{{ passwordSuccessMessage() }}</div>
+        </div>
+
+        <!-- Error Alert -->
+        <div class="alert alert-danger d-flex align-items-center gap-2" role="alert" *ngIf="passwordErrorMessage()">
+          <i class="fa fa-exclamation-circle"></i>
+          <div class="fs-sm fw-medium">{{ passwordErrorMessage() }}</div>
+        </div>
+
+        <form (ngSubmit)="onChangePassword()">
+          <!-- Current Password -->
+          <div class="mb-4">
+            <label class="form-label fs-sm fw-semibold" for="current-password">Mot de passe actuel <span class="text-danger">*</span></label>
+            <input type="password" class="form-control form-control-alt fs-sm"
+                   id="current-password" name="current-password" placeholder="Entrez votre mot de passe actuel"
+                   [ngModel]="currentPassword()" (ngModelChange)="currentPassword.set($event)" required>
+          </div>
+
+          <!-- New Password -->
+          <div class="mb-4">
+            <label class="form-label fs-sm fw-semibold" for="new-password">Nouveau mot de passe <span class="text-danger">*</span></label>
+            <input type="password" class="form-control form-control-alt fs-sm"
+                   id="new-password" name="new-password" placeholder="Minimum 6 caractères"
+                   [ngModel]="newPassword()" (ngModelChange)="newPassword.set($event)" required>
+          </div>
+
+          <!-- Confirm New Password -->
+          <div class="mb-4">
+            <label class="form-label fs-sm fw-semibold" for="confirm-password">Confirmer le nouveau mot de passe <span class="text-danger">*</span></label>
+            <input type="password" class="form-control form-control-alt fs-sm"
+                   id="confirm-password" name="confirm-password" placeholder="Répétez le nouveau mot de passe"
+                   [ngModel]="confirmNewPassword()" (ngModelChange)="confirmNewPassword.set($event)" required>
+          </div>
+
+          <!-- Submit Button -->
+          <div class="mb-4">
+            <button type="submit" class="btn btn-alt-primary fs-sm px-4" [disabled]="isSavingPassword()">
+              <span *ngIf="!isSavingPassword()">
+                <i class="fa fa-key me-1"></i> Changer le mot de passe
+              </span>
+              <span *ngIf="isSavingPassword()">
+                <i class="fa fa-circle-notch fa-spin me-1"></i> Modification...
+              </span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

@@ -25,4 +25,12 @@ public class Caterer {
     public boolean isActive() {
         return CatererStatus.ACTIVE.equals(this.accountStatus);
     }
+
+    public void updateBusinessName(String businessName) {
+        this.businessName = businessName;
+    }
+
+    public void updatePassword(String encodedPassword) {
+        this.password = encodedPassword;
+    }
 }
