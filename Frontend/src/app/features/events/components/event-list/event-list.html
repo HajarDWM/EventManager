@@ -16,11 +16,61 @@
 </div>
 <!-- END Hero -->
 
-<div class="block block-rounded mt-3 shadow-sm border border-light">
-  <div class="block-header block-header-default bg-body-light border-bottom border-light">
-    <h3 class="block-title">Liste de mes Prestations</h3>
+<!-- Search & Filter Toolbar -->
+<div class="block block-rounded mt-3 shadow-sm border border-light p-3 bg-body-extra-light">
+  <div class="row g-3 align-items-center">
+    <!-- Search Bar -->
+    <div class="col-md-4">
+      <div class="input-group input-group-alt">
+        <span class="input-group-text bg-body-light border-0">
+          <i class="fa fa-search text-muted"></i>
+        </span>
+        <input type="text" class="form-control border-0 bg-body-light fs-sm"
+               placeholder="Rechercher par titre ou lieu..."
+               [ngModel]="searchTerm()" (ngModelChange)="searchTerm.set($event)">
+      </div>
+    </div>
+
+    <!-- Status Filter -->
+    <div class="col-md-3">
+      <select class="form-select border-0 bg-body-light fs-sm"
+              [ngModel]="statusFilter()" (ngModelChange)="statusFilter.set($event)">
+        <option value="ALL">Tous les statuts</option>
+        <option value="PLANNED">Planifiés</option>
+        <option value="DRAFT">Brouillons</option>
+        <option value="COMPLETED">Terminés</option>
+        <option value="CANCELLED">Annulés</option>
+      </select>
+    </div>
+
+    <!-- Sort By -->
+    <div class="col-md-3">
+      <select class="form-select border-0 bg-body-light fs-sm"
+              [ngModel]="sortBy()" (ngModelChange)="sortBy.set($event)">
+        <option value="date-asc">Date (Plus proche)</option>
+        <option value="date-desc">Date (Plus éloignée)</option>
+        <option value="guests-desc">Invités (Décroissant)</option>
+        <option value="title-asc">Titre (A-Z)</option>
+      </select>
+    </div>
+
+    <!-- Reset Button -->
+    <div class="col-md-2 text-md-end">
+      <button type="button" class="btn btn-sm btn-alt-secondary w-100" (click)="resetFilters()" title="Réinitialiser les filtres">
+        <i class="fa fa-sync-alt me-1"></i> Réinitialiser
+      </button>
+    </div>
   </div>
-  
+</div>
+
+<div class="block block-rounded mt-3 shadow-sm border border-light">
+  <div class="block-header block-header-default bg-body-light border-bottom border-light d-flex justify-content-between align-items-center">
+    <h3 class="block-title mb-0">Liste de mes Prestations</h3>
+    <span class="badge bg-primary px-3 py-2 rounded-pill fs-xs">
+      {{ filteredEvents().length }} prestation(s)
+    </span>
+  </div>
+
   <div class="block-content">
     <!-- Error Alert -->
     <div class="alert alert-danger d-flex align-items-center gap-2" role="alert" *ngIf="errorMessage()">
@@ -35,30 +85,34 @@
     </div>
 
     <!-- Empty State -->
-    <div class="text-center py-5" *ngIf="!isLoading() && events().length === 0">
+    <div class="text-center py-5" *ngIf="!isLoading() && filteredEvents().length === 0">
       <i class="far fa-calendar-times text-muted fs-1 mb-3"></i>
-      <h3 class="h5 fw-bold mb-1">Aucun événement planifié</h3>
-      <p class="text-muted fs-sm mb-4">Commencez par planifier votre première prestation de traiteur.</p>
-      <a class="btn btn-sm btn-alt-primary" routerLink="/events/create">
+      <h3 class="h5 fw-bold mb-1">Aucun événement trouvé</h3>
+      <p class="text-muted fs-sm mb-4" *ngIf="events().length === 0">Commencez par planifier votre première prestation de traiteur.</p>
+      <p class="text-muted fs-sm mb-4" *ngIf="events().length > 0">Aucun résultat ne correspond à vos filtres de recherche.</p>
+      <a class="btn btn-sm btn-alt-primary" routerLink="/events/create" *ngIf="events().length === 0">
         <i class="fa fa-plus me-1"></i> Créer un événement
       </a>
+      <button class="btn btn-sm btn-alt-secondary ms-2" (click)="resetFilters()" *ngIf="events().length > 0">
+        <i class="fa fa-sync-alt me-1"></i> Effacer les filtres
+      </button>
     </div>
 
     <!-- Events Table -->
-    <div class="table-responsive" *ngIf="!isLoading() && events().length > 0">
+    <div class="table-responsive" *ngIf="!isLoading() && filteredEvents().length > 0">
       <table class="table table-bordered table-striped table-vcenter fs-sm">
         <thead class="table-light">
           <tr>
             <th>Titre</th>
             <th>Date & Heure</th>
             <th>Lieu</th>
-            <th class="text-center" style="width: 15%;">Invités</th>
+            <th class="text-center" style="width: 12%;">Invités</th>
             <th class="text-center" style="width: 15%;">Statut</th>
-            <th class="text-center" style="width: 15%;">Actions</th>
+            <th class="text-center" style="width: 18%;">Actions</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let event of events()">
+          <tr *ngFor="let event of filteredEvents()">
             <td class="fw-semibold text-primary">
               {{ event.title }}
             </td>

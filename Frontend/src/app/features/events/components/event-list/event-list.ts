@@ -1,5 +1,6 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { EventService } from '../../services/event.service';
 import { Event } from '../../models/event.model';
@@ -7,7 +8,7 @@ import { Event } from '../../models/event.model';
 @Component({
   selector: 'app-event-list',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './event-list.html'
 })
 export class EventList implements OnInit {
@@ -16,6 +17,51 @@ export class EventList implements OnInit {
   protected readonly events = signal<Event[]>([]);
   protected readonly isLoading = signal(false);
   protected readonly errorMessage = signal('');
+
+  // Search & Filter State
+  protected readonly searchTerm = signal('');
+  protected readonly statusFilter = signal('ALL');
+  protected readonly sortBy = signal('date-asc');
+
+  // Computed Filtered & Sorted Events
+  protected readonly filteredEvents = computed(() => {
+    let list = [...this.events()];
+
+    // Search filter (Title or Location)
+    const term = this.searchTerm().trim().toLowerCase();
+    if (term) {
+      list = list.filter(e =>
+        (e.title && e.title.toLowerCase().includes(term)) ||
+        (e.location && e.location.toLowerCase().includes(term))
+      );
+    }
+
+    // Status filter
+    const status = this.statusFilter();
+    if (status !== 'ALL') {
+      list = list.filter(e => e.status === status);
+    }
+
+    // Sorting
+    const sort = this.sortBy();
+    list.sort((a, b) => {
+      if (sort === 'date-asc') {
+        return new Date(a.eventDate).getTime() - new Date(b.eventDate).getTime();
+      }
+      if (sort === 'date-desc') {
+        return new Date(b.eventDate).getTime() - new Date(a.eventDate).getTime();
+      }
+      if (sort === 'guests-desc') {
+        return (b.guestCount || 0) - (a.guestCount || 0);
+      }
+      if (sort === 'title-asc') {
+        return (a.title || '').localeCompare(b.title || '');
+      }
+      return 0;
+    });
+
+    return list;
+  });
 
   public ngOnInit(): void {
     this.loadEvents();
@@ -36,6 +82,12 @@ export class EventList implements OnInit {
         console.error(err);
       }
     });
+  }
+
+  protected resetFilters(): void {
+    this.searchTerm.set('');
+    this.statusFilter.set('ALL');
+    this.sortBy.set('date-asc');
   }
 
   protected getStatusBadgeClass(status: string | undefined): string {
