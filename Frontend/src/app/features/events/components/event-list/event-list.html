@@ -54,6 +54,7 @@
             <th>Lieu</th>
             <th class="text-center" style="width: 15%;">Invités</th>
             <th class="text-center" style="width: 15%;">Statut</th>
+            <th class="text-center" style="width: 15%;">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -76,6 +77,16 @@
               <span class="badge px-3 py-2 rounded" [ngClass]="getStatusBadgeClass(event.status)">
                 {{ getStatusLabel(event.status) }}
               </span>
+            </td>
+            <td class="text-center">
+              <div class="btn-group">
+                <a class="btn btn-sm btn-alt-secondary" [routerLink]="['/events/edit', event.id]" title="Modifier">
+                  <i class="fa fa-fw fa-pencil-alt"></i>
+                </a>
+                <button type="button" class="btn btn-sm btn-alt-danger ms-1" (click)="deleteEvent(event.id!)" title="Supprimer">
+                  <i class="fa fa-fw fa-times"></i>
+                </button>
+              </div>
             </td>
           </tr>
         </tbody>

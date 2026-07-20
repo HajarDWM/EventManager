@@ -2,10 +2,10 @@
 <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-2 text-center text-md-start">
   <div class="flex-grow-1 mb-1 mb-md-0">
     <h1 class="h3 fw-bold mb-2">
-      Planifier un événement
+      Modifier l'événement
     </h1>
     <h2 class="h6 fw-medium text-muted mb-0">
-      Remplissez le formulaire ci-dessous pour ajouter une nouvelle prestation.
+      Mettez à jour les détails de cette prestation.
     </h2>
   </div>
 </div>
@@ -15,7 +15,7 @@
   <div class="col-md-8 col-lg-6">
     <div class="block block-rounded shadow-sm border border-light">
       <div class="block-header block-header-default bg-body-light border-bottom border-light">
-        <h3 class="block-title">Détails de l'événement</h3>
+        <h3 class="block-title">Édition de la prestation #{{ eventId() }}</h3>
       </div>
       <div class="block-content">
         <!-- Error Alert -->
@@ -24,7 +24,13 @@
           <div class="fs-sm fw-medium">{{ errorMessage() }}</div>
         </div>
 
-        <form (ngSubmit)="onSubmit()">
+        <!-- Loading Spinner -->
+        <div class="text-center py-5" *ngIf="isLoading()">
+          <i class="fa fa-fw fa-circle-notch fa-spin text-primary fs-2"></i>
+          <p class="mt-2 text-muted fs-sm">Chargement des données de l'événement...</p>
+        </div>
+
+        <form (ngSubmit)="onSubmit()" *ngIf="!isLoading()">
           <!-- Titre -->
           <div class="mb-4">
             <label class="form-label fs-sm fw-semibold" for="event-title">Nom de l'événement <span class="text-danger">*</span></label>
@@ -72,12 +78,12 @@
 
           <!-- Actions -->
           <div class="mb-4 d-flex gap-2">
-            <button type="submit" class="btn btn-primary fs-sm px-4" [disabled]="isLoading()">
-              <span *ngIf="!isLoading()">
-                <i class="fa fa-save me-1"></i> Enregistrer
+            <button type="submit" class="btn btn-primary fs-sm px-4" [disabled]="isSaving()">
+              <span *ngIf="!isSaving()">
+                <i class="fa fa-save me-1"></i> Mettre à jour
               </span>
-              <span *ngIf="isLoading()">
-                <i class="fa fa-circle-notch fa-spin me-1"></i> Enregistrement...
+              <span *ngIf="isSaving()">
+                <i class="fa fa-circle-notch fa-spin me-1"></i> Mise à jour...
               </span>
             </button>
             <a class="btn btn-alt-secondary fs-sm px-4" routerLink="/events">

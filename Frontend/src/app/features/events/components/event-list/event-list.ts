@@ -57,4 +57,18 @@ export class EventList implements OnInit {
       default: return 'Inconnu';
     }
   }
+
+  protected deleteEvent(id: number): void {
+    if (confirm('Êtes-vous sûr de vouloir supprimer cet événement ?')) {
+      this.eventService.deleteEvent(id).subscribe({
+        next: () => {
+          this.events.update(list => list.filter(e => e.id !== id));
+        },
+        error: (err) => {
+          this.errorMessage.set('Une erreur est survenue lors de la suppression.');
+          console.error(err);
+        }
+      });
+    }
+  }
 }

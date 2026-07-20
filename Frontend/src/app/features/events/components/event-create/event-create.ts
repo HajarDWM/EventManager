@@ -18,6 +18,7 @@ export class EventCreate {
   protected readonly eventDate = signal('');
   protected readonly location = signal('');
   protected readonly guestCount = signal<number | null>(null);
+  protected readonly status = signal<'DRAFT' | 'PLANNED' | 'COMPLETED' | 'CANCELLED'>('PLANNED');
   protected readonly errorMessage = signal('');
   protected readonly isLoading = signal(false);
 
@@ -39,7 +40,8 @@ export class EventCreate {
       title: this.title(),
       eventDate: this.eventDate(),
       location: this.location(),
-      guestCount: this.guestCount()!
+      guestCount: this.guestCount()!,
+      status: this.status()
     }).subscribe({
       next: () => {
         this.isLoading.set(false);
