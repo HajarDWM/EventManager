@@ -9,7 +9,8 @@ import { EventCreate } from './features/events/components/event-create/event-cre
 import { EventEdit } from './features/events/components/event-edit/event-edit';
 import { GuestList } from './features/events/components/guest-list/guest-list';
 import { MenuList } from './features/events/components/menu-list/menu-list';
-import { Profile } from './features/profile/profile';
+import { TaskList } from './features/events/components/task-list/task-list';
+import { Profile } from './features/profile';
 
 export const routes: Routes = [
   {
@@ -48,6 +49,10 @@ export const routes: Routes = [
       {
         path: 'events/:id/menu',
         component: MenuList
+      },
+      {
+        path: 'events/:id/tasks',
+        component: TaskList
       },
       {
         path: 'profile',

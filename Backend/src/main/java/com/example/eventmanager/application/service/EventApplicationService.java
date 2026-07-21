@@ -7,6 +7,7 @@ import com.example.eventmanager.application.port.in.DeleteEventUseCase;
 import com.example.eventmanager.application.port.in.GetEventUseCase;
 import com.example.eventmanager.application.port.in.UpdateEventUseCase;
 import com.example.eventmanager.application.port.out.EventRepositoryPort;
+import com.example.eventmanager.application.port.out.EventTaskRepositoryPort;
 import com.example.eventmanager.application.port.out.GuestRepositoryPort;
 import com.example.eventmanager.application.port.out.MenuItemRepositoryPort;
 import com.example.eventmanager.application.port.out.SecurityContextPort;
@@ -27,6 +28,7 @@ public class EventApplicationService implements CreateEventUseCase, GetEventUseC
     private final EventRepositoryPort eventRepositoryPort;
     private final GuestRepositoryPort guestRepositoryPort;
     private final MenuItemRepositoryPort menuItemRepositoryPort;
+    private final EventTaskRepositoryPort eventTaskRepositoryPort;
     private final EventMapper eventMapper;
     private final SecurityContextPort securityContextPort;
 
@@ -88,9 +90,10 @@ public class EventApplicationService implements CreateEventUseCase, GetEventUseC
             throw new UnauthorizedAccessException("Vous n'êtes pas autorisé à supprimer cet événement.");
         }
         
-        // Suppression en cascade des invités et plats du menu rattachés
+        // Suppression en cascade des invités, plats et tâches rattachés
         guestRepositoryPort.deleteByEventId(id);
         menuItemRepositoryPort.deleteByEventId(id);
+        eventTaskRepositoryPort.deleteByEventId(id);
         
         eventRepositoryPort.deleteById(id);
     }

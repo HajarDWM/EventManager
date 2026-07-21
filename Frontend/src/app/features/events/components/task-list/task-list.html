@@ -1,0 +1,253 @@
+<!-- Hero Header -->
+<div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-2 text-center text-md-start">
+  <div class="flex-grow-1 mb-1 mb-md-0">
+    <h1 class="h3 fw-bold mb-2">
+      Checklist & Tâches de Préparation
+    </h1>
+    <h2 class="h6 fw-medium text-muted mb-0" *ngIf="event()">
+      Événement : <strong class="text-primary">{{ event()?.title }}</strong> ({{ event()?.eventDate | date:'dd/MM/yyyy' }})
+    </h2>
+  </div>
+  <div class="mt-3 mt-md-0 d-flex gap-2 justify-content-center">
+    <a routerLink="/events" class="btn btn-alt-secondary">
+      <i class="fa fa-arrow-left me-1"></i> Retour aux événements
+    </a>
+    <button class="btn btn-primary" (click)="openAddModal()">
+      <i class="fa fa-plus me-1"></i> Nouvelle tâche
+    </button>
+  </div>
+</div>
+<!-- END Hero Header -->
+
+<!-- Progress Bar Block -->
+<div class="block block-rounded shadow-sm border border-light mt-3">
+  <div class="block-content block-content-full">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <span class="fs-sm fw-semibold text-uppercase text-muted">Progression du Rétroplanning</span>
+      <span class="fs-sm fw-bold text-primary">{{ progressPercentage() }}% réalisé ({{ completedCount() }}/{{ totalCount() }} tâches)</span>
+    </div>
+    <div class="progress push" style="height: 12px;">
+      <div class="progress-bar bg-success progress-bar-striped progress-bar-animated"
+           role="progressbar"
+           [style.width.%]="progressPercentage()"
+           [attr.aria-valuenow]="progressPercentage()"
+           aria-valuemin="0"
+           aria-valuemax="100">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Stats Cards -->
+<div class="row mt-3">
+  <div class="col-6 col-lg-3">
+    <div class="block block-rounded block-link-shadow text-center">
+      <div class="block-content block-content-full">
+        <div class="fs-2 fw-bold text-primary">{{ totalCount() }}</div>
+        <div class="fs-sm fw-semibold text-muted text-uppercase">Total Tâches</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="block block-rounded block-link-shadow text-center">
+      <div class="block-content block-content-full">
+        <div class="fs-2 fw-bold text-success">{{ completedCount() }}</div>
+        <div class="fs-sm fw-semibold text-muted text-uppercase">Terminées</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="block block-rounded block-link-shadow text-center">
+      <div class="block-content block-content-full">
+        <div class="fs-2 fw-bold text-info">{{ inProgressCount() }}</div>
+        <div class="fs-sm fw-semibold text-muted text-uppercase">En cours</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="block block-rounded block-link-shadow text-center">
+      <div class="block-content block-content-full">
+        <div class="fs-2 fw-bold text-danger">{{ highPriorityCount() }}</div>
+        <div class="fs-sm fw-semibold text-muted text-uppercase">Priorité Haute / Urgentes</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Alerts -->
+<div class="alert alert-success d-flex align-items-center gap-2 mt-2" role="alert" *ngIf="successMessage()">
+  <i class="fa fa-check-circle"></i>
+  <div class="fs-sm fw-medium">{{ successMessage() }}</div>
+</div>
+
+<div class="alert alert-danger d-flex align-items-center gap-2 mt-2" role="alert" *ngIf="errorMessage()">
+  <i class="fa fa-exclamation-circle"></i>
+  <div class="fs-sm fw-medium">{{ errorMessage() }}</div>
+</div>
+
+<!-- Checklist & Toolbar -->
+<div class="block block-rounded shadow-sm border border-light mt-3">
+  <div class="block-header block-header-default d-flex flex-wrap justify-content-between align-items-center gap-2">
+    <h3 class="block-title mb-0">
+      <i class="fa fa-tasks me-1 text-primary"></i> Checklist d'organisation
+    </h3>
+    <div class="btn-group btn-group-sm" role="group">
+      <button type="button" class="btn" [class.btn-primary]="selectedStatus() === 'ALL'" [class.btn-alt-secondary]="selectedStatus() !== 'ALL'" (click)="selectedStatus.set('ALL')">Toutes ({{ totalCount() }})</button>
+      <button type="button" class="btn" [class.btn-primary]="selectedStatus() === 'TODO'" [class.btn-alt-secondary]="selectedStatus() !== 'TODO'" (click)="selectedStatus.set('TODO')">À faire ({{ todoCount() }})</button>
+      <button type="button" class="btn" [class.btn-primary]="selectedStatus() === 'IN_PROGRESS'" [class.btn-alt-secondary]="selectedStatus() !== 'IN_PROGRESS'" (click)="selectedStatus.set('IN_PROGRESS')">En cours ({{ inProgressCount() }})</button>
+      <button type="button" class="btn" [class.btn-primary]="selectedStatus() === 'COMPLETED'" [class.btn-alt-secondary]="selectedStatus() !== 'COMPLETED'" (click)="selectedStatus.set('COMPLETED')">Terminées ({{ completedCount() }})</button>
+    </div>
+  </div>
+
+  <div class="block-content block-content-full">
+    <!-- Loading -->
+    <div class="text-center py-5" *ngIf="isLoading()">
+      <i class="fa fa-circle-notch fa-spin text-primary fs-2"></i>
+      <p class="mt-2 text-muted fs-sm">Chargement de la checklist des tâches...</p>
+    </div>
+
+    <!-- Empty State -->
+    <div class="text-center py-5" *ngIf="!isLoading() && filteredTasks().length === 0">
+      <i class="fa fa-clipboard-list text-muted fs-1 mb-3"></i>
+      <h4 class="h5 fw-bold text-muted mb-1">Aucune tâche trouvée</h4>
+      <p class="fs-sm text-muted">Ajoutez votre première tâche pour préparer cet événement.</p>
+      <button class="btn btn-sm btn-alt-primary" (click)="openAddModal()">
+        <i class="fa fa-plus me-1"></i> Créer une tâche
+      </button>
+    </div>
+
+    <!-- Table Checklist -->
+    <div class="table-responsive" *ngIf="!isLoading() && filteredTasks().length > 0">
+      <table class="table table-striped table-vcenter">
+        <thead>
+          <tr>
+            <th class="text-center" style="width: 50px;">Check</th>
+            <th>Tâche</th>
+            <th>Échéance</th>
+            <th>Priorité</th>
+            <th>Statut</th>
+            <th>Responsable</th>
+            <th class="text-end">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let t of filteredTasks()" [class.table-success]="t.status === 'COMPLETED'">
+            <td class="text-center">
+              <div class="form-check d-inline-block">
+                <input class="form-check-input" type="checkbox"
+                       [checked]="t.status === 'COMPLETED'"
+                       (change)="onToggleStatus(t)"
+                       title="Basculer terminé / à faire">
+              </div>
+            </td>
+            <td>
+              <div class="fw-semibold" [class.text-decoration-line-through]="t.status === 'COMPLETED'" [class.text-muted]="t.status === 'COMPLETED'">
+                {{ t.title }}
+              </div>
+              <div class="fs-xs text-muted" *ngIf="t.description">{{ t.description }}</div>
+            </td>
+            <td class="fs-sm">
+              <span *ngIf="t.dueDate">
+                <i class="fa fa-calendar-day text-muted me-1"></i> {{ t.dueDate | date:'dd/MM/yyyy' }}
+              </span>
+              <span class="text-muted fs-xs" *ngIf="!t.dueDate">Non définie</span>
+            </td>
+            <td>
+              <span class="badge px-3 py-2 rounded-pill fw-bold" [ngClass]="getPriorityBadgeClass(t.priority)">
+                {{ getPriorityLabel(t.priority) }}
+              </span>
+            </td>
+            <td>
+              <span class="badge px-3 py-2 rounded-pill fw-bold" [ngClass]="getStatusBadgeClass(t.status)">
+                {{ getStatusLabel(t.status) }}
+              </span>
+            </td>
+            <td class="fs-sm text-muted">
+              <span *ngIf="t.assignedTo"><i class="fa fa-user me-1 opacity-75"></i> {{ t.assignedTo }}</span>
+              <span class="fs-xs" *ngIf="!t.assignedTo">-</span>
+            </td>
+            <td class="text-end">
+              <div class="btn-group">
+                <button type="button" class="btn btn-sm btn-alt-primary" (click)="openEditModal(t)" title="Modifier">
+                  <i class="fa fa-pencil-alt"></i>
+                </button>
+                <button type="button" class="btn btn-sm btn-alt-danger" (click)="onDeleteTask(t)" title="Supprimer">
+                  <i class="fa fa-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Form -->
+<div class="modal d-block bg-dark bg-opacity-50" tabindex="-1" *ngIf="isModalOpen()">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content shadow-lg">
+      <div class="modal-header">
+        <h5 class="modal-title fw-bold">
+          <i class="fa fa-tasks text-primary me-1" *ngIf="!isEditing()"></i>
+          <i class="fa fa-edit text-primary me-1" *ngIf="isEditing()"></i>
+          {{ isEditing() ? 'Modifier la tâche' : 'Nouvelle tâche' }}
+        </h5>
+        <button type="button" class="btn-close" (click)="closeModal()"></button>
+      </div>
+      <form (ngSubmit)="onSaveTask()">
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label fs-sm fw-semibold">Titre de la tâche <span class="text-danger">*</span></label>
+            <input type="text" class="form-control form-control-alt fs-sm"
+                   placeholder="Ex: Confirmer le nombre d'invités final" [ngModel]="title()" (ngModelChange)="title.set($event)" name="title" required>
+          </div>
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label class="form-label fs-sm fw-semibold">Priorité</label>
+              <select class="form-select form-control-alt fs-sm" [ngModel]="priority()" (ngModelChange)="priority.set($event)" name="priority">
+                <option value="LOW">Basse</option>
+                <option value="MEDIUM">Moyenne</option>
+                <option value="HIGH">Haute / Urgente</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fs-sm fw-semibold">Statut</label>
+              <select class="form-select form-control-alt fs-sm" [ngModel]="status()" (ngModelChange)="status.set($event)" name="status">
+                <option value="TODO">À faire</option>
+                <option value="IN_PROGRESS">En cours</option>
+                <option value="COMPLETED">Terminée</option>
+              </select>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label class="form-label fs-sm fw-semibold">Date d'échéance</label>
+              <input type="date" class="form-control form-control-alt fs-sm"
+                     [ngModel]="dueDate()" (ngModelChange)="dueDate.set($event)" name="dueDate">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fs-sm fw-semibold">Responsable assigné</label>
+              <input type="text" class="form-control form-control-alt fs-sm"
+                     placeholder="Ex: Chef Pierre / Équipe Salle" [ngModel]="assignedTo()" (ngModelChange)="assignedTo.set($event)" name="assignedTo">
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fs-sm fw-semibold">Description / Notes</label>
+            <textarea class="form-control form-control-alt fs-sm" rows="3"
+                      placeholder="Ex: Appeler le maitre d'hôtel pour ajuster l'ordonnancement de la soirée."
+                      [ngModel]="description()" (ngModelChange)="description.set($event)" name="description"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer bg-body-light">
+          <button type="button" class="btn btn-sm btn-alt-secondary" (click)="closeModal()">Annuler</button>
+          <button type="submit" class="btn btn-sm btn-primary" [disabled]="isSaving()">
+            <i class="fa fa-save me-1" *ngIf="!isSaving()"></i>
+            <i class="fa fa-circle-notch fa-spin me-1" *ngIf="isSaving()"></i>
+            Enregistrer
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
