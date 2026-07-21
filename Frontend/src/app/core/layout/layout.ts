@@ -1,7 +1,8 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../auth/services/auth.service';
+import { CatererService, CatererProfile } from '../services/caterer.service';
 
 @Component({
   selector: 'app-layout',
@@ -10,8 +11,9 @@ import { AuthService } from '../auth/services/auth.service';
   templateUrl: './layout.html',
   styleUrl: './layout.scss'
 })
-export class Layout {
+export class Layout implements OnInit {
   private readonly authService = inject(AuthService);
+  private readonly catererService = inject(CatererService);
 
   // Signaux réactifs pour contrôler le layout
   protected readonly isSidebarOpen = signal(true);
@@ -19,9 +21,28 @@ export class Layout {
   protected readonly isSidebarMini = signal(false);
   protected readonly isUserDropdownOpen = signal(false);
 
-  // Informations utilisateur simulées pour le moment
-  protected readonly userBusinessName = signal('Mon Traiteur Premium');
-  protected readonly userEmail = signal('caterer@example.com');
+  // Informations utilisateur réelles du traiteur connecté
+  protected readonly userBusinessName = signal('Chargement...');
+  protected readonly userEmail = signal('');
+
+  public ngOnInit(): void {
+    this.loadCatererProfile();
+  }
+
+  private loadCatererProfile(): void {
+    this.catererService.getCurrentProfile().subscribe({
+      next: (profile: CatererProfile) => {
+        if (profile) {
+          this.userBusinessName.set(profile.businessName || 'Mon Compte Traiteur');
+          this.userEmail.set(profile.email || '');
+        }
+      },
+      error: (err) => {
+        console.error('Erreur chargement profil traiteur layout', err);
+        this.userBusinessName.set('Mon Compte Traiteur');
+      }
+    });
+  }
 
   protected toggleSidebar(): void {
     if (window.innerWidth < 992) {

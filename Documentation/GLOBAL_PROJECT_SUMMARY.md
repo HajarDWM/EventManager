@@ -1,7 +1,7 @@
 # EventManager - Documentation Master & Bilan Global du Projet
 
-**Projet :** EventManager — Plateforme Saas Multi-Tenant de Gestion de Prestations et Événements pour Traiteurs  
-**Tech Stack Backend :** Java 21, Spring Boot 3, Clean Architecture Hexagonale, Spring Security JWT, Spring Data JPA, H2 / PostgreSQL  
+**Projet :** EventManager — Plateforme SaaS Multi-Tenant de Gestion de Prestations et Événements pour Traiteurs  
+**Tech Stack Backend :** Java 21, Spring Boot 3, Clean Architecture Hexagonale, Spring Security JWT, Spring Data JPA, H2 / PostgreSQL / MySQL  
 **Tech Stack Frontend :** Angular 18+ (Standalone API, Reactive Signals), OneUI 5.12 Design System (Sass/SCSS), Bootstrap 5  
 **État Actuel :** 🟢 **100% Fonctionnel & Compilé (Build Success Backend & Frontend)**
 
@@ -19,9 +19,11 @@
    - [Module 5 (Option 5) : Gestion de la Restauration & des Menus](#module-5-option-5--gestion-de-la-restauration--des-menus)
    - [Module 6 (Option 6) : Checklist & Gestion des Tâches par Événement](#module-6-option-6--checklist--gestion-des-tâches-par-événement)
    - [Module 7 (Option 7) : Export PDF & Impression (Fiches Cuisine, Invités & Rétroplanning)](#module-7-option-7--export-pdf--impression-fiches-cuisine-invités--rétroplanning)
-   - [Module 8 : Tableau de Bord Dynamique & Métriques Temps Réel](#module-8--tableau-de-bord-dynamique--métriques-temps-réel)
-4. [Bilan des Builds & Validations](#4-bilan-des-builds--validations)
-5. [Prochaines Évolutions Possibles (Roadmap)](#5-prochaines-évolutions-possibles-roadmap)
+   - [Module 8 : Tableau de Bord Dynamique & Profil Traiteur En-tête](#module-8--tableau-de-bord-dynamique--profil-traiteur-en-tête)
+4. [Cartographie des Routes & Composants Frontend](#4-cartographie-des-routes--composants-frontend)
+5. [Guide Pas-à-Pas de Prise en Main](#5-guide-pas-à-pas-de-prise-en-main)
+6. [Bilan des Builds & Validations](#6-bilan-des-builds--validations)
+7. [Prochaines Évolutions Possibles (Roadmap)](#7-prochaines-évolutions-possibles-roadmap)
 
 ---
 
@@ -73,6 +75,7 @@ Voici le fil chronologique des grandes étapes de développement franchies sur l
 | **Étape 8** | **Option 5 - Restauration & Menus** : Carte des menus par événement (Entrées, Plats, Desserts, Boissons), allergènes et **calculateur automatique du budget traiteur total**. | 🟢 Fait |
 | **Étape 9** | **Option 6 - Checklist & Tâches de Préparation** : Rétroplanning (priorités, états `TODO`/`IN_PROGRESS`/`COMPLETED`), basculement réactif des états (checkbox 1-clic) et **barre de progression visuelle de réalisation (%)**. | 🟢 Fait |
 | **Étape 10** | **Option 7 - Export PDF & Impression** : Génération en 1-clic et impression papier de 3 fiches techniques rédigées (Fiche Cuisine & Restauration, Fiche Plan de Table & Invités, Fiche Rétroplanning Tâches) avec styles dédiés `@media print`. | 🟢 Fait |
+| **Étape 11** | **Design Harmonisatoire & Profil Dynamique** :<br>- Boutons d'action du tableau des événements uniformisés en boutons icônes réactifs compacts OneUI.<br>- Affichage dynamique en direct du nom du traiteur connecté et de son adresse email dans le menu utilisateur d'en-tête via `catererService.getCurrentProfile()`. | 🟢 Fait |
 
 ---
 
@@ -86,6 +89,7 @@ Voici le fil chronologique des grandes étapes de développement franchies sur l
 ### Module 2 : Gestion CRUD des Événements
 - **Fonctionnalités :** Création et modification d'événements (`title`, `eventDate`, `location`, `guestCount`, `status`).
 - **Statuts d'événements :** `DRAFT` (Brouillon), `PLANNED` (Planifié), `COMPLETED` (Terminé), `CANCELLED` (Annulé).
+- **Design d'Action :** 6 boutons d'action icônes compacts OneUI avec info-bulles (Invités, Menu, Tâches, Export PDF, Éditer, Supprimer).
 - **Composants Angular :** `EventList`, `EventCreate`, `EventEdit`.
 
 ### Module 3 (Option 3) : Gestion des Invités par Événement
@@ -121,14 +125,45 @@ Voici le fil chronologique des grandes étapes de développement franchies sur l
   - 📋 **Fiche Rétroplanning & Checklist :** Tâches à effectuer sur le terrain pour l'équipe traiteur.
 - **Support `@media print` :** Masque la navigation web et applique un style de papier A4 haute définition pour impression ou enregistrement PDF.
 
-### Module 8 : Tableau de Bord Dynamique & Métriques Temps Réel
+### Module 8 : Tableau de Bord Dynamique & Profil Traiteur En-tête
 - **Fonctionnalités :** Écran principal (`/dashboard`) affichant l'état d'activité du traiteur connecté.
-- **Métriques en direct :** Nombre total d'événements enregistrés, cumul total d'invités attendus sur l'ensemble des prestations, statut du compte.
+- **Profil En-tête Dynamique :** Chargement réactif via `catererService.getCurrentProfile()` affichant le nom de l'entreprise traiteur et son email exact dans le menu déroulant supérieur.
 - **Navigation :** Boutons d'action redirigeant directement vers la liste des prestations et le profil.
 
 ---
 
-## 4. Bilan des Builds & Validations
+## 4. Cartographie des Routes & Composants Frontend
+
+| Route Angular | Composant Standalone | Description & Usage |
+| :--- | :--- | :--- |
+| `/login` | `Login` | Page d'authentification des traiteurs |
+| `/register` | `Register` | Page d'inscription de nouveaux compte traiteurs |
+| `/dashboard` | `Dashboard` | Tableau de bord principal avec métriques en temps réel |
+| `/events` | `EventList` | Consultation, recherche textuelle, tri et actions d'événements |
+| `/events/create` | `EventCreate` | Formulaire de création d'une nouvelle prestation |
+| `/events/edit/:id` | `EventEdit` | Formulaire de modification d'un événement |
+| `/events/:id/guests` | `GuestList` | Gestion des invités, numéros de table & régimes alimentaires |
+| `/events/:id/menu` | `MenuList` | Carte des menus (Entrées, Plats, Desserts) & calculateur de budget |
+| `/events/:id/tasks` | `TaskList` | Checklist des préparatifs avec barre de progression % |
+| `/events/:id/export` | `EventExport` | Prévisualisation & impression PDF des 3 fiches techniques papier |
+| `/profile` | `Profile` | Modification du profil d'entreprise & changement de mot de passe |
+
+---
+
+## 5. Guide Pas-à-Pas de Prise en Main
+
+Pour valider l'ensemble du workflow applicatif :
+
+1. **Connexion :** Connectez-vous sur `http://localhost:4200/login`. Votre nom d'entreprise et adresse email s'affichent automatiquement en haut à droite.
+2. **Création :** Cliquez sur **Créer un événement** et remplissez le titre, la date, le lieu et le nombre d'invités estimé.
+3. **Gestion des Invités (Option 3) :** Dans le tableau des prestations, cliquez sur le bouton bleu icône **Invités** pour ajouter vos convives, leur assigner une table et un régime spécifique (*Végétarien*).
+4. **Composition du Menu (Option 5) :** Cliquez sur le bouton jaune/orange icône **Menu** pour ajouter vos entrées, plats principaux et desserts. Le budget restauration total est calculé instantanément.
+5. **Organisation des Tâches (Option 6) :** Cliquez sur le bouton vert/cyan icône **Tâches** pour créer la checklist des préparatifs. Cochez les cases pour voir la barre de progression évoluer en direct.
+6. **Impression PDF (Option 7) :** Cliquez sur le bouton violet icône **Export PDF** pour prévisualiser la Fiche Cuisine, le Plan de Table ou la Fiche Rétroplanning et cliquez sur **Imprimer / Sauvegarder PDF**.
+
+---
+
+## 6. Bilan des Builds & Validations
 
 Les vérifications de compilation et d'exécution sont régulièrement exécutées et validées sans aucune erreur :
 
@@ -139,12 +174,12 @@ Backend Spring Boot (Java 21) :
 
 Frontend Angular (v18 Standalone + OneUI 5.12) :
   Command : npm run build
-  Status  : 🟢 BUILD SUCCESS (Application bundle generated in 7.8s)
+  Status  : 🟢 BUILD SUCCESS (Application bundle generated in 7.1s)
 ```
 
 ---
 
-## 5. Prochaines Évolutions Possibles (Roadmap)
+## 7. Prochaines Évolutions Possibles (Roadmap)
 
 Pour poursuivre le développement de votre SaaS **EventManager**, voici les extensions naturelles prêtes à être intégrées :
 
