@@ -38,6 +38,15 @@ public class GuestApplicationService implements CreateGuestUseCase, GetGuestsByE
         }
     }
 
+    private void syncEventGuestCount(Long eventId) {
+        Event event = eventRepositoryPort.findById(eventId).orElse(null);
+        if (event != null) {
+            long total = guestRepositoryPort.countByEventId(eventId);
+            event.setGuestCount((int) total);
+            eventRepositoryPort.save(event);
+        }
+    }
+
     @Override
     @Transactional
     public GuestDTO createGuest(Long eventId, GuestDTO guestDTO) {
@@ -45,6 +54,7 @@ public class GuestApplicationService implements CreateGuestUseCase, GetGuestsByE
         guestDTO.setEventId(eventId);
         Guest guestToSave = guestMapper.toDomain(guestDTO);
         Guest saved = guestRepositoryPort.save(guestToSave);
+        syncEventGuestCount(eventId);
         return guestMapper.toDTO(saved);
     }
 
@@ -82,8 +92,10 @@ public class GuestApplicationService implements CreateGuestUseCase, GetGuestsByE
     public void deleteGuest(Long guestId) {
         Guest existing = guestRepositoryPort.findById(guestId)
                 .orElseThrow(() -> new RuntimeException("Invité introuvable avec l'id: " + guestId));
-        verifyEventOwnership(existing.getEventId());
+        Long eventId = existing.getEventId();
+        verifyEventOwnership(eventId);
 
         guestRepositoryPort.deleteById(guestId);
+        syncEventGuestCount(eventId);
     }
 }

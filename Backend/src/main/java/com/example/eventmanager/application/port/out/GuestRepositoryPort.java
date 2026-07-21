@@ -10,4 +10,6 @@ public interface GuestRepositoryPort {
     Optional<Guest> findById(Long id);
     List<Guest> findByEventId(Long eventId);
     void deleteById(Long id);
+    void deleteByEventId(Long eventId);
+    long countByEventId(Long eventId);
 }

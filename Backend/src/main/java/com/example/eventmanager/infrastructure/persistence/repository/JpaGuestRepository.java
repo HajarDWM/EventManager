@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface JpaGuestRepository extends JpaRepository<GuestEntity, Long> {
     List<GuestEntity> findByEventId(Long eventId);
+    void deleteByEventId(Long eventId);
+    long countByEventId(Long eventId);
 }

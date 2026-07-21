@@ -43,4 +43,14 @@ public class GuestRepositoryAdapter implements GuestRepositoryPort {
     public void deleteById(Long id) {
         jpaGuestRepository.deleteById(id);
     }
+
+    @Override
+    public void deleteByEventId(Long eventId) {
+        jpaGuestRepository.deleteByEventId(eventId);
+    }
+
+    @Override
+    public long countByEventId(Long eventId) {
+        return jpaGuestRepository.countByEventId(eventId);
+    }
 }

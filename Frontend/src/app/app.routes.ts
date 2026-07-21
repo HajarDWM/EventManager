@@ -8,6 +8,7 @@ import { EventList } from './features/events/components/event-list/event-list';
 import { EventCreate } from './features/events/components/event-create/event-create';
 import { EventEdit } from './features/events/components/event-edit/event-edit';
 import { GuestList } from './features/events/components/guest-list/guest-list';
+import { MenuList } from './features/events/components/menu-list/menu-list';
 import { Profile } from './features/profile/profile';
 
 export const routes: Routes = [
@@ -43,6 +44,10 @@ export const routes: Routes = [
       {
         path: 'events/:id/guests',
         component: GuestList
+      },
+      {
+        path: 'events/:id/menu',
+        component: MenuList
       },
       {
         path: 'profile',
