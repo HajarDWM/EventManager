@@ -1,11 +1,15 @@
 package com.example.eventmanager.application.service;
 
 import com.example.eventmanager.application.dto.EventDTO;
+import com.example.eventmanager.application.dto.EventExportDTO;
+import com.example.eventmanager.application.dto.EventTaskDTO;
+import com.example.eventmanager.application.dto.GuestDTO;
+import com.example.eventmanager.application.dto.MenuItemDTO;
 import com.example.eventmanager.application.mapper.EventMapper;
-import com.example.eventmanager.application.port.in.CreateEventUseCase;
-import com.example.eventmanager.application.port.in.DeleteEventUseCase;
-import com.example.eventmanager.application.port.in.GetEventUseCase;
-import com.example.eventmanager.application.port.in.UpdateEventUseCase;
+import com.example.eventmanager.application.mapper.EventTaskMapper;
+import com.example.eventmanager.application.mapper.GuestMapper;
+import com.example.eventmanager.application.mapper.MenuItemMapper;
+import com.example.eventmanager.application.port.in.*;
 import com.example.eventmanager.application.port.out.EventRepositoryPort;
 import com.example.eventmanager.application.port.out.EventTaskRepositoryPort;
 import com.example.eventmanager.application.port.out.GuestRepositoryPort;
@@ -23,13 +27,16 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class EventApplicationService implements CreateEventUseCase, GetEventUseCase, UpdateEventUseCase, DeleteEventUseCase {
+public class EventApplicationService implements CreateEventUseCase, GetEventUseCase, UpdateEventUseCase, DeleteEventUseCase, GetEventExportDataUseCase {
 
     private final EventRepositoryPort eventRepositoryPort;
     private final GuestRepositoryPort guestRepositoryPort;
     private final MenuItemRepositoryPort menuItemRepositoryPort;
     private final EventTaskRepositoryPort eventTaskRepositoryPort;
     private final EventMapper eventMapper;
+    private final GuestMapper guestMapper;
+    private final MenuItemMapper menuItemMapper;
+    private final EventTaskMapper eventTaskMapper;
     private final SecurityContextPort securityContextPort;
 
     @Override
@@ -121,5 +128,30 @@ public class EventApplicationService implements CreateEventUseCase, GetEventUseC
         return eventRepositoryPort.findAllByCatererId(currentCatererId).stream()
                 .map(eventMapper::toDTO)
                 .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public EventExportDTO getEventExportData(Long eventId) {
+        EventDTO eventDTO = getEventById(eventId);
+
+        List<GuestDTO> guests = guestRepositoryPort.findByEventId(eventId).stream()
+                .map(guestMapper::toDTO)
+                .toList();
+
+        List<MenuItemDTO> menuItems = menuItemRepositoryPort.findByEventId(eventId).stream()
+                .map(menuItemMapper::toDTO)
+                .toList();
+
+        List<EventTaskDTO> tasks = eventTaskRepositoryPort.findByEventId(eventId).stream()
+                .map(eventTaskMapper::toDTO)
+                .toList();
+
+        return EventExportDTO.builder()
+                .event(eventDTO)
+                .guests(guests)
+                .menuItems(menuItems)
+                .tasks(tasks)
+                .build();
     }
 }

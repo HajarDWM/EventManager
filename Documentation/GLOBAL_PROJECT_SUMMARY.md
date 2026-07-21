@@ -18,7 +18,8 @@
    - [Module 4 (Option 4) : Recherche, Filtrage et Tri Avancés](#module-4-option-4--recherche-filtrage-et-tri-avancés)
    - [Module 5 (Option 5) : Gestion de la Restauration & des Menus](#module-5-option-5--gestion-de-la-restauration--des-menus)
    - [Module 6 (Option 6) : Checklist & Gestion des Tâches par Événement](#module-6-option-6--checklist--gestion-des-tâches-par-événement)
-   - [Module 7 : Tableau de Bord Dynamique & Métriques Temps Réel](#module-7--tableau-de-bord-dynamique--métriques-temps-réel)
+   - [Module 7 (Option 7) : Export PDF & Impression (Fiches Cuisine, Invités & Rétroplanning)](#module-7-option-7--export-pdf--impression-fiches-cuisine-invités--rétroplanning)
+   - [Module 8 : Tableau de Bord Dynamique & Métriques Temps Réel](#module-8--tableau-de-bord-dynamique--métriques-temps-réel)
 4. [Bilan des Builds & Validations](#4-bilan-des-builds--validations)
 5. [Prochaines Évolutions Possibles (Roadmap)](#5-prochaines-évolutions-possibles-roadmap)
 
@@ -26,7 +27,7 @@
 
 ## 1. Vue d'Ensemble & Architecture Globale
 
-L'application **EventManager** est une plateforme SaaS conçue pour les traiteurs professionnels. Elle leur permet d'administrer l'intégralité de leurs prestations événementielles, leurs listes d'invités, leurs régimes alimentaires, la confection de leurs menus culinaires et l'organisation du rétroplanning des tâches.
+L'application **EventManager** est une plateforme SaaS conçue pour les traiteurs professionnels. Elle leur permet d'administrer l'intégralité de leurs prestations événementielles, leurs listes d'invités, leurs régimes alimentaires, la confection de leurs menus culinaires, l'organisation des préparatifs et la génération de fiches techniques PDF imprimables.
 
 ```text
                +-------------------------------------------------------+
@@ -70,7 +71,8 @@ Voici le fil chronologique des grandes étapes de développement franchies sur l
 | **Étape 6** | **Option 4 - Recherche & Tri Réactifs** : Barre de recherche instantanée sur le titre/lieu, filtre par statut et tri dynamique multi-critères via les **Angular Signals** (`computed()`). | 🟢 Fait |
 | **Étape 7** | **Optimisations Générales Core** :<br>- **Tableau de bord dynamique** connecté en temps réel aux données API.<br>- **GlobalExceptionHandler** REST pour renvoyer les codes HTTP propres (`404`, `403`, `400`).<br>- **Suppression en Cascade** (`guests`, `menu_items` & `event_tasks`) lors de la suppression d'un événement.<br>- **Auto-Sync** du nombre d'invités sur l'événement. | 🟢 Fait |
 | **Étape 8** | **Option 5 - Restauration & Menus** : Carte des menus par événement (Entrées, Plats, Desserts, Boissons), allergènes et **calculateur automatique du budget traiteur total**. | 🟢 Fait |
-| **Étape 9** | **Option 6 - Checklist & Tâches de Préparation** : Gestion du rétroplanning (priorités `LOW`/`MEDIUM`/`HIGH`, états `TODO`/`IN_PROGRESS`/`COMPLETED`, échéances), basculement réactif des états (checkbox 1-clic) et **barre de progression visuelle de réalisation (%)**. | 🟢 Fait |
+| **Étape 9** | **Option 6 - Checklist & Tâches de Préparation** : Rétroplanning (priorités, états `TODO`/`IN_PROGRESS`/`COMPLETED`), basculement réactif des états (checkbox 1-clic) et **barre de progression visuelle de réalisation (%)**. | 🟢 Fait |
+| **Étape 10** | **Option 7 - Export PDF & Impression** : Génération en 1-clic et impression papier de 3 fiches techniques rédigées (Fiche Cuisine & Restauration, Fiche Plan de Table & Invités, Fiche Rétroplanning Tâches) avec styles dédiés `@media print`. | 🟢 Fait |
 
 ---
 
@@ -111,7 +113,15 @@ Voici le fil chronologique des grandes étapes de développement franchies sur l
 - **Barre de Progression Dynamique :** Affichage visuel du taux d'avancement des préparatifs (`Tâches terminées / Total * 100%`).
 - **Widgets & Actions :** 4 cartes statistiques (Total, Terminées, En cours, Urgentes), basculement instantané d'état via Checkbox 1-clic et filtres de checklist.
 
-### Module 7 : Tableau de Bord Dynamique & Métriques Temps Réel
+### Module 7 (Option 7) : Export PDF & Impression
+- **Fonctionnalités :** Génération et impression natives de fiches techniques professionnelles au format papier PDF (`/events/:id/export`).
+- **3 Fiches d'Exportation :**
+  - 🍴 **Fiche Cuisine & Restauration :** Carte complète du menu avec tarifs, allergènes et budget total.
+  - 👥 **Fiche Plan de Table & Invités :** Liste des invités rangée par table avec statut de présence et régimes alimentaires.
+  - 📋 **Fiche Rétroplanning & Checklist :** Tâches à effectuer sur le terrain pour l'équipe traiteur.
+- **Support `@media print` :** Masque la navigation web et applique un style de papier A4 haute définition pour impression ou enregistrement PDF.
+
+### Module 8 : Tableau de Bord Dynamique & Métriques Temps Réel
 - **Fonctionnalités :** Écran principal (`/dashboard`) affichant l'état d'activité du traiteur connecté.
 - **Métriques en direct :** Nombre total d'événements enregistrés, cumul total d'invités attendus sur l'ensemble des prestations, statut du compte.
 - **Navigation :** Boutons d'action redirigeant directement vers la liste des prestations et le profil.
@@ -125,7 +135,7 @@ Les vérifications de compilation et d'exécution sont régulièrement exécuté
 ```text
 Backend Spring Boot (Java 21) :
   Command : .\mvnw.cmd compile
-  Status  : 🟢 BUILD SUCCESS (96 source files compiled)
+  Status  : 🟢 BUILD SUCCESS (99 source files compiled)
 
 Frontend Angular (v18 Standalone + OneUI 5.12) :
   Command : npm run build
@@ -138,5 +148,5 @@ Frontend Angular (v18 Standalone + OneUI 5.12) :
 
 Pour poursuivre le développement de votre SaaS **EventManager**, voici les extensions naturelles prêtes à être intégrées :
 
-1. **Export PDF & Impression (Option 7) :** Génération de fiches cuisine, cartes de menu imprimables, fiches rétroplanning et plans de table au format PDF.
-2. **Devis & Invoicing (Option 8) :** Module de génération de devis traiteur automatisé et suivi de facturation.
+1. **Devis & Invoicing (Option 8) :** Module de génération de devis traiteur automatisé et suivi de facturation.
+2. **Gestion des Fournisseurs & Lieux :** Répertoire des lieux de réception et partenaires équipementiers.

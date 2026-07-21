@@ -1,0 +1,50 @@
+/* Paper Preview Styling */
+.print-paper {
+  background-color: #ffffff;
+  border-radius: 4px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  padding: 2.5rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* Printable PDF Styling via @media print */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  #page-header, #sidebar, #page-footer, .no-print {
+    display: none !important;
+  }
+
+  .print-area, .print-area * {
+    visibility: visible;
+  }
+
+  .print-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 20mm;
+    background: #fff !important;
+    box-shadow: none !important;
+  }
+
+  .print-paper {
+    box-shadow: none !important;
+    padding: 0 !important;
+    max-width: 100% !important;
+  }
+
+  table {
+    page-break-inside: auto;
+  }
+
+  tr {
+    page-break-inside: avoid;
+    page-break-after: auto;
+  }
+}

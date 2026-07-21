@@ -10,6 +10,7 @@ import { EventEdit } from './features/events/components/event-edit/event-edit';
 import { GuestList } from './features/events/components/guest-list/guest-list';
 import { MenuList } from './features/events/components/menu-list/menu-list';
 import { TaskList } from './features/events/components/task-list/task-list';
+import { EventExport } from './features/events/components/event-export/event-export';
 import { Profile } from './features/profile';
 
 export const routes: Routes = [
@@ -53,6 +54,10 @@ export const routes: Routes = [
       {
         path: 'events/:id/tasks',
         component: TaskList
+      },
+      {
+        path: 'events/:id/export',
+        component: EventExport
       },
       {
         path: 'profile',
