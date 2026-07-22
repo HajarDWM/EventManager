@@ -1,8 +1,9 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
 import { EventService } from '../events/services/event.service';
 import { Event } from '../events/models/event.model';
+import { CatererService } from '../../core/services/caterer.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -12,6 +13,8 @@ import { Event } from '../events/models/event.model';
 })
 export class Dashboard implements OnInit {
   private readonly eventService = inject(EventService);
+  private readonly catererService = inject(CatererService);
+  private readonly router = inject(Router);
 
   protected readonly eventCount = signal<number>(0);
   protected readonly guestCount = signal<number>(0);
@@ -20,7 +23,27 @@ export class Dashboard implements OnInit {
   protected readonly isLoading = signal<boolean>(true);
 
   public ngOnInit(): void {
-    this.loadMetrics();
+    const cachedProfile = this.catererService.currentProfile();
+    if (cachedProfile) {
+      if (cachedProfile.role === 'SUPER_ADMIN') {
+        this.router.navigate(['/admin/dashboard']);
+        return;
+      }
+      this.loadMetrics();
+    } else {
+      this.catererService.getCurrentProfile().subscribe({
+        next: (profile) => {
+          if (profile && profile.role === 'SUPER_ADMIN') {
+            this.router.navigate(['/admin/dashboard']);
+          } else {
+            this.loadMetrics();
+          }
+        },
+        error: () => {
+          this.loadMetrics();
+        }
+      });
+    }
   }
 
   private loadMetrics(): void {

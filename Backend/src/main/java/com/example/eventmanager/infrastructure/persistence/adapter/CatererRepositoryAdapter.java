@@ -40,4 +40,16 @@ public class CatererRepositoryAdapter implements CatererRepositoryPort {
     public boolean existsByEmail(String email) {
         return catererRepository.existsByEmail(email);
     }
+
+    @Override
+    public java.util.List<Caterer> findAll() {
+        return catererRepository.findAll().stream()
+                .map(persistenceMapper::toDomain)
+                .toList();
+    }
+
+    @Override
+    public long count() {
+        return catererRepository.count();
+    }
 }

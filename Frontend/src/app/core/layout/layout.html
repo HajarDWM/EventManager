@@ -41,26 +41,59 @@
       <!-- Side Navigation -->
       <div class="content-side">
         <ul class="nav-main">
-          <li class="nav-main-item">
+          <!-- Tableau de bord dynamique -->
+          <li class="nav-main-item" *ngIf="!isSuperAdmin()">
             <a class="nav-main-link" routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
               <i class="nav-main-link-icon si si-speedometer"></i>
               <span class="nav-main-link-name">Tableau de bord</span>
             </a>
           </li>
-          
-          <li class="nav-main-heading">Prestations</li>
-          <li class="nav-main-item">
-            <a class="nav-main-link" routerLink="/events" routerLinkActive="active">
-              <i class="nav-main-link-icon si si-calendar"></i>
-              <span class="nav-main-link-name">Événements</span>
+          <li class="nav-main-item" *ngIf="isSuperAdmin()">
+            <a class="nav-main-link" routerLink="/admin/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+              <i class="nav-main-link-icon si si-speedometer"></i>
+              <span class="nav-main-link-name">Tableau de bord Admin</span>
             </a>
           </li>
+          
+          <!-- Menu Traiteur standard -->
+          <ng-container *ngIf="!isSuperAdmin()">
+            <li class="nav-main-heading">Prestations</li>
+            <li class="nav-main-item">
+              <a class="nav-main-link" routerLink="/events" routerLinkActive="active">
+                <i class="nav-main-link-icon si si-calendar"></i>
+                <span class="nav-main-link-name">Événements</span>
+              </a>
+            </li>
+          </ng-container>
+
+          <!-- Menu Super-Admin -->
+          <ng-container *ngIf="isSuperAdmin()">
+            <li class="nav-main-heading">Administration Globale</li>
+            <li class="nav-main-item">
+              <a class="nav-main-link" routerLink="/admin/caterers" routerLinkActive="active">
+                <i class="nav-main-link-icon si si-users"></i>
+                <span class="nav-main-link-name">Gestion Traiteurs</span>
+              </a>
+            </li>
+            <li class="nav-main-item">
+              <a class="nav-main-link" routerLink="/admin/invitations" routerLinkActive="active">
+                <i class="nav-main-link-icon si si-envelope-open"></i>
+                <span class="nav-main-link-name">Modèles d'invitations</span>
+              </a>
+            </li>
+            <li class="nav-main-item">
+              <a class="nav-main-link" routerLink="/admin/billing" routerLinkActive="active">
+                <i class="nav-main-link-icon si si-credit-card"></i>
+                <span class="nav-main-link-name">Paramètres Facturation</span>
+              </a>
+            </li>
+          </ng-container>
           
           <li class="nav-main-heading">Paramètres</li>
           <li class="nav-main-item">
             <a class="nav-main-link" routerLink="/profile" routerLinkActive="active">
               <i class="nav-main-link-icon si si-user"></i>
-              <span class="nav-main-link-name">Profil Traiteur</span>
+              <span class="nav-main-link-name">Mon Profil</span>
             </a>
           </li>
           <li class="nav-main-item">

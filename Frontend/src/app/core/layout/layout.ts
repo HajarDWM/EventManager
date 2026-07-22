@@ -24,6 +24,7 @@ export class Layout implements OnInit {
   // Informations utilisateur réelles du traiteur connecté
   protected readonly userBusinessName = signal('Chargement...');
   protected readonly userEmail = signal('');
+  protected readonly isSuperAdmin = signal(false);
 
   public ngOnInit(): void {
     this.loadCatererProfile();
@@ -35,6 +36,7 @@ export class Layout implements OnInit {
         if (profile) {
           this.userBusinessName.set(profile.businessName || 'Mon Compte Traiteur');
           this.userEmail.set(profile.email || '');
+          this.isSuperAdmin.set(profile.role === 'SUPER_ADMIN');
         }
       },
       error: (err) => {

@@ -1,0 +1,149 @@
+<!-- Hero -->
+<div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-2 text-center text-md-start">
+  <div class="flex-grow-1 mb-1 mb-md-0">
+    <h1 class="h3 fw-bold mb-2">
+      Gestion des Comptes Traiteurs
+    </h1>
+    <h2 class="h6 fw-medium text-muted mb-0">
+      Supervisez les abonnements, activez ou suspendez les accès de vos traiteurs.
+    </h2>
+  </div>
+</div>
+<!-- END Hero -->
+
+<!-- Notifications -->
+<div *ngIf="successMessage()" class="alert alert-success d-flex align-items-center mt-3 shadow-sm" role="alert">
+  <i class="fa fa-check-circle me-2"></i>
+  <div>{{ successMessage() }}</div>
+  <button type="button" class="btn-close ms-auto" (click)="successMessage.set('')"></button>
+</div>
+
+<div *ngIf="errorMessage()" class="alert alert-danger d-flex align-items-center mt-3 shadow-sm" role="alert">
+  <i class="fa fa-exclamation-triangle me-2"></i>
+  <div>{{ errorMessage() }}</div>
+  <button type="button" class="btn-close ms-auto" (click)="errorMessage.set('')"></button>
+</div>
+
+<!-- Main Table Block -->
+<div class="block block-rounded bg-white shadow-sm border border-light mt-4">
+  <div class="block-header block-header-default border-bottom bg-body-light d-flex justify-content-between align-items-center">
+    <h3 class="block-title fw-bold">Liste des organisateurs</h3>
+    <button class="btn btn-sm btn-alt-secondary" (click)="loadCaterers()" [disabled]="isLoading()">
+      <i class="fa fa-sync-alt" [class.fa-spin]="isLoading()"></i> Actualiser
+    </button>
+  </div>
+  
+  <div class="block-content">
+    <div class="table-responsive">
+      <table class="table table-bordered table-striped table-vcenter fs-sm">
+        <thead class="table-light">
+          <tr>
+            <th class="text-center" style="width: 70px;">ID</th>
+            <th>Nom de l'entreprise</th>
+            <th>Adresse Email</th>
+            <th style="width: 150px;">Abonnement</th>
+            <th style="width: 150px;">État Paiement</th>
+            <th style="width: 120px;" class="text-center">Statut Compte</th>
+            <th style="width: 150px;" class="text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let caterer of caterers()">
+            <td class="text-center font-semibold text-muted">{{ caterer.id }}</td>
+            <td class="fw-semibold text-dark">{{ caterer.businessName }} <span class="badge bg-danger ms-1" *ngIf="caterer.role === 'SUPER_ADMIN'">ADMIN</span></td>
+            <td>{{ caterer.email }}</td>
+            <td>
+              <span class="badge" [ngClass]="{
+                'bg-success': caterer.subscriptionPlan === 'PREMIUM',
+                'bg-primary': caterer.subscriptionPlan === 'STANDARD',
+                'bg-warning text-dark': caterer.subscriptionPlan === 'FREE'
+              }">{{ caterer.subscriptionPlan }}</span>
+            </td>
+            <td>
+              <span class="badge" [ngClass]="{
+                'bg-success-light text-success border border-success': caterer.subscriptionStatus === 'ACTIVE',
+                'bg-danger-light text-danger border border-danger': caterer.subscriptionStatus === 'EXPIRED',
+                'bg-info-light text-info border border-info': caterer.subscriptionStatus === 'TRIAL'
+              }">{{ caterer.subscriptionStatus }}</span>
+            </td>
+            <td class="text-center">
+              <span class="badge" [ngClass]="{
+                'bg-success': caterer.accountStatus === 'ACTIVE',
+                'bg-danger': caterer.accountStatus === 'SUSPENDED',
+                'bg-secondary': caterer.accountStatus === 'INACTIVE'
+              }">
+                {{ caterer.accountStatus === 'ACTIVE' ? 'Actif' : caterer.accountStatus === 'SUSPENDED' ? 'Suspendu' : 'Inactif' }}
+              </span>
+            </td>
+            <td class="text-center">
+              <div class="btn-group gap-1">
+                <!-- Edit Subscription button -->
+                <button type="button" class="btn btn-sm btn-alt-info" 
+                        (click)="openEditModal(caterer)" title="Gérer l'abonnement">
+                  <i class="fa fa-credit-card"></i>
+                </button>
+                
+                <!-- Toggle status button -->
+                <button *ngIf="caterer.role !== 'SUPER_ADMIN'" type="button" class="btn btn-sm" 
+                        [class.btn-alt-danger]="caterer.accountStatus === 'ACTIVE'"
+                        [class.btn-alt-success]="caterer.accountStatus === 'SUSPENDED'"
+                        (click)="toggleAccountStatus(caterer)" 
+                        [title]="caterer.accountStatus === 'ACTIVE' ? 'Suspendre l\'accès' : 'Rétablir l\'accès'">
+                  <i class="fa" [class.fa-ban]="caterer.accountStatus === 'ACTIVE'" [class.fa-check-circle]="caterer.accountStatus === 'SUSPENDED'"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+          <tr *ngIf="caterers().length === 0 && !isLoading()">
+            <td colspan="7" class="text-center py-4 text-muted">
+              Aucun traiteur enregistré sur la plateforme.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Modal : Edit Subscription Plan & Status (Bootstrap styled overlay) -->
+<div class="modal fade show" tabindex="-1" style="display: block; background: rgba(0,0,0,0.5);" *ngIf="selectedCaterer()">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content shadow-lg border-0 rounded-3">
+      <div class="modal-header bg-body-light border-bottom p-3">
+        <h5 class="modal-title fw-bold text-dark">
+          Abonnement : {{ selectedCaterer()?.businessName }}
+        </h5>
+        <button type="button" class="btn-close" (click)="closeEditModal()"></button>
+      </div>
+      
+      <div class="modal-body p-4">
+        <div class="mb-3">
+          <label class="form-label fw-semibold text-muted">Plan d'abonnement</label>
+          <select class="form-select border-light shadow-sm bg-body-light" [(ngModel)]="editPlan">
+            <option value="FREE">FREE</option>
+            <option value="STANDARD">STANDARD</option>
+            <option value="PREMIUM">PREMIUM</option>
+          </select>
+        </div>
+        
+        <div class="mb-3">
+          <label class="form-label fw-semibold text-muted">État de l'abonnement</label>
+          <select class="form-select border-light shadow-sm bg-body-light" [(ngModel)]="editSubStatus">
+            <option value="ACTIVE">ACTIVE</option>
+            <option value="TRIAL">TRIAL (Essai)</option>
+            <option value="EXPIRED">EXPIRED (Expiré)</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="modal-footer bg-body-light border-top p-3 justify-content-end gap-2">
+        <button type="button" class="btn btn-alt-secondary" (click)="closeEditModal()">
+          Fermer
+        </button>
+        <button type="button" class="btn btn-primary" (click)="saveSubscription()">
+          Sauvegarder
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

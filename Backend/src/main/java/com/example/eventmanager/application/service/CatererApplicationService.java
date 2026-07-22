@@ -35,6 +35,9 @@ public class CatererApplicationService implements CreateCatererUseCase, GetCater
         // Hacher le mot de passe avant de créer l'objet domaine
         String encodedPassword = passwordEncoderPort.encode(catererDTO.getPassword());
         catererDTO.setPassword(encodedPassword);
+        catererDTO.setRole("TRAITEUR");
+        catererDTO.setSubscriptionPlan("FREE");
+        catererDTO.setSubscriptionStatus("ACTIVE");
 
         Caterer catererToSave = catererMapper.toDomain(catererDTO);
         

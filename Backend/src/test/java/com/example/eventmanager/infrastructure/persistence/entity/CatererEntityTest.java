@@ -60,7 +60,10 @@ class CatererEntityTest {
         assertEquals("test@example.com", entity.getEmail());
         assertEquals("password123", entity.getPassword());
         assertNull(entity.getStripeCustomerId());
-        assertNull(entity.getAccountStatus());
+        assertEquals("ACTIVE", entity.getAccountStatus());
+        assertEquals("TRAITEUR", entity.getRole());
+        assertEquals("FREE", entity.getSubscriptionPlan());
+        assertEquals("ACTIVE", entity.getSubscriptionStatus());
     }
 
     @Test
@@ -108,9 +111,12 @@ class CatererEntityTest {
         String password = "allArgsPassword";
         String stripeCustomerId = "cus_111111111";
         String accountStatus = "SUSPENDED";
+        String role = "TRAITEUR";
+        String subscriptionPlan = "FREE";
+        String subscriptionStatus = "ACTIVE";
 
         // Act
-        CatererEntity entity = new CatererEntity(id, businessName, email, password, stripeCustomerId, accountStatus);
+        CatererEntity entity = new CatererEntity(id, businessName, email, password, stripeCustomerId, accountStatus, role, subscriptionPlan, subscriptionStatus);
 
         // Assert
         assertEquals(id, entity.getId());
@@ -119,6 +125,9 @@ class CatererEntityTest {
         assertEquals(password, entity.getPassword());
         assertEquals(stripeCustomerId, entity.getStripeCustomerId());
         assertEquals(accountStatus, entity.getAccountStatus());
+        assertEquals(role, entity.getRole());
+        assertEquals(subscriptionPlan, entity.getSubscriptionPlan());
+        assertEquals(subscriptionStatus, entity.getSubscriptionStatus());
     }
 
     @Test

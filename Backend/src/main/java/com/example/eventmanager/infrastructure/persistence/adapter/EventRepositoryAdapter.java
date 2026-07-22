@@ -41,4 +41,16 @@ public class EventRepositoryAdapter implements EventRepositoryPort {
     public void deleteById(Long id) {
         eventRepository.deleteById(id);
     }
+
+    @Override
+    public java.util.List<Event> findAll() {
+        return eventRepository.findAll().stream()
+                .map(eventPersistenceMapper::toDomain)
+                .toList();
+    }
+
+    @Override
+    public long count() {
+        return eventRepository.count();
+    }
 }

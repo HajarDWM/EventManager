@@ -1,0 +1,156 @@
+<!-- Hero -->
+<div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-2 text-center text-md-start">
+  <div class="flex-grow-1 mb-1 mb-md-0">
+    <h1 class="h3 fw-bold mb-2">
+      Modèles d'Invitations
+    </h1>
+    <h2 class="h6 fw-medium text-muted mb-0">
+      Configurez les modèles d'e-mails d'invitations mis à disposition de vos traiteurs.
+    </h2>
+  </div>
+  <div class="mt-2 mt-md-0">
+    <button type="button" class="btn btn-primary" (click)="openCreateModal()">
+      <i class="fa fa-plus me-1"></i> Nouveau Modèle
+    </button>
+  </div>
+</div>
+<!-- END Hero -->
+
+<!-- Notifications -->
+<div *ngIf="successMessage()" class="alert alert-success d-flex align-items-center mt-3 shadow-sm" role="alert">
+  <i class="fa fa-check-circle me-2"></i>
+  <div>{{ successMessage() }}</div>
+  <button type="button" class="btn-close ms-auto" (click)="successMessage.set('')"></button>
+</div>
+
+<div *ngIf="errorMessage()" class="alert alert-danger d-flex align-items-center mt-3 shadow-sm" role="alert">
+  <i class="fa fa-exclamation-triangle me-2"></i>
+  <div>{{ errorMessage() }}</div>
+  <button type="button" class="btn-close ms-auto" (click)="errorMessage.set('')"></button>
+</div>
+
+<!-- Grid Templates -->
+<div class="row mt-4">
+  <div class="col-md-6 col-xxl-4 mb-4" *ngFor="let template of templates()">
+    <div class="block block-rounded bg-white shadow-sm border border-light h-100 d-flex flex-column">
+      <div class="block-header block-header-default border-bottom bg-body-light p-3">
+        <h3 class="block-title fw-bold text-dark">{{ template.name }}</h3>
+      </div>
+      <div class="block-content p-3 flex-grow-1">
+        <p class="mb-1 text-muted fs-xs uppercase fw-bold">Sujet du mail :</p>
+        <p class="fw-semibold text-dark fs-sm mb-3">{{ template.subject }}</p>
+        
+        <p class="mb-1 text-muted fs-xs uppercase fw-bold">Aperçu du corps :</p>
+        <p class="text-muted fs-sm text-truncate-3" style="white-space: pre-wrap;">{{ template.content }}</p>
+      </div>
+      <div class="bg-body-light rounded-bottom border-top border-light p-2 d-flex justify-content-end gap-2">
+        <button type="button" class="btn btn-sm btn-alt-info" (click)="openEditModal(template)">
+          <i class="fa fa-pencil-alt me-1"></i> Modifier
+        </button>
+        <button type="button" class="btn btn-sm btn-alt-danger" (click)="deleteTemplate(template)">
+          <i class="fa fa-trash-alt me-1"></i> Supprimer
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-12 text-center py-4 text-muted" *ngIf="templates().length === 0 && !isLoading()">
+    Aucun modèle d'invitation configuré.
+  </div>
+</div>
+
+<!-- Modal : Create/Edit Template with Live Preview -->
+<div class="modal fade show" tabindex="-1" style="display: block; background: rgba(0,0,0,0.5);" *ngIf="selectedTemplate()">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content shadow-lg border-0 rounded-3">
+      <div class="modal-header bg-body-light border-bottom p-3">
+        <h5 class="modal-title fw-bold text-dark">
+          {{ isEditMode() ? 'Modifier le modèle d\'invitation' : 'Créer un modèle d\'invitation' }}
+        </h5>
+        <button type="button" class="btn-close" (click)="closeTemplateModal()"></button>
+      </div>
+      
+      <div class="modal-body p-4">
+        <div class="row">
+          <!-- Form Left Column -->
+          <div class="col-lg-6 border-end-lg">
+            <div class="mb-3">
+              <label class="form-label fw-semibold text-muted">Nom du modèle</label>
+              <input type="text" class="form-control border-light shadow-sm bg-body-light" 
+                     placeholder="Ex: Modèle Anniversaire Élégant" [(ngModel)]="nameField">
+            </div>
+            
+            <div class="mb-3">
+              <label class="form-label fw-semibold text-muted">Sujet de l'e-mail</label>
+              <input type="text" class="form-control border-light shadow-sm bg-body-light" 
+                     placeholder="Ex: Invitation à l'anniversaire de {{ '{{guest_name}}' }}" [(ngModel)]="subjectField">
+            </div>
+            
+            <div class="mb-3">
+              <label class="form-label fw-semibold text-muted">Corps du message (Texte/HTML)</label>
+              <textarea class="form-control border-light shadow-sm bg-body-light" rows="10" 
+                        placeholder="Tapez le contenu de votre mail ici..." [(ngModel)]="contentField"></textarea>
+            </div>
+            
+            <div class="alert alert-info py-2 px-3 fs-xs mb-0">
+              <h6 class="alert-heading fw-bold mb-1"><i class="fa fa-info-circle me-1"></i> Variables disponibles</h6>
+              <p class="mb-0">Insérez les balises suivantes dans le sujet ou le contenu pour les remplacer dynamiquement :</p>
+              <ul class="mb-0 ps-3 mt-1">
+                <li><code>{{ '{{guest_name}}' }}</code> : Nom complet de l'invité</li>
+                <li><code>{{ '{{event_title}}' }}</code> : Titre de la prestation</li>
+                <li><code>{{ '{{event_date}}' }}</code> : Date de l'événement</li>
+                <li><code>{{ '{{event_location}}' }}</code> : Lieu de la réception</li>
+              </ul>
+            </div>
+          </div>
+          
+          <!-- Live Preview Right Column -->
+          <div class="col-lg-6 mt-4 mt-lg-0">
+            <h6 class="fw-bold mb-3 text-dark"><i class="fa fa-eye me-1 text-primary"></i> Prévisualisation en temps réel</h6>
+            
+            <!-- Live Preview Inputs to test variables -->
+            <div class="row g-2 mb-3 bg-light p-2 rounded">
+              <div class="col-6">
+                <label class="fs-xs fw-semibold text-muted">Nom de l'invité</label>
+                <input type="text" class="form-control form-control-sm border-0 bg-white" [(ngModel)]="previewGuestName">
+              </div>
+              <div class="col-6">
+                <label class="fs-xs fw-semibold text-muted">Titre de l'Événement</label>
+                <input type="text" class="form-control form-control-sm border-0 bg-white" [(ngModel)]="previewEventTitle">
+              </div>
+              <div class="col-6">
+                <label class="fs-xs fw-semibold text-muted">Date de l'événement</label>
+                <input type="text" class="form-control form-control-sm border-0 bg-white" [(ngModel)]="previewEventDate">
+              </div>
+              <div class="col-6">
+                <label class="fs-xs fw-semibold text-muted">Lieu de l'événement</label>
+                <input type="text" class="form-control form-control-sm border-0 bg-white" [(ngModel)]="previewEventLocation">
+              </div>
+            </div>
+            
+            <!-- Visual Email rendering -->
+            <div class="border rounded p-3 bg-white" style="min-height: 250px; font-family: sans-serif;">
+              <div class="border-bottom pb-2 mb-3 fs-sm">
+                <div class="mb-1"><span class="text-muted fw-semibold">De :</span> noreply@eventmanager.com</div>
+                <div class="mb-1"><span class="text-muted fw-semibold">À :</span> {{ previewGuestName() }}</div>
+                <div><span class="text-muted fw-semibold">Objet :</span> <span class="fw-bold text-dark">{{ subjectField() }}</span></div>
+              </div>
+              <div style="white-space: pre-wrap; font-size: 14px; color: #333; line-height: 1.6;">
+                {{ livePreview() || 'Saisissez le corps du message sur le panneau de gauche pour voir l\'aperçu ici...' }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="modal-footer bg-body-light border-top p-3 justify-content-end gap-2">
+        <button type="button" class="btn btn-alt-secondary" (click)="closeTemplateModal()">
+          Annuler
+        </button>
+        <button type="button" class="btn btn-primary" (click)="saveTemplate()">
+          Enregistrer le modèle
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

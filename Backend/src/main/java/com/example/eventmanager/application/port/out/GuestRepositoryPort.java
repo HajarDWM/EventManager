@@ -12,4 +12,5 @@ public interface GuestRepositoryPort {
     void deleteById(Long id);
     void deleteByEventId(Long eventId);
     long countByEventId(Long eventId);
+    long count();
 }

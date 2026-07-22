@@ -53,4 +53,9 @@ public class GuestRepositoryAdapter implements GuestRepositoryPort {
     public long countByEventId(Long eventId) {
         return jpaGuestRepository.countByEventId(eventId);
     }
+
+    @Override
+    public long count() {
+        return jpaGuestRepository.count();
+    }
 }

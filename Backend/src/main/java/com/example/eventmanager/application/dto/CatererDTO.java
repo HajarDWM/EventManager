@@ -24,5 +24,11 @@ public class CatererDTO {
     private String stripeCustomerId;
 
     private String accountStatus;
+
+    private String role;
+
+    private String subscriptionPlan;
+
+    private String subscriptionStatus;
 }
 

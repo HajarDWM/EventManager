@@ -4,6 +4,7 @@ import { Dashboard } from './features/dashboard/dashboard';
 import { Login } from './core/auth/login/login';
 import { Register } from './core/auth/register/register';
 import { authGuard } from './core/auth/guards/auth.guard';
+import { guestGuard } from './core/auth/guards/guest.guard';
 import { EventList } from './features/events/components/event-list/event-list';
 import { EventCreate } from './features/events/components/event-create/event-create';
 import { EventEdit } from './features/events/components/event-edit/event-edit';
@@ -12,15 +13,22 @@ import { MenuList } from './features/events/components/menu-list/menu-list';
 import { TaskList } from './features/events/components/task-list/task-list';
 import { EventExport } from './features/events/components/event-export/event-export';
 import { Profile } from './features/profile';
+import { adminGuard } from './core/auth/guards/admin.guard';
+import { AdminDashboard } from './features/admin/dashboard/admin-dashboard';
+import { AdminCatererList } from './features/admin/caterers/admin-caterer-list';
+import { AdminInvitationTemplates } from './features/admin/templates/admin-invitation-templates';
+import { AdminBillingSettings } from './features/admin/billing/admin-billing-settings';
 
 export const routes: Routes = [
   {
     path: 'login',
-    component: Login
+    component: Login,
+    canActivate: [guestGuard]
   },
   {
     path: 'register',
-    component: Register
+    component: Register,
+    canActivate: [guestGuard]
   },
   {
     path: '',
@@ -62,6 +70,26 @@ export const routes: Routes = [
       {
         path: 'profile',
         component: Profile
+      },
+      {
+        path: 'admin/dashboard',
+        component: AdminDashboard,
+        canActivate: [adminGuard]
+      },
+      {
+        path: 'admin/caterers',
+        component: AdminCatererList,
+        canActivate: [adminGuard]
+      },
+      {
+        path: 'admin/invitations',
+        component: AdminInvitationTemplates,
+        canActivate: [adminGuard]
+      },
+      {
+        path: 'admin/billing',
+        component: AdminBillingSettings,
+        canActivate: [adminGuard]
       },
       {
         path: '',

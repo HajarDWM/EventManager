@@ -9,7 +9,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
+import java.util.List;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 @Service
 @RequiredArgsConstructor
@@ -22,11 +24,15 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         Caterer caterer = catererRepositoryPort.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Traiteur introuvable avec l'email: " + email));
 
+        String roleName = caterer.getRole() != null ? caterer.getRole().name() : "TRAITEUR";
+        List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + roleName));
+
         return new com.example.eventmanager.infrastructure.security.model.CatererUserDetails(
                 caterer.getEmail(),
                 caterer.getPassword(),
-                Collections.emptyList(), // Pas de rôles pour l'instant
-                caterer.getId()
+                authorities,
+                caterer.getId(),
+                roleName
         );
     }
 }

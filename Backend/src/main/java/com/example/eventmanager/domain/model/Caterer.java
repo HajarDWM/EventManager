@@ -12,8 +12,16 @@ public class Caterer {
     private String password;
     private String stripeCustomerId;
     private CatererStatus accountStatus;
+    private CatererRole role;
+    private String subscriptionPlan;
+    private String subscriptionStatus;
 
     // Méthodes métiers (Règles du domaine)
+    public void updateSubscription(String plan, String status) {
+        this.subscriptionPlan = plan;
+        this.subscriptionStatus = status;
+    }
+
     public void suspendAccount() {
         this.accountStatus = CatererStatus.SUSPENDED;
     }

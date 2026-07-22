@@ -39,7 +39,21 @@ public class CatererEntity {
     @Column(name = "stripe_customer_id")
     private String stripeCustomerId;
 
+    @Builder.Default
     @Column(name = "account_status", nullable = false)
     private String accountStatus = "ACTIVE";
+
+    @Builder.Default
+    @Column(name = "role", nullable = false)
+    private String role = "TRAITEUR";
+
+    @Builder.Default
+    @Column(name = "subscription_plan", nullable = false)
+    private String subscriptionPlan = "FREE";
+
+    @Builder.Default
+    @Column(name = "subscription_status", nullable = false)
+    private String subscriptionStatus = "ACTIVE";
 }
+
 

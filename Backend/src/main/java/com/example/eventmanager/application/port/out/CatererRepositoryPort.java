@@ -13,4 +13,8 @@ public interface CatererRepositoryPort {
     Optional<Caterer> findByEmail(String email);
     
     boolean existsByEmail(String email);
+    
+    java.util.List<Caterer> findAll();
+    
+    long count();
 }

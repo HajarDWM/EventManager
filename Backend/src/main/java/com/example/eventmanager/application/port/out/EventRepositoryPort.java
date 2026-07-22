@@ -10,4 +10,6 @@ public interface EventRepositoryPort {
     Optional<Event> findById(Long id);
     List<Event> findAllByCatererId(Long catererId);
     void deleteById(Long id);
+    List<Event> findAll();
+    long count();
 }

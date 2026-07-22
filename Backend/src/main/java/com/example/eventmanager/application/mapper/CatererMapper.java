@@ -20,6 +20,9 @@ public class CatererMapper {
                 .password(domain.getPassword())
                 .stripeCustomerId(domain.getStripeCustomerId())
                 .accountStatus(domain.getAccountStatus() != null ? domain.getAccountStatus().name() : null)
+                .role(domain.getRole() != null ? domain.getRole().name() : null)
+                .subscriptionPlan(domain.getSubscriptionPlan())
+                .subscriptionStatus(domain.getSubscriptionStatus())
                 .build();
     }
 
@@ -35,6 +38,9 @@ public class CatererMapper {
                 .password(dto.getPassword())
                 .stripeCustomerId(dto.getStripeCustomerId())
                 .accountStatus(dto.getAccountStatus() != null ? CatererStatus.valueOf(dto.getAccountStatus()) : CatererStatus.ACTIVE)
+                .role(dto.getRole() != null ? com.example.eventmanager.domain.model.CatererRole.valueOf(dto.getRole()) : com.example.eventmanager.domain.model.CatererRole.TRAITEUR)
+                .subscriptionPlan(dto.getSubscriptionPlan() != null ? dto.getSubscriptionPlan() : "FREE")
+                .subscriptionStatus(dto.getSubscriptionStatus() != null ? dto.getSubscriptionStatus() : "ACTIVE")
                 .build();
     }
 }

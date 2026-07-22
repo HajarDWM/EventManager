@@ -2,6 +2,7 @@ import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
+import { CatererService } from '../../services/caterer.service';
 
 @Injectable({
   providedIn: 'root'
@@ -9,6 +10,7 @@ import { Observable, tap } from 'rxjs';
 export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
+  private readonly catererService = inject(CatererService);
   private readonly tokenKey = 'auth_token';
 
   // Signal pour l'état de connexion réactif dans l'UI
@@ -39,6 +41,8 @@ export class AuthService {
 
   public logout(): void {
     localStorage.removeItem(this.tokenKey);
+    localStorage.removeItem('caterer'); // Nettoyer aussi le caterer stocké s'il existe
+    this.catererService.clearProfile();
     this.isAuthenticated.set(false);
     this.router.navigate(['/login']);
   }

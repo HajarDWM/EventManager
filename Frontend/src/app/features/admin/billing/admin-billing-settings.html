@@ -1,0 +1,109 @@
+<!-- Hero -->
+<div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-2 text-center text-md-start">
+  <div class="flex-grow-1 mb-1 mb-md-0">
+    <h1 class="h3 fw-bold mb-2">
+      Paramètres de Facturation Globale
+    </h1>
+    <h2 class="h6 fw-medium text-muted mb-0">
+      Configurez les tarifs d'abonnements, les taxes système et l'email de support facturation.
+    </h2>
+  </div>
+</div>
+<!-- END Hero -->
+
+<!-- Notifications -->
+<div *ngIf="successMessage()" class="alert alert-success d-flex align-items-center mt-3 shadow-sm" role="alert">
+  <i class="fa fa-check-circle me-2"></i>
+  <div>{{ successMessage() }}</div>
+  <button type="button" class="btn-close ms-auto" (click)="successMessage.set('')"></button>
+</div>
+
+<div *ngIf="errorMessage()" class="alert alert-danger d-flex align-items-center mt-3 shadow-sm" role="alert">
+  <i class="fa fa-exclamation-triangle me-2"></i>
+  <div>{{ errorMessage() }}</div>
+  <button type="button" class="btn-close ms-auto" (click)="errorMessage.set('')"></button>
+</div>
+
+<!-- Form Container -->
+<div class="row mt-4" *ngIf="!isLoading()">
+  <div class="col-xl-8">
+    <div class="block block-rounded bg-white shadow-sm border border-light">
+      <div class="block-header block-header-default border-bottom bg-body-light p-3">
+        <h3 class="block-title fw-bold">Paramètres Système</h3>
+      </div>
+      
+      <div class="block-content p-4">
+        <form (ngSubmit)="saveSettings()">
+          <!-- Section Taxes & Devise -->
+          <h5 class="fw-bold text-dark border-bottom pb-2 mb-3"><i class="fa fa-percent me-2 text-primary"></i> Taxes & Devise</h5>
+          <div class="row mb-4">
+            <div class="col-md-6 mb-3 mb-md-0">
+              <label class="form-label fw-semibold text-muted">Taux de TVA (%)</label>
+              <div class="input-group">
+                <input type="number" step="0.1" class="form-control border-light shadow-sm bg-body-light" [(ngModel)]="vatRate" name="vatRate">
+                <span class="input-group-text border-light bg-light">%</span>
+              </div>
+              <div class="form-text fs-xs text-muted">Appliqué par défaut sur toutes les prestations générées.</div>
+            </div>
+            
+            <div class="col-md-6">
+              <label class="form-label fw-semibold text-muted">Devise Système</label>
+              <select class="form-select border-light shadow-sm bg-body-light" [(ngModel)]="currency" name="currency">
+                <option value="EUR">Euro (€)</option>
+                <option value="USD">Dollar ($)</option>
+                <option value="GBP">Livre Sterling (£)</option>
+                <option value="CHF">Franc Suisse (CHF)</option>
+              </select>
+              <div class="form-text fs-xs text-muted">Devise par défaut de la plateforme.</div>
+            </div>
+          </div>
+          
+          <!-- Section Tarification Abonnements -->
+          <h5 class="fw-bold text-dark border-bottom pb-2 mb-3 mt-4"><i class="fa fa-tags me-2 text-success"></i> Tarification des abonnements SaaS</h5>
+          <div class="row mb-4">
+            <div class="col-md-6 mb-3 mb-md-0">
+              <label class="form-label fw-semibold text-muted">Abonnement STANDARD ({{ currency() }}/mois)</label>
+              <div class="input-group">
+                <input type="number" step="0.01" class="form-control border-light shadow-sm bg-body-light" [(ngModel)]="subscriptionPriceStandard" name="priceStandard">
+                <span class="input-group-text border-light bg-light">{{ currency() }}</span>
+              </div>
+              <div class="form-text fs-xs text-muted">Prix mensuel pour le niveau intermédiaire.</div>
+            </div>
+            
+            <div class="col-md-6">
+              <label class="form-label fw-semibold text-muted">Abonnement PREMIUM ({{ currency() }}/mois)</label>
+              <div class="input-group">
+                <input type="number" step="0.01" class="form-control border-light shadow-sm bg-body-light" [(ngModel)]="subscriptionPricePremium" name="pricePremium">
+                <span class="input-group-text border-light bg-light">{{ currency() }}</span>
+              </div>
+              <div class="form-text fs-xs text-muted">Prix mensuel pour le niveau entreprise / illimité.</div>
+            </div>
+          </div>
+          
+          <!-- Section Support Facturation -->
+          <h5 class="fw-bold text-dark border-bottom pb-2 mb-3 mt-4"><i class="fa fa-envelope me-2 text-warning"></i> Contact Facturation</h5>
+          <div class="row mb-4">
+            <div class="col-md-12">
+              <label class="form-label fw-semibold text-muted">Adresse Email du support de facturation</label>
+              <input type="email" class="form-control border-light shadow-sm bg-body-light" placeholder="Ex: billing@eventmanager.com" [(ngModel)]="billingContactEmail" name="billingContactEmail">
+              <div class="form-text fs-xs text-muted">Cette adresse est affichée aux traiteurs pour toute demande concernant leurs abonnements.</div>
+            </div>
+          </div>
+          
+          <!-- Submit Button -->
+          <div class="d-flex justify-content-end border-top pt-3 mt-4">
+            <button type="submit" class="btn btn-primary" [disabled]="isSaving()">
+              <span *ngIf="isSaving()"><i class="fa fa-spinner fa-spin me-1"></i> Sauvegarde...</span>
+              <span *ngIf="!isSaving()"><i class="fa fa-save me-1"></i> Enregistrer les modifications</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="text-center py-5" *ngIf="isLoading()">
+  <i class="fa fa-spinner fa-spin text-primary fs-2"></i>
+  <p class="mt-2 text-muted">Chargement des paramètres de facturation...</p>
+</div>
