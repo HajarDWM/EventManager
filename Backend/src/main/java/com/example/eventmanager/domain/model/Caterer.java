@@ -15,11 +15,20 @@ public class Caterer {
     private CatererRole role;
     private String subscriptionPlan;
     private String subscriptionStatus;
+    private java.time.LocalDateTime subscriptionStartDate;
+    private java.time.LocalDateTime subscriptionEndDate;
 
     // Méthodes métiers (Règles du domaine)
     public void updateSubscription(String plan, String status) {
         this.subscriptionPlan = plan;
         this.subscriptionStatus = status;
+    }
+
+    public void updateSubscription(String plan, String status, java.time.LocalDateTime startDate, java.time.LocalDateTime endDate) {
+        this.subscriptionPlan = plan;
+        this.subscriptionStatus = status;
+        this.subscriptionStartDate = startDate;
+        this.subscriptionEndDate = endDate;
     }
 
     public void suspendAccount() {

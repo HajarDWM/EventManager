@@ -30,5 +30,15 @@ public class CatererDTO {
     private String subscriptionPlan;
 
     private String subscriptionStatus;
+
+    private java.time.LocalDateTime subscriptionStartDate;
+
+    private java.time.LocalDateTime subscriptionEndDate;
+
+    private Integer eventCount;
+
+    private Integer eventLimit;
+
+    private Long subscriptionRemainingDays;
 }
 

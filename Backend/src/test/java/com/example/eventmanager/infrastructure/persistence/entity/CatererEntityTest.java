@@ -114,9 +114,11 @@ class CatererEntityTest {
         String role = "TRAITEUR";
         String subscriptionPlan = "FREE";
         String subscriptionStatus = "ACTIVE";
+        java.time.LocalDateTime startDate = java.time.LocalDateTime.now();
+        java.time.LocalDateTime endDate = java.time.LocalDateTime.now().plusDays(30);
 
         // Act
-        CatererEntity entity = new CatererEntity(id, businessName, email, password, stripeCustomerId, accountStatus, role, subscriptionPlan, subscriptionStatus);
+        CatererEntity entity = new CatererEntity(id, businessName, email, password, stripeCustomerId, accountStatus, role, subscriptionPlan, subscriptionStatus, startDate, endDate);
 
         // Assert
         assertEquals(id, entity.getId());
@@ -128,6 +130,8 @@ class CatererEntityTest {
         assertEquals(role, entity.getRole());
         assertEquals(subscriptionPlan, entity.getSubscriptionPlan());
         assertEquals(subscriptionStatus, entity.getSubscriptionStatus());
+        assertEquals(startDate, entity.getSubscriptionStartDate());
+        assertEquals(endDate, entity.getSubscriptionEndDate());
     }
 
     @Test

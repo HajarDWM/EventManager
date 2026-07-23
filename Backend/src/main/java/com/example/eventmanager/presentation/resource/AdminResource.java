@@ -50,9 +50,17 @@ public class AdminResource {
             @PathVariable Long id,
             @RequestParam(required = false) String accountStatus,
             @RequestParam(required = false) String plan,
-            @RequestParam(required = false) String subscriptionStatus) {
-        CatererDTO updated = adminCatererUseCase.updateCatererStatusAndSubscription(id, accountStatus, plan, subscriptionStatus);
+            @RequestParam(required = false) String subscriptionStatus,
+            @RequestParam(required = false) @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME) java.time.LocalDateTime subscriptionStartDate,
+            @RequestParam(required = false) @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME) java.time.LocalDateTime subscriptionEndDate) {
+        CatererDTO updated = adminCatererUseCase.updateCatererStatusAndSubscription(id, accountStatus, plan, subscriptionStatus, subscriptionStartDate, subscriptionEndDate);
         return ResponseEntity.ok(updated);
+    }
+
+    @PostMapping("/caterers")
+    public ResponseEntity<CatererDTO> createCaterer(@RequestBody CatererDTO dto) {
+        CatererDTO created = adminCatererUseCase.createCaterer(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     // === GESTION DES MODÈLES D'INVITATIONS ===

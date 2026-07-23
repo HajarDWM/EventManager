@@ -16,6 +16,7 @@ import com.example.eventmanager.application.port.out.CatererRepositoryPort;
 import com.example.eventmanager.application.port.out.EventRepositoryPort;
 import com.example.eventmanager.application.port.out.GuestRepositoryPort;
 import com.example.eventmanager.application.port.out.InvitationTemplateRepositoryPort;
+import com.example.eventmanager.application.port.out.PasswordEncoderPort;
 import com.example.eventmanager.domain.model.BillingSetting;
 import com.example.eventmanager.domain.model.Caterer;
 import com.example.eventmanager.domain.model.CatererStatus;
@@ -38,22 +39,50 @@ public class AdminApplicationService implements AdminCatererUseCase, AdminStatsU
     private final GuestRepositoryPort guestRepositoryPort;
     private final InvitationTemplateRepositoryPort invitationTemplateRepositoryPort;
     private final BillingSettingRepositoryPort billingSettingRepositoryPort;
+    private final PasswordEncoderPort passwordEncoderPort;
 
     private final CatererMapper catererMapper;
     private final InvitationTemplateMapper invitationTemplateMapper;
     private final BillingSettingMapper billingSettingMapper;
 
+    private int getEventLimitForPlan(String plan) {
+        if (plan == null) return 2;
+        return switch (plan.toUpperCase()) {
+            case "STANDARD" -> 5;
+            case "PREMIUM" -> 15;
+            default -> 2; // "FREE"
+        };
+    }
+
+    private Long getRemainingDays(java.time.LocalDateTime endDate) {
+        if (endDate == null) return 0L;
+        return java.time.temporal.ChronoUnit.DAYS.between(java.time.LocalDateTime.now(), endDate);
+    }
+
     @Override
     @Transactional(readOnly = true)
     public List<CatererDTO> getAllCaterers() {
-        return catererRepositoryPort.findAll().stream()
-                .map(catererMapper::toDTO)
+        List<Caterer> caterers = catererRepositoryPort.findAll();
+        List<Event> events = eventRepositoryPort.findAll();
+
+        Map<Long, Long> eventCounts = events.stream()
+                .filter(e -> e.getCatererId() != null)
+                .collect(Collectors.groupingBy(Event::getCatererId, Collectors.counting()));
+
+        return caterers.stream()
+                .map(c -> {
+                    CatererDTO dto = catererMapper.toDTO(c);
+                    dto.setEventCount(eventCounts.getOrDefault(c.getId(), 0L).intValue());
+                    dto.setEventLimit(getEventLimitForPlan(c.getSubscriptionPlan()));
+                    dto.setSubscriptionRemainingDays(getRemainingDays(c.getSubscriptionEndDate()));
+                    return dto;
+                })
                 .toList();
     }
 
     @Override
     @Transactional
-    public CatererDTO updateCatererStatusAndSubscription(Long id, String accountStatus, String plan, String subscriptionStatus) {
+    public CatererDTO updateCatererStatusAndSubscription(Long id, String accountStatus, String plan, String subscriptionStatus, java.time.LocalDateTime startDate, java.time.LocalDateTime endDate) {
         Caterer caterer = catererRepositoryPort.findById(id)
                 .orElseThrow(() -> new RuntimeException("Traiteur introuvable avec l'id: " + id));
 
@@ -67,11 +96,46 @@ public class AdminApplicationService implements AdminCatererUseCase, AdminStatsU
 
         caterer.updateSubscription(
                 plan != null ? plan : caterer.getSubscriptionPlan(),
-                subscriptionStatus != null ? subscriptionStatus : caterer.getSubscriptionStatus()
+                subscriptionStatus != null ? subscriptionStatus : caterer.getSubscriptionStatus(),
+                startDate != null ? startDate : caterer.getSubscriptionStartDate(),
+                endDate != null ? endDate : caterer.getSubscriptionEndDate()
         );
 
         Caterer saved = catererRepositoryPort.save(caterer);
-        return catererMapper.toDTO(saved);
+        
+        CatererDTO dto = catererMapper.toDTO(saved);
+        List<Event> events = eventRepositoryPort.findAllByCatererId(saved.getId());
+        dto.setEventCount(events.size());
+        dto.setEventLimit(getEventLimitForPlan(saved.getSubscriptionPlan()));
+        dto.setSubscriptionRemainingDays(getRemainingDays(saved.getSubscriptionEndDate()));
+        return dto;
+    }
+
+    @Override
+    @Transactional
+    public CatererDTO createCaterer(CatererDTO dto) {
+        if (dto.getSubscriptionStartDate() == null) {
+            dto.setSubscriptionStartDate(java.time.LocalDateTime.now());
+        }
+        if (dto.getSubscriptionEndDate() == null) {
+            dto.setSubscriptionEndDate(java.time.LocalDateTime.now().plusDays(30));
+        }
+
+        catererRepositoryPort.findByEmail(dto.getEmail()).ifPresent(c -> {
+            throw new RuntimeException("Un compte traiteur existe déjà avec cette adresse email.");
+        });
+
+        Caterer caterer = catererMapper.toDomain(dto);
+        caterer.updatePassword(passwordEncoderPort.encode(dto.getPassword()));
+        caterer.activateAccount();
+
+        Caterer saved = catererRepositoryPort.save(caterer);
+
+        CatererDTO savedDto = catererMapper.toDTO(saved);
+        savedDto.setEventCount(0);
+        savedDto.setEventLimit(getEventLimitForPlan(saved.getSubscriptionPlan()));
+        savedDto.setSubscriptionRemainingDays(getRemainingDays(saved.getSubscriptionEndDate()));
+        return savedDto;
     }
 
     @Override

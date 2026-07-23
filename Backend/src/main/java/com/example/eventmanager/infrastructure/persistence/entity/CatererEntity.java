@@ -54,6 +54,12 @@ public class CatererEntity {
     @Builder.Default
     @Column(name = "subscription_status", nullable = false)
     private String subscriptionStatus = "ACTIVE";
+
+    @Column(name = "subscription_start_date")
+    private java.time.LocalDateTime subscriptionStartDate;
+
+    @Column(name = "subscription_end_date")
+    private java.time.LocalDateTime subscriptionEndDate;
 }
 
 

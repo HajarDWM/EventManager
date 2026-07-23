@@ -22,6 +22,17 @@ export class AdminCatererList implements OnInit {
   protected selectedCaterer = signal<any | null>(null);
   protected editPlan = signal('FREE');
   protected editSubStatus = signal('ACTIVE');
+  protected editStartDate = signal('');
+  protected editEndDate = signal('');
+
+  // Add Caterer Modal States
+  protected isAddModalOpen = signal(false);
+  protected newBusinessName = signal('');
+  protected newEmail = signal('');
+  protected newPassword = signal('');
+  protected newPlan = signal('FREE');
+  protected newStartDate = signal('');
+  protected newEndDate = signal('');
 
   public ngOnInit(): void {
     this.loadCaterers();
@@ -65,6 +76,8 @@ export class AdminCatererList implements OnInit {
     this.selectedCaterer.set(caterer);
     this.editPlan.set(caterer.subscriptionPlan || 'FREE');
     this.editSubStatus.set(caterer.subscriptionStatus || 'ACTIVE');
+    this.editStartDate.set(caterer.subscriptionStartDate ? caterer.subscriptionStartDate.substring(0, 10) : '');
+    this.editEndDate.set(caterer.subscriptionEndDate ? caterer.subscriptionEndDate.substring(0, 10) : '');
   }
 
   protected closeEditModal(): void {
@@ -79,11 +92,16 @@ export class AdminCatererList implements OnInit {
     this.successMessage.set('');
     this.errorMessage.set('');
 
+    const startIso = this.editStartDate() ? this.editStartDate() + 'T00:00:00' : undefined;
+    const endIso = this.editEndDate() ? this.editEndDate() + 'T00:00:00' : undefined;
+
     this.adminService.updateCatererStatusAndSubscription(
       caterer.id, 
       undefined, 
       this.editPlan(), 
-      this.editSubStatus()
+      this.editSubStatus(),
+      startIso,
+      endIso
     ).subscribe({
       next: (updated) => {
         this.loadCaterers();
@@ -93,6 +111,64 @@ export class AdminCatererList implements OnInit {
       error: (err) => {
         this.isLoading.set(false);
         this.errorMessage.set('Impossible de mettre à jour l\'abonnement.');
+        console.error(err);
+      }
+    });
+  }
+
+  protected openAddModal(): void {
+    const now = new Date();
+    const nextMonth = new Date();
+    nextMonth.setDate(now.getDate() + 30);
+
+    const formatDate = (d: Date) => {
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+
+    this.newBusinessName.set('');
+    this.newEmail.set('');
+    this.newPassword.set('');
+    this.newPlan.set('FREE');
+    this.newStartDate.set(formatDate(now));
+    this.newEndDate.set(formatDate(nextMonth));
+    this.isAddModalOpen.set(true);
+  }
+
+  protected closeAddModal(): void {
+    this.isAddModalOpen.set(false);
+  }
+
+  protected createCaterer(): void {
+    if (!this.newBusinessName() || !this.newEmail() || !this.newPassword()) {
+      this.errorMessage.set('Veuillez remplir tous les champs obligatoires.');
+      return;
+    }
+
+    this.isLoading.set(true);
+    this.successMessage.set('');
+    this.errorMessage.set('');
+
+    const payload = {
+      businessName: this.newBusinessName(),
+      email: this.newEmail(),
+      password: this.newPassword(),
+      subscriptionPlan: this.newPlan(),
+      subscriptionStartDate: this.newStartDate() ? this.newStartDate() + 'T00:00:00' : undefined,
+      subscriptionEndDate: this.newEndDate() ? this.newEndDate() + 'T00:00:00' : undefined
+    };
+
+    this.adminService.createCaterer(payload).subscribe({
+      next: (res) => {
+        this.loadCaterers();
+        this.closeAddModal();
+        this.successMessage.set(`Compte traiteur "${res.businessName}" créé avec succès.`);
+      },
+      error: (err) => {
+        this.isLoading.set(false);
+        this.errorMessage.set(err.error?.message || 'Erreur lors de la création du compte traiteur.');
         console.error(err);
       }
     });

@@ -6,5 +6,6 @@ import java.util.List;
 
 public interface AdminCatererUseCase {
     List<CatererDTO> getAllCaterers();
-    CatererDTO updateCatererStatusAndSubscription(Long id, String accountStatus, String plan, String subscriptionStatus);
+    CatererDTO updateCatererStatusAndSubscription(Long id, String accountStatus, String plan, String subscriptionStatus, java.time.LocalDateTime startDate, java.time.LocalDateTime endDate);
+    CatererDTO createCaterer(CatererDTO dto);
 }

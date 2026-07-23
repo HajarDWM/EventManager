@@ -28,9 +28,14 @@
 <div class="block block-rounded bg-white shadow-sm border border-light mt-4">
   <div class="block-header block-header-default border-bottom bg-body-light d-flex justify-content-between align-items-center">
     <h3 class="block-title fw-bold">Liste des organisateurs</h3>
-    <button class="btn btn-sm btn-alt-secondary" (click)="loadCaterers()" [disabled]="isLoading()">
-      <i class="fa fa-sync-alt" [class.fa-spin]="isLoading()"></i> Actualiser
-    </button>
+    <div class="d-flex gap-2">
+      <button class="btn btn-sm btn-primary" (click)="openAddModal()">
+        <i class="fa fa-plus me-1"></i> Ajouter un Traiteur
+      </button>
+      <button class="btn btn-sm btn-alt-secondary" (click)="loadCaterers()" [disabled]="isLoading()">
+        <i class="fa fa-sync-alt" [class.fa-spin]="isLoading()"></i> Actualiser
+      </button>
+    </div>
   </div>
   
   <div class="block-content">
@@ -41,16 +46,21 @@
             <th class="text-center" style="width: 70px;">ID</th>
             <th>Nom de l'entreprise</th>
             <th>Adresse Email</th>
-            <th style="width: 150px;">Abonnement</th>
-            <th style="width: 150px;">État Paiement</th>
-            <th style="width: 120px;" class="text-center">Statut Compte</th>
-            <th style="width: 150px;" class="text-center">Actions</th>
+            <th style="width: 120px;">Abonnement</th>
+            <th style="width: 140px;">Quota Événements</th>
+            <th style="width: 150px;">Jours Restants</th>
+            <th style="width: 120px;" class="text-center">État Paiement</th>
+            <th style="width: 110px;" class="text-center">Statut</th>
+            <th style="width: 110px;" class="text-center">Actions</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let caterer of caterers()">
             <td class="text-center font-semibold text-muted">{{ caterer.id }}</td>
-            <td class="fw-semibold text-dark">{{ caterer.businessName }} <span class="badge bg-danger ms-1" *ngIf="caterer.role === 'SUPER_ADMIN'">ADMIN</span></td>
+            <td class="fw-semibold text-dark">
+              {{ caterer.businessName }} 
+              <span class="badge bg-danger ms-1" *ngIf="caterer.role === 'SUPER_ADMIN'">ADMIN</span>
+            </td>
             <td>{{ caterer.email }}</td>
             <td>
               <span class="badge" [ngClass]="{
@@ -58,6 +68,24 @@
                 'bg-primary': caterer.subscriptionPlan === 'STANDARD',
                 'bg-warning text-dark': caterer.subscriptionPlan === 'FREE'
               }">{{ caterer.subscriptionPlan }}</span>
+            </td>
+            <td>
+              <div class="fw-semibold text-dark" *ngIf="caterer.role !== 'SUPER_ADMIN'">
+                {{ caterer.eventCount || 0 }} / {{ caterer.eventLimit || 2 }}
+              </div>
+              <div class="text-muted fs-xs" *ngIf="caterer.role === 'SUPER_ADMIN'">
+                Illimité
+              </div>
+            </td>
+            <td>
+              <span *ngIf="caterer.role !== 'SUPER_ADMIN'" class="badge" [ngClass]="{
+                'bg-danger': (caterer.subscriptionRemainingDays || 0) < 0 || caterer.subscriptionStatus === 'EXPIRED',
+                'bg-warning text-dark': (caterer.subscriptionRemainingDays || 0) >= 0 && (caterer.subscriptionRemainingDays || 0) <= 5,
+                'bg-success': (caterer.subscriptionRemainingDays || 0) > 5 && caterer.subscriptionStatus !== 'EXPIRED'
+              }">
+                {{ (caterer.subscriptionRemainingDays || 0) < 0 || caterer.subscriptionStatus === 'EXPIRED' ? 'Expiré' : caterer.subscriptionRemainingDays + ' jours restants' }}
+              </span>
+              <span *ngIf="caterer.role === 'SUPER_ADMIN'" class="text-muted fs-xs">-</span>
             </td>
             <td>
               <span class="badge" [ngClass]="{
@@ -95,7 +123,7 @@
             </td>
           </tr>
           <tr *ngIf="caterers().length === 0 && !isLoading()">
-            <td colspan="7" class="text-center py-4 text-muted">
+            <td colspan="9" class="text-center py-4 text-muted">
               Aucun traiteur enregistré sur la plateforme.
             </td>
           </tr>
@@ -134,6 +162,17 @@
             <option value="EXPIRED">EXPIRED (Expiré)</option>
           </select>
         </div>
+
+        <div class="row">
+          <div class="col-6 mb-3">
+            <label class="form-label fw-semibold text-muted">Date de début</label>
+            <input type="date" class="form-control border-light shadow-sm bg-body-light" [(ngModel)]="editStartDate">
+          </div>
+          <div class="col-6 mb-3">
+            <label class="form-label fw-semibold text-muted">Date d'expiration</label>
+            <input type="date" class="form-control border-light shadow-sm bg-body-light" [(ngModel)]="editEndDate">
+          </div>
+        </div>
       </div>
       
       <div class="modal-footer bg-body-light border-top p-3 justify-content-end gap-2">
@@ -142,6 +181,66 @@
         </button>
         <button type="button" class="btn btn-primary" (click)="saveSubscription()">
           Sauvegarder
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal : Add Caterer (Bootstrap styled overlay) -->
+<div class="modal fade show" tabindex="-1" style="display: block; background: rgba(0,0,0,0.5);" *ngIf="isAddModalOpen()">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content shadow-lg border-0 rounded-3">
+      <div class="modal-header bg-body-light border-bottom p-3">
+        <h5 class="modal-title fw-bold text-dark">
+          <i class="fa fa-user-plus text-primary me-2"></i> Ajouter un nouveau Traiteur
+        </h5>
+        <button type="button" class="btn-close" (click)="closeAddModal()"></button>
+      </div>
+      
+      <div class="modal-body p-4">
+        <div class="mb-3">
+          <label class="form-label fw-semibold text-muted">Nom de l'entreprise <span class="text-danger">*</span></label>
+          <input type="text" class="form-control border-light shadow-sm bg-body-light" placeholder="Ex: Délices du Palais" [(ngModel)]="newBusinessName">
+        </div>
+        
+        <div class="mb-3">
+          <label class="form-label fw-semibold text-muted">Adresse Email <span class="text-danger">*</span></label>
+          <input type="email" class="form-control border-light shadow-sm bg-body-light" placeholder="email@exemple.com" [(ngModel)]="newEmail">
+        </div>
+        
+        <div class="mb-3">
+          <label class="form-label fw-semibold text-muted">Mot de passe <span class="text-danger">*</span></label>
+          <input type="password" class="form-control border-light shadow-sm bg-body-light" placeholder="••••••••" [(ngModel)]="newPassword">
+        </div>
+        
+        <div class="mb-3">
+          <label class="form-label fw-semibold text-muted">Plan d'abonnement</label>
+          <select class="form-select border-light shadow-sm bg-body-light" [(ngModel)]="newPlan">
+            <option value="FREE">FREE (Max 2 événements)</option>
+            <option value="STANDARD">STANDARD (Max 5 événements)</option>
+            <option value="PREMIUM">PREMIUM (Max 15 événements)</option>
+          </select>
+        </div>
+        
+        <div class="row">
+          <div class="col-6 mb-3">
+            <label class="form-label fw-semibold text-muted">Date de début</label>
+            <input type="date" class="form-control border-light shadow-sm bg-body-light" [(ngModel)]="newStartDate">
+          </div>
+          <div class="col-6 mb-3">
+            <label class="form-label fw-semibold text-muted">Date d'expiration</label>
+            <input type="date" class="form-control border-light shadow-sm bg-body-light" [(ngModel)]="newEndDate">
+          </div>
+        </div>
+      </div>
+      
+      <div class="modal-footer bg-body-light border-top p-3 justify-content-end gap-2">
+        <button type="button" class="btn btn-alt-secondary" (click)="closeAddModal()">
+          Annuler
+        </button>
+        <button type="button" class="btn btn-primary" (click)="createCaterer()">
+          Créer le compte
         </button>
       </div>
     </div>

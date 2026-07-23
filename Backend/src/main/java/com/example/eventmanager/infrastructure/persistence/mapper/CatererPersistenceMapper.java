@@ -23,6 +23,8 @@ public class CatererPersistenceMapper {
                 .role(domain.getRole() != null ? domain.getRole().name() : "TRAITEUR")
                 .subscriptionPlan(domain.getSubscriptionPlan() != null ? domain.getSubscriptionPlan() : "FREE")
                 .subscriptionStatus(domain.getSubscriptionStatus() != null ? domain.getSubscriptionStatus() : "ACTIVE")
+                .subscriptionStartDate(domain.getSubscriptionStartDate())
+                .subscriptionEndDate(domain.getSubscriptionEndDate())
                 .build();
     }
 
@@ -41,6 +43,8 @@ public class CatererPersistenceMapper {
                 .role(entity.getRole() != null ? com.example.eventmanager.domain.model.CatererRole.valueOf(entity.getRole()) : com.example.eventmanager.domain.model.CatererRole.TRAITEUR)
                 .subscriptionPlan(entity.getSubscriptionPlan() != null ? entity.getSubscriptionPlan() : "FREE")
                 .subscriptionStatus(entity.getSubscriptionStatus() != null ? entity.getSubscriptionStatus() : "ACTIVE")
+                .subscriptionStartDate(entity.getSubscriptionStartDate())
+                .subscriptionEndDate(entity.getSubscriptionEndDate())
                 .build();
     }
 }

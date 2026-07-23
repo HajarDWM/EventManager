@@ -48,7 +48,9 @@ export class AdminService {
     id: number, 
     accountStatus?: string, 
     plan?: string, 
-    subscriptionStatus?: string
+    subscriptionStatus?: string,
+    subscriptionStartDate?: string,
+    subscriptionEndDate?: string
   ): Observable<any> {
     let params = new HttpParams();
     if (accountStatus) {
@@ -60,8 +62,18 @@ export class AdminService {
     if (subscriptionStatus) {
       params = params.set('subscriptionStatus', subscriptionStatus);
     }
+    if (subscriptionStartDate) {
+      params = params.set('subscriptionStartDate', subscriptionStartDate);
+    }
+    if (subscriptionEndDate) {
+      params = params.set('subscriptionEndDate', subscriptionEndDate);
+    }
 
     return this.http.put<any>(`${this.apiUrl}/caterers/${id}`, {}, { params });
+  }
+
+  public createCaterer(caterer: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/caterers`, caterer);
   }
 
   // === GESTION DES TEMPLATES D'INVITATION ===
