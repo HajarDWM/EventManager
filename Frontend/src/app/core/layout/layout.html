@@ -128,7 +128,9 @@
         <div class="dropdown d-inline-block" [class.show]="isUserDropdownOpen()">
           <button type="button" class="btn btn-sm btn-alt-secondary d-flex align-items-center gap-2" 
                   id="page-header-user-dropdown" (click)="toggleUserDropdown()">
-            <span class="d-none d-sm-inline-block fw-semibold">{{ userBusinessName() }}</span>
+            <span class="d-none d-sm-inline-block fw-semibold">
+              {{ isSuperAdmin() ? 'Admin' : 'Traiteur' }} : {{ userBusinessName() }}
+            </span>
             <i class="fa fa-fw fa-angle-down opacity-50"></i>
           </button>
           
@@ -138,7 +140,10 @@
                style="position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate3d(0px, 33px, 0px);">
             <div class="p-3 text-center bg-body-light border-bottom rounded-top">
               <p class="mt-2 mb-0 fw-semibold">{{ userBusinessName() }}</p>
-              <p class="mb-0 text-muted fs-sm">{{ userEmail() }}</p>
+              <p class="mb-2 text-muted fs-sm">{{ userEmail() }}</p>
+              <span class="badge px-3 py-1.5" [ngClass]="isSuperAdmin() ? 'bg-danger-light text-danger' : 'bg-primary-light text-primary'">
+                {{ isSuperAdmin() ? 'Administrateur' : 'Traiteur' }}
+              </span>
             </div>
             <div class="p-2">
               <a class="dropdown-item d-flex align-items-center justify-content-between" routerLink="/profile" (click)="isUserDropdownOpen.set(false)">

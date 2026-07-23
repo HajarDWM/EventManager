@@ -6,6 +6,17 @@ Le module **Option 4 : Recherche, Filtrage et Tri des Événements** permet au t
 
 ---
 
+## 🔒 Soft Delete & Préservation des Données
+
+Afin de garantir qu'aucune donnée importante ne soit supprimée de la base de données par inadvertance, la suppression des événements a été migrée vers un système de **Soft Delete** :
+
+1. **Pas de suppression physique :** Lors de l'appel à la suppression d'un événement, l'événement n'est pas effacé de la base de données (pas de `DELETE`).
+2. **Propriété `archived` :** L'événement est simplement marqué comme archivé (`archived = true` en base).
+3. **Maintien des données associées :** Les invités (`guests`), les plats (`menu_items`) et les tâches de préparation (`event_tasks`) rattachés à cet événement restent intacts en base de données.
+4. **Filtrage des requêtes :** Les méthodes de lecture (comme `findAllByCatererId`) filtrent automatiquement les événements archivés afin qu'ils n'apparaissent plus dans la liste des prestations de l'application.
+
+---
+
 ## Architecture & Code Source
 
 ### 1. Frontend Angular (OneUI 5.12 & Reactive Signals)
@@ -26,8 +37,14 @@ Le module **Option 4 : Recherche, Filtrage et Tri des Événements** permet au t
 
 ### 2. Backend Spring Boot (Clean Architecture Hexagonale)
 
+#### Modèle & Entités
+* `Event.java` & `EventEntity.java` : Ajout du champ `archived` (booléen).
+* `EventPersistenceMapper.java` : Prise en charge du mapping du champ `archived`.
+
 #### Dépôts & Services (`application/service` & `presentation/resource`)
-* `EventResource.java` & `EventApplicationService.java` : Prise en charge des requêtes sur la liste des événements.
+* `EventRepository.java` : Ajout de la méthode `findByCatererIdAndArchivedFalse(Long catererId)`.
+* `EventRepositoryAdapter.java` : Modification de `findAllByCatererId` pour ne retourner que les événements non archivés.
+* `EventApplicationService.java` : Modification de `deleteEvent(Long id)` pour simplement passer `archived` à `true` et sauvegarder l'événement sans altérer les autres tables de la base.
 * Restitution sécurisée des prestations filtrées en fonction du traiteur connecté (isolation multi-tenant).
 
 ---
@@ -36,8 +53,8 @@ Le module **Option 4 : Recherche, Filtrage et Tri des Événements** permet au t
 
 | Composant | Commande de build | Résultat |
 | :--- | :--- | :--- |
-| **Backend Java** | `.\mvnw.cmd compile` | 🟢 **BUILD SUCCESS** (65 fichiers source Java compilés sans erreur) |
-| **Frontend Angular** | `npm run build` | 🟢 **BUILD SUCCESS** (Bundle généré en 5.8s sans erreur) |
+| **Backend Java** | `.\mvnw.cmd compile` | 🟢 **BUILD SUCCESS** (123 fichiers source Java compilés sans erreur) |
+| **Frontend Angular** | `npm run build` | 🟢 **BUILD SUCCESS** (Bundle généré en 9.7s sans erreur) |
 
 ---
 

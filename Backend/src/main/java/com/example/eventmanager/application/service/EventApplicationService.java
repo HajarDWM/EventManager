@@ -97,12 +97,8 @@ public class EventApplicationService implements CreateEventUseCase, GetEventUseC
             throw new UnauthorizedAccessException("Vous n'êtes pas autorisé à supprimer cet événement.");
         }
         
-        // Suppression en cascade des invités, plats et tâches rattachés
-        guestRepositoryPort.deleteByEventId(id);
-        menuItemRepositoryPort.deleteByEventId(id);
-        eventTaskRepositoryPort.deleteByEventId(id);
-        
-        eventRepositoryPort.deleteById(id);
+        existingEvent.setArchived(true);
+        eventRepositoryPort.save(existingEvent);
     }
 
     @Override

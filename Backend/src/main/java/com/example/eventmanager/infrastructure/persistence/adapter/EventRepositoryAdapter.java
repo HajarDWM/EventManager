@@ -32,7 +32,7 @@ public class EventRepositoryAdapter implements EventRepositoryPort {
 
     @Override
     public java.util.List<Event> findAllByCatererId(Long catererId) {
-        return eventRepository.findByCatererId(catererId).stream()
+        return eventRepository.findByCatererIdAndArchivedFalse(catererId).stream()
                 .map(eventPersistenceMapper::toDomain)
                 .toList();
     }

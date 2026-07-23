@@ -16,6 +16,7 @@ public class Event {
     @Builder.Default
     private EventStatus status = EventStatus.DRAFT;
     private Long catererId;
+    private boolean archived;
 
     public void planEvent() {
         this.status = EventStatus.PLANNED;

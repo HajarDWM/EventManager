@@ -38,6 +38,10 @@ public class EventEntity {
     @Column(name = "caterer_id", nullable = false)
     private Long catererId;
 
+    @Column(nullable = false)
+    @Builder.Default
+    private boolean archived = false;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
