@@ -7,6 +7,7 @@ import com.example.eventmanager.application.port.in.CreateCatererUseCase;
 import com.example.eventmanager.application.port.in.GetCatererUseCase;
 import com.example.eventmanager.application.port.in.UpdateCatererProfileUseCase;
 import com.example.eventmanager.application.port.out.CatererRepositoryPort;
+import com.example.eventmanager.application.port.out.EventRepositoryPort;
 import com.example.eventmanager.application.port.out.PasswordEncoderPort;
 import com.example.eventmanager.application.port.out.SecurityContextPort;
 import com.example.eventmanager.domain.exception.CatererAlreadyExistsException;
@@ -24,6 +25,7 @@ public class CatererApplicationService implements CreateCatererUseCase, GetCater
     private final CatererMapper catererMapper;
     private final PasswordEncoderPort passwordEncoderPort;
     private final SecurityContextPort securityContextPort;
+    private final EventRepositoryPort eventRepositoryPort;
 
     @Override
     @Transactional
@@ -38,6 +40,8 @@ public class CatererApplicationService implements CreateCatererUseCase, GetCater
         catererDTO.setRole("TRAITEUR");
         catererDTO.setSubscriptionPlan("FREE");
         catererDTO.setSubscriptionStatus("ACTIVE");
+        catererDTO.setSubscriptionStartDate(java.time.LocalDateTime.now());
+        catererDTO.setSubscriptionEndDate(java.time.LocalDateTime.now().plusDays(30));
 
         Caterer catererToSave = catererMapper.toDomain(catererDTO);
         
@@ -55,7 +59,23 @@ public class CatererApplicationService implements CreateCatererUseCase, GetCater
         Long currentCatererId = securityContextPort.getCurrentCatererId();
         Caterer caterer = catererRepositoryPort.findById(currentCatererId)
                 .orElseThrow(() -> new CatererNotFoundException(currentCatererId));
-        return catererMapper.toDTO(caterer);
+        CatererDTO dto = catererMapper.toDTO(caterer);
+        if (caterer.getRole() != com.example.eventmanager.domain.model.CatererRole.SUPER_ADMIN) {
+            int eventCount = eventRepositoryPort.findAllByCatererId(currentCatererId).size();
+            dto.setEventCount(eventCount);
+            
+            String plan = caterer.getSubscriptionPlan();
+            int limit = switch (plan != null ? plan.toUpperCase() : "FREE") {
+                case "STANDARD" -> 5;
+                case "PREMIUM" -> 15;
+                default -> 2; // "FREE"
+            };
+            dto.setEventLimit(limit);
+        } else {
+            dto.setEventCount(0);
+            dto.setEventLimit(Integer.MAX_VALUE);
+        }
+        return dto;
     }
 
     @Override

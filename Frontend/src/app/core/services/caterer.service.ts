@@ -11,6 +11,8 @@ export interface CatererProfile {
   role?: string;
   subscriptionPlan?: string;
   subscriptionStatus?: string;
+  eventCount?: number;
+  eventLimit?: number;
 }
 
 export interface ChangePasswordRequest {

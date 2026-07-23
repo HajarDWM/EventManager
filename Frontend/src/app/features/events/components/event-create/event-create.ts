@@ -1,8 +1,9 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { EventService } from '../../services/event.service';
+import { CatererService } from '../../../../core/services/caterer.service';
 
 @Component({
   selector: 'app-event-create',
@@ -10,8 +11,9 @@ import { EventService } from '../../services/event.service';
   imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './event-create.html'
 })
-export class EventCreate {
+export class EventCreate implements OnInit {
   private readonly eventService = inject(EventService);
+  private readonly catererService = inject(CatererService);
   private readonly router = inject(Router);
 
   protected readonly title = signal('');
@@ -21,6 +23,26 @@ export class EventCreate {
   protected readonly status = signal<'DRAFT' | 'PLANNED' | 'COMPLETED' | 'CANCELLED'>('PLANNED');
   protected readonly errorMessage = signal('');
   protected readonly isLoading = signal(false);
+  protected readonly isQuotaReached = signal(false);
+
+  public ngOnInit(): void {
+    this.catererService.getCurrentProfile().subscribe({
+      next: (profile) => {
+        if (profile.role !== 'SUPER_ADMIN' && 
+            profile.eventCount !== undefined && 
+            profile.eventLimit !== undefined && 
+            profile.eventCount >= profile.eventLimit) {
+          this.isQuotaReached.set(true);
+          this.errorMessage.set(
+            "Quota dépassé : Vous avez atteint la limite de votre forfait. Veuillez renouveler ou mettre à niveau votre abonnement pour ajouter d'autres événements."
+          );
+        }
+      },
+      error: (err) => {
+        console.error('Erreur lors du chargement du profil traiteur:', err);
+      }
+    });
+  }
 
   protected onSubmit(): void {
     if (!this.title() || !this.eventDate() || !this.location() || this.guestCount() === null) {
@@ -50,7 +72,7 @@ export class EventCreate {
       error: (err) => {
         this.isLoading.set(false);
         this.errorMessage.set(
-          err.error?.error || 'Une erreur est survenue lors de la création de l\'événement.'
+          err.error?.message || err.error?.error || 'Une erreur est survenue lors de la création de l\'événement.'
         );
         console.error(err);
       }

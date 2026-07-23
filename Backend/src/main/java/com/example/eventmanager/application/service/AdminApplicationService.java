@@ -70,6 +70,7 @@ public class AdminApplicationService implements AdminCatererUseCase, AdminStatsU
                 .collect(Collectors.groupingBy(Event::getCatererId, Collectors.counting()));
 
         return caterers.stream()
+                .filter(c -> c.getRole() != com.example.eventmanager.domain.model.CatererRole.SUPER_ADMIN)
                 .map(c -> {
                     CatererDTO dto = catererMapper.toDTO(c);
                     dto.setEventCount(eventCounts.getOrDefault(c.getId(), 0L).intValue());

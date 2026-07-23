@@ -10,6 +10,7 @@ import com.example.eventmanager.application.mapper.EventTaskMapper;
 import com.example.eventmanager.application.mapper.GuestMapper;
 import com.example.eventmanager.application.mapper.MenuItemMapper;
 import com.example.eventmanager.application.port.in.*;
+import com.example.eventmanager.application.port.out.CatererRepositoryPort;
 import com.example.eventmanager.application.port.out.EventRepositoryPort;
 import com.example.eventmanager.application.port.out.EventTaskRepositoryPort;
 import com.example.eventmanager.application.port.out.GuestRepositoryPort;
@@ -17,6 +18,7 @@ import com.example.eventmanager.application.port.out.MenuItemRepositoryPort;
 import com.example.eventmanager.application.port.out.SecurityContextPort;
 import com.example.eventmanager.domain.exception.EventNotFoundException;
 import com.example.eventmanager.domain.exception.UnauthorizedAccessException;
+import com.example.eventmanager.domain.model.Caterer;
 import com.example.eventmanager.domain.model.Event;
 import com.example.eventmanager.domain.model.EventStatus;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +35,7 @@ public class EventApplicationService implements CreateEventUseCase, GetEventUseC
     private final GuestRepositoryPort guestRepositoryPort;
     private final MenuItemRepositoryPort menuItemRepositoryPort;
     private final EventTaskRepositoryPort eventTaskRepositoryPort;
+    private final CatererRepositoryPort catererRepositoryPort;
     private final EventMapper eventMapper;
     private final GuestMapper guestMapper;
     private final MenuItemMapper menuItemMapper;
@@ -43,6 +46,23 @@ public class EventApplicationService implements CreateEventUseCase, GetEventUseC
     @Transactional
     public EventDTO createEvent(EventDTO eventDTO) {
         Long currentCatererId = securityContextPort.getCurrentCatererId();
+        
+        Caterer caterer = catererRepositoryPort.findById(currentCatererId)
+                .orElseThrow(() -> new RuntimeException("Compte traiteur introuvable."));
+
+        if (caterer.getRole() != com.example.eventmanager.domain.model.CatererRole.SUPER_ADMIN) {
+            String plan = caterer.getSubscriptionPlan();
+            int limit = switch (plan != null ? plan.toUpperCase() : "FREE") {
+                case "STANDARD" -> 5;
+                case "PREMIUM" -> 15;
+                default -> 2; // "FREE"
+            };
+
+            List<Event> existingEvents = eventRepositoryPort.findAllByCatererId(currentCatererId);
+            if (existingEvents.size() >= limit) {
+                throw new UnauthorizedAccessException("Quota dépassé : Vous avez atteint la limite de votre forfait. Veuillez renouveler ou mettre à niveau votre abonnement pour ajouter d'autres événements.");
+            }
+        }
         
         Event eventToSave = eventMapper.toDomain(eventDTO);
         

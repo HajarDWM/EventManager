@@ -22,6 +22,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+import com.example.eventmanager.application.port.out.CatererRepositoryPort;
+
 @ExtendWith(MockitoExtension.class)
 class EventApplicationServiceTest {
 
@@ -33,6 +35,9 @@ class EventApplicationServiceTest {
 
     @Mock
     private SecurityContextPort securityContextPort;
+
+    @Mock
+    private CatererRepositoryPort catererRepositoryPort;
 
     @InjectMocks
     private EventApplicationService eventApplicationService;
@@ -65,6 +70,13 @@ class EventApplicationServiceTest {
     void createEvent_ShouldSetStatusToDraft_WhenStatusIsNull() {
         // Arrange
         when(securityContextPort.getCurrentCatererId()).thenReturn(1L);
+        com.example.eventmanager.domain.model.Caterer caterer = com.example.eventmanager.domain.model.Caterer.builder()
+                .id(1L)
+                .role(com.example.eventmanager.domain.model.CatererRole.TRAITEUR)
+                .subscriptionPlan("FREE")
+                .build();
+        when(catererRepositoryPort.findById(1L)).thenReturn(Optional.of(caterer));
+        when(eventRepositoryPort.findAllByCatererId(1L)).thenReturn(java.util.Collections.emptyList());
         when(eventMapper.toDomain(eventDTO)).thenReturn(event);
         when(eventRepositoryPort.save(any(Event.class))).thenReturn(event);
         
@@ -80,6 +92,29 @@ class EventApplicationServiceTest {
         verify(eventRepositoryPort, times(1)).save(event);
         assertEquals(EventStatus.DRAFT, event.getStatus());
         assertEquals(1L, event.getCatererId());
+    }
+
+    @Test
+    void createEvent_ShouldThrowException_WhenQuotaExceeded() {
+        // Arrange
+        when(securityContextPort.getCurrentCatererId()).thenReturn(1L);
+        com.example.eventmanager.domain.model.Caterer caterer = com.example.eventmanager.domain.model.Caterer.builder()
+                .id(1L)
+                .role(com.example.eventmanager.domain.model.CatererRole.TRAITEUR)
+                .subscriptionPlan("FREE") // limit is 2
+                .build();
+        when(catererRepositoryPort.findById(1L)).thenReturn(Optional.of(caterer));
+        
+        // Mock existing events returning 2 events
+        java.util.List<Event> mockEvents = java.util.List.of(mock(Event.class), mock(Event.class));
+        when(eventRepositoryPort.findAllByCatererId(1L)).thenReturn(mockEvents);
+
+        // Act & Assert
+        UnauthorizedAccessException exception = assertThrows(UnauthorizedAccessException.class, () -> {
+            eventApplicationService.createEvent(eventDTO);
+        });
+        assertEquals("Quota dépassé : Vous avez atteint la limite de votre forfait. Veuillez renouveler ou mettre à niveau votre abonnement pour ajouter d'autres événements.", exception.getMessage());
+        verify(eventRepositoryPort, never()).save(any(Event.class));
     }
 
     @Test
