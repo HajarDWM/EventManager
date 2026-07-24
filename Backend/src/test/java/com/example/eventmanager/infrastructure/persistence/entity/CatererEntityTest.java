@@ -41,7 +41,7 @@ class CatererEntityTest {
         CatererEntity entity = new CatererEntity();
 
         // Assert
-        assertEquals("ACTIVE", entity.getAccountStatus());
+        assertEquals("PENDING", entity.getAccountStatus());
     }
 
     @Test
@@ -60,7 +60,7 @@ class CatererEntityTest {
         assertEquals("test@example.com", entity.getEmail());
         assertEquals("password123", entity.getPassword());
         assertNull(entity.getStripeCustomerId());
-        assertEquals("ACTIVE", entity.getAccountStatus());
+        assertEquals("PENDING", entity.getAccountStatus());
         assertEquals("TRAITEUR", entity.getRole());
         assertEquals("FREE", entity.getSubscriptionPlan());
         assertEquals("ACTIVE", entity.getSubscriptionStatus());
@@ -99,7 +99,7 @@ class CatererEntityTest {
         assertNull(entity.getEmail());
         assertNull(entity.getPassword());
         assertNull(entity.getStripeCustomerId());
-        assertEquals("ACTIVE", entity.getAccountStatus()); // Default value
+        assertEquals("PENDING", entity.getAccountStatus()); // Default value
     }
 
     @Test

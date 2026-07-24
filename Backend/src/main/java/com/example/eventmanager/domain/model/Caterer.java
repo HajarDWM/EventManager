@@ -36,11 +36,15 @@ public class Caterer {
     }
 
     public void activateAccount() {
-        this.accountStatus = CatererStatus.ACTIVE;
+        this.accountStatus = CatererStatus.APPROVED;
+    }
+
+    public void pendAccount() {
+        this.accountStatus = CatererStatus.PENDING;
     }
 
     public boolean isActive() {
-        return CatererStatus.ACTIVE.equals(this.accountStatus);
+        return CatererStatus.APPROVED.equals(this.accountStatus);
     }
 
     public void updateBusinessName(String businessName) {

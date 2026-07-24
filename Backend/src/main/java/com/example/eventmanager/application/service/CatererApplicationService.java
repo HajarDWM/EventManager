@@ -45,8 +45,8 @@ public class CatererApplicationService implements CreateCatererUseCase, GetCater
 
         Caterer catererToSave = catererMapper.toDomain(catererDTO);
         
-        // Par défaut, un nouveau compte est actif
-        catererToSave.activateAccount();
+        // Par défaut, un nouveau compte est en attente (PENDING)
+        catererToSave.pendAccount();
 
         Caterer savedCaterer = catererRepositoryPort.save(catererToSave);
 

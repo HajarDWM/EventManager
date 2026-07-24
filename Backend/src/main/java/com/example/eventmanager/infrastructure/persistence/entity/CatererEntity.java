@@ -41,7 +41,7 @@ public class CatererEntity {
 
     @Builder.Default
     @Column(name = "account_status", nullable = false)
-    private String accountStatus = "ACTIVE";
+    private String accountStatus = "PENDING";
 
     @Builder.Default
     @Column(name = "role", nullable = false)

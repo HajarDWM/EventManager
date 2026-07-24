@@ -34,14 +34,14 @@ export class Layout implements OnInit {
     this.catererService.getCurrentProfile().subscribe({
       next: (profile: CatererProfile) => {
         if (profile) {
-          this.userBusinessName.set(profile.businessName || 'Mon Compte Traiteur');
+          this.userBusinessName.set(profile.businessName || 'Mon Compte Organisateur');
           this.userEmail.set(profile.email || '');
           this.isSuperAdmin.set(profile.role === 'SUPER_ADMIN');
         }
       },
       error: (err) => {
-        console.error('Erreur chargement profil traiteur layout', err);
-        this.userBusinessName.set('Mon Compte Traiteur');
+        console.error('Erreur chargement profil organisateur layout', err);
+        this.userBusinessName.set('Mon Compte Organisateur');
       }
     });
   }

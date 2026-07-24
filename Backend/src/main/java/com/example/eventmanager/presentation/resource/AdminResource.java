@@ -41,8 +41,8 @@ public class AdminResource {
 
     // === GESTION DES COMPTES TRAITEURS ===
     @GetMapping("/caterers")
-    public ResponseEntity<List<CatererDTO>> getAllCaterers() {
-        return ResponseEntity.ok(adminCatererUseCase.getAllCaterers());
+    public ResponseEntity<List<CatererDTO>> getAllCaterers(@RequestParam(required = false) String status) {
+        return ResponseEntity.ok(adminCatererUseCase.getAllCaterers(status));
     }
 
     @PutMapping("/caterers/{id}")

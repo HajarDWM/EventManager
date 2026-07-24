@@ -4,9 +4,11 @@ import com.example.eventmanager.application.port.in.LoginUseCase;
 import com.example.eventmanager.application.port.out.CatererRepositoryPort;
 import com.example.eventmanager.application.port.out.JwtServicePort;
 import com.example.eventmanager.application.port.out.PasswordEncoderPort;
+import com.example.eventmanager.domain.exception.AccountPendingApprovalException;
 import com.example.eventmanager.domain.exception.CatererNotFoundException;
 import com.example.eventmanager.domain.model.AuthCredentials;
 import com.example.eventmanager.domain.model.Caterer;
+import com.example.eventmanager.domain.model.CatererStatus;
 import com.example.eventmanager.domain.model.JwtToken;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,8 +30,8 @@ public class AuthApplicationService implements LoginUseCase {
             throw new RuntimeException("Mot de passe incorrect"); // Dans l'idéal, une exception domaine spécifique
         }
 
-        if (!caterer.isActive()) {
-            throw new RuntimeException("Compte inactif ou suspendu");
+        if (caterer.getAccountStatus() == CatererStatus.PENDING || caterer.getAccountStatus() == CatererStatus.SUSPENDED) {
+            throw new AccountPendingApprovalException("Your account is pending admin approval.");
         }
 
         return jwtServicePort.generateToken(caterer);

@@ -5,7 +5,7 @@
         <!-- Sign Up Block -->
         <div class="block block-rounded mb-0 shadow-sm border border-light">
           <div class="block-header block-header-default bg-body-light border-bottom border-light">
-            <h3 class="block-title">Inscription Traiteur</h3>
+            <h3 class="block-title">Inscription Organisateur</h3>
             <div class="block-options">
               <a class="btn-block-option" routerLink="/login" data-bs-toggle="tooltip"
                  data-bs-placement="left" title="Déjà un compte ?">
@@ -17,7 +17,7 @@
             <div class="p-sm-3 px-lg-4 py-lg-4">
               <h1 class="h2 mb-1 text-center">Event<span class="text-primary">Manager</span></h1>
               <p class="fw-medium text-muted text-center mb-4">
-                Créez votre compte traiteur pour gérer vos prestations.
+                Créez votre compte organisateur pour gérer vos prestations.
               </p>
 
               <!-- Success Alert -->
@@ -36,7 +36,7 @@
               <form (ngSubmit)="onSubmit()" *ngIf="!successMessage()">
                 <div class="py-2">
                   <div class="mb-4">
-                    <label class="form-label fs-sm fw-semibold" for="register-business">Nom de l'entreprise (Traiteur)</label>
+                    <label class="form-label fs-sm fw-semibold" for="register-business">Nom de l'entreprise (Organisateur)</label>
                     <input type="text" class="form-control form-control-alt form-control-lg fs-sm"
                            id="register-business" name="register-business" placeholder="Ex: Délices de France"
                            [ngModel]="businessName()" (ngModelChange)="businessName.set($event)" required>

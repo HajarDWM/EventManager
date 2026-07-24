@@ -61,7 +61,7 @@ public class AdminApplicationService implements AdminCatererUseCase, AdminStatsU
 
     @Override
     @Transactional(readOnly = true)
-    public List<CatererDTO> getAllCaterers() {
+    public List<CatererDTO> getAllCaterers(String status) {
         List<Caterer> caterers = catererRepositoryPort.findAll();
         List<Event> events = eventRepositoryPort.findAll();
 
@@ -71,6 +71,7 @@ public class AdminApplicationService implements AdminCatererUseCase, AdminStatsU
 
         return caterers.stream()
                 .filter(c -> c.getRole() != com.example.eventmanager.domain.model.CatererRole.SUPER_ADMIN)
+                .filter(c -> status == null || status.isBlank() || status.equalsIgnoreCase(c.getAccountStatus() != null ? c.getAccountStatus().name() : ""))
                 .map(c -> {
                     CatererDTO dto = catererMapper.toDTO(c);
                     dto.setEventCount(eventCounts.getOrDefault(c.getId(), 0L).intValue());
@@ -90,8 +91,10 @@ public class AdminApplicationService implements AdminCatererUseCase, AdminStatsU
         if (accountStatus != null) {
             if ("SUSPENDED".equalsIgnoreCase(accountStatus)) {
                 caterer.suspendAccount();
-            } else if ("ACTIVE".equalsIgnoreCase(accountStatus)) {
+            } else if ("ACTIVE".equalsIgnoreCase(accountStatus) || "APPROVED".equalsIgnoreCase(accountStatus)) {
                 caterer.activateAccount();
+            } else if ("PENDING".equalsIgnoreCase(accountStatus)) {
+                caterer.pendAccount();
             }
         }
 

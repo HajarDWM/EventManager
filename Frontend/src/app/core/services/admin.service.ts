@@ -40,8 +40,12 @@ export class AdminService {
   }
 
   // === GESTION DES COMPTES TRAITEURS ===
-  public getAllCaterers(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/caterers`);
+  public getAllCaterers(status?: string): Observable<any[]> {
+    let params = new HttpParams();
+    if (status) {
+      params = params.set('status', status);
+    }
+    return this.http.get<any[]>(`${this.apiUrl}/caterers`, { params });
   }
 
   public updateCatererStatusAndSubscription(

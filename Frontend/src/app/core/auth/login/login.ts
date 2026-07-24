@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../services/auth.service';
+import { CatererService } from '../../services/caterer.service';
 
 @Component({
   selector: 'app-login',
@@ -13,6 +14,7 @@ import { AuthService } from '../services/auth.service';
 export class Login {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly catererService = inject(CatererService);
 
   protected readonly email = signal('');
   protected readonly password = signal('');
@@ -33,14 +35,30 @@ export class Login {
       password: this.password()
     }).subscribe({
       next: () => {
-        this.isLoading.set(false);
-        this.router.navigate(['/dashboard']);
+        this.catererService.getCurrentProfile().subscribe({
+          next: (profile) => {
+            this.isLoading.set(false);
+            if (profile && profile.role === 'SUPER_ADMIN') {
+              this.router.navigate(['/admin/caterers']);
+            } else {
+              this.router.navigate(['/events']);
+            }
+          },
+          error: (err) => {
+            this.isLoading.set(false);
+            this.router.navigate(['/events']);
+          }
+        });
       },
       error: (err) => {
         this.isLoading.set(false);
-        this.errorMessage.set(
-          err.error?.error || 'Email ou mot de passe incorrect.'
-        );
+        if (err.status === 403 && err.error?.error === 'ACCOUNT_PENDING_APPROVAL') {
+          this.router.navigate(['/pending-approval']);
+        } else {
+          this.errorMessage.set(
+            err.error?.error || 'Email ou mot de passe incorrect.'
+          );
+        }
       }
     });
   }

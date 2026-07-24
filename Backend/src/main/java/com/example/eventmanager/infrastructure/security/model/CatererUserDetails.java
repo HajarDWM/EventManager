@@ -9,11 +9,13 @@ public class CatererUserDetails extends User {
 
     private final Long catererId;
     private final String role;
+    private final String accountStatus;
 
-    public CatererUserDetails(String username, String password, Collection<? extends GrantedAuthority> authorities, Long catererId, String role) {
+    public CatererUserDetails(String username, String password, Collection<? extends GrantedAuthority> authorities, Long catererId, String role, String accountStatus) {
         super(username, password, authorities);
         this.catererId = catererId;
         this.role = role;
+        this.accountStatus = accountStatus;
     }
 
     public Long getCatererId() {
@@ -22,5 +24,9 @@ public class CatererUserDetails extends User {
 
     public String getRole() {
         return role;
+    }
+
+    public String getAccountStatus() {
+        return accountStatus;
     }
 }

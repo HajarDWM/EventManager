@@ -2,10 +2,10 @@
 <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-2 text-center text-md-start">
   <div class="flex-grow-1 mb-1 mb-md-0">
     <h1 class="h3 fw-bold mb-2">
-      Gestion des Comptes Traiteurs
+      Gestion des Comptes Organisateurs
     </h1>
     <h2 class="h6 fw-medium text-muted mb-0">
-      Supervisez les abonnements, activez ou suspendez les accès de vos traiteurs.
+      Supervisez les abonnements, activez ou suspendez les accès de vos organisateurs.
     </h2>
   </div>
 </div>
@@ -28,9 +28,17 @@
 <div class="block block-rounded bg-white shadow-sm border border-light mt-4">
   <div class="block-header block-header-default border-bottom bg-body-light d-flex justify-content-between align-items-center">
     <h3 class="block-title fw-bold">Liste des organisateurs</h3>
-    <div class="d-flex gap-2">
+    <div class="d-flex align-items-center gap-2">
+      <!-- Status Filter Dropdown -->
+      <select class="form-select form-select-sm" [ngModel]="selectedStatusFilter()" (ngModelChange)="onStatusFilterChange($event)" style="width: 210px;" name="statusFilter">
+        <option value="">Tous les statuts</option>
+        <option value="PENDING">En attente d'approbation</option>
+        <option value="APPROVED">Approuvés</option>
+        <option value="SUSPENDED">Suspendus</option>
+      </select>
+
       <button class="btn btn-sm btn-primary" (click)="openAddModal()">
-        <i class="fa fa-plus me-1"></i> Ajouter un Traiteur
+        <i class="fa fa-plus me-1"></i> Ajouter un Organisateur
       </button>
       <button class="btn btn-sm btn-alt-secondary" (click)="loadCaterers()" [disabled]="isLoading()">
         <i class="fa fa-sync-alt" [class.fa-spin]="isLoading()"></i> Actualiser
@@ -81,37 +89,42 @@
             </td>
             <td class="text-center">
               <span class="badge" [ngClass]="{
-                'bg-success': caterer.accountStatus === 'ACTIVE' && (caterer.subscriptionStatus === 'ACTIVE' || caterer.subscriptionStatus === 'TRIAL'),
-                'bg-warning text-dark': (caterer.accountStatus === 'ACTIVE' && (caterer.subscriptionStatus === 'EXPIRED' || caterer.subscriptionStatus === 'INACTIVE')) || caterer.accountStatus === 'INACTIVE',
+                'bg-success': caterer.accountStatus === 'APPROVED' || caterer.accountStatus === 'ACTIVE',
+                'bg-warning text-dark': caterer.accountStatus === 'PENDING',
                 'bg-danger': caterer.accountStatus === 'SUSPENDED'
               }">
+                <span *ngIf="caterer.accountStatus === 'APPROVED' || caterer.accountStatus === 'ACTIVE'">Approuvé</span>
+                <span *ngIf="caterer.accountStatus === 'PENDING'">En attente d'approbation</span>
                 <span *ngIf="caterer.accountStatus === 'SUSPENDED'">Suspendu</span>
-                <span *ngIf="caterer.accountStatus === 'ACTIVE' && (caterer.subscriptionStatus === 'ACTIVE' || caterer.subscriptionStatus === 'TRIAL')">Actif</span>
-                <span *ngIf="(caterer.accountStatus === 'ACTIVE' && (caterer.subscriptionStatus === 'EXPIRED' || caterer.subscriptionStatus === 'INACTIVE')) || caterer.accountStatus === 'INACTIVE'">En attente de paiement</span>
               </span>
             </td>
             <td class="text-center">
               <div class="btn-group gap-1">
+                <!-- Quick Approve button for PENDING or SUSPENDED -->
+                <button type="button" class="btn btn-sm btn-alt-success" 
+                        *ngIf="caterer.accountStatus === 'PENDING' || caterer.accountStatus === 'SUSPENDED'"
+                        (click)="approveCaterer(caterer)" title="Approuver l'organisateur">
+                  <i class="fa fa-check"></i> Approver
+                </button>
+
+                <!-- Quick Suspend button for PENDING or APPROVED/ACTIVE -->
+                <button type="button" class="btn btn-sm btn-alt-danger" 
+                        *ngIf="caterer.accountStatus === 'PENDING' || caterer.accountStatus === 'APPROVED' || caterer.accountStatus === 'ACTIVE'"
+                        (click)="suspendCaterer(caterer)" title="Suspendre l'organisateur">
+                  <i class="fa fa-ban"></i> Suspendre
+                </button>
+
                 <!-- Edit Subscription button -->
                 <button type="button" class="btn btn-sm btn-alt-info" 
                         (click)="openEditModal(caterer)" title="Gérer l'abonnement">
                   <i class="fa fa-credit-card"></i>
-                </button>
-                
-                <!-- Toggle status button -->
-                <button type="button" class="btn btn-sm" 
-                        [class.btn-alt-danger]="caterer.accountStatus === 'ACTIVE'"
-                        [class.btn-alt-success]="caterer.accountStatus === 'SUSPENDED'"
-                        (click)="toggleAccountStatus(caterer)" 
-                        [title]="caterer.accountStatus === 'ACTIVE' ? 'Suspendre l\'accès' : 'Rétablir l\'accès'">
-                  <i class="fa" [class.fa-ban]="caterer.accountStatus === 'ACTIVE'" [class.fa-check-circle]="caterer.accountStatus === 'SUSPENDED'"></i>
                 </button>
               </div>
             </td>
           </tr>
           <tr *ngIf="caterers().length === 0 && !isLoading()">
             <td colspan="7" class="text-center py-4 text-muted">
-              Aucun traiteur enregistré sur la plateforme.
+              Aucun organisateur enregistré sur la plateforme.
             </td>
           </tr>
         </tbody>
@@ -187,7 +200,7 @@
       <div class="block block-rounded block-transparent mb-0">
         <div class="block-header block-header-default">
           <h3 class="block-title fw-bold text-dark">
-            <i class="fa fa-user-plus text-primary me-2"></i> Ajouter un nouveau Traiteur
+            <i class="fa fa-user-plus text-primary me-2"></i> Ajouter un nouvel Organisateur
           </h3>
           <div class="block-options">
             <button type="button" class="btn-block-option" (click)="closeAddModal()">

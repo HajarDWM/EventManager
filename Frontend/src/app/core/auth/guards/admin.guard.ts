@@ -14,7 +14,7 @@ export const adminGuard: CanActivateFn = (route, state) => {
     if (cachedProfile.role === 'SUPER_ADMIN') {
       return true;
     }
-    router.navigate(['/dashboard']);
+    router.navigate(['/events']);
     return false;
   }
 
@@ -24,11 +24,15 @@ export const adminGuard: CanActivateFn = (route, state) => {
       if (profile && profile.role === 'SUPER_ADMIN') {
         return true;
       }
-      router.navigate(['/dashboard']);
+      router.navigate(['/events']);
       return false;
     }),
-    catchError(() => {
-      router.navigate(['/login']);
+    catchError((err) => {
+      if (err.status === 403 && err.error?.error === 'ACCOUNT_PENDING_APPROVAL') {
+        router.navigate(['/pending-approval']);
+      } else {
+        router.navigate(['/login']);
+      }
       return of(false);
     })
   );

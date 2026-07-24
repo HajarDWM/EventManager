@@ -18,6 +18,7 @@ import { AdminDashboard } from './features/admin/dashboard/admin-dashboard';
 import { AdminCatererList } from './features/admin/caterers/admin-caterer-list';
 import { AdminInvitationTemplates } from './features/admin/templates/admin-invitation-templates';
 import { AdminBillingSettings } from './features/admin/billing/admin-billing-settings';
+import { PendingApproval } from './core/auth/pending-approval/pending-approval';
 
 export const routes: Routes = [
   {
@@ -29,6 +30,10 @@ export const routes: Routes = [
     path: 'register',
     component: Register,
     canActivate: [guestGuard]
+  },
+  {
+    path: 'pending-approval',
+    component: PendingApproval
   },
   {
     path: '',
@@ -93,13 +98,13 @@ export const routes: Routes = [
       },
       {
         path: '',
-        redirectTo: 'dashboard',
+        redirectTo: 'events',
         pathMatch: 'full'
       }
     ]
   },
   {
     path: '**',
-    redirectTo: 'dashboard'
+    redirectTo: 'events'
   }
 ];

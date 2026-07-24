@@ -18,6 +18,8 @@ export class AdminCatererList implements OnInit {
   protected readonly successMessage = signal('');
   protected readonly errorMessage = signal('');
 
+  protected readonly selectedStatusFilter = signal<string>('');
+
   // Selected Caterer for Edit Subscription Modal
   protected selectedCaterer = signal<any | null>(null);
   protected editPlan = signal('FREE');
@@ -40,29 +42,42 @@ export class AdminCatererList implements OnInit {
 
   protected loadCaterers(): void {
     this.isLoading.set(true);
-    this.adminService.getAllCaterers().subscribe({
+    this.adminService.getAllCaterers(this.selectedStatusFilter()).subscribe({
       next: (res) => {
         this.caterers.set(res);
         this.isLoading.set(false);
       },
       error: (err) => {
         this.isLoading.set(false);
-        this.errorMessage.set('Erreur lors du chargement des comptes traiteurs.');
+        this.errorMessage.set('Erreur lors du chargement des comptes organisateurs.');
         console.error(err);
       }
     });
   }
 
-  protected toggleAccountStatus(caterer: any): void {
-    const nextStatus = caterer.accountStatus === 'SUSPENDED' ? 'ACTIVE' : 'SUSPENDED';
+  protected onStatusFilterChange(status: string): void {
+    this.selectedStatusFilter.set(status);
+    this.loadCaterers();
+  }
+
+  protected approveCaterer(caterer: any): void {
+    this.updateStatus(caterer, 'APPROVED');
+  }
+
+  protected suspendCaterer(caterer: any): void {
+    this.updateStatus(caterer, 'SUSPENDED');
+  }
+
+  private updateStatus(caterer: any, status: string): void {
     this.isLoading.set(true);
     this.successMessage.set('');
     this.errorMessage.set('');
 
-    this.adminService.updateCatererStatusAndSubscription(caterer.id, nextStatus).subscribe({
+    this.adminService.updateCatererStatusAndSubscription(caterer.id, status).subscribe({
       next: (updated) => {
         this.loadCaterers();
-        this.successMessage.set(`Le compte de ${caterer.businessName} a été ${nextStatus === 'SUSPENDED' ? 'suspendu' : 'activé'} avec succès.`);
+        const actionLabel = status === 'APPROVED' ? 'approuvé' : 'suspendu';
+        this.successMessage.set(`Le compte de ${caterer.businessName} a été ${actionLabel} avec succès.`);
       },
       error: (err) => {
         this.isLoading.set(false);
@@ -164,11 +179,11 @@ export class AdminCatererList implements OnInit {
       next: (res) => {
         this.loadCaterers();
         this.closeAddModal();
-        this.successMessage.set(`Compte traiteur "${res.businessName}" créé avec succès.`);
+        this.successMessage.set(`Compte organisateur "${res.businessName}" créé avec succès.`);
       },
       error: (err) => {
         this.isLoading.set(false);
-        this.errorMessage.set(err.error?.message || 'Erreur lors de la création du compte traiteur.');
+        this.errorMessage.set(err.error?.message || 'Erreur lors de la création du compte organisateur.');
         console.error(err);
       }
     });

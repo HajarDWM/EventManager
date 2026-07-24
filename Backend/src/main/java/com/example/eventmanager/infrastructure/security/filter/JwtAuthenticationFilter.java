@@ -46,6 +46,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
 
+                if (userDetails instanceof com.example.eventmanager.infrastructure.security.model.CatererUserDetails catererDetails) {
+                    String status = catererDetails.getAccountStatus();
+                    if ("PENDING".equalsIgnoreCase(status) || "SUSPENDED".equalsIgnoreCase(status)) {
+                        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                        response.setContentType("application/json");
+                        response.setCharacterEncoding("UTF-8");
+                        response.getWriter().write("{\"error\": \"ACCOUNT_PENDING_APPROVAL\", \"message\": \"Your account is pending admin approval.\"}");
+                        return;
+                    }
+                }
+
                 if (jwtServicePort.isTokenValid(jwt, userDetails.getUsername())) {
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                             userDetails,

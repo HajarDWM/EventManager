@@ -33,13 +33,26 @@ public class CatererMapper {
             return null;
         }
 
+        CatererStatus status;
+        if (dto.getAccountStatus() == null) {
+            status = CatererStatus.PENDING;
+        } else if ("ACTIVE".equalsIgnoreCase(dto.getAccountStatus()) || "APPROVED".equalsIgnoreCase(dto.getAccountStatus())) {
+            status = CatererStatus.APPROVED;
+        } else {
+            try {
+                status = CatererStatus.valueOf(dto.getAccountStatus());
+            } catch (IllegalArgumentException e) {
+                status = CatererStatus.PENDING;
+            }
+        }
+
         return Caterer.builder()
                 .id(dto.getId())
                 .businessName(dto.getBusinessName())
                 .email(dto.getEmail())
                 .password(dto.getPassword())
                 .stripeCustomerId(dto.getStripeCustomerId())
-                .accountStatus(dto.getAccountStatus() != null ? CatererStatus.valueOf(dto.getAccountStatus()) : CatererStatus.ACTIVE)
+                .accountStatus(status)
                 .role(dto.getRole() != null ? com.example.eventmanager.domain.model.CatererRole.valueOf(dto.getRole()) : com.example.eventmanager.domain.model.CatererRole.TRAITEUR)
                 .subscriptionPlan(dto.getSubscriptionPlan() != null ? dto.getSubscriptionPlan() : "FREE")
                 .subscriptionStatus(dto.getSubscriptionStatus() != null ? dto.getSubscriptionStatus() : "ACTIVE")

@@ -32,7 +32,7 @@ class CatererRepositoryTest {
                 .email("test@catering.com")
                 .password("hashedPassword123")
                 .stripeCustomerId("cus_test123")
-                .accountStatus("ACTIVE")
+                .accountStatus("APPROVED")
                 .build();
     }
 
@@ -79,12 +79,12 @@ class CatererRepositoryTest {
                 .businessName("Inactive Catering")
                 .email("inactive@catering.com")
                 .password("hashedPassword123")
-                .accountStatus("INACTIVE")
+                .accountStatus("SUSPENDED")
                 .build();
         catererRepository.save(inactiveCaterer);
 
         // Act
-        List<CatererEntity> activeCaterers = catererRepository.findByAccountStatus("ACTIVE");
+        List<CatererEntity> activeCaterers = catererRepository.findByAccountStatus("APPROVED");
 
         // Assert
         assertEquals(1, activeCaterers.size());
@@ -166,7 +166,7 @@ class CatererRepositoryTest {
                 .businessName("Another Catering")
                 .email("another@catering.com")
                 .password("hashedPassword456")
-                .accountStatus("ACTIVE")
+                .accountStatus("APPROVED")
                 .build();
 
         catererRepository.save(caterer1);
@@ -188,7 +188,7 @@ class CatererRepositoryTest {
                 .businessName("Different Catering")
                 .email("test@catering.com") // Same email
                 .password("hashedPassword789")
-                .accountStatus("ACTIVE")
+                .accountStatus("APPROVED")
                 .build();
 
         // Act & Assert - should throw exception due to unique constraint

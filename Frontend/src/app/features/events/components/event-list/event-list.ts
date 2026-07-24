@@ -1,9 +1,10 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { EventService } from '../../services/event.service';
 import { Event } from '../../models/event.model';
+import { CatererService } from '../../../../core/services/caterer.service';
 
 @Component({
   selector: 'app-event-list',
@@ -13,6 +14,8 @@ import { Event } from '../../models/event.model';
 })
 export class EventList implements OnInit {
   private readonly eventService = inject(EventService);
+  private readonly catererService = inject(CatererService);
+  private readonly router = inject(Router);
 
   protected readonly events = signal<Event[]>([]);
   protected readonly isLoading = signal(false);
@@ -64,7 +67,26 @@ export class EventList implements OnInit {
   });
 
   public ngOnInit(): void {
-    this.loadEvents();
+    // Check if the logged-in user is a SUPER_ADMIN
+    const profile = this.catererService.currentProfile();
+    if (profile && profile.role === 'SUPER_ADMIN') {
+      this.router.navigate(['/admin/caterers']);
+      return;
+    }
+
+    // Otherwise fetch to confirm or retrieve from REST
+    this.catererService.getCurrentProfile().subscribe({
+      next: (prof) => {
+        if (prof && prof.role === 'SUPER_ADMIN') {
+          this.router.navigate(['/admin/caterers']);
+        } else {
+          this.loadEvents();
+        }
+      },
+      error: () => {
+        this.loadEvents();
+      }
+    });
   }
 
   protected loadEvents(): void {

@@ -11,7 +11,7 @@ export const guestGuard: CanActivateFn = (route, state) => {
     return true;
   }
 
-  // Si l'utilisateur est déjà connecté, on le redirige vers le tableau de bord
-  router.navigate(['/dashboard']);
+  // Si l'utilisateur est déjà connecté, on le redirige vers la liste des événements
+  router.navigate(['/events']);
   return false;
 };

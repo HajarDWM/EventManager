@@ -32,7 +32,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 caterer.getPassword(),
                 authorities,
                 caterer.getId(),
-                roleName
+                roleName,
+                caterer.getAccountStatus() != null ? caterer.getAccountStatus().name() : "PENDING"
         );
     }
 }

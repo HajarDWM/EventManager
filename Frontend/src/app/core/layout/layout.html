@@ -13,7 +13,7 @@
     <!-- Side Header -->
     <div class="content-header">
       <!-- Logo -->
-      <a class="fw-semibold text-dual" routerLink="/dashboard">
+      <a class="fw-semibold text-dual" routerLink="/events">
         <span class="smini-visible">
           <i class="fa fa-circle-notch text-primary"></i>
         </span>
@@ -55,7 +55,7 @@
             </a>
           </li>
           
-          <!-- Menu Traiteur standard -->
+          <!-- Menu Organisateur standard -->
           <ng-container *ngIf="!isSuperAdmin()">
             <li class="nav-main-heading">Prestations</li>
             <li class="nav-main-item">
@@ -72,7 +72,7 @@
             <li class="nav-main-item">
               <a class="nav-main-link" routerLink="/admin/caterers" routerLinkActive="active">
                 <i class="nav-main-link-icon si si-users"></i>
-                <span class="nav-main-link-name">Gestion Traiteurs</span>
+                <span class="nav-main-link-name">Gestion Organisateurs</span>
               </a>
             </li>
             <li class="nav-main-item">
@@ -129,7 +129,7 @@
           <button type="button" class="btn btn-sm btn-alt-secondary d-flex align-items-center gap-2" 
                   id="page-header-user-dropdown" (click)="toggleUserDropdown()">
             <span class="d-none d-sm-inline-block fw-semibold">
-              {{ isSuperAdmin() ? 'Admin' : 'Traiteur' }} : {{ userBusinessName() }}
+              {{ isSuperAdmin() ? 'Admin' : 'Organisateur' }} : {{ userBusinessName() }}
             </span>
             <i class="fa fa-fw fa-angle-down opacity-50"></i>
           </button>
@@ -142,7 +142,7 @@
               <p class="mt-2 mb-0 fw-semibold">{{ userBusinessName() }}</p>
               <p class="mb-2 text-muted fs-sm">{{ userEmail() }}</p>
               <span class="badge px-3 py-1.5" [ngClass]="isSuperAdmin() ? 'bg-danger-light text-danger' : 'bg-primary-light text-primary'">
-                {{ isSuperAdmin() ? 'Administrateur' : 'Traiteur' }}
+                {{ isSuperAdmin() ? 'Administrateur' : 'Organisateur' }}
               </span>
             </div>
             <div class="p-2">

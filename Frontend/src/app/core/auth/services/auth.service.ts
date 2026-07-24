@@ -36,7 +36,7 @@ export class AuthService {
   }
 
   public register(caterer: any): Observable<any> {
-    return this.http.post<any>('/api/caterers', caterer);
+    return this.http.post<any>('/api/auth/register', caterer);
   }
 
   public logout(): void {
