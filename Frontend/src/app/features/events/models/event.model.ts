@@ -3,7 +3,7 @@ export interface Event {
   title: string;
   eventDate: string;
   location: string;
-  guestCount: number;
+  guestCount?: number | null;
   status?: 'DRAFT' | 'PLANNED' | 'COMPLETED' | 'CANCELLED';
   catererId?: number;
 }

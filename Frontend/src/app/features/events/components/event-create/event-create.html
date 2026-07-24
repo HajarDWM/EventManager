@@ -35,12 +35,21 @@
           </div>
 
           <!-- Date & Heure -->
-          <div class="mb-4">
-            <label class="form-label fs-sm fw-semibold" for="event-date">Date & Heure <span class="text-danger">*</span></label>
-            <input type="datetime-local" class="form-control form-control-alt fs-sm"
-                   id="event-date" name="event-date"
-                   [ngModel]="eventDate()" (ngModelChange)="eventDate.set($event)" required
-                   [disabled]="isQuotaReached()">
+          <div class="row mb-4">
+            <div class="col-sm-8">
+              <label class="form-label fs-sm fw-semibold" for="event-date">Date de l'événement <span class="text-danger">*</span></label>
+              <input type="date" class="form-control form-control-alt fs-sm"
+                     id="event-date" name="event-date"
+                     [ngModel]="eventDateOnly()" (ngModelChange)="eventDateOnly.set($event)" required
+                     [disabled]="isQuotaReached()">
+            </div>
+            <div class="col-sm-4">
+              <label class="form-label fs-sm fw-semibold" for="event-time">Heure (facultatif)</label>
+              <input type="time" class="form-control form-control-alt fs-sm"
+                     id="event-time" name="event-time"
+                     [ngModel]="eventTimeOnly()" (ngModelChange)="eventTimeOnly.set($event)"
+                     [disabled]="isQuotaReached()">
+            </div>
           </div>
 
           <!-- Lieu -->
@@ -54,26 +63,14 @@
 
           <!-- Nombre d'invités -->
           <div class="mb-4">
-            <label class="form-label fs-sm fw-semibold" for="event-guests">Nombre d'invités attendus <span class="text-danger">*</span></label>
+            <label class="form-label fs-sm fw-semibold" for="event-guests">Nombre d'invités attendus</label>
             <input type="number" class="form-control form-control-alt fs-sm"
-                   id="event-guests" name="event-guests" placeholder="Ex: 150" min="1"
-                   [ngModel]="guestCount()" (ngModelChange)="guestCount.set($event)" required
+                   id="event-guests" name="event-guests" placeholder="Ex: 150 (facultatif)" min="1"
+                   [ngModel]="guestCount()" (ngModelChange)="guestCount.set($event)"
                    [disabled]="isQuotaReached()">
           </div>
 
-          <!-- Statut -->
-          <div class="mb-4">
-            <label class="form-label fs-sm fw-semibold" for="event-status">Statut de la prestation</label>
-            <select class="form-select form-control-alt fs-sm"
-                    id="event-status" name="event-status"
-                    [ngModel]="status()" (ngModelChange)="status.set($event)"
-                    [disabled]="isQuotaReached()">
-              <option value="PLANNED">Planifié</option>
-              <option value="DRAFT">Brouillon</option>
-              <option value="COMPLETED">Terminé</option>
-              <option value="CANCELLED">Annulé</option>
-            </select>
-          </div>
+
 
           <!-- Actions -->
           <div class="mb-4 d-flex gap-2">

@@ -39,6 +39,7 @@ export class EventExport implements OnInit {
   protected readonly mains = computed(() => this.menuItems().filter(m => m.category === 'MAIN'));
   protected readonly desserts = computed(() => this.menuItems().filter(m => m.category === 'DESSERT'));
   protected readonly beverages = computed(() => this.menuItems().filter(m => m.category === 'BEVERAGE'));
+  protected readonly others = computed(() => this.menuItems().filter(m => m.category === 'OTHER'));
 
   // Metrics
   protected readonly pricePerPerson = computed(() => {

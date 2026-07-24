@@ -17,10 +17,11 @@ export class EventCreate implements OnInit {
   private readonly router = inject(Router);
 
   protected readonly title = signal('');
-  protected readonly eventDate = signal('');
+  protected readonly eventDateOnly = signal('');
+  protected readonly eventTimeOnly = signal('');
   protected readonly location = signal('');
   protected readonly guestCount = signal<number | null>(null);
-  protected readonly status = signal<'DRAFT' | 'PLANNED' | 'COMPLETED' | 'CANCELLED'>('PLANNED');
+  protected readonly status = signal<'DRAFT' | 'PLANNED' | 'COMPLETED' | 'CANCELLED'>('DRAFT');
   protected readonly errorMessage = signal('');
   protected readonly isLoading = signal(false);
   protected readonly isQuotaReached = signal(false);
@@ -45,12 +46,12 @@ export class EventCreate implements OnInit {
   }
 
   protected onSubmit(): void {
-    if (!this.title() || !this.eventDate() || !this.location() || this.guestCount() === null) {
+    if (!this.title() || !this.eventDateOnly() || !this.location()) {
       this.errorMessage.set('Veuillez remplir tous les champs obligatoires.');
       return;
     }
 
-    if (this.guestCount()! <= 0) {
+    if (this.guestCount() !== null && this.guestCount() !== undefined && this.guestCount()! <= 0) {
       this.errorMessage.set('Le nombre d\'invités doit être supérieur à 0.');
       return;
     }
@@ -58,11 +59,13 @@ export class EventCreate implements OnInit {
     this.isLoading.set(true);
     this.errorMessage.set('');
 
+    const dateVal = this.eventDateOnly() + (this.eventTimeOnly() ? 'T' + this.eventTimeOnly() : 'T00:00');
+
     this.eventService.createEvent({
       title: this.title(),
-      eventDate: this.eventDate(),
+      eventDate: dateVal,
       location: this.location(),
-      guestCount: this.guestCount()!,
+      guestCount: this.guestCount(),
       status: this.status()
     }).subscribe({
       next: () => {

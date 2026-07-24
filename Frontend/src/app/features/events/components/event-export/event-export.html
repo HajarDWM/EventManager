@@ -28,7 +28,7 @@
         <i class="fa fa-utensils me-1"></i> Fiche Cuisine & Restauration
       </button>
       <button type="button" class="btn" [class.btn-primary]="activeTab() === 'guests'" [class.btn-alt-secondary]="activeTab() !== 'guests'" (click)="setTab('guests')">
-        <i class="fa fa-users me-1"></i> Plan de Table & Invités
+        <i class="fa fa-users me-1"></i> Positionnement & Invités
       </button>
       <button type="button" class="btn" [class.btn-primary]="activeTab() === 'tasks'" [class.btn-alt-secondary]="activeTab() !== 'tasks'" (click)="setTab('tasks')">
         <i class="fa fa-tasks me-1"></i> Fiche Rétroplanning
@@ -136,6 +136,20 @@
         </ul>
       </div>
 
+      <div class="mb-4" *ngIf="others().length > 0">
+        <h4 class="h6 fw-bold text-secondary text-uppercase border-bottom pb-1 mb-2">Autres (Buffet, Entrées, etc.)</h4>
+        <ul class="list-group list-group-flush mb-2">
+          <li class="list-group-item d-flex justify-content-between align-items-start px-0 py-2" *ngFor="let item of others()">
+            <div>
+              <div class="fw-semibold text-dark">{{ item.name }}</div>
+              <div class="fs-xs text-muted" *ngIf="item.description">{{ item.description }}</div>
+              <span class="badge bg-light text-dark fs-xs border me-1" *ngIf="item.dietaryTag"><i class="fa fa-leaf text-success me-1"></i>{{ item.dietaryTag }}</span>
+            </div>
+            <div class="fw-bold text-primary fs-sm">{{ item.pricePerPerson | number:'1.2-2' }} €</div>
+          </li>
+        </ul>
+      </div>
+
       <!-- Financial Summary Box -->
       <div class="p-3 bg-light rounded border mt-4">
         <div class="row text-center fs-sm">
@@ -159,7 +173,7 @@
     <div *ngIf="activeTab() === 'guests'">
       <div class="d-flex justify-content-between align-items-center mb-3">
         <h3 class="h5 fw-bold text-uppercase tracking-wider text-dark mb-0">
-          <i class="fa fa-users text-primary me-2"></i> Fiche Plan de Table & Exigences Alimentaires
+          <i class="fa fa-users text-primary me-2"></i> Fiche Positionnement & Exigences Alimentaires
         </h3>
         <span class="fs-sm text-muted">Total invités : <strong>{{ guests().length }}</strong></span>
       </div>
@@ -170,7 +184,7 @@
             <th>Nom Complet</th>
             <th>Contact</th>
             <th>Statut Présence</th>
-            <th>Numéro de Table</th>
+            <th>Position</th>
             <th>Régime / Remarques Alimentaires</th>
           </tr>
         </thead>
@@ -184,7 +198,7 @@
               <span class="badge bg-danger-light text-danger" *ngIf="g.status === 'DECLINED'">Décliné</span>
             </td>
             <td class="fw-bold">
-              <span *ngIf="g.tableNumber">Table {{ g.tableNumber }}</span>
+              <span *ngIf="g.tableNumber">{{ g.tableNumber }}</span>
               <span class="text-muted fs-xs" *ngIf="!g.tableNumber">Non attribuée</span>
             </td>
             <td>

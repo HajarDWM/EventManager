@@ -4,5 +4,6 @@ public enum MenuItemCategory {
     STARTER,   // Entrée
     MAIN,      // Plat Principal
     DESSERT,   // Dessert
-    BEVERAGE   // Boisson
+    BEVERAGE,  // Boisson
+    OTHER      // Autre / Divers / Buffet
 }

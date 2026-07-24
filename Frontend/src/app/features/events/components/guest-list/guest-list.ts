@@ -5,6 +5,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { GuestService, Guest, GuestStatus } from '../../../../core/services/guest.service';
 import { EventService } from '../../services/event.service';
 import { Event } from '../../models/event.model';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-guest-list',
@@ -182,5 +183,172 @@ export class GuestList implements OnInit {
         }
       });
     }
+  }
+
+  protected onExportCSV(): void {
+    const csvRows: string[] = [];
+    
+    // Header row with UTF-8 BOM for French Excel compatibility
+    const headers = ['Nom Complet', 'Email', 'Téléphone', 'Statut', 'Position', 'Régime Alimentaire / Notes'];
+    csvRows.push(headers.join(';'));
+    
+    for (const g of this.guests()) {
+      const row = [
+        g.fullName || '',
+        g.email || '',
+        g.phone || '',
+        g.status || 'PENDING',
+        g.tableNumber || '',
+        g.dietaryRequirements || ''
+      ];
+      
+      // Escape values (replacing double quotes and semicolons)
+      const escapedRow = row.map(val => {
+        let clean = val.replace(/"/g, '""'); // Escape quotes
+        if (clean.includes(';') || clean.includes('\n') || clean.includes('\r')) {
+          clean = `"${clean}"`; // Wrap in quotes if it contains semicolons or newlines
+        }
+        return clean;
+      });
+      csvRows.push(escapedRow.join(';'));
+    }
+    
+    const csvContent = '\uFEFF' + csvRows.join('\r\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    
+    const eventTitle = this.event()?.title ? this.event()?.title.replace(/[^a-zA-Z0-9]/g, '_') : 'evenement';
+    link.setAttribute('href', url);
+    link.setAttribute('download', `invites_${eventTitle}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  protected onImportCSV(event: any): void {
+    const target = event.target as HTMLInputElement;
+    const file = target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const text = e.target?.result as string;
+      if (!text) return;
+      this.parseAndImportCSV(text);
+      // Reset input value to allow importing the same file again
+      target.value = '';
+    };
+    reader.onerror = () => {
+      this.errorMessage.set("Erreur lors de la lecture du fichier.");
+    };
+    reader.readAsText(file, 'UTF-8');
+  }
+
+  private parseAndImportCSV(text: string): void {
+    const currentEventId = this.eventId();
+    if (!currentEventId) return;
+
+    this.isLoading.set(true);
+    this.errorMessage.set('');
+    this.successMessage.set('');
+
+    try {
+      // Split lines by newline
+      const lines = text.split(/\r?\n/);
+      if (lines.length <= 1) {
+        throw new Error("Le fichier est vide ou ne contient pas d'invités.");
+      }
+
+      // Detect separator: check first line (header)
+      const headerLine = lines[0];
+      let sep = ';';
+      if (headerLine.includes(';') && !headerLine.includes(',')) {
+        sep = ';';
+      } else if (headerLine.includes(',') && !headerLine.includes(';')) {
+        sep = ',';
+      } else {
+        sep = headerLine.includes(';') ? ';' : (headerLine.includes(',') ? ',' : ';');
+      }
+
+      const importedGuests: Guest[] = [];
+
+      for (let i = 1; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (!line) continue; // Skip empty lines
+
+        // A basic CSV parser that handles quoted strings
+        const columns: string[] = [];
+        let inQuotes = false;
+        let currentValue = '';
+
+        for (let c = 0; c < line.length; c++) {
+          const char = line[c];
+          if (char === '"') {
+            inQuotes = !inQuotes;
+          } else if (char === sep && !inQuotes) {
+            columns.push(currentValue.trim());
+            currentValue = '';
+          } else {
+            currentValue += char;
+          }
+        }
+        columns.push(currentValue.trim());
+
+        // We expect columns: [fullName, email, phone, status, position, dietaryRequirements]
+        // Clean double quotes if any remained
+        const cleanedCols = columns.map(c => c.replace(/^"|"$/g, '').replace(/""/g, '"'));
+
+        const fullName = cleanedCols[0];
+        if (!fullName) {
+          continue; // Skip lines without a name
+        }
+
+        // Map status
+        let statusVal: GuestStatus = 'PENDING';
+        const rawStatus = cleanedCols[3]?.toUpperCase() || '';
+        if (rawStatus.includes('CONFIRM') || rawStatus.includes('OUI') || rawStatus === 'CONFIRMED') {
+          statusVal = 'CONFIRMED';
+        } else if (rawStatus.includes('DECLIN') || rawStatus.includes('NON') || rawStatus === 'DECLINED') {
+          statusVal = 'DECLINED';
+        }
+
+        importedGuests.push({
+          fullName: fullName,
+          email: cleanedCols[1] || '',
+          phone: cleanedCols[2] || '',
+          status: statusVal,
+          tableNumber: cleanedCols[4] || '',
+          dietaryRequirements: cleanedCols[5] || ''
+        });
+      }
+
+      if (importedGuests.length === 0) {
+        throw new Error("Aucun invité valide trouvé dans le fichier.");
+      }
+
+      this.saveImportedGuests(currentEventId, importedGuests);
+
+    } catch (err: any) {
+      this.isLoading.set(false);
+      this.errorMessage.set(err.message || "Erreur lors du traitement du fichier CSV.");
+      console.error(err);
+    }
+  }
+
+  private saveImportedGuests(eventId: number, list: Guest[]): void {
+    const obsList = list.map(g => this.guestService.createGuest(eventId, g));
+    forkJoin(obsList).subscribe({
+      next: (results) => {
+        this.successMessage.set(`${results.length} invités importés avec succès.`);
+        this.loadGuests(eventId);
+      },
+      error: (err) => {
+        this.errorMessage.set("Une erreur est survenue lors de l'importation de certains invités.");
+        this.loadGuests(eventId); // Reload what succeeded
+        console.error(err);
+      }
+    });
   }
 }

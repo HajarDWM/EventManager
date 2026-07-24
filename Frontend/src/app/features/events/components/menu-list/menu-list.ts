@@ -41,6 +41,65 @@ export class MenuList implements OnInit {
   protected readonly dietaryTag = signal<string>('');
   protected readonly description = signal<string>('');
 
+  protected readonly selectedDiets = signal<Record<string, boolean>>({});
+  protected readonly customDietNotes = signal<string>('');
+  
+  protected readonly isAutocompleteOpen = signal<boolean>(false);
+
+  protected readonly commonDietaryOptions = [
+    { label: 'Végétarien', value: 'Végétarien', isCritical: false },
+    { label: 'Vegan', value: 'Vegan', isCritical: false },
+    { label: 'Sans Gluten', value: 'Sans Gluten', isCritical: false },
+    { label: 'Sans Lactose', value: 'Sans Lactose', isCritical: false },
+    { label: 'Sans Arachides (Alerte Médicale)', value: 'Sans Arachides', isCritical: true },
+    { label: 'Halal', value: 'Halal', isCritical: false },
+    { label: 'Sans Fruits de mer', value: 'Sans Fruits de mer', isCritical: false },
+    { label: 'Sans Sucre', value: 'Sans Sucre', isCritical: false }
+  ];
+
+  protected readonly staticSuggestionsDetail: Record<string, { category: string, price: number, dietary: string }> = {
+    "Foie gras de canard maison": { category: 'STARTER', price: 15, dietary: 'Sans Gluten' },
+    "Saumon fumé et blinis": { category: 'STARTER', price: 12, dietary: 'Sans Arachides' },
+    "Salade landaise": { category: 'STARTER', price: 10, dietary: 'Sans Porc' },
+    "Velouté de cèpes": { category: 'STARTER', price: 8, dietary: 'Végétarien' },
+    "Tartare de saumon avocat": { category: 'STARTER', price: 11, dietary: 'Sans Gluten' },
+    "Filet de bœuf sauce morilles": { category: 'MAIN', price: 28, dietary: '' },
+    "Magret de canard au miel": { category: 'MAIN', price: 24, dietary: 'Sans Porc' },
+    "Dos de cabillaud sauce vierge": { category: 'MAIN', price: 22, dietary: 'Sans Arachides' },
+    "Risotto aux truffes": { category: 'MAIN', price: 20, dietary: 'Végétarien, Sans Gluten' },
+    "Suprême de volaille": { category: 'MAIN', price: 18, dietary: '' },
+    "Tarte Tatin et crème fraîche": { category: 'DESSERT', price: 7, dietary: 'Végétarien' },
+    "Moelleux au chocolat": { category: 'DESSERT', price: 6.5, dietary: 'Végétarien' },
+    "Crème brûlée vanille Bourbon": { category: 'DESSERT', price: 6, dietary: 'Végétarien, Sans Gluten' },
+    "Mille-feuille": { category: 'DESSERT', price: 7.5, dietary: 'Végétarien' },
+    "Café gourmand": { category: 'DESSERT', price: 8, dietary: 'Végétarien' },
+    "Champagne Brut": { category: 'BEVERAGE', price: 9, dietary: 'Vegan, Sans Gluten' },
+    "Vin rouge AOC": { category: 'BEVERAGE', price: 6, dietary: 'Vegan, Sans Gluten' },
+    "Vin blanc Chardonnay": { category: 'BEVERAGE', price: 6.5, dietary: 'Vegan, Sans Gluten' },
+    "Eau minérale": { category: 'BEVERAGE', price: 3, dietary: 'Vegan, Sans Gluten' },
+    "Softs et jus de fruits": { category: 'BEVERAGE', price: 4, dietary: 'Vegan, Sans Gluten' },
+    "Buffet de fromages affinés": { category: 'OTHER', price: 12, dietary: 'Végétarien, Sans Gluten' },
+    "Assortiment de pièces cocktail": { category: 'OTHER', price: 25, dietary: '' },
+    "Buffet de desserts": { category: 'OTHER', price: 15, dietary: 'Végétarien' },
+    "Atelier découpe de jambon serrano": { category: 'OTHER', price: 18, dietary: 'Sans Gluten, Sans Lactose' }
+  };
+
+  protected readonly staticSuggestions = Object.keys(this.staticSuggestionsDetail);
+
+  protected readonly filteredSuggestions = computed(() => {
+    const term = this.name().toLowerCase().trim();
+    if (!term) {
+      return this.staticSuggestions;
+    }
+    return this.staticSuggestions.filter(s => s.toLowerCase().includes(term));
+  });
+
+  protected readonly dishSuggestions = computed(() => {
+    const existingNames = this.menuItems().map(item => item.name);
+    const combined = [...new Set([...existingNames, ...this.staticSuggestions])];
+    return combined.sort();
+  });
+
   // Computed Metrics
   protected readonly filteredMenuItems = computed(() => {
     const items = this.menuItems();
@@ -72,6 +131,10 @@ export class MenuList implements OnInit {
 
   protected readonly beverageCount = computed(() => {
     return this.menuItems().filter(i => i.category === 'BEVERAGE').length;
+  });
+
+  protected readonly otherCount = computed(() => {
+    return this.menuItems().filter(i => i.category === 'OTHER').length;
   });
 
   public ngOnInit(): void {
@@ -113,6 +176,8 @@ export class MenuList implements OnInit {
     this.category.set('STARTER');
     this.pricePerPerson.set(0);
     this.dietaryTag.set('');
+    this.selectedDiets.set({});
+    this.customDietNotes.set('');
     this.description.set('');
     this.isModalOpen.set(true);
   }
@@ -124,12 +189,99 @@ export class MenuList implements OnInit {
     this.category.set(item.category || 'STARTER');
     this.pricePerPerson.set(item.pricePerPerson || 0);
     this.dietaryTag.set(item.dietaryTag || '');
+
+    // Parse dietaryTag
+    const dietsMap: Record<string, boolean> = {};
+    const tags = (item.dietaryTag || '').split(',').map(t => t.trim()).filter(Boolean);
+    const standardValues = this.commonDietaryOptions.map(o => o.value);
+    const customNotesList: string[] = [];
+
+    for (const tag of tags) {
+      if (standardValues.includes(tag)) {
+        dietsMap[tag] = true;
+      } else {
+        customNotesList.push(tag);
+      }
+    }
+
+    this.selectedDiets.set(dietsMap);
+    this.customDietNotes.set(customNotesList.join(', '));
     this.description.set(item.description || '');
     this.isModalOpen.set(true);
   }
 
   protected closeModal(): void {
     this.isModalOpen.set(false);
+  }
+
+  protected toggleDiet(value: string, checked: boolean): void {
+    this.selectedDiets.update(map => ({
+      ...map,
+      [value]: checked
+    }));
+  }
+
+  protected onAutocompleteFocusOut(): void {
+    setTimeout(() => {
+      this.isAutocompleteOpen.set(false);
+    }, 200);
+  }
+
+  protected selectSuggestion(suggestion: string): void {
+    this.name.set(suggestion);
+    this.isAutocompleteOpen.set(false);
+
+    // Auto-select category, price and dietary requirements from detail
+    const detail = this.staticSuggestionsDetail[suggestion];
+    if (detail) {
+      this.category.set(detail.category);
+      this.pricePerPerson.set(detail.price);
+
+      // Parse and check the dietary checkboxes
+      const dietsMap: Record<string, boolean> = {};
+      const tags = detail.dietary.split(',').map(t => t.trim()).filter(Boolean);
+      const standardValues = this.commonDietaryOptions.map(o => o.value);
+      const customNotesList: string[] = [];
+
+      for (const tag of tags) {
+        if (standardValues.includes(tag)) {
+          dietsMap[tag] = true;
+        } else {
+          customNotesList.push(tag);
+        }
+      }
+
+      this.selectedDiets.set(dietsMap);
+      this.customDietNotes.set(customNotesList.join(', '));
+    }
+  }
+
+  protected onNameChange(newName: string): void {
+    this.name.set(newName);
+
+    // Check if the input matches any known suggestion
+    const detail = this.staticSuggestionsDetail[newName];
+    if (detail) {
+      this.category.set(detail.category);
+      this.pricePerPerson.set(detail.price);
+
+      // Parse and check the dietary checkboxes
+      const dietsMap: Record<string, boolean> = {};
+      const tags = detail.dietary.split(',').map(t => t.trim()).filter(Boolean);
+      const standardValues = this.commonDietaryOptions.map(o => o.value);
+      const customNotesList: string[] = [];
+
+      for (const tag of tags) {
+        if (standardValues.includes(tag)) {
+          dietsMap[tag] = true;
+        } else {
+          customNotesList.push(tag);
+        }
+      }
+
+      this.selectedDiets.set(dietsMap);
+      this.customDietNotes.set(customNotesList.join(', '));
+    }
   }
 
   protected onSaveMenuItem(): void {
@@ -145,11 +297,22 @@ export class MenuList implements OnInit {
     this.successMessage.set('');
     this.errorMessage.set('');
 
+    // Reconstruct dietaryTag from checkboxes and custom notes
+    const activeDiets = Object.entries(this.selectedDiets())
+      .filter(([_, checked]) => checked)
+      .map(([value]) => value);
+
+    if (this.customDietNotes().trim()) {
+      activeDiets.push(this.customDietNotes().trim());
+    }
+
+    const assembledDietaryTag = activeDiets.join(', ');
+
     const payload: MenuItem = {
       name: this.name().trim(),
       category: this.category(),
       pricePerPerson: this.pricePerPerson() || 0,
-      dietaryTag: this.dietaryTag().trim(),
+      dietaryTag: assembledDietaryTag,
       description: this.description().trim()
     };
 
@@ -206,6 +369,7 @@ export class MenuList implements OnInit {
       case 'MAIN': return 'bg-primary-light text-primary';
       case 'DESSERT': return 'bg-warning-light text-warning';
       case 'BEVERAGE': return 'bg-success-light text-success';
+      case 'OTHER': return 'bg-secondary-light text-secondary';
       default: return 'bg-body-dark text-dark';
     }
   }
@@ -216,6 +380,7 @@ export class MenuList implements OnInit {
       case 'MAIN': return 'Plat Principal';
       case 'DESSERT': return 'Dessert';
       case 'BEVERAGE': return 'Boisson';
+      case 'OTHER': return 'Autre';
       default: return cat;
     }
   }

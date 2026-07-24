@@ -40,11 +40,19 @@
           </div>
 
           <!-- Date & Heure -->
-          <div class="mb-4">
-            <label class="form-label fs-sm fw-semibold" for="event-date">Date & Heure <span class="text-danger">*</span></label>
-            <input type="datetime-local" class="form-control form-control-alt fs-sm"
-                   id="event-date" name="event-date"
-                   [ngModel]="eventDate()" (ngModelChange)="eventDate.set($event)" required>
+          <div class="row mb-4">
+            <div class="col-sm-8">
+              <label class="form-label fs-sm fw-semibold" for="event-date">Date de l'événement <span class="text-danger">*</span></label>
+              <input type="date" class="form-control form-control-alt fs-sm"
+                     id="event-date" name="event-date"
+                     [ngModel]="eventDateOnly()" (ngModelChange)="eventDateOnly.set($event)" required>
+            </div>
+            <div class="col-sm-4">
+              <label class="form-label fs-sm fw-semibold" for="event-time">Heure (facultatif)</label>
+              <input type="time" class="form-control form-control-alt fs-sm"
+                     id="event-time" name="event-time"
+                     [ngModel]="eventTimeOnly()" (ngModelChange)="eventTimeOnly.set($event)">
+            </div>
           </div>
 
           <!-- Lieu -->
@@ -57,10 +65,10 @@
 
           <!-- Nombre d'invités -->
           <div class="mb-4">
-            <label class="form-label fs-sm fw-semibold" for="event-guests">Nombre d'invités attendus <span class="text-danger">*</span></label>
+            <label class="form-label fs-sm fw-semibold" for="event-guests">Nombre d'invités attendus</label>
             <input type="number" class="form-control form-control-alt fs-sm"
-                   id="event-guests" name="event-guests" placeholder="Ex: 150" min="1"
-                   [ngModel]="guestCount()" (ngModelChange)="guestCount.set($event)" required>
+                   id="event-guests" name="event-guests" placeholder="Ex: 150 (facultatif)" min="1"
+                   [ngModel]="guestCount()" (ngModelChange)="guestCount.set($event)">
           </div>
 
           <!-- Statut -->

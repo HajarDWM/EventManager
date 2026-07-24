@@ -124,7 +124,7 @@
             </td>
             <td class="text-center">
               <span class="badge bg-body-dark text-dark fw-bold px-3 py-2 rounded-pill">
-                {{ event.guestCount }}
+                {{ event.guestCount !== null && event.guestCount !== undefined ? event.guestCount : '-' }}
               </span>
             </td>
             <td class="text-center">

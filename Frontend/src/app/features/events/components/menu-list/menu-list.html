@@ -1,11 +1,13 @@
 <!-- Hero Header -->
-<div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-2 text-center text-md-start">
+<div
+  class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-2 text-center text-md-start">
   <div class="flex-grow-1 mb-1 mb-md-0">
     <h1 class="h3 fw-bold mb-2">
       Restauration & Menus
     </h1>
     <h2 class="h6 fw-medium text-muted mb-0" *ngIf="event()">
-      Événement : <strong class="text-primary">{{ event()?.title }}</strong> ({{ event()?.eventDate | date:'dd/MM/yyyy' }}) -
+      Événement : <strong class="text-primary">{{ event()?.title }}</strong> ({{ event()?.eventDate | date:'dd/MM/yyyy'
+      }}) -
       <span class="badge bg-secondary-light text-secondary">{{ event()?.guestCount || 0 }} invités attendus</span>
     </h2>
   </div>
@@ -52,7 +54,9 @@
         <div class="fs-6 fw-semibold text-muted">
           <span class="badge bg-info-light text-info me-1">{{ starterCount() }} Entrées</span>
           <span class="badge bg-primary-light text-primary me-1">{{ mainCount() }} Plats</span>
-          <span class="badge bg-warning-light text-warning">{{ dessertCount() }} Desserts</span>
+          <span class="badge bg-warning-light text-warning me-1">{{ dessertCount() }} Desserts</span>
+          <span class="badge bg-success-light text-success me-1">{{ beverageCount() }} Boissons</span>
+          <span class="badge bg-secondary-light text-secondary" *ngIf="otherCount() > 0">{{ otherCount() }} Autres</span>
         </div>
         <div class="fs-sm fw-semibold text-muted text-uppercase mt-2">Répartition</div>
       </div>
@@ -78,11 +82,22 @@
       <i class="fa fa-utensils me-1 text-primary"></i> Carte & Menu Restauration
     </h3>
     <div class="btn-group btn-group-sm" role="group">
-      <button type="button" class="btn" [class.btn-primary]="selectedCategory() === 'ALL'" [class.btn-alt-secondary]="selectedCategory() !== 'ALL'" (click)="selectedCategory.set('ALL')">Tous</button>
-      <button type="button" class="btn" [class.btn-primary]="selectedCategory() === 'STARTER'" [class.btn-alt-secondary]="selectedCategory() !== 'STARTER'" (click)="selectedCategory.set('STARTER')">Entrées</button>
-      <button type="button" class="btn" [class.btn-primary]="selectedCategory() === 'MAIN'" [class.btn-alt-secondary]="selectedCategory() !== 'MAIN'" (click)="selectedCategory.set('MAIN')">Plats</button>
-      <button type="button" class="btn" [class.btn-primary]="selectedCategory() === 'DESSERT'" [class.btn-alt-secondary]="selectedCategory() !== 'DESSERT'" (click)="selectedCategory.set('DESSERT')">Desserts</button>
-      <button type="button" class="btn" [class.btn-primary]="selectedCategory() === 'BEVERAGE'" [class.btn-alt-secondary]="selectedCategory() !== 'BEVERAGE'" (click)="selectedCategory.set('BEVERAGE')">Boissons</button>
+      <button type="button" class="btn" [class.btn-primary]="selectedCategory() === 'ALL'"
+        [class.btn-alt-secondary]="selectedCategory() !== 'ALL'" (click)="selectedCategory.set('ALL')">Tous</button>
+      <button type="button" class="btn" [class.btn-primary]="selectedCategory() === 'STARTER'"
+        [class.btn-alt-secondary]="selectedCategory() !== 'STARTER'"
+        (click)="selectedCategory.set('STARTER')">Entrées</button>
+      <button type="button" class="btn" [class.btn-primary]="selectedCategory() === 'MAIN'"
+        [class.btn-alt-secondary]="selectedCategory() !== 'MAIN'" (click)="selectedCategory.set('MAIN')">Plats</button>
+      <button type="button" class="btn" [class.btn-primary]="selectedCategory() === 'DESSERT'"
+        [class.btn-alt-secondary]="selectedCategory() !== 'DESSERT'"
+        (click)="selectedCategory.set('DESSERT')">Desserts</button>
+      <button type="button" class="btn" [class.btn-primary]="selectedCategory() === 'BEVERAGE'"
+        [class.btn-alt-secondary]="selectedCategory() !== 'BEVERAGE'"
+        (click)="selectedCategory.set('BEVERAGE')">Boissons</button>
+      <button type="button" class="btn" [class.btn-primary]="selectedCategory() === 'OTHER'"
+        [class.btn-alt-secondary]="selectedCategory() !== 'OTHER'"
+        (click)="selectedCategory.set('OTHER')">Autres</button>
     </div>
   </div>
 
@@ -143,7 +158,8 @@
                 <button type="button" class="btn btn-sm btn-alt-primary" (click)="openEditModal(item)" title="Modifier">
                   <i class="fa fa-pencil-alt"></i>
                 </button>
-                <button type="button" class="btn btn-sm btn-alt-danger" (click)="onDeleteMenuItem(item)" title="Supprimer">
+                <button type="button" class="btn btn-sm btn-alt-danger" (click)="onDeleteMenuItem(item)"
+                  title="Supprimer">
                   <i class="fa fa-trash"></i>
                 </button>
               </div>
@@ -170,36 +186,107 @@
       <form (ngSubmit)="onSaveMenuItem()">
         <div class="modal-body">
           <div class="mb-3">
-            <label class="form-label fs-sm fw-semibold">Nom du plat ou boisson <span class="text-danger">*</span></label>
-            <input type="text" class="form-control form-control-alt fs-sm"
-                   placeholder="Ex: Filet de bœuf rôti au thym" [ngModel]="name()" (ngModelChange)="name.set($event)" name="name" required>
+            <label class="form-label fs-sm fw-semibold">Nom du plat ou boisson <span
+                class="text-danger">*</span></label>
+            <div class="position-relative" (focusout)="onAutocompleteFocusOut()">
+              <input type="text" class="form-control form-control-alt fs-sm" 
+                placeholder="Ex: Saisissez ou recherchez un plat..."
+                [ngModel]="name()" 
+                (ngModelChange)="onNameChange($event)"
+                (focus)="isAutocompleteOpen.set(true)"
+                name="menuItemName" autocomplete="off" required>
+              
+              <!-- Panneau de suggestions flottant -->
+              <div class="autocomplete-dropdown shadow-lg border rounded" 
+                *ngIf="isAutocompleteOpen() && filteredSuggestions().length > 0">
+                <div class="autocomplete-item py-2 px-3 border-bottom text-start" 
+                  *ngFor="let suggestion of filteredSuggestions()"
+                  (mousedown)="selectSuggestion(suggestion)">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <span class="fw-semibold text-dark fs-sm">{{ suggestion }}</span>
+                    <div class="d-flex gap-1 align-items-center">
+                      <span class="badge" [ngClass]="getCategoryBadgeClass(staticSuggestionsDetail[suggestion]?.category || 'OTHER')">
+                        {{ getCategoryLabel(staticSuggestionsDetail[suggestion]?.category || 'OTHER') }}
+                      </span>
+                      <span class="badge bg-light text-primary border" *ngIf="staticSuggestionsDetail[suggestion]?.price">
+                        {{ staticSuggestionsDetail[suggestion]?.price }} €
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <style>
+              .autocomplete-dropdown {
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                z-index: 1050;
+                max-height: 220px;
+                overflow-y: auto;
+                background-color: #ffffff;
+                box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+              }
+              .autocomplete-item {
+                cursor: pointer;
+                transition: background-color 0.15s ease-in-out;
+              }
+              .autocomplete-item:hover {
+                background-color: #f0f4f9;
+              }
+
+            </style>
           </div>
           <div class="row mb-3">
             <div class="col-md-6">
               <label class="form-label fs-sm fw-semibold">Catégorie</label>
-              <select class="form-select form-control-alt fs-sm" [ngModel]="category()" (ngModelChange)="category.set($event)" name="category">
+              <select class="form-select form-control-alt fs-sm" [ngModel]="category()"
+                (ngModelChange)="category.set($event)" name="category">
                 <option value="STARTER">Entrée</option>
                 <option value="MAIN">Plat Principal</option>
                 <option value="DESSERT">Dessert</option>
                 <option value="BEVERAGE">Boisson</option>
+                <option value="OTHER">Autre (Buffet, Entrées, etc.)</option>
               </select>
             </div>
             <div class="col-md-6">
               <label class="form-label fs-sm fw-semibold">Prix par personne (€)</label>
-              <input type="number" step="0.5" class="form-control form-control-alt fs-sm"
-                     placeholder="Ex: 24.50" [ngModel]="pricePerPerson()" (ngModelChange)="pricePerPerson.set($event)" name="pricePerPerson">
+              <input type="number" step="0.5" class="form-control form-control-alt fs-sm" placeholder="Ex: 24.50"
+                [ngModel]="pricePerPerson()" (ngModelChange)="pricePerPerson.set($event)" name="pricePerPerson">
             </div>
           </div>
+          <!-- Régimes alimentaires et Allergies -->
           <div class="mb-3">
-            <label class="form-label fs-sm fw-semibold">Spécificité / Régime (Allergènes, Bio, Halal, etc.)</label>
-            <input type="text" class="form-control form-control-alt fs-sm"
-                   placeholder="Ex: Végétarien, Sans Lactose, Bio" [ngModel]="dietaryTag()" (ngModelChange)="dietaryTag.set($event)" name="dietaryTag">
+            <label class="form-label fs-sm fw-semibold d-block">Régimes alimentaires & Allergies</label>
+            <div class="row g-2">
+              <div class="col-6 col-sm-6" *ngFor="let option of commonDietaryOptions">
+                <div class="form-check fs-sm">
+                  <input class="form-check-input" type="checkbox" 
+                         [id]="'diet-' + option.value" 
+                         [ngModel]="selectedDiets()[option.value] || false" 
+                         (ngModelChange)="toggleDiet(option.value, $event)"
+                         [name]="'diet-' + option.value">
+                  <label class="form-check-label" [for]="'diet-' + option.value">
+                    {{ option.label }}
+                  </label>
+                </div>
+              </div>
+            </div>
+            
+            <div class="mt-2">
+              <label class="form-label fs-xs text-muted mb-1" for="custom-diet">Autres allergies ou régimes particuliers</label>
+              <input type="text" class="form-control form-control-alt fs-sm"
+                     id="custom-diet" name="customDietNotes" placeholder="Ex: Allergie au kiwi, sans céleri..."
+                     [ngModel]="customDietNotes()" (ngModelChange)="customDietNotes.set($event)">
+            </div>
           </div>
           <div class="mb-3">
             <label class="form-label fs-sm fw-semibold">Description / Composition du plat</label>
             <textarea class="form-control form-control-alt fs-sm" rows="3"
-                      placeholder="Ex: Servi avec écrasé de pommes de terre à la truffe et légumes de saison."
-                      [ngModel]="description()" (ngModelChange)="description.set($event)" name="description"></textarea>
+              placeholder="Ex: Servi avec écrasé de pommes de terre à la truffe et légumes de saison."
+              [ngModel]="description()" (ngModelChange)="description.set($event)" name="description"></textarea>
           </div>
         </div>
         <div class="modal-footer bg-body-light">
