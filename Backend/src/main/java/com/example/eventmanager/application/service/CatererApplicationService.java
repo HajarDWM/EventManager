@@ -138,6 +138,7 @@ public class CatererApplicationService implements CreateCatererUseCase, GetCater
                 java.time.LocalDateTime.now(),
                 java.time.LocalDateTime.now().plusDays(30)
         );
+        caterer.activateAccount(); // Automatically approve account upon subscription!
 
         Caterer saved = catererRepositoryPort.save(caterer);
         return catererMapper.toDTO(saved);

@@ -22,7 +22,7 @@
     <div class="col-md-4 mb-4">
       <div class="block block-rounded text-center shadow-sm border border-light h-100 d-flex flex-column justify-content-between bg-white">
         <div class="block-content block-content-full bg-body-light py-4 border-bottom border-light">
-          <div class="h5 fw-bold text-uppercase text-muted mb-2">Forfait Gratuit</div>
+          <div class="h5 fw-bold text-uppercase text-muted mb-2">Pack Free</div>
           <div class="h2 fw-bold text-dark mb-0">0 € <span class="fs-sm text-muted">/ mois</span></div>
         </div>
         <div class="block-content py-4 text-start">
@@ -92,7 +92,7 @@
       <div class="block block-rounded text-center shadow border border-primary h-100 d-flex flex-column justify-content-between bg-white" style="transform: scale(1.02); z-index: 10;">
         <div class="block-content block-content-full bg-primary-light py-4 border-bottom border-light">
           <span class="badge bg-primary text-white rounded-pill px-3 py-1 mb-2">Recommandé</span>
-          <div class="h5 fw-bold text-uppercase text-primary mb-2">Standard Pro</div>
+          <div class="h5 fw-bold text-uppercase text-primary mb-2">Pack Standard Pro</div>
           <div class="h2 fw-bold text-dark mb-0">29.90 € <span class="fs-sm text-muted">/ mois</span></div>
         </div>
         <div class="block-content py-4 text-start">
@@ -161,7 +161,7 @@
     <div class="col-md-4 mb-4">
       <div class="block block-rounded text-center shadow-sm border border-light h-100 d-flex flex-column justify-content-between bg-white">
         <div class="block-content block-content-full bg-body-light py-4 border-bottom border-light">
-          <div class="h5 fw-bold text-uppercase text-muted mb-2">Premium VIP</div>
+          <div class="h5 fw-bold text-uppercase text-muted mb-2">Pack Premium VIP</div>
           <div class="h2 fw-bold text-dark mb-0">59.90 € <span class="fs-sm text-muted">/ mois</span></div>
         </div>
         <div class="block-content py-4 text-start">
@@ -220,6 +220,67 @@
           <button class="btn btn-primary w-100" (click)="selectPlan('PREMIUM')" *ngIf="currentPlan() !== 'PREMIUM'" [disabled]="isLoading()">
             Mettre à niveau (Premium VIP)
           </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal : Simulation de Paiement Stripe -->
+<div class="modal fade show" tabindex="-1" role="dialog" style="display: block; background: rgba(0,0,0,0.5); z-index: 1050;" *ngIf="showPaymentModal()">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content border-0 shadow-lg">
+      <div class="block block-rounded block-transparent mb-0 bg-white">
+        <div class="block-header block-header-default bg-body-light border-bottom border-light d-flex justify-content-between align-items-center p-3">
+          <h3 class="block-title fw-bold text-dark mb-0"><i class="fa fa-credit-card text-primary me-2"></i>Paiement Stripe (Simulation)</h3>
+          <button type="button" class="btn btn-sm btn-alt-secondary" (click)="showPaymentModal.set(false)" style="border: none; background: transparent;">
+            <i class="fa fa-times text-dark"></i>
+          </button>
+        </div>
+        <div class="block-content py-4 px-4">
+          <div class="text-center mb-4">
+            <span class="fs-sm text-muted">Abonnement choisi</span>
+            <h4 class="fw-bold text-dark mt-1 mb-2">{{ selectedPlanLabel() }}</h4>
+            <div class="h3 fw-bold text-primary mb-0">{{ selectedPlanPrice() }} € <span class="fs-xs text-muted">/ mois</span></div>
+          </div>
+          
+          <form (ngSubmit)="confirmPayment()">
+            <!-- Mock Credit Card Input -->
+            <div class="mb-3">
+              <label class="form-label fs-sm fw-semibold text-dark">Numéro de carte de test Stripe</label>
+              <div class="input-group">
+                <span class="input-group-text bg-body border-light"><i class="fa fa-credit-card text-muted"></i></span>
+                <input type="text" class="form-control border-light fs-sm bg-body" value="4242 4242 4242 4242" disabled>
+              </div>
+              <div class="form-text fs-xs text-muted">Utilisez la carte de test Stripe par défaut pour la simulation.</div>
+            </div>
+            
+            <div class="row mb-4">
+              <div class="col-6">
+                <label class="form-label fs-sm fw-semibold text-dark">Expiration</label>
+                <input type="text" class="form-control border-light fs-sm bg-body" value="12 / 29" disabled>
+              </div>
+              <div class="col-6">
+                <label class="form-label fs-sm fw-semibold text-dark">CVC</label>
+                <input type="text" class="form-control border-light fs-sm bg-body" value="123" disabled>
+              </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="d-flex gap-2 justify-content-end border-top border-light pt-3">
+              <button type="button" class="btn btn-alt-secondary fs-sm" (click)="showPaymentModal.set(false)" [disabled]="isProcessingPayment()">
+                Annuler
+              </button>
+              <button type="submit" class="btn btn-primary fs-sm" [disabled]="isProcessingPayment()">
+                <span *ngIf="!isProcessingPayment()">
+                  <i class="fa fa-check me-1"></i> Simuler le Paiement Stripe
+                </span>
+                <span *ngIf="isProcessingPayment()">
+                  <i class="fa fa-circle-notch fa-spin me-1"></i> Traitement du paiement...
+                </span>
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>

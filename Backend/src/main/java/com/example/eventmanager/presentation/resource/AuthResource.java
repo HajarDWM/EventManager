@@ -32,8 +32,9 @@ public class AuthResource {
             JwtToken token = loginUseCase.login(credentials);
             return ResponseEntity.ok(Map.of("token", token.getToken()));
         } catch (AccountPendingApprovalException e) {
+            String errorType = e.getMessage().contains("suspended") ? "ACCOUNT_SUSPENDED" : "ACCOUNT_PENDING_APPROVAL";
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of(
-                "error", "ACCOUNT_PENDING_APPROVAL",
+                "error", errorType,
                 "message", e.getMessage()
             ));
         } catch (Exception e) {

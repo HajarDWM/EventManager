@@ -54,9 +54,11 @@ export class Login {
         this.isLoading.set(false);
         if (err.status === 403 && err.error?.error === 'ACCOUNT_PENDING_APPROVAL') {
           this.router.navigate(['/pending-approval']);
+        } else if (err.status === 403 && err.error?.error === 'ACCOUNT_SUSPENDED') {
+          this.errorMessage.set('Votre compte a été suspendu par l\'administrateur. Veuillez contacter le support.');
         } else {
           this.errorMessage.set(
-            err.error?.error || 'Email ou mot de passe incorrect.'
+            err.error?.message || err.error?.error || 'Email ou mot de passe incorrect.'
           );
         }
       }

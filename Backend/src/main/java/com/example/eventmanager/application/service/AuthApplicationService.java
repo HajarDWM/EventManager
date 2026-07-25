@@ -30,8 +30,8 @@ public class AuthApplicationService implements LoginUseCase {
             throw new RuntimeException("Mot de passe incorrect"); // Dans l'idéal, une exception domaine spécifique
         }
 
-        if (caterer.getAccountStatus() == CatererStatus.PENDING || caterer.getAccountStatus() == CatererStatus.SUSPENDED) {
-            throw new AccountPendingApprovalException("Your account is pending admin approval.");
+        if (caterer.getAccountStatus() == CatererStatus.SUSPENDED) {
+            throw new AccountPendingApprovalException("Your account has been suspended.");
         }
 
         return jwtServicePort.generateToken(caterer);

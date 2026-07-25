@@ -18,7 +18,7 @@ export const authGuard: CanActivateFn = (route, state) => {
 
   const cachedProfile = catererService.currentProfile();
   if (cachedProfile) {
-    if (cachedProfile.accountStatus === 'PENDING' || cachedProfile.accountStatus === 'SUSPENDED') {
+    if (cachedProfile.accountStatus === 'SUSPENDED') {
       authService.logout();
       router.navigate(['/pending-approval']);
       return false;
@@ -28,7 +28,7 @@ export const authGuard: CanActivateFn = (route, state) => {
 
   return catererService.getCurrentProfile().pipe(
     map(profile => {
-      if (profile && (profile.accountStatus === 'PENDING' || profile.accountStatus === 'SUSPENDED')) {
+      if (profile && profile.accountStatus === 'SUSPENDED') {
         authService.logout();
         router.navigate(['/pending-approval']);
         return false;

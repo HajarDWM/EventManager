@@ -48,12 +48,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 if (userDetails instanceof com.example.eventmanager.infrastructure.security.model.CatererUserDetails catererDetails) {
                     String status = catererDetails.getAccountStatus();
-                    if ("PENDING".equalsIgnoreCase(status) || "SUSPENDED".equalsIgnoreCase(status)) {
+                    if ("SUSPENDED".equalsIgnoreCase(status)) {
                         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                         response.setContentType("application/json");
                         response.setCharacterEncoding("UTF-8");
-                        response.getWriter().write("{\"error\": \"ACCOUNT_PENDING_APPROVAL\", \"message\": \"Your account is pending admin approval.\"}");
+                        response.getWriter().write("{\"error\": \"ACCOUNT_SUSPENDED\", \"message\": \"Your account has been suspended.\"}");
                         return;
+                    }
+                    if ("PENDING".equalsIgnoreCase(status)) {
+                        String method = request.getMethod();
+                        if ("POST".equalsIgnoreCase(method) || "PUT".equalsIgnoreCase(method) || "DELETE".equalsIgnoreCase(method)) {
+                            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                            response.setContentType("application/json");
+                            response.setCharacterEncoding("UTF-8");
+                            response.getWriter().write("{\"error\": \"READ_ONLY_MODE\", \"message\": \"Votre compte est en cours d'approbation. Les modifications ne sont pas autorisées en mode exploration.\"}");
+                            return;
+                        }
                     }
                 }
 

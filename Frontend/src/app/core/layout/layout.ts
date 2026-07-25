@@ -25,6 +25,7 @@ export class Layout implements OnInit {
   protected readonly userBusinessName = signal('Chargement...');
   protected readonly userEmail = signal('');
   protected readonly isSuperAdmin = signal(false);
+  protected readonly isPending = signal(false);
 
   public ngOnInit(): void {
     this.loadCatererProfile();
@@ -37,6 +38,7 @@ export class Layout implements OnInit {
           this.userBusinessName.set(profile.businessName || 'Mon Compte Organisateur');
           this.userEmail.set(profile.email || '');
           this.isSuperAdmin.set(profile.role === 'SUPER_ADMIN');
+          this.isPending.set(profile.accountStatus === 'PENDING');
         }
       },
       error: (err) => {
