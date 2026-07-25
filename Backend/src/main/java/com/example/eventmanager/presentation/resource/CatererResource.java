@@ -41,6 +41,11 @@ public class CatererResource {
         return ResponseEntity.ok().build();
     }
 
+    @PutMapping("/subscription")
+    public ResponseEntity<CatererDTO> upgradeSubscription(@RequestParam String plan) {
+        return ResponseEntity.ok(updateCatererProfileUseCase.upgradeSubscription(plan));
+    }
+
     @GetMapping("/{id:\\d+}")
     public ResponseEntity<CatererDTO> getCatererById(@PathVariable Long id) {
         return ResponseEntity.ok(getCatererUseCase.getCatererById(id));

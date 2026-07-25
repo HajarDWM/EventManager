@@ -110,10 +110,60 @@ class EventApplicationServiceTest {
         when(eventRepositoryPort.findAllByCatererId(1L)).thenReturn(mockEvents);
 
         // Act & Assert
-        UnauthorizedAccessException exception = assertThrows(UnauthorizedAccessException.class, () -> {
+        com.example.eventmanager.domain.exception.SubscriptionRequiredException exception = assertThrows(com.example.eventmanager.domain.exception.SubscriptionRequiredException.class, () -> {
             eventApplicationService.createEvent(eventDTO);
         });
-        assertEquals("Quota dépassé : Vous avez atteint la limite de votre forfait. Veuillez renouveler ou mettre à niveau votre abonnement pour ajouter d'autres événements.", exception.getMessage());
+        assertEquals("You have reached your free event limit. Please upgrade your plan to create more events.", exception.getMessage());
+        verify(eventRepositoryPort, never()).save(any(Event.class));
+    }
+
+    @Test
+    void createEvent_ShouldThrowException_WhenStandardPlanGuestLimitExceeded() {
+        // Arrange
+        when(securityContextPort.getCurrentCatererId()).thenReturn(1L);
+        com.example.eventmanager.domain.model.Caterer caterer = com.example.eventmanager.domain.model.Caterer.builder()
+                .id(1L)
+                .role(com.example.eventmanager.domain.model.CatererRole.TRAITEUR)
+                .subscriptionPlan("STANDARD") // Standard Pro Plan
+                .build();
+        when(catererRepositoryPort.findById(1L)).thenReturn(Optional.of(caterer));
+        when(eventRepositoryPort.findAllByCatererId(1L)).thenReturn(java.util.List.of());
+
+        // Event exceeding guest limit (301 guests)
+        EventDTO invalidEvent = new EventDTO();
+        invalidEvent.setTitle("Mariage VIP");
+        invalidEvent.setGuestCount(301);
+
+        // Act & Assert
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            eventApplicationService.createEvent(invalidEvent);
+        });
+        assertEquals("Le forfait limite le nombre d'invités à 300 par événement. Veuillez passer au forfait Premium VIP pour inviter plus de personnes.", exception.getMessage());
+        verify(eventRepositoryPort, never()).save(any(Event.class));
+    }
+
+    @Test
+    void createEvent_ShouldThrowException_WhenFreePlanGuestLimitExceeded() {
+        // Arrange
+        when(securityContextPort.getCurrentCatererId()).thenReturn(1L);
+        com.example.eventmanager.domain.model.Caterer caterer = com.example.eventmanager.domain.model.Caterer.builder()
+                .id(1L)
+                .role(com.example.eventmanager.domain.model.CatererRole.TRAITEUR)
+                .subscriptionPlan("FREE") // Free Plan
+                .build();
+        when(catererRepositoryPort.findById(1L)).thenReturn(Optional.of(caterer));
+        when(eventRepositoryPort.findAllByCatererId(1L)).thenReturn(java.util.List.of());
+
+        // Event exceeding guest limit (301 guests)
+        EventDTO invalidEvent = new EventDTO();
+        invalidEvent.setTitle("Petit Mariage");
+        invalidEvent.setGuestCount(301);
+
+        // Act & Assert
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            eventApplicationService.createEvent(invalidEvent);
+        });
+        assertEquals("Le forfait limite le nombre d'invités à 300 par événement. Veuillez passer au forfait Premium VIP pour inviter plus de personnes.", exception.getMessage());
         verify(eventRepositoryPort, never()).save(any(Event.class));
     }
 

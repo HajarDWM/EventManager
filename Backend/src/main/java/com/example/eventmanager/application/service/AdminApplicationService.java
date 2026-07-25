@@ -48,8 +48,8 @@ public class AdminApplicationService implements AdminCatererUseCase, AdminStatsU
     private int getEventLimitForPlan(String plan) {
         if (plan == null) return 2;
         return switch (plan.toUpperCase()) {
-            case "STANDARD" -> 5;
-            case "PREMIUM" -> 15;
+            case "STANDARD", "STANDARD_PRO", "STANDARD PRO" -> 8;
+            case "PREMIUM" -> 20;
             default -> 2; // "FREE"
         };
     }

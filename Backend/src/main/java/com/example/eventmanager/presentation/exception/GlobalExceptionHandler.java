@@ -4,6 +4,7 @@ import com.example.eventmanager.domain.exception.CatererAlreadyExistsException;
 import com.example.eventmanager.domain.exception.CatererNotFoundException;
 import com.example.eventmanager.domain.exception.EventNotFoundException;
 import com.example.eventmanager.domain.exception.UnauthorizedAccessException;
+import com.example.eventmanager.domain.exception.SubscriptionRequiredException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -23,6 +24,14 @@ public class GlobalExceptionHandler {
         body.put("error", status.getReasonPhrase());
         body.put("message", message);
         return body;
+    }
+
+    @ExceptionHandler(SubscriptionRequiredException.class)
+    public ResponseEntity<Map<String, Object>> handleSubscriptionRequired(SubscriptionRequiredException ex) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("error", "SUBSCRIPTION_REQUIRED");
+        body.put("message", ex.getMessage());
+        return new ResponseEntity<>(body, HttpStatus.PAYMENT_REQUIRED);
     }
 
     @ExceptionHandler(EventNotFoundException.class)

@@ -1,7 +1,7 @@
 package com.example.eventmanager.domain.model;
 
 public enum CatererStatus {
-    ACTIVE,
-    INACTIVE,
+    PENDING,
+    APPROVED,
     SUSPENDED
 }

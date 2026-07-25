@@ -74,9 +74,13 @@ export class EventCreate implements OnInit {
       },
       error: (err) => {
         this.isLoading.set(false);
-        this.errorMessage.set(
-          err.error?.message || err.error?.error || 'Une erreur est survenue lors de la création de l\'événement.'
-        );
+        if (err.status === 402 && err.error?.error === 'SUBSCRIPTION_REQUIRED') {
+          this.router.navigate(['/pricing']);
+        } else {
+          this.errorMessage.set(
+            err.error?.message || err.error?.error || 'Une erreur est survenue lors de la création de l\'événement.'
+          );
+        }
         console.error(err);
       }
     });

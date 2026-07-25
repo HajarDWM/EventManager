@@ -19,9 +19,16 @@
       </div>
       <div class="block-content">
         <!-- Error Alert -->
-        <div class="alert alert-danger d-flex align-items-center gap-2" role="alert" *ngIf="errorMessage()">
-          <i class="fa fa-exclamation-circle"></i>
-          <div class="fs-sm fw-medium">{{ errorMessage() }}</div>
+        <div class="alert alert-danger d-flex flex-column gap-2" role="alert" *ngIf="errorMessage()">
+          <div class="d-flex align-items-center gap-2">
+            <i class="fa fa-exclamation-circle"></i>
+            <div class="fs-sm fw-medium">{{ errorMessage() }}</div>
+          </div>
+          <div *ngIf="isQuotaReached()" class="mt-2">
+            <a routerLink="/pricing" class="btn btn-sm btn-alt-danger">
+              <i class="fa fa-arrow-up me-1"></i> Mettre à niveau mon forfait / Voir les tarifs
+            </a>
+          </div>
         </div>
 
         <form (ngSubmit)="onSubmit()">

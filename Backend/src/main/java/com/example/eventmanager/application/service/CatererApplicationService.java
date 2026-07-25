@@ -66,8 +66,8 @@ public class CatererApplicationService implements CreateCatererUseCase, GetCater
             
             String plan = caterer.getSubscriptionPlan();
             int limit = switch (plan != null ? plan.toUpperCase() : "FREE") {
-                case "STANDARD" -> 5;
-                case "PREMIUM" -> 15;
+                case "STANDARD", "STANDARD_PRO", "STANDARD PRO" -> 8;
+                case "PREMIUM" -> 20;
                 default -> 2; // "FREE"
             };
             dto.setEventLimit(limit);
@@ -123,5 +123,23 @@ public class CatererApplicationService implements CreateCatererUseCase, GetCater
         Caterer caterer = catererRepositoryPort.findByEmail(email)
                 .orElseThrow(() -> new CatererNotFoundException(email));
         return catererMapper.toDTO(caterer);
+    }
+
+    @Override
+    @Transactional
+    public CatererDTO upgradeSubscription(String plan) {
+        Long currentCatererId = securityContextPort.getCurrentCatererId();
+        Caterer caterer = catererRepositoryPort.findById(currentCatererId)
+                .orElseThrow(() -> new CatererNotFoundException(currentCatererId));
+
+        caterer.updateSubscription(
+                plan,
+                "ACTIVE",
+                java.time.LocalDateTime.now(),
+                java.time.LocalDateTime.now().plusDays(30)
+        );
+
+        Caterer saved = catererRepositoryPort.save(caterer);
+        return catererMapper.toDTO(saved);
     }
 }

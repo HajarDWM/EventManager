@@ -18,6 +18,7 @@ import com.example.eventmanager.application.port.out.MenuItemRepositoryPort;
 import com.example.eventmanager.application.port.out.SecurityContextPort;
 import com.example.eventmanager.domain.exception.EventNotFoundException;
 import com.example.eventmanager.domain.exception.UnauthorizedAccessException;
+import com.example.eventmanager.domain.exception.SubscriptionRequiredException;
 import com.example.eventmanager.domain.model.Caterer;
 import com.example.eventmanager.domain.model.Event;
 import com.example.eventmanager.domain.model.EventStatus;
@@ -53,14 +54,26 @@ public class EventApplicationService implements CreateEventUseCase, GetEventUseC
         if (caterer.getRole() != com.example.eventmanager.domain.model.CatererRole.SUPER_ADMIN) {
             String plan = caterer.getSubscriptionPlan();
             int limit = switch (plan != null ? plan.toUpperCase() : "FREE") {
-                case "STANDARD" -> 5;
-                case "PREMIUM" -> 15;
+                case "STANDARD", "STANDARD_PRO", "STANDARD PRO" -> 8;
+                case "PREMIUM" -> 20;
                 default -> 2; // "FREE"
             };
 
             List<Event> existingEvents = eventRepositoryPort.findAllByCatererId(currentCatererId);
             if (existingEvents.size() >= limit) {
-                throw new UnauthorizedAccessException("Quota dépassé : Vous avez atteint la limite de votre forfait. Veuillez renouveler ou mettre à niveau votre abonnement pour ajouter d'autres événements.");
+                if ("FREE".equalsIgnoreCase(plan) || plan == null || plan.isBlank()) {
+                    throw new SubscriptionRequiredException("You have reached your free event limit. Please upgrade your plan to create more events.");
+                } else {
+                    throw new UnauthorizedAccessException("Quota dépassé : Vous avez atteint la limite de votre forfait. Veuillez renouveler ou mettre à niveau votre abonnement pour ajouter d'autres événements.");
+                }
+            }
+
+            // Enforce guest limit (maximum 300 guests) for Free and Standard Pro plans
+            if (eventDTO.getGuestCount() != null && eventDTO.getGuestCount() > 300) {
+                String planUpper = plan != null ? plan.toUpperCase() : "FREE";
+                if (!"PREMIUM".equals(planUpper)) {
+                    throw new IllegalArgumentException("Le forfait limite le nombre d'invités à 300 par événement. Veuillez passer au forfait Premium VIP pour inviter plus de personnes.");
+                }
             }
         }
         

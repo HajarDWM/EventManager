@@ -7,4 +7,5 @@ public interface UpdateCatererProfileUseCase {
     CatererDTO getCurrentCatererProfile();
     CatererDTO updateCatererProfile(CatererDTO catererDTO);
     void changePassword(ChangePasswordDTO changePasswordDTO);
+    CatererDTO upgradeSubscription(String plan);
 }

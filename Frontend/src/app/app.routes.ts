@@ -19,6 +19,7 @@ import { AdminCatererList } from './features/admin/caterers/admin-caterer-list';
 import { AdminInvitationTemplates } from './features/admin/templates/admin-invitation-templates';
 import { AdminBillingSettings } from './features/admin/billing/admin-billing-settings';
 import { PendingApproval } from './core/auth/pending-approval/pending-approval';
+import { Pricing } from './features/pricing/pricing';
 
 export const routes: Routes = [
   {
@@ -75,6 +76,10 @@ export const routes: Routes = [
       {
         path: 'profile',
         component: Profile
+      },
+      {
+        path: 'pricing',
+        component: Pricing
       },
       {
         path: 'admin/dashboard',

@@ -1,0 +1,227 @@
+<div class="d-flex flex-column justify-content-md-between py-2 text-center text-md-start">
+  <div class="flex-grow-1 mb-1 mb-md-0">
+    <h1 class="h3 fw-bold mb-2">Choisissez votre forfait</h1>
+    <h2 class="h6 fw-medium text-muted mb-0">Trouvez la formule idéale pour organiser vos prestations.</h2>
+  </div>
+</div>
+
+<div class="mt-4">
+  <!-- Alerts -->
+  <div class="alert alert-success d-flex align-items-center gap-2" role="alert" *ngIf="successMessage()">
+    <i class="fa fa-check-circle"></i>
+    <div class="fs-sm fw-medium">{{ successMessage() }}</div>
+  </div>
+
+  <div class="alert alert-danger d-flex align-items-center gap-2" role="alert" *ngIf="errorMessage()">
+    <i class="fa fa-exclamation-circle"></i>
+    <div class="fs-sm fw-medium">{{ errorMessage() }}</div>
+  </div>
+
+  <div class="row mt-4">
+    <!-- Free Plan Card -->
+    <div class="col-md-4 mb-4">
+      <div class="block block-rounded text-center shadow-sm border border-light h-100 d-flex flex-column justify-content-between bg-white">
+        <div class="block-content block-content-full bg-body-light py-4 border-bottom border-light">
+          <div class="h5 fw-bold text-uppercase text-muted mb-2">Forfait Gratuit</div>
+          <div class="h2 fw-bold text-dark mb-0">0 € <span class="fs-sm text-muted">/ mois</span></div>
+        </div>
+        <div class="block-content py-4 text-start">
+          <ul class="list-unstyled space-y-4 fs-sm mb-0">
+            <!-- Available features -->
+            <li class="d-flex align-items-start gap-2 mb-3">
+              <span>✅</span>
+              <div>
+                <strong class="text-dark">Limite d'événements : 2 événements</strong>
+                <div class="text-muted fs-xs">Nombre maximum d'événements créés en simultané.</div>
+              </div>
+            </li>
+            <li class="d-flex align-items-start gap-2 mb-3">
+              <span>✅</span>
+              <div>
+                <strong class="text-dark">Limite d'invités : 300 maximum</strong>
+                <div class="text-muted fs-xs">Nombre maximum d'invités autorisés par événement.</div>
+              </div>
+            </li>
+            <li class="d-flex align-items-start gap-2 mb-4">
+              <span>✅</span>
+              <div>
+                <strong class="text-dark">Digital Invitations & RSVP Tracking</strong>
+                <div class="text-muted fs-xs">Messagerie via WhatsApp/Email avec suivi des présences.</div>
+              </div>
+            </li>
+            
+            <hr class="border-light my-3">
+            
+            <!-- Unavailable features (displayed below, faded, no strike-through) -->
+            <li class="d-flex align-items-start gap-2 mb-3 text-muted opacity-50">
+              <i class="fa fa-times text-danger mt-1"></i>
+              <div>
+                <strong>Advanced Meal Menus & Dietary Restrictions</strong>
+                <div class="fs-xs text-muted">Gestion des régimes végétariens, sans sucre et allergies pour la cuisine.</div>
+              </div>
+            </li>
+            <li class="d-flex align-items-start gap-2 mb-3 text-muted opacity-50">
+              <i class="fa fa-times text-danger mt-1"></i>
+              <div>
+                <strong>Digital Seating Chart</strong>
+                <div class="fs-xs text-muted">Organisation des tables en glisser-déposer pour remplacer les tableurs.</div>
+              </div>
+            </li>
+            <li class="d-flex align-items-start gap-2 text-muted opacity-50">
+              <i class="fa fa-times text-danger mt-1"></i>
+              <div>
+                <strong>QR Code Venue Check-in & Kitchen Chef Reports</strong>
+                <div class="fs-xs text-muted">Contrôle d'accès par QR Code et rapports de préparation détaillés pour les chefs.</div>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div class="block-content block-content-full bg-body-light border-top border-light py-3">
+          <button class="btn btn-alt-secondary w-100" [disabled]="true" *ngIf="currentPlan() === 'FREE'">
+            Plan actuel
+          </button>
+          <button class="btn btn-primary w-100" (click)="selectPlan('FREE')" *ngIf="currentPlan() !== 'FREE'" [disabled]="isLoading()">
+            Choisir Gratuit
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Standard Pro Plan Card -->
+    <div class="col-md-4 mb-4">
+      <div class="block block-rounded text-center shadow border border-primary h-100 d-flex flex-column justify-content-between bg-white" style="transform: scale(1.02); z-index: 10;">
+        <div class="block-content block-content-full bg-primary-light py-4 border-bottom border-light">
+          <span class="badge bg-primary text-white rounded-pill px-3 py-1 mb-2">Recommandé</span>
+          <div class="h5 fw-bold text-uppercase text-primary mb-2">Standard Pro</div>
+          <div class="h2 fw-bold text-dark mb-0">29.90 € <span class="fs-sm text-muted">/ mois</span></div>
+        </div>
+        <div class="block-content py-4 text-start">
+          <ul class="list-unstyled space-y-4 fs-sm mb-0">
+            <!-- Available features -->
+            <li class="d-flex align-items-start gap-2 mb-3">
+              <span>✅</span>
+              <div>
+                <strong class="text-dark">Limite d'événements : 8 événements</strong>
+                <div class="text-muted fs-xs">Nombre maximum d'événements créés en simultané.</div>
+              </div>
+            </li>
+            <li class="d-flex align-items-start gap-2 mb-3">
+              <span>✅</span>
+              <div>
+                <strong class="text-dark">Limite d'invités : 300 maximum</strong>
+                <div class="text-muted fs-xs">Nombre maximum d'invités autorisés par événement.</div>
+              </div>
+            </li>
+            <li class="d-flex align-items-start gap-2 mb-3">
+              <span>✅</span>
+              <div>
+                <strong class="text-dark">Digital Invitations & RSVP Tracking</strong>
+                <div class="text-muted fs-xs">Messagerie via WhatsApp/Email avec suivi des présences.</div>
+              </div>
+            </li>
+            <li class="d-flex align-items-start gap-2 mb-3">
+              <span>✅</span>
+              <div>
+                <strong class="text-dark">Advanced Meal Menus & Dietary Restrictions</strong>
+                <div class="text-muted fs-xs">Gestion des régimes végétariens, sans sucre et allergies pour la cuisine.</div>
+              </div>
+            </li>
+            <li class="d-flex align-items-start gap-2 mb-4">
+              <span>✅</span>
+              <div>
+                <strong class="text-dark">Digital Seating Chart</strong>
+                <div class="text-muted fs-xs">Organisation des tables en glisser-déposer pour remplacer les tableurs.</div>
+              </div>
+            </li>
+            
+            <hr class="border-light my-3">
+            
+            <!-- Unavailable features (displayed below, faded, no strike-through) -->
+            <li class="d-flex align-items-start gap-2 text-muted opacity-50">
+              <i class="fa fa-times text-danger mt-1"></i>
+              <div>
+                <strong>QR Code Venue Check-in & Kitchen Chef Reports</strong>
+                <div class="fs-xs text-muted">Contrôle d'accès par QR Code et rapports de préparation détaillés pour les chefs.</div>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div class="block-content block-content-full bg-body-light border-top border-light py-3">
+          <button class="btn btn-alt-primary w-100" [disabled]="true" *ngIf="currentPlan() === 'STANDARD'">
+            Plan actuel
+          </button>
+          <button class="btn btn-primary w-100" (click)="selectPlan('STANDARD')" *ngIf="currentPlan() !== 'STANDARD'" [disabled]="isLoading()">
+            Mettre à niveau (Standard Pro)
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Premium VIP Plan Card -->
+    <div class="col-md-4 mb-4">
+      <div class="block block-rounded text-center shadow-sm border border-light h-100 d-flex flex-column justify-content-between bg-white">
+        <div class="block-content block-content-full bg-body-light py-4 border-bottom border-light">
+          <div class="h5 fw-bold text-uppercase text-muted mb-2">Premium VIP</div>
+          <div class="h2 fw-bold text-dark mb-0">59.90 € <span class="fs-sm text-muted">/ mois</span></div>
+        </div>
+        <div class="block-content py-4 text-start">
+          <ul class="list-unstyled space-y-4 fs-sm mb-0">
+            <!-- Available features -->
+            <li class="d-flex align-items-start gap-2 mb-3">
+              <span>✅</span>
+              <div>
+                <strong class="text-dark">Limite d'événements : 20 événements</strong>
+                <div class="text-muted fs-xs">Nombre maximum d'événements créés en simultané.</div>
+              </div>
+            </li>
+            <li class="d-flex align-items-start gap-2 mb-3">
+              <span>✅</span>
+              <div>
+                <strong class="text-dark">Limite d'invités : Illimitée</strong>
+                <div class="text-muted fs-xs">Aucune restriction sur le nombre d'invités par événement.</div>
+              </div>
+            </li>
+            <li class="d-flex align-items-start gap-2 mb-3">
+              <span>✅</span>
+              <div>
+                <strong class="text-dark">Digital Invitations & RSVP Tracking</strong>
+                <div class="text-muted fs-xs">Messagerie via WhatsApp/Email avec suivi des présences.</div>
+              </div>
+            </li>
+            <li class="d-flex align-items-start gap-2 mb-3">
+              <span>✅</span>
+              <div>
+                <strong class="text-dark">Advanced Meal Menus & Dietary Restrictions</strong>
+                <div class="text-muted fs-xs">Gestion des régimes végétariens, sans sucre et allergies pour la cuisine.</div>
+              </div>
+            </li>
+            <li class="d-flex align-items-start gap-2 mb-3">
+              <span>✅</span>
+              <div>
+                <strong class="text-dark">Digital Seating Chart</strong>
+                <div class="text-muted fs-xs">Organisation des tables en glisser-déposer pour remplacer les tableurs.</div>
+              </div>
+            </li>
+            <li class="d-flex align-items-start gap-2">
+              <span>✅</span>
+              <div>
+                <strong class="text-dark">QR Code Venue Check-in & Kitchen Chef Reports</strong>
+                <div class="text-muted fs-xs">Contrôle d'accès par QR Code et rapports de préparation détaillés pour les chefs.</div>
+              </div>
+            </li>
+            
+            <!-- No unavailable features to display -->
+          </ul>
+        </div>
+        <div class="block-content block-content-full bg-body-light border-top border-light py-3">
+          <button class="btn btn-alt-secondary w-100" [disabled]="true" *ngIf="currentPlan() === 'PREMIUM'">
+            Plan actuel
+          </button>
+          <button class="btn btn-primary w-100" (click)="selectPlan('PREMIUM')" *ngIf="currentPlan() !== 'PREMIUM'" [disabled]="isLoading()">
+            Mettre à niveau (Premium VIP)
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
