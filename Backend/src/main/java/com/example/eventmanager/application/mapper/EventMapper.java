@@ -19,7 +19,8 @@ public class EventMapper {
                 .eventDate(dto.getEventDate())
                 .location(dto.getLocation())
                 .guestCount(dto.getGuestCount())
-                .catererId(dto.getCatererId());
+                .catererId(dto.getCatererId())
+                .createdAt(dto.getCreatedAt());
 
         if (dto.getStatus() != null) {
             builder.status(EventStatus.valueOf(dto.getStatus()));
@@ -41,6 +42,7 @@ public class EventMapper {
                 .guestCount(event.getGuestCount())
                 .status(event.getStatus() != null ? event.getStatus().name() : null)
                 .catererId(event.getCatererId())
+                .createdAt(event.getCreatedAt())
                 .build();
     }
 }

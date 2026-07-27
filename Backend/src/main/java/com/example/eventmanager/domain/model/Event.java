@@ -17,6 +17,7 @@ public class Event {
     private EventStatus status = EventStatus.DRAFT;
     private Long catererId;
     private boolean archived;
+    private LocalDateTime createdAt;
 
     public void planEvent() {
         this.status = EventStatus.PLANNED;

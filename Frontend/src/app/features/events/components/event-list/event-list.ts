@@ -21,6 +21,13 @@ export class EventList implements OnInit {
   protected readonly isLoading = signal(false);
   protected readonly errorMessage = signal('');
 
+  // Feature toggle flag for modularity (can easily be set to false to completely turn off this feature)
+  protected readonly showQuotaUsageBanner = signal(true);
+  protected readonly currentPlan = signal('FREE');
+  protected readonly eventsLimit = signal(2);
+  protected readonly usagePercentage = signal(0);
+  protected readonly filteredQuotaEventsUsed = signal(0);
+
   // Search & Filter State
   protected readonly searchTerm = signal('');
   protected readonly statusFilter = signal('ALL');
@@ -97,6 +104,7 @@ export class EventList implements OnInit {
       next: (data) => {
         this.events.set(data);
         this.isLoading.set(false);
+        this.updateQuotaStats();
       },
       error: (err) => {
         this.isLoading.set(false);
@@ -137,6 +145,7 @@ export class EventList implements OnInit {
       this.eventService.deleteEvent(id).subscribe({
         next: () => {
           this.events.update(list => list.filter(e => e.id !== id));
+          this.updateQuotaStats();
         },
         error: (err) => {
           this.errorMessage.set('Une erreur est survenue lors de la suppression.');
@@ -144,5 +153,22 @@ export class EventList implements OnInit {
         }
       });
     }
+  }
+
+  private updateQuotaStats(): void {
+    this.catererService.getCurrentProfile().subscribe({
+      next: (profile) => {
+        const plan = profile.subscriptionPlan || 'FREE';
+        this.currentPlan.set(plan);
+        const limit = profile.eventLimit || 2;
+        const count = profile.eventCount || 0;
+        
+        this.eventsLimit.set(limit);
+        this.filteredQuotaEventsUsed.set(count);
+        
+        const percentage = Math.min(100, Math.round((count / limit) * 100));
+        this.usagePercentage.set(percentage);
+      }
+    });
   }
 }

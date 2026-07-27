@@ -51,28 +51,15 @@ export class SubscriptionComponent implements OnInit {
         this.subscriptionEndDate.set(profile.subscriptionEndDate || null);
         this.catererId = profile.id;
         
-        // Calculate limit based on plan
-        let limit = 2;
-        if (profile.subscriptionPlan === 'STANDARD') {
-          limit = 8;
-        } else if (profile.subscriptionPlan === 'PREMIUM') {
-          limit = 20;
-        }
+        const limit = profile.eventLimit || 2;
+        const count = profile.eventCount || 0;
+        
         this.eventsLimit.set(limit);
-
-        // Fetch events count
-        this.eventService.getAllEvents().subscribe({
-          next: (events) => {
-            this.eventsUsed.set(events.length);
-            const percentage = Math.min(100, Math.round((events.length / limit) * 100));
-            this.usagePercentage.set(percentage);
-            this.isLoading.set(false);
-          },
-          error: (err) => {
-            console.error('Error fetching events count', err);
-            this.isLoading.set(false);
-          }
-        });
+        this.eventsUsed.set(count);
+        
+        const percentage = Math.min(100, Math.round((count / limit) * 100));
+        this.usagePercentage.set(percentage);
+        this.isLoading.set(false);
       },
       error: (err) => {
         console.error('Error fetching profile', err);

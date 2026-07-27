@@ -13,6 +13,8 @@ import com.example.eventmanager.application.port.out.SecurityContextPort;
 import com.example.eventmanager.domain.exception.CatererAlreadyExistsException;
 import com.example.eventmanager.domain.exception.CatererNotFoundException;
 import com.example.eventmanager.domain.model.Caterer;
+import com.example.eventmanager.domain.model.Event;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -61,10 +63,19 @@ public class CatererApplicationService implements CreateCatererUseCase, GetCater
                 .orElseThrow(() -> new CatererNotFoundException(currentCatererId));
         CatererDTO dto = catererMapper.toDTO(caterer);
         if (caterer.getRole() != com.example.eventmanager.domain.model.CatererRole.SUPER_ADMIN) {
-            int eventCount = eventRepositoryPort.findAllByCatererId(currentCatererId).size();
-            dto.setEventCount(eventCount);
-            
             String plan = caterer.getSubscriptionPlan();
+            java.time.LocalDateTime startDate = caterer.getSubscriptionStartDate();
+            List<Event> existingEvents = eventRepositoryPort.findAllByCatererId(currentCatererId);
+            long eventCount;
+            if (plan == null || "FREE".equalsIgnoreCase(plan) || plan.isBlank()) {
+                eventCount = existingEvents.size();
+            } else {
+                eventCount = existingEvents.stream()
+                        .filter(e -> startDate == null || e.getCreatedAt() == null || !e.getCreatedAt().isBefore(startDate))
+                        .count();
+            }
+            dto.setEventCount((int) eventCount);
+            
             int limit = switch (plan != null ? plan.toUpperCase() : "FREE") {
                 case "STANDARD", "STANDARD_PRO", "STANDARD PRO" -> 8;
                 case "PREMIUM" -> 20;

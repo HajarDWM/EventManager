@@ -16,6 +16,42 @@
 </div>
 <!-- END Hero -->
 
+<!-- Quota Usage Banner (Modular / Removable Feature Toggle) -->
+<div class="block block-rounded shadow-sm border border-light bg-white mb-3" *ngIf="showQuotaUsageBanner() && currentPlan() !== 'PREMIUM'">
+  <div class="block-content py-3 px-4">
+    <div class="row align-items-center">
+      <div class="col-md-8 mb-2 mb-md-0">
+        <div class="d-flex align-items-center gap-2 mb-1">
+          <i class="fa fa-info-circle text-primary fs-5"></i>
+          <div>
+            <span class="fw-semibold text-dark">Utilisation de votre quota</span>
+            <span class="fs-xs text-muted ms-2">
+              ({{ filteredQuotaEventsUsed() }} / {{ eventsLimit() }} événements créés sous le forfait 
+              <span class="fw-bold">{{ currentPlan() === 'FREE' ? 'Pack Free' : 'Pack Standard Pro' }}</span>)
+            </span>
+          </div>
+        </div>
+        <div class="progress rounded-pill bg-body" style="height: 8px;">
+          <div class="progress-bar rounded-pill" role="progressbar" 
+               [style.width.%]="usagePercentage()"
+               [ngClass]="{
+                 'bg-primary': usagePercentage() < 70,
+                 'bg-warning': usagePercentage() >= 70 && usagePercentage() < 95,
+                 'bg-danger': usagePercentage() >= 95
+               }"
+               [attr.aria-valuenow]="usagePercentage()" aria-valuemin="0" aria-valuemax="100">
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 text-md-end">
+        <a class="btn btn-sm btn-alt-primary px-3 fs-xs fw-semibold" routerLink="/subscription">
+          <i class="fa fa-arrow-up me-1"></i> Mettre à niveau le forfait
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Search & Filter Toolbar -->
 <div class="block block-rounded mt-3 shadow-sm border border-light p-3 bg-body-extra-light">
   <div class="row g-3 align-items-center">

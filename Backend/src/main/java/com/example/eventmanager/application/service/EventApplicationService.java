@@ -59,8 +59,17 @@ public class EventApplicationService implements CreateEventUseCase, GetEventUseC
                 default -> 2; // "FREE"
             };
 
+            java.time.LocalDateTime startDate = caterer.getSubscriptionStartDate();
             List<Event> existingEvents = eventRepositoryPort.findAllByCatererId(currentCatererId);
-            if (existingEvents.size() >= limit) {
+            long consumedInPeriod;
+            if (plan == null || "FREE".equalsIgnoreCase(plan) || plan.isBlank()) {
+                consumedInPeriod = existingEvents.size();
+            } else {
+                consumedInPeriod = existingEvents.stream()
+                        .filter(e -> startDate == null || e.getCreatedAt() == null || !e.getCreatedAt().isBefore(startDate))
+                        .count();
+            }
+            if (consumedInPeriod >= limit) {
                 if ("FREE".equalsIgnoreCase(plan) || plan == null || plan.isBlank()) {
                     throw new SubscriptionRequiredException("You have reached your free event limit. Please upgrade your plan to create more events.");
                 } else {

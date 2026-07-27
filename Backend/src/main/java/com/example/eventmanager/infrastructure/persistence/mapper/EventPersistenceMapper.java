@@ -22,6 +22,7 @@ public class EventPersistenceMapper {
                 .status(entity.getStatus() != null ? EventStatus.valueOf(entity.getStatus()) : EventStatus.DRAFT)
                 .catererId(entity.getCatererId())
                 .archived(entity.isArchived())
+                .createdAt(entity.getCreatedAt())
                 .build();
     }
 
@@ -39,6 +40,7 @@ public class EventPersistenceMapper {
                 .status(domain.getStatus() != null ? domain.getStatus().name() : "DRAFT")
                 .catererId(domain.getCatererId())
                 .archived(domain.isArchived())
+                .createdAt(domain.getCreatedAt())
                 .build();
     }
 }

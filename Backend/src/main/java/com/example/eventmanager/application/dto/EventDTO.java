@@ -19,4 +19,5 @@ public class EventDTO {
     private Integer guestCount;
     private String status;
     private Long catererId;
+    private LocalDateTime createdAt;
 }
