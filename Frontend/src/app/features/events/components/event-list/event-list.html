@@ -144,7 +144,7 @@
             <th>Lieu</th>
             <th class="text-center" style="width: 12%;">Invités</th>
             <th class="text-center" style="width: 15%;">Statut</th>
-            <th class="text-center" style="width: 18%;">Actions</th>
+            <th class="text-center" style="min-width: 250px;">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -169,24 +169,24 @@
               </span>
             </td>
             <td class="text-center">
-              <div class="btn-group">
-                <a class="btn btn-sm btn-alt-info me-1" [routerLink]="['/events', event.id, 'guests']" title="Gérer les invités">
-                  <i class="fa fa-fw fa-users"></i>
+              <div class="d-flex align-items-center justify-content-center gap-1">
+                <a class="btn btn-sm btn-alt-info btn-table-action" [routerLink]="['/events', event.id, 'guests']" title="Gérer les invités">
+                  <i class="fa fa-users me-1"></i> Invités
                 </a>
-                <a class="btn btn-sm btn-alt-warning me-1" [routerLink]="['/events', event.id, 'menu']" title="Gérer le menu & la restauration">
-                  <i class="fa fa-fw fa-utensils"></i>
+                <a class="btn btn-sm btn-alt-warning btn-table-action" [routerLink]="['/events', event.id, 'menu']" title="Gérer le menu & la restauration">
+                  <i class="fa fa-utensils me-1"></i> Menu
                 </a>
-                <a class="btn btn-sm btn-alt-success me-1" [routerLink]="['/events', event.id, 'tasks']" title="Checklist & Tâches de préparation">
-                  <i class="fa fa-fw fa-tasks"></i>
+                <a class="btn btn-sm btn-alt-success btn-table-action" [routerLink]="['/events', event.id, 'tasks']" title="Checklist & Tâches de préparation">
+                  <i class="fa fa-tasks me-1"></i> Tâches
                 </a>
-                <a class="btn btn-sm btn-alt-primary me-1" [routerLink]="['/events', event.id, 'export']" title="Exportation PDF & Impression">
-                  <i class="fa fa-fw fa-file-pdf"></i>
+                <a class="btn btn-sm btn-alt-primary btn-table-action" [routerLink]="['/events', event.id, 'export']" title="Exportation PDF & Impression">
+                  <i class="fa fa-file-pdf me-1"></i> PDF
                 </a>
-                <a class="btn btn-sm btn-alt-secondary me-1" [routerLink]="['/events/edit', event.id]" title="Modifier l'événement">
-                  <i class="fa fa-fw fa-pencil-alt"></i>
+                <a class="btn btn-sm btn-alt-secondary btn-table-action" [routerLink]="['/events/edit', event.id]" title="Modifier l'événement">
+                  <i class="fa fa-pencil-alt me-1"></i> Modifier
                 </a>
-                <button type="button" class="btn btn-sm btn-alt-danger" (click)="deleteEvent(event.id!)" title="Supprimer l'événement">
-                  <i class="fa fa-fw fa-times"></i>
+                <button type="button" class="btn btn-sm btn-alt-danger btn-table-action" (click)="deleteEvent(event.id!)" title="Supprimer l'événement">
+                  <i class="fa fa-trash-alt me-1"></i> Supprimer
                 </button>
               </div>
             </td>

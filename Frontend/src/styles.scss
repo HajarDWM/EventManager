@@ -1,2 +1,12 @@
 /* You can add global styles to this file, and also import other style files */
 @import "assets/oneui/_scss/main.scss";
+
+/* Ultra compact action buttons for tables */
+.btn-table-action {
+  font-size: 11px !important;
+  padding: 0.2rem 0.4rem !important;
+  line-height: 1.2 !important;
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+}

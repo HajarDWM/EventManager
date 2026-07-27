@@ -127,7 +127,7 @@
             <th>Priorité</th>
             <th>Statut</th>
             <th>Responsable</th>
-            <th class="text-end">Actions</th>
+            <th class="text-end" style="min-width: 180px;">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -167,12 +167,12 @@
               <span class="fs-xs" *ngIf="!t.assignedTo">-</span>
             </td>
             <td class="text-end">
-              <div class="btn-group">
-                <button type="button" class="btn btn-sm btn-alt-primary" (click)="openEditModal(t)" title="Modifier">
-                  <i class="fa fa-pencil-alt"></i>
+              <div class="d-flex align-items-center justify-content-end gap-1">
+                <button type="button" class="btn btn-sm btn-alt-primary btn-table-action" (click)="openEditModal(t)" title="Modifier">
+                  <i class="fa fa-pencil-alt me-1"></i> Modifier
                 </button>
-                <button type="button" class="btn btn-sm btn-alt-danger" (click)="onDeleteTask(t)" title="Supprimer">
-                  <i class="fa fa-trash"></i>
+                <button type="button" class="btn btn-sm btn-alt-danger btn-table-action" (click)="onDeleteTask(t)" title="Supprimer">
+                  <i class="fa fa-trash me-1"></i> Supprimer
                 </button>
               </div>
             </td>
