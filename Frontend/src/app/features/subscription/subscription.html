@@ -1,11 +1,11 @@
 <div class="d-flex flex-column justify-content-md-between py-2 text-center text-md-start">
   <div class="flex-grow-1 mb-1 mb-md-0">
-    <h1 class="h3 fw-bold mb-2">Choisissez votre forfait</h1>
-    <h2 class="h6 fw-medium text-muted mb-0">Trouvez la formule idéale pour organiser vos prestations.</h2>
+    <h1 class="h3 fw-bold mb-2">Abonnement</h1>
+    <h2 class="h6 fw-medium text-muted mb-0">Suivez votre consommation de quota et gérez votre forfait.</h2>
   </div>
 </div>
 
-<div class="mt-4">
+<div class="mt-4" *ngIf="!isLoading(); else loadingTpl">
   <!-- Alerts -->
   <div class="alert alert-success d-flex align-items-center gap-2" role="alert" *ngIf="successMessage()">
     <i class="fa fa-check-circle"></i>
@@ -17,17 +17,76 @@
     <div class="fs-sm fw-medium">{{ errorMessage() }}</div>
   </div>
 
-  <div class="row mt-4">
+  <!-- Summary Dashboard Block -->
+  <div class="block block-rounded shadow-sm border border-light bg-white mb-4">
+    <div class="block-header block-header-default bg-body-light border-bottom border-light p-3">
+      <h3 class="block-title fw-bold text-dark"><i class="fa fa-info-circle text-primary me-2"></i>Statut de
+        l'abonnement</h3>
+    </div>
+    <div class="block-content py-4 px-4">
+      <div class="row align-items-center">
+        <!-- Plan Name & Status Badge -->
+        <div class="col-md-4 mb-3 mb-md-0 border-end border-light">
+          <span class="fs-xs text-uppercase fw-bold text-muted">Forfait Actuel</span>
+          <h3 class="fw-bold text-dark mt-1 mb-2">
+            <span *ngIf="currentPlan() === 'FREE'">Pack Free</span>
+            <span *ngIf="currentPlan() === 'STANDARD'">Pack Standard Pro</span>
+            <span *ngIf="currentPlan() === 'PREMIUM'">Pack Premium VIP</span>
+          </h3>
+          <div class="d-flex align-items-center gap-2">
+            <span class="badge bg-success-light text-success px-2.5 py-1 fw-bold rounded-pill text-uppercase fs-xs">
+              {{ subscriptionStatus() === 'ACTIVE' ? 'Actif' : subscriptionStatus() }}
+            </span>
+            <span class="fs-xs text-muted" *ngIf="subscriptionEndDate() && currentPlan() !== 'FREE'">
+              Expire le {{ subscriptionEndDate() | date:'dd/MM/yyyy' }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Quota Usage Stats & Progress Bar -->
+        <div class="col-md-8 px-md-4">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="fs-xs text-uppercase fw-bold text-muted">Événements Créés</span>
+            <span class="fs-sm fw-bold text-dark">{{ eventsUsed() }} / {{ eventsLimit() }}</span>
+          </div>
+          <div class="progress rounded-pill bg-body" style="height: 12px;">
+            <div class="progress-bar rounded-pill" role="progressbar" [style.width.%]="usagePercentage()" [ngClass]="{
+                   'bg-primary': usagePercentage() < 70,
+                   'bg-warning': usagePercentage() >= 70 && usagePercentage() < 95,
+                   'bg-danger': usagePercentage() >= 95
+                 }" [attr.aria-valuenow]="usagePercentage()" aria-valuemin="0" aria-valuemax="100">
+            </div>
+          </div>
+          <div class="d-flex justify-content-between mt-2">
+            <span class="fs-xs text-muted">Taux d'utilisation : {{ usagePercentage() }}%</span>
+            <span class="fs-xs text-warning fw-semibold"
+              *ngIf="eventsUsed() >= eventsLimit() && currentPlan() !== 'PREMIUM'">
+              Quota épuisé. Veuillez mettre à niveau votre forfait.
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Upgrade Title -->
+  <div class="my-4">
+    <h3 class="h5 fw-bold text-dark mb-1"><i class="fa fa-arrow-up text-primary me-2"></i>Mettre à niveau ou modifier
+      votre formule</h3>
+    <p class="text-muted fs-sm">Sélectionnez le forfait adapté à l'envergure de vos prestations de traiteur.</p>
+  </div>
+
+  <div class="row">
     <!-- Free Plan Card -->
     <div class="col-md-4 mb-4">
-      <div class="block block-rounded text-center shadow-sm border border-light h-100 d-flex flex-column justify-content-between bg-white">
+      <div
+        class="block block-rounded text-center shadow-sm border border-light h-100 d-flex flex-column justify-content-between bg-white">
         <div class="block-content block-content-full bg-body-light py-4 border-bottom border-light">
           <div class="h5 fw-bold text-uppercase text-muted mb-2">Pack Free</div>
           <div class="h2 fw-bold text-dark mb-0">0 € <span class="fs-sm text-muted">/ mois</span></div>
         </div>
         <div class="block-content py-4 text-start">
           <ul class="list-unstyled space-y-4 fs-sm mb-0">
-            <!-- Available features -->
             <li class="d-flex align-items-start gap-2 mb-3">
               <span>✅</span>
               <div>
@@ -49,38 +108,42 @@
                 <div class="text-muted fs-xs">Messagerie via WhatsApp/Email avec suivi des présences.</div>
               </div>
             </li>
-            
+
             <hr class="border-light my-3">
-            
-            <!-- Unavailable features (displayed below, faded, no strike-through) -->
+
             <li class="d-flex align-items-start gap-2 mb-3 text-muted opacity-50">
               <i class="fa fa-times text-danger mt-1"></i>
               <div>
                 <strong>Advanced Meal Menus & Dietary Restrictions</strong>
-                <div class="fs-xs text-muted">Gestion des régimes végétariens, sans sucre et allergies pour la cuisine.</div>
+                <div class="fs-xs text-muted">Gestion des régimes végétariens, sans sucre et allergies pour la cuisine.
+                </div>
               </div>
             </li>
             <li class="d-flex align-items-start gap-2 mb-3 text-muted opacity-50">
               <i class="fa fa-times text-danger mt-1"></i>
               <div>
                 <strong>Digital Seating Chart</strong>
-                <div class="fs-xs text-muted">Organisation des tables en glisser-déposer pour remplacer les tableurs.</div>
+                <div class="fs-xs text-muted">Organisation des tables en glisser-déposer pour remplacer les tableurs.
+                </div>
               </div>
             </li>
             <li class="d-flex align-items-start gap-2 text-muted opacity-50">
               <i class="fa fa-times text-danger mt-1"></i>
               <div>
                 <strong>QR Code Venue Check-in & Kitchen Chef Reports</strong>
-                <div class="fs-xs text-muted">Contrôle d'accès par QR Code et rapports de préparation détaillés pour les chefs.</div>
+                <div class="fs-xs text-muted">Contrôle d'accès par QR Code et rapports de préparation détaillés pour les
+                  chefs.</div>
               </div>
             </li>
           </ul>
         </div>
         <div class="block-content block-content-full bg-body-light border-top border-light py-3">
-          <button class="btn btn-success w-100 animate__animated animate__fadeIn" [disabled]="true" *ngIf="currentPlan() === 'FREE'">
+          <button class="btn btn-success w-100 animate__animated animate__fadeIn" [disabled]="true"
+            *ngIf="currentPlan() === 'FREE'">
             <i class="fa fa-check-circle me-1"></i> Abonnement Actif
           </button>
-          <button class="btn btn-primary w-100" (click)="selectPlan('FREE')" *ngIf="currentPlan() !== 'FREE'" [disabled]="isLoading()">
+          <button class="btn btn-primary w-100" (click)="selectPlan('FREE')" *ngIf="currentPlan() !== 'FREE'"
+            [disabled]="isLoading()">
             Choisir Gratuit
           </button>
         </div>
@@ -89,7 +152,9 @@
 
     <!-- Standard Pro Plan Card -->
     <div class="col-md-4 mb-4">
-      <div class="block block-rounded text-center shadow border border-primary h-100 d-flex flex-column justify-content-between bg-white" style="transform: scale(1.02); z-index: 10;">
+      <div
+        class="block block-rounded text-center shadow border border-primary h-100 d-flex flex-column justify-content-between bg-white"
+        style="transform: scale(1.02); z-index: 10;">
         <div class="block-content block-content-full bg-primary-light py-4 border-bottom border-light">
           <span class="badge bg-primary text-white rounded-pill px-3 py-1 mb-2">Recommandé</span>
           <div class="h5 fw-bold text-uppercase text-primary mb-2">Pack Standard Pro</div>
@@ -97,7 +162,6 @@
         </div>
         <div class="block-content py-4 text-start">
           <ul class="list-unstyled space-y-4 fs-sm mb-0">
-            <!-- Available features -->
             <li class="d-flex align-items-start gap-2 mb-3">
               <span>✅</span>
               <div>
@@ -123,34 +187,38 @@
               <span>✅</span>
               <div>
                 <strong class="text-dark">Advanced Meal Menus & Dietary Restrictions</strong>
-                <div class="text-muted fs-xs">Gestion des régimes végétariens, sans sucre et allergies pour la cuisine.</div>
+                <div class="text-muted fs-xs">Gestion des régimes végétariens, sans sucre et allergies pour la cuisine.
+                </div>
               </div>
             </li>
             <li class="d-flex align-items-start gap-2 mb-4">
               <span>✅</span>
               <div>
                 <strong class="text-dark">Digital Seating Chart</strong>
-                <div class="text-muted fs-xs">Organisation des tables en glisser-déposer pour remplacer les tableurs.</div>
+                <div class="text-muted fs-xs">Organisation des tables en glisser-déposer pour remplacer les tableurs.
+                </div>
               </div>
             </li>
-            
+
             <hr class="border-light my-3">
-            
-            <!-- Unavailable features (displayed below, faded, no strike-through) -->
+
             <li class="d-flex align-items-start gap-2 text-muted opacity-50">
               <i class="fa fa-times text-danger mt-1"></i>
               <div>
                 <strong>QR Code Venue Check-in & Kitchen Chef Reports</strong>
-                <div class="fs-xs text-muted">Contrôle d'accès par QR Code et rapports de préparation détaillés pour les chefs.</div>
+                <div class="fs-xs text-muted">Contrôle d'accès par QR Code et rapports de préparation détaillés pour les
+                  chefs.</div>
               </div>
             </li>
           </ul>
         </div>
         <div class="block-content block-content-full bg-body-light border-top border-light py-3">
-          <button class="btn btn-success w-100 animate__animated animate__fadeIn" [disabled]="true" *ngIf="currentPlan() === 'STANDARD'">
+          <button class="btn btn-success w-100 animate__animated animate__fadeIn" [disabled]="true"
+            *ngIf="currentPlan() === 'STANDARD'">
             <i class="fa fa-check-circle me-1"></i> Abonnement Actif
           </button>
-          <button class="btn btn-primary w-100" (click)="selectPlan('STANDARD')" *ngIf="currentPlan() !== 'STANDARD'" [disabled]="isLoading()">
+          <button class="btn btn-primary w-100" (click)="selectPlan('STANDARD')" *ngIf="currentPlan() !== 'STANDARD'"
+            [disabled]="isLoading()">
             Mettre à niveau (Standard Pro)
           </button>
         </div>
@@ -159,14 +227,14 @@
 
     <!-- Premium VIP Plan Card -->
     <div class="col-md-4 mb-4">
-      <div class="block block-rounded text-center shadow-sm border border-light h-100 d-flex flex-column justify-content-between bg-white">
+      <div
+        class="block block-rounded text-center shadow-sm border border-light h-100 d-flex flex-column justify-content-between bg-white">
         <div class="block-content block-content-full bg-body-light py-4 border-bottom border-light">
           <div class="h5 fw-bold text-uppercase text-muted mb-2">Pack Premium VIP</div>
           <div class="h2 fw-bold text-dark mb-0">59.90 € <span class="fs-sm text-muted">/ mois</span></div>
         </div>
         <div class="block-content py-4 text-start">
           <ul class="list-unstyled space-y-4 fs-sm mb-0">
-            <!-- Available features -->
             <li class="d-flex align-items-start gap-2 mb-3">
               <span>✅</span>
               <div>
@@ -192,32 +260,35 @@
               <span>✅</span>
               <div>
                 <strong class="text-dark">Advanced Meal Menus & Dietary Restrictions</strong>
-                <div class="text-muted fs-xs">Gestion des régimes végétariens, sans sucre et allergies pour la cuisine.</div>
+                <div class="text-muted fs-xs">Gestion des régimes végétariens, sans sucre et allergies pour la cuisine.
+                </div>
               </div>
             </li>
             <li class="d-flex align-items-start gap-2 mb-3">
               <span>✅</span>
               <div>
                 <strong class="text-dark">Digital Seating Chart</strong>
-                <div class="text-muted fs-xs">Organisation des tables en glisser-déposer pour remplacer les tableurs.</div>
+                <div class="text-muted fs-xs">Organisation des tables en glisser-déposer pour remplacer les tableurs.
+                </div>
               </div>
             </li>
             <li class="d-flex align-items-start gap-2">
               <span>✅</span>
               <div>
                 <strong class="text-dark">QR Code Venue Check-in & Kitchen Chef Reports</strong>
-                <div class="text-muted fs-xs">Contrôle d'accès par QR Code et rapports de préparation détaillés pour les chefs.</div>
+                <div class="text-muted fs-xs">Contrôle d'accès par QR Code et rapports de préparation détaillés pour les
+                  chefs.</div>
               </div>
             </li>
-            
-            <!-- No unavailable features to display -->
           </ul>
         </div>
         <div class="block-content block-content-full bg-body-light border-top border-light py-3">
-          <button class="btn btn-success w-100 animate__animated animate__fadeIn" [disabled]="true" *ngIf="currentPlan() === 'PREMIUM'">
+          <button class="btn btn-success w-100 animate__animated animate__fadeIn" [disabled]="true"
+            *ngIf="currentPlan() === 'PREMIUM'">
             <i class="fa fa-check-circle me-1"></i> Abonnement Actif
           </button>
-          <button class="btn btn-primary w-100" (click)="selectPlan('PREMIUM')" *ngIf="currentPlan() !== 'PREMIUM'" [disabled]="isLoading()">
+          <button class="btn btn-primary w-100" (click)="selectPlan('PREMIUM')" *ngIf="currentPlan() !== 'PREMIUM'"
+            [disabled]="isLoading()">
             Mettre à niveau (Premium VIP)
           </button>
         </div>
@@ -226,14 +297,28 @@
   </div>
 </div>
 
+<!-- Loading Template -->
+<ng-template #loadingTpl>
+  <div class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Chargement...</span>
+    </div>
+    <p class="text-muted mt-2 fs-sm">Chargement des données de votre abonnement...</p>
+  </div>
+</ng-template>
+
 <!-- Modal : Simulation de Paiement Stripe -->
-<div class="modal fade show" tabindex="-1" role="dialog" style="display: block; background: rgba(0,0,0,0.5); z-index: 1050;" *ngIf="showPaymentModal()">
+<div class="modal fade show" tabindex="-1" role="dialog"
+  style="display: block; background: rgba(0,0,0,0.5); z-index: 1050;" *ngIf="showPaymentModal()">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content border-0 shadow-lg">
       <div class="block block-rounded block-transparent mb-0 bg-white">
-        <div class="block-header block-header-default bg-body-light border-bottom border-light d-flex justify-content-between align-items-center p-3">
-          <h3 class="block-title fw-bold text-dark mb-0"><i class="fa fa-credit-card text-primary me-2"></i>Paiement Stripe (Simulation)</h3>
-          <button type="button" class="btn btn-sm btn-alt-secondary" (click)="showPaymentModal.set(false)" style="border: none; background: transparent;">
+        <div
+          class="block-header block-header-default bg-body-light border-bottom border-light d-flex justify-content-between align-items-center p-3">
+          <h3 class="block-title fw-bold text-dark mb-0"><i class="fa fa-credit-card text-primary me-2"></i>Paiement
+            Stripe (Simulation)</h3>
+          <button type="button" class="btn btn-sm btn-alt-secondary" (click)="showPaymentModal.set(false)"
+            style="border: none; background: transparent;">
             <i class="fa fa-times text-dark"></i>
           </button>
         </div>
@@ -241,9 +326,10 @@
           <div class="text-center mb-4">
             <span class="fs-sm text-muted">Abonnement choisi</span>
             <h4 class="fw-bold text-dark mt-1 mb-2">{{ selectedPlanLabel() }}</h4>
-            <div class="h3 fw-bold text-primary mb-0">{{ selectedPlanPrice() }} € <span class="fs-xs text-muted">/ mois</span></div>
+            <div class="h3 fw-bold text-primary mb-0">{{ selectedPlanPrice() }} € <span class="fs-xs text-muted">/
+                mois</span></div>
           </div>
-          
+
           <form (ngSubmit)="confirmPayment()">
             <!-- Mock Credit Card Input -->
             <div class="mb-3">
@@ -252,9 +338,10 @@
                 <span class="input-group-text bg-body border-light"><i class="fa fa-credit-card text-muted"></i></span>
                 <input type="text" class="form-control border-light fs-sm bg-body" value="4242 4242 4242 4242" disabled>
               </div>
-              <div class="form-text fs-xs text-muted">Utilisez la carte de test Stripe par défaut pour la simulation.</div>
+              <div class="form-text fs-xs text-muted">Utilisez la carte de test Stripe par défaut pour la simulation.
+              </div>
             </div>
-            
+
             <div class="row mb-4">
               <div class="col-6">
                 <label class="form-label fs-sm fw-semibold text-dark">Expiration</label>
@@ -269,12 +356,14 @@
             <!-- Actions -->
             <div class="d-flex gap-2 justify-content-between border-top border-light pt-3">
               <div>
-                <button type="button" class="btn btn-alt-success fs-sm" (click)="confirmPaymentTest()" [disabled]="isProcessingPayment()">
+                <button type="button" class="btn btn-alt-success fs-sm" (click)="confirmPaymentTest()"
+                  [disabled]="isProcessingPayment()">
                   <i class="fa fa-flask me-1"></i> Activer en Mode Test (Gratuit)
                 </button>
               </div>
               <div class="d-flex gap-2">
-                <button type="button" class="btn btn-alt-secondary fs-sm" (click)="showPaymentModal.set(false)" [disabled]="isProcessingPayment()">
+                <button type="button" class="btn btn-alt-secondary fs-sm" (click)="showPaymentModal.set(false)"
+                  [disabled]="isProcessingPayment()">
                   Annuler
                 </button>
                 <button type="submit" class="btn btn-primary fs-sm" [disabled]="isProcessingPayment()">

@@ -20,6 +20,7 @@ import { AdminInvitationTemplates } from './features/admin/templates/admin-invit
 import { AdminBillingSettings } from './features/admin/billing/admin-billing-settings';
 import { PendingApproval } from './core/auth/pending-approval/pending-approval';
 import { Pricing } from './features/pricing/pricing';
+import { SubscriptionComponent } from './features/subscription/subscription';
 
 export const routes: Routes = [
   {
@@ -80,6 +81,10 @@ export const routes: Routes = [
       {
         path: 'pricing',
         component: Pricing
+      },
+      {
+        path: 'subscription',
+        component: SubscriptionComponent
       },
       {
         path: 'admin/dashboard',

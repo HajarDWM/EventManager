@@ -75,7 +75,7 @@ export class EventCreate implements OnInit {
       error: (err) => {
         this.isLoading.set(false);
         if (err.status === 402 && err.error?.error === 'SUBSCRIPTION_REQUIRED') {
-          this.router.navigate(['/pricing']);
+          this.router.navigate(['/subscription']);
         } else {
           this.errorMessage.set(
             err.error?.message || err.error?.error || 'Une erreur est survenue lors de la création de l\'événement.'

@@ -2,23 +2,32 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { CatererService } from '../../core/services/caterer.service';
+import { EventService } from '../events/services/event.service';
 import { HttpClient } from '@angular/common/http';
 
 @Component({
-  selector: 'app-pricing',
+  selector: 'app-subscription',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './pricing.html'
+  templateUrl: './subscription.html'
 })
-export class Pricing implements OnInit {
+export class SubscriptionComponent implements OnInit {
   private readonly catererService = inject(CatererService);
+  private readonly eventService = inject(EventService);
   private readonly router = inject(Router);
   private readonly http = inject(HttpClient);
 
   protected readonly currentPlan = signal('FREE');
+  protected readonly subscriptionStatus = signal('INACTIF');
+  protected readonly subscriptionEndDate = signal<string | null>(null);
   protected readonly isLoading = signal(false);
   protected readonly successMessage = signal('');
   protected readonly errorMessage = signal('');
+
+  // Usage statistics
+  protected readonly eventsUsed = signal(0);
+  protected readonly eventsLimit = signal(2);
+  protected readonly usagePercentage = signal(0);
 
   // Payment simulation state
   protected readonly showPaymentModal = signal(false);
@@ -27,20 +36,48 @@ export class Pricing implements OnInit {
   protected readonly selectedPlanPrice = signal(0);
   protected readonly isProcessingPayment = signal(false);
 
-  // Profile data for Webhook simulation
   private catererId: number | undefined = undefined;
 
   public ngOnInit(): void {
-    this.loadProfile();
+    this.loadProfileAndStats();
   }
 
-  private loadProfile(): void {
+  private loadProfileAndStats(): void {
+    this.isLoading.set(true);
     this.catererService.getCurrentProfile().subscribe({
       next: (profile) => {
         this.currentPlan.set(profile.subscriptionPlan || 'FREE');
+        this.subscriptionStatus.set(profile.subscriptionStatus || 'INACTIF');
+        this.subscriptionEndDate.set(profile.subscriptionEndDate || null);
         this.catererId = profile.id;
+        
+        // Calculate limit based on plan
+        let limit = 2;
+        if (profile.subscriptionPlan === 'STANDARD') {
+          limit = 8;
+        } else if (profile.subscriptionPlan === 'PREMIUM') {
+          limit = 20;
+        }
+        this.eventsLimit.set(limit);
+
+        // Fetch events count
+        this.eventService.getAllEvents().subscribe({
+          next: (events) => {
+            this.eventsUsed.set(events.length);
+            const percentage = Math.min(100, Math.round((events.length / limit) * 100));
+            this.usagePercentage.set(percentage);
+            this.isLoading.set(false);
+          },
+          error: (err) => {
+            console.error('Error fetching events count', err);
+            this.isLoading.set(false);
+          }
+        });
       },
-      error: (err) => console.error(err)
+      error: (err) => {
+        console.error('Error fetching profile', err);
+        this.isLoading.set(false);
+      }
     });
   }
 
@@ -50,14 +87,13 @@ export class Pricing implements OnInit {
     }
 
     if (plan === 'FREE') {
-      // Direct downgrade simulation (no payment needed)
       this.isLoading.set(true);
       this.http.put<any>(`/api/caterers/subscription?plan=FREE`, {}).subscribe({
         next: () => {
-          this.isLoading.set(false);
           this.successMessage.set('Votre forfait a été modifié vers Gratuit.');
           this.currentPlan.set('FREE');
-          setTimeout(() => this.router.navigate(['/events']), 2000);
+          this.loadProfileAndStats();
+          setTimeout(() => this.successMessage.set(''), 3000);
         },
         error: (err) => {
           this.isLoading.set(false);
@@ -67,7 +103,6 @@ export class Pricing implements OnInit {
       return;
     }
 
-    // Set billing details for selected plan
     this.selectedPlan.set(plan);
     if (plan === 'STANDARD') {
       this.selectedPlanLabel.set('Pack Standard Pro');
@@ -78,11 +113,9 @@ export class Pricing implements OnInit {
     }
 
     this.isLoading.set(true);
-    // 1. Call checkout API to prepare simulation session
     this.http.post<any>(`/api/subscriptions/checkout?plan=${plan}`, {}).subscribe({
       next: (res) => {
         this.isLoading.set(false);
-        // Open simulated payment modal
         this.showPaymentModal.set(true);
       },
       error: (err) => {
@@ -97,7 +130,6 @@ export class Pricing implements OnInit {
     this.isProcessingPayment.set(true);
     this.errorMessage.set('');
 
-    // 2. Simulate Stripe Webhook POST call to /api/webhooks/stripe
     const mockStripeEvent = {
       type: 'checkout.session.completed',
       data: {
@@ -115,23 +147,20 @@ export class Pricing implements OnInit {
         this.isProcessingPayment.set(false);
         this.showPaymentModal.set(false);
         
-        // Immediately change visual state of button by setting signal
+        // Visual indicator transition
         this.currentPlan.set(this.selectedPlan());
+        this.successMessage.set(`Félicitations ! Votre forfait a été activé sous le ${this.selectedPlanLabel()} avec accès immédiat. Redirection...`);
 
-        // Refresh profile in background
-        this.catererService.getCurrentProfile().subscribe();
+        // Load profile stats in background
+        this.loadProfileAndStats();
 
-        this.successMessage.set(`Félicitations ! Votre paiement a été confirmé par Stripe. Votre compte est maintenant activé sous le ${this.selectedPlanLabel()} avec accès immédiat. Redirection...`);
-
-        // Wait 1.2 seconds, then navigate directly to event creation interface
         setTimeout(() => {
           this.router.navigate(['/events/create']);
         }, 1200);
       },
       error: (err) => {
         this.isProcessingPayment.set(false);
-        this.errorMessage.set('La validation du paiement a échoué. Veuillez réessayer.');
-        console.error(err);
+        this.errorMessage.set('La validation du paiement a échoué.');
       }
     });
   }
@@ -145,15 +174,13 @@ export class Pricing implements OnInit {
         this.isProcessingPayment.set(false);
         this.showPaymentModal.set(false);
         
-        // Immediately change visual state of button by setting signal
+        // Visual indicator transition
         this.currentPlan.set(this.selectedPlan());
+        this.successMessage.set(`Mode Test : Votre forfait a été activé gratuitement pour le ${this.selectedPlanLabel()}. Redirection...`);
 
-        // Refresh profile in background
-        this.catererService.getCurrentProfile().subscribe();
+        // Load profile stats in background
+        this.loadProfileAndStats();
 
-        this.successMessage.set(`Mode Test : Votre forfait a été activé gratuitement pour le ${this.selectedPlanLabel()}. Redirection vers l'interface de création d'événement...`);
-
-        // Wait 1.2 seconds, then navigate directly to event creation interface
         setTimeout(() => {
           this.router.navigate(['/events/create']);
         }, 1200);
@@ -161,7 +188,6 @@ export class Pricing implements OnInit {
       error: (err) => {
         this.isProcessingPayment.set(false);
         this.errorMessage.set('Une erreur est survenue lors de l\'activation en Mode Test.');
-        console.error(err);
       }
     });
   }

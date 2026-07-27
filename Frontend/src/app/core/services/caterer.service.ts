@@ -11,6 +11,8 @@ export interface CatererProfile {
   role?: string;
   subscriptionPlan?: string;
   subscriptionStatus?: string;
+  subscriptionEndDate?: string;
+  subscriptionRemainingDays?: number;
   eventCount?: number;
   eventLimit?: number;
 }
