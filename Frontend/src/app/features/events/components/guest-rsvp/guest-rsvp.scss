@@ -1,0 +1,315 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+
+.rsvp-luxury-wrapper {
+  background: radial-gradient(circle at center, #fdfbfa 0%, #ede5d8 100%);
+  min-height: 100vh;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  color: #3f382e;
+}
+
+.luxury-card {
+  border: 1px solid rgba(197, 160, 89, 0.25) !important;
+  box-shadow: 0 25px 60px rgba(186, 160, 120, 0.18) !important;
+  border-radius: 16px;
+  overflow: hidden;
+  background-color: #fdfcfb !important;
+}
+
+.luxury-inner-border {
+  border: 1px solid rgba(197, 160, 89, 0.4);
+  margin: 16px;
+  padding: 32px 24px;
+  border-radius: 12px;
+  background-color: #ffffff;
+  
+  @media (min-width: 768px) {
+    margin: 24px;
+    padding: 48px;
+  }
+}
+
+.gold-top-border {
+  height: 6px;
+  background: linear-gradient(90deg, #dfc07b, #c5a059, #b08c45);
+}
+
+.crest-wrapper {
+  text-align: center;
+}
+
+.crest-circle {
+  width: 56px;
+  height: 56px;
+  border: 1px solid #c5a059;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  background-color: #fff;
+  box-shadow: 0 4px 10px rgba(197, 160, 89, 0.1);
+}
+
+.crest-letters {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #c5a059;
+  letter-spacing: 1px;
+}
+
+.crest-line {
+  width: 120px;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(197, 160, 89, 0) 0%, rgba(197, 160, 89, 0.5) 50%, rgba(197, 160, 89, 0) 100%);
+  margin: 12px auto 0;
+}
+
+.luxury-subtitle {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  color: #c5a059;
+  font-weight: 600;
+}
+
+.wedding-names {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #2b251d;
+  line-height: 1.25;
+  font-style: italic;
+  
+  @media (min-width: 768px) {
+    font-size: 2.8rem;
+  }
+}
+
+.wedding-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #2b251d;
+}
+
+.wedding-greeting {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #6e6454;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.guest-highlight {
+  color: #2b251d;
+  font-weight: 600;
+  border-bottom: 1px dashed rgba(197, 160, 89, 0.4);
+  padding-bottom: 2px;
+}
+
+/* Details Grid Layout */
+.details-grid {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  margin: 40px 0;
+  background-color: #faf8f5;
+  border: 1px solid rgba(197, 160, 89, 0.15);
+  border-radius: 8px;
+  padding: 16px 8px;
+  
+  @media (max-width: 576px) {
+    flex-direction: column;
+    gap: 24px;
+    padding: 24px 16px;
+  }
+}
+
+.details-col {
+  flex: 1;
+  text-align: center;
+  padding: 8px 16px;
+}
+
+.details-divider {
+  width: 1px;
+  background: linear-gradient(180deg, rgba(197, 160, 89, 0) 0%, rgba(197, 160, 89, 0.3) 50%, rgba(197, 160, 89, 0) 100%);
+  
+  @media (max-width: 576px) {
+    width: 60%;
+    height: 1px;
+    margin: 0 auto;
+    background: linear-gradient(90deg, rgba(197, 160, 89, 0) 0%, rgba(197, 160, 89, 0.3) 50%, rgba(197, 160, 89, 0) 100%);
+  }
+}
+
+.details-icon-wrapper {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #fff;
+  border: 1px solid rgba(197, 160, 89, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 12px;
+  color: #c5a059;
+  font-size: 1rem;
+}
+
+.details-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #c5a059;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.details-value {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #2b251d;
+  margin-bottom: 2px;
+}
+
+.details-subvalue {
+  font-size: 0.8rem;
+  color: #6e6454;
+  margin-bottom: 0;
+}
+
+.details-gps-link {
+  font-size: 0.75rem;
+  color: #c5a059;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.25s ease;
+  
+  &:hover {
+    color: #9c7b39;
+    text-decoration: underline;
+  }
+}
+
+/* Form Styles */
+.text-gold {
+  color: #c5a059 !important;
+}
+
+.text-gold-muted {
+  color: #a39580 !important;
+}
+
+.spinner-border.text-gold {
+  color: #c5a059;
+}
+
+.bg-cream {
+  background-color: #faf7f2;
+  border: 1px solid rgba(197, 160, 89, 0.15);
+}
+
+.bg-gold-success {
+  background-color: rgba(46, 125, 50, 0.1);
+  color: #2e7d32;
+}
+
+.bg-gold-muted {
+  background-color: rgba(142, 142, 142, 0.1);
+  color: #666666;
+}
+
+.rsvp-action-btn {
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-width: 1px;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  background-color: #ffffff;
+  
+  &.btn-presence-yes {
+    border-color: rgba(46, 125, 50, 0.3);
+    color: #2e7d32;
+    
+    &:hover, &.active {
+      background-color: #2e7d32;
+      border-color: #2e7d32;
+      color: #ffffff;
+      box-shadow: 0 4px 15px rgba(46, 125, 50, 0.2);
+    }
+  }
+  
+  &.btn-presence-no {
+    border-color: rgba(110, 100, 84, 0.3);
+    color: #6e6454;
+    
+    &:hover, &.active {
+      background-color: #6e6454;
+      border-color: #6e6454;
+      color: #ffffff;
+      box-shadow: 0 4px 15px rgba(110, 100, 84, 0.2);
+    }
+  }
+}
+
+.luxury-form-control {
+  background-color: #fdfbfa;
+  border: 1px solid rgba(197, 160, 89, 0.25);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: #3f382e;
+  padding: 10px 14px;
+  transition: all 0.3s ease;
+  
+  &:focus {
+    background-color: #ffffff;
+    border-color: #c5a059;
+    box-shadow: 0 0 0 3px rgba(197, 160, 89, 0.12);
+  }
+}
+
+.luxury-checkbox-wrapper {
+  background-color: #fdfbfa;
+  border: 1px solid rgba(197, 160, 89, 0.2);
+  transition: all 0.3s ease;
+  
+  &:hover {
+    border-color: rgba(197, 160, 89, 0.4);
+    background-color: #ffffff;
+  }
+  
+  .form-check-input {
+    border-color: rgba(197, 160, 89, 0.4);
+    &:checked {
+      background-color: #c5a059;
+      border-color: #c5a059;
+    }
+  }
+}
+
+.btn-luxury-submit {
+  background: linear-gradient(135deg, #dfc07b 0%, #c5a059 50%, #b08c45 100%);
+  border: none;
+  color: #ffffff;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(197, 160, 89, 0.15);
+  
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(197, 160, 89, 0.35);
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    background: #cccccc;
+    box-shadow: none;
+    cursor: not-allowed;
+  }
+}

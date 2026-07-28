@@ -1,0 +1,97 @@
+package com.example.eventmanager.presentation.resource;
+
+import com.example.eventmanager.application.dto.PublicRsvpDTO;
+import com.example.eventmanager.application.port.out.EventRepositoryPort;
+import com.example.eventmanager.application.port.out.GuestRepositoryPort;
+import com.example.eventmanager.domain.model.Event;
+import com.example.eventmanager.domain.model.Guest;
+import com.example.eventmanager.domain.model.GuestStatus;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/public/rsvp")
+@RequiredArgsConstructor
+public class PublicRsvpController {
+
+    private final GuestRepositoryPort guestRepositoryPort;
+    private final EventRepositoryPort eventRepositoryPort;
+
+    @GetMapping("/{guestId}")
+    public ResponseEntity<PublicRsvpDTO> getPublicRsvpDetail(@PathVariable Long guestId) {
+        Guest guest = guestRepositoryPort.findById(guestId)
+                .orElseThrow(() -> new IllegalArgumentException("Invité non trouvé avec l'id : " + guestId));
+
+        Event event = eventRepositoryPort.findById(guest.getEventId())
+                .orElseThrow(() -> new IllegalArgumentException("Événement non trouvé avec l'id : " + guest.getEventId()));
+
+        PublicRsvpDTO dto = PublicRsvpDTO.builder()
+                .guestId(guest.getId())
+                .guestName(guest.getFullName())
+                .guestEmail(guest.getEmail())
+                .guestPhone(guest.getPhone())
+                .guestStatus(guest.getStatus() != null ? guest.getStatus().name() : "PENDING")
+                .tableNumber(guest.getTableNumber())
+                .dietaryRequirements(guest.getDietaryRequirements())
+                .eventId(event.getId())
+                .eventTitle(event.getTitle())
+                .eventDate(event.getEventDate())
+                .eventLocation(event.getLocation())
+                .digitalTemplateId(event.getDigitalTemplateId())
+                .invitationTitle(event.getInvitationTitle())
+                .invitationDate(event.getInvitationDate())
+                .invitationLocation(event.getInvitationLocation())
+                .build();
+
+        return ResponseEntity.ok(dto);
+    }
+
+    @PostMapping("/{guestId}")
+    public ResponseEntity<PublicRsvpDTO> updatePublicRsvpResponse(
+            @PathVariable Long guestId,
+            @RequestBody PublicRsvpDTO rsvpDTO) {
+
+        Guest guest = guestRepositoryPort.findById(guestId)
+                .orElseThrow(() -> new IllegalArgumentException("Invité non trouvé avec l'id : " + guestId));
+
+        GuestStatus statusVal = guest.getStatus();
+        if (rsvpDTO.getGuestStatus() != null) {
+            statusVal = GuestStatus.valueOf(rsvpDTO.getGuestStatus().toUpperCase());
+        }
+
+        guest.updateDetails(
+                guest.getFullName(),
+                guest.getEmail(),
+                guest.getPhone(),
+                statusVal,
+                guest.getTableNumber(),
+                rsvpDTO.getDietaryRequirements()
+        );
+
+        Guest savedGuest = guestRepositoryPort.save(guest);
+
+        Event event = eventRepositoryPort.findById(savedGuest.getEventId())
+                .orElseThrow(() -> new IllegalArgumentException("Événement non trouvé avec l'id : " + savedGuest.getEventId()));
+
+        PublicRsvpDTO responseDto = PublicRsvpDTO.builder()
+                .guestId(savedGuest.getId())
+                .guestName(savedGuest.getFullName())
+                .guestEmail(savedGuest.getEmail())
+                .guestPhone(savedGuest.getPhone())
+                .guestStatus(savedGuest.getStatus() != null ? savedGuest.getStatus().name() : "PENDING")
+                .tableNumber(savedGuest.getTableNumber())
+                .dietaryRequirements(savedGuest.getDietaryRequirements())
+                .eventId(event.getId())
+                .eventTitle(event.getTitle())
+                .eventDate(event.getEventDate())
+                .eventLocation(event.getLocation())
+                .digitalTemplateId(event.getDigitalTemplateId())
+                .invitationTitle(event.getInvitationTitle())
+                .invitationDate(event.getInvitationDate())
+                .invitationLocation(event.getInvitationLocation())
+                .build();
+
+        return ResponseEntity.ok(responseDto);
+    }
+}

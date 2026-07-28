@@ -1,0 +1,211 @@
+<div class="rsvp-luxury-wrapper py-5 px-3 d-flex align-items-center justify-content-center">
+  <div class="invitation-outer-container w-100" style="max-width: 600px;">
+    
+    <!-- Loading State -->
+    <div class="text-center py-5" *ngIf="isLoading()">
+      <div class="spinner-border text-gold" role="status">
+        <span class="visually-hidden">Chargement...</span>
+      </div>
+      <p class="text-gold-muted mt-3">Préparation de votre faire-part...</p>
+    </div>
+
+    <!-- Error State -->
+    <div class="luxury-card text-center p-5 bg-white" *ngIf="!isLoading() && errorMessage()">
+      <div class="luxury-inner-border p-4 d-flex flex-column align-items-center justify-content-center">
+        <div class="mb-4 text-danger">
+          <i class="fa fa-exclamation-circle fs-1"></i>
+        </div>
+        <h3 class="h4 fw-bold text-dark mb-3">Erreur d'invitation</h3>
+        <p class="text-muted mb-4">{{ errorMessage() }}</p>
+      </div>
+    </div>
+
+    <!-- Success State -->
+    <div class="luxury-card text-center p-5 bg-white" *ngIf="!isLoading() && isSuccess()">
+      <div class="luxury-inner-border p-4 p-md-5">
+        <!-- Top Monogram -->
+        <div class="crest-wrapper mb-4">
+          <div class="crest-circle">
+            <span class="crest-letters">R S V P</span>
+          </div>
+          <div class="crest-line"></div>
+        </div>
+
+        <h3 class="wedding-names mb-3">Merci infiniment</h3>
+        <p class="text-muted fs-sm mb-4">Votre participation a bien été enregistrée pour cet événement d'exception.</p>
+        
+        <div class="summary-box p-4 rounded-2 bg-cream text-start mb-4">
+          <h4 class="fs-xs fw-bold text-gold uppercase tracking-wider mb-3">Récapitulatif de votre réponse</h4>
+          <div class="fs-sm text-dark mb-2"><strong>Invité :</strong> {{ guest()?.guestName }}</div>
+          <div class="fs-sm text-dark mb-2">
+            <strong>Statut :</strong> 
+            <span class="badge rounded-pill" [ngClass]="status() === 'CONFIRMED' ? 'bg-gold-success' : 'bg-gold-muted'">
+              {{ status() === 'CONFIRMED' ? 'Présent' : 'Absent' }}
+            </span>
+          </div>
+          <div class="fs-sm text-dark" *ngIf="guest()?.dietaryRequirements">
+            <strong>Préférences & Régimes :</strong> {{ guest()?.dietaryRequirements }}
+          </div>
+        </div>
+        
+        <p class="fs-xs text-muted font-serif">Vous pouvez fermer cet onglet en toute sérénité.</p>
+      </div>
+    </div>
+
+    <!-- Invitation Form Card -->
+    <div class="luxury-card bg-white" *ngIf="!isLoading() && !isSuccess() && guest()">
+      <div class="luxury-inner-border">
+        
+        <!-- Top Crest / Monogram -->
+        <div class="crest-wrapper mb-4">
+          <div class="crest-circle">
+            <span class="crest-letters">{{ guest()?.invitationTitle ? guest()?.invitationTitle!.substring(0, 1) : 'E' }}</span>
+          </div>
+          <div class="crest-line"></div>
+        </div>
+
+        <!-- Header Titles -->
+        <div class="text-center mb-5">
+          <span class="luxury-subtitle d-block mb-2">Invitation d'exception</span>
+          <h1 class="wedding-names mb-3">{{ guest()?.invitationTitle || guest()?.eventTitle }}</h1>
+          <div class="wedding-greeting">
+            Cher(e) <span class="guest-highlight">{{ guest()?.guestName }}</span>,<br>
+            Nous serions honorés de célébrer ce moment unique à vos côtés.
+          </div>
+        </div>
+
+        <!-- Event Details Splits -->
+        <div class="details-grid mb-5">
+          <div class="details-col">
+            <div class="details-icon-wrapper">
+              <i class="fa fa-calendar-alt"></i>
+            </div>
+            <h4 class="details-label">Date & Heure</h4>
+            <p class="details-value">
+              {{ (guest()?.invitationDate || guest()?.eventDate) | date:'EEEE dd MMMM yyyy' }}
+            </p>
+            <p class="details-subvalue">
+              à {{ (guest()?.invitationDate || guest()?.eventDate) | date:'HH:mm' }}
+            </p>
+          </div>
+          
+          <div class="details-divider"></div>
+          
+          <div class="details-col">
+            <div class="details-icon-wrapper">
+              <i class="fa fa-map-marker-alt"></i>
+            </div>
+            <h4 class="details-label">Lieu de la réception</h4>
+            <p class="details-value">
+              {{ guest()?.invitationLocation || guest()?.eventLocation }}
+            </p>
+            <a href="https://maps.google.com/?q={{ guest()?.invitationLocation || guest()?.eventLocation }}" 
+               target="_blank" 
+               class="details-gps-link mt-1 d-inline-block">
+              <i class="fa fa-location-arrow me-1"></i> Itinéraire GPS
+            </a>
+          </div>
+        </div>
+
+        <!-- RSVP Form Section -->
+        <form (ngSubmit)="submitResponse()" #rsvpForm="ngForm">
+          
+          <!-- Presence Toggle Buttons -->
+          <div class="mb-5">
+            <label class="form-label d-block text-center fw-bold text-gold text-uppercase fs-xs tracking-widest mb-3">Votre réponse</label>
+            <div class="row g-3">
+              <div class="col-sm-6">
+                <button type="button" class="btn rsvp-action-btn btn-presence-yes w-100 py-3" 
+                        [class.active]="status() === 'CONFIRMED'"
+                        (click)="selectStatus('CONFIRMED')">
+                  <i class="fa fa-check me-2"></i>
+                  Je serai présent
+                </button>
+              </div>
+              <div class="col-sm-6">
+                <button type="button" class="btn rsvp-action-btn btn-presence-no w-100 py-3" 
+                        [class.active]="status() === 'DECLINED'"
+                        (click)="selectStatus('DECLINED')">
+                  <i class="fa fa-times me-2"></i>
+                  Je ne pourrai pas venir
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Extra details ONLY shown if CONFIRMED -->
+          <div *ngIf="status() === 'CONFIRMED'" class="extra-rsvp-sections animate__animated animate__fadeIn">
+            
+            <!-- Meal Choice -->
+            <div class="mb-4">
+              <label class="form-label fw-bold text-gold text-uppercase fs-xs tracking-widest mb-2">Choix du Plat Principal</label>
+              <select class="form-select luxury-form-control" [(ngModel)]="mealChoice" name="mealChoice">
+                <option value="">-- Sélectionnez un menu --</option>
+                <option value="Viande">Menu Terroir (Viande)</option>
+                <option value="Poisson">Menu Océan (Poisson)</option>
+                <option value="Végétarien">Menu Saveurs Nature (Végétarien)</option>
+              </select>
+            </div>
+
+            <!-- Dietary Restrictions -->
+            <div class="mb-4">
+              <label class="form-label d-block fw-bold text-gold text-uppercase fs-xs tracking-widest mb-2">Régimes Particuliers & Allergies</label>
+              <div class="row g-2">
+                <div class="col-6 col-sm-6">
+                  <div class="form-check luxury-checkbox-wrapper p-3 rounded h-100">
+                    <input class="form-check-input ms-0 me-2" type="checkbox" id="dietVeg" [(ngModel)]="hasVegetarien" name="hasVegetarien">
+                    <label class="form-check-label fw-semibold text-dark fs-sm" for="dietVeg">Végétarien</label>
+                  </div>
+                </div>
+                <div class="col-6 col-sm-6">
+                  <div class="form-check luxury-checkbox-wrapper p-3 rounded h-100">
+                    <input class="form-check-input ms-0 me-2" type="checkbox" id="dietGluten" [(ngModel)]="hasGlutenFree" name="hasGlutenFree">
+                    <label class="form-check-label fw-semibold text-dark fs-sm" for="dietGluten">Sans gluten</label>
+                  </div>
+                </div>
+                <div class="col-6 col-sm-6">
+                  <div class="form-check luxury-checkbox-wrapper p-3 rounded h-100">
+                    <input class="form-check-input ms-0 me-2" type="checkbox" id="dietNut" [(ngModel)]="hasNutFree" name="hasNutFree">
+                    <label class="form-check-label fw-semibold text-dark fs-sm" for="dietNut">Sans noix</label>
+                  </div>
+                </div>
+                <div class="col-6 col-sm-6">
+                  <div class="form-check luxury-checkbox-wrapper p-3 rounded h-100">
+                    <input class="form-check-input ms-0 me-2" type="checkbox" id="dietLactose" [(ngModel)]="hasLactoseFree" name="hasLactoseFree">
+                    <label class="form-check-label fw-semibold text-dark fs-sm" for="dietLactose">Sans lactose</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Custom Allergies / Notes -->
+            <div class="mb-5">
+              <label class="form-label fw-bold text-gold text-uppercase fs-xs tracking-widest mb-2">Autres allergies ou restrictions</label>
+              <textarea class="form-control luxury-form-control py-2" rows="3" 
+                        placeholder="Ex: sans arachide, allergie aux fraises, etc..." 
+                        [(ngModel)]="otherAllergies" name="otherAllergies"></textarea>
+            </div>
+
+          </div>
+
+          <!-- Error Alert inside form -->
+          <div *ngIf="errorMessage()" class="alert alert-danger py-2 px-3 fs-sm mb-4">
+            {{ errorMessage() }}
+          </div>
+
+          <!-- Submit Button -->
+          <div class="text-center mt-4">
+            <button type="submit" class="btn btn-luxury-submit w-100 py-3 fs-sm" 
+                    [disabled]="isSubmitting() || status() === 'PENDING'">
+              <span *ngIf="!isSubmitting()">Confirmer ma réponse</span>
+              <span *ngIf="isSubmitting()"><i class="fa fa-spinner fa-spin me-2"></i>Enregistrement...</span>
+            </button>
+          </div>
+
+        </form>
+
+      </div>
+    </div>
+
+  </div>
+</div>

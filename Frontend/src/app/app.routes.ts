@@ -23,6 +23,7 @@ import { Pricing } from './features/pricing/pricing';
 import { SubscriptionComponent } from './features/subscription/subscription';
 import { AdminTemplates } from './features/admin/templates/admin-templates';
 import { OrganiserInvitationSetup } from './features/events/components/organiser-invitation-setup/organiser-invitation-setup';
+import { GuestRsvp } from './features/events/components/guest-rsvp/guest-rsvp';
 
 export const routes: Routes = [
   {
@@ -38,6 +39,10 @@ export const routes: Routes = [
   {
     path: 'pending-approval',
     component: PendingApproval
+  },
+  {
+    path: 'rsvp/:id',
+    component: GuestRsvp
   },
   {
     path: '',
