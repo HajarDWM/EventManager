@@ -21,6 +21,7 @@ import { AdminBillingSettings } from './features/admin/billing/admin-billing-set
 import { PendingApproval } from './core/auth/pending-approval/pending-approval';
 import { Pricing } from './features/pricing/pricing';
 import { SubscriptionComponent } from './features/subscription/subscription';
+import { AdminTemplates } from './features/admin/templates/admin-templates';
 
 export const routes: Routes = [
   {
@@ -99,6 +100,11 @@ export const routes: Routes = [
       {
         path: 'admin/invitations',
         component: AdminInvitationTemplates,
+        canActivate: [adminGuard]
+      },
+      {
+        path: 'admin/templates',
+        component: AdminTemplates,
         canActivate: [adminGuard]
       },
       {

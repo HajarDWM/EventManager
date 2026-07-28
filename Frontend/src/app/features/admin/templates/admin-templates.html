@@ -1,0 +1,142 @@
+<!-- Hero -->
+<div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-2 text-center text-md-start">
+  <div class="flex-grow-1 mb-1 mb-md-0">
+    <h1 class="h3 fw-bold mb-2">
+      Modèles de Faire-part Digitaux
+    </h1>
+    <h2 class="h6 fw-medium text-muted mb-0">
+      Gérez les designs de faire-part interactifs disponibles pour les RSVP de vos traiteurs.
+    </h2>
+  </div>
+  <div class="mt-2 mt-md-0">
+    <button type="button" class="btn btn-primary" (click)="openAddModal()">
+      <i class="fa fa-plus me-1"></i> Nouveau Faire-part
+    </button>
+  </div>
+</div>
+<!-- END Hero -->
+
+<!-- Notifications -->
+<div *ngIf="successMessage()" class="alert alert-success d-flex align-items-center mt-3 shadow-sm" role="alert">
+  <i class="fa fa-check-circle me-2"></i>
+  <div>{{ successMessage() }}</div>
+  <button type="button" class="btn-close ms-auto" (click)="successMessage.set('')"></button>
+</div>
+
+<div *ngIf="errorMessage()" class="alert alert-danger d-flex align-items-center mt-3 shadow-sm" role="alert">
+  <i class="fa fa-exclamation-triangle me-2"></i>
+  <div>{{ errorMessage() }}</div>
+  <button type="button" class="btn-close ms-auto" (click)="errorMessage.set('')"></button>
+</div>
+
+<!-- Grid Templates -->
+<div class="row mt-4" *ngIf="!isLoading()">
+  <div class="col-md-6 col-xxl-4 mb-4" *ngFor="let template of templates()">
+    <div class="block block-rounded bg-white shadow-sm border border-light h-100 d-flex flex-column overflow-hidden">
+      
+      <!-- Template Image Preview -->
+      <div class="position-relative bg-light" style="height: 200px; overflow: hidden;">
+        <img [src]="template.imageUrl || 'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=500'" 
+             class="w-100 h-100 object-fit-cover" 
+             [alt]="template.title">
+        
+        <!-- Category Badge overlay -->
+        <span class="position-absolute top-0 start-0 m-3 badge px-3 py-2 fs-xs rounded-pill"
+              [ngClass]="{
+                'bg-success': template.category === 'Mariage',
+                'bg-primary': template.category === 'Corporate',
+                'bg-warning text-dark': template.category !== 'Mariage' && template.category !== 'Corporate'
+              }">
+          {{ template.category }}
+        </span>
+      </div>
+
+      <div class="block-content p-3 flex-grow-1">
+        <h3 class="h5 fw-bold text-dark mb-2">{{ template.title }}</h3>
+        <p class="text-muted fs-sm mb-0">{{ template.description || 'Aucune description disponible.' }}</p>
+      </div>
+
+      <div class="bg-body-light rounded-bottom border-top border-light p-2 d-flex justify-content-end gap-2">
+        <button type="button" class="btn btn-sm btn-alt-danger btn-table-action" (click)="deleteTemplate(template.id!)">
+          <i class="fa fa-trash-alt me-1"></i> Supprimer
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 text-center py-5 text-muted" *ngIf="templates().length === 0">
+    <i class="fa fa-images fs-1 text-muted mb-3"></i>
+    <h4 class="h5 fw-bold text-muted mb-1">Aucun modèle de faire-part</h4>
+    <p class="fs-sm text-muted">Ajoutez votre premier modèle pour commencer.</p>
+  </div>
+</div>
+
+<div class="text-center py-5" *ngIf="isLoading()">
+  <div class="spinner-border text-primary" role="status">
+    <span class="visually-hidden">Chargement...</span>
+  </div>
+</div>
+
+<!-- Modal: Add Template -->
+<div class="modal fade show" tabindex="-1" style="display: block; background: rgba(0,0,0,0.5);" *ngIf="isModalOpen()">
+  <div class="modal-dialog modal-md modal-dialog-centered">
+    <div class="modal-content shadow-lg border-0 rounded-3">
+      <div class="modal-header bg-body-light border-bottom p-3">
+        <h5 class="modal-title fw-bold text-dark">
+          Créer un nouveau modèle de faire-part
+        </h5>
+        <button type="button" class="btn-close" (click)="closeAddModal()"></button>
+      </div>
+      
+      <form (ngSubmit)="addTemplate()">
+        <div class="modal-body p-4">
+          <div class="mb-3">
+            <label class="form-label fw-semibold text-muted">Titre du modèle</label>
+            <input type="text" class="form-control border-light shadow-sm bg-body-light" 
+                   placeholder="Ex: Fleurs de Coton" [(ngModel)]="titleField" name="title" required>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold text-muted">Catégorie</label>
+            <select class="form-select border-light shadow-sm bg-body-light" [(ngModel)]="categoryField" name="category">
+              <option value="Mariage">Mariage</option>
+              <option value="Corporate">Corporate</option>
+              <option value="Anniversaire">Anniversaire</option>
+              <option value="Autre">Autre</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold text-muted">Description</label>
+            <textarea class="form-control border-light shadow-sm bg-body-light" rows="3" 
+                      placeholder="Décrivez brièvement le style visuel de ce modèle..." 
+                      [(ngModel)]="descriptionField" name="description"></textarea>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold text-muted">URL de l'image de couverture</label>
+            <input type="url" class="form-control border-light shadow-sm bg-body-light" 
+                   placeholder="Ex: https://images.unsplash.com/..." [(ngModel)]="imageUrlField" name="imageUrl">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold text-muted">Code HTML / Contenu personnalisé</label>
+            <textarea class="form-control border-light shadow-sm bg-body-light" rows="5" 
+                      placeholder="Ex: <h1>Fleurs de Coton</h1><p>...</p>" 
+                      [(ngModel)]="htmlContentField" name="htmlContent"></textarea>
+          </div>
+        </div>
+        
+        <div class="modal-footer bg-body-light border-top p-3 justify-content-end gap-2">
+          <button type="button" class="btn btn-alt-secondary" (click)="closeAddModal()">
+            Annuler
+          </button>
+          <button type="submit" class="btn btn-primary" [disabled]="isSubmitting()">
+            <span *ngIf="!isSubmitting()">Enregistrer le modèle</span>
+            <span *ngIf="isSubmitting()"><i class="fa fa-spinner fa-spin me-2"></i>Création...</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
