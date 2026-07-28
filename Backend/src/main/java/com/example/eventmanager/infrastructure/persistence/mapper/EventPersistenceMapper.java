@@ -23,6 +23,11 @@ public class EventPersistenceMapper {
                 .catererId(entity.getCatererId())
                 .archived(entity.isArchived())
                 .createdAt(entity.getCreatedAt())
+                .digitalTemplateId(entity.getDigitalTemplateId())
+                .invitationToken(entity.getInvitationToken())
+                .invitationTitle(entity.getInvitationTitle())
+                .invitationDate(entity.getInvitationDate())
+                .invitationLocation(entity.getInvitationLocation())
                 .build();
     }
 
@@ -41,6 +46,11 @@ public class EventPersistenceMapper {
                 .catererId(domain.getCatererId())
                 .archived(domain.isArchived())
                 .createdAt(domain.getCreatedAt())
+                .digitalTemplateId(domain.getDigitalTemplateId())
+                .invitationToken(domain.getInvitationToken())
+                .invitationTitle(domain.getInvitationTitle())
+                .invitationDate(domain.getInvitationDate())
+                .invitationLocation(domain.getInvitationLocation())
                 .build();
     }
 }

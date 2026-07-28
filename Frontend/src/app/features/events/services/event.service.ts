@@ -29,4 +29,8 @@ export class EventService {
   public deleteEvent(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
+
+  public setupInvitation(eventId: number, setupData: any): Observable<any> {
+    return this.http.post<any>(`/api/organizer/events/${eventId}/invitation-setup`, setupData);
+  }
 }

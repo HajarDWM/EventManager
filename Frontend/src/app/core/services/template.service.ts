@@ -17,9 +17,10 @@ export interface DigitalTemplate {
 export class TemplateService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = '/api/admin/templates';
+  private readonly sharedUrl = '/api/templates';
 
   public getTemplates(): Observable<DigitalTemplate[]> {
-    return this.http.get<DigitalTemplate[]>(this.apiUrl);
+    return this.http.get<DigitalTemplate[]>(this.sharedUrl);
   }
 
   public createTemplate(template: DigitalTemplate): Observable<DigitalTemplate> {

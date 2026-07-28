@@ -20,7 +20,12 @@ public class EventMapper {
                 .location(dto.getLocation())
                 .guestCount(dto.getGuestCount())
                 .catererId(dto.getCatererId())
-                .createdAt(dto.getCreatedAt());
+                .createdAt(dto.getCreatedAt())
+                .digitalTemplateId(dto.getDigitalTemplateId())
+                .invitationToken(dto.getInvitationToken())
+                .invitationTitle(dto.getInvitationTitle())
+                .invitationDate(dto.getInvitationDate())
+                .invitationLocation(dto.getInvitationLocation());
 
         if (dto.getStatus() != null) {
             builder.status(EventStatus.valueOf(dto.getStatus()));
@@ -43,6 +48,11 @@ public class EventMapper {
                 .status(event.getStatus() != null ? event.getStatus().name() : null)
                 .catererId(event.getCatererId())
                 .createdAt(event.getCreatedAt())
+                .digitalTemplateId(event.getDigitalTemplateId())
+                .invitationToken(event.getInvitationToken())
+                .invitationTitle(event.getInvitationTitle())
+                .invitationDate(event.getInvitationDate())
+                .invitationLocation(event.getInvitationLocation())
                 .build();
     }
 }

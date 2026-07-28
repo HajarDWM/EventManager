@@ -49,4 +49,19 @@ public class EventEntity {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @Column(name = "digital_template_id")
+    private Long digitalTemplateId;
+
+    @Column(name = "invitation_token")
+    private String invitationToken;
+
+    @Column(name = "invitation_title")
+    private String invitationTitle;
+
+    @Column(name = "invitation_date")
+    private LocalDateTime invitationDate;
+
+    @Column(name = "invitation_location")
+    private String invitationLocation;
 }

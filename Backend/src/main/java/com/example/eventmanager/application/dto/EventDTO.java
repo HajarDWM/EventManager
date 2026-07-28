@@ -20,4 +20,9 @@ public class EventDTO {
     private String status;
     private Long catererId;
     private LocalDateTime createdAt;
+    private Long digitalTemplateId;
+    private String invitationToken;
+    private String invitationTitle;
+    private LocalDateTime invitationDate;
+    private String invitationLocation;
 }

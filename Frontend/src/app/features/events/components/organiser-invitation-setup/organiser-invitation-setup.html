@@ -1,0 +1,185 @@
+<!-- Hero -->
+<div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-2 text-center text-md-start">
+  <div class="flex-grow-1 mb-1 mb-md-0">
+    <h1 class="h3 fw-bold mb-2">
+      Personnalisation du Faire-part : {{ event()?.title }}
+    </h1>
+    <h2 class="h6 fw-medium text-muted mb-0">
+      Sélectionnez un modèle de faire-part interactif et personnalisez les détails de l'invitation.
+    </h2>
+  </div>
+  <div class="mt-2 mt-md-0">
+    <a [routerLink]="['/events', event()?.id, 'guests']" class="btn btn-alt-secondary">
+      <i class="fa fa-arrow-left me-1"></i> Retour aux Invités
+    </a>
+  </div>
+</div>
+<!-- END Hero -->
+
+<!-- Notifications -->
+<div *ngIf="successMessage()" class="alert alert-success d-flex align-items-center mt-3 shadow-sm" role="alert">
+  <i class="fa fa-check-circle me-2"></i>
+  <div>{{ successMessage() }}</div>
+  <button type="button" class="btn-close ms-auto" (click)="successMessage.set('')"></button>
+</div>
+
+<div *ngIf="errorMessage()" class="alert alert-danger d-flex align-items-center mt-3 shadow-sm" role="alert">
+  <i class="fa fa-exclamation-triangle me-2"></i>
+  <div>{{ errorMessage() }}</div>
+  <button type="button" class="btn-close ms-auto" (click)="errorMessage.set('')"></button>
+</div>
+
+<!-- Active Link Banner if setup exists -->
+<div class="card border-0 shadow-sm rounded-3 mt-4 bg-light-primary border-start border-primary border-4" *ngIf="invitationToken">
+  <div class="card-body p-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+      <div>
+        <h4 class="h5 fw-bold text-dark mb-1">
+          <i class="fa fa-link text-primary me-2"></i> Faire-part en ligne actif !
+        </h4>
+        <p class="text-muted fs-sm mb-0">
+          Chaque invité dispose d'un lien RSVP unique pour répondre. Utilisez le format de lien ci-dessous :
+        </p>
+        <div class="mt-2 p-2 bg-white rounded border border-light font-monospace fs-sm text-dark d-inline-block">
+          {{ invitationLink() }}
+        </div>
+        <div class="fs-xs text-muted mt-1">
+          Remplacez <span class="badge bg-secondary font-monospace">[ID_INVITE]</span> par l'ID réel d'un invité (visible dans sa fiche) pour lui envoyer son lien personnalisé.
+        </div>
+      </div>
+      <div>
+        <button type="button" class="btn btn-primary d-flex align-items-center gap-2" (click)="copyLink()">
+          <i class="fa" [ngClass]="isCopied ? 'fa-check' : 'fa-copy'"></i>
+          {{ isCopied ? 'Copié !' : 'Copier le modèle de lien' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Tabs Filters -->
+<div class="block block-rounded bg-white shadow-sm border border-light mt-4">
+  <div class="block-content p-3 border-bottom border-light">
+    <ul class="nav nav-tabs nav-tabs-alt justify-content-center justify-content-md-start border-0" role="tablist">
+      <li class="nav-item">
+        <button type="button" class="nav-link px-4 fw-bold fs-sm border-0 rounded-pill me-2"
+                [class.active]="selectedCategory() === 'Mariage'"
+                (click)="setCategory('Mariage')">
+          <i class="fa fa-heart text-danger me-1"></i> Mariage / Célébrations
+        </button>
+      </li>
+      <li class="nav-item">
+        <button type="button" class="nav-link px-4 fw-bold fs-sm border-0 rounded-pill"
+                [class.active]="selectedCategory() === 'Corporate'"
+                (click)="setCategory('Corporate')">
+          <i class="fa fa-briefcase text-primary me-1"></i> Corporate / Professionnel
+        </button>
+      </li>
+    </ul>
+  </div>
+
+  <div class="block-content p-4" *ngIf="!isLoading()">
+    <!-- Grid Templates -->
+    <div class="row">
+      <div class="col-md-6 col-xl-4 mb-4" *ngFor="let template of filteredTemplates()">
+        <div class="card h-100 border border-light shadow-sm overflow-hidden d-flex flex-column"
+             [class.border-primary]="event()?.digitalTemplateId === template.id"
+             [class.selected-card]="event()?.digitalTemplateId === template.id">
+          
+          <!-- Badge active template -->
+          <div class="position-relative" style="height: 220px; overflow: hidden;">
+            <img [src]="template.imageUrl || 'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=500'" 
+                 class="w-100 h-100 object-fit-cover" 
+                 [alt]="template.title">
+            <span class="position-absolute top-0 end-0 m-3 badge bg-primary px-3 py-2 fs-xs shadow-sm" *ngIf="event()?.digitalTemplateId === template.id">
+              <i class="fa fa-check-circle me-1"></i> Sélectionné
+            </span>
+          </div>
+
+          <div class="card-body p-3 flex-grow-1 d-flex flex-column justify-content-between">
+            <div>
+              <h3 class="h5 fw-bold text-dark mb-2">{{ template.title }}</h3>
+              <p class="text-muted fs-sm mb-3">{{ template.description }}</p>
+            </div>
+
+            <button type="button" class="btn w-100 mt-2" 
+                    [ngClass]="event()?.digitalTemplateId === template.id ? 'btn-success' : 'btn-alt-primary'"
+                    (click)="selectTemplate(template)">
+              <i class="fa fa-magic me-1"></i>
+              {{ event()?.digitalTemplateId === template.id ? 'Modifier la personnalisation' : 'Choisir ce modèle' }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 text-center py-5 text-muted" *ngIf="filteredTemplates().length === 0">
+        <i class="fa fa-paint-brush fs-1 mb-3"></i>
+        <h4 class="h5 fw-bold text-muted mb-1">Aucun modèle disponible</h4>
+        <p class="fs-sm text-muted mb-0">Revenez plus tard ou contactez l'administrateur.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="text-center py-5" *ngIf="isLoading()">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Chargement...</span>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Customize Invitation details -->
+<div class="modal fade show animate__animated animate__fadeIn" tabindex="-1" style="display: block; background: rgba(0,0,0,0.5);" *ngIf="isModalOpen()">
+  <div class="modal-dialog modal-md modal-dialog-centered">
+    <div class="modal-content shadow-lg border-0 rounded-3">
+      <div class="modal-header bg-body-light border-bottom p-3">
+        <h5 class="modal-title fw-bold text-dark">
+          Personnaliser : {{ selectedTemplate()?.title }}
+        </h5>
+        <button type="button" class="btn-close" (click)="closeModal()"></button>
+      </div>
+
+      <form (ngSubmit)="saveSetup()">
+        <div class="modal-body p-4">
+          <p class="text-muted fs-sm mb-4">
+            Renseignez les détails qui apparaîtront sur le faire-part interactif des invités. Par défaut, les informations de l'événement sont utilisées.
+          </p>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold text-muted">Titre de l'invitation (Couple ou Événement)</label>
+            <input type="text" class="form-control border-light shadow-sm bg-body-light" 
+                   placeholder="Ex: Nom 1 & Nom 2" [(ngModel)]="invitationTitle" name="invTitle" required>
+          </div>
+
+          <div class="row g-3 mb-3">
+            <div class="col-sm-6">
+              <label class="form-label fw-semibold text-muted">Date de l'invitation</label>
+              <input type="date" class="form-control border-light shadow-sm bg-body-light" 
+                     [(ngModel)]="invitationDateStr" name="invDate" required>
+            </div>
+            <div class="col-sm-6">
+              <label class="form-label fw-semibold text-muted">Heure de début</label>
+              <input type="time" class="form-control border-light shadow-sm bg-body-light" 
+                     [(ngModel)]="invitationTimeStr" name="invTime" required>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold text-muted">Adresse / Lieu exact</label>
+            <input type="text" class="form-control border-light shadow-sm bg-body-light" 
+                   placeholder="Ex: Château de Versailles, France" [(ngModel)]="invitationLocation" name="invLoc" required>
+          </div>
+        </div>
+
+        <div class="modal-footer bg-body-light border-top p-3 justify-content-end gap-2">
+          <button type="button" class="btn btn-alt-secondary" (click)="closeModal()">
+            Annuler
+          </button>
+          <button type="submit" class="btn btn-primary" [disabled]="isSubmitting()">
+            <span *ngIf="!isSubmitting()">Valider et Activer</span>
+            <span *ngIf="isSubmitting()"><i class="fa fa-spinner fa-spin me-2"></i>Enregistrement...</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

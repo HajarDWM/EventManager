@@ -22,6 +22,7 @@ import { PendingApproval } from './core/auth/pending-approval/pending-approval';
 import { Pricing } from './features/pricing/pricing';
 import { SubscriptionComponent } from './features/subscription/subscription';
 import { AdminTemplates } from './features/admin/templates/admin-templates';
+import { OrganiserInvitationSetup } from './features/events/components/organiser-invitation-setup/organiser-invitation-setup';
 
 export const routes: Routes = [
   {
@@ -74,6 +75,10 @@ export const routes: Routes = [
       {
         path: 'events/:id/export',
         component: EventExport
+      },
+      {
+        path: 'events/:id/invitation-setup',
+        component: OrganiserInvitationSetup
       },
       {
         path: 'profile',

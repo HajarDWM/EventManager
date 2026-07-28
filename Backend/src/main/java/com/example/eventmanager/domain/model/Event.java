@@ -18,6 +18,19 @@ public class Event {
     private Long catererId;
     private boolean archived;
     private LocalDateTime createdAt;
+    private Long digitalTemplateId;
+    private String invitationToken;
+    private String invitationTitle;
+    private LocalDateTime invitationDate;
+    private String invitationLocation;
+
+    public void setupInvitation(Long templateId, String token, String title, LocalDateTime date, String location) {
+        this.digitalTemplateId = templateId;
+        this.invitationToken = token;
+        this.invitationTitle = title;
+        this.invitationDate = date;
+        this.invitationLocation = location;
+    }
 
     public void planEvent() {
         this.status = EventStatus.PLANNED;
