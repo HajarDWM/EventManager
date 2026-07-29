@@ -220,6 +220,23 @@
   color: #666666;
 }
 
+.attendance-toggle-container {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+  
+  @media (max-width: 576px) {
+    flex-direction: column;
+    gap: 12px;
+  }
+}
+
+.attendance-col {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+}
+
 .rsvp-action-btn {
   font-weight: 600;
   font-size: 0.85rem;
@@ -229,6 +246,13 @@
   transition: all 0.3s ease;
   border-radius: 8px;
   background-color: #ffffff;
+  height: 56px;
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  white-space: nowrap;
   
   &.btn-presence-yes {
     border-color: rgba(46, 125, 50, 0.3);
@@ -271,22 +295,47 @@
   }
 }
 
-.luxury-checkbox-wrapper {
-  background-color: #fdfbfa;
-  border: 1px solid rgba(197, 160, 89, 0.2);
-  transition: all 0.3s ease;
+.dietary-pills-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-start;
+  margin-top: 12px;
+}
+
+.dietary-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 18px;
+  background-color: #faf8f5;
+  border: 1px solid rgba(197, 160, 89, 0.25);
+  border-radius: 50px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #6e6454;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.25s ease;
   
   &:hover {
-    border-color: rgba(197, 160, 89, 0.4);
-    background-color: #ffffff;
+    border-color: rgba(197, 160, 89, 0.5);
+    background-color: #fdfcfb;
+    color: #3f382e;
   }
   
-  .form-check-input {
-    border-color: rgba(197, 160, 89, 0.4);
-    &:checked {
-      background-color: #c5a059;
-      border-color: #c5a059;
+  &.active-pill {
+    background: linear-gradient(135deg, #dfc07b 0%, #c5a059 50%, #b08c45 100%);
+    border-color: #c5a059;
+    color: #ffffff !important;
+    box-shadow: 0 4px 10px rgba(197, 160, 89, 0.2);
+    
+    .pill-check-icon {
+      color: #ffffff;
     }
+  }
+  
+  .dietary-checkbox {
+    display: none !important;
   }
 }
 

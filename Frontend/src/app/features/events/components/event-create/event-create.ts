@@ -66,7 +66,8 @@ export class EventCreate implements OnInit {
       eventDate: dateVal,
       location: this.location(),
       guestCount: this.guestCount(),
-      status: this.status()
+      status: this.status(),
+      mealType: 'PLATS_FIXES' // Default to PLATS_FIXES on creation, can be changed in Restaurations dashboard
     }).subscribe({
       next: () => {
         this.isLoading.set(false);

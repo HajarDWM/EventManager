@@ -119,6 +119,9 @@ public class EventApplicationService implements CreateEventUseCase, GetEventUseC
         existingEvent.setEventDate(eventDTO.getEventDate());
         existingEvent.setLocation(eventDTO.getLocation());
         existingEvent.setGuestCount(eventDTO.getGuestCount());
+        if (eventDTO.getMealType() != null) {
+            existingEvent.setMealType(eventDTO.getMealType());
+        }
         if (eventDTO.getStatus() != null) {
             existingEvent.setStatus(EventStatus.valueOf(eventDTO.getStatus()));
         }

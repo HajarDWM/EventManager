@@ -20,6 +20,8 @@ export interface PublicRsvpDetail {
   invitationTitle?: string;
   invitationDate?: string;
   invitationLocation?: string;
+  mealType?: string; // BUFFET or PLATS_FIXES
+  menuItems?: any[];
 }
 
 @Component({
@@ -39,14 +41,36 @@ export class GuestRsvp implements OnInit {
   protected readonly isSuccess = signal(false);
   protected readonly errorMessage = signal('');
 
+  // Service configuration
+  protected readonly mealType = signal<string>('PLATS_FIXES');
+
+  // Categorized menu items for PLATS_FIXES
+  protected readonly starters = signal<any[]>([]);
+  protected readonly mainDishes = signal<any[]>([]);
+  protected readonly beverages = signal<any[]>([]);
+
   // Form states
-  protected readonly status = signal<string>('PENDING'); // CONFIRMED, DECLINED
-  protected readonly mealChoice = signal<string>(''); // Viande, Poisson, Végétarien
-  protected readonly hasVegetarien = signal(false);
-  protected readonly hasGlutenFree = signal(false);
-  protected readonly hasNutFree = signal(false);
-  protected readonly hasLactoseFree = signal(false);
-  protected readonly otherAllergies = signal('');
+  protected readonly status = signal<string>('PENDING'); // CONFIRMED, DECLINED, PENDING
+  
+  // Explicit boolean visibility state requested by user
+  public attendanceStatus: boolean | null = null;
+
+  // Specific category selections for PLATS_FIXES (Regular properties for ngModel)
+  public starterChoice = '';
+  public mealChoice = '';
+  public beverageChoice = '';
+
+  // Dietary options (comprehensive list as regular properties)
+  public hasVegetarien = false;
+  public hasVegan = false;
+  public hasGlutenFree = false;
+  public hasLactoseFree = false;
+  public hasArachidesFree = false;
+  public hasHalal = false;
+  public hasFruitsDeMerFree = false;
+  public hasSucreFree = false;
+  
+  public otherAllergies = '';
 
   public ngOnInit(): void {
     const guestId = this.route.snapshot.paramMap.get('id');
@@ -58,32 +82,69 @@ export class GuestRsvp implements OnInit {
 
     this.http.get<PublicRsvpDetail>(`/api/public/rsvp/${guestId}`).subscribe({
       next: (data) => {
+        console.log('Public RSVP data loaded:', data);
         this.guest.set(data);
         this.status.set(data.guestStatus || 'PENDING');
         
+        // Initialize attendanceStatus to null on page load
+        this.attendanceStatus = null;
+        
+        if (data.mealType) {
+          this.mealType.set(data.mealType);
+        } else {
+          this.mealType.set('PLATS_FIXES');
+        }
+        
+        // Categorize menu items if PLATS_FIXES
+        if (this.mealType() === 'PLATS_FIXES' && data.menuItems) {
+          this.starters.set(data.menuItems.filter(item => item.category === 'STARTER'));
+          this.mainDishes.set(data.menuItems.filter(item => item.category === 'MAIN'));
+          this.beverages.set(data.menuItems.filter(item => item.category === 'BEVERAGE'));
+        }
+
         // Parse dietary requirements if any
         if (data.dietaryRequirements) {
-          const diets = data.dietaryRequirements.split(',').map(d => d.trim().toLowerCase());
+          const diets = data.dietaryRequirements.split(',').map(d => d.trim());
+          const lowerDiets = diets.map(d => d.toLowerCase());
           
-          if (diets.includes('végétarien') || diets.includes('vegetarien')) this.hasVegetarien.set(true);
-          if (diets.includes('sans gluten') || diets.includes('gluten-free')) this.hasGlutenFree.set(true);
-          if (diets.includes('sans noix') || diets.includes('noix') || diets.includes('nut-free')) this.hasNutFree.set(true);
-          if (diets.includes('sans lactose') || diets.includes('lactose-free')) this.hasLactoseFree.set(true);
+          if (lowerDiets.includes('végétarien') || lowerDiets.includes('vegetarien')) this.hasVegetarien = true;
+          if (lowerDiets.includes('végétalien') || lowerDiets.includes('vegan') || lowerDiets.includes('végétalienne')) this.hasVegan = true;
+          if (lowerDiets.includes('sans gluten') || lowerDiets.includes('gluten-free')) this.hasGlutenFree = true;
+          if (lowerDiets.includes('sans lactose') || lowerDiets.includes('lactose-free')) this.hasLactoseFree = true;
+          if (lowerDiets.includes('sans arachides') || lowerDiets.includes('arachides-free') || lowerDiets.includes('sans arachide')) this.hasArachidesFree = true;
+          if (lowerDiets.includes('halal')) this.hasHalal = true;
+          if (lowerDiets.includes('sans fruits de mer') || lowerDiets.includes('fruits-de-mer-free')) this.hasFruitsDeMerFree = true;
+          if (lowerDiets.includes('sans sucre') || lowerDiets.includes('sucre-free')) this.hasSucreFree = true;
           
-          // Check for meal choice in the text
-          const choiceViande = diets.find(d => d.includes('menu: viande'));
-          const choicePoisson = diets.find(d => d.includes('menu: poisson'));
-          const choiceVeg = diets.find(d => d.includes('menu: végétarien') || d.includes('menu: vegetarien'));
-          
-          if (choiceViande) this.mealChoice.set('Viande');
-          else if (choicePoisson) this.mealChoice.set('Poisson');
-          else if (choiceVeg) this.mealChoice.set('Végétarien');
-          
-          // Reconstruct other allergies
-          const standard = ['végétarien', 'vegetarien', 'sans gluten', 'gluten-free', 'sans noix', 'noix', 'nut-free', 'sans lactose', 'lactose-free', 'menu: viande', 'menu: poisson', 'menu: végétarien', 'menu: vegetarien'];
-          const remaining = diets.filter(d => !standard.some(s => d.includes(s)));
+          // Reconstruct selected starters, mains, beverages if present (only if PLATS_FIXES)
+          if (this.mealType() === 'PLATS_FIXES') {
+            const starterPrefix = diets.find(d => d.startsWith('Entrée: '));
+            if (starterPrefix) {
+              this.starterChoice = starterPrefix.replace('Entrée: ', '');
+            }
+
+            const mealPrefix = diets.find(d => d.startsWith('Plat: '));
+            if (mealPrefix) {
+              this.mealChoice = mealPrefix.replace('Plat: ', '');
+            }
+
+            const beveragePrefix = diets.find(d => d.startsWith('Boisson: '));
+            if (beveragePrefix) {
+              this.beverageChoice = beveragePrefix.replace('Boisson: ', '');
+            }
+          }
+
+          // Read other customized allergies
+          const standard = [
+            'végétarien', 'vegetarien', 'végétalien', 'vegan', 'végétalienne',
+            'sans gluten', 'gluten-free', 'sans lactose', 'lactose-free',
+            'sans arachides', 'sans arachide', 'arachides-free', 'halal',
+            'sans fruits de mer', 'fruits-de-mer-free', 'sans sucre', 'sucre-free',
+            'entrée: ', 'plat: ', 'menu: ', 'boisson: '
+          ];
+          const remaining = diets.filter(d => !standard.some(s => d.toLowerCase().includes(s)));
           if (remaining.length > 0) {
-            this.otherAllergies.set(remaining.join(', '));
+            this.otherAllergies = remaining.join(', ');
           }
         }
         
@@ -99,6 +160,13 @@ export class GuestRsvp implements OnInit {
 
   protected selectStatus(newStatus: string): void {
     this.status.set(newStatus);
+    if (newStatus === 'CONFIRMED') {
+      this.attendanceStatus = true;
+    } else if (newStatus === 'DECLINED') {
+      this.attendanceStatus = false;
+    } else {
+      this.attendanceStatus = null;
+    }
   }
 
   protected submitResponse(): void {
@@ -111,16 +179,33 @@ export class GuestRsvp implements OnInit {
     // Reconstruct dietaryRequirements field
     const activeDiets: string[] = [];
     
-    if (this.mealChoice()) {
-      activeDiets.push(`Menu: ${this.mealChoice()}`);
+    // Add specific dish selections only if CONFIRMED and PLATS_FIXES
+    if (this.attendanceStatus === true && this.mealType() === 'PLATS_FIXES') {
+      if (this.starterChoice) {
+        activeDiets.push(`Entrée: ${this.starterChoice}`);
+      }
+      if (this.mealChoice) {
+        activeDiets.push(`Plat: ${this.mealChoice}`);
+      }
+      if (this.beverageChoice) {
+        activeDiets.push(`Boisson: ${this.beverageChoice}`);
+      }
     }
-    if (this.hasVegetarien()) activeDiets.push('Végétarien');
-    if (this.hasGlutenFree()) activeDiets.push('Sans gluten');
-    if (this.hasNutFree()) activeDiets.push('Sans noix');
-    if (this.hasLactoseFree()) activeDiets.push('Sans lactose');
-    
-    if (this.otherAllergies().trim()) {
-      activeDiets.push(this.otherAllergies().trim());
+
+    // Add dietary options only if CONFIRMED
+    if (this.attendanceStatus === true) {
+      if (this.hasVegetarien) activeDiets.push('Végétarien');
+      if (this.hasVegan) activeDiets.push('Vegan');
+      if (this.hasGlutenFree) activeDiets.push('Sans gluten');
+      if (this.hasLactoseFree) activeDiets.push('Sans lactose');
+      if (this.hasArachidesFree) activeDiets.push('Sans arachides');
+      if (this.hasHalal) activeDiets.push('Halal');
+      if (this.hasFruitsDeMerFree) activeDiets.push('Sans fruits de mer');
+      if (this.hasSucreFree) activeDiets.push('Sans sucre');
+      
+      if (this.otherAllergies.trim()) {
+        activeDiets.push(this.otherAllergies.trim());
+      }
     }
 
     const payload = {
@@ -137,7 +222,7 @@ export class GuestRsvp implements OnInit {
       },
       error: (err) => {
         console.error(err);
-        this.errorMessage.set('Une erreur est survenue lors de l\'enregistrement. Veuillez réessayer.');
+        this.errorMessage.set('Une erreur est survenue lors de l\'enregistrement de votre réponse.');
         this.isSubmitting.set(false);
       }
     });

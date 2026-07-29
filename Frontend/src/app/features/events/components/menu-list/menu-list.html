@@ -75,6 +75,42 @@
   <div class="fs-sm fw-medium">{{ errorMessage() }}</div>
 </div>
 
+<!-- Meal Type Service Selector -->
+<div class="block block-rounded shadow-sm border border-light mt-3">
+  <div class="block-content block-content-full bg-body-light border-bottom border-light">
+    <div class="row align-items-center">
+      <div class="col-md-6 mb-2 mb-md-0">
+        <h4 class="fs-sm fw-bold text-uppercase text-muted mb-1">Type de Service de Restauration</h4>
+        <p class="fs-xs text-muted mb-0">Détermine la présentation et la saisie des plats pour la page RSVP publique.</p>
+      </div>
+      <div class="col-md-6 text-md-end">
+        <div class="btn-group" role="group">
+          <button type="button" class="btn btn-alt-primary" 
+                  [class.active]="mealType() === 'BUFFET'"
+                  [class.btn-primary]="mealType() === 'BUFFET'"
+                  (click)="saveMealType('BUFFET')">
+            <i class="fa fa-cheese me-1"></i> Buffet
+          </button>
+          <button type="button" class="btn btn-alt-primary" 
+                  [class.active]="mealType() === 'PLATS_FIXES'"
+                  [class.btn-primary]="mealType() === 'PLATS_FIXES'"
+                  (click)="saveMealType('PLATS_FIXES')">
+            <i class="fa fa-concierge-bell me-1"></i> Plats Fixes
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Buffet Mode Notice -->
+<div class="alert alert-info d-flex align-items-center gap-2 mt-3 animate__animated animate__fadeIn" *ngIf="mealType() === 'BUFFET'">
+  <i class="fa fa-info-circle"></i>
+  <div class="fs-sm fw-medium">
+    L'événement est configuré en mode <strong>Buffet</strong>. Les invités n'auront pas à choisir de plats spécifiques sur leur page d'invitation RSVP, mais pourront toujours renseigner leurs restrictions alimentaires.
+  </div>
+</div>
+
 <!-- Category Toolbar & Menu List -->
 <div class="block block-rounded shadow-sm border border-light mt-3">
   <div class="block-header block-header-default d-flex flex-wrap justify-content-between align-items-center gap-2">

@@ -28,4 +28,6 @@ public class PublicRsvpDTO {
     private String invitationTitle;
     private LocalDateTime invitationDate;
     private String invitationLocation;
+    private String mealType;
+    private java.util.List<MenuItemDTO> menuItems;
 }

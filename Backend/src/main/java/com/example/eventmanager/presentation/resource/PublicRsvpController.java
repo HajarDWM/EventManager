@@ -17,6 +17,8 @@ public class PublicRsvpController {
 
     private final GuestRepositoryPort guestRepositoryPort;
     private final EventRepositoryPort eventRepositoryPort;
+    private final com.example.eventmanager.application.port.out.MenuItemRepositoryPort menuItemRepositoryPort;
+    private final com.example.eventmanager.application.mapper.MenuItemMapper menuItemMapper;
 
     @GetMapping("/{guestId}")
     public ResponseEntity<PublicRsvpDTO> getPublicRsvpDetail(@PathVariable Long guestId) {
@@ -25,6 +27,14 @@ public class PublicRsvpController {
 
         Event event = eventRepositoryPort.findById(guest.getEventId())
                 .orElseThrow(() -> new IllegalArgumentException("Événement non trouvé avec l'id : " + guest.getEventId()));
+
+        java.util.List<com.example.eventmanager.application.dto.MenuItemDTO> menuItems = new java.util.ArrayList<>();
+        if ("PLATS_FIXES".equals(event.getMealType())) {
+            menuItems = menuItemRepositoryPort.findByEventId(event.getId())
+                    .stream()
+                    .map(menuItemMapper::toDTO)
+                    .toList();
+        }
 
         PublicRsvpDTO dto = PublicRsvpDTO.builder()
                 .guestId(guest.getId())
@@ -42,6 +52,8 @@ public class PublicRsvpController {
                 .invitationTitle(event.getInvitationTitle())
                 .invitationDate(event.getInvitationDate())
                 .invitationLocation(event.getInvitationLocation())
+                .mealType(event.getMealType())
+                .menuItems(menuItems)
                 .build();
 
         return ResponseEntity.ok(dto);
@@ -74,6 +86,14 @@ public class PublicRsvpController {
         Event event = eventRepositoryPort.findById(savedGuest.getEventId())
                 .orElseThrow(() -> new IllegalArgumentException("Événement non trouvé avec l'id : " + savedGuest.getEventId()));
 
+        java.util.List<com.example.eventmanager.application.dto.MenuItemDTO> menuItems = new java.util.ArrayList<>();
+        if ("PLATS_FIXES".equals(event.getMealType())) {
+            menuItems = menuItemRepositoryPort.findByEventId(event.getId())
+                    .stream()
+                    .map(menuItemMapper::toDTO)
+                    .toList();
+        }
+
         PublicRsvpDTO responseDto = PublicRsvpDTO.builder()
                 .guestId(savedGuest.getId())
                 .guestName(savedGuest.getFullName())
@@ -90,6 +110,8 @@ public class PublicRsvpController {
                 .invitationTitle(event.getInvitationTitle())
                 .invitationDate(event.getInvitationDate())
                 .invitationLocation(event.getInvitationLocation())
+                .mealType(event.getMealType())
+                .menuItems(menuItems)
                 .build();
 
         return ResponseEntity.ok(responseDto);

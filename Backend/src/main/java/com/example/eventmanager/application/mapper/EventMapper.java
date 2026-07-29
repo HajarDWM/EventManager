@@ -25,7 +25,8 @@ public class EventMapper {
                 .invitationToken(dto.getInvitationToken())
                 .invitationTitle(dto.getInvitationTitle())
                 .invitationDate(dto.getInvitationDate())
-                .invitationLocation(dto.getInvitationLocation());
+                .invitationLocation(dto.getInvitationLocation())
+                .mealType(dto.getMealType());
 
         if (dto.getStatus() != null) {
             builder.status(EventStatus.valueOf(dto.getStatus()));
@@ -53,6 +54,7 @@ public class EventMapper {
                 .invitationTitle(event.getInvitationTitle())
                 .invitationDate(event.getInvitationDate())
                 .invitationLocation(event.getInvitationLocation())
+                .mealType(event.getMealType())
                 .build();
     }
 }

@@ -64,4 +64,8 @@ public class EventEntity {
 
     @Column(name = "invitation_location")
     private String invitationLocation;
+
+    @Column(name = "meal_type", nullable = false)
+    @Builder.Default
+    private String mealType = "PLATS_FIXES";
 }

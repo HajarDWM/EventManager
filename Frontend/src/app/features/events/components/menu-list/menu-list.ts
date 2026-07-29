@@ -20,6 +20,7 @@ export class MenuList implements OnInit {
   protected readonly eventId = signal<number | null>(null);
   protected readonly event = signal<Event | null>(null);
   protected readonly menuItems = signal<MenuItem[]>([]);
+  protected readonly mealType = signal<string>('PLATS_FIXES');
 
   protected readonly isLoading = signal<boolean>(true);
   protected readonly isSaving = signal<boolean>(false);
@@ -149,8 +150,35 @@ export class MenuList implements OnInit {
 
   private loadEventData(id: number): void {
     this.eventService.getEventById(id).subscribe({
-      next: (data) => this.event.set(data),
+      next: (data) => {
+        this.event.set(data);
+        if (data.mealType) {
+          this.mealType.set(data.mealType);
+        }
+      },
       error: (err) => console.error('Erreur chargement événement', err)
+    });
+  }
+
+  protected saveMealType(newType: string): void {
+    const currentEvent = this.event();
+    if (!currentEvent || !this.eventId()) return;
+
+    this.mealType.set(newType);
+    this.eventService.updateEvent(this.eventId()!, {
+      ...currentEvent,
+      mealType: newType
+    }).subscribe({
+      next: (updated) => {
+        this.event.set(updated);
+        this.successMessage.set('Type de service de restauration mis à jour avec succès !');
+        setTimeout(() => this.successMessage.set(''), 4000);
+      },
+      error: (err) => {
+        this.errorMessage.set('Erreur lors de la mise à jour du type de service.');
+        console.error(err);
+        setTimeout(() => this.errorMessage.set(''), 4000);
+      }
     });
   }
 

@@ -17,6 +17,8 @@ public class Event {
     private EventStatus status = EventStatus.DRAFT;
     private Long catererId;
     private boolean archived;
+    @Builder.Default
+    private String mealType = "PLATS_FIXES";
     private LocalDateTime createdAt;
     private Long digitalTemplateId;
     private String invitationToken;
