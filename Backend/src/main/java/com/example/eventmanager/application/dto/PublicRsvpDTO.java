@@ -29,5 +29,6 @@ public class PublicRsvpDTO {
     private LocalDateTime invitationDate;
     private String invitationLocation;
     private String mealType;
+    private String templateCategory; // Mariage, Corporate, etc.
     private java.util.List<MenuItemDTO> menuItems;
 }

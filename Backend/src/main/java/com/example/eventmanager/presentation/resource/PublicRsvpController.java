@@ -19,6 +19,7 @@ public class PublicRsvpController {
     private final EventRepositoryPort eventRepositoryPort;
     private final com.example.eventmanager.application.port.out.MenuItemRepositoryPort menuItemRepositoryPort;
     private final com.example.eventmanager.application.mapper.MenuItemMapper menuItemMapper;
+    private final com.example.eventmanager.infrastructure.persistence.repository.DigitalInvitationTemplateRepository templateRepository;
 
     @GetMapping("/{guestId}")
     public ResponseEntity<PublicRsvpDTO> getPublicRsvpDetail(@PathVariable Long guestId) {
@@ -34,6 +35,13 @@ public class PublicRsvpController {
                     .stream()
                     .map(menuItemMapper::toDTO)
                     .toList();
+        }
+
+        String templateCategory = "Corporate";
+        if (event.getDigitalTemplateId() != null) {
+            templateCategory = templateRepository.findById(event.getDigitalTemplateId())
+                    .map(com.example.eventmanager.infrastructure.persistence.entity.DigitalInvitationTemplateEntity::getCategory)
+                    .orElse("Corporate");
         }
 
         PublicRsvpDTO dto = PublicRsvpDTO.builder()
@@ -53,6 +61,7 @@ public class PublicRsvpController {
                 .invitationDate(event.getInvitationDate())
                 .invitationLocation(event.getInvitationLocation())
                 .mealType(event.getMealType())
+                .templateCategory(templateCategory)
                 .menuItems(menuItems)
                 .build();
 
@@ -94,6 +103,13 @@ public class PublicRsvpController {
                     .toList();
         }
 
+        String templateCategory = "Corporate";
+        if (event.getDigitalTemplateId() != null) {
+            templateCategory = templateRepository.findById(event.getDigitalTemplateId())
+                    .map(com.example.eventmanager.infrastructure.persistence.entity.DigitalInvitationTemplateEntity::getCategory)
+                    .orElse("Corporate");
+        }
+
         PublicRsvpDTO responseDto = PublicRsvpDTO.builder()
                 .guestId(savedGuest.getId())
                 .guestName(savedGuest.getFullName())
@@ -111,6 +127,7 @@ public class PublicRsvpController {
                 .invitationDate(event.getInvitationDate())
                 .invitationLocation(event.getInvitationLocation())
                 .mealType(event.getMealType())
+                .templateCategory(templateCategory)
                 .menuItems(menuItems)
                 .build();
 

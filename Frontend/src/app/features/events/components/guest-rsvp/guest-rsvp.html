@@ -1,4 +1,6 @@
-<div class="rsvp-luxury-wrapper py-5 px-3 d-flex align-items-center justify-content-center">
+<div class="rsvp-luxury-wrapper py-5 px-3 d-flex align-items-center justify-content-center"
+     [class.wedding-theme]="guest()?.templateCategory === 'Mariage'"
+     [class.corporate-theme]="guest()?.templateCategory !== 'Mariage'">
   <div class="invitation-outer-container w-100" style="max-width: 600px;">
     
     <!-- Loading State -->
@@ -57,46 +59,89 @@
       
       <!-- Corner Leaf Accents -->
       <div class="corner-leaves-wrapper">
-        <!-- Top Right Leaf -->
-        <svg viewBox="0 0 120 120" class="corner-leaf corner-leaf-top-right" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="goldGradientLeaf" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#f3e0aa" />
-              <stop offset="50%" stop-color="#d4af37" />
-              <stop offset="100%" stop-color="#aa8524" />
-            </linearGradient>
-          </defs>
-          <path d="M10,110 Q50,70 110,10" stroke="url(#goldGradientLeaf)" stroke-width="2" fill="none" />
-          <path d="M40,80 Q30,60 20,50 Q35,60 45,75 Z" fill="url(#goldGradientLeaf)" />
-          <path d="M50,70 Q40,48 30,35 Q45,50 55,65 Z" fill="url(#goldGradientLeaf)" />
-          <path d="M60,60 Q50,35 40,20 Q55,38 65,55 Z" fill="url(#goldGradientLeaf)" />
-          <path d="M70,50 Q60,25 52,10 Q65,28 75,45 Z" fill="url(#goldGradientLeaf)" />
-          <path d="M80,40 Q72,18 68,2 Q78,20 85,35 Z" fill="url(#goldGradientLeaf)" />
-          <path d="M90,30 Q85,12 85,0 Q92,15 95,27 Z" fill="url(#goldGradientLeaf)" />
+        <!-- Corporate Theme Leaves -->
+        <ng-container *ngIf="guest()?.templateCategory !== 'Mariage'">
+          <!-- Top Right Leaf -->
+          <svg viewBox="0 0 120 120" class="corner-leaf corner-leaf-top-right" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="goldGradientLeaf" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#f3e0aa" />
+                <stop offset="50%" stop-color="#d4af37" />
+                <stop offset="100%" stop-color="#aa8524" />
+              </linearGradient>
+            </defs>
+            <path d="M10,110 Q50,70 110,10" stroke="url(#goldGradientLeaf)" stroke-width="2" fill="none" />
+            <path d="M40,80 Q30,60 20,50 Q35,60 45,75 Z" fill="url(#goldGradientLeaf)" />
+            <path d="M50,70 Q40,48 30,35 Q45,50 55,65 Z" fill="url(#goldGradientLeaf)" />
+            <path d="M60,60 Q50,35 40,20 Q55,38 65,55 Z" fill="url(#goldGradientLeaf)" />
+            <path d="M70,50 Q60,25 52,10 Q65,28 75,45 Z" fill="url(#goldGradientLeaf)" />
+            <path d="M80,40 Q72,18 68,2 Q78,20 85,35 Z" fill="url(#goldGradientLeaf)" />
+            <path d="M90,30 Q85,12 85,0 Q92,15 95,27 Z" fill="url(#goldGradientLeaf)" />
+            
+            <path d="M50,82 Q65,75 75,70 Q62,80 48,84 Z" fill="url(#goldGradientLeaf)" />
+            <path d="M60,72 Q75,65 85,60 Q72,70 58,74 Z" fill="url(#goldGradientLeaf)" />
+            <path d="M70,62 Q85,55 95,50 Q82,60 68,64 Z" fill="url(#goldGradientLeaf)" />
+            <path d="M80,52 Q95,45 105,40 Q92,50 78,54 Z" fill="url(#goldGradientLeaf)" />
+            <path d="M90,42 Q105,35 115,30 Q102,40 88,44 Z" fill="url(#goldGradientLeaf)" />
+          </svg>
           
-          <path d="M50,82 Q65,75 75,70 Q62,80 48,84 Z" fill="url(#goldGradientLeaf)" />
-          <path d="M60,72 Q75,65 85,60 Q72,70 58,74 Z" fill="url(#goldGradientLeaf)" />
-          <path d="M70,62 Q85,55 95,50 Q82,60 68,64 Z" fill="url(#goldGradientLeaf)" />
-          <path d="M80,52 Q95,45 105,40 Q92,50 78,54 Z" fill="url(#goldGradientLeaf)" />
-          <path d="M90,42 Q105,35 115,30 Q102,40 88,44 Z" fill="url(#goldGradientLeaf)" />
-        </svg>
-        
-        <!-- Bottom Left Leaf -->
-        <svg viewBox="0 0 120 120" class="corner-leaf corner-leaf-bottom-left" xmlns="http://www.w3.org/2000/svg">
-          <path d="M110,10 Q70,50 10,110" stroke="url(#goldGradientLeaf)" stroke-width="2" fill="none" />
-          <path d="M80,40 Q90,60 100,70 Q85,60 75,45 Z" fill="url(#goldGradientLeaf)" />
-          <path d="M70,50 Q80,72 90,85 Q75,70 65,55 Z" fill="url(#goldGradientLeaf)" />
-          <path d="M60,60 Q70,85 80,100 Q65,82 55,65 Z" fill="url(#goldGradientLeaf)" />
-          <path d="M50,70 Q60,95 68,110 Q55,92 45,75 Z" fill="url(#goldGradientLeaf)" />
-          <path d="M40,80 Q48,102 52,118 Q42,100 35,85 Z" fill="url(#goldGradientLeaf)" />
-          <path d="M30,90 Q35,108 35,120 Q28,105 25,93 Z" fill="url(#goldGradientLeaf)" />
-          
-          <path d="M70,38 Q55,45 45,50 Q58,40 72,36 Z" fill="url(#goldGradientLeaf)" />
-          <path d="M60,48 Q45,55 35,60 Q48,50 62,46 Z" fill="url(#goldGradientLeaf)" />
-          <path d="M50,58 Q35,65 25,70 Q38,60 52,56 Z" fill="url(#goldGradientLeaf)" />
-          <path d="M40,68 Q25,75 15,80 Q28,70 42,66 Z" fill="url(#goldGradientLeaf)" />
-          <path d="M30,78 Q15,85 5,90 Q18,80 32,76 Z" fill="url(#goldGradientLeaf)" />
-        </svg>
+          <!-- Bottom Left Leaf -->
+          <svg viewBox="0 0 120 120" class="corner-leaf corner-leaf-bottom-left" xmlns="http://www.w3.org/2000/svg">
+            <path d="M110,10 Q70,50 10,110" stroke="url(#goldGradientLeaf)" stroke-width="2" fill="none" />
+            <path d="M80,40 Q90,60 100,70 Q85,60 75,45 Z" fill="url(#goldGradientLeaf)" />
+            <path d="M70,50 Q80,72 90,85 Q75,70 65,55 Z" fill="url(#goldGradientLeaf)" />
+            <path d="M60,60 Q70,85 80,100 Q65,82 55,65 Z" fill="url(#goldGradientLeaf)" />
+            <path d="M50,70 Q60,95 68,110 Q55,92 45,75 Z" fill="url(#goldGradientLeaf)" />
+            <path d="M40,80 Q48,102 52,118 Q42,100 35,85 Z" fill="url(#goldGradientLeaf)" />
+            <path d="M30,90 Q35,108 35,120 Q28,105 25,93 Z" fill="url(#goldGradientLeaf)" />
+            
+            <path d="M70,38 Q55,45 45,50 Q58,40 72,36 Z" fill="url(#goldGradientLeaf)" />
+            <path d="M60,48 Q45,55 35,60 Q48,50 62,46 Z" fill="url(#goldGradientLeaf)" />
+            <path d="M50,58 Q35,65 25,70 Q38,60 52,56 Z" fill="url(#goldGradientLeaf)" />
+            <path d="M40,68 Q25,75 15,80 Q28,70 42,66 Z" fill="url(#goldGradientLeaf)" />
+            <path d="M30,78 Q15,85 5,90 Q18,80 32,76 Z" fill="url(#goldGradientLeaf)" />
+          </svg>
+        </ng-container>
+
+        <!-- Wedding Theme Eucalyptus Leaves -->
+        <ng-container *ngIf="guest()?.templateCategory === 'Mariage'">
+          <!-- Top Right Eucalyptus Leaf -->
+          <svg viewBox="0 0 120 120" class="corner-leaf corner-leaf-top-right" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="eucalyptusGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#c5d3cb" />
+                <stop offset="50%" stop-color="#9cb0a4" />
+                <stop offset="100%" stop-color="#738a7c" />
+              </linearGradient>
+            </defs>
+            <path d="M10,110 C40,90 80,50 110,10" stroke="url(#eucalyptusGradient)" stroke-width="2" fill="none" />
+            <circle cx="35" cy="85" r="12" fill="url(#eucalyptusGradient)" opacity="0.85" />
+            <circle cx="50" cy="65" r="14" fill="url(#eucalyptusGradient)" opacity="0.85" />
+            <circle cx="70" cy="50" r="13" fill="url(#eucalyptusGradient)" opacity="0.85" />
+            <circle cx="88" cy="32" r="11" fill="url(#eucalyptusGradient)" opacity="0.85" />
+            <circle cx="102" cy="18" r="8" fill="url(#eucalyptusGradient)" opacity="0.85" />
+            <circle cx="20" cy="98" r="10" fill="url(#eucalyptusGradient)" opacity="0.85" />
+            <circle cx="35" cy="70" r="12" fill="url(#eucalyptusGradient)" opacity="0.85" />
+            <circle cx="58" cy="50" r="13" fill="url(#eucalyptusGradient)" opacity="0.85" />
+            <circle cx="75" cy="35" r="11" fill="url(#eucalyptusGradient)" opacity="0.85" />
+            <circle cx="92" cy="20" r="8" fill="url(#eucalyptusGradient)" opacity="0.85" />
+          </svg>
+
+          <!-- Bottom Left Eucalyptus Leaf -->
+          <svg viewBox="0 0 120 120" class="corner-leaf corner-leaf-bottom-left" xmlns="http://www.w3.org/2000/svg">
+            <path d="M110,10 C80,30 40,70 10,110" stroke="url(#eucalyptusGradient)" stroke-width="2" fill="none" />
+            <circle cx="85" cy="35" r="12" fill="url(#eucalyptusGradient)" opacity="0.85" />
+            <circle cx="65" cy="50" r="14" fill="url(#eucalyptusGradient)" opacity="0.85" />
+            <circle cx="50" cy="70" r="13" fill="url(#eucalyptusGradient)" opacity="0.85" />
+            <circle cx="32" cy="88" r="11" fill="url(#eucalyptusGradient)" opacity="0.85" />
+            <circle cx="18" cy="102" r="8" fill="url(#eucalyptusGradient)" opacity="0.85" />
+            <circle cx="98" cy="20" r="10" fill="url(#eucalyptusGradient)" opacity="0.85" />
+            <circle cx="70" cy="35" r="12" fill="url(#eucalyptusGradient)" opacity="0.85" />
+            <circle cx="50" cy="58" r="13" fill="url(#eucalyptusGradient)" opacity="0.85" />
+            <circle cx="35" cy="75" r="11" fill="url(#eucalyptusGradient)" opacity="0.85" />
+            <circle cx="20" cy="92" r="8" fill="url(#eucalyptusGradient)" opacity="0.85" />
+          </svg>
+        </ng-container>
       </div>
 
       <div class="luxury-inner-border">
@@ -251,12 +296,6 @@
                   Sans lactose
                 </label>
 
-                <label class="dietary-pill" [class.active-pill]="hasArachidesFree" for="dietArachides">
-                  <input type="checkbox" id="dietArachides" [(ngModel)]="hasArachidesFree" name="hasArachidesFree" class="dietary-checkbox">
-                  <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasArachidesFree"></i>
-                  Sans Arachides
-                </label>
-
                 <label class="dietary-pill" [class.active-pill]="hasHalal" for="dietHalal">
                   <input type="checkbox" id="dietHalal" [(ngModel)]="hasHalal" name="hasHalal" class="dietary-checkbox">
                   <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasHalal"></i>
@@ -273,6 +312,13 @@
                   <input type="checkbox" id="dietSucre" [(ngModel)]="hasSucreFree" name="hasSucreFree" class="dietary-checkbox">
                   <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasSucreFree"></i>
                   Sans Sucre
+                </label>
+
+                <!-- Long Item placed neatly at the end with full-width-pill class -->
+                <label class="dietary-pill full-width-pill" [class.active-pill]="hasArachidesFree" for="dietArachides">
+                  <input type="checkbox" id="dietArachides" [(ngModel)]="hasArachidesFree" name="hasArachidesFree" class="dietary-checkbox">
+                  <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasArachidesFree"></i>
+                  Sans Arachides (Alerte Médicale)
                 </label>
 
               </div>

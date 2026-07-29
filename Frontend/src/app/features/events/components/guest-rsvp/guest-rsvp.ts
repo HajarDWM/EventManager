@@ -21,6 +21,7 @@ export interface PublicRsvpDetail {
   invitationDate?: string;
   invitationLocation?: string;
   mealType?: string; // BUFFET or PLATS_FIXES
+  templateCategory?: string; // Mariage, Corporate, etc.
   menuItems?: any[];
 }
 
