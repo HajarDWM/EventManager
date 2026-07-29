@@ -72,6 +72,41 @@ export class GuestRsvp implements OnInit {
   
   public otherAllergies = '';
 
+  public get eventDayName(): string {
+    const dateStr = this.guest()?.invitationDate || this.guest()?.eventDate;
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('fr-FR', { weekday: 'long' });
+  }
+
+  public get eventDayNum(): string {
+    const dateStr = this.guest()?.invitationDate || this.guest()?.eventDate;
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('fr-FR', { day: 'numeric' });
+  }
+
+  public get eventMonth(): string {
+    const dateStr = this.guest()?.invitationDate || this.guest()?.eventDate;
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('fr-FR', { month: 'long' });
+  }
+
+  public get eventYear(): string {
+    const dateStr = this.guest()?.invitationDate || this.guest()?.eventDate;
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('fr-FR', { year: 'numeric' });
+  }
+
+  public get eventTime(): string {
+    const dateStr = this.guest()?.invitationDate || this.guest()?.eventDate;
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
+    return date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }).replace(':', 'h');
+  }
+
   public ngOnInit(): void {
     const guestId = this.route.snapshot.paramMap.get('id');
     if (!guestId) {

@@ -10,7 +10,7 @@
     </div>
 
     <!-- Error State -->
-    <div class="luxury-card text-center p-5 bg-white" *ngIf="!isLoading() && errorMessage()">
+    <div class="luxury-card text-center p-5" *ngIf="!isLoading() && errorMessage()">
       <div class="luxury-inner-border p-4 d-flex flex-column align-items-center justify-content-center">
         <div class="mb-4 text-danger">
           <i class="fa fa-exclamation-circle fs-1"></i>
@@ -21,7 +21,7 @@
     </div>
 
     <!-- Success State -->
-    <div class="luxury-card text-center p-5 bg-white" *ngIf="!isLoading() && isSuccess()">
+    <div class="luxury-card text-center p-5" *ngIf="!isLoading() && isSuccess()">
       <div class="luxury-inner-border p-4 p-md-5">
         <!-- Top Monogram -->
         <div class="crest-wrapper mb-4">
@@ -53,7 +53,52 @@
     </div>
 
     <!-- Invitation Form Card -->
-    <div class="luxury-card bg-white" *ngIf="!isLoading() && !isSuccess() && guest()">
+    <div class="luxury-card" *ngIf="!isLoading() && !isSuccess() && guest()">
+      
+      <!-- Corner Leaf Accents -->
+      <div class="corner-leaves-wrapper">
+        <!-- Top Right Leaf -->
+        <svg viewBox="0 0 120 120" class="corner-leaf corner-leaf-top-right" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="goldGradientLeaf" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#f3e0aa" />
+              <stop offset="50%" stop-color="#d4af37" />
+              <stop offset="100%" stop-color="#aa8524" />
+            </linearGradient>
+          </defs>
+          <path d="M10,110 Q50,70 110,10" stroke="url(#goldGradientLeaf)" stroke-width="2" fill="none" />
+          <path d="M40,80 Q30,60 20,50 Q35,60 45,75 Z" fill="url(#goldGradientLeaf)" />
+          <path d="M50,70 Q40,48 30,35 Q45,50 55,65 Z" fill="url(#goldGradientLeaf)" />
+          <path d="M60,60 Q50,35 40,20 Q55,38 65,55 Z" fill="url(#goldGradientLeaf)" />
+          <path d="M70,50 Q60,25 52,10 Q65,28 75,45 Z" fill="url(#goldGradientLeaf)" />
+          <path d="M80,40 Q72,18 68,2 Q78,20 85,35 Z" fill="url(#goldGradientLeaf)" />
+          <path d="M90,30 Q85,12 85,0 Q92,15 95,27 Z" fill="url(#goldGradientLeaf)" />
+          
+          <path d="M50,82 Q65,75 75,70 Q62,80 48,84 Z" fill="url(#goldGradientLeaf)" />
+          <path d="M60,72 Q75,65 85,60 Q72,70 58,74 Z" fill="url(#goldGradientLeaf)" />
+          <path d="M70,62 Q85,55 95,50 Q82,60 68,64 Z" fill="url(#goldGradientLeaf)" />
+          <path d="M80,52 Q95,45 105,40 Q92,50 78,54 Z" fill="url(#goldGradientLeaf)" />
+          <path d="M90,42 Q105,35 115,30 Q102,40 88,44 Z" fill="url(#goldGradientLeaf)" />
+        </svg>
+        
+        <!-- Bottom Left Leaf -->
+        <svg viewBox="0 0 120 120" class="corner-leaf corner-leaf-bottom-left" xmlns="http://www.w3.org/2000/svg">
+          <path d="M110,10 Q70,50 10,110" stroke="url(#goldGradientLeaf)" stroke-width="2" fill="none" />
+          <path d="M80,40 Q90,60 100,70 Q85,60 75,45 Z" fill="url(#goldGradientLeaf)" />
+          <path d="M70,50 Q80,72 90,85 Q75,70 65,55 Z" fill="url(#goldGradientLeaf)" />
+          <path d="M60,60 Q70,85 80,100 Q65,82 55,65 Z" fill="url(#goldGradientLeaf)" />
+          <path d="M50,70 Q60,95 68,110 Q55,92 45,75 Z" fill="url(#goldGradientLeaf)" />
+          <path d="M40,80 Q48,102 52,118 Q42,100 35,85 Z" fill="url(#goldGradientLeaf)" />
+          <path d="M30,90 Q35,108 35,120 Q28,105 25,93 Z" fill="url(#goldGradientLeaf)" />
+          
+          <path d="M70,38 Q55,45 45,50 Q58,40 72,36 Z" fill="url(#goldGradientLeaf)" />
+          <path d="M60,48 Q45,55 35,60 Q48,50 62,46 Z" fill="url(#goldGradientLeaf)" />
+          <path d="M50,58 Q35,65 25,70 Q38,60 52,56 Z" fill="url(#goldGradientLeaf)" />
+          <path d="M40,68 Q25,75 15,80 Q28,70 42,66 Z" fill="url(#goldGradientLeaf)" />
+          <path d="M30,78 Q15,85 5,90 Q18,80 32,76 Z" fill="url(#goldGradientLeaf)" />
+        </svg>
+      </div>
+
       <div class="luxury-inner-border">
         
         <!-- Top Crest / Monogram -->
@@ -65,42 +110,46 @@
         </div>
 
         <!-- Header Titles -->
-        <div class="text-center mb-5">
-          <span class="luxury-subtitle d-block mb-2">Invitation d'exception</span>
-          <h1 class="wedding-names mb-3">{{ guest()?.invitationTitle || guest()?.eventTitle }}</h1>
+        <div class="text-center mb-4">
+          <span class="luxury-subtitle d-block mb-1">Invitation d'exception</span>
+          <h1 class="wedding-names mb-4">{{ guest()?.invitationTitle || guest()?.eventTitle }}</h1>
           <div class="wedding-greeting">
-            Cher(e) <span class="guest-highlight">{{ guest()?.guestName }}</span>, nous serions honorés de vous compter parmi nos invités.
+            Cher(e) <span class="guest-highlight">{{ guest()?.guestName }}</span>,<br>
+            nous serions honorés de vous compter parmi nos invités.
           </div>
         </div>
 
-        <!-- Event Details Splits -->
-        <div class="details-grid mb-5">
-          <div class="details-col">
-            <div class="details-icon-wrapper">
-              <i class="fa fa-calendar-alt"></i>
+        <!-- Artistic Invitation Date & Location Details -->
+        <div class="artistic-invitation-details mb-5">
+          
+          <!-- Date Block -->
+          <div class="artistic-date-block">
+            <div class="date-header-line"></div>
+            <div class="artistic-date-flex">
+              <div class="date-side-part text-end">
+                <span class="day-name">{{ eventDayName }}</span>
+              </div>
+              <div class="date-center-num">
+                {{ eventDayNum }}
+              </div>
+              <div class="date-side-part text-start">
+                <span class="month-year">{{ eventMonth }} &bull; {{ eventYear }}</span>
+              </div>
             </div>
-            <h4 class="details-label">Date & Heure</h4>
-            <p class="details-value">
-              {{ (guest()?.invitationDate || guest()?.eventDate) | date:'EEEE dd MMMM yyyy' }}
-            </p>
-            <p class="details-subvalue">
-              à {{ (guest()?.invitationDate || guest()?.eventDate) | date:'HH:mm' }}
-            </p>
+            <div class="artistic-time">À {{ eventTime }}</div>
+            <div class="date-footer-line"></div>
           </div>
-          
-          <div class="details-divider"></div>
-          
-          <div class="details-col">
-            <div class="details-icon-wrapper">
+
+          <!-- Location Block -->
+          <div class="artistic-location-block mt-4 text-center">
+            <div class="location-icon-wrapper mb-2">
               <i class="fa fa-map-marker-alt"></i>
             </div>
-            <h4 class="details-label">Lieu de la réception</h4>
-            <p class="details-value">
-              {{ guest()?.invitationLocation || guest()?.eventLocation }}
-            </p>
+            <div class="location-title">Lieu de la Réception</div>
+            <div class="location-value">{{ guest()?.invitationLocation || guest()?.eventLocation }}</div>
             <a href="https://maps.google.com/?q={{ guest()?.invitationLocation || guest()?.eventLocation }}" 
                target="_blank" 
-               class="details-gps-link mt-1 d-inline-block">
+               class="details-gps-link mt-2 d-inline-block">
               <i class="fa fa-location-arrow me-1"></i> Itinéraire GPS
             </a>
           </div>
