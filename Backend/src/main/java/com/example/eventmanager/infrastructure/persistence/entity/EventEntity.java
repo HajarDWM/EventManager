@@ -53,6 +53,9 @@ public class EventEntity {
     @Column(name = "digital_template_id")
     private Long digitalTemplateId;
 
+    @Column(name = "template_id")
+    private String templateId;
+
     @Column(name = "invitation_token")
     private String invitationToken;
 

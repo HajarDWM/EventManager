@@ -49,6 +49,7 @@ public class OrganiserInvitationController {
         // Set setup details on domain model
         event.setupInvitation(
                 setupDTO.getTemplateId(),
+                setupDTO.getTemplateIdString(),
                 token,
                 customTitle,
                 customDate,
@@ -59,6 +60,7 @@ public class OrganiserInvitationController {
 
         InvitationSetupDTO response = InvitationSetupDTO.builder()
                 .templateId(savedEvent.getDigitalTemplateId())
+                .templateIdString(savedEvent.getTemplateId())
                 .invitationToken(savedEvent.getInvitationToken())
                 .invitationTitle(savedEvent.getInvitationTitle())
                 .invitationDate(savedEvent.getInvitationDate())

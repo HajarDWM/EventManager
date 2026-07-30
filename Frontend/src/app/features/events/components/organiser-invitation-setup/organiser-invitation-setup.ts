@@ -151,8 +151,20 @@ export class OrganiserInvitationSetup implements OnInit {
     // Combine date and time
     const combinedDate = new Date(`${this.invitationDateStr}T${this.invitationTimeStr}:00`);
 
+    let templateIdString = 'or-et-velours';
+    if (template.id === 1) {
+      templateIdString = 'fleurs-de-coton';
+    } else if (template.id === 2) {
+      templateIdString = 'or-et-velours';
+    } else if (template.id === 3) {
+      templateIdString = 'seminaire-imperial';
+    } else {
+      templateIdString = template.category === 'Mariage' ? 'fleurs-de-coton' : 'or-et-velours';
+    }
+
     const payload = {
       templateId: template.id,
+      templateIdString: templateIdString,
       invitationTitle: this.invitationTitle,
       invitationDate: combinedDate.toISOString(),
       invitationLocation: this.invitationLocation

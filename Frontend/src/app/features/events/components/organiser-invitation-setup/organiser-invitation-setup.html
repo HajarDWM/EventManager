@@ -30,29 +30,22 @@
 </div>
 
 <!-- Active Link Banner if setup exists -->
-<div class="card border-0 shadow-sm rounded-3 mt-4 bg-light-primary border-start border-primary border-4" *ngIf="invitationToken">
-  <div class="card-body p-4">
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
-      <div>
-        <h4 class="h5 fw-bold text-dark mb-1">
-          <i class="fa fa-link text-primary me-2"></i> Faire-part en ligne actif !
-        </h4>
-        <p class="text-muted fs-sm mb-0">
-          Chaque invité dispose d'un lien RSVP unique pour répondre. Utilisez le format de lien ci-dessous :
-        </p>
-        <div class="mt-2 p-2 bg-white rounded border border-light font-monospace fs-sm text-dark d-inline-block">
-          {{ invitationLink() }}
-        </div>
-        <div class="fs-xs text-muted mt-1">
-          Remplacez <span class="badge bg-secondary font-monospace">[ID_INVITE]</span> par l'ID réel d'un invité (visible dans sa fiche) pour lui envoyer son lien personnalisé.
-        </div>
-      </div>
-      <div>
-        <button type="button" class="btn btn-primary d-flex align-items-center gap-2" (click)="copyLink()">
-          <i class="fa" [ngClass]="isCopied ? 'fa-check' : 'fa-copy'"></i>
-          {{ isCopied ? 'Copié !' : 'Copier le modèle de lien' }}
-        </button>
-      </div>
+<div class="block block-rounded block-themed mt-4" *ngIf="invitationToken">
+  <div class="block-header bg-primary-dark">
+    <h3 class="block-title">
+      <i class="fa fa-link me-1"></i> Lien Public du Faire-part
+    </h3>
+  </div>
+  <div class="block-content pb-4">
+    <p class="text-muted fs-sm mb-3">
+      Chaque invité dispose d'un lien RSVP unique pour répondre. Utilisez le format de lien ci-dessous en remplaçant la valeur <code class="font-monospace text-danger fw-bold">[ID_INVITE]</code> par l'identifiant réel d'un invité (visible dans la liste des invités) :
+    </p>
+    <div class="input-group">
+      <input type="text" class="form-control font-monospace fs-sm bg-light" [value]="invitationLink()" readonly>
+      <button type="button" class="btn btn-primary d-flex align-items-center gap-2" (click)="copyLink()">
+        <i class="fa" [class.fa-check]="isCopied" [class.fa-copy]="!isCopied"></i>
+        {{ isCopied ? 'Copié !' : 'Copier le lien' }}
+      </button>
     </div>
   </div>
 </div>

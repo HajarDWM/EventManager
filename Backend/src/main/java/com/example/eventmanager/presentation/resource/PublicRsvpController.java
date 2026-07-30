@@ -62,6 +62,7 @@ public class PublicRsvpController {
                 .invitationLocation(event.getInvitationLocation())
                 .mealType(event.getMealType())
                 .templateCategory(templateCategory)
+                .templateId(event.getTemplateId())
                 .menuItems(menuItems)
                 .build();
 
@@ -128,6 +129,7 @@ public class PublicRsvpController {
                 .invitationLocation(event.getInvitationLocation())
                 .mealType(event.getMealType())
                 .templateCategory(templateCategory)
+                .templateId(event.getTemplateId())
                 .menuItems(menuItems)
                 .build();
 

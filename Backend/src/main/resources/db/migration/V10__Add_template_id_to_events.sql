@@ -1,0 +1,1 @@
+ALTER TABLE events ADD COLUMN template_id VARCHAR(255);

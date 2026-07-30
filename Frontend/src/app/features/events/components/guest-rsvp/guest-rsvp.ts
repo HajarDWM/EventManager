@@ -22,6 +22,7 @@ export interface PublicRsvpDetail {
   invitationLocation?: string;
   mealType?: string; // BUFFET or PLATS_FIXES
   templateCategory?: string; // Mariage, Corporate, etc.
+  templateId?: string;
   menuItems?: any[];
 }
 
@@ -106,6 +107,20 @@ export class GuestRsvp implements OnInit {
     if (!dateStr) return '';
     const date = new Date(dateStr);
     return date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }).replace(':', 'h');
+  }
+
+  public get resolvedTemplateId(): string {
+    const tId = this.guest()?.templateId;
+    if (tId === 'fleurs-de-coton' || tId === 'wedding-botanical') {
+      return 'fleurs-de-coton';
+    }
+    if (tId === 'or-et-velours' || tId === 'corporate-gold' || tId === 'seminaire-imperial') {
+      return 'or-et-velours';
+    }
+    if (tId === 'luxury-minimal') {
+      return 'luxury-minimal';
+    }
+    return this.guest()?.templateCategory === 'Mariage' ? 'fleurs-de-coton' : 'or-et-velours';
   }
 
   public ngOnInit(): void {

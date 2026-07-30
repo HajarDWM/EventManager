@@ -26,7 +26,8 @@ public class EventMapper {
                 .invitationTitle(dto.getInvitationTitle())
                 .invitationDate(dto.getInvitationDate())
                 .invitationLocation(dto.getInvitationLocation())
-                .mealType(dto.getMealType());
+                .mealType(dto.getMealType())
+                .templateId(dto.getTemplateId());
 
         if (dto.getStatus() != null) {
             builder.status(EventStatus.valueOf(dto.getStatus()));
@@ -50,6 +51,7 @@ public class EventMapper {
                 .catererId(event.getCatererId())
                 .createdAt(event.getCreatedAt())
                 .digitalTemplateId(event.getDigitalTemplateId())
+                .templateId(event.getTemplateId())
                 .invitationToken(event.getInvitationToken())
                 .invitationTitle(event.getInvitationTitle())
                 .invitationDate(event.getInvitationDate())

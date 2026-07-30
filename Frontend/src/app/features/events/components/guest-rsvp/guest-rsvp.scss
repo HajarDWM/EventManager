@@ -6,7 +6,7 @@
   transition: all 0.5s ease;
   
   /* --- CORPORATE THEME (Dark Luxury Black & Gold) --- */
-  &.corporate-theme {
+  &.corporate-theme, &.corporate-gold-theme, &.or-et-velours-theme {
     background: radial-gradient(circle at center, #faf6ee 0%, #f1ebe0 100%);
     color: #e0e0e0;
     
@@ -285,7 +285,7 @@
   }
 
   /* --- WEDDING THEME (Eucalyptus Watercolor Light & Sage) --- */
-  &.wedding-theme {
+  &.wedding-theme, &.wedding-botanical-theme, &.fleurs-de-coton-theme {
     background: radial-gradient(circle at center, #f4f7f5 0%, #e6ece8 100%);
     color: #4a554a;
     
@@ -560,6 +560,284 @@
       
       &:hover:not(:disabled) {
         box-shadow: 0 8px 25px rgba(135, 155, 140, 0.35);
+      }
+    }
+  }
+
+  /* --- LUXURY MINIMAL THEME (Modern Minimalist Light) --- */
+  &.luxury-minimal-theme {
+    background: #f8fafc;
+    color: #1e293b;
+    
+    .luxury-card {
+      border: 1px solid #e2e8f0 !important;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04) !important;
+      border-radius: 8px;
+      overflow: hidden;
+      background-color: #ffffff !important;
+    }
+    
+    .luxury-inner-border {
+      border: none;
+      margin: 16px;
+      padding: 32px 24px;
+      border-radius: 0;
+      background-color: #ffffff;
+      
+      @media (min-width: 768px) {
+        margin: 24px;
+        padding: 48px;
+      }
+    }
+    
+    .gold-top-border {
+      height: 4px;
+      background: #0f172a;
+    }
+    
+    .crest-circle {
+      width: 50px;
+      height: 50px;
+      border: 1px solid #0f172a;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto;
+      background-color: #ffffff;
+    }
+    
+    .crest-letters {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #0f172a;
+      letter-spacing: 2px;
+    }
+    
+    .crest-line {
+      width: 80px;
+      height: 1px;
+      background: #e2e8f0;
+      margin: 12px auto 0;
+    }
+    
+    .luxury-subtitle {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: #64748b;
+      margin-bottom: 8px;
+    }
+    
+    .wedding-names {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.2rem;
+      font-weight: 400;
+      color: #0f172a;
+      line-height: 1.25;
+      text-transform: none;
+      letter-spacing: 0;
+      
+      @media (min-width: 768px) {
+        font-size: 2.8rem;
+      }
+    }
+    
+    .wedding-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #0f172a;
+    }
+    
+    .wedding-greeting {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: #475569;
+    }
+    
+    .guest-highlight {
+      color: #0f172a;
+      font-weight: 700;
+      border-bottom: 2px solid #0f172a;
+      padding-bottom: 1px;
+    }
+    
+    .date-header-line, .date-footer-line {
+      height: 1px;
+      background: #e2e8f0;
+      width: 100%;
+    }
+    
+    .date-side-part {
+      flex: 1;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #64748b;
+      font-weight: 700;
+    }
+    
+    .date-center-num {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 3rem;
+      font-weight: 800;
+      color: #0f172a;
+      line-height: 1;
+      border-left: 1px solid #e2e8f0;
+      border-right: 1px solid #e2e8f0;
+      padding: 0 18px;
+    }
+    
+    .artistic-time {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #64748b;
+      letter-spacing: 1px;
+      margin-top: 10px;
+      margin-bottom: 16px;
+    }
+    
+    .location-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #64748b;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    
+    .location-value {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1rem;
+      color: #0f172a;
+      font-weight: 600;
+    }
+    
+    .location-icon-wrapper {
+      color: #0f172a;
+      font-size: 1.1rem;
+    }
+    
+    .details-gps-link {
+      color: #0f172a;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.25s ease;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      
+      &:hover {
+        color: #475569;
+        text-decoration: underline;
+      }
+    }
+    
+    .bg-cream {
+      background-color: #f8fafc;
+      border: 1px solid #e2e8f0;
+    }
+    
+    .bg-gold-success {
+      background-color: #f0fdf4;
+      color: #166534;
+      border: 1px solid #bbf7d0;
+    }
+    
+    .bg-gold-muted {
+      background-color: #f1f5f9;
+      color: #475569;
+      border: 1px solid #cbd5e1;
+    }
+    
+    .summary-box {
+      .text-dark {
+        color: #1e293b !important;
+      }
+    }
+    
+    .rsvp-action-btn {
+      background-color: #ffffff;
+      border: 1px solid #cbd5e1;
+      color: #475569;
+      border-radius: 4px;
+      font-weight: 600;
+      
+      &.btn-presence-yes {
+        &:hover, &.active {
+          background-color: #0f172a;
+          border-color: #0f172a;
+          color: #ffffff;
+        }
+      }
+      
+      &.btn-presence-no {
+        &:hover, &.active {
+          background-color: #0f172a;
+          border-color: #0f172a;
+          color: #ffffff;
+        }
+      }
+    }
+    
+    .luxury-form-control {
+      background-color: #ffffff;
+      border: 1px solid #cbd5e1;
+      color: #0f172a;
+      border-radius: 4px;
+      
+      &:focus {
+        background-color: #ffffff;
+        border-color: #0f172a;
+        box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.1);
+      }
+      
+      option {
+        background-color: #ffffff;
+        color: #0f172a;
+      }
+    }
+    
+    .dietary-pill {
+      background-color: #ffffff;
+      border: 1px solid #cbd5e1;
+      color: #475569;
+      border-radius: 4px;
+      
+      &:hover {
+        border-color: #0f172a;
+        background-color: #f8fafc;
+        color: #0f172a;
+      }
+      
+      &.active-pill {
+        background: #0f172a;
+        border-color: #0f172a;
+        color: #ffffff !important;
+        
+        .pill-check-icon {
+          color: #ffffff;
+        }
+      }
+    }
+    
+    .btn-luxury-submit {
+      background: #0f172a;
+      color: #ffffff;
+      border-radius: 4px;
+      box-shadow: none;
+      
+      &:hover:not(:disabled) {
+        background: #1e293b;
+        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
       }
     }
   }

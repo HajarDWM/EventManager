@@ -21,6 +21,7 @@ public class EventDTO {
     private Long catererId;
     private LocalDateTime createdAt;
     private Long digitalTemplateId;
+    private String templateId;
     private String invitationToken;
     private String invitationTitle;
     private LocalDateTime invitationDate;

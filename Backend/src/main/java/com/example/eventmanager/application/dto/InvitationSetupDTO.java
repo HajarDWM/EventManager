@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class InvitationSetupDTO {
     private Long templateId;
+    private String templateIdString;
     private String invitationTitle;
     private LocalDateTime invitationDate;
     private String invitationLocation;
