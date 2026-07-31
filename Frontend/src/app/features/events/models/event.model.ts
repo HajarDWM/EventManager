@@ -12,4 +12,5 @@ export interface Event {
   invitationDate?: string;
   invitationLocation?: string;
   mealType?: string;
+  templateId?: string;
 }

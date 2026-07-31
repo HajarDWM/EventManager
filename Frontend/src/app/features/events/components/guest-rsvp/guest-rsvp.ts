@@ -114,13 +114,16 @@ export class GuestRsvp implements OnInit {
     if (tId === 'fleurs-de-coton' || tId === 'wedding-botanical') {
       return 'fleurs-de-coton';
     }
-    if (tId === 'or-et-velours' || tId === 'corporate-gold' || tId === 'seminaire-imperial') {
+    if (tId === 'or-et-velours' || tId === 'corporate-gold') {
       return 'or-et-velours';
+    }
+    if (tId === 'seminaire-imperial' || tId === 'corporate-professional' || tId === 'launch-party') {
+      return 'corporate-professional';
     }
     if (tId === 'luxury-minimal') {
       return 'luxury-minimal';
     }
-    return this.guest()?.templateCategory === 'Mariage' ? 'fleurs-de-coton' : 'or-et-velours';
+    return this.guest()?.templateCategory === 'Mariage' ? 'or-et-velours' : 'corporate-professional';
   }
 
   public ngOnInit(): void {

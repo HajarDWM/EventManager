@@ -72,7 +72,16 @@ export class OrganiserInvitationSetup implements OnInit {
     // Fetch templates first
     this.templateService.getTemplates().subscribe({
       next: (templateList) => {
-        this.templates.set(templateList);
+        const modifiedList = templateList.map(t => {
+          if (t.id === 2 || t.title === 'Or & Velours') {
+            return {
+              ...t,
+              imageUrl: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=500'
+            };
+          }
+          return t;
+        });
+        this.templates.set(modifiedList);
 
         // Then fetch event details
         this.eventService.getEventById(eventId).subscribe({
@@ -180,6 +189,7 @@ export class OrganiserInvitationSetup implements OnInit {
         this.event.update(e => e ? {
           ...e,
           digitalTemplateId: template.id,
+          templateId: res.templateIdString,
           invitationTitle: res.invitationTitle,
           invitationDate: res.invitationDate,
           invitationLocation: res.invitationLocation,
