@@ -49,10 +49,12 @@
             <div class="col-md-6">
               <label class="form-label fw-semibold text-muted">Devise Système</label>
               <select class="form-select border-light shadow-sm bg-body-light" [(ngModel)]="currency" name="currency">
-                <option value="EUR">Euro (€)</option>
-                <option value="USD">Dollar ($)</option>
-                <option value="GBP">Livre Sterling (£)</option>
-                <option value="CHF">Franc Suisse (CHF)</option>
+                <option value="CAD">CAD - Dollar Canadien ($)</option>
+                <option value="MAD">MAD - Dirham Marocain (DH)</option>
+                <option value="EUR">EUR - Euro (€)</option>
+                <option value="USD">USD - Dollar ($)</option>
+                <option value="GBP">GBP - Livre Sterling (£)</option>
+                <option value="CHF">CHF - Franc Suisse (CHF)</option>
               </select>
               <div class="form-text fs-xs text-muted">Devise par défaut de la plateforme.</div>
             </div>
@@ -98,6 +100,72 @@
             </button>
           </div>
         </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Real-time Billing Preview Card -->
+  <div class="col-xl-4">
+    <div class="block block-rounded bg-white shadow-sm border border-light h-100 d-flex flex-column">
+      <div class="block-header block-header-default border-bottom bg-body-light p-3">
+        <h3 class="block-title fw-bold">
+          <i class="fa fa-file-invoice-dollar text-info me-2"></i>Aperçu de Facture Type
+        </h3>
+      </div>
+      <div class="block-content p-4 flex-grow-1">
+        <p class="text-muted fs-xs mb-3">
+          Visualisez en temps réel l'impact de vos tarifs, devise et taux de TVA sur la facturation finale d'un organisateur.
+        </p>
+
+        <!-- Toggle Plan -->
+        <label class="form-label fw-semibold text-muted mb-2">Plan d'abonnement :</label>
+        <div class="btn-group w-100 mb-4" role="group" aria-label="Toggle preview plan">
+          <button type="button" class="btn btn-sm py-2 fw-semibold" 
+                  [ngClass]="previewPlan() === 'standard' ? 'btn-primary' : 'btn-alt-secondary'"
+                  (click)="previewPlan.set('standard')">
+            Plan Standard
+          </button>
+          <button type="button" class="btn btn-sm py-2 fw-semibold" 
+                  [ngClass]="previewPlan() === 'premium' ? 'btn-primary' : 'btn-alt-secondary'"
+                  (click)="previewPlan.set('premium')">
+            Plan Premium
+          </button>
+        </div>
+
+        <!-- Visual Invoice Card -->
+        <div class="border border-light rounded-3 bg-body-light p-3 shadow-xs">
+          <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2 border-light-dark">
+            <div>
+              <span class="fs-xs text-muted text-uppercase d-block">Organisateur</span>
+              <span class="fw-bold text-dark fs-sm">Traiteur Gourmet</span>
+            </div>
+            <div class="text-end">
+              <span class="fs-xs text-muted text-uppercase d-block">Statut</span>
+              <span class="badge bg-warning-light text-warning-dark rounded-pill px-2">Brouillon</span>
+            </div>
+          </div>
+
+          <div class="d-flex flex-column gap-2">
+            <div class="d-flex justify-content-between fs-sm text-muted">
+              <span>Prix de base (HT) :</span>
+              <span class="fw-semibold text-dark">{{ formatPrice(previewPlanPrice()) }}</span>
+            </div>
+            <div class="d-flex justify-content-between fs-sm text-muted">
+              <span>TVA ({{ vatRate() }}%) :</span>
+              <span class="fw-semibold text-dark">{{ formatPrice(previewVatAmount()) }}</span>
+            </div>
+            <hr class="my-2 border-light-dark">
+            <div class="d-flex justify-content-between align-items-center fw-bold text-dark fs-base">
+              <span>Montant Total (TTC) :</span>
+              <span class="text-primary fs-5">{{ formatPrice(previewTotalAmount()) }}</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="alert alert-info py-2 px-3 fs-xs mt-4 mb-0 border-info-light">
+          <h6 class="alert-heading fw-bold mb-1"><i class="fa fa-info-circle me-1"></i> Renseignement</h6>
+          <p class="mb-0">Les prix des abonnements sont affichés et facturés aux organisateurs selon cette configuration globale.</p>
+        </div>
       </div>
     </div>
   </div>
