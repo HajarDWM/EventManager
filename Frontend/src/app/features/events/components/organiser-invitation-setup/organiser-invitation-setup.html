@@ -192,6 +192,7 @@
                   <th>Nom complet</th>
                   <th>Coordonnées</th>
                   <th class="text-center" style="width: 100px;">Canaux</th>
+                  <th class="text-center" style="width: 110px;">Test</th>
                 </tr>
               </thead>
               <tbody>
@@ -218,6 +219,11 @@
                     <span class="badge bg-info-light text-info" *ngIf="guest.email" title="E-mail disponible">
                       <i class="far fa-envelope"></i>
                     </span>
+                  </td>
+                  <td class="text-center" (click)="$event.stopPropagation()">
+                    <a [routerLink]="['/rsvp', guest.id]" target="_blank" class="btn btn-xs btn-alt-warning d-inline-flex align-items-center gap-1 py-1 px-2" title="Tester RSVP">
+                      <i class="fa fa-external-link-alt"></i> Tester
+                    </a>
                   </td>
                 </tr>
               </tbody>
