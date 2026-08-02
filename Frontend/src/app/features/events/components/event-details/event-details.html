@@ -65,6 +65,10 @@
             <a class="btn btn-sm btn-alt-primary rounded-pill px-3" [routerLink]="['/events', event()?.id, 'export']">
               <i class="fa fa-file-pdf me-1"></i> PDF
             </a>
+
+            <a class="btn btn-sm btn-alt-danger rounded-pill px-3" [routerLink]="['/events', event()?.id, 'billing']">
+              <i class="fa fa-file-invoice-dollar me-1"></i> Finances
+            </a>
           </div>
         </div>
         <div class="block-content p-4">

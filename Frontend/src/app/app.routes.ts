@@ -24,6 +24,7 @@ import { AdminTemplates } from './features/admin/templates/admin-templates';
 import { OrganiserInvitationSetup } from './features/events/components/organiser-invitation-setup/organiser-invitation-setup';
 import { GuestRsvp } from './features/events/components/guest-rsvp/guest-rsvp';
 import { EventDetails } from './features/events/components/event-details/event-details';
+import { EventBilling } from './features/events/components/event-billing/event-billing';
 
 export const routes: Routes = [
   {
@@ -68,6 +69,10 @@ export const routes: Routes = [
       {
         path: 'events/:id',
         component: EventDetails
+      },
+      {
+        path: 'events/:id/billing',
+        component: EventBilling
       },
       {
         path: 'events/:id/guests',

@@ -1,0 +1,218 @@
+<!-- Hero & Header -->
+<div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-2 text-center text-md-start mb-4">
+  <div class="flex-grow-1 mb-2 mb-md-0">
+    <div class="d-flex align-items-center justify-content-center justify-content-md-start gap-2 mb-1">
+      <h1 class="h3 fw-bold mb-0">
+        {{ eventTitle() || 'Chargement...' }}
+      </h1>
+      <span class="badge bg-danger-light text-danger px-3 py-2 rounded fs-xs">
+        Suivi Financier Simplifié
+      </span>
+    </div>
+    <h2 class="h6 fw-medium text-muted mb-0">
+      Définissez le montant de l'événement et suivez les acomptes et règlements reçus.
+    </h2>
+  </div>
+  <div class="mt-2 mt-md-0 ms-md-3">
+    <a class="btn btn-alt-secondary rounded-pill px-3" [routerLink]="['/events', eventId()]">
+      <i class="fa fa-arrow-left me-1"></i> Retour aux détails
+    </a>
+  </div>
+</div>
+
+<!-- Alert States -->
+<div class="row" *ngIf="errorMessage() || successMessage()">
+  <div class="col-12">
+    <div class="alert alert-danger d-flex align-items-center gap-2" role="alert" *ngIf="errorMessage()">
+      <i class="fa fa-exclamation-circle"></i>
+      <div class="fs-sm fw-medium">{{ errorMessage() }}</div>
+    </div>
+    <div class="alert alert-success d-flex align-items-center gap-2" role="alert" *ngIf="successMessage()">
+      <i class="fa fa-check-circle"></i>
+      <div class="fs-sm fw-medium">{{ successMessage() }}</div>
+    </div>
+  </div>
+</div>
+
+<!-- Loading Spinner -->
+<div class="row" *ngIf="isLoading()">
+  <div class="col-12 text-center py-5">
+    <i class="fa fa-fw fa-circle-notch fa-spin text-primary fs-2"></i>
+    <p class="mt-2 text-muted fs-sm">Mise à jour des données financières...</p>
+  </div>
+</div>
+
+<!-- Simplified Content (When not loading) -->
+<div class="row g-4" *ngIf="!isLoading()">
+  
+  <!-- 1. Top Summary Cards -->
+  <div class="col-12">
+    <div class="row g-3">
+      <!-- Card 1: Total Price -->
+      <div class="col-md-4">
+        <div class="block block-rounded bg-white border border-light shadow-sm p-4 text-center h-100 d-flex flex-column justify-content-center">
+          <div class="fs-xs fw-bold text-muted text-uppercase mb-2">Total Global de l'Événement</div>
+          <div class="fs-3 fw-extrabold text-primary">{{ eventTotalPrice() | number:'1.2-2' }} €</div>
+          <div class="fs-xs text-muted mt-1">Tarif forfaitaire défini par le traiteur</div>
+        </div>
+      </div>
+      
+      <!-- Card 2: Paid Advance -->
+      <div class="col-md-4">
+        <div class="block block-rounded bg-white border border-light shadow-sm p-4 text-center h-100 d-flex flex-column justify-content-center">
+          <div class="fs-xs fw-bold text-muted text-uppercase mb-2">Acompte / Avance Versé</div>
+          <div class="fs-3 fw-extrabold text-success">{{ totalPaidAmount() | number:'1.2-2' }} €</div>
+          <div class="fs-xs text-muted mt-1">Total des règlements clients encaissés</div>
+        </div>
+      </div>
+      
+      <!-- Card 3: Remaining Due -->
+      <div class="col-md-4">
+        <div class="block block-rounded bg-white border border-light shadow-sm p-4 text-center h-100 d-flex flex-column justify-content-center">
+          <div class="fs-xs fw-bold text-muted text-uppercase mb-2">Solde Restant Dû</div>
+          <div class="fs-3 fw-extrabold" [ngClass]="remainingBalanceDue() > 0 ? 'text-danger' : 'text-muted'">
+            {{ remainingBalanceDue() | number:'1.2-2' }} €
+          </div>
+          <div class="fs-xs mt-1" [ngClass]="remainingBalanceDue() > 0 ? 'text-danger fw-semibold' : 'text-success fw-semibold'">
+            {{ remainingBalanceDue() > 0 ? 'En attente de règlement' : 'Facturation soldée' }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Configuration & Financial Setup -->
+  <div class="col-lg-5">
+    <div class="block block-rounded bg-white shadow-sm border border-light h-100">
+      <div class="block-header block-header-default border-bottom bg-body-light p-3">
+        <h3 class="block-title fw-bold mb-0">
+          <i class="fa fa-cogs text-primary me-2"></i>Configuration Tarifaire
+        </h3>
+      </div>
+      <div class="block-content p-4">
+        <div class="mb-4">
+          <label class="form-label fw-semibold fs-sm text-dark mb-1">Montant forfaitaire TTC (€)</label>
+          <div class="input-group">
+            <input type="number" class="form-control" placeholder="Entrez le prix total" [(ngModel)]="editTotalPrice" name="editTotalPrice" min="0">
+            <button class="btn btn-primary" type="button" (click)="saveTotalPrice()">
+              Mettre à jour
+            </button>
+          </div>
+          <div class="form-text fs-xs text-muted mt-2">
+            Mettre à jour ce montant ajustera automatiquement le solde restant dû du client.
+          </div>
+        </div>
+
+        <hr class="my-4 border-light">
+
+        <div class="d-flex flex-column gap-2">
+          <button type="button" class="btn btn-success w-100 rounded-pill py-2.5 fw-bold" [disabled]="eventTotalPrice() <= 0" (click)="openPaymentModal()">
+            <i class="fa fa-euro-sign me-1"></i> Enregistrer un Règlement
+          </button>
+          <button type="button" class="btn btn-alt-danger w-100 rounded-pill py-2.5 fw-semibold mt-2" *ngIf="paymentsList().length > 0" (click)="resetBilling()">
+            <i class="fa fa-sync-alt me-1"></i> Réinitialiser les Règlements
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Payments Log List -->
+  <div class="col-lg-7">
+    <div class="block block-rounded bg-white shadow-sm border border-light h-100">
+      <div class="block-header block-header-default border-bottom bg-body-light p-3 d-flex justify-content-between align-items-center">
+        <h3 class="block-title fw-bold mb-0">
+          <i class="fa fa-history text-primary me-2"></i>Historique des Règlements
+        </h3>
+        <span class="badge bg-success-light text-success rounded-pill px-3 py-1.5 fs-xs fw-bold">
+          {{ paymentsList().length }} paiement(s)
+        </span>
+      </div>
+      <div class="block-content p-4">
+        <!-- Empty State -->
+        <div class="text-center py-5 text-muted" *ngIf="paymentsList().length === 0">
+          <i class="fa fa-receipt fs-1 opacity-50 mb-2"></i>
+          <p class="fs-sm mb-0">Aucun règlement n'a encore été enregistré.</p>
+        </div>
+
+        <!-- Table list of payments -->
+        <div class="table-responsive" *ngIf="paymentsList().length > 0">
+          <table class="table table-hover table-striped table-vcenter fs-sm">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Mode</th>
+                <th>Référence</th>
+                <th class="text-end">Montant</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let pay of paymentsList()">
+                <td>
+                  {{ pay.paymentDate | date:'dd/MM/yyyy HH:mm' }}
+                </td>
+                <td class="fw-semibold">
+                  {{ getPaymentMethodLabel(pay.paymentMethod) }}
+                </td>
+                <td class="text-muted">
+                  {{ pay.reference || '-' }}
+                </td>
+                <td class="text-end fw-bold text-success">
+                  + {{ pay.amount | number:'1.2-2' }} €
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- --- RECORD PAYMENT MODAL --- -->
+<div class="modal fade show d-block" tabindex="-1" role="dialog" style="background-color: rgba(0,0,0,0.5);" *ngIf="isRecordingPaymentModal()">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content border-0 shadow-lg rounded">
+      <div class="block block-rounded block-transparent mb-0">
+        <div class="block-header block-header-default border-bottom bg-body-light p-3 d-flex justify-content-between align-items-center">
+          <h3 class="block-title fw-bold mb-0">Enregistrer un Règlement</h3>
+          <button type="button" class="btn-close" (click)="isRecordingPaymentModal.set(false)"></button>
+        </div>
+        <div class="block-content p-4">
+          <p class="fs-sm text-muted">Saisissez les détails de l'encaissement reçu pour cet événement.</p>
+          
+          <div class="mb-3">
+            <label class="form-label fs-sm fw-bold">Montant reçu (€)</label>
+            <input type="number" class="form-control" [(ngModel)]="paymentAmountInput" name="paymentAmountInput" step="0.01">
+            <div class="form-text fs-xs text-danger">Solde restant dû : {{ remainingBalanceDue() | number:'1.2-2' }} €</div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fs-sm fw-bold">Mode de règlement</label>
+            <select class="form-select" [(ngModel)]="paymentMethodInput" name="paymentMethodInput">
+              <option value="BANK_TRANSFER">Virement Bancaire</option>
+              <option value="CARD">Carte Bancaire</option>
+              <option value="CASH">Espèces</option>
+              <option value="CHECK">Chèque</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fs-sm fw-bold">Référence / Numéro (Optionnel)</label>
+            <input type="text" class="form-control" placeholder="Numéro de chèque, transaction, ID virement..." [(ngModel)]="paymentReferenceInput" name="paymentReferenceInput">
+          </div>
+
+          <div class="d-flex justify-content-end gap-2 border-top pt-3 mt-4">
+            <button type="button" class="btn btn-alt-secondary btn-sm rounded-pill px-3" (click)="isRecordingPaymentModal.set(false)">
+              Annuler
+            </button>
+            <button type="button" class="btn btn-success btn-sm rounded-pill px-3" (click)="recordPayment()">
+              Enregistrer le Règlement
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
