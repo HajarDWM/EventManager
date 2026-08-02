@@ -23,6 +23,7 @@ import { SubscriptionComponent } from './features/subscription/subscription';
 import { AdminTemplates } from './features/admin/templates/admin-templates';
 import { OrganiserInvitationSetup } from './features/events/components/organiser-invitation-setup/organiser-invitation-setup';
 import { GuestRsvp } from './features/events/components/guest-rsvp/guest-rsvp';
+import { EventDetails } from './features/events/components/event-details/event-details';
 
 export const routes: Routes = [
   {
@@ -63,6 +64,10 @@ export const routes: Routes = [
       {
         path: 'events/edit/:id',
         component: EventEdit
+      },
+      {
+        path: 'events/:id',
+        component: EventDetails
       },
       {
         path: 'events/:id/guests',
