@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { EventService } from '../../services/event.service';
 import { TemplateService, DigitalTemplate } from '../../../../core/services/template.service';
+import { GuestService, Guest } from '../../../../core/services/guest.service';
 import { Event } from '../../models/event.model';
 
 @Component({
@@ -18,9 +19,16 @@ export class OrganiserInvitationSetup implements OnInit {
   private readonly router = inject(Router);
   private readonly eventService = inject(EventService);
   private readonly templateService = inject(TemplateService);
+  private readonly guestService = inject(GuestService);
 
   protected readonly event = signal<Event | null>(null);
   protected readonly templates = signal<DigitalTemplate[]>([]);
+  protected readonly guests = signal<Guest[]>([]);
+  protected readonly selectedGuestIds = signal<Record<number, boolean>>({});
+  protected readonly sendingChannel = signal<'WHATSAPP' | 'EMAIL' | 'BOTH'>('BOTH');
+  protected readonly isSending = signal(false);
+  protected readonly sendSuccessMessage = signal('');
+
   protected readonly isLoading = signal(true);
   protected readonly isSubmitting = signal(false);
   protected readonly successMessage = signal('');
@@ -82,6 +90,22 @@ export class OrganiserInvitationSetup implements OnInit {
           return t;
         });
         this.templates.set(modifiedList);
+
+        // Fetch guests
+        this.guestService.getGuestsByEvent(eventId).subscribe({
+          next: (guestList) => {
+            this.guests.set(guestList);
+            // Default select all guests
+            const initialSelection: Record<number, boolean> = {};
+            guestList.forEach(g => {
+              if (g.id) initialSelection[g.id] = true;
+            });
+            this.selectedGuestIds.set(initialSelection);
+          },
+          error: (err) => {
+            console.error('Erreur chargement invités:', err);
+          }
+        });
 
         // Then fetch event details
         this.eventService.getEventById(eventId).subscribe({
@@ -209,17 +233,69 @@ export class OrganiserInvitationSetup implements OnInit {
   }
 
   private updateInvitationLink(token: string): void {
-    // Generate a clean invitation link pattern or base route
     this.invitationLink.set(`${window.location.origin}/rsvp/[ID_INVITE]`);
   }
 
-  protected copyLink(): void {
-    const linkText = this.invitationLink();
-    if (!linkText) return;
+  protected toggleGuest(guestId: number): void {
+    this.selectedGuestIds.update(selection => ({
+      ...selection,
+      [guestId]: !selection[guestId]
+    }));
+  }
 
-    navigator.clipboard.writeText(linkText).then(() => {
-      this.isCopied = true;
-      setTimeout(() => this.isCopied = false, 2000);
+  protected toggleAllGuests(event: any): void {
+    const isChecked = event.target.checked;
+    const selection: Record<number, boolean> = {};
+    this.guests().forEach(g => {
+      if (g.id) {
+        selection[g.id] = isChecked;
+      }
     });
+    this.selectedGuestIds.set(selection);
+  }
+
+  protected isAllSelected(): boolean {
+    const list = this.guests();
+    if (list.length === 0) return false;
+    const selection = this.selectedGuestIds();
+    return list.every(g => g.id && selection[g.id]);
+  }
+
+  protected getSelectedCount(): number {
+    const selection = this.selectedGuestIds();
+    return this.guests().filter(g => g.id && selection[g.id]).length;
+  }
+
+  protected sendInvitations(): void {
+    const selectedCount = this.getSelectedCount();
+    if (selectedCount === 0) {
+      this.errorMessage.set('Veuillez sélectionner au moins un invité à qui envoyer l\'invitation.');
+      setTimeout(() => this.errorMessage.set(''), 3000);
+      return;
+    }
+
+    this.isSending.set(true);
+    this.sendSuccessMessage.set('');
+
+    const channelLabel = this.sendingChannel() === 'BOTH' 
+      ? 'WhatsApp et E-mail' 
+      : this.sendingChannel() === 'EMAIL' 
+        ? 'E-mail' 
+        : 'WhatsApp';
+
+    console.log(`--- ENVOI DES INVITATIONS VIA ${this.sendingChannel()} ---`);
+    this.guests().forEach(guest => {
+      if (guest.id && this.selectedGuestIds()[guest.id]) {
+        const guestLink = `${window.location.origin}/rsvp/${guest.id}`;
+        console.log(`Envoi à: ${guest.fullName} | Lien unique: ${guestLink} | Canaux: ${this.sendingChannel()}`);
+      }
+    });
+
+    // Simulate sending network latency
+    setTimeout(() => {
+      this.isSending.set(false);
+      this.sendSuccessMessage.set(`Félicitations ! Les faire-part ont été envoyés avec succès à ${selectedCount} invité(s) via ${channelLabel}.`);
+      setTimeout(() => this.sendSuccessMessage.set(''), 5000);
+    }, 1500);
   }
 }

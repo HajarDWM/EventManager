@@ -29,27 +29,6 @@
   <button type="button" class="btn-close ms-auto" (click)="errorMessage.set('')"></button>
 </div>
 
-<!-- Active Link Banner if setup exists -->
-<div class="block block-rounded block-themed mt-4" *ngIf="invitationToken">
-  <div class="block-header bg-primary-dark">
-    <h3 class="block-title">
-      <i class="fa fa-link me-1"></i> Lien Public du Faire-part
-    </h3>
-  </div>
-  <div class="block-content pb-4">
-    <p class="text-muted fs-sm mb-3">
-      Chaque invité dispose d'un lien RSVP unique pour répondre. Utilisez le format de lien ci-dessous en remplaçant la valeur <code class="font-monospace text-danger fw-bold">[ID_INVITE]</code> par l'identifiant réel d'un invité (visible dans la liste des invités) :
-    </p>
-    <div class="input-group">
-      <input type="text" class="form-control font-monospace fs-sm bg-light" [value]="invitationLink()" readonly>
-      <button type="button" class="btn btn-primary d-flex align-items-center gap-2" (click)="copyLink()">
-        <i class="fa" [class.fa-check]="isCopied" [class.fa-copy]="!isCopied"></i>
-        {{ isCopied ? 'Copié !' : 'Copier le lien' }}
-      </button>
-    </div>
-  </div>
-</div>
-
 <!-- Tabs Filters -->
 <div class="block block-rounded bg-white shadow-sm border border-light mt-4">
   <div class="block-content p-3 border-bottom border-light">
@@ -116,6 +95,153 @@
   <div class="text-center py-5" *ngIf="isLoading()">
     <div class="spinner-border text-primary" role="status">
       <span class="visually-hidden">Chargement...</span>
+    </div>
+  </div>
+</div>
+
+<!-- Action-Oriented Sending Section -->
+<div class="block block-rounded shadow-sm border border-light mt-4 animate__animated animate__fadeIn" *ngIf="invitationToken">
+  <div class="block-header block-header-default bg-body-light border-bottom border-light">
+    <h3 class="block-title fw-bold mb-0">
+      <i class="fa fa-paper-plane text-primary me-2"></i>Envoi des Invitations
+    </h3>
+    <div class="block-options">
+      <span class="badge bg-primary px-3 py-2 rounded-pill fs-xs">
+        {{ getSelectedCount() }} / {{ guests().length }} invité(s) sélectionné(s)
+      </span>
+    </div>
+  </div>
+  
+  <div class="block-content p-4">
+    <!-- Success Banner -->
+    <div *ngIf="sendSuccessMessage()" class="alert alert-success d-flex align-items-center mb-3 shadow-sm" role="alert">
+      <i class="fa fa-check-circle me-2 fs-5"></i>
+      <div class="fs-sm fw-medium">{{ sendSuccessMessage() }}</div>
+    </div>
+
+    <div class="row g-4 mb-4">
+      <!-- Channel Selection -->
+      <div class="col-lg-4">
+        <div class="bg-body-light p-3 rounded h-100 border border-light">
+          <h4 class="fs-sm fw-bold text-uppercase text-muted mb-3"><i class="fa fa-share-alt me-1"></i> 1. Choisir le canal d'envoi</h4>
+          
+          <div class="space-y-2">
+            <div class="form-check form-check-block mb-3">
+              <input class="form-check-input" type="radio" id="channelBoth" value="BOTH" 
+                     [ngModel]="sendingChannel()" (ngModelChange)="sendingChannel.set($event)" name="sendingChannel">
+              <label class="form-check-label d-flex align-items-center gap-2" for="channelBoth" style="cursor: pointer;">
+                <i class="fa fa-share-alt text-primary fs-5"></i>
+                <div>
+                  <span class="fw-semibold d-block fs-sm">WhatsApp & E-mail</span>
+                  <span class="fs-xs text-muted">Recommandé pour maximiser les réponses</span>
+                </div>
+              </label>
+            </div>
+            
+            <div class="form-check form-check-block mb-3">
+              <input class="form-check-input" type="radio" id="channelWhatsapp" value="WHATSAPP" 
+                     [ngModel]="sendingChannel()" (ngModelChange)="sendingChannel.set($event)" name="sendingChannel">
+              <label class="form-check-label d-flex align-items-center gap-2" for="channelWhatsapp" style="cursor: pointer;">
+                <i class="fab fa-whatsapp text-success fs-5"></i>
+                <div>
+                  <span class="fw-semibold d-block fs-sm">WhatsApp uniquement</span>
+                  <span class="fs-xs text-muted">Lien direct envoyé sur leur numéro mobile</span>
+                </div>
+              </label>
+            </div>
+
+            <div class="form-check form-check-block">
+              <input class="form-check-input" type="radio" id="channelEmail" value="EMAIL" 
+                     [ngModel]="sendingChannel()" (ngModelChange)="sendingChannel.set($event)" name="sendingChannel">
+              <label class="form-check-label d-flex align-items-center gap-2" for="channelEmail" style="cursor: pointer;">
+                <i class="far fa-envelope text-info fs-5"></i>
+                <div>
+                  <span class="fw-semibold d-block fs-sm">E-mail uniquement</span>
+                  <span class="fs-xs text-muted">Invitation formelle envoyée dans leur boîte mail</span>
+                </div>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Guests Selection Table -->
+      <div class="col-lg-8">
+        <div class="border border-light rounded h-100 d-flex flex-column" style="min-height: 250px;">
+          <div class="bg-body-light p-3 border-bottom border-light">
+            <h4 class="fs-sm fw-bold text-uppercase text-muted mb-0"><i class="fa fa-users me-1"></i> 2. Sélectionner les destinataires</h4>
+          </div>
+          
+          <div class="flex-grow-1 overflow-auto" style="max-height: 250px;">
+            <!-- Empty state -->
+            <div class="text-center py-5 text-muted animate__animated animate__fadeIn" *ngIf="guests().length === 0">
+              <i class="fa fa-user-slash fs-3 mb-2"></i>
+              <p class="fs-sm mb-0">Aucun invité enregistré pour cet événement.</p>
+              <a class="fs-xs fw-semibold" [routerLink]="['/events', event()?.id, 'guests']">Ajouter des invités</a>
+            </div>
+
+            <!-- Table -->
+            <table class="table table-vcenter table-striped table-hover fs-sm mb-0" *ngIf="guests().length > 0">
+              <thead class="table-light position-sticky top-0" style="z-index: 1;">
+                <tr>
+                  <th class="text-center" style="width: 50px;">
+                    <input class="form-check-input" type="checkbox" 
+                           [checked]="isAllSelected()" 
+                           (change)="toggleAllGuests($event)">
+                  </th>
+                  <th>Nom complet</th>
+                  <th>Coordonnées</th>
+                  <th class="text-center" style="width: 100px;">Canaux</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let guest of guests()" 
+                    (click)="toggleGuest(guest.id!)" 
+                    style="cursor: pointer;">
+                  <td class="text-center" (click)="$event.stopPropagation()">
+                    <input class="form-check-input" type="checkbox" 
+                           [checked]="selectedGuestIds()[guest.id!]" 
+                           (change)="toggleGuest(guest.id!)">
+                  </td>
+                  <td class="fw-semibold text-dark">
+                    {{ guest.fullName }}
+                  </td>
+                  <td>
+                    <div class="fs-xs text-muted" *ngIf="guest.email"><i class="far fa-envelope me-1"></i> {{ guest.email }}</div>
+                    <div class="fs-xs text-muted" *ngIf="guest.phone"><i class="fa fa-phone me-1"></i> {{ guest.phone }}</div>
+                    <div class="fs-xs text-muted text-danger fw-semibold" *ngIf="!guest.email && !guest.phone">Aucun contact saisi</div>
+                  </td>
+                  <td class="text-center" (click)="$event.stopPropagation()">
+                    <span class="badge bg-success-light text-success me-1" *ngIf="guest.phone" title="WhatsApp disponible">
+                      <i class="fab fa-whatsapp"></i>
+                    </span>
+                    <span class="badge bg-info-light text-info" *ngIf="guest.email" title="E-mail disponible">
+                      <i class="far fa-envelope"></i>
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions Footer -->
+    <div class="d-flex justify-content-end align-items-center gap-3 border-top pt-3 flex-wrap">
+      <div class="text-muted fs-xs" *ngIf="getSelectedCount() > 0">
+        Prêt à envoyer <strong class="text-dark">{{ getSelectedCount() }}</strong> invitation(s) unique(s) via le canal sélectionné.
+      </div>
+      <button type="button" class="btn btn-primary d-flex align-items-center gap-2 px-4" 
+              [disabled]="isSending() || getSelectedCount() === 0"
+              (click)="sendInvitations()">
+        <span *ngIf="!isSending()">
+          <i class="fa fa-paper-plane me-1"></i> Envoyer les invitations
+        </span>
+        <span *ngIf="isSending()">
+          <i class="fa fa-circle-notch fa-spin me-1"></i> Envoi en cours...
+        </span>
+      </button>
     </div>
   </div>
 </div>

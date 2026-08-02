@@ -46,16 +46,16 @@
             <i class="fa fa-info-circle text-primary me-2"></i>Informations Générales
           </h3>
           <div class="block-options d-flex gap-2 flex-wrap">
-            <a class="btn btn-sm btn-alt-info rounded-pill px-3" [routerLink]="['/events', event()?.id, 'guests']">
-              <i class="fa fa-users me-1"></i> Invités
-            </a>
-            
             <a class="btn btn-sm btn-alt-primary rounded-pill px-3" [routerLink]="['/events', event()?.id, 'invitation-setup']">
-              <i class="fa fa-envelope me-1"></i> Faire-part
+              <i class="fa fa-envelope me-1"></i> Invitation
             </a>
 
             <a class="btn btn-sm btn-alt-warning text-warning-dark rounded-pill px-3" [routerLink]="['/events', event()?.id, 'menu']">
               <i class="fa fa-utensils me-1"></i> Menu
+            </a>
+
+            <a class="btn btn-sm btn-alt-info rounded-pill px-3" [routerLink]="['/events', event()?.id, 'guests']">
+              <i class="fa fa-users me-1"></i> Invités
             </a>
 
             <a class="btn btn-sm btn-alt-success rounded-pill px-3" [routerLink]="['/events', event()?.id, 'tasks']">
