@@ -23,6 +23,10 @@ export class MenuItemService {
     return this.http.get<MenuItem[]>(`${this.baseUrl}/events/${eventId}/menu-items`);
   }
 
+  public getCatererMenuItems(): Observable<MenuItem[]> {
+    return this.http.get<MenuItem[]>(`${this.baseUrl}/menu-items`);
+  }
+
   public createMenuItem(eventId: number, menuItem: MenuItem): Observable<MenuItem> {
     return this.http.post<MenuItem>(`${this.baseUrl}/events/${eventId}/menu-items`, menuItem);
   }

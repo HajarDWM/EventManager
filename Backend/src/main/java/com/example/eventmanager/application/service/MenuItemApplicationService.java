@@ -60,6 +60,15 @@ public class MenuItemApplicationService implements CreateMenuItemUseCase, GetMen
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<MenuItemDTO> getCatererMenuItems() {
+        Long currentCatererId = securityContextPort.getCurrentCatererId();
+        return menuItemRepositoryPort.findAllByCatererId(currentCatererId).stream()
+                .map(menuItemMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     @Transactional
     public MenuItemDTO updateMenuItem(Long id, MenuItemDTO menuItemDTO) {
         MenuItem existing = menuItemRepositoryPort.findById(id)

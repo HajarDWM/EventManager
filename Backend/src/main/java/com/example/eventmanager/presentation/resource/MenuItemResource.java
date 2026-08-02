@@ -28,6 +28,22 @@ public class MenuItemResource {
         return ResponseEntity.ok(items);
     }
 
+    @GetMapping("/menu-items")
+    public ResponseEntity<?> getCatererMenuItems() {
+        try {
+            List<MenuItemDTO> items = getMenuItemsByEventUseCase.getCatererMenuItems();
+            return ResponseEntity.ok(items);
+        } catch (Exception e) {
+            java.io.StringWriter sw = new java.io.StringWriter();
+            java.io.PrintWriter pw = new java.io.PrintWriter(sw);
+            e.printStackTrace(pw);
+            return ResponseEntity.status(500).body(java.util.Map.of(
+                "error", e.getMessage() != null ? e.getMessage() : e.getClass().getName(),
+                "stack", sw.toString()
+            ));
+        }
+    }
+
     @PostMapping("/events/{eventId}/menu-items")
     public ResponseEntity<MenuItemDTO> createMenuItem(@PathVariable Long eventId, @RequestBody MenuItemDTO menuItemDTO) {
         MenuItemDTO created = createMenuItemUseCase.createMenuItem(eventId, menuItemDTO);

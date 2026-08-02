@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface GetMenuItemsByEventUseCase {
     List<MenuItemDTO> getMenuItemsByEventId(Long eventId);
+    List<MenuItemDTO> getCatererMenuItems();
 }

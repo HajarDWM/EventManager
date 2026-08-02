@@ -9,6 +9,7 @@ public interface MenuItemRepositoryPort {
     MenuItem save(MenuItem menuItem);
     Optional<MenuItem> findById(Long id);
     List<MenuItem> findByEventId(Long eventId);
+    List<MenuItem> findAllByCatererId(Long catererId);
     void deleteById(Long id);
     void deleteByEventId(Long eventId);
 }

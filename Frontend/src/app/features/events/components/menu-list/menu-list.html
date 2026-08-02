@@ -238,11 +238,11 @@
                   <div class="d-flex justify-content-between align-items-center">
                     <span class="fw-semibold text-dark fs-sm">{{ suggestion }}</span>
                     <div class="d-flex gap-1 align-items-center">
-                      <span class="badge" [ngClass]="getCategoryBadgeClass(staticSuggestionsDetail[suggestion]?.category || 'OTHER')">
-                        {{ getCategoryLabel(staticSuggestionsDetail[suggestion]?.category || 'OTHER') }}
+                      <span class="badge" [ngClass]="getCategoryBadgeClass(mergedSuggestionsDetail()[suggestion]?.category || 'OTHER')">
+                        {{ getCategoryLabel(mergedSuggestionsDetail()[suggestion]?.category || 'OTHER') }}
                       </span>
-                      <span class="badge bg-light text-primary border" *ngIf="staticSuggestionsDetail[suggestion]?.price">
-                        {{ staticSuggestionsDetail[suggestion]?.price }} €
+                      <span class="badge bg-light text-primary border" *ngIf="mergedSuggestionsDetail()[suggestion]?.price">
+                        {{ mergedSuggestionsDetail()[suggestion]?.price }} €
                       </span>
                     </div>
                   </div>

@@ -8,4 +8,7 @@ import java.util.List;
 public interface JpaMenuItemRepository extends JpaRepository<MenuItemEntity, Long> {
     List<MenuItemEntity> findByEventId(Long eventId);
     void deleteByEventId(Long eventId);
+
+    @org.springframework.data.jpa.repository.Query("SELECT m FROM MenuItemEntity m WHERE m.eventId IN (SELECT e.id FROM EventEntity e WHERE e.catererId = :catererId)")
+    List<MenuItemEntity> findAllByCatererId(@org.springframework.data.repository.query.Param("catererId") Long catererId);
 }

@@ -85,19 +85,45 @@ export class MenuList implements OnInit {
     "Atelier découpe de jambon serrano": { category: 'OTHER', price: 18, dietary: 'Sans Gluten, Sans Lactose' }
   };
 
-  protected readonly staticSuggestions = Object.keys(this.staticSuggestionsDetail);
+  protected readonly globalMenuItems = signal<MenuItem[]>([]);
+
+  protected readonly mergedSuggestionsDetail = computed(() => {
+    const map: Record<string, { category: string, price: number, dietary: string, description?: string }> = {};
+    
+    // First populate with static template suggestions
+    Object.entries(this.staticSuggestionsDetail).forEach(([name, details]) => {
+      map[name] = details;
+    });
+
+    // Merge in dynamically saved menu items from database
+    this.globalMenuItems().forEach(item => {
+      map[item.name] = {
+        category: item.category,
+        price: item.pricePerPerson,
+        dietary: item.dietaryTag || '',
+        description: item.description
+      };
+    });
+
+    return map;
+  });
+
+  protected readonly mergedSuggestions = computed(() => {
+    return Object.keys(this.mergedSuggestionsDetail());
+  });
 
   protected readonly filteredSuggestions = computed(() => {
     const term = this.name().toLowerCase().trim();
+    const suggestions = this.mergedSuggestions();
     if (!term) {
-      return this.staticSuggestions;
+      return suggestions;
     }
-    return this.staticSuggestions.filter(s => s.toLowerCase().includes(term));
+    return suggestions.filter(s => s.toLowerCase().includes(term));
   });
 
   protected readonly dishSuggestions = computed(() => {
     const existingNames = this.menuItems().map(item => item.name);
-    const combined = [...new Set([...existingNames, ...this.staticSuggestions])];
+    const combined = [...new Set([...existingNames, ...this.mergedSuggestions()])];
     return combined.sort();
   });
 
@@ -145,7 +171,17 @@ export class MenuList implements OnInit {
       this.eventId.set(id);
       this.loadEventData(id);
       this.loadMenuItems(id);
+      this.loadCatererMenuItems();
     }
+  }
+
+  private loadCatererMenuItems(): void {
+    this.menuItemService.getCatererMenuItems().subscribe({
+      next: (items) => {
+        this.globalMenuItems.set(items);
+      },
+      error: (err) => console.error('Erreur chargement catalogue global', err)
+    });
   }
 
   private loadEventData(id: number): void {
@@ -259,11 +295,14 @@ export class MenuList implements OnInit {
     this.name.set(suggestion);
     this.isAutocompleteOpen.set(false);
 
-    // Auto-select category, price and dietary requirements from detail
-    const detail = this.staticSuggestionsDetail[suggestion];
+    // Auto-select category, price, dietary, and description from merged details
+    const detail = this.mergedSuggestionsDetail()[suggestion];
     if (detail) {
       this.category.set(detail.category);
       this.pricePerPerson.set(detail.price);
+      if (detail.description) {
+        this.description.set(detail.description);
+      }
 
       // Parse and check the dietary checkboxes
       const dietsMap: Record<string, boolean> = {};
@@ -288,10 +327,13 @@ export class MenuList implements OnInit {
     this.name.set(newName);
 
     // Check if the input matches any known suggestion
-    const detail = this.staticSuggestionsDetail[newName];
+    const detail = this.mergedSuggestionsDetail()[newName];
     if (detail) {
       this.category.set(detail.category);
       this.pricePerPerson.set(detail.price);
+      if (detail.description) {
+        this.description.set(detail.description);
+      }
 
       // Parse and check the dietary checkboxes
       const dietsMap: Record<string, boolean> = {};
@@ -349,6 +391,7 @@ export class MenuList implements OnInit {
         next: (updated) => {
           this.isSaving.set(false);
           this.menuItems.update(list => list.map(i => i.id === updated.id ? updated : i));
+          this.loadCatererMenuItems();
           this.successMessage.set('Plat modifié avec succès !');
           this.closeModal();
         },
@@ -363,6 +406,7 @@ export class MenuList implements OnInit {
         next: (created) => {
           this.isSaving.set(false);
           this.menuItems.update(list => [...list, created]);
+          this.loadCatererMenuItems();
           this.successMessage.set('Plat ajouté au menu !');
           this.closeModal();
         },

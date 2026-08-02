@@ -40,6 +40,13 @@ public class MenuItemRepositoryAdapter implements MenuItemRepositoryPort {
     }
 
     @Override
+    public List<MenuItem> findAllByCatererId(Long catererId) {
+        return jpaMenuItemRepository.findAllByCatererId(catererId).stream()
+                .map(menuItemMapper::toDomainFromEntity)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public void deleteById(Long id) {
         jpaMenuItemRepository.deleteById(id);
     }
