@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface TransactionRepositoryPort {
     Transaction save(Transaction transaction);
-    Page<Transaction> findAll(String search, Pageable pageable);
+    Page<Transaction> findAll(String search, String period, Pageable pageable);
     List<Transaction> findAllForExport();
+    List<Transaction> findSuccessfulTransactionsSince(java.time.LocalDateTime sinceDate);
 }

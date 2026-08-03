@@ -14,4 +14,16 @@ public interface JpaTransactionRepository extends JpaRepository<TransactionEntit
            "LOWER(t.id) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
            "LOWER(t.subscriptionPlan) LIKE LOWER(CONCAT('%', :search, '%'))")
     Page<TransactionEntity> searchTransactions(@Param("search") String search, Pageable pageable);
+
+    @Query("SELECT t FROM TransactionEntity t WHERE " +
+           "(LOWER(t.businessName) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
+           "LOWER(t.id) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
+           "LOWER(t.subscriptionPlan) LIKE LOWER(CONCAT('%', :search, '%'))) AND " +
+           "t.paymentDate >= :sinceDate")
+    Page<TransactionEntity> searchTransactionsSince(@Param("search") String search, @Param("sinceDate") java.time.LocalDateTime sinceDate, Pageable pageable);
+
+    @Query("SELECT t FROM TransactionEntity t WHERE t.paymentDate >= :sinceDate")
+    Page<TransactionEntity> findAllSince(@Param("sinceDate") java.time.LocalDateTime sinceDate, Pageable pageable);
+
+    java.util.List<TransactionEntity> findByPaymentStatusAndPaymentDateAfter(String status, java.time.LocalDateTime sinceDate);
 }

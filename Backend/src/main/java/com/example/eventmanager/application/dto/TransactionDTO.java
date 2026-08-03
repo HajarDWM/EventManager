@@ -17,4 +17,11 @@ public class TransactionDTO {
     private BigDecimal vatRate;
     private LocalDateTime paymentDate;
     private String paymentStatus;
+
+    public BigDecimal getAmountHt() {
+        if (amountPaid == null) return BigDecimal.ZERO;
+        if (vatRate == null || vatRate.compareTo(BigDecimal.ZERO) == 0) return amountPaid;
+        BigDecimal divisor = BigDecimal.ONE.add(vatRate.divide(BigDecimal.valueOf(100), 4, java.math.RoundingMode.HALF_UP));
+        return amountPaid.divide(divisor, 2, java.math.RoundingMode.HALF_UP);
+    }
 }

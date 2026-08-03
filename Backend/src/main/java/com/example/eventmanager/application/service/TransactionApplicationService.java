@@ -28,8 +28,8 @@ public class TransactionApplicationService implements GetTransactionsUseCase, Re
 
     @Override
     @Transactional(readOnly = true)
-    public Page<TransactionDTO> getTransactions(String search, Pageable pageable) {
-        Page<Transaction> transactions = transactionRepositoryPort.findAll(search, pageable);
+    public Page<TransactionDTO> getTransactions(String search, String period, Pageable pageable) {
+        Page<Transaction> transactions = transactionRepositoryPort.findAll(search, period, pageable);
         return transactions.map(transactionMapper::toDTO);
     }
 

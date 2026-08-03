@@ -16,15 +16,24 @@ import java.util.List;
 public class TransactionResource {
 
     private final GetTransactionsUseCase getTransactionsUseCase;
+    private final com.example.eventmanager.application.port.in.ManageExpensesUseCase manageExpensesUseCase;
 
     @GetMapping
     public ResponseEntity<Page<TransactionDTO>> getTransactions(
             @RequestParam(required = false) String search,
+            @RequestParam(required = false) String period,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "paymentDate"));
-        return ResponseEntity.ok(getTransactionsUseCase.getTransactions(search, pageable));
+        return ResponseEntity.ok(getTransactionsUseCase.getTransactions(search, period, pageable));
+    }
+
+    @GetMapping("/stats")
+    public ResponseEntity<com.example.eventmanager.application.dto.FinancialStatsDTO> getFinancialStats(
+            @RequestParam(defaultValue = "1_MONTH") String period
+    ) {
+        return ResponseEntity.ok(manageExpensesUseCase.getFinancialStats(period));
     }
 
     @GetMapping("/export/csv")
@@ -34,7 +43,7 @@ public class TransactionResource {
         
         // UTF-8 BOM to ensure proper French character display in Excel
         csv.append("\uFEFF");
-        csv.append("ID Transaction;Organisateur;Forfait;Montant Payé;TVA (%);Date;Statut\n");
+        csv.append("ID Transaction;Organisateur;Forfait;Montant (HT);TVA (%);Date;Statut\n");
         
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
         for (TransactionDTO t : list) {
@@ -42,7 +51,7 @@ public class TransactionResource {
                 t.getId(),
                 t.getBusinessName().replace(";", ","),
                 t.getSubscriptionPlan(),
-                t.getAmountPaid().toString(),
+                t.getAmountHt().toString(),
                 t.getVatRate().toString(),
                 t.getPaymentDate().format(formatter),
                 t.getPaymentStatus()

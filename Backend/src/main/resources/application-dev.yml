@@ -22,3 +22,7 @@ spring:
           batch_size: 20
         order_inserts: true
         order_updates: true
+  flyway:
+    enabled: true
+    ignore-missing-migrations: true
+    ignore-migration-patterns: "*:missing"

@@ -128,17 +128,42 @@ export class AdminService {
   }
 
   // === AUDIT FINANCIER & TRANSACTIONS ===
-  public getTransactions(search?: string, page = 0, size = 10): Observable<any> {
+  public getTransactions(search?: string, period?: string, page = 0, size = 10): Observable<any> {
     let params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString());
     if (search) {
       params = params.set('search', search);
     }
+    if (period) {
+      params = params.set('period', period);
+    }
     return this.http.get<any>(`${this.apiUrl}/transactions`, { params });
+  }
+
+  public getFinancialStats(period: string): Observable<any> {
+    const params = new HttpParams().set('period', period);
+    return this.http.get<any>(`${this.apiUrl}/transactions/stats`, { params });
   }
 
   public downloadTransactionsCsv(): Observable<Blob> {
     return this.http.get(`${this.apiUrl}/transactions/export/csv`, { responseType: 'blob' });
+  }
+
+  // === GESTION DES DÉPENSES PLATEFORME ===
+  public getAllExpenses(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/expenses`);
+  }
+
+  public createExpense(expense: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/expenses`, expense);
+  }
+
+  public updateExpense(id: number, expense: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/expenses/${id}`, expense);
+  }
+
+  public deleteExpense(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/expenses/${id}`);
   }
 }

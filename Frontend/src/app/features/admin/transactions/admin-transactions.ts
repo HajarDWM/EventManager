@@ -13,6 +13,15 @@ export interface Transaction {
   vatRate: number;
   paymentDate: string;
   paymentStatus: string;
+  amountHt: number;
+}
+
+export interface Expense {
+  id?: number;
+  description: string;
+  amount: number;
+  expenseDate: string;
+  category: string;
 }
 
 @Component({
@@ -37,15 +46,32 @@ export class AdminTransactions implements OnInit {
   protected readonly totalPages = signal(0);
   protected readonly pageSize = 10;
 
+  // Filter & Expense States
+  protected readonly selectedPeriod = signal<string>('1_MONTH');
+  protected readonly stats = signal<any>(null);
+  protected readonly expenses = signal<Expense[]>([]);
+  protected readonly showExpenseModal = signal<boolean>(false);
+  protected readonly isAddingExpense = signal<boolean>(false);
+  protected readonly isEditingExpense = signal<boolean>(false);
+  protected readonly editingExpenseId = signal<number | null>(null);
+
+  // Expense Form Properties
+  protected newExpenseDescription = '';
+  protected newExpenseAmount: number | null = null;
+  protected newExpenseCategory = 'SERVER';
+  protected newExpenseDate = '';
+
   public ngOnInit(): void {
     this.loadTransactions();
+    this.loadExpenses();
+    this.loadFinancialStats();
   }
 
   protected loadTransactions(): void {
     this.isLoading.set(true);
     this.errorMessage.set('');
 
-    this.adminService.getTransactions(this.searchInput(), this.currentPage(), this.pageSize).subscribe({
+    this.adminService.getTransactions(this.searchInput(), this.selectedPeriod(), this.currentPage(), this.pageSize).subscribe({
       next: (res) => {
         if (res) {
           this.transactions.set(res.content || []);
@@ -130,6 +156,123 @@ export class AdminTransactions implements OnInit {
       case 'FREE':
       default:
         return 'badge-custom-free';
+    }
+  }
+
+  protected loadExpenses(): void {
+    this.adminService.getAllExpenses().subscribe({
+      next: (res) => {
+        this.expenses.set(res || []);
+      },
+      error: (err) => console.error('Error loading expenses', err)
+    });
+  }
+
+  protected loadFinancialStats(): void {
+    this.adminService.getFinancialStats(this.selectedPeriod()).subscribe({
+      next: (res) => {
+        this.stats.set(res);
+      },
+      error: (err) => console.error('Error loading stats', err)
+    });
+  }
+
+  protected changePeriod(period: string): void {
+    this.selectedPeriod.set(period);
+    this.currentPage.set(0);
+    this.loadTransactions();
+    this.loadFinancialStats();
+  }
+
+  protected openExpenseModal(): void {
+    this.newExpenseDescription = '';
+    this.newExpenseAmount = null;
+    this.newExpenseCategory = 'SERVER';
+    this.newExpenseDate = new Date().toISOString().substring(0, 16);
+    this.isEditingExpense.set(false);
+    this.editingExpenseId.set(null);
+    this.showExpenseModal.set(true);
+  }
+
+  protected openEditExpenseModal(expense: Expense): void {
+    this.newExpenseDescription = expense.description;
+    this.newExpenseAmount = expense.amount;
+    this.newExpenseCategory = expense.category;
+    if (expense.expenseDate) {
+      // Format to local date time-local format (YYYY-MM-DDTHH:mm) adjusting for local timezone offset
+      const d = new Date(expense.expenseDate);
+      const tzOffset = d.getTimezoneOffset() * 60000; // offset in milliseconds
+      const localISOTime = (new Date(d.getTime() - tzOffset)).toISOString().slice(0, 16);
+      this.newExpenseDate = localISOTime;
+    } else {
+      this.newExpenseDate = new Date().toISOString().substring(0, 16);
+    }
+    this.isEditingExpense.set(true);
+    this.editingExpenseId.set(expense.id || null);
+    this.showExpenseModal.set(true);
+  }
+
+  protected addExpense(): void {
+    if (!this.newExpenseDescription.trim() || !this.newExpenseAmount || this.newExpenseAmount <= 0) {
+      return;
+    }
+    this.isAddingExpense.set(true);
+    const expenseData: Expense = {
+      description: this.newExpenseDescription,
+      amount: this.newExpenseAmount,
+      expenseDate: this.newExpenseDate ? new Date(this.newExpenseDate).toISOString() : new Date().toISOString(),
+      category: this.newExpenseCategory
+    };
+
+    if (this.isEditingExpense()) {
+      this.adminService.updateExpense(this.editingExpenseId()!, expenseData).subscribe({
+        next: () => {
+          this.isAddingExpense.set(false);
+          this.showExpenseModal.set(false);
+          this.loadExpenses();
+          this.loadFinancialStats();
+        },
+        error: (err) => {
+          this.isAddingExpense.set(false);
+          console.error('Error updating expense', err);
+        }
+      });
+    } else {
+      this.adminService.createExpense(expenseData).subscribe({
+        next: () => {
+          this.isAddingExpense.set(false);
+          this.showExpenseModal.set(false);
+          this.loadExpenses();
+          this.loadFinancialStats();
+        },
+        error: (err) => {
+          this.isAddingExpense.set(false);
+          console.error('Error creating expense', err);
+        }
+      });
+    }
+  }
+
+  protected deleteExpense(id: number): void {
+    if (confirm('Êtes-vous sûr de vouloir supprimer cette dépense ?')) {
+      this.adminService.deleteExpense(id).subscribe({
+        next: () => {
+          this.loadExpenses();
+          this.loadFinancialStats();
+        },
+        error: (err) => console.error('Error deleting expense', err)
+      });
+    }
+  }
+
+  protected getCategoryLabel(category: string): string {
+    switch (category) {
+      case 'SERVER': return 'Serveur / Cloud';
+      case 'TOOL': return 'Outil / Licence';
+      case 'MARKETING': return 'Marketing';
+      case 'OTHER':
+      default:
+        return 'Autre';
     }
   }
 }

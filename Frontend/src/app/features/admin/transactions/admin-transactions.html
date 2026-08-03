@@ -1,14 +1,14 @@
 <!-- Hero -->
-<div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-2 text-center text-md-start">
+<div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-2 text-center text-md-start border-bottom border-light pb-3">
   <div class="flex-grow-1 mb-1 mb-md-0">
     <h1 class="h3 fw-bold mb-2">
-      Audit Financier & Suivi des Revenus
+      Tableau de Bord Financier & Audit
     </h1>
     <h2 class="h6 fw-medium text-muted mb-0">
-      Visualisez l'historique complet des encaissements d'abonnements de la plateforme SaaS EventManager.
+      Suivez les revenus d'abonnements, déclarez les dépenses de la plateforme et auditez le bénéfice net.
     </h2>
   </div>
-  <div class="mt-2 mt-md-0 ms-md-3">
+  <div class="mt-2 mt-md-0 ms-md-3 d-flex align-items-center gap-2">
     <button type="button" class="btn btn-alt-primary rounded-pill px-3" (click)="exportCsv()" [disabled]="isExporting()">
       <i class="fa fa-download me-1" *ngIf="!isExporting()"></i>
       <i class="fa fa-spinner fa-spin me-1" *ngIf="isExporting()"></i>
@@ -29,13 +29,117 @@
   <button type="button" class="btn-close" (click)="errorMessage.set('')" aria-label="Close"></button>
 </div>
 
+<!-- Period Filters -->
+<div class="d-flex justify-content-between align-items-center mb-3 mt-3.5">
+  <div class="d-flex align-items-center gap-2">
+    <span class="fs-xs fw-bold text-uppercase text-muted me-2">Analyse de la Période :</span>
+    <button class="btn btn-sm px-3 rounded-pill fw-semibold" 
+            [ngClass]="selectedPeriod() === '1_MONTH' ? 'btn-primary' : 'btn-alt-secondary'"
+            (click)="changePeriod('1_MONTH')">
+      1 Mois
+    </button>
+    <button class="btn btn-sm px-3 rounded-pill fw-semibold" 
+            [ngClass]="selectedPeriod() === '3_MONTHS' ? 'btn-primary' : 'btn-alt-secondary'"
+            (click)="changePeriod('3_MONTHS')">
+      3 Mois
+    </button>
+    <button class="btn btn-sm px-3 rounded-pill fw-semibold" 
+            [ngClass]="selectedPeriod() === '1_YEAR' ? 'btn-primary' : 'btn-alt-secondary'"
+            (click)="changePeriod('1_YEAR')">
+      1 An
+    </button>
+  </div>
+</div>
+
+<!-- Financial KPI Cards -->
+<div class="row g-3 mb-4">
+  <!-- Card 1: Revenue Current Month -->
+  <div class="col-6 col-lg-3">
+    <div class="block block-rounded shadow-sm border border-light h-100 bg-white mb-0">
+      <div class="block-content block-content-full d-flex align-items-center justify-content-between p-3">
+        <div>
+          <span class="fs-xs fw-semibold text-uppercase text-muted d-block mb-1">Revenu (Mois En Cours)</span>
+          <h4 class="fw-extrabold text-dark mb-0">
+            {{ (stats()?.totalRevenueCurrentMonth || 0) | currency:'EUR':'symbol':'1.2-2':'fr' }}
+          </h4>
+        </div>
+        <div class="item item-rounded bg-success-light text-success">
+          <i class="fa fa-chart-line"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 2: Revenue Last 3 Months -->
+  <div class="col-6 col-lg-3">
+    <div class="block block-rounded shadow-sm border border-light h-100 bg-white mb-0">
+      <div class="block-content block-content-full d-flex align-items-center justify-content-between p-3">
+        <div>
+          <span class="fs-xs fw-semibold text-uppercase text-muted d-block mb-1">Revenu (3 Derniers Mois)</span>
+          <h4 class="fw-extrabold text-dark mb-0">
+            {{ (stats()?.totalRevenueLast3Months || 0) | currency:'EUR':'symbol':'1.2-2':'fr' }}
+          </h4>
+        </div>
+        <div class="item item-rounded bg-info-light text-info">
+          <i class="fa fa-calendar-alt"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 3: Revenue Last Year -->
+  <div class="col-6 col-lg-3">
+    <div class="block block-rounded shadow-sm border border-light h-100 bg-white mb-0">
+      <div class="block-content block-content-full d-flex align-items-center justify-content-between p-3">
+        <div>
+          <span class="fs-xs fw-semibold text-uppercase text-muted d-block mb-1">Revenu (Dernière Année)</span>
+          <h4 class="fw-extrabold text-dark mb-0">
+            {{ (stats()?.totalRevenueLastYear || 0) | currency:'EUR':'symbol':'1.2-2':'fr' }}
+          </h4>
+        </div>
+        <div class="item item-rounded bg-primary-light text-primary">
+          <i class="fa fa-piggy-bank"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 4: Net Profit (Selected Period) -->
+  <div class="col-6 col-lg-3">
+    <div class="block block-rounded shadow-sm border h-100 mb-0 bg-white" 
+         [ngClass]="{
+           'border-success': (stats()?.netProfitSelectedPeriod || 0) >= 0, 
+           'border-danger': (stats()?.netProfitSelectedPeriod || 0) < 0
+         }">
+      <div class="block-content block-content-full d-flex align-items-center justify-content-between p-3">
+        <div>
+          <span class="fs-xs fw-semibold text-uppercase text-muted d-block mb-1">
+            Bénéfice Net 
+            <span *ngIf="selectedPeriod() === '1_MONTH'">(1 Mois)</span>
+            <span *ngIf="selectedPeriod() === '3_MONTHS'">(3 Mois)</span>
+            <span *ngIf="selectedPeriod() === '1_YEAR'">(1 An)</span>
+          </span>
+          <h4 class="fw-extrabold mb-0" 
+              [ngClass]="(stats()?.netProfitSelectedPeriod || 0) >= 0 ? 'text-success' : 'text-danger'">
+            {{ (stats()?.netProfitSelectedPeriod || 0) | currency:'EUR':'symbol':'1.2-2':'fr' }}
+          </h4>
+        </div>
+        <div class="item item-rounded" 
+             [ngClass]="(stats()?.netProfitSelectedPeriod || 0) >= 0 ? 'bg-success text-white' : 'bg-danger text-white'">
+          <i class="fa" [ngClass]="(stats()?.netProfitSelectedPeriod || 0) >= 0 ? 'fa-wallet' : 'fa-hand-holding-usd'"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Search and Table Block -->
 <div class="block block-rounded bg-white shadow-sm border border-light mt-4">
   <div class="block-header block-header-default border-bottom bg-body-light d-flex justify-content-between align-items-center">
     <h3 class="block-title fw-bold">Journal des Transactions</h3>
     <div class="d-flex align-items-center gap-2">
       <div class="input-group input-group-sm" style="width: 280px;">
-        <input type="text" class="form-control" placeholder="Rechercher par ID or Organisateur..."
+        <input type="text" class="form-control" placeholder="Rechercher par ID ou Organisateur..."
                [(ngModel)]="searchInput" (keyup.enter)="onSearch()">
         <button class="btn btn-primary" type="button" (click)="onSearch()">
           <i class="fa fa-search"></i>
@@ -88,7 +192,7 @@
               </span>
             </td>
             <td class="text-end fw-semibold text-dark">
-              {{ t.amountPaid | currency:'EUR':'symbol':'1.2-2':'fr' }}
+              {{ (t.amountHt || 0) | currency:'EUR':'symbol':'1.2-2':'fr' }}
             </td>
             <td class="text-center text-muted">
               {{ t.vatRate }} %
@@ -128,6 +232,137 @@
           </li>
         </ul>
       </nav>
+    </div>
+  </div>
+</div>
+
+<!-- Expense Management Block -->
+<div class="block block-rounded bg-white shadow-sm border border-light mt-4">
+  <div class="block-header block-header-default border-bottom bg-body-light d-flex justify-content-between align-items-center">
+    <h3 class="block-title fw-bold">Gestion des Dépenses Plateforme</h3>
+    <div>
+      <button class="btn btn-sm btn-danger rounded-pill px-3 fw-semibold" (click)="openExpenseModal()">
+        <i class="fa fa-plus me-1"></i> Déclarer une Dépense
+      </button>
+    </div>
+  </div>
+
+  <div class="block-content py-3">
+    <!-- Empty State -->
+    <div class="text-center py-4" *ngIf="expenses().length === 0">
+      <div class="mb-2">
+        <i class="fa fa-file-invoice-dollar text-muted fs-2"></i>
+      </div>
+      <h5 class="fw-semibold text-dark">Aucune dépense déclarée</h5>
+      <p class="text-muted fs-xs mb-0">Ajoutez des frais de fonctionnement pour déduire le bénéfice net réel.</p>
+    </div>
+
+    <!-- Expenses Table -->
+    <div class="table-responsive" *ngIf="expenses().length > 0">
+      <table class="table table-bordered table-striped table-vcenter fs-sm">
+        <thead class="table-light">
+          <tr>
+            <th>Description</th>
+            <th style="width: 150px;">Catégorie</th>
+            <th style="width: 140px;" class="text-end">Montant</th>
+            <th style="width: 160px;">Date d'effet</th>
+            <th style="width: 80px;" class="text-center">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let exp of expenses()">
+            <td class="fw-medium text-dark">{{ exp.description }}</td>
+            <td>
+              <span class="badge bg-body-dark text-dark border px-2 py-1">
+                {{ getCategoryLabel(exp.category) }}
+              </span>
+            </td>
+            <td class="text-end fw-semibold text-danger">
+              -{{ exp.amount | currency:'EUR':'symbol':'1.2-2':'fr' }}
+            </td>
+            <td>{{ exp.expenseDate | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td class="text-center">
+              <div class="d-flex align-items-center justify-content-center gap-2">
+                <button type="button" class="btn btn-sm btn-alt-primary border-0 p-1" (click)="openEditExpenseModal(exp)" title="Modifier la dépense">
+                  <i class="fa fa-pencil-alt text-primary"></i>
+                </button>
+                <button type="button" class="btn btn-sm btn-alt-danger border-0 p-1" (click)="deleteExpense(exp.id!)" title="Supprimer la dépense">
+                  <i class="fa fa-trash-alt text-danger"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Modal : Ajouter une Dépense -->
+<div class="modal fade show" tabindex="-1" role="dialog" style="display: block; background: rgba(0,0,0,0.5); z-index: 1050;" *ngIf="showExpenseModal()">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content border-0 shadow-lg bg-white">
+      <div class="block block-rounded block-transparent mb-0">
+        <div class="block-header block-header-default bg-body-light border-bottom border-light d-flex justify-content-between align-items-center p-3">
+          <h3 class="block-title fw-bold text-dark mb-0">
+            <i class="fa text-danger me-2" [ngClass]="isEditingExpense() ? 'fa-edit' : 'fa-plus-circle'"></i>
+            {{ isEditingExpense() ? 'Modifier la Dépense Plateforme' : 'Déclarer une Dépense Plateforme' }}
+          </h3>
+          <button type="button" class="btn btn-sm btn-alt-secondary" (click)="showExpenseModal.set(false)" style="border: none; background: transparent;">
+            <i class="fa fa-times text-dark"></i>
+          </button>
+        </div>
+        <div class="block-content py-3 px-4">
+          <form (ngSubmit)="addExpense()">
+            <!-- Description -->
+            <div class="mb-3">
+              <label class="form-label fs-sm fw-semibold text-dark">Libellé / Description</label>
+              <input type="text" class="form-control border-light fs-sm" placeholder="ex: Serveur Cloud AWS, Licence Datadog..." 
+                     [(ngModel)]="newExpenseDescription" name="desc" required>
+            </div>
+
+            <!-- Amount -->
+            <div class="mb-3">
+              <label class="form-label fs-sm fw-semibold text-dark">Montant (€ HT)</label>
+              <input type="number" step="0.01" class="form-control border-light fs-sm" placeholder="ex: 120.00" 
+                     [(ngModel)]="newExpenseAmount" name="amount" required>
+            </div>
+
+            <!-- Category -->
+            <div class="mb-3">
+              <label class="form-label fs-sm fw-semibold text-dark">Catégorie de frais</label>
+              <select class="form-select border-light fs-sm" [(ngModel)]="newExpenseCategory" name="cat" required>
+                <option value="SERVER">Serveur / Cloud</option>
+                <option value="TOOL">Outil / Licence API</option>
+                <option value="MARKETING">Marketing & Pub</option>
+                <option value="OTHER">Autre Dépense</option>
+              </select>
+            </div>
+
+            <!-- Date -->
+            <div class="mb-4">
+              <label class="form-label fs-sm fw-semibold text-dark">Date d'effet</label>
+              <input type="datetime-local" class="form-control border-light fs-sm" [(ngModel)]="newExpenseDate" name="date">
+            </div>
+
+            <!-- Actions -->
+            <div class="d-flex gap-2 justify-content-end border-top border-light pt-3">
+              <button type="button" class="btn btn-alt-secondary fs-sm" (click)="showExpenseModal.set(false)">
+                Annuler
+              </button>
+              <button type="submit" class="btn btn-danger fs-sm" [disabled]="isAddingExpense()">
+                <span *ngIf="!isAddingExpense()">
+                  <i class="fa fa-check me-1"></i>
+                  {{ isEditingExpense() ? 'Enregistrer les modifications' : 'Ajouter la dépense' }}
+                </span>
+                <span *ngIf="isAddingExpense()">
+                  <i class="fa fa-spinner fa-spin me-1"></i> Enregistrement...
+                </span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
   </div>
 </div>
