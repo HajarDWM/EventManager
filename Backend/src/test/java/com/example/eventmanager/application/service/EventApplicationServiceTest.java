@@ -108,6 +108,7 @@ class EventApplicationServiceTest {
         // Mock existing events returning 2 events
         java.util.List<Event> mockEvents = java.util.List.of(mock(Event.class), mock(Event.class));
         when(eventRepositoryPort.findAllByCatererId(1L)).thenReturn(mockEvents);
+        when(eventRepositoryPort.countByCatererId(1L)).thenReturn(2L);
 
         // Act & Assert
         com.example.eventmanager.domain.exception.SubscriptionRequiredException exception = assertThrows(com.example.eventmanager.domain.exception.SubscriptionRequiredException.class, () -> {

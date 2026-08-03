@@ -65,14 +65,15 @@ public class CatererApplicationService implements CreateCatererUseCase, GetCater
         if (caterer.getRole() != com.example.eventmanager.domain.model.CatererRole.SUPER_ADMIN) {
             String plan = caterer.getSubscriptionPlan();
             java.time.LocalDateTime startDate = caterer.getSubscriptionStartDate();
-            List<Event> existingEvents = eventRepositoryPort.findAllByCatererId(currentCatererId);
             long eventCount;
             if (plan == null || "FREE".equalsIgnoreCase(plan) || plan.isBlank()) {
-                eventCount = existingEvents.size();
+                eventCount = eventRepositoryPort.countByCatererId(currentCatererId);
             } else {
-                eventCount = existingEvents.stream()
-                        .filter(e -> startDate == null || e.getCreatedAt() == null || !e.getCreatedAt().isBefore(startDate))
-                        .count();
+                if (startDate != null) {
+                    eventCount = eventRepositoryPort.countByCatererIdAndCreatedAtAfter(currentCatererId, startDate);
+                } else {
+                    eventCount = eventRepositoryPort.countByCatererId(currentCatererId);
+                }
             }
             dto.setEventCount((int) eventCount);
             

@@ -11,5 +11,6 @@ public interface EventRepositoryPort {
     List<Event> findAllByCatererId(Long catererId);
     void deleteById(Long id);
     List<Event> findAll();
-    long count();
+    long countByCatererId(Long catererId);
+    long countByCatererIdAndCreatedAtAfter(Long catererId, java.time.LocalDateTime createdAt);
 }

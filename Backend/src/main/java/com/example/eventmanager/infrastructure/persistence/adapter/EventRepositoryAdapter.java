@@ -26,7 +26,7 @@ public class EventRepositoryAdapter implements EventRepositoryPort {
 
     @Override
     public Optional<Event> findById(Long id) {
-        return eventRepository.findById(id)
+        return eventRepository.findByIdAndArchivedFalse(id)
                 .map(eventPersistenceMapper::toDomain);
     }
 
@@ -44,13 +44,18 @@ public class EventRepositoryAdapter implements EventRepositoryPort {
 
     @Override
     public java.util.List<Event> findAll() {
-        return eventRepository.findAll().stream()
+        return eventRepository.findByArchivedFalse().stream()
                 .map(eventPersistenceMapper::toDomain)
                 .toList();
     }
 
     @Override
-    public long count() {
-        return eventRepository.count();
+    public long countByCatererId(Long catererId) {
+        return eventRepository.countByCatererId(catererId);
+    }
+
+    @Override
+    public long countByCatererIdAndCreatedAtAfter(Long catererId, java.time.LocalDateTime createdAt) {
+        return eventRepository.countByCatererIdAndCreatedAtAfter(catererId, createdAt);
     }
 }

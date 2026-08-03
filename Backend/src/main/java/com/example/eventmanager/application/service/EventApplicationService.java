@@ -63,19 +63,29 @@ public class EventApplicationService implements CreateEventUseCase, GetEventUseC
             };
 
             java.time.LocalDateTime startDate = caterer.getSubscriptionStartDate();
-            List<Event> existingEvents = eventRepositoryPort.findAllByCatererId(currentCatererId);
+            long activeEventsCount = eventRepositoryPort.findAllByCatererId(currentCatererId).size();
             long consumedInPeriod;
             if (plan == null || "FREE".equalsIgnoreCase(plan) || plan.isBlank()) {
-                consumedInPeriod = existingEvents.size();
+                consumedInPeriod = eventRepositoryPort.countByCatererId(currentCatererId);
             } else {
-                consumedInPeriod = existingEvents.stream()
-                        .filter(e -> startDate == null || e.getCreatedAt() == null || !e.getCreatedAt().isBefore(startDate))
-                        .count();
-            }
-            if (consumedInPeriod >= limit) {
-                if ("FREE".equalsIgnoreCase(plan) || plan == null || plan.isBlank()) {
-                    throw new SubscriptionRequiredException("You have reached your free event limit. Please upgrade your plan to create more events.");
+                if (startDate != null) {
+                    consumedInPeriod = eventRepositoryPort.countByCatererIdAndCreatedAtAfter(currentCatererId, startDate);
                 } else {
+                    consumedInPeriod = eventRepositoryPort.countByCatererId(currentCatererId);
+                }
+            }
+
+            // Exemption de quota pour le plan FREE (Période d'essai / de grâce)
+            // Si l'organisateur a 0 événement actif (tout premier événement créé ou si tous les événements tests/essais précédents ont été archivés),
+            // on autorise la création pour permettre des tests fluides sans blocage prématuré.
+            if (plan == null || "FREE".equalsIgnoreCase(plan) || plan.isBlank()) {
+                if (activeEventsCount == 0) {
+                    // Période de grâce autorisée
+                } else if (consumedInPeriod >= limit) {
+                    throw new SubscriptionRequiredException("You have reached your free event limit. Please upgrade your plan to create more events.");
+                }
+            } else {
+                if (consumedInPeriod >= limit) {
                     throw new UnauthorizedAccessException("Quota dépassé : Vous avez atteint la limite de votre forfait. Veuillez renouveler ou mettre à niveau votre abonnement pour ajouter d'autres événements.");
                 }
             }
