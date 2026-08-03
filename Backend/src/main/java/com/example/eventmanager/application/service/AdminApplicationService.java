@@ -63,18 +63,28 @@ public class AdminApplicationService implements AdminCatererUseCase, AdminStatsU
     @Transactional(readOnly = true)
     public List<CatererDTO> getAllCaterers(String status) {
         List<Caterer> caterers = catererRepositoryPort.findAll();
-        List<Event> events = eventRepositoryPort.findAll();
-
-        Map<Long, Long> eventCounts = events.stream()
-                .filter(e -> e.getCatererId() != null)
-                .collect(Collectors.groupingBy(Event::getCatererId, Collectors.counting()));
 
         return caterers.stream()
                 .filter(c -> c.getRole() != com.example.eventmanager.domain.model.CatererRole.SUPER_ADMIN)
                 .filter(c -> status == null || status.isBlank() || status.equalsIgnoreCase(c.getAccountStatus() != null ? c.getAccountStatus().name() : ""))
                 .map(c -> {
                     CatererDTO dto = catererMapper.toDTO(c);
-                    dto.setEventCount(eventCounts.getOrDefault(c.getId(), 0L).intValue());
+                    
+                    // Calcul cumulatif du nombre d'événements créés (Anti-Cheat) pour le Super-Admin
+                    String plan = c.getSubscriptionPlan();
+                    java.time.LocalDateTime startDate = c.getSubscriptionStartDate();
+                    long count;
+                    if (plan == null || "FREE".equalsIgnoreCase(plan) || plan.isBlank()) {
+                        count = eventRepositoryPort.countByCatererId(c.getId());
+                    } else {
+                        if (startDate != null) {
+                            count = eventRepositoryPort.countByCatererIdAndCreatedAtAfter(c.getId(), startDate);
+                        } else {
+                            count = eventRepositoryPort.countByCatererId(c.getId());
+                        }
+                    }
+                    
+                    dto.setEventCount((int) count);
                     dto.setEventLimit(getEventLimitForPlan(c.getSubscriptionPlan()));
                     dto.setSubscriptionRemainingDays(getRemainingDays(c.getSubscriptionEndDate()));
                     return dto;
@@ -108,8 +118,22 @@ public class AdminApplicationService implements AdminCatererUseCase, AdminStatsU
         Caterer saved = catererRepositoryPort.save(caterer);
         
         CatererDTO dto = catererMapper.toDTO(saved);
-        List<Event> events = eventRepositoryPort.findAllByCatererId(saved.getId());
-        dto.setEventCount(events.size());
+        
+        // Calcul cumulatif du nombre d'événements créés (Anti-Cheat)
+        String catererPlan = saved.getSubscriptionPlan();
+        java.time.LocalDateTime catererStartDate = saved.getSubscriptionStartDate();
+        long count;
+        if (catererPlan == null || "FREE".equalsIgnoreCase(catererPlan) || catererPlan.isBlank()) {
+            count = eventRepositoryPort.countByCatererId(saved.getId());
+        } else {
+            if (catererStartDate != null) {
+                count = eventRepositoryPort.countByCatererIdAndCreatedAtAfter(saved.getId(), catererStartDate);
+            } else {
+                count = eventRepositoryPort.countByCatererId(saved.getId());
+            }
+        }
+        
+        dto.setEventCount((int) count);
         dto.setEventLimit(getEventLimitForPlan(saved.getSubscriptionPlan()));
         dto.setSubscriptionRemainingDays(getRemainingDays(saved.getSubscriptionEndDate()));
         return dto;
