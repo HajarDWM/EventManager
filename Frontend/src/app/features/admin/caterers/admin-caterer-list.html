@@ -52,12 +52,11 @@
         <thead class="table-light">
           <tr>
             <th>Nom de l'entreprise</th>
-            <th>Adresse Email</th>
-            <th style="width: 120px;">Abonnement</th>
+            <th>Adresse Email</th>            <th style="width: 120px;">Abonnement</th>
             <th style="width: 140px;">Quota Événements</th>
             <th style="width: 150px;">Jours Restants</th>
             <th style="width: 180px;" class="text-center">État du Compte</th>
-            <th style="min-width: 280px;" class="text-center">Actions</th>
+            <th style="width: 80px;" class="text-center">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -68,9 +67,9 @@
             <td>{{ caterer.email }}</td>
             <td>
               <span class="badge" [ngClass]="{
-                'bg-success': caterer.subscriptionPlan === 'PREMIUM',
-                'bg-primary': caterer.subscriptionPlan === 'STANDARD',
-                'bg-warning text-dark': caterer.subscriptionPlan === 'FREE'
+                'badge-custom-premium': caterer.subscriptionPlan === 'PREMIUM',
+                'badge-custom-standard': caterer.subscriptionPlan === 'STANDARD',
+                'badge-custom-free': caterer.subscriptionPlan === 'FREE'
               }">{{ caterer.subscriptionPlan }}</span>
             </td>
             <td>
@@ -79,19 +78,18 @@
               </div>
             </td>
             <td>
-              <span class="badge" [ngClass]="{
-                'bg-danger': (caterer.subscriptionRemainingDays || 0) < 0 || caterer.subscriptionStatus === 'EXPIRED',
-                'bg-warning text-dark': (caterer.subscriptionRemainingDays || 0) >= 0 && (caterer.subscriptionRemainingDays || 0) <= 5,
-                'bg-success': (caterer.subscriptionRemainingDays || 0) > 5 && caterer.subscriptionStatus !== 'EXPIRED'
-              }">
+              <span *ngIf="(caterer.subscriptionRemainingDays || 0) < 0 || caterer.subscriptionStatus === 'EXPIRED' || (caterer.subscriptionRemainingDays || 0) < 3" class="badge bg-danger text-white fw-bold">
                 {{ (caterer.subscriptionRemainingDays || 0) < 0 || caterer.subscriptionStatus === 'EXPIRED' ? 'Expiré' : caterer.subscriptionRemainingDays + ' jours restants' }}
+              </span>
+              <span *ngIf="(caterer.subscriptionRemainingDays || 0) >= 3 && caterer.subscriptionStatus !== 'EXPIRED'" class="text-dark fw-semibold">
+                {{ caterer.subscriptionRemainingDays }} jours restants
               </span>
             </td>
             <td class="text-center">
               <span class="badge" [ngClass]="{
-                'bg-success': caterer.accountStatus === 'APPROVED' || caterer.accountStatus === 'ACTIVE',
-                'bg-warning text-dark': caterer.accountStatus === 'PENDING',
-                'bg-danger': caterer.accountStatus === 'SUSPENDED'
+                'badge-custom-approved': caterer.accountStatus === 'APPROVED' || caterer.accountStatus === 'ACTIVE',
+                'badge-custom-pending': caterer.accountStatus === 'PENDING',
+                'badge-custom-suspended': caterer.accountStatus === 'SUSPENDED'
               }">
                 <span *ngIf="caterer.accountStatus === 'APPROVED' || caterer.accountStatus === 'ACTIVE'">Approuvé</span>
                 <span *ngIf="caterer.accountStatus === 'PENDING'">En attente d'approbation</span>
@@ -99,27 +97,31 @@
               </span>
             </td>
             <td class="text-center">
-              <div class="d-flex align-items-center justify-content-center gap-1" (click)="$event.stopPropagation()">
-                <!-- Quick Approve button for PENDING or SUSPENDED -->
-                <button type="button" class="btn btn-sm btn-alt-success btn-table-action" 
-                        *ngIf="caterer.accountStatus === 'PENDING' || caterer.accountStatus === 'SUSPENDED'"
-                        (click)="approveCaterer(caterer)" title="Approuver l'organisateur">
-                  <i class="fa fa-check me-1"></i> Approuver
+              <div class="dropdown d-inline-block" (click)="$event.stopPropagation()">
+                <button type="button" class="btn btn-sm btn-alt-secondary" [id]="'dropdown-caterer-actions-' + caterer.id" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <i class="fa fa-ellipsis-v"></i>
                 </button>
+                <div class="dropdown-menu dropdown-menu-end fs-sm" [attr.aria-labelledby]="'dropdown-caterer-actions-' + caterer.id">
+                  <!-- Quick Approve button for PENDING or SUSPENDED -->
+                  <button type="button" class="dropdown-item text-success fw-semibold" 
+                          *ngIf="caterer.accountStatus === 'PENDING' || caterer.accountStatus === 'SUSPENDED'"
+                          (click)="approveCaterer(caterer)">
+                    <i class="fa fa-fw fa-check me-2"></i> Approuver
+                  </button>
 
-                <!-- Quick Suspend button for PENDING or APPROVED/ACTIVE -->
-                <button type="button" class="btn btn-sm btn-alt-danger btn-table-action" 
-                        *ngIf="caterer.accountStatus === 'PENDING' || caterer.accountStatus === 'APPROVED' || caterer.accountStatus === 'ACTIVE'"
-                        (click)="suspendCaterer(caterer)" title="Suspendre l'organisateur">
-                  <i class="fa fa-ban me-1"></i> Suspendre
+                  <!-- Quick Suspend button for PENDING or APPROVED/ACTIVE -->
+                  <button type="button" class="dropdown-item text-danger fw-semibold" 
+                          *ngIf="caterer.accountStatus === 'PENDING' || caterer.accountStatus === 'APPROVED' || caterer.accountStatus === 'ACTIVE'"
+                          (click)="suspendCaterer(caterer)">
+                    <i class="fa fa-fw fa-ban me-2"></i> Suspendre
+                  </button>
 
-                </button>
-
-                <!-- Edit Subscription button -->
-                <button type="button" class="btn btn-sm btn-alt-info btn-table-action" 
-                        (click)="openEditModal(caterer)" title="Gérer l'abonnement">
-                  <i class="fa fa-credit-card me-1"></i> Abonnement
-                </button>
+                  <!-- Edit Subscription button -->
+                  <button type="button" class="dropdown-item text-primary fw-semibold" 
+                          (click)="openEditModal(caterer)">
+                    <i class="fa fa-fw fa-credit-card me-2"></i> Modifier Abonnement
+                  </button>
+                </div>
               </div>
             </td>
           </tr>

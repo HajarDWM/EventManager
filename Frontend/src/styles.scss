@@ -10,3 +10,41 @@
   align-items: center;
   white-space: nowrap;
 }
+
+/* Custom High-Contrast Pastel Badges */
+.badge-custom-premium {
+  background-color: #e0f2fe !important;
+  color: #0c4a6e !important;
+  border: 1px solid #bae6fd !important;
+  font-weight: 600;
+}
+.badge-custom-standard {
+  background-color: #d1fae5 !important;
+  color: #064e3b !important;
+  border: 1px solid #a7f3d0 !important;
+  font-weight: 600;
+}
+.badge-custom-free {
+  background-color: #ffeedd !important;
+  color: #000000 !important;
+  border: 1px solid #ffd8a8 !important;
+  font-weight: 600;
+}
+.badge-custom-approved {
+  background-color: #d1e7dd !important;
+  color: #000000 !important;
+  border: 1px solid #badbcc !important;
+  font-weight: 600;
+}
+.badge-custom-pending {
+  background-color: #ffedd5 !important;
+  color: #000000 !important;
+  border: 1px solid #fed7aa !important;
+  font-weight: 600;
+}
+.badge-custom-suspended {
+  background-color: #f8d7da !important;
+  color: #000000 !important;
+  border: 1px solid #f5c2c7 !important;
+  font-weight: 600;
+}
