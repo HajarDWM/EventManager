@@ -17,6 +17,21 @@
     <div class="fs-sm fw-medium">{{ errorMessage() }}</div>
   </div>
 
+  <!-- Expiration Warning Alert Banner -->
+  <div class="alert alert-danger d-flex flex-column flex-sm-row align-items-sm-center justify-content-between p-3 mb-3 rounded shadow-sm border-0 bg-danger-light text-danger animate__animated animate__fadeIn" role="alert" *ngIf="isSubscriptionExpired()">
+    <div class="d-flex align-items-center gap-3 mb-2 mb-sm-0">
+      <div class="item item-circle bg-danger text-white fs-base">
+        <i class="fa fa-exclamation-triangle"></i>
+      </div>
+      <div>
+        <h4 class="alert-heading fs-sm fw-bold mb-1 text-danger">Abonnement Expiré</h4>
+        <p class="fs-sm fw-medium mb-0 text-dark-danger">
+          Attention ! Votre abonnement a expiré. Veuillez renouveler votre forfait pour continuer à profiter de toutes les fonctionnalités.
+        </p>
+      </div>
+    </div>
+  </div>
+
   <!-- Summary Dashboard Block (Compacted) -->
   <div class="block block-rounded shadow-sm border border-light bg-white mb-3">
     <div class="block-header block-header-default bg-body-light border-bottom border-light py-1.5 px-3">
@@ -205,8 +220,8 @@
           </ul>
         </div>
         <div class="block-content block-content-full bg-body-light border-top border-light py-2.5">
-          <button class="btn btn-success w-100 animate__animated animate__fadeIn py-1.5 fs-sm" [disabled]="true" *ngIf="currentPlan() === 'STANDARD'">
-            <i class="fa fa-check-circle me-1"></i> Abonnement Actif
+          <button class="btn btn-success w-100 animate__animated animate__fadeIn py-1.5 fs-sm" (click)="selectPlan('STANDARD')" *ngIf="currentPlan() === 'STANDARD'">
+            <i class="fa fa-sync me-1"></i> Renouveler l'abonnement
           </button>
           <button class="btn btn-primary w-100 py-1.5 fs-sm" (click)="selectPlan('STANDARD')" *ngIf="currentPlan() !== 'STANDARD'" [disabled]="isLoading()">
             Mettre à niveau (Standard Pro)
@@ -270,8 +285,8 @@
           </ul>
         </div>
         <div class="block-content block-content-full bg-body-light border-top border-light py-2.5">
-          <button class="btn btn-success w-100 animate__animated animate__fadeIn py-1.5 fs-sm" [disabled]="true" *ngIf="currentPlan() === 'PREMIUM'">
-            <i class="fa fa-check-circle me-1"></i> Abonnement Actif
+          <button class="btn btn-success w-100 animate__animated animate__fadeIn py-1.5 fs-sm" (click)="selectPlan('PREMIUM')" *ngIf="currentPlan() === 'PREMIUM'">
+            <i class="fa fa-sync me-1"></i> Renouveler l'abonnement
           </button>
           <button class="btn btn-primary w-100 py-1.5 fs-sm" (click)="selectPlan('PREMIUM')" *ngIf="currentPlan() !== 'PREMIUM'" [disabled]="isLoading()">
             Mettre à niveau (Premium VIP)

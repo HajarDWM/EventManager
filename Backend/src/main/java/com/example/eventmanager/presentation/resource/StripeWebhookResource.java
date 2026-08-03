@@ -29,7 +29,15 @@ public class StripeWebhookResource {
             com.example.eventmanager.domain.model.Caterer caterer = catererRepositoryPort.findById(catererId)
                     .orElseThrow(() -> new RuntimeException("Caterer not found"));
 
-            caterer.updateSubscription(plan, "ACTIVE", java.time.LocalDateTime.now(), java.time.LocalDateTime.now().plusDays(30));
+            java.time.LocalDateTime now = java.time.LocalDateTime.now();
+            java.time.LocalDateTime newEndDate;
+            if (caterer.getSubscriptionPlan() != null && caterer.getSubscriptionPlan().equalsIgnoreCase(plan) 
+                    && caterer.getSubscriptionEndDate() != null && caterer.getSubscriptionEndDate().isAfter(now)) {
+                newEndDate = caterer.getSubscriptionEndDate().plusDays(30);
+            } else {
+                newEndDate = now.plusDays(30);
+            }
+            caterer.updateSubscription(plan, "ACTIVE", now, newEndDate);
             caterer.activateAccount();
 
             catererRepositoryPort.save(caterer);

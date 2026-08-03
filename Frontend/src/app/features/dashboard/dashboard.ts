@@ -22,6 +22,8 @@ export class Dashboard implements OnInit {
   protected readonly accountStatus = signal<string>('ACTIF');
   protected readonly isLoading = signal<boolean>(true);
 
+  protected readonly isSubscriptionExpired = signal<boolean>(false);
+
   public ngOnInit(): void {
     const cachedProfile = this.catererService.currentProfile();
     if (cachedProfile) {
@@ -29,6 +31,7 @@ export class Dashboard implements OnInit {
         this.router.navigate(['/admin/dashboard']);
         return;
       }
+      this.isSubscriptionExpired.set(!!cachedProfile.isExpired || !!cachedProfile.expired);
       this.loadMetrics();
     } else {
       this.catererService.getCurrentProfile().subscribe({
@@ -36,6 +39,7 @@ export class Dashboard implements OnInit {
           if (profile && profile.role === 'SUPER_ADMIN') {
             this.router.navigate(['/admin/dashboard']);
           } else {
+            this.isSubscriptionExpired.set(!!profile.isExpired || !!profile.expired);
             this.loadMetrics();
           }
         },

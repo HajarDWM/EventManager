@@ -11,6 +11,26 @@
 </div>
 <!-- END Hero -->
 
+<!-- Expiration Warning Alert Banner -->
+<div class="alert alert-danger d-flex flex-column flex-sm-row align-items-sm-center justify-content-between p-3 mt-3 mb-2 rounded shadow-sm border-0 bg-danger-light text-danger" role="alert" *ngIf="isSubscriptionExpired()">
+  <div class="d-flex align-items-center gap-3 mb-2 mb-sm-0">
+    <div class="item item-circle bg-danger text-white fs-base">
+      <i class="fa fa-exclamation-triangle"></i>
+    </div>
+    <div>
+      <h4 class="alert-heading fs-sm fw-bold mb-1 text-danger">Abonnement Expiré</h4>
+      <p class="fs-sm fw-medium mb-0 text-dark-danger">
+        Attention ! Votre abonnement a expiré. Veuillez renouveler votre forfait pour continuer à profiter de toutes les fonctionnalités.
+      </p>
+    </div>
+  </div>
+  <div>
+    <a class="btn btn-danger btn-sm px-3 py-1.5 fw-bold w-100" routerLink="/subscription">
+      <i class="fa fa-sync me-1"></i> Renouveler maintenant
+    </a>
+  </div>
+</div>
+
 <!-- Stats Cards -->
 <div class="row items-push mt-3">
   <!-- Planned Events -->

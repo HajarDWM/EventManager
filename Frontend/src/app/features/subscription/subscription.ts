@@ -20,6 +20,7 @@ export class SubscriptionComponent implements OnInit {
   protected readonly currentPlan = signal('FREE');
   protected readonly subscriptionStatus = signal('INACTIF');
   protected readonly subscriptionEndDate = signal<string | null>(null);
+  protected readonly isSubscriptionExpired = signal<boolean>(false);
   protected readonly isLoading = signal(false);
   protected readonly successMessage = signal('');
   protected readonly errorMessage = signal('');
@@ -49,6 +50,7 @@ export class SubscriptionComponent implements OnInit {
         this.currentPlan.set(profile.subscriptionPlan || 'FREE');
         this.subscriptionStatus.set(profile.subscriptionStatus || 'INACTIF');
         this.subscriptionEndDate.set(profile.subscriptionEndDate || null);
+        this.isSubscriptionExpired.set(!!profile.isExpired || !!profile.expired);
         this.catererId = profile.id;
         
         const limit = profile.eventLimit || 2;
@@ -69,7 +71,7 @@ export class SubscriptionComponent implements OnInit {
   }
 
   protected selectPlan(plan: string): void {
-    if (plan === this.currentPlan()) {
+    if (plan === this.currentPlan() && plan === 'FREE') {
       return;
     }
 

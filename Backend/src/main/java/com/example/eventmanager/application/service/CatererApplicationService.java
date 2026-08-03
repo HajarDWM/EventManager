@@ -62,6 +62,25 @@ public class CatererApplicationService implements CreateCatererUseCase, GetCater
         Caterer caterer = catererRepositoryPort.findById(currentCatererId)
                 .orElseThrow(() -> new CatererNotFoundException(currentCatererId));
         CatererDTO dto = catererMapper.toDTO(caterer);
+
+        java.time.LocalDateTime now = java.time.LocalDateTime.now();
+        boolean isExpired = false;
+        if (!"FREE".equalsIgnoreCase(caterer.getSubscriptionPlan())) {
+            if (caterer.getSubscriptionEndDate() != null && caterer.getSubscriptionEndDate().isBefore(now)) {
+                isExpired = true;
+            } else if ("EXPIRED".equalsIgnoreCase(caterer.getSubscriptionStatus())) {
+                isExpired = true;
+            }
+        }
+        dto.setExpired(isExpired);
+
+        if (caterer.getSubscriptionEndDate() != null) {
+            long remaining = java.time.temporal.ChronoUnit.DAYS.between(now, caterer.getSubscriptionEndDate());
+            dto.setSubscriptionRemainingDays(Math.max(0, remaining));
+        } else {
+            dto.setSubscriptionRemainingDays(0L);
+        }
+
         if (caterer.getRole() != com.example.eventmanager.domain.model.CatererRole.SUPER_ADMIN) {
             String plan = caterer.getSubscriptionPlan();
             java.time.LocalDateTime startDate = caterer.getSubscriptionStartDate();

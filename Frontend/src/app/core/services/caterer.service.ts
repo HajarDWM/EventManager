@@ -15,6 +15,8 @@ export interface CatererProfile {
   subscriptionRemainingDays?: number;
   eventCount?: number;
   eventLimit?: number;
+  expired?: boolean;
+  isExpired?: boolean;
 }
 
 export interface ChangePasswordRequest {

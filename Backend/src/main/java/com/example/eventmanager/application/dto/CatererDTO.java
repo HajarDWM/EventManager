@@ -40,5 +40,11 @@ public class CatererDTO {
     private Integer eventLimit;
 
     private Long subscriptionRemainingDays;
+
+    private boolean expired;
+
+    public boolean getIsExpired() {
+        return this.expired;
+    }
 }
 
