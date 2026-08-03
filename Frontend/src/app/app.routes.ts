@@ -16,6 +16,7 @@ import { Profile } from './features/profile';
 import { adminGuard } from './core/auth/guards/admin.guard';
 import { AdminDashboard } from './features/admin/dashboard/admin-dashboard';
 import { AdminCatererList } from './features/admin/caterers/admin-caterer-list';
+import { AdminCatererDetail } from './features/admin/caterers/admin-caterer-detail';
 import { AdminBillingSettings } from './features/admin/billing/admin-billing-settings';
 import { PendingApproval } from './core/auth/pending-approval/pending-approval';
 import { Pricing } from './features/pricing/pricing';
@@ -114,6 +115,11 @@ export const routes: Routes = [
       {
         path: 'admin/caterers',
         component: AdminCatererList,
+        canActivate: [adminGuard]
+      },
+      {
+        path: 'admin/caterers/:id',
+        component: AdminCatererDetail,
         canActivate: [adminGuard]
       },
       {

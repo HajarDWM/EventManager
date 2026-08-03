@@ -48,6 +48,23 @@ export class AdminService {
     return this.http.get<any[]>(`${this.apiUrl}/caterers`, { params });
   }
 
+  public getCatererById(id: number): Observable<any> {
+    return new Observable<any>(observer => {
+      this.getAllCaterers().subscribe({
+        next: (caterers) => {
+          const found = caterers.find(c => c.id === id);
+          if (found) {
+            observer.next(found);
+            observer.complete();
+          } else {
+            observer.error(new Error('Compte organisateur introuvable.'));
+          }
+        },
+        error: (err) => observer.error(err)
+      });
+    });
+  }
+
   public updateCatererStatusAndSubscription(
     id: number, 
     accountStatus?: string, 

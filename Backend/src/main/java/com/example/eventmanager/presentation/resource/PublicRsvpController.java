@@ -21,29 +21,7 @@ public class PublicRsvpController {
     private final com.example.eventmanager.application.mapper.MenuItemMapper menuItemMapper;
     private final com.example.eventmanager.infrastructure.persistence.repository.DigitalInvitationTemplateRepository templateRepository;
 
-    @GetMapping("/debug-menu-items")
-    public ResponseEntity<?> getDebugMenuItems() {
-        try {
-            Long catererId = 1L;
-            java.util.Optional<Event> eventOpt = eventRepositoryPort.findById(24L);
-            if (eventOpt.isPresent()) {
-                catererId = eventOpt.get().getCatererId();
-            }
-            java.util.List<com.example.eventmanager.application.dto.MenuItemDTO> items = menuItemRepositoryPort.findAllByCatererId(catererId)
-                    .stream()
-                    .map(menuItemMapper::toDTO)
-                    .toList();
-            return ResponseEntity.ok(items);
-        } catch (Exception e) {
-            java.io.StringWriter sw = new java.io.StringWriter();
-            java.io.PrintWriter pw = new java.io.PrintWriter(sw);
-            e.printStackTrace(pw);
-            return ResponseEntity.status(500).body(java.util.Map.of(
-                "error", e.getMessage() != null ? e.getMessage() : e.getClass().getName(),
-                "stack", sw.toString()
-            ));
-        }
-    }
+
 
     @GetMapping("/{guestId}")
     public ResponseEntity<PublicRsvpDTO> getPublicRsvpDetail(@PathVariable Long guestId) {

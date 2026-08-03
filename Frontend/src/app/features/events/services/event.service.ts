@@ -10,8 +10,12 @@ export class EventService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = '/api/events';
 
-  public getAllEvents(): Observable<Event[]> {
-    return this.http.get<Event[]>(this.apiUrl);
+  public getAllEvents(catererId?: number): Observable<Event[]> {
+    let url = this.apiUrl;
+    if (catererId) {
+      url += `?catererId=${catererId}`;
+    }
+    return this.http.get<Event[]>(url);
   }
 
   public getEventById(id: number): Observable<Event> {

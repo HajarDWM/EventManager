@@ -52,6 +52,9 @@ public class EventApplicationService implements CreateEventUseCase, GetEventUseC
                 .orElseThrow(() -> new RuntimeException("Compte traiteur introuvable."));
 
         if (caterer.getRole() != com.example.eventmanager.domain.model.CatererRole.SUPER_ADMIN) {
+            if (caterer.getAccountStatus() == com.example.eventmanager.domain.model.CatererStatus.SUSPENDED) {
+                throw new UnauthorizedAccessException("Votre compte est suspendu. Veuillez renouveler ou mettre à niveau votre abonnement pour créer des événements.");
+            }
             String plan = caterer.getSubscriptionPlan();
             int limit = switch (plan != null ? plan.toUpperCase() : "FREE") {
                 case "STANDARD", "STANDARD_PRO", "STANDARD PRO" -> 8;
@@ -107,7 +110,10 @@ public class EventApplicationService implements CreateEventUseCase, GetEventUseC
         Event existingEvent = eventRepositoryPort.findById(id)
                 .orElseThrow(() -> new EventNotFoundException(id));
                 
-        if (existingEvent.getCatererId() != null && !existingEvent.getCatererId().equals(currentCatererId)) {
+        com.example.eventmanager.domain.model.Caterer caterer = catererRepositoryPort.findById(currentCatererId).orElse(null);
+        boolean isSuperAdmin = caterer != null && "SUPER_ADMIN".equals(caterer.getRole().name());
+
+        if (!isSuperAdmin && existingEvent.getCatererId() != null && !existingEvent.getCatererId().equals(currentCatererId)) {
             throw new UnauthorizedAccessException("Vous n'êtes pas autorisé à modifier cet événement.");
         }
         
@@ -138,7 +144,10 @@ public class EventApplicationService implements CreateEventUseCase, GetEventUseC
         Event existingEvent = eventRepositoryPort.findById(id)
                 .orElseThrow(() -> new EventNotFoundException(id));
                 
-        if (existingEvent.getCatererId() != null && !existingEvent.getCatererId().equals(currentCatererId)) {
+        com.example.eventmanager.domain.model.Caterer caterer = catererRepositoryPort.findById(currentCatererId).orElse(null);
+        boolean isSuperAdmin = caterer != null && "SUPER_ADMIN".equals(caterer.getRole().name());
+
+        if (!isSuperAdmin && existingEvent.getCatererId() != null && !existingEvent.getCatererId().equals(currentCatererId)) {
             throw new UnauthorizedAccessException("Vous n'êtes pas autorisé à supprimer cet événement.");
         }
         
@@ -154,8 +163,11 @@ public class EventApplicationService implements CreateEventUseCase, GetEventUseC
         Event event = eventRepositoryPort.findById(id)
                 .orElseThrow(() -> new EventNotFoundException(id));
                 
+        com.example.eventmanager.domain.model.Caterer caterer = catererRepositoryPort.findById(currentCatererId).orElse(null);
+        boolean isSuperAdmin = caterer != null && "SUPER_ADMIN".equals(caterer.getRole().name());
+
         // Isolation Tenant : Vérifier l'appartenance
-        if (!event.getCatererId().equals(currentCatererId)) {
+        if (!isSuperAdmin && !event.getCatererId().equals(currentCatererId)) {
             throw new UnauthorizedAccessException("Vous n'êtes pas autorisé à accéder à cet événement.");
         }
         
@@ -164,9 +176,15 @@ public class EventApplicationService implements CreateEventUseCase, GetEventUseC
     
     @Override
     @Transactional(readOnly = true)
-    public List<EventDTO> getAllEvents() {
+    public List<EventDTO> getAllEvents(Long catererId) {
         Long currentCatererId = securityContextPort.getCurrentCatererId();
-        return eventRepositoryPort.findAllByCatererId(currentCatererId).stream()
+        
+        com.example.eventmanager.domain.model.Caterer caterer = catererRepositoryPort.findById(currentCatererId).orElse(null);
+        boolean isSuperAdmin = caterer != null && "SUPER_ADMIN".equals(caterer.getRole().name());
+
+        Long targetCatererId = (isSuperAdmin && catererId != null) ? catererId : currentCatererId;
+
+        return eventRepositoryPort.findAllByCatererId(targetCatererId).stream()
                 .map(eventMapper::toDTO)
                 .toList();
     }

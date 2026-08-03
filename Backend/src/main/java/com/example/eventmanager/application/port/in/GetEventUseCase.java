@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface GetEventUseCase {
     EventDTO getEventById(Long id);
-    List<EventDTO> getAllEvents();
+    List<EventDTO> getAllEvents(Long catererId);
 }

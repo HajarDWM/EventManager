@@ -61,8 +61,8 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let caterer of caterers()">
-            <td class="fw-semibold text-dark">
+          <tr *ngFor="let caterer of caterers()" [routerLink]="['/admin/caterers', caterer.id]" style="cursor: pointer;">
+            <td class="fw-semibold text-primary">
               {{ caterer.businessName }}
             </td>
             <td>{{ caterer.email }}</td>
@@ -99,7 +99,7 @@
               </span>
             </td>
             <td class="text-center">
-              <div class="d-flex align-items-center justify-content-center gap-1">
+              <div class="d-flex align-items-center justify-content-center gap-1" (click)="$event.stopPropagation()">
                 <!-- Quick Approve button for PENDING or SUSPENDED -->
                 <button type="button" class="btn btn-sm btn-alt-success btn-table-action" 
                         *ngIf="caterer.accountStatus === 'PENDING' || caterer.accountStatus === 'SUSPENDED'"
@@ -112,6 +112,7 @@
                         *ngIf="caterer.accountStatus === 'PENDING' || caterer.accountStatus === 'APPROVED' || caterer.accountStatus === 'ACTIVE'"
                         (click)="suspendCaterer(caterer)" title="Suspendre l'organisateur">
                   <i class="fa fa-ban me-1"></i> Suspendre
+
                 </button>
 
                 <!-- Edit Subscription button -->

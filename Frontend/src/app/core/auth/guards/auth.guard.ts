@@ -17,10 +17,16 @@ export const authGuard: CanActivateFn = (route, state) => {
   }
 
   const cachedProfile = catererService.currentProfile();
+  const targetUrl = state.url || '';
+  const isAllowedForSuspended = targetUrl.includes('/subscription') || targetUrl.includes('/profile');
+
   if (cachedProfile) {
-    if (cachedProfile.accountStatus === 'SUSPENDED') {
-      authService.logout();
-      router.navigate(['/pending-approval']);
+    const isSuspended = cachedProfile.accountStatus === 'SUSPENDED' || cachedProfile.subscriptionStatus === 'EXPIRED';
+    if (isSuspended) {
+      if (isAllowedForSuspended) {
+        return true;
+      }
+      router.navigate(['/subscription']);
       return false;
     }
     return true;
@@ -28,9 +34,12 @@ export const authGuard: CanActivateFn = (route, state) => {
 
   return catererService.getCurrentProfile().pipe(
     map(profile => {
-      if (profile && profile.accountStatus === 'SUSPENDED') {
-        authService.logout();
-        router.navigate(['/pending-approval']);
+      const isSuspended = profile && (profile.accountStatus === 'SUSPENDED' || profile.subscriptionStatus === 'EXPIRED');
+      if (isSuspended) {
+        if (isAllowedForSuspended) {
+          return true;
+        }
+        router.navigate(['/subscription']);
         return false;
       }
       return true;

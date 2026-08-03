@@ -1,0 +1,132 @@
+<!-- Hero -->
+<div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-2 text-center text-md-start">
+  <div class="flex-grow-1 mb-1 mb-md-0">
+    <h1 class="h3 fw-bold mb-2">
+      Détails de l'Organisateur
+    </h1>
+    <h2 class="h6 fw-medium text-muted mb-0">
+      Visualisez le profil et les événements de cet organisateur.
+    </h2>
+  </div>
+  <div class="mt-2 mt-md-0">
+    <a class="btn btn-alt-secondary rounded-pill px-3" routerLink="/admin/caterers">
+      <i class="fa fa-arrow-left me-1"></i> Retour à la liste
+    </a>
+  </div>
+</div>
+<!-- END Hero -->
+
+<!-- Loading Spinner -->
+<div *ngIf="isLoading()" class="text-center py-5">
+  <div class="spinner-border text-primary" role="status">
+    <span class="visually-hidden">Chargement...</span>
+  </div>
+</div>
+
+<!-- Error Alert -->
+<div *ngIf="errorMessage() && !isLoading()" class="alert alert-danger d-flex align-items-center mt-3 shadow-sm" role="alert">
+  <i class="fa fa-exclamation-triangle me-2"></i>
+  <div>{{ errorMessage() }}</div>
+</div>
+
+<!-- Main Content -->
+<div class="row mt-4" *ngIf="!isLoading() && caterer()">
+  <!-- Left Side: Profile Card -->
+  <div class="col-md-4">
+    <div class="block block-rounded bg-white shadow-sm border border-light">
+      <div class="block-header block-header-default border-bottom bg-body-light">
+        <h3 class="block-title fw-bold">Profil Organisateur</h3>
+      </div>
+      <div class="block-content p-4">
+        <div class="text-center mb-4">
+          <div class="avatar-placeholder d-inline-flex align-items-center justify-content-center bg-primary-light text-primary rounded-circle mb-3" style="width: 70px; height: 70px;">
+            <i class="fa fa-store fs-1"></i>
+          </div>
+          <h4 class="fw-bold mb-1">{{ caterer().businessName }}</h4>
+          <span class="badge" [ngClass]="{
+            'bg-success': caterer().accountStatus === 'APPROVED' || caterer().accountStatus === 'ACTIVE',
+            'bg-warning text-dark': caterer().accountStatus === 'PENDING',
+            'bg-danger': caterer().accountStatus === 'SUSPENDED'
+          }">
+            {{ caterer().accountStatus === 'APPROVED' || caterer().accountStatus === 'ACTIVE' ? 'Approuvé' : (caterer().accountStatus === 'PENDING' ? 'En attente' : 'Suspendu') }}
+          </span>
+        </div>
+
+        <ul class="list-group list-group-flush fs-sm">
+          <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2 border-0 border-bottom border-light">
+            <span class="text-muted">Adresse Email</span>
+            <span class="fw-semibold text-dark">{{ caterer().email }}</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2 border-0 border-bottom border-light">
+            <span class="text-muted">Forfait</span>
+            <span class="badge" [ngClass]="{
+              'bg-success': caterer().subscriptionPlan === 'PREMIUM',
+              'bg-primary': caterer().subscriptionPlan === 'STANDARD',
+              'bg-warning text-dark': caterer().subscriptionPlan === 'FREE'
+            }">{{ caterer().subscriptionPlan }}</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2 border-0 border-bottom border-light">
+            <span class="text-muted">État Abonnement</span>
+            <span class="fw-semibold" [ngClass]="caterer().subscriptionStatus === 'ACTIVE' ? 'text-success' : 'text-danger'">
+              {{ caterer().subscriptionStatus === 'ACTIVE' ? 'Actif' : 'Expiré' }}
+            </span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2 border-0 border-bottom border-light">
+            <span class="text-muted">Début contrat</span>
+            <span class="fw-semibold text-dark">{{ caterer().subscriptionStartDate ? (caterer().subscriptionStartDate | date:'dd/MM/yyyy') : '-' }}</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2 border-0">
+            <span class="text-muted">Fin contrat</span>
+            <span class="fw-semibold text-dark">{{ caterer().subscriptionEndDate ? (caterer().subscriptionEndDate | date:'dd/MM/yyyy') : '-' }}</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Side: Events Table -->
+  <div class="col-md-8">
+    <div class="block block-rounded bg-white shadow-sm border border-light h-100">
+      <div class="block-header block-header-default border-bottom bg-body-light d-flex justify-content-between align-items-center">
+        <h3 class="block-title fw-bold">Liste des Événements ({{ events().length }})</h3>
+      </div>
+      <div class="block-content">
+        <div class="table-responsive">
+          <table class="table table-bordered table-striped table-vcenter fs-sm">
+            <thead class="table-light">
+              <tr>
+                <th>Titre</th>
+                <th>Date & Heure</th>
+                <th>Lieu</th>
+                <th class="text-center" style="width: 150px;">Statut</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let event of events()" [routerLink]="['/events', event.id]" style="cursor: pointer;">
+                <td class="fw-semibold text-primary">
+                  {{ event.title }}
+                </td>
+                <td>
+                  {{ event.eventDate | date:'dd/MM/yyyy HH:mm' }}
+                </td>
+                <td>
+                  {{ event.location }}
+                </td>
+                <td class="text-center">
+                  <span class="badge px-3 py-2 rounded-pill" [ngClass]="getStatusBadgeClass(event.status)">
+                    {{ getStatusLabel(event.status) }}
+                  </span>
+                </td>
+              </tr>
+              <tr *ngIf="events().length === 0">
+                <td colspan="4" class="text-center py-4 text-muted">
+                  Aucun événement créé par cet organisateur.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

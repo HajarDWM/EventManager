@@ -45,7 +45,7 @@ public class EventResource {
     }
 
     @GetMapping
-    public ResponseEntity<java.util.List<EventDTO>> getAllEvents() {
-        return ResponseEntity.ok(getEventUseCase.getAllEvents());
+    public ResponseEntity<java.util.List<EventDTO>> getAllEvents(@RequestParam(required = false) Long catererId) {
+        return ResponseEntity.ok(getEventUseCase.getAllEvents(catererId));
     }
 }

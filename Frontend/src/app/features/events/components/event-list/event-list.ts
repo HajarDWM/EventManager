@@ -1,7 +1,7 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { EventService } from '../../services/event.service';
 import { Event } from '../../models/event.model';
 import { CatererService } from '../../../../core/services/caterer.service';
@@ -16,10 +16,17 @@ export class EventList implements OnInit {
   private readonly eventService = inject(EventService);
   private readonly catererService = inject(CatererService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
 
   protected readonly events = signal<Event[]>([]);
   protected readonly isLoading = signal(false);
   protected readonly errorMessage = signal('');
+  protected readonly selectedCatererId = signal<number | null>(null);
+
+  protected readonly isSuspended = computed(() => {
+    const profile = this.catererService.currentProfile();
+    return profile && (profile.accountStatus === 'SUSPENDED' || profile.subscriptionStatus === 'EXPIRED');
+  });
 
   // Feature toggle flag for modularity (can easily be set to false to completely turn off this feature)
   protected readonly showQuotaUsageBanner = signal(true);
@@ -74,33 +81,44 @@ export class EventList implements OnInit {
   });
 
   public ngOnInit(): void {
-    // Check if the logged-in user is a SUPER_ADMIN
-    const profile = this.catererService.currentProfile();
-    if (profile && profile.role === 'SUPER_ADMIN') {
-      this.router.navigate(['/admin/caterers']);
-      return;
-    }
+    this.route.queryParams.subscribe(params => {
+      const paramCatererId = params['catererId'] ? Number(params['catererId']) : null;
+      this.selectedCatererId.set(paramCatererId);
 
-    // Otherwise fetch to confirm or retrieve from REST
-    this.catererService.getCurrentProfile().subscribe({
-      next: (prof) => {
-        if (prof && prof.role === 'SUPER_ADMIN') {
-          this.router.navigate(['/admin/caterers']);
-        } else {
-          this.loadEvents();
-        }
-      },
-      error: () => {
-        this.loadEvents();
+      const profile = this.catererService.currentProfile();
+      const isSuper = profile && profile.role === 'SUPER_ADMIN';
+
+      if (isSuper && !paramCatererId) {
+        this.router.navigate(['/admin/caterers']);
+        return;
+      }
+
+      if (profile) {
+        this.loadEvents(paramCatererId);
+      } else {
+        // Otherwise fetch to confirm or retrieve from REST
+        this.catererService.getCurrentProfile().subscribe({
+          next: (prof) => {
+            const isSuperFetch = prof && prof.role === 'SUPER_ADMIN';
+            if (isSuperFetch && !paramCatererId) {
+              this.router.navigate(['/admin/caterers']);
+            } else {
+              this.loadEvents(paramCatererId);
+            }
+          },
+          error: () => {
+            this.loadEvents(paramCatererId);
+          }
+        });
       }
     });
   }
 
-  protected loadEvents(): void {
+  protected loadEvents(catererId: number | null = null): void {
     this.isLoading.set(true);
     this.errorMessage.set('');
 
-    this.eventService.getAllEvents().subscribe({
+    this.eventService.getAllEvents(catererId || undefined).subscribe({
       next: (data) => {
         this.events.set(data);
         this.isLoading.set(false);
