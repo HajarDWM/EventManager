@@ -126,4 +126,19 @@ export class AdminService {
   public updateBillingSettings(settings: BillingSettings): Observable<BillingSettings> {
     return this.http.put<BillingSettings>(`${this.apiUrl}/billing-settings`, settings);
   }
+
+  // === AUDIT FINANCIER & TRANSACTIONS ===
+  public getTransactions(search?: string, page = 0, size = 10): Observable<any> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+    if (search) {
+      params = params.set('search', search);
+    }
+    return this.http.get<any>(`${this.apiUrl}/transactions`, { params });
+  }
+
+  public downloadTransactionsCsv(): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/transactions/export/csv`, { responseType: 'blob' });
+  }
 }

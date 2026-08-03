@@ -1,5 +1,6 @@
 <!-- Hero -->
-<div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-2 text-center text-md-start">
+<div
+  class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-2 text-center text-md-start">
   <div class="flex-grow-1 mb-1 mb-md-0">
     <h1 class="h3 fw-bold mb-2">
       Gestion des Comptes Organisateurs
@@ -26,11 +27,13 @@
 
 <!-- Main Table Block -->
 <div class="block block-rounded bg-white shadow-sm border border-light mt-4">
-  <div class="block-header block-header-default border-bottom bg-body-light d-flex justify-content-between align-items-center">
+  <div
+    class="block-header block-header-default border-bottom bg-body-light d-flex justify-content-between align-items-center">
     <h3 class="block-title fw-bold">Liste des organisateurs</h3>
     <div class="d-flex align-items-center gap-2">
       <!-- Status Filter Dropdown -->
-      <select class="form-select form-select-sm" [ngModel]="selectedStatusFilter()" (ngModelChange)="onStatusFilterChange($event)" style="width: 210px;" name="statusFilter">
+      <select class="form-select form-select-sm" [ngModel]="selectedStatusFilter()"
+        (ngModelChange)="onStatusFilterChange($event)" style="width: 210px;" name="statusFilter">
         <option value="">Tous les statuts</option>
         <option value="PENDING">En attente d'approbation</option>
         <option value="APPROVED">Approuvés</option>
@@ -45,22 +48,24 @@
       </button>
     </div>
   </div>
-  
+
   <div class="block-content">
     <div class="table-responsive">
       <table class="table table-bordered table-striped table-vcenter fs-sm">
         <thead class="table-light">
           <tr>
             <th>Nom de l'entreprise</th>
-            <th>Adresse Email</th>            <th style="width: 120px;">Abonnement</th>
+            <th>Adresse Email</th>
+            <th style="width: 120px;">Abonnement</th>
             <th style="width: 140px;">Quota Événements</th>
             <th style="width: 150px;">Jours Restants</th>
             <th style="width: 180px;" class="text-center">État du Compte</th>
-            <th style="width: 80px;" class="text-center">Actions</th>
+            <th style="width: 120px;" class="text-center">Actions</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let caterer of caterers()" [routerLink]="['/admin/caterers', caterer.id]" style="cursor: pointer;">
+          <tr *ngFor="let caterer of caterers()" [routerLink]="['/admin/caterers', caterer.id]"
+            style="cursor: pointer;">
             <td class="fw-semibold text-primary">
               {{ caterer.businessName }}
             </td>
@@ -78,12 +83,16 @@
               </div>
             </td>
             <td>
-              <span *ngIf="(caterer.subscriptionRemainingDays || 0) < 0 || caterer.subscriptionStatus === 'EXPIRED' || (caterer.subscriptionRemainingDays || 0) < 3" class="badge bg-danger text-white fw-bold">
-                {{ (caterer.subscriptionRemainingDays || 0) < 0 || caterer.subscriptionStatus === 'EXPIRED' ? 'Expiré' : caterer.subscriptionRemainingDays + ' jours restants' }}
-              </span>
-              <span *ngIf="(caterer.subscriptionRemainingDays || 0) >= 3 && caterer.subscriptionStatus !== 'EXPIRED'" class="text-dark fw-semibold">
-                {{ caterer.subscriptionRemainingDays }} jours restants
-              </span>
+              <span
+                *ngIf="(caterer.subscriptionRemainingDays || 0) < 0 || caterer.subscriptionStatus === 'EXPIRED' || (caterer.subscriptionRemainingDays || 0) < 3"
+                class="badge bg-danger text-white fw-bold">
+                {{ (caterer.subscriptionRemainingDays || 0) < 0 || caterer.subscriptionStatus==='EXPIRED' ? 'Expiré' :
+                  caterer.subscriptionRemainingDays + ' jours restants' }} </span>
+                  <span
+                    *ngIf="(caterer.subscriptionRemainingDays || 0) >= 3 && caterer.subscriptionStatus !== 'EXPIRED'"
+                    class="text-dark fw-semibold">
+                    {{ caterer.subscriptionRemainingDays }} jours restants
+                  </span>
             </td>
             <td class="text-center">
               <span class="badge" [ngClass]="{
@@ -97,31 +106,26 @@
               </span>
             </td>
             <td class="text-center">
-              <div class="dropdown d-inline-block" (click)="$event.stopPropagation()">
-                <button type="button" class="btn btn-sm btn-alt-secondary" [id]="'dropdown-caterer-actions-' + caterer.id" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  <i class="fa fa-ellipsis-v"></i>
+              <div class="d-flex align-items-center justify-content-center gap-2" (click)="$event.stopPropagation()">
+                <!-- Quick Approve button for PENDING or SUSPENDED -->
+                <button type="button" class="btn btn-sm text-success bg-transparent border-0 shadow-none p-1" 
+                        *ngIf="caterer.accountStatus === 'PENDING' || caterer.accountStatus === 'SUSPENDED'"
+                        (click)="approveCaterer(caterer)" title="Approuver">
+                  <i class="fa fa-fw fa-check"></i>
                 </button>
-                <div class="dropdown-menu dropdown-menu-end fs-sm" [attr.aria-labelledby]="'dropdown-caterer-actions-' + caterer.id">
-                  <!-- Quick Approve button for PENDING or SUSPENDED -->
-                  <button type="button" class="dropdown-item text-success fw-semibold" 
-                          *ngIf="caterer.accountStatus === 'PENDING' || caterer.accountStatus === 'SUSPENDED'"
-                          (click)="approveCaterer(caterer)">
-                    <i class="fa fa-fw fa-check me-2"></i> Approuver
-                  </button>
 
-                  <!-- Quick Suspend button for PENDING or APPROVED/ACTIVE -->
-                  <button type="button" class="dropdown-item text-danger fw-semibold" 
-                          *ngIf="caterer.accountStatus === 'PENDING' || caterer.accountStatus === 'APPROVED' || caterer.accountStatus === 'ACTIVE'"
-                          (click)="suspendCaterer(caterer)">
-                    <i class="fa fa-fw fa-ban me-2"></i> Suspendre
-                  </button>
+                <!-- Quick Suspend button for PENDING or APPROVED/ACTIVE -->
+                <button type="button" class="btn btn-sm text-danger bg-transparent border-0 shadow-none p-1" 
+                        *ngIf="caterer.accountStatus === 'PENDING' || caterer.accountStatus === 'APPROVED' || caterer.accountStatus === 'ACTIVE'"
+                        (click)="suspendCaterer(caterer)" title="Suspendre">
+                  <i class="fa fa-fw fa-ban"></i>
+                </button>
 
-                  <!-- Edit Subscription button -->
-                  <button type="button" class="dropdown-item text-primary fw-semibold" 
-                          (click)="openEditModal(caterer)">
-                    <i class="fa fa-fw fa-credit-card me-2"></i> Modifier Abonnement
-                  </button>
-                </div>
+                <!-- Edit Subscription button -->
+                <button type="button" class="btn btn-sm text-secondary bg-transparent border-0 shadow-none p-1" 
+                        (click)="openEditModal(caterer)" title="Modifier Abonnement">
+                  <i class="fa fa-fw fa-credit-card"></i>
+                </button>
               </div>
             </td>
           </tr>
@@ -137,7 +141,8 @@
 </div>
 
 <!-- Modal : Edit Subscription Plan & Status (OneUI Block Modal) -->
-<div class="modal fade show" tabindex="-1" role="dialog" aria-labelledby="modal-block-edit" aria-hidden="true" style="display: block; background: rgba(0,0,0,0.5);" *ngIf="selectedCaterer()">
+<div class="modal fade show" tabindex="-1" role="dialog" aria-labelledby="modal-block-edit" aria-hidden="true"
+  style="display: block; background: rgba(0,0,0,0.5);" *ngIf="selectedCaterer()">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="block block-rounded block-transparent mb-0">
@@ -151,7 +156,7 @@
             </button>
           </div>
         </div>
-        
+
         <div class="block-content fs-sm py-3">
           <div class="mb-3">
             <label class="form-label fw-semibold text-muted">Plan d'abonnement</label>
@@ -161,7 +166,7 @@
               <option value="PREMIUM">PREMIUM</option>
             </select>
           </div>
-          
+
           <div class="mb-3">
             <label class="form-label fw-semibold text-muted">État de l'abonnement</label>
             <select class="form-select border-light shadow-sm bg-body-light" [(ngModel)]="editSubStatus">
@@ -182,7 +187,7 @@
             </div>
           </div>
         </div>
-        
+
         <div class="block-content block-content-full text-end bg-body py-3">
           <button type="button" class="btn btn-sm btn-alt-secondary me-1" (click)="closeEditModal()">
             Fermer
@@ -197,7 +202,8 @@
 </div>
 
 <!-- Modal : Add Caterer (OneUI Block Modal) -->
-<div class="modal fade show" tabindex="-1" role="dialog" aria-labelledby="modal-block-add" aria-hidden="true" style="display: block; background: rgba(0,0,0,0.5);" *ngIf="isAddModalOpen()">
+<div class="modal fade show" tabindex="-1" role="dialog" aria-labelledby="modal-block-add" aria-hidden="true"
+  style="display: block; background: rgba(0,0,0,0.5);" *ngIf="isAddModalOpen()">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="block block-rounded block-transparent mb-0">
@@ -211,23 +217,27 @@
             </button>
           </div>
         </div>
-        
+
         <div class="block-content fs-sm py-3">
           <div class="mb-3">
-            <label class="form-label fw-semibold text-muted">Nom de l'entreprise <span class="text-danger">*</span></label>
-            <input type="text" class="form-control border-light shadow-sm bg-body-light" placeholder="Ex: Délices du Palais" [(ngModel)]="newBusinessName">
+            <label class="form-label fw-semibold text-muted">Nom de l'entreprise <span
+                class="text-danger">*</span></label>
+            <input type="text" class="form-control border-light shadow-sm bg-body-light"
+              placeholder="Ex: Délices du Palais" [(ngModel)]="newBusinessName">
           </div>
-          
+
           <div class="mb-3">
             <label class="form-label fw-semibold text-muted">Adresse Email <span class="text-danger">*</span></label>
-            <input type="email" class="form-control border-light shadow-sm bg-body-light" placeholder="email@exemple.com" [(ngModel)]="newEmail">
+            <input type="email" class="form-control border-light shadow-sm bg-body-light"
+              placeholder="email@exemple.com" [(ngModel)]="newEmail">
           </div>
-          
+
           <div class="mb-3">
             <label class="form-label fw-semibold text-muted">Mot de passe <span class="text-danger">*</span></label>
-            <input type="password" class="form-control border-light shadow-sm bg-body-light" placeholder="••••••••" [(ngModel)]="newPassword">
+            <input type="password" class="form-control border-light shadow-sm bg-body-light" placeholder="••••••••"
+              [(ngModel)]="newPassword">
           </div>
-          
+
           <div class="mb-3">
             <label class="form-label fw-semibold text-muted">Plan d'abonnement</label>
             <select class="form-select border-light shadow-sm bg-body-light" [(ngModel)]="newPlan">
@@ -236,7 +246,7 @@
               <option value="PREMIUM">PREMIUM (Max 15 événements)</option>
             </select>
           </div>
-          
+
           <div class="row">
             <div class="col-6 mb-3">
               <label class="form-label fw-semibold text-muted">Date de début</label>
@@ -248,7 +258,7 @@
             </div>
           </div>
         </div>
-        
+
         <div class="block-content block-content-full text-end bg-body py-3">
           <button type="button" class="btn btn-sm btn-alt-secondary me-1" (click)="closeAddModal()">
             Annuler

@@ -16,6 +16,8 @@ public class SubscriptionCheckoutResource {
 
     private final SecurityContextPort securityContextPort;
     private final CatererRepositoryPort catererRepositoryPort;
+    private final com.example.eventmanager.application.port.in.RecordTransactionUseCase recordTransactionUseCase;
+    private final com.example.eventmanager.application.port.out.BillingSettingRepositoryPort billingSettingRepositoryPort;
 
     @PostMapping("/checkout")
     public ResponseEntity<Map<String, String>> createCheckoutSession(@RequestParam String plan) {
@@ -36,6 +38,25 @@ public class SubscriptionCheckoutResource {
         caterer.updateSubscription(plan, "ACTIVE", java.time.LocalDateTime.now(), java.time.LocalDateTime.now().plusDays(30));
         caterer.activateAccount();
         catererRepositoryPort.save(caterer);
+
+        // Fetch configured pricing settings dynamically
+        com.example.eventmanager.domain.model.BillingSetting settings = billingSettingRepositoryPort.findById(1L)
+                .orElseGet(() -> com.example.eventmanager.domain.model.BillingSetting.builder()
+                        .vatRate(20.0)
+                        .subscriptionPriceStandard(29.90)
+                        .subscriptionPricePremium(59.90)
+                        .build());
+
+        java.math.BigDecimal amount = java.math.BigDecimal.ZERO;
+        if ("STANDARD".equalsIgnoreCase(plan)) {
+            amount = java.math.BigDecimal.valueOf(settings.getSubscriptionPriceStandard());
+        } else if ("PREMIUM".equalsIgnoreCase(plan)) {
+            amount = java.math.BigDecimal.valueOf(settings.getSubscriptionPricePremium());
+        }
+        java.math.BigDecimal vat = java.math.BigDecimal.valueOf(settings.getVatRate());
+
+        // Record audit transaction
+        recordTransactionUseCase.recordTransaction(catererId, plan, amount, vat, "SUCCESS");
 
         return ResponseEntity.ok(Map.of(
             "status", "SUCCESS",

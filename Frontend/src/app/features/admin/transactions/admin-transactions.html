@@ -1,0 +1,133 @@
+<!-- Hero -->
+<div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-2 text-center text-md-start">
+  <div class="flex-grow-1 mb-1 mb-md-0">
+    <h1 class="h3 fw-bold mb-2">
+      Audit Financier & Suivi des Revenus
+    </h1>
+    <h2 class="h6 fw-medium text-muted mb-0">
+      Visualisez l'historique complet des encaissements d'abonnements de la plateforme SaaS EventManager.
+    </h2>
+  </div>
+  <div class="mt-2 mt-md-0 ms-md-3">
+    <button type="button" class="btn btn-alt-primary rounded-pill px-3" (click)="exportCsv()" [disabled]="isExporting()">
+      <i class="fa fa-download me-1" *ngIf="!isExporting()"></i>
+      <i class="fa fa-spinner fa-spin me-1" *ngIf="isExporting()"></i>
+      Exporter le rapport CSV
+    </button>
+  </div>
+</div>
+<!-- END Hero -->
+
+<!-- Error Alert -->
+<div *ngIf="errorMessage()" class="alert alert-danger d-flex align-items-center mt-3 shadow-sm" role="alert">
+  <div class="flex-shrink-0">
+    <i class="fa fa-fw fa-exclamation-triangle"></i>
+  </div>
+  <div class="flex-grow-1 ms-3">
+    <p class="mb-0">{{ errorMessage() }}</p>
+  </div>
+  <button type="button" class="btn-close" (click)="errorMessage.set('')" aria-label="Close"></button>
+</div>
+
+<!-- Search and Table Block -->
+<div class="block block-rounded bg-white shadow-sm border border-light mt-4">
+  <div class="block-header block-header-default border-bottom bg-body-light d-flex justify-content-between align-items-center">
+    <h3 class="block-title fw-bold">Journal des Transactions</h3>
+    <div class="d-flex align-items-center gap-2">
+      <div class="input-group input-group-sm" style="width: 280px;">
+        <input type="text" class="form-control" placeholder="Rechercher par ID or Organisateur..."
+               [(ngModel)]="searchInput" (keyup.enter)="onSearch()">
+        <button class="btn btn-primary" type="button" (click)="onSearch()">
+          <i class="fa fa-search"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="block-content">
+    <!-- Loading State -->
+    <div class="text-center py-5" *ngIf="isLoading()">
+      <i class="fa fa-fw fa-circle-notch fa-spin text-primary fs-2"></i>
+      <p class="mt-2 text-muted fs-sm">Chargement des transactions financières...</p>
+    </div>
+
+    <!-- Empty State -->
+    <div class="text-center py-5" *ngIf="!isLoading() && transactions().length === 0">
+      <div class="mb-3">
+        <i class="fa fa-receipt text-muted fs-1"></i>
+      </div>
+      <h4 class="fw-bold text-dark">Aucune transaction trouvée</h4>
+      <p class="text-muted fs-sm">Aucun historique de paiement ne correspond à vos critères de filtrage actuels.</p>
+    </div>
+
+    <!-- Transactions Table -->
+    <div class="table-responsive" *ngIf="!isLoading() && transactions().length > 0">
+      <table class="table table-bordered table-striped table-vcenter fs-sm">
+        <thead class="table-light">
+          <tr>
+            <th style="width: 140px;">ID Transaction</th>
+            <th>Organisateur</th>
+            <th style="width: 130px;">Forfait</th>
+            <th style="width: 140px;" class="text-end">Montant (HT)</th>
+            <th style="width: 100px;" class="text-center">TVA</th>
+            <th style="width: 160px;">Date & Heure</th>
+            <th style="width: 130px;" class="text-center">Statut</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let t of transactions()" [routerLink]="['/admin/caterers', t.catererId]" style="cursor: pointer;">
+            <td class="font-monospace text-muted fs-xs">
+              {{ t.id.substring(0, 8) }}...
+            </td>
+            <td class="fw-semibold text-primary">
+              {{ t.businessName }}
+            </td>
+            <td>
+              <span class="badge" [ngClass]="getPlanBadgeClass(t.subscriptionPlan)">
+                {{ t.subscriptionPlan }}
+              </span>
+            </td>
+            <td class="text-end fw-semibold text-dark">
+              {{ t.amountPaid | currency:'EUR':'symbol':'1.2-2':'fr' }}
+            </td>
+            <td class="text-center text-muted">
+              {{ t.vatRate }} %
+            </td>
+            <td class="text-dark">
+              {{ t.paymentDate | date:'dd/MM/yyyy HH:mm' }}
+            </td>
+            <td class="text-center">
+              <span class="badge" [ngClass]="getStatusBadgeClass(t.paymentStatus)">
+                {{ getStatusLabel(t.paymentStatus) }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination Controls -->
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 border-top border-light py-3 mt-2" *ngIf="!isLoading() && totalPages() > 1">
+      <div class="fs-sm text-muted">
+        Affichage de <strong>{{ transactions().length }}</strong> transactions sur <strong>{{ totalElements() }}</strong> au total.
+      </div>
+      <nav aria-label="Page navigation">
+        <ul class="pagination pagination-sm mb-0">
+          <li class="page-item" [class.disabled]="currentPage() === 0">
+            <button class="page-link" (click)="changePage(currentPage() - 1)" aria-label="Previous">
+              <span aria-hidden="true"><i class="fa fa-angle-left"></i></span>
+            </button>
+          </li>
+          <li class="page-item" *ngFor="let p of [].constructor(totalPages()); let i = index" [class.active]="i === currentPage()">
+            <button class="page-link" (click)="changePage(i)">{{ i + 1 }}</button>
+          </li>
+          <li class="page-item" [class.disabled]="currentPage() === totalPages() - 1">
+            <button class="page-link" (click)="changePage(currentPage() + 1)" aria-label="Next">
+              <span aria-hidden="true"><i class="fa fa-angle-right"></i></span>
+            </button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</div>

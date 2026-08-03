@@ -23,6 +23,7 @@ import { Pricing } from './features/pricing/pricing';
 import { SubscriptionComponent } from './features/subscription/subscription';
 import { AdminTemplates } from './features/admin/templates/admin-templates';
 import { OrganiserInvitationSetup } from './features/events/components/organiser-invitation-setup/organiser-invitation-setup';
+import { AdminTransactions } from './features/admin/transactions/admin-transactions';
 import { GuestRsvp } from './features/events/components/guest-rsvp/guest-rsvp';
 import { EventDetails } from './features/events/components/event-details/event-details';
 import { EventBilling } from './features/events/components/event-billing/event-billing';
@@ -135,6 +136,11 @@ export const routes: Routes = [
       {
         path: 'admin/billing',
         component: AdminBillingSettings,
+        canActivate: [adminGuard]
+      },
+      {
+        path: 'admin/transactions',
+        component: AdminTransactions,
         canActivate: [adminGuard]
       },
       {
