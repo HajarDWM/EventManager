@@ -45,6 +45,7 @@ export class MenuList implements OnInit {
 
   protected readonly selectedDiets = signal<Record<string, boolean>>({});
   protected readonly customDietNotes = signal<string>('');
+  protected readonly mixSectionChoice = signal<'BUFFET' | 'ASSIS'>('BUFFET');
   
   protected readonly isAutocompleteOpen = signal<boolean>(false);
 
@@ -209,6 +210,7 @@ export class MenuList implements OnInit {
 
   protected selectMasterMode(mode: 'BUFFET' | 'PLATS_FIXES' | 'MIX'): void {
     this.masterCateringMode.set(mode);
+    this.selectedCategory.set('ALL');
     let defaultType = '';
     if (mode === 'BUFFET') {
       defaultType = 'BUFFET_STANDARD,BUFFET_VEG';
@@ -281,11 +283,19 @@ export class MenuList implements OnInit {
     });
   }
 
-  protected openAddModal(): void {
+  protected openAddModal(section?: 'BUFFET' | 'ASSIS'): void {
     this.isEditing.set(false);
     this.editingItemId.set(null);
     this.name.set('');
-    this.category.set('STARTER');
+
+    if (this.masterCateringMode() === 'MIX') {
+      const sec = section || 'BUFFET';
+      this.mixSectionChoice.set(sec);
+      this.category.set(sec === 'BUFFET' ? 'BUFFET_STARTER' : 'MAIN');
+    } else {
+      this.category.set(this.masterCateringMode() === 'BUFFET' ? 'BUFFET_STARTER' : 'STARTER');
+    }
+
     this.pricePerPerson.set(0);
     this.dietaryTag.set('');
     this.selectedDiets.set({});
@@ -298,7 +308,15 @@ export class MenuList implements OnInit {
     this.isEditing.set(true);
     this.editingItemId.set(item.id || null);
     this.name.set(item.name || '');
-    this.category.set(item.category || 'STARTER');
+
+    const cat = item.category || (this.masterCateringMode() === 'BUFFET' ? 'BUFFET_STARTER' : 'STARTER');
+    this.category.set(cat);
+
+    if (this.masterCateringMode() === 'MIX') {
+      const isBuffet = ['BUFFET_STARTER', 'STARTER', 'OTHER'].includes(cat);
+      this.mixSectionChoice.set(isBuffet ? 'BUFFET' : 'ASSIS');
+    }
+
     this.pricePerPerson.set(item.pricePerPerson || 0);
     this.dietaryTag.set(item.dietaryTag || '');
 
@@ -467,6 +485,11 @@ export class MenuList implements OnInit {
     }
   }
 
+  protected onMixSectionChange(sec: 'BUFFET' | 'ASSIS'): void {
+    this.mixSectionChoice.set(sec);
+    this.category.set(sec === 'BUFFET' ? 'BUFFET_STARTER' : 'MAIN');
+  }
+
   protected onDeleteMenuItem(item: MenuItem): void {
     if (confirm(`Voulez-vous vraiment supprimer "${item.name}" du menu ?`)) {
       if (!item.id) return;
@@ -484,14 +507,7 @@ export class MenuList implements OnInit {
   }
 
   protected getCategoryBadgeClass(cat: string): string {
-    switch (cat) {
-      case 'STARTER': return 'bg-info-light text-info';
-      case 'MAIN': return 'bg-primary-light text-primary';
-      case 'DESSERT': return 'bg-warning-light text-warning';
-      case 'BEVERAGE': return 'bg-success-light text-success';
-      case 'OTHER': return 'bg-secondary-light text-secondary';
-      default: return 'bg-body-dark text-dark';
-    }
+    return 'bg-body-dark text-dark';
   }
 
   protected getCategoryLabel(cat: string): string {
@@ -501,6 +517,9 @@ export class MenuList implements OnInit {
       case 'DESSERT': return 'Dessert';
       case 'BEVERAGE': return 'Boisson';
       case 'OTHER': return 'Autre';
+      case 'BUFFET_STARTER': return 'Salad Bar / Entrée';
+      case 'BUFFET_MAIN': return 'Plats Chauds';
+      case 'BUFFET_DESSERT': return 'Station Desserts';
       default: return cat;
     }
   }

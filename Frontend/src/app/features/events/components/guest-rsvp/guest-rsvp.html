@@ -356,169 +356,172 @@
         <!-- RSVP Form Section -->
         <form (ngSubmit)="submitResponse()" #rsvpForm="ngForm">
 
-          <!-- Presence Toggle Buttons -->
-          <div class="mb-5">
-            <label
-              class="form-label d-block text-center fw-bold text-gold text-uppercase fs-xs tracking-widest mb-3">Votre
-              réponse</label>
-            <div class="attendance-toggle-container">
-              <div class="attendance-col">
-                <button type="button" class="btn rsvp-action-btn btn-presence-yes w-100"
-                  [class.active]="status() === 'CONFIRMED'" (click)="selectStatus('CONFIRMED')">
-                  <i class="fa fa-check me-2"></i>
-                  Je serai présent
-                </button>
-              </div>
-              <div class="attendance-col">
-                <button type="button" class="btn rsvp-action-btn btn-presence-no w-100"
-                  [class.active]="status() === 'DECLINED'" (click)="selectStatus('DECLINED')">
-                  <i class="fa fa-times me-2"></i>
-                  Je ne pourrai pas venir
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Extra details ONLY shown if CONFIRMED -->
-          <div *ngIf="attendanceStatus === true" class="extra-rsvp-sections animate__animated animate__fadeIn">
-
-            <!-- Condition 1: Plats Fixes (Render dropdowns for Entrée, Plat, Boisson dynamically) -->
-            <div *ngIf="hasFormat('PLATS_FIXES')"
-              class="plats-fixes-container animate__animated animate__fadeIn mb-4">
-
-              <!-- Entrée Selection -->
-              <div class="mb-4" *ngIf="starters().length > 0">
-                <label class="form-label fw-bold text-gold text-uppercase fs-xs tracking-widest mb-2">Choix de
-                  l'Entrée</label>
-                <select class="form-select luxury-form-control" [(ngModel)]="starterChoice" name="starterChoice">
-                  <option value="">-- Sélectionnez votre entrée --</option>
-                  <option *ngFor="let item of starters()" [value]="item.name">
-                    {{ item.name }} <span *ngIf="item.dietaryTag">({{ item.dietaryTag }})</span>
-                  </option>
-                </select>
-              </div>
-
-              <!-- Plat Principal Selection -->
-              <div class="mb-4" *ngIf="mainDishes().length > 0">
-                <label class="form-label fw-bold text-gold text-uppercase fs-xs tracking-widest mb-2">Choix du Plat
-                  Principal</label>
-                <select class="form-select luxury-form-control" [(ngModel)]="mealChoice" name="mealChoice">
-                  <option value="">-- Sélectionnez votre plat --</option>
-                  <option *ngFor="let item of mainDishes()" [value]="item.name">
-                    {{ item.name }} <span *ngIf="item.dietaryTag">({{ item.dietaryTag }})</span>
-                  </option>
-                </select>
-              </div>
-
-              <!-- Boisson Selection -->
-              <div class="mb-4" *ngIf="beverages().length > 0">
-                <label class="form-label fw-bold text-gold text-uppercase fs-xs tracking-widest mb-2">Choix de la
-                  Boisson</label>
-                <select class="form-select luxury-form-control" [(ngModel)]="beverageChoice" name="beverageChoice">
-                  <option value="">-- Sélectionnez votre boisson --</option>
-                  <option *ngFor="let item of beverages()" [value]="item.name">
-                    {{ item.name }} <span *ngIf="item.dietaryTag">({{ item.dietaryTag }})</span>
-                  </option>
-                </select>
-              </div>
-
-            </div>
-
-            <!-- Dietary Restrictions Grid -->
+          <!-- STEP 1: Attendance Toggle (Je serai présent / Je ne pourrai pas venir) -->
+          <div *ngIf="currentRsvpStep() === 1" class="animate__animated animate__fadeIn">
             <div class="mb-4">
-              <label class="form-label d-block fw-bold text-gold text-uppercase fs-xs tracking-widest mb-2">Régimes
-                Particuliers & Allergies</label>
-              <div class="dietary-pills-container">
-
-                <label class="dietary-pill" [class.active-pill]="hasVegetarien" for="dietVeg">
-                  <input type="checkbox" id="dietVeg" [(ngModel)]="hasVegetarien" name="hasVegetarien"
-                    class="dietary-checkbox">
-                  <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasVegetarien"></i>
-                  Végétarien
-                </label>
-
-                <label class="dietary-pill" [class.active-pill]="hasVegan" for="dietVegan">
-                  <input type="checkbox" id="dietVegan" [(ngModel)]="hasVegan" name="hasVegan" class="dietary-checkbox">
-                  <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasVegan"></i>
-                  Vegan
-                </label>
-
-                <label class="dietary-pill" [class.active-pill]="hasGlutenFree" for="dietGluten">
-                  <input type="checkbox" id="dietGluten" [(ngModel)]="hasGlutenFree" name="hasGlutenFree"
-                    class="dietary-checkbox">
-                  <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasGlutenFree"></i>
-                  Sans gluten
-                </label>
-
-                <label class="dietary-pill" [class.active-pill]="hasLactoseFree" for="dietLactose">
-                  <input type="checkbox" id="dietLactose" [(ngModel)]="hasLactoseFree" name="hasLactoseFree"
-                    class="dietary-checkbox">
-                  <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasLactoseFree"></i>
-                  Sans lactose
-                </label>
-
-                <label class="dietary-pill" [class.active-pill]="hasHalal" for="dietHalal">
-                  <input type="checkbox" id="dietHalal" [(ngModel)]="hasHalal" name="hasHalal" class="dietary-checkbox">
-                  <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasHalal"></i>
-                  Halal
-                </label>
-
-                <label class="dietary-pill" [class.active-pill]="hasFruitsDeMerFree" for="dietFruitsDeMer">
-                  <input type="checkbox" id="dietFruitsDeMer" [(ngModel)]="hasFruitsDeMerFree" name="hasFruitsDeMerFree"
-                    class="dietary-checkbox">
-                  <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasFruitsDeMerFree"></i>
-                  Sans Fruits de mer
-                </label>
-
-                <label class="dietary-pill" [class.active-pill]="hasSucreFree" for="dietSucre">
-                  <input type="checkbox" id="dietSucre" [(ngModel)]="hasSucreFree" name="hasSucreFree"
-                    class="dietary-checkbox">
-                  <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasSucreFree"></i>
-                  Sans Sucre
-                </label>
-
-                <!-- Long Item placed neatly at the end with full-width-pill class -->
-                <label class="dietary-pill full-width-pill" [class.active-pill]="hasArachidesFree" for="dietArachides">
-                  <input type="checkbox" id="dietArachides" [(ngModel)]="hasArachidesFree" name="hasArachidesFree"
-                    class="dietary-checkbox">
-                  <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasArachidesFree"></i>
-                  Sans Arachides (Alerte Médicale)
-                </label>
-
+              <label class="form-label d-block text-center fw-bold text-gold text-uppercase fs-xs tracking-widest mb-3">
+                Votre réponse
+              </label>
+              <div class="attendance-toggle-container">
+                <div class="attendance-col">
+                  <button type="button" class="btn rsvp-action-btn btn-presence-yes w-100"
+                    [class.active]="status() === 'CONFIRMED'" (click)="selectStatus('CONFIRMED')">
+                    <i class="fa fa-check me-2"></i>
+                    Je serai présent
+                  </button>
+                </div>
+                <div class="attendance-col">
+                  <button type="button" class="btn rsvp-action-btn btn-presence-no w-100"
+                    [class.active]="status() === 'DECLINED'" (click)="selectStatus('DECLINED')">
+                    <i class="fa fa-times me-2"></i>
+                    Je ne pourrai pas venir
+                  </button>
+                </div>
               </div>
             </div>
 
-            <!-- Custom Allergies / Notes -->
-            <div class="mb-5">
-              <label class="form-label fw-bold text-gold text-uppercase fs-xs tracking-widest mb-2">Autres allergies ou
-                restrictions</label>
-              <textarea class="form-control luxury-form-control py-2" rows="3"
-                placeholder="Ex: sans arachide, allergie aux fraises, etc..." [(ngModel)]="otherAllergies"
-                name="otherAllergies"></textarea>
+            <!-- Confirm Absence Button (Shown directly in Step 1 if declined) -->
+            <div class="text-center mt-4" *ngIf="attendanceStatus === false">
+              <button type="submit" class="btn btn-presence-no w-100 py-3 fs-sm text-uppercase fw-semibold" [disabled]="isSubmitting()">
+                <span *ngIf="!isSubmitting()">Confirmer mon absence</span>
+                <span *ngIf="isSubmitting()"><i class="fa fa-spinner fa-spin me-2"></i>Enregistrement...</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- STEP 2: Menu Selection (Plated Plats) -->
+          <div *ngIf="attendanceStatus === true && currentRsvpStep() === 2 && hasFormat('PLATS_FIXES')" class="plats-fixes-container animate__animated animate__fadeIn mb-4">
+            <h4 class="form-label d-block text-center fw-bold text-gold text-uppercase fs-xs tracking-widest mb-4">
+              Étape 1 : Choix de votre Menu
+            </h4>
+
+            <!-- Entrée Selection (Only shown if starters are plated, i.e., not a buffet starters hybrid) -->
+            <div class="mb-4" *ngIf="starters().length > 0 && !hasFormat('BUFFET_ENTREES')">
+              <label class="form-label fw-bold text-gold text-uppercase fs-xs tracking-widest mb-2">Choix de l'Entrée</label>
+              <select class="form-select luxury-form-control" [(ngModel)]="starterChoice" name="starterChoice">
+                <option value="">-- Sélectionnez votre entrée --</option>
+                <option *ngFor="let item of starters()" [value]="item.name">
+                  {{ item.name }} <span *ngIf="item.dietaryTag">({{ item.dietaryTag }})</span>
+                </option>
+              </select>
             </div>
 
+            <!-- Plat Principal Selection (Explicitly required main course option) -->
+            <div class="mb-4" *ngIf="mainDishes().length > 0">
+              <label class="form-label fw-bold text-gold text-uppercase fs-xs tracking-widest mb-2">Choix du Plat Principal <span class="text-danger">*</span></label>
+              <select class="form-select luxury-form-control" [(ngModel)]="mealChoice" name="mealChoice" required>
+                <option value="">-- Sélectionnez votre plat principal --</option>
+                <option *ngFor="let item of mainDishes()" [value]="item.name">
+                  {{ item.name }} <span *ngIf="item.dietaryTag">({{ item.dietaryTag }})</span>
+                </option>
+              </select>
+            </div>
+
+            <!-- Boisson Selection -->
+            <div class="mb-4" *ngIf="beverages().length > 0">
+              <label class="form-label fw-bold text-gold text-uppercase fs-xs tracking-widest mb-2">Choix de la Boisson</label>
+              <select class="form-select luxury-form-control" [(ngModel)]="beverageChoice" name="beverageChoice">
+                <option value="">-- Sélectionnez votre boisson --</option>
+                <option *ngFor="let item of beverages()" [value]="item.name">
+                  {{ item.name }} <span *ngIf="item.dietaryTag">({{ item.dietaryTag }})</span>
+                </option>
+              </select>
+            </div>
+
+            <!-- Step Navigation Buttons -->
+            <div class="d-flex gap-3 justify-content-between mt-4">
+              <button type="button" class="btn btn-alt-secondary w-50 py-2.5 fs-xs fw-semibold" (click)="prevStep()">
+                <i class="fa fa-arrow-left me-1"></i> Précédent
+              </button>
+              <button type="button" class="btn btn-luxury-submit w-50 py-2.5 fs-xs fw-semibold" (click)="nextStep()" [disabled]="!mealChoice">
+                Suivant <i class="fa fa-arrow-right ms-1"></i>
+              </button>
+            </div>
           </div>
 
-          <!-- Error Alert inside form -->
-          <div *ngIf="errorMessage()" class="alert alert-danger py-2 px-3 fs-sm mb-4 animate__animated animate__fadeIn">
-            {{ errorMessage() }}
-          </div>
+          <!-- STEP 3: Dietary Preferences & Allergies -->
+          <div *ngIf="attendanceStatus === true && currentRsvpStep() === 3" class="extra-rsvp-sections animate__animated animate__fadeIn">
+            <h4 class="form-label d-block text-center fw-bold text-gold text-uppercase fs-xs tracking-widest mb-4">
+              {{ hasFormat('PLATS_FIXES') ? 'Étape 2 : Régimes & Allergies' : 'Régimes & Allergies' }}
+            </h4>
 
-          <!-- Submit Buttons based on conditional status -->
-          <div class="text-center mt-4 animate__animated animate__fadeIn" *ngIf="attendanceStatus !== null">
-            <!-- Confirm Presence Button -->
-            <button type="submit" class="btn btn-luxury-submit w-100 py-3 fs-sm" *ngIf="attendanceStatus === true"
-              [disabled]="isSubmitting()">
-              <span *ngIf="!isSubmitting()">Confirmer ma présence</span>
-              <span *ngIf="isSubmitting()"><i class="fa fa-spinner fa-spin me-2"></i>Enregistrement...</span>
-            </button>
+            <!-- If Buffet mode (no plated courses configured) -->
+            <div *ngIf="!hasFormat('PLATS_FIXES')" class="mb-4 animate__animated animate__fadeIn text-center">
+              <label class="form-label d-block fw-bold text-gold text-uppercase fs-xs tracking-widest mb-3">
+                Avez-vous des restrictions alimentaires ou des allergies sévères ? <span class="text-danger">*</span>
+              </label>
+              <div class="d-flex gap-4 justify-content-center mb-3">
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" id="has_diets_yes" name="hasDietsChoice" 
+                         [value]="true" [(ngModel)]="hasDietsChoice" required>
+                  <label class="form-check-label fs-xs fw-semibold text-dark ms-1" for="has_diets_yes" style="cursor: pointer;">Oui</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" id="has_diets_no" name="hasDietsChoice" 
+                         [value]="false" [(ngModel)]="hasDietsChoice" required (change)="resetDietSelections()">
+                  <label class="form-check-label fs-xs fw-semibold text-dark ms-1" for="has_diets_no" style="cursor: pointer;">Non, aucune</label>
+                </div>
+              </div>
+            </div>
 
-            <!-- Confirm Absence Button -->
-            <button type="submit" class="btn btn-presence-no w-100 py-3 fs-sm text-uppercase fw-semibold"
-              *ngIf="attendanceStatus === false" [disabled]="isSubmitting()">
-              <span *ngIf="!isSubmitting()">Confirmer mon absence</span>
-              <span *ngIf="isSubmitting()"><i class="fa fa-spinner fa-spin me-2"></i>Enregistrement...</span>
-            </button>
+            <!-- Dietary Restrictions Grid & Custom Allergies -->
+            <div *ngIf="hasFormat('PLATS_FIXES') || hasDietsChoice === true" class="animate__animated animate__fadeIn">
+              <div class="mb-4">
+                <label class="form-label d-block fw-bold text-gold text-uppercase fs-xs tracking-widest mb-2">Régimes Particuliers & Allergies</label>
+                <div class="dietary-pills-container">
+                  <label class="dietary-pill" [class.active-pill]="hasVegetarien" for="dietVeg">
+                    <input type="checkbox" id="dietVeg" [(ngModel)]="hasVegetarien" name="hasVegetarien" class="dietary-checkbox">
+                    <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasVegetarien"></i> Végétarien
+                  </label>
+                  <label class="dietary-pill" [class.active-pill]="hasVegan" for="dietVegan">
+                    <input type="checkbox" id="dietVegan" [(ngModel)]="hasVegan" name="hasVegan" class="dietary-checkbox">
+                    <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasVegan"></i> Vegan
+                  </label>
+                  <label class="dietary-pill" [class.active-pill]="hasGlutenFree" for="dietGluten">
+                    <input type="checkbox" id="dietGluten" [(ngModel)]="hasGlutenFree" name="hasGlutenFree" class="dietary-checkbox">
+                    <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasGlutenFree"></i> Sans gluten
+                  </label>
+                  <label class="dietary-pill" [class.active-pill]="hasLactoseFree" for="dietLactose">
+                    <input type="checkbox" id="dietLactose" [(ngModel)]="hasLactoseFree" name="hasLactoseFree" class="dietary-checkbox">
+                    <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasLactoseFree"></i> Sans lactose
+                  </label>
+                  <label class="dietary-pill" [class.active-pill]="hasHalal" for="dietHalal">
+                    <input type="checkbox" id="dietHalal" [(ngModel)]="hasHalal" name="hasHalal" class="dietary-checkbox">
+                    <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasHalal"></i> Halal
+                  </label>
+                  <label class="dietary-pill" [class.active-pill]="hasFruitsDeMerFree" for="dietFruitsDeMer">
+                    <input type="checkbox" id="dietFruitsDeMer" [(ngModel)]="hasFruitsDeMerFree" name="hasFruitsDeMerFree" class="dietary-checkbox">
+                    <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasFruitsDeMerFree"></i> Sans Fruits de mer
+                  </label>
+                  <label class="dietary-pill" [class.active-pill]="hasSucreFree" for="dietSucre">
+                    <input type="checkbox" id="dietSucre" [(ngModel)]="hasSucreFree" name="hasSucreFree" class="dietary-checkbox">
+                    <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasSucreFree"></i> Sans Sucre
+                  </label>
+                  <label class="dietary-pill full-width-pill" [class.active-pill]="hasArachidesFree" for="dietArachides">
+                    <input type="checkbox" id="dietArachides" [(ngModel)]="hasArachidesFree" name="hasArachidesFree" class="dietary-checkbox">
+                    <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasArachidesFree"></i> Sans Arachides (Alerte Médicale)
+                  </label>
+                </div>
+              </div>
+
+              <!-- Custom Allergies -->
+              <div class="mb-5">
+                <label class="form-label fw-bold text-gold text-uppercase fs-xs tracking-widest mb-2">Autres allergies ou restrictions</label>
+                <textarea class="form-control luxury-form-control py-2" rows="3" placeholder="Ex: sans arachide, allergie aux fraises, etc..." [(ngModel)]="otherAllergies" name="otherAllergies"></textarea>
+              </div>
+            </div>
+
+            <!-- Navigation and Submit Buttons for Step 3 -->
+            <div class="d-flex gap-3 justify-content-between mt-4">
+              <button type="button" class="btn btn-alt-secondary w-50 py-3 fs-sm" (click)="prevStep()">
+                <i class="fa fa-arrow-left me-1"></i> Précédent
+              </button>
+              <button type="submit" class="btn btn-luxury-submit w-50 py-3 fs-sm" 
+                [disabled]="isSubmitting() || (!hasFormat('PLATS_FIXES') && hasDietsChoice === null)">
+                <span *ngIf="!isSubmitting()">Confirmer ma présence</span>
+                <span *ngIf="isSubmitting()"><i class="fa fa-spinner fa-spin me-2"></i>Envoi...</span>
+              </button>
+            </div>
           </div>
 
         </form>

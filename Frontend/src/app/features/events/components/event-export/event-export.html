@@ -150,6 +150,152 @@
         </ul>
       </div>
 
+      <!-- Synthesis box for kitchen allergies and counts -->
+      <div class="p-3 bg-light rounded border mb-4">
+        <h4 class="h6 fw-bold text-danger text-uppercase border-bottom pb-1 mb-3">
+          <i class="fa fa-exclamation-triangle me-1"></i> Synthèse Cuisine (Allergies & Régimes Spéciaux)
+        </h4>
+        <div class="row g-2 mb-3">
+          <div class="col-4">
+            <div class="border rounded p-2 bg-white text-center">
+              <span class="fs-xxs fw-semibold text-muted text-uppercase d-block mb-1">Convives Confirmés</span>
+              <span class="fs-sm fw-extrabold text-dark">{{ confirmedGuestCount() }} invités</span>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="border rounded p-2 bg-white text-center">
+              <span class="fs-xxs fw-semibold text-muted text-uppercase d-block mb-1">Végétariens</span>
+              <span class="fs-sm fw-extrabold text-success">{{ vegetarianCount() }}</span>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="border rounded p-2 bg-white text-center">
+              <span class="fs-xxs fw-semibold text-muted text-uppercase d-block mb-1">Vegans / Végétaliens</span>
+              <span class="fs-sm fw-extrabold text-success">{{ veganCount() }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="otherAllergiesList().length > 0">
+          <span class="fs-xxs fw-bold text-muted text-uppercase d-block mb-2">Liste des Allergies Déclarées :</span>
+          <div class="d-flex flex-wrap gap-1">
+            <span class="badge bg-danger-light text-danger fs-xxs py-1.5 px-2 border border-danger" *ngFor="let allergy of otherAllergiesList()">
+              {{ allergy }}
+            </span>
+          </div>
+        </div>
+        <div *ngIf="otherAllergiesList().length === 0" class="text-muted fs-xs">
+          <i class="fa fa-info-circle me-1"></i> Aucune allergie spécifique ou sévère déclarée.
+        </div>
+      </div>
+
+      <!-- Precise Chef Production Report (Quantities & Tables Mappings) -->
+      <div class="mb-4 shadow-sm border rounded p-3 bg-white" *ngIf="dishQuantities().length > 0">
+        
+        <!-- Dual Kitchen Report Header (Standard vs Hybrid Mode) -->
+        <ng-container *ngIf="isHybridMode(); else standardChefReport">
+          
+          <!-- Volet A: Buffet Libre (Cocktail / Entrées) -->
+          <div class="mb-4 p-3 bg-light rounded border border-info-light">
+            <h4 class="h6 fw-bold text-info text-uppercase border-bottom pb-2 mb-3">
+              <i class="fa fa-utensils me-2 text-info"></i> Volet A : Buffet Libre (Cocktails & Entrées)
+            </h4>
+            <div class="mb-3 fs-xs text-muted">
+              <span class="me-3"><i class="fa fa-users me-1 text-primary"></i> Convives attendus au Buffet : <strong>{{ confirmedGuestCount() }}</strong></span>
+              <span><i class="fa fa-info-circle me-1 text-warning"></i> Libre service, réapprovisionnement à prévoir.</span>
+            </div>
+            
+            <table class="table table-bordered table-sm fs-xs mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th>Nom de la Station / Entrée</th>
+                  <th style="width: 250px;">Régime / Spécificité</th>
+                </tr>
+              </thead>
+              <tbody>
+                <ng-container *ngFor="let item of menuItems()">
+                  <tr *ngIf="item.category === 'STARTER' || item.category === 'BUFFET_STARTER' || item.category === 'OTHER'">
+                    <td class="fw-semibold">{{ item.name }}</td>
+                    <td>
+                      <span class="badge bg-info-light text-info fs-xxs" *ngIf="item.dietaryTag">{{ item.dietaryTag }}</span>
+                      <span class="text-muted fs-xxs" *ngIf="!item.dietaryTag">Standard</span>
+                    </td>
+                  </tr>
+                </ng-container>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Volet B: Service à Table (Plats assis & Desserts) -->
+          <div class="p-3 bg-light rounded border border-primary-light">
+            <h4 class="h6 fw-bold text-primary text-uppercase border-bottom pb-2 mb-3">
+              <i class="fa fa-concierge-bell me-2 text-primary"></i> Volet B : Service à Table (Plats assis & Desserts)
+            </h4>
+            <div class="mb-3 fs-xs text-muted">
+              <span><i class="fa fa-clipboard-check me-1 text-success"></i> Portions individuelles nominatives par table.</span>
+            </div>
+
+            <table class="table table-bordered table-striped table-sm fs-xs align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th>Plat / Boisson</th>
+                  <th class="text-center" style="width: 130px;">Quantité (Portions)</th>
+                  <th>Détail des Convives & Tables</th>
+                </tr>
+              </thead>
+              <tbody>
+                <ng-container *ngFor="let item of dishQuantities()">
+                  <tr *ngIf="item.name">
+                    <td class="fw-semibold text-dark fs-xs">{{ item.name }}</td>
+                    <td class="text-center fw-extrabold fs-sm text-primary">{{ item.qty }}</td>
+                    <td>
+                      <div class="d-flex flex-wrap gap-1">
+                        <span class="badge bg-light text-dark border fs-xxs py-1 px-2" *ngFor="let guest of item.guests">
+                          {{ guest.guestName }} <span class="badge bg-primary-light text-primary ms-1 fs-xxxxs py-0.5 px-1">Table {{ guest.tableNumber }}</span>
+                        </span>
+                      </div>
+                    </td>
+                  </tr>
+                </ng-container>
+              </tbody>
+            </table>
+          </div>
+
+        </ng-container>
+
+        <!-- Fallback Standard Report -->
+        <ng-template #standardChefReport>
+          <h4 class="h6 fw-bold text-dark text-uppercase border-bottom pb-1 mb-3">
+            <i class="fa fa-clipboard-list text-primary me-2"></i> Fiche de Production Chef : Quantités de Plats Requises
+          </h4>
+          <div class="table-responsive">
+            <table class="table table-bordered table-striped table-sm fs-xs align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th>Plat / Boisson</th>
+                  <th class="text-center" style="width: 130px;">Quantité (Portions)</th>
+                  <th>Détail des Convives & Tables</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of dishQuantities()">
+                  <td class="fw-semibold text-dark fs-xs">{{ item.name }}</td>
+                  <td class="text-center fw-extrabold fs-sm text-primary">{{ item.qty }}</td>
+                  <td>
+                    <div class="d-flex flex-wrap gap-1">
+                      <span class="badge bg-light text-dark border fs-xxs py-1 px-2" *ngFor="let guest of item.guests">
+                        {{ guest.guestName }} <span class="badge bg-primary-light text-primary ms-1 fs-xxxxs py-0.5 px-1">Table {{ guest.tableNumber }}</span>
+                      </span>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </ng-template>
+
+      </div>
+
       <!-- Financial Summary Box -->
       <div class="p-3 bg-light rounded border mt-4">
         <div class="row text-center fs-sm">

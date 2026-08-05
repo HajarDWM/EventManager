@@ -78,6 +78,19 @@ export class GuestRsvp implements OnInit {
   public hasSucreFree = false;
   
   public otherAllergies = '';
+  public hasDietsChoice: boolean | null = null;
+
+  public resetDietSelections(): void {
+    this.hasVegetarien = false;
+    this.hasVegan = false;
+    this.hasGlutenFree = false;
+    this.hasLactoseFree = false;
+    this.hasArachidesFree = false;
+    this.hasHalal = false;
+    this.hasFruitsDeMerFree = false;
+    this.hasSucreFree = false;
+    this.otherAllergies = '';
+  }
 
   public get eventDayName(): string {
     const dateStr = this.guest()?.invitationDate || this.guest()?.eventDate;
@@ -217,14 +230,45 @@ export class GuestRsvp implements OnInit {
     });
   }
 
+  protected readonly currentRsvpStep = signal<number>(1);
+
   protected selectStatus(newStatus: string): void {
     this.status.set(newStatus);
     if (newStatus === 'CONFIRMED') {
       this.attendanceStatus = true;
+      if (this.hasFormat('PLATS_FIXES')) {
+        this.currentRsvpStep.set(2);
+      } else {
+        this.currentRsvpStep.set(3);
+      }
     } else if (newStatus === 'DECLINED') {
       this.attendanceStatus = false;
+      this.currentRsvpStep.set(1);
     } else {
       this.attendanceStatus = null;
+      this.currentRsvpStep.set(1);
+    }
+  }
+
+  protected nextStep(): void {
+    if (this.currentRsvpStep() === 2) {
+      this.currentRsvpStep.set(3);
+    }
+  }
+
+  protected prevStep(): void {
+    if (this.currentRsvpStep() === 3) {
+      if (this.hasFormat('PLATS_FIXES')) {
+        this.currentRsvpStep.set(2);
+      } else {
+        this.currentRsvpStep.set(1);
+        this.attendanceStatus = null;
+        this.status.set('PENDING');
+      }
+    } else if (this.currentRsvpStep() === 2) {
+      this.currentRsvpStep.set(1);
+      this.attendanceStatus = null;
+      this.status.set('PENDING');
     }
   }
 
@@ -253,17 +297,19 @@ export class GuestRsvp implements OnInit {
 
     // Add dietary options only if CONFIRMED
     if (this.attendanceStatus === true) {
-      if (this.hasVegetarien) activeDiets.push('Végétarien');
-      if (this.hasVegan) activeDiets.push('Vegan');
-      if (this.hasGlutenFree) activeDiets.push('Sans gluten');
-      if (this.hasLactoseFree) activeDiets.push('Sans lactose');
-      if (this.hasArachidesFree) activeDiets.push('Sans arachides');
-      if (this.hasHalal) activeDiets.push('Halal');
-      if (this.hasFruitsDeMerFree) activeDiets.push('Sans fruits de mer');
-      if (this.hasSucreFree) activeDiets.push('Sans sucre');
-      
-      if (this.otherAllergies.trim()) {
-        activeDiets.push(this.otherAllergies.trim());
+      if (this.hasFormat('PLATS_FIXES') || this.hasDietsChoice === true) {
+        if (this.hasVegetarien) activeDiets.push('Végétarien');
+        if (this.hasVegan) activeDiets.push('Vegan');
+        if (this.hasGlutenFree) activeDiets.push('Sans gluten');
+        if (this.hasLactoseFree) activeDiets.push('Sans lactose');
+        if (this.hasArachidesFree) activeDiets.push('Sans arachides');
+        if (this.hasHalal) activeDiets.push('Halal');
+        if (this.hasFruitsDeMerFree) activeDiets.push('Sans fruits de mer');
+        if (this.hasSucreFree) activeDiets.push('Sans sucre');
+        
+        if (this.otherAllergies.trim()) {
+          activeDiets.push(this.otherAllergies.trim());
+        }
       }
     }
 

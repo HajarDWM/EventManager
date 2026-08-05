@@ -58,6 +58,80 @@ export class EventExport implements OnInit {
   protected readonly completedTasks = computed(() => this.tasks().filter(t => t.status === 'COMPLETED'));
   protected readonly pendingTasks = computed(() => this.tasks().filter(t => t.status !== 'COMPLETED'));
 
+  // Kitchen Aggregations
+  protected readonly confirmedGuestCount = computed(() => {
+    return this.guests().filter(g => g.status === 'CONFIRMED').length;
+  });
+
+  protected readonly vegetarianCount = computed(() => {
+    return this.guests().filter(g => {
+      const diets = (g.dietaryRequirements || '').toLowerCase();
+      return g.status === 'CONFIRMED' && (diets.includes('végétarien') || diets.includes('vegetarien'));
+    }).length;
+  });
+
+  protected readonly veganCount = computed(() => {
+    return this.guests().filter(g => {
+      const diets = (g.dietaryRequirements || '').toLowerCase();
+      return g.status === 'CONFIRMED' && (diets.includes('vegan') || diets.includes('végétalien') || diets.includes('végétalienne'));
+    }).length;
+  });
+
+  protected readonly otherAllergiesList = computed(() => {
+    const list: string[] = [];
+    this.guests().forEach(g => {
+      if (g.status === 'CONFIRMED' && g.dietaryRequirements) {
+        const parts = g.dietaryRequirements.split(',').map(p => p.trim()).filter(Boolean);
+        parts.forEach(p => {
+          const lower = p.toLowerCase();
+          const isStandardVeg = lower.includes('végétarien') || lower.includes('vegetarien') || lower.includes('vegan') || lower.includes('végétalien') || lower.includes('végétalienne');
+          const isDishSelection = lower.startsWith('entrée:') || lower.startsWith('plat:') || lower.startsWith('boisson:');
+          if (!isStandardVeg && !isDishSelection) {
+            list.push(`${g.fullName} (${p})`);
+          }
+        });
+      }
+    });
+    return list;
+  });
+
+  protected readonly dishQuantities = computed(() => {
+    const quantities: Record<string, number> = {};
+    const mappings: Record<string, { guestName: string, tableNumber: string }[]> = {};
+
+    this.guests().forEach(g => {
+      if (g.status === 'CONFIRMED' && g.dietaryRequirements) {
+        const parts = g.dietaryRequirements.split(',').map(p => p.trim()).filter(Boolean);
+        parts.forEach(p => {
+          if (p.startsWith('Entrée: ') || p.startsWith('Plat: ') || p.startsWith('Boisson: ')) {
+            const dishName = p.substring(p.indexOf(':') + 1).trim();
+            if (dishName) {
+              quantities[dishName] = (quantities[dishName] || 0) + 1;
+              if (!mappings[dishName]) {
+                mappings[dishName] = [];
+              }
+              mappings[dishName].push({
+                guestName: g.fullName,
+                tableNumber: g.tableNumber || 'Non assignée'
+              });
+            }
+          }
+        });
+      }
+    });
+
+    return Object.entries(quantities).map(([name, qty]) => ({
+      name,
+      qty,
+      guests: mappings[name] || []
+    })).sort((a, b) => b.qty - a.qty);
+  });
+
+  protected readonly isHybridMode = computed(() => {
+    const meal = this.event()?.mealType || '';
+    return meal.includes('BUFFET_ENTREES') && meal.includes('PLATS_FIXES');
+  });
+
   public ngOnInit(): void {
     const idParam = this.route.snapshot.paramMap.get('id');
     if (idParam) {
