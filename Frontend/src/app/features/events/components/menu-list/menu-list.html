@@ -653,14 +653,13 @@
                   <!-- Buffet Restrictive Categories -->
                   <ng-container *ngIf="mixSectionChoice() === 'BUFFET'">
                     <option value="BEVERAGE">Boissons d'accueil</option>
-                    <option value="BUFFET_STARTER">Canapés / Amuse-bouches</option>
-                    <option value="STARTER">Salades</option>
+                    <option value="BUFFET_STARTER">Canapés & Amuse-bouches</option>
+                    <option value="STARTER">Salades / Bar à salades</option>
                   </ng-container>
                   <!-- Seated Restrictive Categories -->
                   <ng-container *ngIf="mixSectionChoice() === 'ASSIS'">
-                    <option value="STARTER">Entrée</option>
                     <option value="MAIN">Plat Principal</option>
-                    <option value="DESSERT">Dessert</option>
+                    <option value="DESSERT">Dessert & Pièce montée</option>
                   </ng-container>
                 </ng-container>
               </select>

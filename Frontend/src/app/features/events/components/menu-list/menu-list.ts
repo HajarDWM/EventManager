@@ -313,7 +313,7 @@ export class MenuList implements OnInit {
     this.category.set(cat);
 
     if (this.masterCateringMode() === 'MIX') {
-      const isBuffet = ['BUFFET_STARTER', 'STARTER', 'OTHER'].includes(cat);
+      const isBuffet = ['BUFFET_STARTER', 'STARTER', 'OTHER', 'BEVERAGE'].includes(cat);
       this.mixSectionChoice.set(isBuffet ? 'BUFFET' : 'ASSIS');
     }
 
@@ -511,6 +511,16 @@ export class MenuList implements OnInit {
   }
 
   protected getCategoryLabel(cat: string): string {
+    if (this.masterCateringMode() === 'MIX') {
+      switch (cat) {
+        case 'BEVERAGE': return "Boissons d'accueil";
+        case 'BUFFET_STARTER': return 'Canapés & Amuse-bouches';
+        case 'STARTER': return 'Salades / Bar à salades';
+        case 'MAIN': return 'Plat Principal';
+        case 'DESSERT': return 'Dessert & Pièce montée';
+        default: return cat;
+      }
+    }
     switch (cat) {
       case 'STARTER': return 'Entrée';
       case 'MAIN': return 'Plat Principal';
