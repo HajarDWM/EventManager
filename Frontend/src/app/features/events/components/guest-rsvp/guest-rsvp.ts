@@ -46,6 +46,11 @@ export class GuestRsvp implements OnInit {
   // Service configuration
   protected readonly mealType = signal<string>('PLATS_FIXES');
 
+  protected hasFormat(format: string): boolean {
+    const current = this.mealType() || '';
+    return current.split(',').map(s => s.trim()).includes(format);
+  }
+
   // Categorized menu items for PLATS_FIXES
   protected readonly starters = signal<any[]>([]);
   protected readonly mainDishes = signal<any[]>([]);
@@ -149,8 +154,8 @@ export class GuestRsvp implements OnInit {
           this.mealType.set('PLATS_FIXES');
         }
         
-        // Categorize menu items if PLATS_FIXES
-        if (this.mealType() === 'PLATS_FIXES' && data.menuItems) {
+        // Categorize menu items if PLATS_FIXES is selected
+        if (this.hasFormat('PLATS_FIXES') && data.menuItems) {
           this.starters.set(data.menuItems.filter(item => item.category === 'STARTER'));
           this.mainDishes.set(data.menuItems.filter(item => item.category === 'MAIN'));
           this.beverages.set(data.menuItems.filter(item => item.category === 'BEVERAGE'));
@@ -170,8 +175,8 @@ export class GuestRsvp implements OnInit {
           if (lowerDiets.includes('sans fruits de mer') || lowerDiets.includes('fruits-de-mer-free')) this.hasFruitsDeMerFree = true;
           if (lowerDiets.includes('sans sucre') || lowerDiets.includes('sucre-free')) this.hasSucreFree = true;
           
-          // Reconstruct selected starters, mains, beverages if present (only if PLATS_FIXES)
-          if (this.mealType() === 'PLATS_FIXES') {
+          // Reconstruct selected starters, mains, beverages if present (only if PLATS_FIXES is selected)
+          if (this.hasFormat('PLATS_FIXES')) {
             const starterPrefix = diets.find(d => d.startsWith('Entrée: '));
             if (starterPrefix) {
               this.starterChoice = starterPrefix.replace('Entrée: ', '');
@@ -233,8 +238,8 @@ export class GuestRsvp implements OnInit {
     // Reconstruct dietaryRequirements field
     const activeDiets: string[] = [];
     
-    // Add specific dish selections only if CONFIRMED and PLATS_FIXES
-    if (this.attendanceStatus === true && this.mealType() === 'PLATS_FIXES') {
+    // Add specific dish selections only if CONFIRMED and PLATS_FIXES is selected
+    if (this.attendanceStatus === true && this.hasFormat('PLATS_FIXES')) {
       if (this.starterChoice) {
         activeDiets.push(`Entrée: ${this.starterChoice}`);
       }

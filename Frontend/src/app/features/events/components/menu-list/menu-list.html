@@ -75,37 +75,194 @@
   <div class="fs-sm fw-medium">{{ errorMessage() }}</div>
 </div>
 
-<!-- Meal Type Service Selector -->
+<!-- Meal Format Master Selector Card Grid -->
 <div class="block block-rounded shadow-sm border border-light mt-3">
-  <div class="block-content block-content-full bg-body-light border-bottom border-light">
-    <div class="row align-items-center">
-      <div class="col-md-6 mb-2 mb-md-0">
-        <h4 class="fs-sm fw-bold text-uppercase text-muted mb-1">Type de Service de Restauration</h4>
-        <p class="fs-xs text-muted mb-0">Détermine la présentation et la saisie des plats pour la page RSVP publique.</p>
-      </div>
-      <div class="col-md-6 text-md-end">
-        <div class="btn-group" role="group">
-          <button type="button" class="btn" 
-                  [ngClass]="mealType() === 'BUFFET' ? 'btn-primary' : 'btn-alt-primary'"
-                  (click)="saveMealType('BUFFET')">
-            <i class="fa fa-cheese me-1"></i> Buffet
-          </button>
-          <button type="button" class="btn" 
-                  [ngClass]="mealType() === 'PLATS_FIXES' ? 'btn-primary' : 'btn-alt-primary'"
-                  (click)="saveMealType('PLATS_FIXES')">
-            <i class="fa fa-concierge-bell me-1"></i> Plats Fixes
-          </button>
+  <div class="block-header block-header-default border-bottom p-3">
+    <h3 class="block-title fw-bold fs-sm mb-0 text-dark">
+      <i class="fa fa-utensils text-primary me-2"></i>Formats de Restauration (Configuration)
+    </h3>
+  </div>
+  <div class="block-content p-3 bg-white">
+    <!-- Step 1: Master Mode Selection (Option Card Toggles) -->
+    <div class="row g-3 mb-4">
+      <!-- Option A: Buffet -->
+      <div class="col-12 col-md-4">
+        <div class="card h-100 border text-center p-3 btn-card shadow-xs" 
+             [class.border-primary]="masterCateringMode() === 'BUFFET'"
+             [class.bg-primary-light]="masterCateringMode() === 'BUFFET'"
+             (click)="selectMasterMode('BUFFET')"
+             style="cursor: pointer; transition: all 0.2s;">
+          <div class="fs-1 text-primary mb-2">
+            <i class="fa fa-cheese"></i>
+          </div>
+          <h5 class="fw-bold fs-xs text-uppercase mb-1 text-dark">Formule Buffet</h5>
+          <p class="fs-xs text-muted mb-0">Les plats sont mis en libre-service.</p>
         </div>
       </div>
+
+      <!-- Option B: Plats (Plat Fixe) -->
+      <div class="col-12 col-md-4">
+        <div class="card h-100 border text-center p-3 btn-card shadow-xs" 
+             [class.border-primary]="masterCateringMode() === 'PLATS_FIXES'"
+             [class.bg-primary-light]="masterCateringMode() === 'PLATS_FIXES'"
+             (click)="selectMasterMode('PLATS_FIXES')"
+             style="cursor: pointer; transition: all 0.2s;">
+          <div class="fs-1 text-primary mb-2">
+            <i class="fa fa-concierge-bell"></i>
+          </div>
+          <h5 class="fw-bold fs-xs text-uppercase mb-1 text-dark">Service à l'assiette</h5>
+          <p class="fs-xs text-muted mb-0">Menu servi à table par service de plats.</p>
+        </div>
+      </div>
+
+      <!-- Option C: Mix / Combiné -->
+      <div class="col-12 col-md-4">
+        <div class="card h-100 border text-center p-3 btn-card shadow-xs" 
+             [class.border-primary]="masterCateringMode() === 'MIX'"
+             [class.bg-primary-light]="masterCateringMode() === 'MIX'"
+             (click)="selectMasterMode('MIX')"
+             style="cursor: pointer; transition: all 0.2s;">
+          <div class="fs-1 text-primary mb-2">
+            <i class="fa fa-blender"></i>
+          </div>
+          <h5 class="fw-bold fs-xs text-uppercase mb-1 text-dark">Formule Combinée (Mix)</h5>
+          <p class="fs-xs text-muted mb-0">Combinaison de buffets et de service assis.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2: Conditional Sub-Options -->
+    <div class="bg-body-light border rounded p-3 animate__animated animate__fadeIn">
+      
+      <!-- SUB-OPTIONS FOR BUFFET -->
+      <div *ngIf="masterCateringMode() === 'BUFFET'" class="animate__animated animate__fadeIn">
+        <h5 class="fw-bold fs-xs text-uppercase text-muted border-bottom pb-1 mb-3">Options du Buffet</h5>
+        <div class="row g-3">
+          <div class="col-6 col-sm-3">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="buffet_standard"
+                     [checked]="isFormatSelected('BUFFET_STANDARD')" (change)="toggleFormat('BUFFET_STANDARD')">
+              <label class="form-check-label fs-xs fw-semibold text-dark" for="buffet_standard" style="cursor: pointer;">
+                Buffet Standard / Classique
+              </label>
+            </div>
+          </div>
+          <div class="col-6 col-sm-3">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="buffet_veg"
+                     [checked]="isFormatSelected('BUFFET_VEG')" (change)="toggleFormat('BUFFET_VEG')">
+              <label class="form-check-label fs-xs fw-semibold text-dark" for="buffet_veg" style="cursor: pointer;">
+                Option Végétarienne / Vegan
+              </label>
+            </div>
+          </div>
+          <div class="col-6 col-sm-3">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="buffet_halal"
+                     [checked]="isFormatSelected('BUFFET_HALAL')" (change)="toggleFormat('BUFFET_HALAL')">
+              <label class="form-check-label fs-xs fw-semibold text-dark" for="buffet_halal" style="cursor: pointer;">
+                Option Halal / Casher
+              </label>
+            </div>
+          </div>
+          <div class="col-6 col-sm-3">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="buffet_sucre"
+                     [checked]="isFormatSelected('BUFFET_SUCRE_FREE')" (change)="toggleFormat('BUFFET_SUCRE_FREE')">
+              <label class="form-check-label fs-xs fw-semibold text-dark" for="buffet_sucre" style="cursor: pointer;">
+                Option Sans Sucre / Diabétique
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUB-OPTIONS FOR PLATS_FIXES -->
+      <div *ngIf="masterCateringMode() === 'PLATS_FIXES'" class="animate__animated animate__fadeIn">
+        <h5 class="fw-bold fs-xs text-uppercase text-muted border-bottom pb-1 mb-3">Déroulement des Plats</h5>
+        <div class="row g-3">
+          <div class="col-6 col-sm-3">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="course_starter"
+                     [checked]="isFormatSelected('COURSE_STARTER')" (change)="toggleFormat('COURSE_STARTER')">
+              <label class="form-check-label fs-xs fw-semibold text-dark" for="course_starter" style="cursor: pointer;">
+                Entrée (Starter)
+              </label>
+            </div>
+          </div>
+          <div class="col-6 col-sm-3">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="course_main"
+                     [checked]="isFormatSelected('COURSE_MAIN') || isFormatSelected('PLATS_FIXES')" (change)="toggleFormat('COURSE_MAIN')">
+              <label class="form-check-label fs-xs fw-semibold text-dark" for="course_main" style="cursor: pointer;">
+                Plat Principal (Main)
+              </label>
+            </div>
+          </div>
+          <div class="col-6 col-sm-3">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="course_dessert"
+                     [checked]="isFormatSelected('COURSE_DESSERT')" (change)="toggleFormat('COURSE_DESSERT')">
+              <label class="form-check-label fs-xs fw-semibold text-dark" for="course_dessert" style="cursor: pointer;">
+                Dessert (Dessert)
+              </label>
+            </div>
+          </div>
+          <div class="col-6 col-sm-3">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="course_beverage"
+                     [checked]="isFormatSelected('COURSE_BEVERAGE')" (change)="toggleFormat('COURSE_BEVERAGE')">
+              <label class="form-check-label fs-xs fw-semibold text-dark" for="course_beverage" style="cursor: pointer;">
+                Boisson (Beverage)
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUB-OPTIONS FOR MIX -->
+      <div *ngIf="masterCateringMode() === 'MIX'" class="animate__animated animate__fadeIn">
+        <h5 class="fw-bold fs-xs text-uppercase text-muted border-bottom pb-1 mb-3">Formules Hybrides</h5>
+        <div class="row g-3">
+          <div class="col-6 col-sm-4">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="mix_buffet_entrees"
+                     [checked]="isFormatSelected('BUFFET_ENTREES')" (change)="toggleFormat('BUFFET_ENTREES')">
+              <label class="form-check-label fs-xs fw-semibold text-dark" for="mix_buffet_entrees" style="cursor: pointer;">
+                Entrées présentées en Buffet
+              </label>
+            </div>
+          </div>
+          <div class="col-6 col-sm-4">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="mix_plated_main"
+                     [checked]="isFormatSelected('PLATS_FIXES')" (change)="toggleFormat('PLATS_FIXES')">
+              <label class="form-check-label fs-xs fw-semibold text-dark" for="mix_plated_main" style="cursor: pointer;">
+                Plat Principal servi assis à table
+              </label>
+            </div>
+          </div>
+          <div class="col-6 col-sm-4">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="mix_buffet_desserts"
+                     [checked]="isFormatSelected('BUFFET_DESSERTS')" (change)="toggleFormat('BUFFET_DESSERTS')">
+              <label class="form-check-label fs-xs fw-semibold text-dark" for="mix_buffet_desserts" style="cursor: pointer;">
+                Desserts présentés en Buffet
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
 
 <!-- Buffet Mode Notice -->
-<div class="alert alert-info d-flex align-items-center gap-2 mt-3 animate__animated animate__fadeIn" *ngIf="mealType() === 'BUFFET'">
-  <i class="fa fa-info-circle"></i>
-  <div class="fs-sm fw-medium">
-    L'événement est configuré en mode <strong>Buffet</strong>. Les invités n'auront pas à choisir de plats spécifiques sur leur page d'invitation RSVP, mais pourront toujours renseigner leurs restrictions alimentaires.
+<div class="alert alert-info d-flex align-items-center gap-2 mt-3 animate__animated animate__fadeIn" *ngIf="masterCateringMode() === 'BUFFET' || masterCateringMode() === 'MIX'">
+  <i class="fa fa-info-circle text-info"></i>
+  <div class="fs-xs fw-medium text-black">
+    Les formules en <strong>Buffet</strong> seront présentées en libre-service pour les invités lors de leur RSVP.
   </div>
 </div>
 

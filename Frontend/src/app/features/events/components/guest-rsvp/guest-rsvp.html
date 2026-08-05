@@ -383,7 +383,7 @@
           <div *ngIf="attendanceStatus === true" class="extra-rsvp-sections animate__animated animate__fadeIn">
 
             <!-- Condition 1: Plats Fixes (Render dropdowns for Entrée, Plat, Boisson dynamically) -->
-            <div *ngIf="mealType() === 'PLATS_FIXES'"
+            <div *ngIf="hasFormat('PLATS_FIXES')"
               class="plats-fixes-container animate__animated animate__fadeIn mb-4">
 
               <!-- Entrée Selection -->

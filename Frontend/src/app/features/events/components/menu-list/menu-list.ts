@@ -21,6 +21,7 @@ export class MenuList implements OnInit {
   protected readonly event = signal<Event | null>(null);
   protected readonly menuItems = signal<MenuItem[]>([]);
   protected readonly mealType = signal<string>('PLATS_FIXES');
+  protected readonly masterCateringMode = signal<'BUFFET' | 'PLATS_FIXES' | 'MIX'>('PLATS_FIXES');
 
   protected readonly isLoading = signal<boolean>(true);
   protected readonly isSaving = signal<boolean>(false);
@@ -190,10 +191,57 @@ export class MenuList implements OnInit {
         this.event.set(data);
         if (data.mealType) {
           this.mealType.set(data.mealType);
+          const t = data.mealType;
+          if (t.includes('BUFFET_ENTREES') && t.includes('PLATS_FIXES')) {
+            this.masterCateringMode.set('MIX');
+          } else if (t.startsWith('BUFFET') || t.includes('BUFFET_STANDARD')) {
+            this.masterCateringMode.set('BUFFET');
+          } else if (t === 'BUFFET') {
+            this.masterCateringMode.set('BUFFET');
+          } else {
+            this.masterCateringMode.set('PLATS_FIXES');
+          }
         }
       },
       error: (err) => console.error('Erreur chargement événement', err)
     });
+  }
+
+  protected selectMasterMode(mode: 'BUFFET' | 'PLATS_FIXES' | 'MIX'): void {
+    this.masterCateringMode.set(mode);
+    let defaultType = '';
+    if (mode === 'BUFFET') {
+      defaultType = 'BUFFET_STANDARD,BUFFET_VEG';
+    } else if (mode === 'PLATS_FIXES') {
+      defaultType = 'PLATS_FIXES,COURSE_MAIN';
+    } else if (mode === 'MIX') {
+      defaultType = 'BUFFET_ENTREES,PLATS_FIXES';
+    }
+    this.saveMealType(defaultType);
+  }
+
+  protected readonly availableFormats = [
+    { label: 'Entrées sous forme de Buffet', value: 'BUFFET_ENTREES', icon: 'fa-cheese' },
+    { label: 'Plat principal servi à table', value: 'PLATS_FIXES', icon: 'fa-concierge-bell' },
+    { label: 'Buffet de Desserts', value: 'BUFFET_DESSERTS', icon: 'fa-birthday-cake' },
+    { label: 'Buffet Végétarien & Halal', value: 'BUFFET_REGIMES', icon: 'fa-seedling' }
+  ];
+
+  protected isFormatSelected(value: string): boolean {
+    const current = this.mealType() || '';
+    return current.split(',').map(s => s.trim()).includes(value);
+  }
+
+  protected toggleFormat(value: string): void {
+    const currentList = (this.mealType() || '').split(',').map(s => s.trim()).filter(Boolean);
+    const index = currentList.indexOf(value);
+    if (index > -1) {
+      currentList.splice(index, 1);
+    } else {
+      currentList.push(value);
+    }
+    const newMealType = currentList.join(',');
+    this.saveMealType(newMealType);
   }
 
   protected saveMealType(newType: string): void {
@@ -207,11 +255,11 @@ export class MenuList implements OnInit {
     }).subscribe({
       next: (updated) => {
         this.event.set(updated);
-        this.successMessage.set('Type de service de restauration mis à jour avec succès !');
+        this.successMessage.set('Formats de restauration mis à jour avec succès !');
         setTimeout(() => this.successMessage.set(''), 4000);
       },
       error: (err) => {
-        this.errorMessage.set('Erreur lors de la mise à jour du type de service.');
+        this.errorMessage.set('Erreur lors de la mise à jour des formats de restauration.');
         console.error(err);
         setTimeout(() => this.errorMessage.set(''), 4000);
       }
