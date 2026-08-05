@@ -94,11 +94,22 @@ export class OrganiserInvitationSetup implements OnInit {
         // Fetch guests
         this.guestService.getGuestsByEvent(eventId).subscribe({
           next: (guestList) => {
-            this.guests.set(guestList);
-            // Default select all guests
+            const updatedList = (guestList || []).map(g => {
+              if (!g.id) return g;
+              const localSent = localStorage.getItem(`guest_${g.id}_isSent`);
+              if (localSent === 'true') {
+                return { ...g, isSent: true, invitationStatus: 'SENT' };
+              }
+              return g;
+            });
+            this.guests.set(updatedList);
+
+            // Default select only guests who are STILL PENDING (not sent yet)
             const initialSelection: Record<number, boolean> = {};
-            guestList.forEach(g => {
-              if (g.id) initialSelection[g.id] = true;
+            updatedList.forEach(g => {
+              if (g.id) {
+                initialSelection[g.id] = !(g.isSent === true || g.invitationStatus === 'SENT');
+              }
             });
             this.selectedGuestIds.set(initialSelection);
           },
@@ -248,14 +259,18 @@ export class OrganiserInvitationSetup implements OnInit {
     const selection: Record<number, boolean> = {};
     this.guests().forEach(g => {
       if (g.id) {
-        selection[g.id] = isChecked;
+        if (isChecked) {
+          selection[g.id] = !(g.isSent === true || g.invitationStatus === 'SENT');
+        } else {
+          selection[g.id] = false;
+        }
       }
     });
     this.selectedGuestIds.set(selection);
   }
 
   protected isAllSelected(): boolean {
-    const list = this.guests();
+    const list = this.guests().filter(g => !(g.isSent === true || g.invitationStatus === 'SENT'));
     if (list.length === 0) return false;
     const selection = this.selectedGuestIds();
     return list.every(g => g.id && selection[g.id]);
@@ -284,15 +299,30 @@ export class OrganiserInvitationSetup implements OnInit {
         : 'WhatsApp';
 
     console.log(`--- ENVOI DES INVITATIONS VIA ${this.sendingChannel()} ---`);
-    this.guests().forEach(guest => {
+    const currentGuests = this.guests();
+    const updatedGuests = currentGuests.map(guest => {
       if (guest.id && this.selectedGuestIds()[guest.id]) {
         const guestLink = `${window.location.origin}/rsvp/${guest.id}`;
         console.log(`Envoi à: ${guest.fullName} | Lien unique: ${guestLink} | Canaux: ${this.sendingChannel()}`);
+        localStorage.setItem(`guest_${guest.id}_isSent`, 'true');
+        return { ...guest, isSent: true, invitationStatus: 'SENT' };
       }
+      return guest;
     });
 
     // Simulate sending network latency
     setTimeout(() => {
+      this.guests.set(updatedGuests);
+
+      // Reset selection of checkboxes: only keep pending ones checked
+      const newSelection: Record<number, boolean> = {};
+      updatedGuests.forEach(g => {
+        if (g.id) {
+          newSelection[g.id] = !(g.isSent === true || g.invitationStatus === 'SENT');
+        }
+      });
+      this.selectedGuestIds.set(newSelection);
+
       this.isSending.set(false);
       this.sendSuccessMessage.set(`Félicitations ! Les faire-part ont été envoyés avec succès à ${selectedCount} invité(s) via ${channelLabel}.`);
       setTimeout(() => this.sendSuccessMessage.set(''), 5000);

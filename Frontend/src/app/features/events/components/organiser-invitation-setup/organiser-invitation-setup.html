@@ -191,6 +191,7 @@
                   </th>
                   <th>Nom complet</th>
                   <th>Coordonnées</th>
+                  <th class="text-center" style="width: 120px;">Statut Envoi</th>
                   <th class="text-center" style="width: 100px;">Canaux</th>
                   <th class="text-center" style="width: 110px;">Test</th>
                 </tr>
@@ -212,12 +213,18 @@
                     <div class="fs-xs text-muted" *ngIf="guest.phone"><i class="fa fa-phone me-1"></i> {{ guest.phone }}</div>
                     <div class="fs-xs text-muted text-danger fw-semibold" *ngIf="!guest.email && !guest.phone">Aucun contact saisi</div>
                   </td>
-                  <td class="text-center" (click)="$event.stopPropagation()">
-                    <span class="badge bg-success-light text-success me-1" *ngIf="guest.phone" title="WhatsApp disponible">
-                      <i class="fab fa-whatsapp"></i>
+                  <td class="text-center">
+                    <span class="badge rounded-pill px-2 py-1 fs-xxs" 
+                          [ngClass]="(guest.isSent === true || guest.invitationStatus === 'SENT') ? 'bg-success-light text-black border border-success-light' : 'bg-warning-light text-black border border-warning-light'">
+                      {{ (guest.isSent === true || guest.invitationStatus === 'SENT') ? 'Envoyé' : 'Non envoyé' }}
                     </span>
-                    <span class="badge bg-info-light text-info" *ngIf="guest.email" title="E-mail disponible">
-                      <i class="far fa-envelope"></i>
+                  </td>
+                  <td class="text-center" (click)="$event.stopPropagation()">
+                    <span class="badge bg-success-light text-black border border-success-light me-1" *ngIf="guest.phone" title="WhatsApp disponible">
+                      <i class="fab fa-whatsapp text-success"></i>
+                    </span>
+                    <span class="badge bg-info-light text-black border border-info-light" *ngIf="guest.email" title="E-mail disponible">
+                      <i class="far fa-envelope text-info"></i>
                     </span>
                   </td>
                   <td class="text-center" (click)="$event.stopPropagation()">

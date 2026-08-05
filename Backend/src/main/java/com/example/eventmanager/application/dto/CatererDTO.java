@@ -41,10 +41,10 @@ public class CatererDTO {
 
     private Long subscriptionRemainingDays;
 
-    private boolean expired;
+    private Boolean expired;
 
-    public boolean getIsExpired() {
-        return this.expired;
+    public Boolean getIsExpired() {
+        return this.expired != null && this.expired;
     }
 }
 

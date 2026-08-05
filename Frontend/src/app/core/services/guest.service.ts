@@ -13,6 +13,8 @@ export interface Guest {
   status: GuestStatus;
   tableNumber?: string;
   dietaryRequirements?: string;
+  isSent?: boolean;
+  invitationStatus?: 'PENDING' | 'SENT' | string;
 }
 
 @Injectable({
