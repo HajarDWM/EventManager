@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, inject } from '@angular/core';
+import { Component, OnInit, signal, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
@@ -51,9 +51,14 @@ export class GuestRsvp implements OnInit {
     return current.split(',').map(s => s.trim()).includes(format);
   }
 
-  // Categorized menu items for PLATS_FIXES
+  protected readonly isMix = computed(() => this.hasFormat('BUFFET_ENTREES') && this.hasFormat('PLATS_FIXES'));
+  protected readonly isBuffet = computed(() => !this.hasFormat('PLATS_FIXES'));
+  protected readonly isPlated = computed(() => this.hasFormat('PLATS_FIXES') && !this.hasFormat('BUFFET_ENTREES'));
+
+  // Categorized menu items
   protected readonly starters = signal<any[]>([]);
   protected readonly mainDishes = signal<any[]>([]);
+  protected readonly desserts = signal<any[]>([]);
   protected readonly beverages = signal<any[]>([]);
 
   // Form states
@@ -167,11 +172,12 @@ export class GuestRsvp implements OnInit {
           this.mealType.set('PLATS_FIXES');
         }
         
-        // Categorize menu items if PLATS_FIXES is selected
-        if (this.hasFormat('PLATS_FIXES') && data.menuItems) {
-          this.starters.set(data.menuItems.filter(item => item.category === 'STARTER'));
-          this.mainDishes.set(data.menuItems.filter(item => item.category === 'MAIN'));
+        // Categorize menu items
+        if (data.menuItems) {
+          this.starters.set(data.menuItems.filter(item => item.category === 'STARTER' || item.category === 'BUFFET_STARTER'));
+          this.mainDishes.set(data.menuItems.filter(item => item.category === 'MAIN' || item.category === 'BUFFET_MAIN'));
           this.beverages.set(data.menuItems.filter(item => item.category === 'BEVERAGE'));
+          this.desserts.set(data.menuItems.filter(item => item.category === 'DESSERT' || item.category === 'BUFFET_DESSERT'));
         }
 
         // Parse dietary requirements if any
@@ -236,11 +242,7 @@ export class GuestRsvp implements OnInit {
     this.status.set(newStatus);
     if (newStatus === 'CONFIRMED') {
       this.attendanceStatus = true;
-      if (this.hasFormat('PLATS_FIXES')) {
-        this.currentRsvpStep.set(2);
-      } else {
-        this.currentRsvpStep.set(3);
-      }
+      this.currentRsvpStep.set(2);
     } else if (newStatus === 'DECLINED') {
       this.attendanceStatus = false;
       this.currentRsvpStep.set(1);
@@ -250,26 +252,37 @@ export class GuestRsvp implements OnInit {
     }
   }
 
-  protected nextStep(): void {
-    if (this.currentRsvpStep() === 2) {
-      this.currentRsvpStep.set(3);
+  protected goToNextStep(): void {
+    const step = this.currentRsvpStep();
+    if (step < 4) {
+      this.currentRsvpStep.set(step + 1);
     }
   }
 
-  protected prevStep(): void {
-    if (this.currentRsvpStep() === 3) {
-      if (this.hasFormat('PLATS_FIXES')) {
-        this.currentRsvpStep.set(2);
-      } else {
-        this.currentRsvpStep.set(1);
+  protected goToPrevStep(): void {
+    const step = this.currentRsvpStep();
+    if (step > 1) {
+      if (step === 2) {
         this.attendanceStatus = null;
         this.status.set('PENDING');
       }
-    } else if (this.currentRsvpStep() === 2) {
-      this.currentRsvpStep.set(1);
-      this.attendanceStatus = null;
-      this.status.set('PENDING');
+      this.currentRsvpStep.set(step - 1);
     }
+  }
+
+  public getSelectedDietsSummary(): string {
+    const list: string[] = [];
+    if (this.hasVegetarien) list.push('Végétarien');
+    if (this.hasVegan) list.push('Vegan');
+    if (this.hasGlutenFree) list.push('Sans gluten');
+    if (this.hasLactoseFree) list.push('Sans lactose');
+    if (this.hasArachidesFree) list.push('Sans arachides');
+    if (this.hasHalal) list.push('Halal');
+    if (this.hasFruitsDeMerFree) list.push('Sans fruits de mer');
+    if (this.hasSucreFree) list.push('Sans sucre');
+    if (this.otherAllergies.trim()) list.push(this.otherAllergies.trim());
+    
+    return list.length > 0 ? list.join(', ') : 'Aucune restriction ou allergie';
   }
 
   protected submitResponse(): void {

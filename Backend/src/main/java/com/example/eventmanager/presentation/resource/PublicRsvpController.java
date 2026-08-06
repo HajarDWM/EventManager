@@ -31,13 +31,10 @@ public class PublicRsvpController {
         Event event = eventRepositoryPort.findById(guest.getEventId())
                 .orElseThrow(() -> new IllegalArgumentException("Événement non trouvé avec l'id : " + guest.getEventId()));
 
-        java.util.List<com.example.eventmanager.application.dto.MenuItemDTO> menuItems = new java.util.ArrayList<>();
-        if ("PLATS_FIXES".equals(event.getMealType())) {
-            menuItems = menuItemRepositoryPort.findByEventId(event.getId())
-                    .stream()
-                    .map(menuItemMapper::toDTO)
-                    .toList();
-        }
+        java.util.List<com.example.eventmanager.application.dto.MenuItemDTO> menuItems = menuItemRepositoryPort.findByEventId(event.getId())
+                .stream()
+                .map(menuItemMapper::toDTO)
+                .toList();
 
         String templateCategory = "Corporate";
         if (event.getDigitalTemplateId() != null) {
@@ -98,13 +95,10 @@ public class PublicRsvpController {
         Event event = eventRepositoryPort.findById(savedGuest.getEventId())
                 .orElseThrow(() -> new IllegalArgumentException("Événement non trouvé avec l'id : " + savedGuest.getEventId()));
 
-        java.util.List<com.example.eventmanager.application.dto.MenuItemDTO> menuItems = new java.util.ArrayList<>();
-        if ("PLATS_FIXES".equals(event.getMealType())) {
-            menuItems = menuItemRepositoryPort.findByEventId(event.getId())
-                    .stream()
-                    .map(menuItemMapper::toDTO)
-                    .toList();
-        }
+        java.util.List<com.example.eventmanager.application.dto.MenuItemDTO> menuItems = menuItemRepositoryPort.findByEventId(event.getId())
+                .stream()
+                .map(menuItemMapper::toDTO)
+                .toList();
 
         String templateCategory = "Corporate";
         if (event.getDigitalTemplateId() != null) {
