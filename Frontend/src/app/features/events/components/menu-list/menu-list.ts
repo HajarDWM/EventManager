@@ -169,6 +169,9 @@ export class MenuList implements OnInit {
     return this.menuItems().filter(i => i.category === 'OTHER').length;
   });
 
+  protected readonly hasBuffetEntrees = computed(() => this.isFormatSelected('BUFFET_ENTREES'));
+  protected readonly hasBuffetDesserts = computed(() => this.isFormatSelected('BUFFET_DESSERTS'));
+
   public ngOnInit(): void {
     const idParam = this.route.snapshot.paramMap.get('id');
     if (idParam) {
@@ -299,14 +302,24 @@ export class MenuList implements OnInit {
       this.mixSectionChoice.set(sec);
       
       // Determine if current category is compatible with target section
-      const allowed = sec === 'BUFFET' 
-        ? ['BEVERAGE', 'BUFFET_STARTER', 'STARTER'] 
-        : ['MAIN', 'DESSERT'];
+      const allowed: string[] = [];
+      if (sec === 'BUFFET') {
+        if (this.hasBuffetEntrees()) {
+          allowed.push('BEVERAGE', 'BUFFET_STARTER', 'STARTER');
+        }
+        if (this.hasBuffetDesserts()) {
+          allowed.push('BUFFET_DESSERT');
+        }
+      } else {
+        allowed.push('MAIN', 'DESSERT');
+      }
       
       if (!allowed.includes(currentCat)) {
         // Fallback to activeCategory if compatible, otherwise default
         if (allowed.includes(activeCat)) {
           this.category.set(activeCat);
+        } else if (allowed.length > 0) {
+          this.category.set(allowed[0]);
         } else {
           this.category.set(sec === 'BUFFET' ? 'BUFFET_STARTER' : 'MAIN');
         }
@@ -348,7 +361,7 @@ export class MenuList implements OnInit {
     this.category.set(cat);
 
     if (this.masterCateringMode() === 'MIX') {
-      const isBuffet = ['BUFFET_STARTER', 'STARTER', 'OTHER', 'BEVERAGE'].includes(cat);
+      const isBuffet = ['BUFFET_STARTER', 'STARTER', 'OTHER', 'BEVERAGE', 'BUFFET_DESSERT'].includes(cat);
       this.mixSectionChoice.set(isBuffet ? 'BUFFET' : 'ASSIS');
     }
 
@@ -551,6 +564,7 @@ export class MenuList implements OnInit {
         case 'STARTER': return 'Salades / Bar à salades';
         case 'MAIN': return 'Plat Principal';
         case 'DESSERT': return 'Dessert & Pièce montée';
+        case 'BUFFET_DESSERT': return 'Station Desserts (Buffet)';
         default: return cat;
       }
     }

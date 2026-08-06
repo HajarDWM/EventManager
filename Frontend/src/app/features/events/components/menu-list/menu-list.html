@@ -649,9 +649,14 @@
                 <ng-container *ngIf="masterCateringMode() === 'MIX'">
                   <!-- Buffet Restrictive Categories -->
                   <ng-container *ngIf="mixSectionChoice() === 'BUFFET'">
-                    <option value="BEVERAGE">Boissons d'accueil</option>
-                    <option value="BUFFET_STARTER">Canapés & Amuse-bouches</option>
-                    <option value="STARTER">Salades / Bar à salades</option>
+                    <ng-container *ngIf="hasBuffetEntrees()">
+                      <option value="BEVERAGE">Boissons d'accueil</option>
+                      <option value="BUFFET_STARTER">Canapés & Amuse-bouches</option>
+                      <option value="STARTER">Salades / Bar à salades</option>
+                    </ng-container>
+                    <ng-container *ngIf="hasBuffetDesserts()">
+                      <option value="BUFFET_DESSERT">Station Desserts (Buffet)</option>
+                    </ng-container>
                   </ng-container>
                   <!-- Seated Restrictive Categories -->
                   <ng-container *ngIf="mixSectionChoice() === 'ASSIS'">
