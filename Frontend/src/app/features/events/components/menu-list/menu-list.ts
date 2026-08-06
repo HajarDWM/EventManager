@@ -90,17 +90,20 @@ export class MenuList implements OnInit {
   protected readonly globalMenuItems = signal<MenuItem[]>([]);
 
   protected readonly mergedSuggestionsDetail = computed(() => {
-    const map: Record<string, { category: string, price: number, dietary: string, description?: string }> = {};
+    const map: Record<string, { price: number, dietary: string, description?: string }> = {};
     
     // First populate with static template suggestions
     Object.entries(this.staticSuggestionsDetail).forEach(([name, details]) => {
-      map[name] = details;
+      map[name] = {
+        price: details.price,
+        dietary: details.dietary,
+        description: undefined
+      };
     });
 
     // Merge in dynamically saved menu items from database
     this.globalMenuItems().forEach(item => {
       map[item.name] = {
-        category: item.category,
         price: item.pricePerPerson,
         dietary: item.dietaryTag || '',
         description: item.description
@@ -288,12 +291,44 @@ export class MenuList implements OnInit {
     this.editingItemId.set(null);
     this.name.set('');
 
+    const activeCat = this.selectedCategory();
+    const currentCat = this.category();
+
     if (this.masterCateringMode() === 'MIX') {
-      const sec = section || 'BUFFET';
+      const sec = section || this.mixSectionChoice();
       this.mixSectionChoice.set(sec);
-      this.category.set(sec === 'BUFFET' ? 'BUFFET_STARTER' : 'MAIN');
+      
+      // Determine if current category is compatible with target section
+      const allowed = sec === 'BUFFET' 
+        ? ['BEVERAGE', 'BUFFET_STARTER', 'STARTER'] 
+        : ['MAIN', 'DESSERT'];
+      
+      if (!allowed.includes(currentCat)) {
+        // Fallback to activeCategory if compatible, otherwise default
+        if (allowed.includes(activeCat)) {
+          this.category.set(activeCat);
+        } else {
+          this.category.set(sec === 'BUFFET' ? 'BUFFET_STARTER' : 'MAIN');
+        }
+      }
+    } else if (this.masterCateringMode() === 'BUFFET') {
+      const allowed = ['BUFFET_STARTER', 'BUFFET_MAIN', 'BUFFET_DESSERT', 'BEVERAGE'];
+      if (!allowed.includes(currentCat)) {
+        if (allowed.includes(activeCat)) {
+          this.category.set(activeCat);
+        } else {
+          this.category.set('BUFFET_STARTER');
+        }
+      }
     } else {
-      this.category.set(this.masterCateringMode() === 'BUFFET' ? 'BUFFET_STARTER' : 'STARTER');
+      const allowed = ['STARTER', 'MAIN', 'DESSERT', 'BEVERAGE', 'OTHER'];
+      if (!allowed.includes(currentCat)) {
+        if (allowed.includes(activeCat)) {
+          this.category.set(activeCat);
+        } else {
+          this.category.set('STARTER');
+        }
+      }
     }
 
     this.pricePerPerson.set(0);
@@ -361,10 +396,9 @@ export class MenuList implements OnInit {
     this.name.set(suggestion);
     this.isAutocompleteOpen.set(false);
 
-    // Auto-select category, price, dietary, and description from merged details
+    // Auto-select price, dietary, and description from merged details
     const detail = this.mergedSuggestionsDetail()[suggestion];
     if (detail) {
-      this.category.set(detail.category);
       this.pricePerPerson.set(detail.price);
       if (detail.description) {
         this.description.set(detail.description);
@@ -395,7 +429,6 @@ export class MenuList implements OnInit {
     // Check if the input matches any known suggestion
     const detail = this.mergedSuggestionsDetail()[newName];
     if (detail) {
-      this.category.set(detail.category);
       this.pricePerPerson.set(detail.price);
       if (detail.description) {
         this.description.set(detail.description);
