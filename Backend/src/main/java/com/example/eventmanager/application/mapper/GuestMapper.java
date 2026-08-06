@@ -19,6 +19,7 @@ public class GuestMapper {
                 .status(dto.getStatus())
                 .tableNumber(dto.getTableNumber())
                 .dietaryRequirements(dto.getDietaryRequirements())
+                .groupName(dto.getGroupName())
                 .build();
     }
 
@@ -33,6 +34,7 @@ public class GuestMapper {
                 .status(domain.getStatus())
                 .tableNumber(domain.getTableNumber())
                 .dietaryRequirements(domain.getDietaryRequirements())
+                .groupName(domain.getGroupName())
                 .build();
     }
 
@@ -47,6 +49,7 @@ public class GuestMapper {
         entity.setStatus(domain.getStatus() != null ? domain.getStatus().name() : "PENDING");
         entity.setTableNumber(domain.getTableNumber());
         entity.setDietaryRequirements(domain.getDietaryRequirements());
+        entity.setGroupName(domain.getGroupName());
         return entity;
     }
 
@@ -61,6 +64,7 @@ public class GuestMapper {
                 .status(entity.getStatus() != null ? com.example.eventmanager.domain.model.GuestStatus.valueOf(entity.getStatus()) : com.example.eventmanager.domain.model.GuestStatus.PENDING)
                 .tableNumber(entity.getTableNumber())
                 .dietaryRequirements(entity.getDietaryRequirements())
+                .groupName(entity.getGroupName())
                 .build();
     }
 }

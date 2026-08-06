@@ -102,13 +102,27 @@
       </button>
     </div>
 
+    <!-- Group Filter Row -->
+    <div class="row mb-3 mt-1 g-2 justify-content-start align-items-center" *ngIf="!isLoading() && guests().length > 0">
+      <div class="col-12 col-sm-6 col-md-4">
+        <div class="input-group input-group-sm">
+          <span class="input-group-text bg-body-light border-light text-muted fs-xs fw-semibold"><i class="fa fa-filter me-1"></i> GROUPE</span>
+          <select class="form-select form-select-sm border-light fs-xs" [ngModel]="selectedGroupFilter()" (ngModelChange)="selectedGroupFilter.set($event)">
+            <option value="ALL">Tous les groupes ({{ guests().length }})</option>
+            <option *ngFor="let grp of uniqueGroups()" [value]="grp">{{ grp }}</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
     <!-- Table -->
-    <div class="table-responsive" *ngIf="!isLoading() && guests().length > 0">
+    <div class="table-responsive" *ngIf="!isLoading() && filteredGuests().length > 0">
       <table class="table table-striped table-vcenter">
         <thead>
           <tr>
             <th>Nom Complet</th>
             <th>Contact</th>
+            <th>Groupe</th>
             <th>Statut</th>
             <th>Position</th>
             <th>Régime / Notes</th>
@@ -116,11 +130,15 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let g of guests()">
+          <tr *ngFor="let g of filteredGuests()">
             <td class="fw-semibold">{{ g.fullName }}</td>
             <td class="fs-sm">
               <div *ngIf="g.email"><i class="fa fa-envelope text-muted me-1"></i> {{ g.email }}</div>
               <div *ngIf="g.phone"><i class="fa fa-phone text-muted me-1"></i> {{ g.phone }}</div>
+            </td>
+            <td class="fs-sm">
+              <span class="badge bg-primary-light text-primary fw-semibold" *ngIf="g.groupName">{{ g.groupName }}</span>
+              <span class="text-muted fs-xs" *ngIf="!g.groupName">-</span>
             </td>
             <td>
               <span class="badge bg-success-light text-success px-3 py-2 rounded-pill fw-bold" *ngIf="g.status === 'CONFIRMED'">
@@ -203,11 +221,22 @@
                      placeholder="Ex: Table A1, Buffet 1, VIP..." [ngModel]="tableNumber()" (ngModelChange)="tableNumber.set($event)" name="tableNumber">
             </div>
           </div>
-          <div class="mb-3">
-            <label class="form-label fs-sm fw-semibold">Régime alimentaire / Remarques</label>
-            <textarea class="form-control form-control-alt fs-sm" rows="2"
-                      placeholder="Ex: Végétarien, allergie aux fruits de mer"
-                      [ngModel]="dietaryRequirements()" (ngModelChange)="dietaryRequirements.set($event)" name="dietaryRequirements"></textarea>
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label class="form-label fs-sm fw-semibold">Groupe</label>
+              <input type="text" class="form-control form-control-alt fs-sm"
+                     list="group-suggestions" placeholder="Ex: Famille Proche, VIP, Staff..."
+                     [ngModel]="groupName()" (ngModelChange)="groupName.set($event)" name="groupName">
+              <datalist id="group-suggestions">
+                <option *ngFor="let grp of groupSuggestions()" [value]="grp"></option>
+              </datalist>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fs-sm fw-semibold">Régime alimentaire / Remarques</label>
+              <input type="text" class="form-control form-control-alt fs-sm"
+                     placeholder="Ex: Végétarien, sans gluten"
+                     [ngModel]="dietaryRequirements()" (ngModelChange)="dietaryRequirements.set($event)" name="dietaryRequirements">
+            </div>
           </div>
         </div>
         <div class="modal-footer bg-body-light">

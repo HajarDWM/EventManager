@@ -317,11 +317,17 @@
 
     <!-- TAB 2: FICHE PLAN DE TABLE & INVITÉS -->
     <div *ngIf="activeTab() === 'guests'">
-      <div class="d-flex justify-content-between align-items-center mb-3">
+      <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center mb-3 gap-2">
         <h3 class="h5 fw-bold text-uppercase tracking-wider text-dark mb-0">
           <i class="fa fa-users text-primary me-2"></i> Fiche Positionnement & Exigences Alimentaires
         </h3>
-        <span class="fs-sm text-muted">Total invités : <strong>{{ guests().length }}</strong></span>
+        <div class="d-flex align-items-center gap-2">
+          <span class="fs-sm text-muted text-nowrap">Filtrer par Groupe :</span>
+          <select class="form-select form-select-sm border-light fs-xs" style="width: auto;" [ngModel]="selectedGroupFilter()" (ngModelChange)="selectedGroupFilter.set($event)">
+            <option value="ALL">Tous ({{ guests().length }})</option>
+            <option *ngFor="let grp of uniqueGroups()" [value]="grp">{{ grp }}</option>
+          </select>
+        </div>
       </div>
 
       <table class="table table-bordered table-sm fs-sm align-middle">
@@ -329,15 +335,20 @@
           <tr>
             <th>Nom Complet</th>
             <th>Contact</th>
+            <th>Groupe</th>
             <th>Statut Présence</th>
             <th>Position</th>
             <th>Régime / Remarques Alimentaires</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let g of guests()">
+          <tr *ngFor="let g of filteredGuests()">
             <td class="fw-semibold">{{ g.fullName }}</td>
             <td class="fs-xs">{{ g.email || g.phone || '-' }}</td>
+            <td class="fs-xs">
+              <span class="badge bg-primary-light text-primary fw-semibold" *ngIf="g.groupName">{{ g.groupName }}</span>
+              <span class="text-muted fs-xs" *ngIf="!g.groupName">-</span>
+            </td>
             <td>
               <span class="badge bg-success-light text-success" *ngIf="g.status === 'CONFIRMED'">Confirmé</span>
               <span class="badge bg-warning-light text-warning" *ngIf="g.status === 'PENDING'">En attente</span>

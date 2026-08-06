@@ -13,6 +13,7 @@ export interface Guest {
   status: GuestStatus;
   tableNumber?: string;
   dietaryRequirements?: string;
+  groupName?: string;
   isSent?: boolean;
   invitationStatus?: 'PENDING' | 'SENT' | string;
 }

@@ -35,4 +35,7 @@ public class GuestEntity {
 
     @Column(name = "dietary_requirements")
     private String dietaryRequirements;
+
+    @Column(name = "group_name")
+    private String groupName;
 }

@@ -1,0 +1,1 @@
+ALTER TABLE guests ADD COLUMN group_name VARCHAR(100);

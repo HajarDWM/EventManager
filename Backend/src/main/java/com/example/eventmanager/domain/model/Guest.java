@@ -14,8 +14,9 @@ public class Guest {
     private GuestStatus status;
     private String tableNumber;
     private String dietaryRequirements;
+    private String groupName;
 
-    public void updateDetails(String fullName, String email, String phone, GuestStatus status, String tableNumber, String dietaryRequirements) {
+    public void updateDetails(String fullName, String email, String phone, GuestStatus status, String tableNumber, String dietaryRequirements, String groupName) {
         this.fullName = fullName;
         this.email = email;
         this.phone = phone;
@@ -24,5 +25,6 @@ public class Guest {
         }
         this.tableNumber = tableNumber;
         this.dietaryRequirements = dietaryRequirements;
+        this.groupName = groupName;
     }
 }

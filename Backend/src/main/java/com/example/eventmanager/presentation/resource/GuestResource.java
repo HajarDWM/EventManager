@@ -24,7 +24,13 @@ public class GuestResource {
 
     @GetMapping("/events/{eventId}/guests/template")
     public ResponseEntity<byte[]> getGuestsTemplate(@PathVariable Long eventId) {
-        String csvContent = "\uFEFFNom Complet;Téléphone;Email;Groupe\r\n";
+        String csvContent = "\uFEFFNom Complet;Téléphone;Email;Groupe\r\n" +
+                "Jean Dupont (Exemple);0612345678;jean.dupont@example.com;Famille Proche\r\n" +
+                "Marie Martin (Exemple);0712345678;marie.martin@example.com;Amis\r\n" +
+                "Alexandre Bernard (Exemple);0600000000;alexandre.b@example.com;VIP\r\n" +
+                "Sophie Petit (Exemple);0611111111;sophie.p@example.com;Hommes\r\n" +
+                "Julie Roux (Exemple);0622222222;julie.r@example.com;Femmes\r\n" +
+                "Caterer Staff (Exemple);0633333333;staff@example.com;Staff\r\n";
         byte[] csvBytes = csvContent.getBytes(java.nio.charset.StandardCharsets.UTF_8);
 
         org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -42,6 +42,32 @@ export class GuestList implements OnInit {
   protected readonly status = signal<GuestStatus>('PENDING');
   protected readonly tableNumber = signal('');
   protected readonly dietaryRequirements = signal('');
+  protected readonly groupName = signal('');
+
+  // Group Filtering state
+  protected readonly selectedGroupFilter = signal<string>('ALL');
+
+  protected readonly uniqueGroups = computed(() => {
+    const list = this.guests().map(g => g.groupName).filter((g): g is string => !!g);
+    return Array.from(new Set(list));
+  });
+
+  protected readonly filteredGuests = computed(() => {
+    const list = this.guests();
+    const filter = this.selectedGroupFilter();
+    if (filter === 'ALL') return list;
+    return list.filter(g => g.groupName === filter);
+  });
+
+  protected readonly groupSuggestions = computed(() => {
+    const tempId = this.event()?.templateId || '';
+    const isPrivate = tempId.includes('wedding') || tempId.includes('coton') || tempId.includes('fleurs');
+    if (isPrivate) {
+      return ['Famille Proche', 'Famille Élargie', 'Amis', 'VIP', 'Hommes', 'Femmes', 'Enfants', 'Prestataires'];
+    } else {
+      return ['Direction', 'Staff', 'VIP', 'Partenaires', 'Presse', 'Invités d\'honneur', 'Équipe technique'];
+    }
+  });
 
   public ngOnInit(): void {
     const idParam = this.route.snapshot.paramMap.get('id');
@@ -99,6 +125,7 @@ export class GuestList implements OnInit {
     this.status.set('PENDING');
     this.tableNumber.set('');
     this.dietaryRequirements.set('');
+    this.groupName.set('');
     this.isModalOpen.set(true);
   }
 
@@ -111,6 +138,7 @@ export class GuestList implements OnInit {
     this.status.set(guest.status || 'PENDING');
     this.tableNumber.set(guest.tableNumber || '');
     this.dietaryRequirements.set(guest.dietaryRequirements || '');
+    this.groupName.set(guest.groupName || '');
     this.isModalOpen.set(true);
   }
 
@@ -136,7 +164,8 @@ export class GuestList implements OnInit {
       phone: this.phone(),
       status: this.status(),
       tableNumber: this.tableNumber(),
-      dietaryRequirements: this.dietaryRequirements()
+      dietaryRequirements: this.dietaryRequirements(),
+      groupName: this.groupName()
     };
 
     if (this.isEditing() && this.editingGuestId()) {
@@ -191,14 +220,15 @@ export class GuestList implements OnInit {
     const csvRows: string[] = [];
     
     // Header row with UTF-8 BOM for French Excel compatibility
-    const headers = ['Nom Complet', 'Email', 'Téléphone', 'Statut', 'Position', 'Régime Alimentaire / Notes'];
+    const headers = ['Nom Complet', 'Téléphone', 'Email', 'Groupe', 'Statut', 'Position', 'Régime Alimentaire / Notes'];
     csvRows.push(headers.join(';'));
     
     for (const g of this.guests()) {
       const row = [
         g.fullName || '',
-        g.email || '',
         g.phone || '',
+        g.email || '',
+        g.groupName || '',
         g.status || 'PENDING',
         g.tableNumber || '',
         g.dietaryRequirements || ''
@@ -305,7 +335,8 @@ export class GuestList implements OnInit {
       const emailIndex = headers.findIndex(h => h.includes('email') || h.includes('courriel'));
       const phoneIndex = headers.findIndex(h => h.includes('téléphone') || h.includes('telephone') || h.includes('phone'));
       const statusIndex = headers.findIndex(h => h.includes('statut') || h.includes('status'));
-      const groupeIndex = headers.findIndex(h => h.includes('groupe') || h.includes('table') || h.includes('position'));
+      const tableIndex = headers.findIndex(h => h.includes('table') || h.includes('position') || h.includes('placement'));
+      const groupeIndex = headers.findIndex(h => h.includes('groupe') || h.includes('group'));
       const dietaryIndex = headers.findIndex(h => h.includes('régime') || h.includes('regime') || h.includes('diet') || h.includes('notes'));
 
       const importedGuests: Guest[] = [];
@@ -349,18 +380,19 @@ export class GuestList implements OnInit {
           resolvedFullName = cleanedCols[0] || '';
         }
 
-        if (!resolvedFullName) {
-          continue; // Skip lines without a name
+        if (!resolvedFullName || resolvedFullName.includes('(Exemple)') || resolvedFullName.includes('(Example)')) {
+          continue; // Skip lines without a name or example lines
         }
 
         // Map fields
         const emailVal = emailIndex !== -1 ? (cleanedCols[emailIndex] || '') : (cleanedCols[1] || '');
         const phoneVal = phoneIndex !== -1 ? (cleanedCols[phoneIndex] || '') : (cleanedCols[2] || '');
-        const tableNumberVal = groupeIndex !== -1 ? (cleanedCols[groupeIndex] || '') : (cleanedCols[4] || '');
-        const dietaryVal = dietaryIndex !== -1 ? (cleanedCols[dietaryIndex] || '') : (cleanedCols[5] || '');
+        const tableNumberVal = tableIndex !== -1 ? (cleanedCols[tableIndex] || '') : (cleanedCols[5] || '');
+        const dietaryVal = dietaryIndex !== -1 ? (cleanedCols[dietaryIndex] || '') : (cleanedCols[6] || '');
+        const groupNameVal = groupeIndex !== -1 ? (cleanedCols[groupeIndex] || '') : (cleanedCols[3] || '');
 
         let statusVal: GuestStatus = 'PENDING';
-        const rawStatus = (statusIndex !== -1 ? cleanedCols[statusIndex] : (cleanedCols[3] || '')).toUpperCase();
+        const rawStatus = (statusIndex !== -1 ? cleanedCols[statusIndex] : (cleanedCols[4] || '')).toUpperCase();
         if (rawStatus.includes('CONFIRM') || rawStatus.includes('OUI') || rawStatus === 'CONFIRMED' || rawStatus.includes('PRES')) {
           statusVal = 'CONFIRMED';
         } else if (rawStatus.includes('DECLIN') || rawStatus.includes('NON') || rawStatus === 'DECLINED' || rawStatus.includes('ABS')) {
@@ -373,7 +405,8 @@ export class GuestList implements OnInit {
           phone: phoneVal,
           status: statusVal,
           tableNumber: tableNumberVal,
-          dietaryRequirements: dietaryVal
+          dietaryRequirements: dietaryVal,
+          groupName: groupNameVal
         });
       }
 

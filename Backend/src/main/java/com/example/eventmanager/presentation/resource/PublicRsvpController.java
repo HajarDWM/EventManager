@@ -87,7 +87,8 @@ public class PublicRsvpController {
                 guest.getPhone(),
                 statusVal,
                 guest.getTableNumber(),
-                rsvpDTO.getDietaryRequirements()
+                rsvpDTO.getDietaryRequirements(),
+                guest.getGroupName()
         );
 
         Guest savedGuest = guestRepositoryPort.save(guest);

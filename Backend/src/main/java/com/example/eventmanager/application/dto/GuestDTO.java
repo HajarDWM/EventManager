@@ -19,4 +19,5 @@ public class GuestDTO {
     private GuestStatus status;
     private String tableNumber;
     private String dietaryRequirements;
+    private String groupName;
 }

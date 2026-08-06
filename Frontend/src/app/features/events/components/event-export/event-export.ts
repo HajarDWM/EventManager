@@ -6,11 +6,12 @@ import { MenuItem } from '../../../../core/services/menu-item.service';
 import { EventTask } from '../../../../core/services/event-task.service';
 import { Guest } from '../../../../core/services/guest.service';
 import { Event } from '../../models/event.model';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-event-export',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, FormsModule],
   templateUrl: './event-export.html',
   styleUrls: ['./event-export.scss']
 })
@@ -28,9 +29,24 @@ export class EventExport implements OnInit {
   // Active Tab: 'kitchen' | 'guests' | 'tasks'
   protected readonly activeTab = signal<'kitchen' | 'guests' | 'tasks'>('kitchen');
 
+  // Group Filtering state
+  protected readonly selectedGroupFilter = signal<string>('ALL');
+
   // Computed Accessors
   protected readonly event = computed<Event | null>(() => this.exportData()?.event || null);
   protected readonly guests = computed<Guest[]>(() => this.exportData()?.guests || []);
+
+  protected readonly uniqueGroups = computed(() => {
+    const list = this.guests().map(g => g.groupName).filter((g): g is string => !!g);
+    return Array.from(new Set(list));
+  });
+
+  protected readonly filteredGuests = computed(() => {
+    const list = this.guests();
+    const filter = this.selectedGroupFilter();
+    if (filter === 'ALL') return list;
+    return list.filter(g => g.groupName === filter);
+  });
   protected readonly menuItems = computed<MenuItem[]>(() => this.exportData()?.menuItems || []);
   protected readonly tasks = computed<EventTask[]>(() => this.exportData()?.tasks || []);
 

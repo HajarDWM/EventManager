@@ -80,7 +80,8 @@ public class GuestApplicationService implements CreateGuestUseCase, GetGuestsByE
                 guestDTO.getPhone(),
                 guestDTO.getStatus(),
                 guestDTO.getTableNumber(),
-                guestDTO.getDietaryRequirements()
+                guestDTO.getDietaryRequirements(),
+                guestDTO.getGroupName()
         );
 
         Guest updated = guestRepositoryPort.save(existing);
