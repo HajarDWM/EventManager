@@ -6,6 +6,7 @@ import { GuestService, Guest, GuestStatus } from '../../../../core/services/gues
 import { EventService } from '../../services/event.service';
 import { Event } from '../../models/event.model';
 import { forkJoin } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-guest-list',
@@ -18,6 +19,7 @@ export class GuestList implements OnInit {
   private readonly router = inject(Router);
   private readonly guestService = inject(GuestService);
   private readonly eventService = inject(EventService);
+  private readonly http = inject(HttpClient);
 
   protected readonly eventId = signal<number | null>(null);
   protected readonly event = signal<Event | null>(null);
@@ -227,6 +229,29 @@ export class GuestList implements OnInit {
     document.body.removeChild(link);
   }
 
+  protected onDownloadTemplate(): void {
+    const currentEventId = this.eventId();
+    if (!currentEventId) return;
+
+    this.http.get(`/api/events/${currentEventId}/guests/template`, { responseType: 'blob' }).subscribe({
+      next: (blob) => {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.setAttribute('href', url);
+        link.setAttribute('download', 'modele_invites.csv');
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      },
+      error: (err) => {
+        this.errorMessage.set("Erreur lors du téléchargement du modèle.");
+        console.error(err);
+      }
+    });
+  }
+
   protected onImportCSV(event: any): void {
     const target = event.target as HTMLInputElement;
     const file = target.files?.[0];
@@ -272,6 +297,17 @@ export class GuestList implements OnInit {
         sep = headerLine.includes(';') ? ';' : (headerLine.includes(',') ? ',' : ';');
       }
 
+      // Map headers dynamically to support various order / header languages
+      const headers = headerLine.split(sep).map(h => h.trim().toLowerCase().replace(/^"|"$/g, ''));
+      const nomIndex = headers.findIndex(h => h === 'nom');
+      const prenomIndex = headers.findIndex(h => h.includes('prénom') || h.includes('prenom'));
+      const fullNameIndex = headers.findIndex(h => h.includes('nom complet') || h.includes('fullname') || h === 'name');
+      const emailIndex = headers.findIndex(h => h.includes('email') || h.includes('courriel'));
+      const phoneIndex = headers.findIndex(h => h.includes('téléphone') || h.includes('telephone') || h.includes('phone'));
+      const statusIndex = headers.findIndex(h => h.includes('statut') || h.includes('status'));
+      const groupeIndex = headers.findIndex(h => h.includes('groupe') || h.includes('table') || h.includes('position'));
+      const dietaryIndex = headers.findIndex(h => h.includes('régime') || h.includes('regime') || h.includes('diet') || h.includes('notes'));
+
       const importedGuests: Guest[] = [];
 
       for (let i = 1; i < lines.length; i++) {
@@ -296,31 +332,48 @@ export class GuestList implements OnInit {
         }
         columns.push(currentValue.trim());
 
-        // We expect columns: [fullName, email, phone, status, position, dietaryRequirements]
         // Clean double quotes if any remained
         const cleanedCols = columns.map(c => c.replace(/^"|"$/g, '').replace(/""/g, '"'));
 
-        const fullName = cleanedCols[0];
-        if (!fullName) {
+        // Resolve fullName: combine Nom & Prénom if present, otherwise look for Nom Complet
+        let resolvedFullName = '';
+        if (fullNameIndex !== -1) {
+          resolvedFullName = cleanedCols[fullNameIndex] || '';
+        } else if (nomIndex !== -1 && prenomIndex !== -1) {
+          resolvedFullName = ((cleanedCols[prenomIndex] || '') + ' ' + (cleanedCols[nomIndex] || '')).trim();
+        } else if (nomIndex !== -1) {
+          resolvedFullName = cleanedCols[nomIndex] || '';
+        } else if (prenomIndex !== -1) {
+          resolvedFullName = cleanedCols[prenomIndex] || '';
+        } else {
+          resolvedFullName = cleanedCols[0] || '';
+        }
+
+        if (!resolvedFullName) {
           continue; // Skip lines without a name
         }
 
-        // Map status
+        // Map fields
+        const emailVal = emailIndex !== -1 ? (cleanedCols[emailIndex] || '') : (cleanedCols[1] || '');
+        const phoneVal = phoneIndex !== -1 ? (cleanedCols[phoneIndex] || '') : (cleanedCols[2] || '');
+        const tableNumberVal = groupeIndex !== -1 ? (cleanedCols[groupeIndex] || '') : (cleanedCols[4] || '');
+        const dietaryVal = dietaryIndex !== -1 ? (cleanedCols[dietaryIndex] || '') : (cleanedCols[5] || '');
+
         let statusVal: GuestStatus = 'PENDING';
-        const rawStatus = cleanedCols[3]?.toUpperCase() || '';
-        if (rawStatus.includes('CONFIRM') || rawStatus.includes('OUI') || rawStatus === 'CONFIRMED') {
+        const rawStatus = (statusIndex !== -1 ? cleanedCols[statusIndex] : (cleanedCols[3] || '')).toUpperCase();
+        if (rawStatus.includes('CONFIRM') || rawStatus.includes('OUI') || rawStatus === 'CONFIRMED' || rawStatus.includes('PRES')) {
           statusVal = 'CONFIRMED';
-        } else if (rawStatus.includes('DECLIN') || rawStatus.includes('NON') || rawStatus === 'DECLINED') {
+        } else if (rawStatus.includes('DECLIN') || rawStatus.includes('NON') || rawStatus === 'DECLINED' || rawStatus.includes('ABS')) {
           statusVal = 'DECLINED';
         }
 
         importedGuests.push({
-          fullName: fullName,
-          email: cleanedCols[1] || '',
-          phone: cleanedCols[2] || '',
+          fullName: resolvedFullName,
+          email: emailVal,
+          phone: phoneVal,
           status: statusVal,
-          tableNumber: cleanedCols[4] || '',
-          dietaryRequirements: cleanedCols[5] || ''
+          tableNumber: tableNumberVal,
+          dietaryRequirements: dietaryVal
         });
       }
 

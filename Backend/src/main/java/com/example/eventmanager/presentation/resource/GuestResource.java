@@ -22,6 +22,20 @@ public class GuestResource {
     private final UpdateGuestUseCase updateGuestUseCase;
     private final DeleteGuestUseCase deleteGuestUseCase;
 
+    @GetMapping("/events/{eventId}/guests/template")
+    public ResponseEntity<byte[]> getGuestsTemplate(@PathVariable Long eventId) {
+        String csvContent = "\uFEFFNom Complet;Téléphone;Email;Groupe\r\n";
+        byte[] csvBytes = csvContent.getBytes(java.nio.charset.StandardCharsets.UTF_8);
+
+        org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
+        headers.setContentType(org.springframework.http.MediaType.parseMediaType("text/csv;charset=utf-8"));
+        headers.setContentDisposition(org.springframework.http.ContentDisposition.builder("attachment")
+                .filename("modele_invites.csv")
+                .build());
+
+        return new ResponseEntity<>(csvBytes, headers, HttpStatus.OK);
+    }
+
     @GetMapping("/events/{eventId}/guests")
     public ResponseEntity<List<GuestDTO>> getGuestsByEvent(@PathVariable Long eventId) {
         return ResponseEntity.ok(getGuestsByEventUseCase.getGuestsByEventId(eventId));

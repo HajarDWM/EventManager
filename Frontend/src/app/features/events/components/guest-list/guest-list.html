@@ -74,6 +74,9 @@
     </h3>
     <div class="block-options d-flex gap-2">
       <input type="file" #fileImportInput (change)="onImportCSV($event)" accept=".csv" class="d-none">
+      <button type="button" class="btn btn-sm btn-alt-warning" (click)="onDownloadTemplate()">
+        <i class="fa fa-file-excel me-1"></i> Télécharger le modèle (Excel/CSV)
+      </button>
       <button type="button" class="btn btn-sm btn-alt-success" (click)="fileImportInput.click()">
         <i class="fa fa-upload me-1"></i> Importer Excel/CSV
       </button>
