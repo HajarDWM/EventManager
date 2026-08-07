@@ -327,4 +327,57 @@ public class BillingApplicationService implements ManageQuoteUseCase, ManageInvo
 
         invoiceRepositoryPort.deleteById(id);
     }
+
+    @Override
+    @Transactional
+    public void deletePayment(Long eventId, Long paymentId) {
+        verifyEventOwnership(eventId);
+        Payment payment = paymentRepositoryPort.findById(paymentId)
+                .orElseThrow(() -> new RuntimeException("Règlement introuvable avec l'id: " + paymentId));
+        
+        Invoice invoice = invoiceRepositoryPort.findById(payment.getInvoiceId())
+                .orElseThrow(() -> new RuntimeException("Facture introuvable avec l'id: " + payment.getInvoiceId()));
+        
+        invoice.getPayments().removeIf(p -> paymentId.equals(p.getId()));
+        invoice.updateStatusBasedOnPayments();
+        
+        invoiceRepositoryPort.save(invoice);
+        paymentRepositoryPort.deleteById(paymentId);
+    }
+
+    @Override
+    @Transactional
+    public InvoiceDTO updatePayment(Long eventId, Long invoiceId, Long paymentId, PaymentDTO paymentDTO) {
+        verifyEventOwnership(eventId);
+        Payment existingPayment = paymentRepositoryPort.findById(paymentId)
+                .orElseThrow(() -> new RuntimeException("Règlement introuvable avec l'id: " + paymentId));
+        
+        Invoice invoice = invoiceRepositoryPort.findById(invoiceId)
+                .orElseThrow(() -> new RuntimeException("Facture introuvable avec l'id: " + invoiceId));
+        
+        PaymentMethod method = PaymentMethod.CARD;
+        try {
+            method = PaymentMethod.valueOf(paymentDTO.getPaymentMethod().toUpperCase());
+        } catch (Exception ignored) {}
+        
+        Payment updatedPayment = Payment.builder()
+                .id(paymentId)
+                .invoiceId(invoiceId)
+                .catererId(invoice.getCatererId())
+                .amount(paymentDTO.getAmount())
+                .paymentDate(existingPayment.getPaymentDate())
+                .paymentMethod(method)
+                .reference(paymentDTO.getReference())
+                .label(paymentDTO.getLabel())
+                .build();
+                
+        paymentRepositoryPort.save(updatedPayment);
+        
+        Invoice updatedInvoice = invoiceRepositoryPort.findById(invoiceId)
+                .orElseThrow(() -> new RuntimeException("Facture introuvable avec l'id: " + invoiceId));
+        updatedInvoice.updateStatusBasedOnPayments();
+        Invoice savedInvoice = invoiceRepositoryPort.save(updatedInvoice);
+        
+        return invoiceMapper.toDTO(savedInvoice);
+    }
 }

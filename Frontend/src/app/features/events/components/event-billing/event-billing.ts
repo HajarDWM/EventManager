@@ -34,6 +34,14 @@ export class EventBilling implements OnInit {
     return balance < 0 ? 0 : balance;
   });
 
+  protected readonly paymentProgressPercentage = computed(() => {
+    const total = this.eventTotalPrice();
+    if (total <= 0) return 0;
+    const paid = this.totalPaidAmount();
+    const pct = Math.round((paid / total) * 100);
+    return pct > 100 ? 100 : pct;
+  });
+
   // Backend links cached
   protected activeQuote: QuoteDTO | null = null;
   protected activeInvoice: InvoiceDTO | null = null;
@@ -48,6 +56,7 @@ export class EventBilling implements OnInit {
 
   // Modal controls
   protected readonly isRecordingPaymentModal = signal<boolean>(false);
+  protected readonly editingPaymentId = signal<number | null>(null);
 
   public ngOnInit(): void {
     const idParam = this.route.snapshot.paramMap.get('id');
@@ -240,6 +249,7 @@ export class EventBilling implements OnInit {
       alert('Veuillez d\'abord définir le montant total de l\'événement.');
       return;
     }
+    this.editingPaymentId.set(null);
     this.paymentAmountInput = this.remainingBalanceDue();
     this.paymentMethodInput = 'BANK_TRANSFER';
     this.paymentReferenceInput = '';
@@ -253,6 +263,16 @@ export class EventBilling implements OnInit {
     this.isRecordingPaymentModal.set(true);
   }
 
+  protected openEditPaymentModal(pay: PaymentDTO): void {
+    if (!pay.id) return;
+    this.editingPaymentId.set(pay.id);
+    this.paymentAmountInput = pay.amount;
+    this.paymentMethodInput = pay.paymentMethod;
+    this.paymentReferenceInput = pay.reference || '';
+    this.paymentLabelInput = pay.label || 'AVANCE';
+    this.isRecordingPaymentModal.set(true);
+  }
+
   protected recordPayment(): void {
     if (this.paymentAmountInput <= 0) {
       alert('Le montant du règlement doit être supérieur à 0 €.');
@@ -261,6 +281,29 @@ export class EventBilling implements OnInit {
 
     this.isLoading.set(true);
     this.isRecordingPaymentModal.set(false);
+
+    const paymentId = this.editingPaymentId();
+    if (paymentId) {
+      const payment: PaymentDTO = {
+        invoiceId: this.activeInvoice!.id!,
+        amount: this.paymentAmountInput,
+        paymentMethod: this.paymentMethodInput,
+        reference: this.paymentReferenceInput,
+        label: this.paymentLabelInput
+      };
+      this.billingService.updatePayment(this.eventId(), this.activeInvoice!.id!, paymentId, payment).subscribe({
+        next: () => {
+          this.successMessage.set('Règlement modifié avec succès.');
+          this.loadBillingData();
+        },
+        error: (err) => {
+          console.error(err);
+          this.errorMessage.set('Erreur lors de la modification du règlement.');
+          this.isLoading.set(false);
+        }
+      });
+      return;
+    }
 
     // Ensure invoice exists before recording payment
     if (!this.activeInvoice) {
@@ -323,6 +366,26 @@ export class EventBilling implements OnInit {
       } else {
         this.loadBillingData();
       }
+    }
+  }
+
+  // --- DELETE PAYMENT ---
+  protected deletePayment(paymentId: number): void {
+    if (!this.activeInvoice || !this.activeInvoice.id) return;
+
+    if (confirm('Êtes-vous sûr de vouloir supprimer ce règlement ?')) {
+      this.isLoading.set(true);
+      this.billingService.deletePayment(this.eventId(), this.activeInvoice.id, paymentId).subscribe({
+        next: () => {
+          this.successMessage.set('Règlement supprimé avec succès.');
+          this.loadBillingData();
+        },
+        error: (err) => {
+          console.error(err);
+          this.errorMessage.set('Erreur lors de la suppression du règlement.');
+          this.isLoading.set(false);
+        }
+      });
     }
   }
 

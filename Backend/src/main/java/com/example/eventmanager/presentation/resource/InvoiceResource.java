@@ -54,4 +54,25 @@ public class InvoiceResource {
         manageInvoiceUseCase.deleteInvoice(id);
         return ResponseEntity.noContent().build();
     }
+
+    @DeleteMapping("/{id}/payments/{paymentId}")
+    public ResponseEntity<Void> deletePayment(
+            @PathVariable Long eventId,
+            @PathVariable Long id,
+            @PathVariable Long paymentId
+    ) {
+        manageInvoiceUseCase.deletePayment(eventId, paymentId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}/payments/{paymentId}")
+    public ResponseEntity<InvoiceDTO> updatePayment(
+            @PathVariable Long eventId,
+            @PathVariable Long id,
+            @PathVariable Long paymentId,
+            @RequestBody PaymentDTO paymentDTO
+    ) {
+        InvoiceDTO updated = manageInvoiceUseCase.updatePayment(eventId, id, paymentId, paymentDTO);
+        return ResponseEntity.ok(updated);
+    }
 }

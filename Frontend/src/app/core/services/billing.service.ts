@@ -110,4 +110,12 @@ export class BillingService {
   public deleteInvoice(eventId: number, invoiceId: number): Observable<void> {
     return this.http.delete<void>(`/api/events/${eventId}/invoices/${invoiceId}`);
   }
+
+  public deletePayment(eventId: number, invoiceId: number, paymentId: number): Observable<void> {
+    return this.http.delete<void>(`/api/events/${eventId}/invoices/${invoiceId}/payments/${paymentId}`);
+  }
+
+  public updatePayment(eventId: number, invoiceId: number, paymentId: number, payment: PaymentDTO): Observable<InvoiceDTO> {
+    return this.http.put<InvoiceDTO>(`/api/events/${eventId}/invoices/${invoiceId}/payments/${paymentId}`, payment);
+  }
 }

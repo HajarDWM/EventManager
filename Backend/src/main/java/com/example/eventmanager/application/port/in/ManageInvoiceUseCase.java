@@ -10,4 +10,6 @@ public interface ManageInvoiceUseCase {
     InvoiceDTO generateInvoiceFromQuote(Long quoteId, String type, java.math.BigDecimal percentage);
     InvoiceDTO recordPayment(Long invoiceId, PaymentDTO paymentDTO);
     void deleteInvoice(Long id);
+    void deletePayment(Long eventId, Long paymentId);
+    InvoiceDTO updatePayment(Long eventId, Long invoiceId, Long paymentId, PaymentDTO paymentDTO);
 }
