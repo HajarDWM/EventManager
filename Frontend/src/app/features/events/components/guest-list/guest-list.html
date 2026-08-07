@@ -73,7 +73,7 @@
       <i class="fa fa-users me-1 text-primary"></i> Liste des invités
     </h3>
     <div class="block-options d-flex gap-2">
-      <input type="file" #fileImportInput (change)="onImportCSV($event)" accept=".csv" class="d-none">
+      <input type="file" #fileImportInput (change)="onImportFile($event)" accept=".csv, .xlsx" class="d-none">
       <button type="button" class="btn btn-sm btn-alt-warning" (click)="onDownloadTemplate()">
         <i class="fa fa-file-excel me-1"></i> Télécharger le modèle (Excel/CSV)
       </button>

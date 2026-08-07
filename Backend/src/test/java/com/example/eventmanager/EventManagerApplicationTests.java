@@ -18,6 +18,48 @@ class EventManagerApplicationTests {
 
     @Test
     void contextLoads() {
+        try {
+            System.out.println("====== EXCEL POI TEST ======");
+            try (org.apache.poi.xssf.usermodel.XSSFWorkbook workbook = new org.apache.poi.xssf.usermodel.XSSFWorkbook()) {
+                org.apache.poi.xssf.usermodel.XSSFSheet sheet = workbook.createSheet("Invités");
+                org.apache.poi.xssf.usermodel.XSSFRow headerRow = sheet.createRow(0);
+                headerRow.createCell(0).setCellValue("Nom Complet");
+                headerRow.createCell(1).setCellValue("Téléphone");
+                headerRow.createCell(2).setCellValue("Email");
+                headerRow.createCell(3).setCellValue("Groupe");
+
+                String[] groups = {
+                    "Famille Proche", "Famille Élargie", "Amis & Proches", "Hommes", "Femmes",
+                    "VIP", "Enfants", "Direction / Management", "Partenaires / Clients VIP",
+                    "Équipe Interne / Salariés", "Presse / Médias", "Invités Externes",
+                    "VIP / Sponsors", "Table d'Honneur", "Grand Public / Standard",
+                    "Presse & Officiels", "Staff / Organisateurs"
+                };
+
+                org.apache.poi.xssf.usermodel.XSSFSheet groupsSheet = workbook.createSheet("PredefinedGroups");
+                for (int i = 0; i < groups.length; i++) {
+                    org.apache.poi.xssf.usermodel.XSSFRow row = groupsSheet.createRow(i);
+                    row.createCell(0).setCellValue(groups[i]);
+                }
+                workbook.setSheetHidden(workbook.getSheetIndex("PredefinedGroups"), true);
+
+                org.apache.poi.ss.usermodel.DataValidationHelper validationHelper = sheet.getDataValidationHelper();
+                org.apache.poi.ss.usermodel.DataValidationConstraint constraint = validationHelper.createFormulaListConstraint("PredefinedGroups!$A$1:$A$" + groups.length);
+                org.apache.poi.ss.util.CellRangeAddressList addressList = new org.apache.poi.ss.util.CellRangeAddressList(1, 999, 3, 3);
+                org.apache.poi.ss.usermodel.DataValidation validation = validationHelper.createValidation(constraint, addressList);
+                validation.setErrorStyle(org.apache.poi.ss.usermodel.DataValidation.ErrorStyle.WARNING);
+                validation.setShowErrorBox(true);
+                validation.createErrorBox("Groupe Inhabituel", "Le groupe saisi n'est pas dans la liste prédéfinie. Vous pouvez continuer ou sélectionner un groupe de la liste.");
+                sheet.addValidationData(validation);
+                
+                java.io.ByteArrayOutputStream out = new java.io.ByteArrayOutputStream();
+                workbook.write(out);
+                System.out.println("====== EXCEL POI TEST SUCCESS, bytes=" + out.size() + " ======");
+            }
+        } catch (Exception e) {
+            System.err.println("====== EXCEL POI TEST EXCEPTION ======");
+            e.printStackTrace();
+        }
     }
 
     @Test

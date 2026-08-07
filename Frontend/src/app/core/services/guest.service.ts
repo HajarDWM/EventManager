@@ -40,4 +40,10 @@ export class GuestService {
   public deleteGuest(guestId: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/guests/${guestId}`);
   }
+
+  public importGuests(eventId: number, file: File): Observable<Guest[]> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post<Guest[]>(`${this.apiUrl}/events/${eventId}/guests/import`, formData);
+  }
 }

@@ -60,13 +60,16 @@ export class GuestList implements OnInit {
   });
 
   protected readonly groupSuggestions = computed(() => {
-    const tempId = this.event()?.templateId || '';
-    const isPrivate = tempId.includes('wedding') || tempId.includes('coton') || tempId.includes('fleurs');
-    if (isPrivate) {
-      return ['Famille Proche', 'Famille Élargie', 'Amis', 'VIP', 'Hommes', 'Femmes', 'Enfants', 'Prestataires'];
-    } else {
-      return ['Direction', 'Staff', 'VIP', 'Partenaires', 'Presse', 'Invités d\'honneur', 'Équipe technique'];
-    }
+    const globalGroups = [
+      'Famille Proche', 'Famille Élargie', 'Amis & Proches', 'Hommes', 'Femmes',
+      'VIP', 'Enfants', 'Direction / Management', 'Partenaires / Clients VIP',
+      'Équipe Interne / Salariés', 'Presse / Médias', 'Invités Externes',
+      'VIP / Sponsors', 'Table d\'Honneur', 'Grand Public / Standard',
+      'Presse & Officiels', 'Staff / Organisateurs'
+    ];
+    const currentUnique = this.uniqueGroups();
+    const combined = [...globalGroups, ...currentUnique];
+    return Array.from(new Set(combined));
   });
 
   public ngOnInit(): void {
@@ -268,7 +271,7 @@ export class GuestList implements OnInit {
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.setAttribute('href', url);
-        link.setAttribute('download', 'modele_invites.csv');
+        link.setAttribute('download', 'modele_invites.xlsx');
         link.style.visibility = 'hidden';
         document.body.appendChild(link);
         link.click();
@@ -282,26 +285,11 @@ export class GuestList implements OnInit {
     });
   }
 
-  protected onImportCSV(event: any): void {
+  protected onImportFile(event: any): void {
     const target = event.target as HTMLInputElement;
     const file = target.files?.[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const text = e.target?.result as string;
-      if (!text) return;
-      this.parseAndImportCSV(text);
-      // Reset input value to allow importing the same file again
-      target.value = '';
-    };
-    reader.onerror = () => {
-      this.errorMessage.set("Erreur lors de la lecture du fichier.");
-    };
-    reader.readAsText(file, 'UTF-8');
-  }
-
-  private parseAndImportCSV(text: string): void {
     const currentEventId = this.eventId();
     if (!currentEventId) return;
 
@@ -309,130 +297,16 @@ export class GuestList implements OnInit {
     this.errorMessage.set('');
     this.successMessage.set('');
 
-    try {
-      // Split lines by newline
-      const lines = text.split(/\r?\n/);
-      if (lines.length <= 1) {
-        throw new Error("Le fichier est vide ou ne contient pas d'invités.");
-      }
-
-      // Detect separator: check first line (header)
-      const headerLine = lines[0];
-      let sep = ';';
-      if (headerLine.includes(';') && !headerLine.includes(',')) {
-        sep = ';';
-      } else if (headerLine.includes(',') && !headerLine.includes(';')) {
-        sep = ',';
-      } else {
-        sep = headerLine.includes(';') ? ';' : (headerLine.includes(',') ? ',' : ';');
-      }
-
-      // Map headers dynamically to support various order / header languages
-      const headers = headerLine.split(sep).map(h => h.trim().toLowerCase().replace(/^"|"$/g, ''));
-      const nomIndex = headers.findIndex(h => h === 'nom');
-      const prenomIndex = headers.findIndex(h => h.includes('prénom') || h.includes('prenom'));
-      const fullNameIndex = headers.findIndex(h => h.includes('nom complet') || h.includes('fullname') || h === 'name');
-      const emailIndex = headers.findIndex(h => h.includes('email') || h.includes('courriel'));
-      const phoneIndex = headers.findIndex(h => h.includes('téléphone') || h.includes('telephone') || h.includes('phone'));
-      const statusIndex = headers.findIndex(h => h.includes('statut') || h.includes('status'));
-      const tableIndex = headers.findIndex(h => h.includes('table') || h.includes('position') || h.includes('placement'));
-      const groupeIndex = headers.findIndex(h => h.includes('groupe') || h.includes('group'));
-      const dietaryIndex = headers.findIndex(h => h.includes('régime') || h.includes('regime') || h.includes('diet') || h.includes('notes'));
-
-      const importedGuests: Guest[] = [];
-
-      for (let i = 1; i < lines.length; i++) {
-        const line = lines[i].trim();
-        if (!line) continue; // Skip empty lines
-
-        // A basic CSV parser that handles quoted strings
-        const columns: string[] = [];
-        let inQuotes = false;
-        let currentValue = '';
-
-        for (let c = 0; c < line.length; c++) {
-          const char = line[c];
-          if (char === '"') {
-            inQuotes = !inQuotes;
-          } else if (char === sep && !inQuotes) {
-            columns.push(currentValue.trim());
-            currentValue = '';
-          } else {
-            currentValue += char;
-          }
-        }
-        columns.push(currentValue.trim());
-
-        // Clean double quotes if any remained
-        const cleanedCols = columns.map(c => c.replace(/^"|"$/g, '').replace(/""/g, '"'));
-
-        // Resolve fullName: combine Nom & Prénom if present, otherwise look for Nom Complet
-        let resolvedFullName = '';
-        if (fullNameIndex !== -1) {
-          resolvedFullName = cleanedCols[fullNameIndex] || '';
-        } else if (nomIndex !== -1 && prenomIndex !== -1) {
-          resolvedFullName = ((cleanedCols[prenomIndex] || '') + ' ' + (cleanedCols[nomIndex] || '')).trim();
-        } else if (nomIndex !== -1) {
-          resolvedFullName = cleanedCols[nomIndex] || '';
-        } else if (prenomIndex !== -1) {
-          resolvedFullName = cleanedCols[prenomIndex] || '';
-        } else {
-          resolvedFullName = cleanedCols[0] || '';
-        }
-
-        if (!resolvedFullName || resolvedFullName.includes('(Exemple)') || resolvedFullName.includes('(Example)')) {
-          continue; // Skip lines without a name or example lines
-        }
-
-        // Map fields
-        const emailVal = emailIndex !== -1 ? (cleanedCols[emailIndex] || '') : (cleanedCols[1] || '');
-        const phoneVal = phoneIndex !== -1 ? (cleanedCols[phoneIndex] || '') : (cleanedCols[2] || '');
-        const tableNumberVal = tableIndex !== -1 ? (cleanedCols[tableIndex] || '') : (cleanedCols[5] || '');
-        const dietaryVal = dietaryIndex !== -1 ? (cleanedCols[dietaryIndex] || '') : (cleanedCols[6] || '');
-        const groupNameVal = groupeIndex !== -1 ? (cleanedCols[groupeIndex] || '') : (cleanedCols[3] || '');
-
-        let statusVal: GuestStatus = 'PENDING';
-        const rawStatus = (statusIndex !== -1 ? cleanedCols[statusIndex] : (cleanedCols[4] || '')).toUpperCase();
-        if (rawStatus.includes('CONFIRM') || rawStatus.includes('OUI') || rawStatus === 'CONFIRMED' || rawStatus.includes('PRES')) {
-          statusVal = 'CONFIRMED';
-        } else if (rawStatus.includes('DECLIN') || rawStatus.includes('NON') || rawStatus === 'DECLINED' || rawStatus.includes('ABS')) {
-          statusVal = 'DECLINED';
-        }
-
-        importedGuests.push({
-          fullName: resolvedFullName,
-          email: emailVal,
-          phone: phoneVal,
-          status: statusVal,
-          tableNumber: tableNumberVal,
-          dietaryRequirements: dietaryVal,
-          groupName: groupNameVal
-        });
-      }
-
-      if (importedGuests.length === 0) {
-        throw new Error("Aucun invité valide trouvé dans le fichier.");
-      }
-
-      this.saveImportedGuests(currentEventId, importedGuests);
-
-    } catch (err: any) {
-      this.isLoading.set(false);
-      this.errorMessage.set(err.message || "Erreur lors du traitement du fichier CSV.");
-      console.error(err);
-    }
-  }
-
-  private saveImportedGuests(eventId: number, list: Guest[]): void {
-    const obsList = list.map(g => this.guestService.createGuest(eventId, g));
-    forkJoin(obsList).subscribe({
+    this.guestService.importGuests(currentEventId, file).subscribe({
       next: (results) => {
         this.successMessage.set(`${results.length} invités importés avec succès.`);
-        this.loadGuests(eventId);
+        this.loadGuests(currentEventId);
+        target.value = '';
       },
       error: (err) => {
-        this.errorMessage.set("Une erreur est survenue lors de l'importation de certains invités.");
-        this.loadGuests(eventId); // Reload what succeeded
+        this.errorMessage.set("Une erreur est survenue lors de l'importation des invités.");
+        this.isLoading.set(false);
+        target.value = '';
         console.error(err);
       }
     });
