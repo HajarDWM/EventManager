@@ -95,7 +95,7 @@
           <div class="input-group">
             <input type="number" class="form-control" placeholder="Entrez le prix total" [(ngModel)]="editTotalPrice" name="editTotalPrice" min="0">
             <button class="btn btn-primary" type="button" (click)="saveTotalPrice()">
-              Mettre à jour
+              Valider le Budget
             </button>
           </div>
           <div class="form-text fs-xs text-muted mt-2">
@@ -108,9 +108,6 @@
         <div class="d-flex flex-column gap-2">
           <button type="button" class="btn btn-success w-100 rounded-pill py-2.5 fw-bold" [disabled]="eventTotalPrice() <= 0" (click)="openPaymentModal()">
             <i class="fa fa-euro-sign me-1"></i> Enregistrer un Règlement
-          </button>
-          <button type="button" class="btn btn-alt-danger w-100 rounded-pill py-2.5 fw-semibold mt-2" *ngIf="paymentsList().length > 0" (click)="resetBilling()">
-            <i class="fa fa-sync-alt me-1"></i> Réinitialiser les Règlements
           </button>
         </div>
       </div>
@@ -141,6 +138,7 @@
             <thead>
               <tr>
                 <th>Date</th>
+                <th>Type</th>
                 <th>Mode</th>
                 <th>Référence</th>
                 <th class="text-end">Montant</th>
@@ -150,6 +148,11 @@
               <tr *ngFor="let pay of paymentsList()">
                 <td>
                   {{ pay.paymentDate | date:'dd/MM/yyyy HH:mm' }}
+                </td>
+                <td>
+                  <span class="badge" [ngClass]="getPaymentLabelBadgeClass(pay.label)">
+                    {{ getPaymentLabelText(pay.label) }}
+                  </span>
                 </td>
                 <td class="fw-semibold">
                   {{ getPaymentMethodLabel(pay.paymentMethod) }}
@@ -195,6 +198,17 @@
               <option value="CARD">Carte Bancaire</option>
               <option value="CASH">Espèces</option>
               <option value="CHECK">Chèque</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fs-sm fw-bold">Type de règlement</label>
+            <select class="form-select" [(ngModel)]="paymentLabelInput" name="paymentLabelInput">
+              <option value="AVANCE">Acompte / Avance</option>
+              <option value="VERSEMENT_2">Deuxième versement</option>
+              <option value="VERSEMENT_3">Troisième versement</option>
+              <option value="SOLDE">Solde final</option>
+              <option value="AUTRE">Autre règlement</option>
             </select>
           </div>
 

@@ -25,8 +25,15 @@ export class OrganiserInvitationSetup implements OnInit {
   protected readonly templates = signal<DigitalTemplate[]>([]);
   protected readonly guests = signal<Guest[]>([]);
   protected readonly selectedGuestIds = signal<Record<number, boolean>>({});
-  protected readonly sendingChannel = signal<'WHATSAPP' | 'EMAIL' | 'BOTH'>('BOTH');
+  protected readonly channelWhatsapp = signal(true);
+  protected readonly channelEmail = signal(true);
+  protected readonly channelSms = signal(false);
+  protected readonly channelPaper = signal(false);
   protected readonly isSending = signal(false);
+
+  protected readonly hasSelectedChannel = computed(() => {
+    return this.channelWhatsapp() || this.channelEmail() || this.channelSms() || this.channelPaper();
+  });
   protected readonly sendSuccessMessage = signal('');
 
   protected readonly isLoading = signal(true);
@@ -289,21 +296,29 @@ export class OrganiserInvitationSetup implements OnInit {
       return;
     }
 
+    const activeChannels: string[] = [];
+    if (this.channelWhatsapp()) activeChannels.push('WhatsApp');
+    if (this.channelEmail()) activeChannels.push('E-mail');
+    if (this.channelSms()) activeChannels.push('SMS');
+    if (this.channelPaper()) activeChannels.push('Papier');
+
+    if (activeChannels.length === 0) {
+      this.errorMessage.set("Veuillez sélectionner au moins un canal d'envoi.");
+      setTimeout(() => this.errorMessage.set(''), 3000);
+      return;
+    }
+
     this.isSending.set(true);
     this.sendSuccessMessage.set('');
 
-    const channelLabel = this.sendingChannel() === 'BOTH' 
-      ? 'WhatsApp et E-mail' 
-      : this.sendingChannel() === 'EMAIL' 
-        ? 'E-mail' 
-        : 'WhatsApp';
+    const channelLabel = activeChannels.join(' & ');
 
-    console.log(`--- ENVOI DES INVITATIONS VIA ${this.sendingChannel()} ---`);
+    console.log(`--- ENVOI DES INVITATIONS VIA ${activeChannels.join(', ')} ---`);
     const currentGuests = this.guests();
     const updatedGuests = currentGuests.map(guest => {
       if (guest.id && this.selectedGuestIds()[guest.id]) {
         const guestLink = `${window.location.origin}/rsvp/${guest.id}`;
-        console.log(`Envoi à: ${guest.fullName} | Lien unique: ${guestLink} | Canaux: ${this.sendingChannel()}`);
+        console.log(`Envoi à: ${guest.fullName} | Lien unique: ${guestLink} | Canaux: ${activeChannels.join(', ')}`);
         localStorage.setItem(`guest_${guest.id}_isSent`, 'true');
         return { ...guest, isSent: true, invitationStatus: 'SENT' };
       }

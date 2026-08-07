@@ -44,6 +44,7 @@ export class EventBilling implements OnInit {
   protected paymentAmountInput = 0;
   protected paymentMethodInput = 'BANK_TRANSFER';
   protected paymentReferenceInput = '';
+  protected paymentLabelInput = 'AVANCE';
 
   // Modal controls
   protected readonly isRecordingPaymentModal = signal<boolean>(false);
@@ -209,27 +210,7 @@ export class EventBilling implements OnInit {
     if (!this.activeQuote || !this.activeQuote.id) return;
 
     if (this.activeInvoice) {
-      // If invoice exists, but payments are recorded, we need to delete the invoice and recreate it
-      // or if no payments are recorded, we delete and recreate.
-      if (this.activeInvoice.totalPaid && this.activeInvoice.totalPaid > 0) {
-        // Payments already exist. To avoid deleting payments, we will just inform the user or recreate.
-        // Actually, let's keep the existing payments: we can delete the invoice, which drops payments,
-        // but it's simpler if we just recreate it when they reset. Let's delete the invoice and recreate
-        // if no payments are made, otherwise warn the user.
-        alert('Attention : Le montant total a été mis à jour. Veuillez réinitialiser les règlements si vous souhaitez ajuster la facture globale.');
-        this.loadBillingData();
-      } else {
-        // No payments recorded yet, safe to delete invoice and recreate
-        this.billingService.deleteInvoice(this.eventId(), this.activeInvoice.id!).subscribe({
-          next: () => {
-            this.generateGlobalInvoice();
-          },
-          error: (err) => {
-            console.error(err);
-            this.loadBillingData();
-          }
-        });
-      }
+      this.loadBillingData();
     } else {
       // No invoice yet, create one
       this.generateGlobalInvoice();
@@ -262,6 +243,13 @@ export class EventBilling implements OnInit {
     this.paymentAmountInput = this.remainingBalanceDue();
     this.paymentMethodInput = 'BANK_TRANSFER';
     this.paymentReferenceInput = '';
+    
+    if (this.paymentsList().length === 0) {
+      this.paymentLabelInput = 'AVANCE';
+    } else {
+      this.paymentLabelInput = `VERSEMENT_${this.paymentsList().length + 1}`;
+    }
+    
     this.isRecordingPaymentModal.set(true);
   }
 
@@ -297,7 +285,8 @@ export class EventBilling implements OnInit {
       invoiceId: invoiceId,
       amount: this.paymentAmountInput,
       paymentMethod: this.paymentMethodInput,
-      reference: this.paymentReferenceInput
+      reference: this.paymentReferenceInput,
+      label: this.paymentLabelInput
     };
 
     this.billingService.recordPayment(this.eventId(), invoiceId, payment).subscribe({
@@ -345,6 +334,26 @@ export class EventBilling implements OnInit {
       case 'CASH': return 'Espèces';
       case 'CHECK': return 'Chèque';
       default: return method || 'Autre';
+    }
+  }
+
+  protected getPaymentLabelText(label?: string): string {
+    switch (label) {
+      case 'AVANCE': return 'Acompte / Avance';
+      case 'VERSEMENT_2': return '2ème versement';
+      case 'VERSEMENT_3': return '3ème versement';
+      case 'SOLDE': return 'Solde final';
+      default: return label ? label.replace('_', ' ') : 'Règlement';
+    }
+  }
+
+  protected getPaymentLabelBadgeClass(label?: string): string {
+    switch (label) {
+      case 'AVANCE': return 'bg-info-light text-info border border-info-light';
+      case 'VERSEMENT_2':
+      case 'VERSEMENT_3': return 'bg-warning-light text-warning border border-warning-light';
+      case 'SOLDE': return 'bg-success-light text-success border border-success-light';
+      default: return 'bg-body-light text-muted border border-light';
     }
   }
 }

@@ -115,6 +115,18 @@ public class BillingApplicationService implements ManageQuoteUseCase, ManageInvo
         existing.calculateTotals();
 
         Quote saved = quoteRepositoryPort.save(existing);
+        
+        // Sync invoice totals
+        invoiceRepositoryPort.findByEventId(existing.getEventId()).stream()
+                .filter(inv -> saved.getId().equals(inv.getQuoteId()))
+                .forEach(inv -> {
+                    inv.setTotalHt(saved.getTotalHt());
+                    inv.setTotalVat(saved.getTotalVat());
+                    inv.setTotalTtc(saved.getTotalTtc());
+                    inv.updateStatusBasedOnPayments();
+                    invoiceRepositoryPort.save(inv);
+                });
+
         return quoteMapper.toDTO(saved);
     }
 
@@ -284,6 +296,7 @@ public class BillingApplicationService implements ManageQuoteUseCase, ManageInvo
                 .paymentDate(LocalDateTime.now())
                 .paymentMethod(method)
                 .reference(paymentDTO.getReference())
+                .label(paymentDTO.getLabel())
                 .build();
 
         invoice.addPayment(payment);

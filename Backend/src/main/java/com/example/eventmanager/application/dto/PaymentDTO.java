@@ -17,4 +17,5 @@ public class PaymentDTO {
     private LocalDateTime paymentDate;
     private String paymentMethod;
     private String reference;
+    private String label;
 }

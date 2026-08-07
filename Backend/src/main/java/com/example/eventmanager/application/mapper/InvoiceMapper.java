@@ -56,6 +56,7 @@ public class InvoiceMapper {
                 .paymentDate(payment.getPaymentDate())
                 .paymentMethod(payment.getPaymentMethod() != null ? payment.getPaymentMethod().name() : null)
                 .reference(payment.getReference())
+                .label(payment.getLabel())
                 .build();
     }
 
@@ -119,6 +120,7 @@ public class InvoiceMapper {
                 .paymentDate(paymentDTO.getPaymentDate())
                 .paymentMethod(methodEnum)
                 .reference(paymentDTO.getReference())
+                .label(paymentDTO.getLabel())
                 .build();
     }
 }

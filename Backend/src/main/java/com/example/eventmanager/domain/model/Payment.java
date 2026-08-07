@@ -15,4 +15,5 @@ public class Payment {
     private LocalDateTime paymentDate;
     private PaymentMethod paymentMethod;
     private String reference; // transaction receipt / check number
+    private String label;
 }

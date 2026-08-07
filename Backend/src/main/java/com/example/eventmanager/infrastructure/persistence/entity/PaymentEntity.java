@@ -35,4 +35,6 @@ public class PaymentEntity {
     private String paymentMethod;
 
     private String reference;
+
+    private String label;
 }

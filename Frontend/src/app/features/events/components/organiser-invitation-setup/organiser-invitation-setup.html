@@ -125,39 +125,51 @@
         <div class="bg-body-light p-3 rounded h-100 border border-light">
           <h4 class="fs-sm fw-bold text-uppercase text-muted mb-3"><i class="fa fa-share-alt me-1"></i> 1. Choisir le canal d'envoi</h4>
           
-          <div class="space-y-2">
+          <div class="space-y-3">
             <div class="form-check form-check-block mb-3">
-              <input class="form-check-input" type="radio" id="channelBoth" value="BOTH" 
-                     [ngModel]="sendingChannel()" (ngModelChange)="sendingChannel.set($event)" name="sendingChannel">
-              <label class="form-check-label d-flex align-items-center gap-2" for="channelBoth" style="cursor: pointer;">
-                <i class="fa fa-share-alt text-primary fs-5"></i>
+              <input class="form-check-input" type="checkbox" id="channelWhatsapp" 
+                     [ngModel]="channelWhatsapp()" (ngModelChange)="channelWhatsapp.set($event)" name="channelWhatsapp">
+              <label class="form-check-label d-flex align-items-center gap-2" for="channelWhatsapp" style="cursor: pointer;">
+                <i class="fab fa-whatsapp text-success fs-5"></i>
                 <div>
-                  <span class="fw-semibold d-block fs-sm">WhatsApp & E-mail</span>
-                  <span class="fs-xs text-muted">Recommandé pour maximiser les réponses</span>
+                  <span class="fw-semibold d-block fs-sm">WhatsApp</span>
+                  <span class="fs-xs text-muted">Lien direct envoyé sur leur numéro mobile</span>
                 </div>
               </label>
             </div>
             
             <div class="form-check form-check-block mb-3">
-              <input class="form-check-input" type="radio" id="channelWhatsapp" value="WHATSAPP" 
-                     [ngModel]="sendingChannel()" (ngModelChange)="sendingChannel.set($event)" name="sendingChannel">
-              <label class="form-check-label d-flex align-items-center gap-2" for="channelWhatsapp" style="cursor: pointer;">
-                <i class="fab fa-whatsapp text-success fs-5"></i>
+              <input class="form-check-input" type="checkbox" id="channelEmail" 
+                     [ngModel]="channelEmail()" (ngModelChange)="channelEmail.set($event)" name="channelEmail">
+              <label class="form-check-label d-flex align-items-center gap-2" for="channelEmail" style="cursor: pointer;">
+                <i class="far fa-envelope text-info fs-5"></i>
                 <div>
-                  <span class="fw-semibold d-block fs-sm">WhatsApp uniquement</span>
-                  <span class="fs-xs text-muted">Lien direct envoyé sur leur numéro mobile</span>
+                  <span class="fw-semibold d-block fs-sm">E-mail</span>
+                  <span class="fs-xs text-muted">Invitation formelle envoyée dans leur boîte mail</span>
+                </div>
+              </label>
+            </div>
+
+            <div class="form-check form-check-block mb-3">
+              <input class="form-check-input" type="checkbox" id="channelSms" 
+                     [ngModel]="channelSms()" (ngModelChange)="channelSms.set($event)" name="channelSms">
+              <label class="form-check-label d-flex align-items-center gap-2" for="channelSms" style="cursor: pointer;">
+                <i class="fa fa-comment-sms text-warning fs-5"></i>
+                <div>
+                  <span class="fw-semibold d-block fs-sm">SMS</span>
+                  <span class="fs-xs text-muted">SMS standard envoyé sur leur numéro</span>
                 </div>
               </label>
             </div>
 
             <div class="form-check form-check-block">
-              <input class="form-check-input" type="radio" id="channelEmail" value="EMAIL" 
-                     [ngModel]="sendingChannel()" (ngModelChange)="sendingChannel.set($event)" name="sendingChannel">
-              <label class="form-check-label d-flex align-items-center gap-2" for="channelEmail" style="cursor: pointer;">
-                <i class="far fa-envelope text-info fs-5"></i>
+              <input class="form-check-input" type="checkbox" id="channelPaper" 
+                     [ngModel]="channelPaper()" (ngModelChange)="channelPaper.set($event)" name="channelPaper">
+              <label class="form-check-label d-flex align-items-center gap-2" for="channelPaper" style="cursor: pointer;">
+                <i class="fa fa-envelope-open-text text-danger fs-5"></i>
                 <div>
-                  <span class="fw-semibold d-block fs-sm">E-mail uniquement</span>
-                  <span class="fs-xs text-muted">Invitation formelle envoyée dans leur boîte mail</span>
+                  <span class="fw-semibold d-block fs-sm">Format Papier</span>
+                  <span class="fs-xs text-muted">Générer un PDF imprimable avec code QR</span>
                 </div>
               </label>
             </div>
@@ -246,7 +258,7 @@
         Prêt à envoyer <strong class="text-dark">{{ getSelectedCount() }}</strong> invitation(s) unique(s) via le canal sélectionné.
       </div>
       <button type="button" class="btn btn-primary d-flex align-items-center gap-2 px-4" 
-              [disabled]="isSending() || getSelectedCount() === 0"
+              [disabled]="isSending() || getSelectedCount() === 0 || !hasSelectedChannel()"
               (click)="sendInvitations()">
         <span *ngIf="!isSending()">
           <i class="fa fa-paper-plane me-1"></i> Envoyer les invitations

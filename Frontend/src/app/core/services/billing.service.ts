@@ -33,6 +33,7 @@ export interface PaymentDTO {
   paymentDate?: string;
   paymentMethod: string;
   reference?: string;
+  label?: string;
 }
 
 export interface InvoiceDTO {

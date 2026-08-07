@@ -51,6 +51,7 @@ public class InvoicePersistenceMapper {
                 .paymentDate(payment.getPaymentDate())
                 .paymentMethod(payment.getPaymentMethod() != null ? payment.getPaymentMethod().name() : "CARD")
                 .reference(payment.getReference())
+                .label(payment.getLabel())
                 .build();
     }
 
@@ -115,6 +116,7 @@ public class InvoicePersistenceMapper {
                 .paymentDate(entity.getPaymentDate())
                 .paymentMethod(methodEnum)
                 .reference(entity.getReference())
+                .label(entity.getLabel())
                 .build();
     }
 }
