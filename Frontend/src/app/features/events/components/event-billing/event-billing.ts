@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { BillingService, QuoteDTO, QuoteItemDTO, InvoiceDTO, PaymentDTO } from '../../../../core/services/billing.service';
+import { BillingService, QuoteDTO, QuoteItemDTO, InvoiceDTO, PaymentDTO, EventExpenseDTO } from '../../../../core/services/billing.service';
 
 @Component({
   selector: 'app-event-billing',
@@ -47,6 +47,15 @@ export class EventBilling implements OnInit {
   protected activeInvoice: InvoiceDTO | null = null;
   protected paymentsList = signal<PaymentDTO[]>([]);
 
+  // Expense signals
+  protected readonly expensesList = signal<EventExpenseDTO[]>([]);
+  protected readonly totalExpensesAmount = computed(() => {
+    return this.expensesList().reduce((sum, exp) => sum + (exp.amount || 0), 0);
+  });
+  protected readonly netProfitAmount = computed(() => {
+    return this.eventTotalPrice() - this.totalExpensesAmount();
+  });
+
   // Input bindings
   protected editTotalPrice = 0;
   protected paymentAmountInput = 0;
@@ -58,12 +67,21 @@ export class EventBilling implements OnInit {
   protected readonly isRecordingPaymentModal = signal<boolean>(false);
   protected readonly editingPaymentId = signal<number | null>(null);
 
+  // Expense Modal controls & fields
+  protected readonly isRecordingExpenseModal = signal<boolean>(false);
+  protected readonly editingExpenseId = signal<number | null>(null);
+  protected expenseCategoryInput = 'LOCATION';
+  protected expenseDescriptionInput = '';
+  protected expenseAmountInput = 0;
+  protected expenseProviderInput = '';
+
   public ngOnInit(): void {
     const idParam = this.route.snapshot.paramMap.get('id');
     if (idParam) {
       this.eventId.set(Number(idParam));
       this.loadEventDetails();
       this.loadBillingData();
+      this.loadExpenses();
     } else {
       this.errorMessage.set('Identifiant de l\'événement manquant.');
       this.isLoading.set(false);
@@ -389,6 +407,105 @@ export class EventBilling implements OnInit {
     }
   }
 
+  // --- EXPENSES MANAGEMENT ---
+  protected loadExpenses(): void {
+    this.billingService.getEventExpenses(this.eventId()).subscribe({
+      next: (expenses) => {
+        this.expensesList.set(expenses);
+      },
+      error: (err) => {
+        console.error('Erreur chargement dépenses', err);
+      }
+    });
+  }
+
+  protected openExpenseModal(): void {
+    this.editingExpenseId.set(null);
+    this.expenseCategoryInput = 'LOCATION';
+    this.expenseDescriptionInput = '';
+    this.expenseAmountInput = 0;
+    this.expenseProviderInput = '';
+    this.isRecordingExpenseModal.set(true);
+  }
+
+  protected openEditExpenseModal(exp: EventExpenseDTO): void {
+    if (!exp.id) return;
+    this.editingExpenseId.set(exp.id);
+    this.expenseCategoryInput = exp.category;
+    this.expenseDescriptionInput = exp.description;
+    this.expenseAmountInput = exp.amount;
+    this.expenseProviderInput = exp.providerName || '';
+    this.isRecordingExpenseModal.set(true);
+  }
+
+  protected recordExpense(): void {
+    if (this.expenseAmountInput <= 0) {
+      alert('Le montant de la dépense doit être supérieur à 0 €.');
+      return;
+    }
+    if (!this.expenseDescriptionInput.trim()) {
+      alert('Veuillez saisir une description pour la dépense.');
+      return;
+    }
+
+    this.isLoading.set(true);
+    this.isRecordingExpenseModal.set(false);
+
+    const expenseDTO: EventExpenseDTO = {
+      category: this.expenseCategoryInput,
+      description: this.expenseDescriptionInput,
+      amount: this.expenseAmountInput,
+      providerName: this.expenseProviderInput || undefined
+    };
+
+    const expenseId = this.editingExpenseId();
+    if (expenseId) {
+      this.billingService.updateEventExpense(this.eventId(), expenseId, expenseDTO).subscribe({
+        next: () => {
+          this.successMessage.set('Dépense modifiée avec succès.');
+          this.loadExpenses();
+          this.isLoading.set(false);
+        },
+        error: (err) => {
+          console.error(err);
+          this.errorMessage.set('Erreur lors de la modification de la dépense.');
+          this.isLoading.set(false);
+        }
+      });
+    } else {
+      this.billingService.createEventExpense(this.eventId(), expenseDTO).subscribe({
+        next: () => {
+          this.successMessage.set('Dépense enregistrée avec succès.');
+          this.loadExpenses();
+          this.isLoading.set(false);
+        },
+        error: (err) => {
+          console.error(err);
+          this.errorMessage.set('Erreur lors de l\'enregistrement de la dépense.');
+          this.isLoading.set(false);
+        }
+      });
+    }
+  }
+
+  protected deleteExpense(expenseId: number): void {
+    if (confirm('Êtes-vous sûr de vouloir supprimer cette dépense ?')) {
+      this.isLoading.set(true);
+      this.billingService.deleteEventExpense(this.eventId(), expenseId).subscribe({
+        next: () => {
+          this.successMessage.set('Dépense supprimée avec succès.');
+          this.loadExpenses();
+          this.isLoading.set(false);
+        },
+        error: (err) => {
+          console.error(err);
+          this.errorMessage.set('Erreur lors de la suppression de la dépense.');
+          this.isLoading.set(false);
+        }
+      });
+    }
+  }
+
   // --- HELPERS ---
   protected getPaymentMethodLabel(method?: string): string {
     switch (method) {
@@ -418,5 +535,376 @@ export class EventBilling implements OnInit {
       case 'SOLDE': return 'bg-success-light text-success border border-success-light';
       default: return 'bg-body-light text-muted border border-light';
     }
+  }
+
+  protected getExpenseCategoryLabel(category?: string): string {
+    switch (category) {
+      case 'LOCATION': return 'Location de salle';
+      case 'CATERING': return 'Traiteur / Approvisionnement';
+      case 'STAFF': return 'Personnel / Sécurité';
+      case 'DECORATION': return 'Décoration / Fleuriste';
+      case 'LOGISTICS': return 'Logistique / Transport';
+      default: return category ? category.replace('_', ' ') : 'Autre dépense';
+    }
+  }
+
+  protected getExpenseCategoryBadgeClass(category?: string): string {
+    switch (category) {
+      case 'LOCATION': return 'bg-flat-light text-flat border border-flat-light';
+      case 'CATERING': return 'bg-warning-light text-warning border border-warning-light';
+      case 'STAFF': return 'bg-danger-light text-danger border border-danger-light';
+      case 'DECORATION': return 'bg-info-light text-info border border-info-light';
+      case 'LOGISTICS': return 'bg-city-light text-city border border-city-light';
+      default: return 'bg-body-light text-muted border border-light';
+    }
+  }
+
+  protected printPaymentReceipt(pay: PaymentDTO): void {
+    const eventName = this.eventTitle() || 'Événement';
+    
+    const printWindow = window.open('', '_blank', 'width=800,height=600');
+    if (!printWindow) {
+      alert('Veuillez autoriser les fenêtres pop-up pour imprimer le reçu.');
+      return;
+    }
+
+    const dateStr = pay.paymentDate ? new Date(pay.paymentDate).toLocaleDateString('fr-FR', {
+      year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
+    }) : '-';
+
+    const labelText = this.getPaymentLabelText(pay.label);
+    const methodText = this.getPaymentMethodLabel(pay.paymentMethod);
+
+    const htmlContent = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Reçu de Règlement - ${eventName}</title>
+        <style>
+          body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            color: #333;
+            margin: 40px;
+            line-height: 1.6;
+          }
+          .receipt-container {
+            border: 1px solid #e0e0e0;
+            padding: 30px;
+            border-radius: 8px;
+            max-width: 600px;
+            margin: 0 auto;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+          }
+          .header {
+            text-align: center;
+            border-bottom: 2px solid #2c3e50;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+          }
+          .header h1 {
+            margin: 0;
+            font-size: 24px;
+            color: #2c3e50;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+          }
+          .header p {
+            margin: 5px 0 0;
+            font-size: 14px;
+            color: #7f8c8d;
+          }
+          .meta-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            font-size: 13px;
+            color: #555;
+            background-color: #f9f9f9;
+            padding: 10px 15px;
+            border-radius: 4px;
+          }
+          .details-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+          }
+          .details-table th, .details-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+          }
+          .details-table th {
+            background-color: #f8f9fa;
+            color: #2c3e50;
+            font-weight: bold;
+            font-size: 13px;
+            text-transform: uppercase;
+          }
+          .details-table td {
+            font-size: 14px;
+          }
+          .amount-row {
+            background-color: #f1f9f1;
+            font-weight: bold;
+          }
+          .amount-value {
+            font-size: 18px;
+            color: #27ae60;
+          }
+          .footer {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 11px;
+            color: #bdc3c7;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+          }
+          @media print {
+            body { margin: 0; }
+            .receipt-container {
+              box-shadow: none;
+              border: none;
+              padding: 0;
+              max-width: 100%;
+            }
+          }
+        </style>
+      </head>
+      <body>
+        <div class="receipt-container">
+          <div class="header">
+            <h1>Reçu de Paiement</h1>
+            <p>EventManager - Gestion Financière</p>
+          </div>
+          <div class="meta-info">
+            <div>
+              <strong>Événement :</strong> ${eventName}<br>
+              <strong>Date d'impression :</strong> ${new Date().toLocaleDateString('fr-FR')}
+            </div>
+            <div style="text-align: right;">
+              <strong>Règlement ID :</strong> ${pay.id || 'N/A'}<br>
+              <strong>Référence :</strong> ${pay.reference || '-'}
+            </div>
+          </div>
+          <table class="details-table">
+            <thead>
+              <tr>
+                <th style="width: 50%;">Description</th>
+                <th style="width: 50%;">Détails</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Type de règlement</strong></td>
+                <td>${labelText}</td>
+              </tr>
+              <tr>
+                <td><strong>Moyen de paiement</strong></td>
+                <td>${methodText}</td>
+              </tr>
+              <tr>
+                <td><strong>Date du versement</strong></td>
+                <td>${dateStr}</td>
+              </tr>
+              <tr>
+                <td><strong>Référence de transaction</strong></td>
+                <td>${pay.reference || '-'}</td>
+              </tr>
+              <tr class="amount-row">
+                <td><strong>Montant Total Reçu</strong></td>
+                <td class="amount-value">${pay.amount.toFixed(2)} €</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="footer">
+            <p>Document officiel généré par EventManager. Merci de votre confiance.</p>
+          </div>
+        </div>
+        <script>
+          window.onload = function() {
+            window.print();
+            setTimeout(function() { window.close(); }, 500);
+          };
+        </script>
+      </body>
+      </html>
+    `;
+
+    printWindow.document.write(htmlContent);
+    printWindow.document.close();
+  }
+
+  protected printExpenseReceipt(exp: EventExpenseDTO): void {
+    const eventName = this.eventTitle() || 'Événement';
+    
+    const printWindow = window.open('', '_blank', 'width=800,height=600');
+    if (!printWindow) {
+      alert('Veuillez autoriser les fenêtres pop-up pour imprimer le bon de dépense.');
+      return;
+    }
+
+    const dateStr = exp.expenseDate ? new Date(exp.expenseDate).toLocaleDateString('fr-FR', {
+      year: 'numeric', month: 'long', day: 'numeric'
+    }) : '-';
+
+    const categoryText = this.getExpenseCategoryLabel(exp.category);
+
+    const htmlContent = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Bon de Dépense - ${eventName}</title>
+        <style>
+          body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            color: #333;
+            margin: 40px;
+            line-height: 1.6;
+          }
+          .receipt-container {
+            border: 1px solid #e0e0e0;
+            padding: 30px;
+            border-radius: 8px;
+            max-width: 600px;
+            margin: 0 auto;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+          }
+          .header {
+            text-align: center;
+            border-bottom: 2px solid #c0392b;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+          }
+          .header h1 {
+            margin: 0;
+            font-size: 24px;
+            color: #c0392b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+          }
+          .header p {
+            margin: 5px 0 0;
+            font-size: 14px;
+            color: #7f8c8d;
+          }
+          .meta-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            font-size: 13px;
+            color: #555;
+            background-color: #f9f9f9;
+            padding: 10px 15px;
+            border-radius: 4px;
+          }
+          .details-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+          }
+          .details-table th, .details-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+          }
+          .details-table th {
+            background-color: #f8f9fa;
+            color: #c0392b;
+            font-weight: bold;
+            font-size: 13px;
+            text-transform: uppercase;
+          }
+          .details-table td {
+            font-size: 14px;
+          }
+          .amount-row {
+            background-color: #fdf2f2;
+            font-weight: bold;
+          }
+          .amount-value {
+            font-size: 18px;
+            color: #c0392b;
+          }
+          .footer {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 11px;
+            color: #bdc3c7;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+          }
+          @media print {
+            body { margin: 0; }
+            .receipt-container {
+              box-shadow: none;
+              border: none;
+              padding: 0;
+              max-width: 100%;
+            }
+          }
+        </style>
+      </head>
+      <body>
+        <div class="receipt-container">
+          <div class="header">
+            <h1>Bon de Dépense</h1>
+            <p>EventManager - Suivi des Frais</p>
+          </div>
+          <div class="meta-info">
+            <div>
+              <strong>Événement :</strong> ${eventName}<br>
+              <strong>Date d'impression :</strong> ${new Date().toLocaleDateString('fr-FR')}
+            </div>
+            <div style="text-align: right;">
+              <strong>Dépense ID :</strong> ${exp.id || 'N/A'}<br>
+              <strong>Date de la dépense :</strong> ${dateStr}
+            </div>
+          </div>
+          <table class="details-table">
+            <thead>
+              <tr>
+                <th style="width: 50%;">Description de la Charge</th>
+                <th style="width: 50%;">Détails</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Catégorie</strong></td>
+                <td>${categoryText}</td>
+              </tr>
+              <tr>
+                <td><strong>Description / Intitulé</strong></td>
+                <td>${exp.description}</td>
+              </tr>
+              <tr>
+                <td><strong>Fournisseur / Prestataire</strong></td>
+                <td>${exp.providerName || '-'}</td>
+              </tr>
+              <tr>
+                <td><strong>Date d'enregistrement</strong></td>
+                <td>${dateStr}</td>
+              </tr>
+              <tr class="amount-row">
+                <td><strong>Montant Total Payé (TTC)</strong></td>
+                <td class="amount-value">${exp.amount.toFixed(2)} €</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="footer">
+            <p>Justificatif de dépense interne généré par EventManager.</p>
+          </div>
+        </div>
+        <script>
+          window.onload = function() {
+            window.print();
+            setTimeout(function() { window.close(); }, 500);
+          };
+        </script>
+      </body>
+      </html>
+    `;
+
+    printWindow.document.write(htmlContent);
+    printWindow.document.close();
   }
 }

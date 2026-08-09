@@ -36,6 +36,16 @@ export interface PaymentDTO {
   label?: string;
 }
 
+export interface EventExpenseDTO {
+  id?: number;
+  eventId?: number;
+  category: string;
+  description: string;
+  amount: number;
+  providerName?: string;
+  expenseDate?: string;
+}
+
 export interface InvoiceDTO {
   id?: number;
   invoiceNumber?: string;
@@ -117,5 +127,21 @@ export class BillingService {
 
   public updatePayment(eventId: number, invoiceId: number, paymentId: number, payment: PaymentDTO): Observable<InvoiceDTO> {
     return this.http.put<InvoiceDTO>(`/api/events/${eventId}/invoices/${invoiceId}/payments/${paymentId}`, payment);
+  }
+
+  public getEventExpenses(eventId: number): Observable<EventExpenseDTO[]> {
+    return this.http.get<EventExpenseDTO[]>(`/api/events/${eventId}/expenses`);
+  }
+
+  public createEventExpense(eventId: number, expense: EventExpenseDTO): Observable<EventExpenseDTO> {
+    return this.http.post<EventExpenseDTO>(`/api/events/${eventId}/expenses`, expense);
+  }
+
+  public updateEventExpense(eventId: number, expenseId: number, expense: EventExpenseDTO): Observable<EventExpenseDTO> {
+    return this.http.put<EventExpenseDTO>(`/api/events/${eventId}/expenses/${expenseId}`, expense);
+  }
+
+  public deleteEventExpense(eventId: number, expenseId: number): Observable<void> {
+    return this.http.delete<void>(`/api/events/${eventId}/expenses/${expenseId}`);
   }
 }

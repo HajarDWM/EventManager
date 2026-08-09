@@ -27,6 +27,9 @@
        style="width: 32px; height: 32px; padding: 0; border-radius: 50%;">
       <i class="fa fa-pencil-alt"></i>
     </a>
+    <a class="btn btn-sm btn-alt-success rounded-pill px-3 fw-semibold d-inline-flex align-items-center gap-1" [routerLink]="['/events', event()?.id, 'tasks']">
+      <i class="fa fa-tasks"></i> Tâches
+    </a>
     <a class="btn btn-sm btn-primary rounded-pill px-3 fw-semibold d-inline-flex align-items-center gap-1" [routerLink]="['/events', event()?.id, 'export']">
       <i class="fa fa-file-pdf"></i> Rapport Global
     </a>
