@@ -222,8 +222,8 @@ export class GuestRsvp implements OnInit {
         this.guest.set(data);
         this.status.set(data.guestStatus || 'PENDING');
         
-        // Initialize attendanceStatus to null on page load
-        this.attendanceStatus = null;
+        // Initialize attendanceStatus for natural exploration
+        this.attendanceStatus = true;
         
         if (data.mealType) {
           this.mealType.set(data.mealType);
@@ -295,38 +295,34 @@ export class GuestRsvp implements OnInit {
     });
   }
 
-  protected readonly currentRsvpStep = signal<number>(1);
-
-  protected selectStatus(newStatus: string): void {
-    this.status.set(newStatus);
-    if (newStatus === 'CONFIRMED') {
-      this.attendanceStatus = true;
-      this.currentRsvpStep.set(2);
-    } else if (newStatus === 'DECLINED') {
-      this.attendanceStatus = false;
-      this.currentRsvpStep.set(1);
-    } else {
-      this.attendanceStatus = null;
-      this.currentRsvpStep.set(1);
-    }
-  }
+  protected readonly currentRsvpStep = signal<number>(0);
 
   protected goToNextStep(): void {
     const step = this.currentRsvpStep();
-    if (step < 4) {
+    if (step < 3) {
       this.currentRsvpStep.set(step + 1);
     }
   }
 
   protected goToPrevStep(): void {
     const step = this.currentRsvpStep();
-    if (step > 1) {
-      if (step === 2) {
-        this.attendanceStatus = null;
-        this.status.set('PENDING');
-      }
+    if (step > 0) {
       this.currentRsvpStep.set(step - 1);
     }
+  }
+
+  protected readonly selectedAttendanceChoice = signal<'CONFIRMED' | 'DECLINED' | null>(null);
+
+  protected selectAttendanceChoice(choice: 'CONFIRMED' | 'DECLINED'): void {
+    this.selectedAttendanceChoice.set(choice);
+  }
+
+  protected confirmRsvpSubmission(): void {
+    const choice = this.selectedAttendanceChoice();
+    if (!choice) return;
+    this.status.set(choice);
+    this.attendanceStatus = (choice === 'CONFIRMED');
+    this.submitResponse();
   }
 
   public getSelectedDietsSummary(): string {

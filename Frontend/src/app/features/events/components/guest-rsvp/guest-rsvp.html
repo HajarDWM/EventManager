@@ -480,43 +480,71 @@
         </div>
 
         <!-- RSVP Form Section -->
-        <form (ngSubmit)="submitResponse()" #rsvpForm="ngForm">
+        <form #rsvpForm="ngForm">
 
-          <!-- STEP 1: Attendance Toggle (Je serai présent / Je ne pourrai pas venir) -->
-          <div *ngIf="currentRsvpStep() === 1" class="animate__animated animate__fadeIn">
-            <div class="mb-4">
+          <!-- STEP 0: Initial State / Overview on page load -->
+          <div *ngIf="currentRsvpStep() === 0" class="initial-rsvp-view animate__animated animate__fadeIn mb-4">
+            
+            <!-- Action Trigger to begin choices / explore steps -->
+            <div class="text-center mb-4">
+              <button type="button" class="btn btn-alt-gold w-100 py-2.5 fs-xs fw-semibold rounded-pill" (click)="goToNextStep()">
+                <i class="fa fa-utensils me-2"></i>Personnaliser mon menu & préférences <i class="fa fa-arrow-right ms-1"></i>
+              </button>
+            </div>
+
+            <!-- Initial RSVP Action Section (Visible right from the start!) -->
+            <div class="final-rsvp-actions text-center mt-2">
               <label class="form-label d-block text-center fw-bold text-gold text-uppercase fs-xs tracking-widest mb-3">
-                Votre réponse
+                Votre Réponse
               </label>
-              <div class="attendance-toggle-container">
-                <div class="attendance-col">
-                  <button type="button" class="btn rsvp-action-btn btn-presence-yes w-100"
-                    [class.active]="status() === 'CONFIRMED'" (click)="selectStatus('CONFIRMED')">
-                    <i class="fa fa-check me-2"></i>
-                    Je serai présent
+
+              <!-- Side-by-side choices (Visible until one is selected) -->
+              <div class="d-flex gap-2.5 justify-content-center mb-3" *ngIf="selectedAttendanceChoice() === null">
+                <button type="button" class="btn btn-presence-yes flex-fill py-3 fs-xs fw-bold rounded-pill"
+                  (click)="selectAttendanceChoice('CONFIRMED')">
+                  <i class="fa fa-check me-1.5"></i> Je serai présent
+                </button>
+                <button type="button" class="btn btn-presence-no flex-fill py-3 fs-xs fw-bold rounded-pill"
+                  (click)="selectAttendanceChoice('DECLINED')">
+                  <i class="fa fa-times me-1.5"></i> Je ne pourrai pas venir
+                </button>
+              </div>
+
+              <!-- Dynamic Confirmation Button (Appears when choice is made) -->
+              <div *ngIf="selectedAttendanceChoice() !== null" class="animate__animated animate__fadeIn">
+                
+                <!-- Choice Feedback Badge -->
+                <div class="p-2.5 rounded-pill mb-3 d-flex align-items-center justify-content-between px-3"
+                  [ngClass]="selectedAttendanceChoice() === 'CONFIRMED' ? 'bg-success-subtle text-success border border-success' : 'bg-danger-subtle text-danger border border-danger'">
+                  <span class="fs-xs fw-bold">
+                    <i class="fa me-1.5" [ngClass]="selectedAttendanceChoice() === 'CONFIRMED' ? 'fa-check-circle' : 'fa-times-circle'"></i>
+                    Votre choix : {{ selectedAttendanceChoice() === 'CONFIRMED' ? 'Je serai présent' : 'Je ne pourrai pas venir' }}
+                  </span>
+                  <button type="button" class="btn btn-link btn-sm p-0 text-decoration-underline fs-xxs" 
+                    [ngClass]="selectedAttendanceChoice() === 'CONFIRMED' ? 'text-success' : 'text-danger'"
+                    (click)="selectedAttendanceChoice.set(null)">
+                    Modifier
                   </button>
                 </div>
-                <div class="attendance-col">
-                  <button type="button" class="btn rsvp-action-btn btn-presence-no w-100"
-                    [class.active]="status() === 'DECLINED'" (click)="selectStatus('DECLINED')">
-                    <i class="fa fa-times me-2"></i>
-                    Je ne pourrai pas venir
-                  </button>
-                </div>
+
+                <!-- Single Confirmation Submission Button -->
+                <button type="button" class="btn w-100 py-3 fs-sm text-uppercase fw-bold rounded-pill shadow mb-2"
+                  [ngClass]="selectedAttendanceChoice() === 'CONFIRMED' ? 'btn-luxury-submit' : 'btn-presence-no'"
+                  (click)="confirmRsvpSubmission()" [disabled]="isSubmitting()">
+                  <span *ngIf="!isSubmitting()">
+                    <i class="fa fa-paper-plane me-2"></i>
+                    {{ selectedAttendanceChoice() === 'CONFIRMED' ? 'Confirmer ma présence' : 'Confirmer mon absence' }}
+                  </span>
+                  <span *ngIf="isSubmitting()"><i class="fa fa-spinner fa-spin me-2"></i>Enregistrement...</span>
+                </button>
+
               </div>
             </div>
 
-            <!-- Confirm Absence Button (Shown directly in Step 1 if declined) -->
-            <div class="text-center mt-4" *ngIf="attendanceStatus === false">
-              <button type="submit" class="btn btn-presence-no w-100 py-3 fs-sm text-uppercase fw-semibold" [disabled]="isSubmitting()">
-                <span *ngIf="!isSubmitting()">Confirmer mon absence</span>
-                <span *ngIf="isSubmitting()"><i class="fa fa-spinner fa-spin me-2"></i>Enregistrement...</span>
-              </button>
-            </div>
           </div>
 
-          <!-- STEP 2: Étape 1 : Choix de votre menu -->
-          <div *ngIf="attendanceStatus === true && currentRsvpStep() === 2" class="menu-selection-container animate__animated animate__fadeIn mb-4">
+          <!-- STEP 1: Choix de votre Menu (Hidden by default, opened by Suivant) -->
+          <div *ngIf="currentRsvpStep() === 1" class="menu-selection-container animate__animated animate__fadeIn mb-4">
             <h4 class="form-label d-block text-center fw-bold text-gold text-uppercase fs-xs tracking-widest mb-4">
               Étape 1 : Choix de votre Menu
             </h4>
@@ -629,20 +657,19 @@
               </div>
             </div>
 
-            <!-- Navigation Buttons -->
+            <!-- Navigation Buttons in Step 1 -->
             <div class="d-flex gap-3 justify-content-between mt-4">
-              <button type="button" class="btn btn-alt-secondary w-50 py-2.5 fs-xs fw-semibold" (click)="goToPrevStep()">
+              <button type="button" class="btn btn-alt-secondary w-50 py-2.5 fs-xs fw-semibold rounded-pill" (click)="goToPrevStep()">
                 <i class="fa fa-arrow-left me-1"></i> Précédent
               </button>
-              <button type="button" class="btn btn-gold-success w-50 py-2.5 fs-xs fw-semibold" (click)="goToNextStep()" 
-                [disabled]="(isPlated() || isMix()) && mainDishes().length > 0 && !mealChoice">
+              <button type="button" class="btn btn-gold-success w-50 py-2.5 fs-xs fw-semibold rounded-pill" (click)="goToNextStep()">
                 Suivant <i class="fa fa-arrow-right ms-1"></i>
               </button>
             </div>
           </div>
 
-          <!-- STEP 3: Étape 2 : Allergies & Remarques -->
-          <div *ngIf="attendanceStatus === true && currentRsvpStep() === 3" class="extra-rsvp-sections animate__animated animate__fadeIn mb-4">
+          <!-- STEP 2: Allergies & Remarques -->
+          <div *ngIf="currentRsvpStep() === 2" class="extra-rsvp-sections animate__animated animate__fadeIn mb-4">
             <h4 class="form-label d-block text-center fw-bold text-gold text-uppercase fs-xs tracking-widest mb-4">
               Étape 2 : Allergies & Remarques
             </h4>
@@ -686,26 +713,26 @@
             </div>
 
             <!-- Custom Allergies -->
-            <div class="mb-5">
+            <div class="mb-4">
               <label class="form-label fw-bold text-gold text-uppercase fs-xs tracking-widest mb-2">Autres allergies ou restrictions</label>
               <textarea class="form-control luxury-form-control py-2" rows="3" placeholder="Ex: sans arachide, allergie aux fraises, etc..." [(ngModel)]="otherAllergies" name="otherAllergies"></textarea>
             </div>
 
             <!-- Step Navigation Buttons -->
             <div class="d-flex gap-3 justify-content-between mt-4">
-              <button type="button" class="btn btn-alt-secondary w-50 py-2.5 fs-xs fw-semibold" (click)="goToPrevStep()">
+              <button type="button" class="btn btn-alt-secondary w-50 py-2.5 fs-xs fw-semibold rounded-pill" (click)="goToPrevStep()">
                 <i class="fa fa-arrow-left me-1"></i> Précédent
               </button>
-              <button type="button" class="btn btn-gold-success w-50 py-2.5 fs-xs fw-semibold" (click)="goToNextStep()">
+              <button type="button" class="btn btn-gold-success w-50 py-2.5 fs-xs fw-semibold rounded-pill" (click)="goToNextStep()">
                 Suivant <i class="fa fa-arrow-right ms-1"></i>
               </button>
             </div>
           </div>
 
-          <!-- STEP 4: Confirmation & Récapitulatif -->
-          <div *ngIf="attendanceStatus === true && currentRsvpStep() === 4" class="rsvp-summary-container animate__animated animate__fadeIn mb-4">
+          <!-- STEP 3: Confirmation & Réponse Finale -->
+          <div *ngIf="currentRsvpStep() === 3" class="rsvp-summary-container animate__animated animate__fadeIn mb-4">
             <h4 class="form-label d-block text-center fw-bold text-gold text-uppercase fs-xs tracking-widest mb-4">
-              Confirmation & Récapitulatif
+              Étape 3 : Confirmation & Réponse Finale
             </h4>
 
             <div class="summary-box p-4 rounded-2 bg-cream text-start mb-4">
@@ -716,11 +743,11 @@
                 <div class="fs-xs fw-bold text-gold-muted text-uppercase mb-1">Choix du Menu</div>
                 <ng-container *ngIf="isPlated()">
                   <div class="fs-sm text-dark mb-1" *ngIf="starterChoice"><strong>Entrée :</strong> {{ starterChoice }}</div>
-                  <div class="fs-sm text-dark mb-1"><strong>Plat Principal :</strong> {{ mealChoice }}</div>
+                  <div class="fs-sm text-dark mb-1"><strong>Plat Principal :</strong> {{ mealChoice || 'Non spécifié' }}</div>
                   <div class="fs-sm text-dark mb-1" *ngIf="beverageChoice"><strong>Boisson :</strong> {{ beverageChoice }}</div>
                 </ng-container>
                 <ng-container *ngIf="isMix()">
-                  <div class="fs-sm text-dark mb-1"><strong>Plat Principal (assis) :</strong> {{ mealChoice }}</div>
+                  <div class="fs-sm text-dark mb-1"><strong>Plat Principal (assis) :</strong> {{ mealChoice || 'Non spécifié' }}</div>
                   <div class="fs-sm text-muted mb-1">Entrées & Boissons d'accueil servis en buffet libre-service</div>
                 </ng-container>
                 <ng-container *ngIf="isBuffet()">
@@ -729,7 +756,7 @@
               </div>
 
               <!-- Dietary & Allergies Summary -->
-              <div class="mb-3">
+              <div class="mb-2">
                 <div class="fs-xs fw-bold text-gold-muted text-uppercase mb-1">Régimes & Allergies</div>
                 <div class="fs-sm text-dark">
                   {{ getSelectedDietsSummary() }}
@@ -737,15 +764,60 @@
               </div>
             </div>
 
-            <!-- Navigation and Submit Buttons for Step 4 -->
-            <div class="d-flex gap-3 justify-content-between mt-4">
-              <button type="button" class="btn btn-alt-secondary w-50 py-3 fs-sm" (click)="goToPrevStep()">
-                <i class="fa fa-arrow-left me-1"></i> Précédent
-              </button>
-              <button type="submit" class="btn btn-luxury-submit w-50 py-3 fs-sm" [disabled]="isSubmitting()">
-                <span *ngIf="!isSubmitting()">Confirmer ma participation</span>
-                <span *ngIf="isSubmitting()"><i class="fa fa-spinner fa-spin me-2"></i>Envoi...</span>
-              </button>
+            <!-- Final RSVP Action Section -->
+            <div class="final-rsvp-actions text-center mt-4">
+              <label class="form-label d-block text-center fw-bold text-gold text-uppercase fs-xs tracking-widest mb-3">
+                Votre Réponse Finale
+              </label>
+
+              <!-- Side-by-side choices (Visible until one is selected) -->
+              <div class="d-flex gap-2.5 justify-content-center mb-3" *ngIf="selectedAttendanceChoice() === null">
+                <button type="button" class="btn btn-presence-yes flex-fill py-3 fs-xs fw-bold rounded-pill"
+                  (click)="selectAttendanceChoice('CONFIRMED')">
+                  <i class="fa fa-check me-1.5"></i> Je serai présent
+                </button>
+                <button type="button" class="btn btn-presence-no flex-fill py-3 fs-xs fw-bold rounded-pill"
+                  (click)="selectAttendanceChoice('DECLINED')">
+                  <i class="fa fa-times me-1.5"></i> Je ne pourrai pas venir
+                </button>
+              </div>
+
+              <!-- Dynamic Confirmation Button (Appears when choice is made) -->
+              <div *ngIf="selectedAttendanceChoice() !== null" class="animate__animated animate__fadeIn">
+                
+                <!-- Choice Feedback Badge -->
+                <div class="p-2.5 rounded-pill mb-3 d-flex align-items-center justify-content-between px-3"
+                  [ngClass]="selectedAttendanceChoice() === 'CONFIRMED' ? 'bg-success-subtle text-success border border-success' : 'bg-danger-subtle text-danger border border-danger'">
+                  <span class="fs-xs fw-bold">
+                    <i class="fa me-1.5" [ngClass]="selectedAttendanceChoice() === 'CONFIRMED' ? 'fa-check-circle' : 'fa-times-circle'"></i>
+                    Votre choix : {{ selectedAttendanceChoice() === 'CONFIRMED' ? 'Je serai présent' : 'Je ne pourrai pas venir' }}
+                  </span>
+                  <button type="button" class="btn btn-link btn-sm p-0 text-decoration-underline fs-xxs" 
+                    [ngClass]="selectedAttendanceChoice() === 'CONFIRMED' ? 'text-success' : 'text-danger'"
+                    (click)="selectedAttendanceChoice.set(null)">
+                    Modifier
+                  </button>
+                </div>
+
+                <!-- Single Confirmation Submission Button -->
+                <button type="button" class="btn w-100 py-3 fs-sm text-uppercase fw-bold rounded-pill shadow mb-2"
+                  [ngClass]="selectedAttendanceChoice() === 'CONFIRMED' ? 'btn-luxury-submit' : 'btn-presence-no'"
+                  (click)="confirmRsvpSubmission()" [disabled]="isSubmitting()">
+                  <span *ngIf="!isSubmitting()">
+                    <i class="fa fa-paper-plane me-2"></i>
+                    {{ selectedAttendanceChoice() === 'CONFIRMED' ? 'Confirmer ma présence' : 'Confirmer mon absence' }}
+                  </span>
+                  <span *ngIf="isSubmitting()"><i class="fa fa-spinner fa-spin me-2"></i>Enregistrement...</span>
+                </button>
+
+              </div>
+
+              <!-- Back to previous step link -->
+              <div class="text-center mt-3">
+                <button type="button" class="btn btn-link text-muted fs-xs py-1" (click)="goToPrevStep()">
+                  <i class="fa fa-arrow-left me-1"></i> Précédent (Modifier mes choix)
+                </button>
+              </div>
             </div>
           </div>
 
@@ -753,6 +825,5 @@
 
       </div>
     </div>
-
   </div>
 </div>
