@@ -42,6 +42,7 @@ export class MenuList implements OnInit {
   protected readonly pricePerPerson = signal<number>(0);
   protected readonly dietaryTag = signal<string>('');
   protected readonly description = signal<string>('');
+  protected readonly imageUrl = signal<string>('');
 
   protected readonly selectedDiets = signal<Record<string, boolean>>({});
   protected readonly customDietNotes = signal<string>('');
@@ -90,24 +91,29 @@ export class MenuList implements OnInit {
   protected readonly globalMenuItems = signal<MenuItem[]>([]);
 
   protected readonly mergedSuggestionsDetail = computed(() => {
-    const map: Record<string, { price: number, dietary: string, description?: string }> = {};
+    const map: Record<string, { price: number, dietary: string, description?: string, imageUrl?: string }> = {};
     
     // First populate with static template suggestions
     Object.entries(this.staticSuggestionsDetail).forEach(([name, details]) => {
       map[name] = {
         price: details.price,
         dietary: details.dietary,
-        description: undefined
+        description: undefined,
+        imageUrl: undefined
       };
     });
 
     // Merge in dynamically saved menu items from database
     this.globalMenuItems().forEach(item => {
-      map[item.name] = {
-        price: item.pricePerPerson,
-        dietary: item.dietaryTag || '',
-        description: item.description
-      };
+      const existing = map[item.name];
+      if (!existing || (item.imageUrl && !existing.imageUrl)) {
+        map[item.name] = {
+          price: item.pricePerPerson,
+          dietary: item.dietaryTag || '',
+          description: item.description,
+          imageUrl: item.imageUrl
+        };
+      }
     });
 
     return map;
@@ -349,6 +355,7 @@ export class MenuList implements OnInit {
     this.selectedDiets.set({});
     this.customDietNotes.set('');
     this.description.set('');
+    this.imageUrl.set('');
     this.isModalOpen.set(true);
   }
 
@@ -385,6 +392,7 @@ export class MenuList implements OnInit {
     this.selectedDiets.set(dietsMap);
     this.customDietNotes.set(customNotesList.join(', '));
     this.description.set(item.description || '');
+    this.imageUrl.set(item.imageUrl || '');
     this.isModalOpen.set(true);
   }
 
@@ -416,6 +424,7 @@ export class MenuList implements OnInit {
       if (detail.description) {
         this.description.set(detail.description);
       }
+      this.imageUrl.set(detail.imageUrl || '');
 
       // Parse and check the dietary checkboxes
       const dietsMap: Record<string, boolean> = {};
@@ -446,6 +455,7 @@ export class MenuList implements OnInit {
       if (detail.description) {
         this.description.set(detail.description);
       }
+      this.imageUrl.set(detail.imageUrl || '');
 
       // Parse and check the dietary checkboxes
       const dietsMap: Record<string, boolean> = {};
@@ -495,7 +505,8 @@ export class MenuList implements OnInit {
       category: this.category(),
       pricePerPerson: this.pricePerPerson() || 0,
       dietaryTag: assembledDietaryTag,
-      description: this.description().trim()
+      description: this.description().trim(),
+      imageUrl: this.imageUrl().trim() || undefined
     };
 
     if (this.isEditing() && this.editingItemId()) {

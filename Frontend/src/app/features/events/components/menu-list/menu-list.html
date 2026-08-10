@@ -329,7 +329,15 @@
             <tbody>
               <ng-container *ngFor="let item of menuItems()">
                 <tr *ngIf="item.category === 'STARTER' || item.category === 'BUFFET_STARTER' || item.category === 'OTHER'">
-                  <td class="fw-semibold" style="width: 30%;">{{ item.name }}</td>
+                  <td class="fw-semibold" style="width: 35%;">
+                    <div class="d-flex align-items-center gap-2">
+                      <img *ngIf="item.imageUrl" [src]="item.imageUrl" alt="Aperçu" class="rounded object-fit-cover border shadow-sm" style="width: 36px; height: 36px;">
+                      <div *ngIf="!item.imageUrl" class="rounded bg-body border d-flex align-items-center justify-content-center text-muted" style="width: 36px; height: 36px;" title="Aucune photo (Repli par défaut)">
+                        <i class="fa fa-utensils fs-xs" style="opacity: 0.5;"></i>
+                      </div>
+                      <span>{{ item.name }}</span>
+                    </div>
+                  </td>
                   <td class="fs-xs text-muted" style="width: 45%;">{{ item.description || '-' }}</td>
                   <td class="text-end fw-bold text-primary" style="width: 10%;">{{ item.pricePerPerson | number:'1.2-2' }} €</td>
                   <td class="text-end text-nowrap" style="width: 15%;">
@@ -357,7 +365,15 @@
             <tbody>
               <ng-container *ngFor="let item of menuItems()">
                 <tr *ngIf="item.category === 'MAIN' || item.category === 'BUFFET_MAIN' || item.category === 'DESSERT' || item.category === 'BUFFET_DESSERT' || item.category === 'BEVERAGE'">
-                  <td class="fw-semibold" style="width: 30%;">{{ item.name }}</td>
+                  <td class="fw-semibold" style="width: 35%;">
+                    <div class="d-flex align-items-center gap-2">
+                      <img *ngIf="item.imageUrl" [src]="item.imageUrl" alt="Aperçu" class="rounded object-fit-cover border shadow-sm" style="width: 36px; height: 36px;">
+                      <div *ngIf="!item.imageUrl" class="rounded bg-body border d-flex align-items-center justify-content-center text-muted" style="width: 36px; height: 36px;" title="Aucune photo (Repli par défaut)">
+                        <i class="fa fa-utensils fs-xs" style="opacity: 0.5;"></i>
+                      </div>
+                      <span>{{ item.name }}</span>
+                    </div>
+                  </td>
                   <td class="fs-xs text-muted" style="width: 45%;">{{ item.description || '-' }}</td>
                   <td class="text-end fw-bold text-primary" style="width: 10%;">{{ item.pricePerPerson | number:'1.2-2' }} €</td>
                   <td class="text-end text-nowrap" style="width: 15%;">
@@ -386,7 +402,15 @@
               <tbody>
                 <ng-container *ngFor="let item of menuItems()">
                   <tr *ngIf="item.category === 'STARTER'">
-                    <td class="fw-semibold" style="width: 30%;">{{ item.name }}</td>
+                    <td class="fw-semibold" style="width: 35%;">
+                      <div class="d-flex align-items-center gap-2">
+                        <img *ngIf="item.imageUrl" [src]="item.imageUrl" alt="Aperçu" class="rounded object-fit-cover border shadow-sm" style="width: 36px; height: 36px;">
+                        <div *ngIf="!item.imageUrl" class="rounded bg-body border d-flex align-items-center justify-content-center text-muted" style="width: 36px; height: 36px;" title="Aucune photo (Repli par défaut)">
+                          <i class="fa fa-utensils fs-xs" style="opacity: 0.5;"></i>
+                        </div>
+                        <span>{{ item.name }}</span>
+                      </div>
+                    </td>
                     <td class="fs-xs text-muted" style="width: 45%;">{{ item.description || '-' }}</td>
                     <td class="text-end fw-bold text-primary" style="width: 10%;">{{ item.pricePerPerson | number:'1.2-2' }} €</td>
                     <td class="text-end text-nowrap" style="width: 15%;">
@@ -409,7 +433,15 @@
               <tbody>
                 <ng-container *ngFor="let item of menuItems()">
                   <tr *ngIf="item.category === 'MAIN'">
-                    <td class="fw-semibold" style="width: 30%;">{{ item.name }}</td>
+                    <td class="fw-semibold" style="width: 35%;">
+                      <div class="d-flex align-items-center gap-2">
+                        <img *ngIf="item.imageUrl" [src]="item.imageUrl" alt="Aperçu" class="rounded object-fit-cover border shadow-sm" style="width: 36px; height: 36px;">
+                        <div *ngIf="!item.imageUrl" class="rounded bg-body border d-flex align-items-center justify-content-center text-muted" style="width: 36px; height: 36px;" title="Aucune photo (Repli par défaut)">
+                          <i class="fa fa-utensils fs-xs" style="opacity: 0.5;"></i>
+                        </div>
+                        <span>{{ item.name }}</span>
+                      </div>
+                    </td>
                     <td class="fs-xs text-muted" style="width: 45%;">{{ item.description || '-' }}</td>
                     <td class="text-end fw-bold text-primary" style="width: 10%;">{{ item.pricePerPerson | number:'1.2-2' }} €</td>
                     <td class="text-end text-nowrap" style="width: 15%;">
@@ -432,7 +464,15 @@
               <tbody>
                 <ng-container *ngFor="let item of menuItems()">
                   <tr *ngIf="item.category === 'DESSERT'">
-                    <td class="fw-semibold" style="width: 30%;">{{ item.name }}</td>
+                    <td class="fw-semibold" style="width: 35%;">
+                      <div class="d-flex align-items-center gap-2">
+                        <img *ngIf="item.imageUrl" [src]="item.imageUrl" alt="Aperçu" class="rounded object-fit-cover border shadow-sm" style="width: 36px; height: 36px;">
+                        <div *ngIf="!item.imageUrl" class="rounded bg-body border d-flex align-items-center justify-content-center text-muted" style="width: 36px; height: 36px;" title="Aucune photo (Repli par défaut)">
+                          <i class="fa fa-utensils fs-xs" style="opacity: 0.5;"></i>
+                        </div>
+                        <span>{{ item.name }}</span>
+                      </div>
+                    </td>
                     <td class="fs-xs text-muted" style="width: 45%;">{{ item.description || '-' }}</td>
                     <td class="text-end fw-bold text-primary" style="width: 10%;">{{ item.pricePerPerson | number:'1.2-2' }} €</td>
                     <td class="text-end text-nowrap" style="width: 15%;">
@@ -455,7 +495,15 @@
               <tbody>
                 <ng-container *ngFor="let item of menuItems()">
                   <tr *ngIf="item.category === 'BEVERAGE'">
-                    <td class="fw-semibold" style="width: 30%;">{{ item.name }}</td>
+                    <td class="fw-semibold" style="width: 35%;">
+                      <div class="d-flex align-items-center gap-2">
+                        <img *ngIf="item.imageUrl" [src]="item.imageUrl" alt="Aperçu" class="rounded object-fit-cover border shadow-sm" style="width: 36px; height: 36px;">
+                        <div *ngIf="!item.imageUrl" class="rounded bg-body border d-flex align-items-center justify-content-center text-muted" style="width: 36px; height: 36px;" title="Aucune photo (Repli par défaut)">
+                          <i class="fa fa-utensils fs-xs" style="opacity: 0.5;"></i>
+                        </div>
+                        <span>{{ item.name }}</span>
+                      </div>
+                    </td>
                     <td class="fs-xs text-muted" style="width: 45%;">{{ item.description || '-' }}</td>
                     <td class="text-end fw-bold text-primary" style="width: 10%;">{{ item.pricePerPerson | number:'1.2-2' }} €</td>
                     <td class="text-end text-nowrap" style="width: 15%;">
@@ -478,7 +526,15 @@
               <tbody>
                 <ng-container *ngFor="let item of menuItems()">
                   <tr *ngIf="item.category === 'OTHER'">
-                    <td class="fw-semibold" style="width: 30%;">{{ item.name }}</td>
+                    <td class="fw-semibold" style="width: 35%;">
+                      <div class="d-flex align-items-center gap-2">
+                        <img *ngIf="item.imageUrl" [src]="item.imageUrl" alt="Aperçu" class="rounded object-fit-cover border shadow-sm" style="width: 36px; height: 36px;">
+                        <div *ngIf="!item.imageUrl" class="rounded bg-body border d-flex align-items-center justify-content-center text-muted" style="width: 36px; height: 36px;" title="Aucune photo (Repli par défaut)">
+                          <i class="fa fa-utensils fs-xs" style="opacity: 0.5;"></i>
+                        </div>
+                        <span>{{ item.name }}</span>
+                      </div>
+                    </td>
                     <td class="fs-xs text-muted" style="width: 45%;">{{ item.description || '-' }}</td>
                     <td class="text-end fw-bold text-primary" style="width: 10%;">{{ item.pricePerPerson | number:'1.2-2' }} €</td>
                     <td class="text-end text-nowrap" style="width: 15%;">
@@ -509,7 +565,13 @@
           <tbody>
             <tr *ngFor="let item of filteredMenuItems()">
               <td class="fw-semibold">
-                {{ item.name }}
+                <div class="d-flex align-items-center gap-2">
+                  <img *ngIf="item.imageUrl" [src]="item.imageUrl" alt="Aperçu" class="rounded object-fit-cover border shadow-sm" style="width: 36px; height: 36px;">
+                  <div *ngIf="!item.imageUrl" class="rounded bg-body border d-flex align-items-center justify-content-center text-muted" style="width: 36px; height: 36px;" title="Aucune photo (Repli par défaut)">
+                    <i class="fa fa-utensils fs-xs" style="opacity: 0.5;"></i>
+                  </div>
+                  <span>{{ item.name }}</span>
+                </div>
               </td>
               <td>
                 <span class="badge px-3 py-2 rounded-pill fw-bold" [ngClass]="getCategoryBadgeClass(item.category)">
@@ -702,6 +764,12 @@
             <textarea class="form-control form-control-alt fs-sm" rows="3"
               placeholder="Ex: Servi avec écrasé de pommes de terre à la truffe et légumes de saison."
               [ngModel]="description()" (ngModelChange)="description.set($event)" name="description"></textarea>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fs-sm fw-semibold">Photo du plat (URL)</label>
+            <input type="text" class="form-control form-control-alt fs-sm"
+              placeholder="Ex: https://images.unsplash.com/... ou /assets/images/plat.png"
+              [ngModel]="imageUrl()" (ngModelChange)="imageUrl.set($event)" name="imageUrl">
           </div>
         </div>
         <div class="modal-footer bg-body-light">

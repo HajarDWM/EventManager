@@ -42,6 +42,65 @@ export class GuestRsvp implements OnInit {
   protected readonly isSubmitting = signal(false);
   protected readonly isSuccess = signal(false);
   protected readonly errorMessage = signal('');
+  protected readonly isFullMenuModalOpen = signal(false);
+  protected readonly activeCarouselIndex = signal<number>(0);
+  private touchStartX = 0;
+
+  protected readonly carouselItems = computed<any[]>(() => {
+    const data = this.guest();
+    if (!data || !data.menuItems || data.menuItems.length === 0) {
+      return [
+        {
+          name: "Duo de Saint-Jacques dorées, émulsion d'agrumes",
+          categoryLabel: "Entrée",
+          image: "/assets/images/menu_starter.png"
+        },
+        {
+          name: "Filet de bœuf rôti, purée fine truffée",
+          categoryLabel: "Plat Principal",
+          image: "/assets/images/menu_main.png"
+        },
+        {
+          name: "Dôme au chocolat intense, éclat de feuille d'or",
+          categoryLabel: "Dessert",
+          image: "/assets/images/menu_dessert.png"
+        }
+      ];
+    }
+
+    const starters = data.menuItems.filter(item => item.category === 'STARTER' || item.category === 'BUFFET_STARTER').slice(0, 3);
+    const mains = data.menuItems.filter(item => item.category === 'MAIN' || item.category === 'BUFFET_MAIN').slice(0, 3);
+    const desserts = data.menuItems.filter(item => item.category === 'DESSERT' || item.category === 'BUFFET_DESSERT').slice(0, 3);
+    const beverages = data.menuItems.filter(item => item.category === 'BEVERAGE').slice(0, 3);
+
+    const orderedItems = [...starters, ...mains, ...desserts, ...beverages];
+
+    return orderedItems.map(item => {
+      let catLabel = 'Plat';
+      let img = item.imageUrl || '/assets/images/menu_main.png';
+
+      const cat = item.category || '';
+      if (cat.includes('STARTER')) {
+        catLabel = 'Entrée';
+        img = item.imageUrl || '/assets/images/menu_starter.png';
+      } else if (cat.includes('MAIN')) {
+        catLabel = 'Plat Principal';
+        img = item.imageUrl || '/assets/images/menu_main.png';
+      } else if (cat.includes('DESSERT')) {
+        catLabel = 'Dessert';
+        img = item.imageUrl || '/assets/images/menu_dessert.png';
+      } else if (cat.includes('BEVERAGE')) {
+        catLabel = 'Boisson';
+        img = item.imageUrl || '/assets/images/menu_starter.png';
+      }
+
+      return {
+        name: item.name,
+        categoryLabel: catLabel,
+        image: img
+      };
+    });
+  });
 
   // Service configuration
   protected readonly mealType = signal<string>('PLATS_FIXES');
@@ -344,5 +403,32 @@ export class GuestRsvp implements OnInit {
         this.isSubmitting.set(false);
       }
     });
+  }
+
+  protected prevCarouselItem(): void {
+    const items = this.carouselItems();
+    if (items.length <= 1) return;
+    this.activeCarouselIndex.update(idx => (idx === 0 ? items.length - 1 : idx - 1));
+  }
+
+  protected nextCarouselItem(): void {
+    const items = this.carouselItems();
+    if (items.length <= 1) return;
+    this.activeCarouselIndex.update(idx => (idx === items.length - 1 ? 0 : idx + 1));
+  }
+
+  protected onTouchStart(event: TouchEvent): void {
+    this.touchStartX = event.changedTouches[0].screenX;
+  }
+
+  protected onTouchEnd(event: TouchEvent): void {
+    const touchEndX = event.changedTouches[0].screenX;
+    const diff = this.touchStartX - touchEndX;
+
+    if (diff > 50) {
+      this.nextCarouselItem();
+    } else if (diff < -50) {
+      this.prevCarouselItem();
+    }
   }
 }

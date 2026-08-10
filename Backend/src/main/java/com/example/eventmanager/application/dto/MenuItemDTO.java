@@ -19,4 +19,5 @@ public class MenuItemDTO {
     private BigDecimal pricePerPerson;
     private String dietaryTag;
     private String description;
+    private String imageUrl;
 }

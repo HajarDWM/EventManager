@@ -87,7 +87,8 @@ public class MenuItemApplicationService implements CreateMenuItemUseCase, GetMen
                 categoryEnum,
                 menuItemDTO.getPricePerPerson(),
                 menuItemDTO.getDietaryTag(),
-                menuItemDTO.getDescription()
+                menuItemDTO.getDescription(),
+                menuItemDTO.getImageUrl()
         );
 
         MenuItem updated = menuItemRepositoryPort.save(existing);

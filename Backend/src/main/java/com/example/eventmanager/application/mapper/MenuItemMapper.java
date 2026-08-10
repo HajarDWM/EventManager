@@ -19,6 +19,7 @@ public class MenuItemMapper {
                 .pricePerPerson(domain.getPricePerPerson())
                 .dietaryTag(domain.getDietaryTag())
                 .description(domain.getDescription())
+                .imageUrl(domain.getImageUrl())
                 .build();
     }
 
@@ -37,7 +38,8 @@ public class MenuItemMapper {
                 categoryEnum,
                 dto.getPricePerPerson(),
                 dto.getDietaryTag(),
-                dto.getDescription()
+                dto.getDescription(),
+                dto.getImageUrl()
         );
     }
 
@@ -50,7 +52,8 @@ public class MenuItemMapper {
                 domain.getCategory() != null ? domain.getCategory().name() : MenuItemCategory.STARTER.name(),
                 domain.getPricePerPerson(),
                 domain.getDietaryTag(),
-                domain.getDescription()
+                domain.getDescription(),
+                domain.getImageUrl()
         );
     }
 
@@ -69,7 +72,8 @@ public class MenuItemMapper {
                 categoryEnum,
                 entity.getPricePerPerson(),
                 entity.getDietaryTag(),
-                entity.getDescription()
+                entity.getDescription(),
+                entity.getImageUrl()
         );
     }
 }

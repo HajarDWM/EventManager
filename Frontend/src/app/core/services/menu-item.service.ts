@@ -10,6 +10,7 @@ export interface MenuItem {
   pricePerPerson: number;
   dietaryTag?: string;
   description?: string;
+  imageUrl?: string;
 }
 
 @Injectable({

@@ -37,4 +37,7 @@ public class MenuItemEntity {
 
     @Column(length = 500)
     private String description;
+
+    @Column(name = "image_url")
+    private String imageUrl;
 }

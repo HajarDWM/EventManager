@@ -1597,3 +1597,132 @@ textarea.luxury-form-control::placeholder {
     grid-column: 1 / -1;
   }
 }
+
+.bg-luxury-modal {
+  border-radius: 16px !important;
+  background-color: #faf6ee !important;
+  color: #2b2b2b !important;
+
+  .text-dark {
+    color: #2b2b2b !important;
+  }
+  .text-muted {
+    color: #777777 !important;
+  }
+
+  /* When the page has a dark theme wrapper, style the modal dark */
+  .corporate-theme &, .corporate-gold-theme & {
+    background-color: #0b0b0b !important;
+    color: #e0e0e0 !important;
+    border: 1px solid rgba(212, 175, 55, 0.3) !important;
+
+    .text-dark {
+      color: #ffffff !important;
+    }
+    .text-muted {
+      color: #aaaaaa !important;
+    }
+  }
+}
+
+.spotlight-underline {
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(212, 175, 55, 0.1) 0%, rgba(212, 175, 55, 0.8) 50%, rgba(212, 175, 55, 0.1) 100%);
+  margin: 8px auto 0;
+}
+
+.bg-cream-light {
+  background-color: rgba(212, 175, 55, 0.04) !important;
+  border: 1px solid rgba(212, 175, 55, 0.1) !important;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background-color: rgba(212, 175, 55, 0.08) !important;
+    border-color: rgba(212, 175, 55, 0.25) !important;
+  }
+}
+
+.btn-alt-gold {
+  background-color: rgba(212, 175, 55, 0.08) !important;
+  color: #cda82d !important;
+  border: 1px solid rgba(212, 175, 55, 0.25) !important;
+  transition: all 0.25s ease;
+  
+  &:hover {
+    background-color: #d4af37 !important;
+    color: #ffffff !important;
+    border-color: #d4af37 !important;
+  }
+}
+
+.carousel-spotlight-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: pan-y;
+  
+  .carousel-arrow {
+    position: absolute;
+    top: 40%;
+    transform: translateY(-50%);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    color: #bfa142;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    
+    &:hover {
+      background-color: #d4af37;
+      color: #fff;
+      border-color: #d4af37;
+    }
+    
+    &.arrow-left {
+      left: -16px;
+    }
+    
+    &.arrow-right {
+      right: -16px;
+    }
+  }
+
+  .corporate-theme & .carousel-arrow, .corporate-gold-theme & .carousel-arrow {
+    background-color: rgba(15, 15, 15, 0.9);
+    border-color: rgba(212, 175, 55, 0.4);
+    color: #d4af37;
+    
+    &:hover {
+      background-color: #d4af37;
+      color: #000;
+    }
+  }
+}
+
+.carousel-dots-indicator {
+  .carousel-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: rgba(212, 175, 55, 0.2);
+    cursor: pointer;
+    transition: all 0.25s ease;
+    
+    &.active-dot {
+      background-color: #d4af37;
+      transform: scale(1.2);
+      width: 12px;
+      border-radius: 3px;
+    }
+  }
+}
+
+

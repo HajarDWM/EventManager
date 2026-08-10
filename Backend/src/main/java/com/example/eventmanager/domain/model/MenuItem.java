@@ -19,8 +19,9 @@ public class MenuItem {
     private BigDecimal pricePerPerson;
     private String dietaryTag;
     private String description;
+    private String imageUrl;
 
-    public void updateDetails(String name, MenuItemCategory category, BigDecimal pricePerPerson, String dietaryTag, String description) {
+    public void updateDetails(String name, MenuItemCategory category, BigDecimal pricePerPerson, String dietaryTag, String description, String imageUrl) {
         if (name != null && !name.trim().isEmpty()) {
             this.name = name.trim();
         }
@@ -32,5 +33,6 @@ public class MenuItem {
         }
         this.dietaryTag = dietaryTag;
         this.description = description;
+        this.imageUrl = imageUrl;
     }
 }
