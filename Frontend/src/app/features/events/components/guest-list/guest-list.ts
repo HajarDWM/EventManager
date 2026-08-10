@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, inject, signal, computed, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -70,6 +70,15 @@ export class GuestList implements OnInit {
     const currentUnique = this.uniqueGroups();
     const combined = [...globalGroups, ...currentUnique];
     return Array.from(new Set(combined));
+  });
+
+  protected readonly isGroupDropdownOpen = signal<boolean>(false);
+
+  protected readonly filteredGroupSuggestions = computed(() => {
+    const input = this.groupName().toLowerCase().trim();
+    const suggestions = this.groupSuggestions();
+    if (!input) return suggestions;
+    return suggestions.filter(s => s.toLowerCase().includes(input));
   });
 
   public ngOnInit(): void {
@@ -310,5 +319,28 @@ export class GuestList implements OnInit {
         console.error(err);
       }
     });
+  }
+
+  protected toggleGroupDropdown(event: MouseEvent): void {
+    event.stopPropagation();
+    this.isGroupDropdownOpen.update(v => !v);
+  }
+
+  protected selectGroupSuggestion(grp: string): void {
+    this.groupName.set(grp);
+    this.isGroupDropdownOpen.set(false);
+  }
+
+  protected onGroupInputChange(val: string): void {
+    this.groupName.set(val);
+    this.isGroupDropdownOpen.set(true);
+  }
+
+  @HostListener('document:click', ['$event'])
+  protected onDocumentClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    if (target && !target.closest('.group-autocomplete-container')) {
+      this.isGroupDropdownOpen.set(false);
+    }
   }
 }

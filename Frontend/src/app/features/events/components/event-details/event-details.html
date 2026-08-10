@@ -1,36 +1,53 @@
 <!-- Hero / Header Action Bar -->
-<div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-2 text-center text-md-start mb-4 border-bottom border-light pb-3">
+<div
+  class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-2 text-center text-md-start mb-4 border-bottom border-light pb-3">
   <!-- On the Left: Event Basic Details -->
   <div class="flex-grow-1 mb-3 mb-md-0">
     <div class="d-flex align-items-center justify-content-center justify-content-md-start gap-2 mb-1 flex-wrap">
       <h1 class="h3 fw-bold mb-0 text-dark">
         {{ event()?.title || 'Chargement...' }}
       </h1>
-      <span class="badge px-3 py-2 rounded-pill fs-xs ms-md-2" *ngIf="event()" [ngClass]="getStatusBadgeClass(event()?.status)">
+      <span class="badge px-3 py-2 rounded-pill fs-xs ms-md-2" *ngIf="event()"
+        [ngClass]="getStatusBadgeClass(event()?.status)">
         {{ getStatusLabel(event()?.status) }}
       </span>
     </div>
-    <div class="d-flex flex-column flex-sm-row justify-content-center justify-content-md-start gap-3 mt-2 text-muted fs-sm">
-      <span><i class="fa fa-calendar-alt text-primary me-1"></i> {{ event()?.eventDate | date:'dd/MM/yyyy HH:mm' }}</span>
+    <div
+      class="d-flex flex-column flex-sm-row justify-content-center justify-content-md-start gap-3 mt-2 text-muted fs-sm">
+      <span><i class="fa fa-calendar-alt text-primary me-1"></i> {{ event()?.eventDate | date:'dd/MM/yyyy HH:mm'
+        }}</span>
       <span><i class="fa fa-map-marker-alt text-danger me-1"></i> {{ event()?.location }}</span>
     </div>
   </div>
-  
+
   <!-- On the Right: Compact Action Buttons (OneUI Styling) -->
   <div class="mt-2 mt-md-0 d-flex align-items-center gap-2 justify-content-center flex-wrap" *ngIf="event()">
     <a class="btn btn-sm btn-alt-secondary rounded-pill px-3" routerLink="/events">
       <i class="fa fa-arrow-left me-1"></i> Retour
     </a>
-    <a class="btn btn-sm btn-alt-primary d-inline-flex align-items-center justify-content-center" 
-       [routerLink]="['/events/edit', event()?.id]" 
-       title="Modifier l'événement" 
-       style="width: 32px; height: 32px; padding: 0; border-radius: 50%;">
-      <i class="fa fa-pencil-alt"></i>
+    <a class="btn btn-sm btn-alt-primary rounded-pill px-3 fw-semibold d-inline-flex align-items-center gap-1"
+      [routerLink]="['/events', event()?.id, 'guests']">
+      <i class="fa fa-users"></i> Invités
     </a>
-    <a class="btn btn-sm btn-alt-success rounded-pill px-3 fw-semibold d-inline-flex align-items-center gap-1" [routerLink]="['/events', event()?.id, 'tasks']">
+    <a class="btn btn-sm btn-alt-danger rounded-pill px-3 fw-semibold d-inline-flex align-items-center gap-1"
+      [routerLink]="['/events', event()?.id, 'menu']">
+      <i class="fa fa-utensils"></i> Menu
+    </a>
+    <a class="btn btn-sm btn-alt-info rounded-pill px-3 fw-semibold d-inline-flex align-items-center gap-1"
+      [routerLink]="['/events', event()?.id, 'invitation-setup']">
+      <i class="fa fa-envelope-open-text"></i> Invitations
+    </a>
+    <a class="btn btn-sm btn-alt-warning rounded-pill px-3 fw-semibold d-inline-flex align-items-center gap-1"
+      [routerLink]="['/events', event()?.id, 'billing']">
+      <i class="fa fa-wallet"></i> Finance
+    </a>
+    <a class="btn btn-sm btn-alt-success rounded-pill px-3 fw-semibold d-inline-flex align-items-center gap-1"
+      [routerLink]="['/events', event()?.id, 'tasks']">
       <i class="fa fa-tasks"></i> Tâches
     </a>
-    <a class="btn btn-sm btn-primary rounded-pill px-3 fw-semibold d-inline-flex align-items-center gap-1" [routerLink]="['/events', event()?.id, 'export']">
+
+    <a class="btn btn-sm btn-primary rounded-pill px-3 fw-semibold d-inline-flex align-items-center gap-1"
+      [routerLink]="['/events', event()?.id, 'export']">
       <i class="fa fa-file-pdf"></i> Rapport Global
     </a>
   </div>
@@ -56,15 +73,17 @@
   <ng-container *ngIf="!isLoading() && event()">
     <div class="col-12">
       <div class="row g-4">
-        
+
         <!-- Box 1: Gestion des Invités (Guests Summary) -->
         <div class="col-12 col-xl-6">
           <div class="block block-rounded shadow-sm border border-light h-100 bg-white mb-0">
-            <div class="block-header block-header-default border-bottom p-3 d-flex justify-content-between align-items-center">
+            <div
+              class="block-header block-header-default border-bottom p-3 d-flex justify-content-between align-items-center">
               <h3 class="block-title fw-bold fs-sm mb-0">
                 <i class="fa fa-users text-primary me-2"></i>Gestion des Invités
               </h3>
-              <a class="btn btn-xs btn-alt-primary rounded-pill px-2.5" [routerLink]="['/events', event()?.id, 'guests']">
+              <a class="btn btn-xs btn-alt-primary rounded-pill px-2.5"
+                [routerLink]="['/events', event()?.id, 'guests']">
                 Voir tout
               </a>
             </div>
@@ -116,8 +135,7 @@
                         </span>
                       </td>
                       <td class="text-center">
-                        <span class="badge rounded-pill px-2 py-1 fs-xxs" 
-                              [ngClass]="{
+                        <span class="badge rounded-pill px-2 py-1 fs-xxs" [ngClass]="{
                                 'bg-success-light text-black border border-success-light': g.status === 'CONFIRMED',
                                 'bg-danger-light text-black border border-danger-light': g.status === 'DECLINED',
                                 'bg-warning-light text-black border border-warning-light': g.status === 'PENDING'
@@ -136,7 +154,8 @@
         <!-- Box 2: Gestion des Repas & Menus (Menus & Dietary Restrictions) -->
         <div class="col-12 col-xl-6">
           <div class="block block-rounded shadow-sm border border-light h-100 bg-white mb-0">
-            <div class="block-header block-header-default border-bottom p-3 d-flex justify-content-between align-items-center">
+            <div
+              class="block-header block-header-default border-bottom p-3 d-flex justify-content-between align-items-center">
               <h3 class="block-title fw-bold fs-sm mb-0">
                 <i class="fa fa-utensils text-danger me-2"></i>Gestion des Repas & Menus
               </h3>
@@ -152,22 +171,30 @@
                   <!-- Left side: Metrics -->
                   <div class="col-12 col-sm-6">
                     <div class="mb-3">
-                      <span class="fs-xxs fw-semibold text-uppercase text-muted d-block mb-1">Total Plats & Boissons</span>
-                      <h4 class="fw-extrabold text-dark mb-0">{{ totalPlatesAndBeverages() }} <span class="fs-xs fw-normal text-muted">unités</span></h4>
+                      <span class="fs-xxs fw-semibold text-uppercase text-muted d-block mb-1">Total Plats &
+                        Boissons</span>
+                      <h4 class="fw-extrabold text-dark mb-0">{{ totalPlatesAndBeverages() }} <span
+                          class="fs-xs fw-normal text-muted">unités</span></h4>
                     </div>
                     <div class="mb-3 border-top pt-2">
-                      <span class="fs-xxs fw-semibold text-uppercase text-muted d-block mb-1">Budget Traiteur (Est.)</span>
-                      <h4 class="fw-extrabold text-success mb-0">{{ cateringBudget() | currency:'EUR':'symbol':'1.2-2':'fr' }}</h4>
+                      <span class="fs-xxs fw-semibold text-uppercase text-muted d-block mb-1">Budget Traiteur
+                        (Est.)</span>
+                      <h4 class="fw-extrabold text-success mb-0">{{ cateringBudget() |
+                        currency:'EUR':'symbol':'1.2-2':'fr' }}</h4>
                     </div>
                     <div class="border-top pt-2" *ngIf="dietaryGuests().length > 0">
-                      <span class="fs-xxs fw-semibold text-uppercase text-muted d-block mb-1">Allergies & Restrictions</span>
+                      <span class="fs-xxs fw-semibold text-uppercase text-muted d-block mb-1">Allergies &
+                        Restrictions</span>
                       <span class="badge bg-danger-light text-black border border-danger-light px-2 py-1.5 fs-xs mt-1">
-                        <i class="fa fa-exclamation-triangle text-danger me-1"></i> {{ dietaryGuests().length }} Convives à risque
+                        <i class="fa fa-exclamation-triangle text-danger me-1"></i> {{ dietaryGuests().length }}
+                        Convives à risque
                       </span>
                     </div>
                     <div class="border-top pt-2" *ngIf="dietaryGuests().length === 0">
-                      <span class="fs-xxs fw-semibold text-uppercase text-muted d-block mb-1">Allergies & Restrictions</span>
-                      <span class="badge bg-success-light text-black border border-success-light px-2 py-1.5 fs-xs mt-1">
+                      <span class="fs-xxs fw-semibold text-uppercase text-muted d-block mb-1">Allergies &
+                        Restrictions</span>
+                      <span
+                        class="badge bg-success-light text-black border border-success-light px-2 py-1.5 fs-xs mt-1">
                         <i class="fa fa-check-circle text-success me-1"></i> Aucune alerte
                       </span>
                     </div>
@@ -186,11 +213,13 @@
                         <span class="badge bg-body-dark text-black px-2">{{ mainsCount() }}</span>
                       </div>
                       <div class="d-flex justify-content-between align-items-center fs-xs">
-                        <span class="text-dark"><i class="fa fa-birthday-cake text-muted me-1"></i> Desserts (Dessert)</span>
+                        <span class="text-dark"><i class="fa fa-birthday-cake text-muted me-1"></i> Desserts
+                          (Dessert)</span>
                         <span class="badge bg-body-dark text-black px-2">{{ dessertsCount() }}</span>
                       </div>
                       <div class="d-flex justify-content-between align-items-center fs-xs">
-                        <span class="text-dark"><i class="fa fa-wine-glass text-muted me-1"></i> Boissons (Beverage)</span>
+                        <span class="text-dark"><i class="fa fa-wine-glass text-muted me-1"></i> Boissons
+                          (Beverage)</span>
                         <span class="badge bg-body-dark text-black px-2">{{ beveragesCount() }}</span>
                       </div>
                     </div>
@@ -203,8 +232,10 @@
                 <div class="row g-3">
                   <div class="col-12 col-sm-6">
                     <span class="fs-xxs fw-semibold text-uppercase text-muted d-block mb-1">Formule de Service</span>
-                    <h4 class="fw-extrabold text-primary mb-2"><i class="fa fa-concierge-bell me-1"></i> Buffet Libre</h4>
-                    <p class="text-muted fs-xs mb-0">Tous les plats du menu sont présentés en accès libre pour les convives.</p>
+                    <h4 class="fw-extrabold text-primary mb-2"><i class="fa fa-concierge-bell me-1"></i> Buffet Libre
+                    </h4>
+                    <p class="text-muted fs-xs mb-0">Tous les plats du menu sont présentés en accès libre pour les
+                      convives.</p>
                   </div>
                   <div class="col-12 col-sm-6 border-start-sm">
                     <h5 class="fw-bold fs-xs text-uppercase text-muted border-bottom pb-1 mb-2">Plats au Buffet</h5>
@@ -214,7 +245,8 @@
                         <span class="badge bg-primary text-white px-2">{{ menuItems().length }}</span>
                       </div>
                       <div class="d-flex justify-content-between align-items-center" *ngIf="dietaryGuests().length > 0">
-                        <span class="text-danger fw-semibold"><i class="fa fa-exclamation-triangle me-1"></i> Allergies au buffet</span>
+                        <span class="text-danger fw-semibold"><i class="fa fa-exclamation-triangle me-1"></i> Allergies
+                          au buffet</span>
                         <span class="badge bg-danger-light text-black px-2">{{ dietaryGuests().length }}</span>
                       </div>
                     </div>
@@ -228,11 +260,13 @@
         <!-- Box: Gestion des Invitations -->
         <div class="col-12 col-xl-6">
           <div class="block block-rounded shadow-sm border border-light h-100 bg-white mb-0">
-            <div class="block-header block-header-default border-bottom p-3 d-flex justify-content-between align-items-center">
+            <div
+              class="block-header block-header-default border-bottom p-3 d-flex justify-content-between align-items-center">
               <h3 class="block-title fw-bold fs-sm mb-0">
                 <i class="fa fa-paper-plane text-info me-2"></i>Gestion des Invitations
               </h3>
-              <a class="btn btn-xs btn-alt-primary rounded-pill px-2.5" [routerLink]="['/events', event()?.id, 'invitation-setup']">
+              <a class="btn btn-xs btn-alt-primary rounded-pill px-2.5"
+                [routerLink]="['/events', event()?.id, 'invitation-setup']">
                 Voir tout
               </a>
             </div>
@@ -249,16 +283,20 @@
                     <span class="fs-sm fw-bold text-success">{{ deliveredCount() }}</span>
                   </div>
                   <div class="col-4">
-                    <span class="fs-xxs fw-semibold text-uppercase text-muted d-block text-warning-dark">En attente</span>
+                    <span class="fs-xxs fw-semibold text-uppercase text-muted d-block text-warning-dark">En
+                      attente</span>
                     <span class="fs-sm fw-bold text-warning-dark">{{ pendingDeliveryCount() }}</span>
                   </div>
                 </div>
 
                 <!-- Primary channel usage summary -->
-                <div class="d-flex align-items-center justify-content-around bg-body-light border rounded py-2 px-3 mb-3 fs-xs">
-                  <span class="text-dark"><i class="fab fa-whatsapp text-success me-1"></i> WhatsApp: <strong>{{ whatsappCount() }}</strong></span>
+                <div
+                  class="d-flex align-items-center justify-content-around bg-body-light border rounded py-2 px-3 mb-3 fs-xs">
+                  <span class="text-dark"><i class="fab fa-whatsapp text-success me-1"></i> WhatsApp: <strong>{{
+                      whatsappCount() }}</strong></span>
                   <span class="text-muted border-end" style="height: 15px;"></span>
-                  <span class="text-dark"><i class="fa fa-envelope text-primary me-1"></i> E-mail: <strong>{{ emailCount() }}</strong></span>
+                  <span class="text-dark"><i class="fa fa-envelope text-primary me-1"></i> E-mail: <strong>{{
+                      emailCount() }}</strong></span>
                 </div>
 
                 <!-- Compact preview table (Top 5) -->
@@ -280,17 +318,18 @@
                         <td class="fw-semibold text-dark">{{ g.fullName }}</td>
                         <td class="text-muted">
                           <span *ngIf="g.phone"><i class="fab fa-whatsapp text-success me-1"></i> WhatsApp</span>
-                          <span *ngIf="!g.phone && g.email"><i class="fa fa-envelope text-primary me-1"></i> E-mail</span>
+                          <span *ngIf="!g.phone && g.email"><i class="fa fa-envelope text-primary me-1"></i>
+                            E-mail</span>
                           <span *ngIf="!g.phone && !g.email">-</span>
                         </td>
                         <td class="text-center">
-                          <span class="badge rounded-pill px-2 py-1 fs-xxs" 
-                                [ngClass]="{
+                          <span class="badge rounded-pill px-2 py-1 fs-xxs" [ngClass]="{
                                   'bg-success-light text-black border border-success-light': g.status === 'CONFIRMED',
                                   'bg-danger-light text-black border border-danger-light': g.status === 'DECLINED',
                                   'bg-warning-light text-black border border-warning-light': g.status === 'PENDING'
                                 }">
-                            {{ g.status === 'CONFIRMED' ? 'Confirmé' : g.status === 'DECLINED' ? 'Décliné' : 'Attente' }}
+                            {{ g.status === 'CONFIRMED' ? 'Confirmé' : g.status === 'DECLINED' ? 'Décliné' : 'Attente'
+                            }}
                           </span>
                         </td>
                       </tr>
@@ -305,11 +344,13 @@
         <!-- Box 3: Suivi Financier & Budget (Finance & Budget) -->
         <div class="col-12 col-xl-6">
           <div class="block block-rounded shadow-sm border border-light h-100 bg-white mb-0">
-            <div class="block-header block-header-default border-bottom p-3 d-flex justify-content-between align-items-center">
+            <div
+              class="block-header block-header-default border-bottom p-3 d-flex justify-content-between align-items-center">
               <h3 class="block-title fw-bold fs-sm mb-0">
                 <i class="fa fa-file-invoice-dollar text-success me-2"></i>Suivi Financier & Budget
               </h3>
-              <a class="btn btn-xs btn-alt-primary rounded-pill px-2.5" [routerLink]="['/events', event()?.id, 'billing']">
+              <a class="btn btn-xs btn-alt-primary rounded-pill px-2.5"
+                [routerLink]="['/events', event()?.id, 'billing']">
                 Voir tout
               </a>
             </div>
@@ -318,15 +359,18 @@
               <div class="row g-2 mb-4 text-center border-bottom pb-3">
                 <div class="col-4 border-end">
                   <span class="fs-xxs fw-semibold text-uppercase text-muted d-block mb-1">Budget Total</span>
-                  <span class="fs-sm fw-bold text-dark">{{ totalBudget() | currency:'EUR':'symbol':'1.2-2':'fr' }}</span>
+                  <span class="fs-sm fw-bold text-dark">{{ totalBudget() | currency:'EUR':'symbol':'1.2-2':'fr'
+                    }}</span>
                 </div>
                 <div class="col-4 border-end">
                   <span class="fs-xxs fw-semibold text-uppercase text-muted d-block mb-1">Acomptes Payés</span>
-                  <span class="fs-sm fw-bold text-success">{{ totalPaid() | currency:'EUR':'symbol':'1.2-2':'fr' }}</span>
+                  <span class="fs-sm fw-bold text-success">{{ totalPaid() | currency:'EUR':'symbol':'1.2-2':'fr'
+                    }}</span>
                 </div>
                 <div class="col-4">
                   <span class="fs-xxs fw-semibold text-uppercase text-muted d-block mb-1">Solde Restant</span>
-                  <span class="fs-sm fw-bold text-danger">{{ remainingBudget() | currency:'EUR':'symbol':'1.2-2':'fr' }}</span>
+                  <span class="fs-sm fw-bold text-danger">{{ remainingBudget() | currency:'EUR':'symbol':'1.2-2':'fr'
+                    }}</span>
                 </div>
               </div>
 
@@ -348,9 +392,11 @@
                     <tr *ngFor="let p of payments()">
                       <td>{{ p.paymentDate | date:'dd/MM/yyyy' }}</td>
                       <td class="text-muted">
-                        {{ p.reference || '-' }} ({{ p.paymentMethod === 'BANK_TRANSFER' ? 'Virement' : p.paymentMethod === 'CREDIT_CARD' ? 'Carte Bancaire' : p.paymentMethod }})
+                        {{ p.reference || '-' }} ({{ p.paymentMethod === 'BANK_TRANSFER' ? 'Virement' : p.paymentMethod
+                        === 'CREDIT_CARD' ? 'Carte Bancaire' : p.paymentMethod }})
                       </td>
-                      <td class="text-end fw-semibold text-success">{{ p.amount | currency:'EUR':'symbol':'1.2-2':'fr' }}</td>
+                      <td class="text-end fw-semibold text-success">{{ p.amount | currency:'EUR':'symbol':'1.2-2':'fr'
+                        }}</td>
                     </tr>
                   </tbody>
                 </table>
