@@ -354,16 +354,16 @@
         </div>
 
         <!-- Menu Highlights Spotlight Carousel Section -->
-        <div class="menu-highlight-spotlight-section mb-5 text-center">
-          <div class="spotlight-title-wrapper mb-3">
+        <div class="menu-highlight-spotlight-section mb-3.5 text-center">
+          <div class="spotlight-title-wrapper mb-2.5">
             <span class="luxury-subtitle d-block mb-1">Aperçu Gastronomique</span>
-            <h3 class="wedding-names fs-4 mb-2">Les Saveurs de l'Événement</h3>
+            <h3 class="wedding-names fs-4 mb-1.5">Les Saveurs de l'Événement</h3>
             <div class="spotlight-underline"></div>
           </div>
-          <p class="text-gold-muted fs-xs font-serif mb-4" style="color: #cda82d !important; font-size: 0.75rem !important;">Faites glisser pour découvrir le menu</p>
+          <p class="text-gold-muted fs-xs font-serif mb-3" style="color: #cda82d !important; font-size: 0.72rem !important;">Faites glisser pour découvrir le menu</p>
 
           <!-- Interactive Carousel Container -->
-          <div class="carousel-spotlight-container position-relative mx-auto mb-4" style="max-width: 290px;"
+          <div class="carousel-spotlight-container position-relative mx-auto mb-2.5" style="max-width: 380px; width: 100%;"
                (touchstart)="onTouchStart($event)" (touchend)="onTouchEnd($event)">
             
             <!-- Left Arrow -->
@@ -372,16 +372,16 @@
             </button>
 
             <!-- Active Card -->
-            <div class="carousel-card-wrapper border border-light rounded-3 bg-cream-light p-3 position-relative overflow-hidden shadow-sm" style="width: 290px; box-sizing: border-box;">
-              <div class="carousel-card-image-container mb-3 position-relative">
+            <div class="carousel-card-wrapper border border-light rounded-3 bg-cream-light p-2.5 position-relative overflow-hidden shadow-sm w-100" style="box-sizing: border-box;">
+              <div class="carousel-card-image-container mb-2 position-relative">
                 <img [src]="carouselItems()[activeCarouselIndex()]?.image" [alt]="carouselItems()[activeCarouselIndex()]?.name"
-                     class="w-100 object-fit-cover rounded-3 shadow-sm" style="height: 165px;">
+                     class="w-100 object-fit-cover rounded-2 shadow-sm" style="height: 125px;">
               </div>
               <div class="carousel-card-info">
-                <span class="badge bg-gold-success px-2.5 py-1 rounded-pill fs-xxs text-uppercase fw-semibold mb-2 d-inline-block" style="font-size: 0.65rem;">
+                <span class="badge bg-gold-success px-2.5 py-0.5 rounded-pill fs-xxs text-uppercase fw-semibold mb-1 d-inline-block" style="font-size: 0.62rem;">
                   {{ carouselItems()[activeCarouselIndex()]?.categoryLabel }}
                 </span>
-                <h4 class="fs-xs fw-bold font-serif mb-1" style="color: #d4af37; min-height: 40px; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; line-height: 1.3;">
+                <h4 class="fs-xs fw-bold font-serif mb-0" style="color: #d4af37; min-height: 28px; display: flex; align-items: center; justify-content: center; font-size: 0.82rem; line-height: 1.25;">
                   {{ carouselItems()[activeCarouselIndex()]?.name }}
                 </h4>
               </div>
@@ -393,19 +393,12 @@
             </button>
           </div>
 
-          <!-- Dots Indicator -->
-          <div class="carousel-dots-indicator d-flex justify-content-center gap-1.5 mb-4" *ngIf="carouselItems().length > 1">
-            <span *ngFor="let item of carouselItems(); let i = index" 
-                  class="carousel-dot" 
-                  [class.active-dot]="i === activeCarouselIndex()"
-                  (click)="activeCarouselIndex.set(i)">
-            </span>
-          </div>
-
           <!-- Secondary Button to open Full Menu Modal -->
-          <button type="button" class="btn btn-sm btn-alt-gold rounded-pill px-4 fs-xs fw-semibold py-2" (click)="isFullMenuModalOpen.set(true)">
-            <i class="fa fa-utensils me-1"></i> Voir le menu complet
-          </button>
+          <div class="mt-2 mb-3">
+            <button type="button" class="btn btn-sm btn-alt-gold rounded-pill px-3.5 fs-xxs fw-semibold py-1.5" (click)="isFullMenuModalOpen.set(true)">
+              <i class="fa fa-utensils me-1"></i> Voir le menu complet
+            </button>
+          </div>
         </div>
 
         <!-- Full Menu Modal Overlay -->
@@ -423,50 +416,58 @@
                   <div class="crest-line" style="width: 80px; height: 1px; background: linear-gradient(90deg, rgba(212, 175, 55, 0) 0%, rgba(212, 175, 55, 0.5) 50%, rgba(212, 175, 55, 0) 100%); margin: 8px auto 0;"></div>
                 </div>
                 
-                <h3 class="wedding-names fs-4 mb-1">Le Menu Complet</h3>
+                <h3 class="wedding-names fs-4 mb-1">{{ guest()?.eventTitle || 'Le Menu Complet' }}</h3>
                 <p class="text-gold-muted fs-xxs font-serif mb-4 uppercase tracking-wider" style="color: #cda82d !important;">Création gastronomique pour notre réception</p>
 
-                <div class="menu-categories-wrapper text-start" style="max-height: 250px; overflow-y: auto; padding-right: 5px;">
+                <!-- Categorized Full Menu Details -->
+                <div class="full-menu-scrollable text-start">
                   
                   <!-- Entrées -->
-                  <div class="menu-modal-category mb-4" *ngIf="starters().length > 0">
-                    <h4 class="fs-xs fw-bold text-gold text-uppercase border-bottom pb-1 mb-2 tracking-widest font-serif text-center" style="color: #d4af37;">Entrées</h4>
-                    <div class="mb-3 text-center" *ngFor="let item of starters()">
-                      <div class="fs-sm fw-bold text-dark font-serif">{{ item.name }}</div>
-                      <div class="fs-xxs text-muted font-serif" *ngIf="item.dietaryTag">({{ item.dietaryTag }})</div>
+                  <div class="menu-cat-group mb-3" *ngIf="starters().length > 0">
+                    <h5 class="fs-xxs text-uppercase fw-bold text-gold border-bottom border-light pb-1 mb-2">Entrées</h5>
+                    <div class="menu-modal-item mb-2" *ngFor="let item of starters()">
+                      <div class="d-flex justify-content-between align-items-center">
+                        <span class="fs-xs fw-bold text-dark">{{ item.name }}</span>
+                        <span class="badge bg-light text-dark fs-xxs" *ngIf="item.dietaryTag">{{ item.dietaryTag }}</span>
+                      </div>
+                      <p class="fs-xxs text-muted mb-0" *ngIf="item.description">{{ item.description }}</p>
                     </div>
                   </div>
 
-                  <!-- Plats -->
-                  <div class="menu-modal-category mb-4" *ngIf="mainDishes().length > 0">
-                    <h4 class="fs-xs fw-bold text-gold text-uppercase border-bottom pb-1 mb-2 tracking-widest font-serif text-center" style="color: #d4af37;">Plats Principaux</h4>
-                    <div class="mb-3 text-center" *ngFor="let item of mainDishes()">
-                      <div class="fs-sm fw-bold text-dark font-serif">{{ item.name }}</div>
-                      <div class="fs-xxs text-muted font-serif" *ngIf="item.dietaryTag">({{ item.dietaryTag }})</div>
+                  <!-- Plats Principaux -->
+                  <div class="menu-cat-group mb-3" *ngIf="mainDishes().length > 0">
+                    <h5 class="fs-xxs text-uppercase fw-bold text-gold border-bottom border-light pb-1 mb-2">Plats Principaux</h5>
+                    <div class="menu-modal-item mb-2" *ngFor="let item of mainDishes()">
+                      <div class="d-flex justify-content-between align-items-center">
+                        <span class="fs-xs fw-bold text-dark">{{ item.name }}</span>
+                        <span class="badge bg-light text-dark fs-xxs" *ngIf="item.dietaryTag">{{ item.dietaryTag }}</span>
+                      </div>
+                      <p class="fs-xxs text-muted mb-0" *ngIf="item.description">{{ item.description }}</p>
                     </div>
                   </div>
 
                   <!-- Desserts -->
-                  <div class="menu-modal-category mb-4" *ngIf="desserts().length > 0">
-                    <h4 class="fs-xs fw-bold text-gold text-uppercase border-bottom pb-1 mb-2 tracking-widest font-serif text-center" style="color: #d4af37;">Desserts</h4>
-                    <div class="mb-3 text-center" *ngFor="let item of desserts()">
-                      <div class="fs-sm fw-bold text-dark font-serif">{{ item.name }}</div>
-                      <div class="fs-xxs text-muted font-serif" *ngIf="item.dietaryTag">({{ item.dietaryTag }})</div>
+                  <div class="menu-cat-group mb-3" *ngIf="desserts().length > 0">
+                    <h5 class="fs-xxs text-uppercase fw-bold text-gold border-bottom border-light pb-1 mb-2">Desserts</h5>
+                    <div class="menu-modal-item mb-2" *ngFor="let item of desserts()">
+                      <div class="d-flex justify-content-between align-items-center">
+                        <span class="fs-xs fw-bold text-dark">{{ item.name }}</span>
+                        <span class="badge bg-light text-dark fs-xxs" *ngIf="item.dietaryTag">{{ item.dietaryTag }}</span>
+                      </div>
+                      <p class="fs-xxs text-muted mb-0" *ngIf="item.description">{{ item.description }}</p>
                     </div>
                   </div>
 
                   <!-- Boissons -->
-                  <div class="menu-modal-category mb-4" *ngIf="beverages().length > 0">
-                    <h4 class="fs-xs fw-bold text-gold text-uppercase border-bottom pb-1 mb-2 tracking-widest font-serif text-center" style="color: #d4af37;">Boissons</h4>
-                    <div class="mb-3 text-center" *ngFor="let item of beverages()">
-                      <div class="fs-sm fw-bold text-dark font-serif">{{ item.name }}</div>
-                      <div class="fs-xxs text-muted font-serif" *ngIf="item.dietaryTag">({{ item.dietaryTag }})</div>
+                  <div class="menu-cat-group mb-3" *ngIf="beverages().length > 0">
+                    <h5 class="fs-xxs text-uppercase fw-bold text-gold border-bottom border-light pb-1 mb-2">Boissons</h5>
+                    <div class="menu-modal-item mb-2" *ngFor="let item of beverages()">
+                      <div class="d-flex justify-content-between align-items-center">
+                        <span class="fs-xs fw-bold text-dark">{{ item.name }}</span>
+                        <span class="badge bg-light text-dark fs-xxs" *ngIf="item.dietaryTag">{{ item.dietaryTag }}</span>
+                      </div>
+                      <p class="fs-xxs text-muted mb-0" *ngIf="item.description">{{ item.description }}</p>
                     </div>
-                  </div>
-
-                  <!-- Empty state inside modal -->
-                  <div class="text-center py-4 text-muted fs-xs font-serif" *ngIf="starters().length === 0 && mainDishes().length === 0 && desserts().length === 0 && beverages().length === 0">
-                    Aucun plat n'est actuellement configuré dans le menu de cet événement.
                   </div>
 
                 </div>
@@ -483,7 +484,7 @@
         <form #rsvpForm="ngForm">
 
           <!-- STEP 0: Initial State / Overview on page load -->
-          <div *ngIf="currentRsvpStep() === 0" class="initial-rsvp-view animate__animated animate__fadeIn mb-4">
+          <div *ngIf="currentRsvpStep() === 0" class="initial-rsvp-view animate__animated animate__fadeIn pt-2 mb-4">
             
             <!-- Action Trigger to begin choices / explore steps -->
             <div class="text-center mb-4">
@@ -499,12 +500,12 @@
               </label>
 
               <!-- Side-by-side choices (Visible until one is selected) -->
-              <div class="d-flex gap-2.5 justify-content-center mb-3" *ngIf="selectedAttendanceChoice() === null">
-                <button type="button" class="btn btn-presence-yes flex-fill py-3 fs-xs fw-bold rounded-pill"
+              <div class="d-flex gap-2 justify-content-center mb-2.5" *ngIf="selectedAttendanceChoice() === null">
+                <button type="button" class="btn btn-presence-yes flex-fill py-2 fs-xxs fw-semibold rounded-pill"
                   (click)="selectAttendanceChoice('CONFIRMED')">
                   <i class="fa fa-check me-1.5"></i> Je serai présent
                 </button>
-                <button type="button" class="btn btn-presence-no flex-fill py-3 fs-xs fw-bold rounded-pill"
+                <button type="button" class="btn btn-presence-no flex-fill py-2 fs-xxs fw-semibold rounded-pill"
                   (click)="selectAttendanceChoice('DECLINED')">
                   <i class="fa fa-times me-1.5"></i> Je ne pourrai pas venir
                 </button>
@@ -514,7 +515,7 @@
               <div *ngIf="selectedAttendanceChoice() !== null" class="animate__animated animate__fadeIn">
                 
                 <!-- Choice Feedback Badge -->
-                <div class="p-2.5 rounded-pill mb-3 d-flex align-items-center justify-content-between px-3"
+                <div class="p-2 rounded-pill mb-2.5 d-flex align-items-center justify-content-between px-3"
                   [ngClass]="selectedAttendanceChoice() === 'CONFIRMED' ? 'bg-success-subtle text-success border border-success' : 'bg-danger-subtle text-danger border border-danger'">
                   <span class="fs-xs fw-bold">
                     <i class="fa me-1.5" [ngClass]="selectedAttendanceChoice() === 'CONFIRMED' ? 'fa-check-circle' : 'fa-times-circle'"></i>
@@ -528,7 +529,7 @@
                 </div>
 
                 <!-- Single Confirmation Submission Button -->
-                <button type="button" class="btn w-100 py-3 fs-sm text-uppercase fw-bold rounded-pill shadow mb-2"
+                <button type="button" class="btn w-100 py-2 fs-xs text-uppercase fw-bold rounded-pill shadow mb-2"
                   [ngClass]="selectedAttendanceChoice() === 'CONFIRMED' ? 'btn-luxury-submit' : 'btn-presence-no'"
                   (click)="confirmRsvpSubmission()" [disabled]="isSubmitting()">
                   <span *ngIf="!isSubmitting()">
@@ -545,107 +546,126 @@
 
           <!-- STEP 1: Choix de votre Menu (Hidden by default, opened by Suivant) -->
           <div *ngIf="currentRsvpStep() === 1" class="menu-selection-container animate__animated animate__fadeIn mb-4">
-            <h4 class="form-label d-block text-center fw-bold text-gold text-uppercase fs-xs tracking-widest mb-4">
+            <h4 class="form-label d-block text-center fw-bold text-gold text-uppercase fs-xs tracking-widest mb-3">
               Étape 1 : Choix de votre Menu
             </h4>
 
-            <!-- Plated (Service à table) -->
+            <!-- Plated (Service à table) - Two-column Side-by-Side Grid without redundant labels -->
             <div *ngIf="isPlated()">
-              <!-- Entrée Selection -->
-              <div class="mb-4" *ngIf="starters().length > 0">
-                <label class="form-label fw-bold text-gold text-uppercase fs-xs tracking-widest mb-2">Choix de l'Entrée</label>
-                <select class="form-select luxury-form-control" [(ngModel)]="starterChoice" name="starterChoice">
-                  <option value="">-- Sélectionnez votre entrée --</option>
-                  <option *ngFor="let item of starters()" [value]="item.name">
-                    {{ item.name }} <span *ngIf="item.dietaryTag">({{ item.dietaryTag }})</span>
-                  </option>
-                </select>
-              </div>
+              <div class="row g-2 mb-2 text-start">
+                <!-- Entrée Selection -->
+                <div class="col-12 col-sm-6" *ngIf="starters().length > 0">
+                  <select class="form-select luxury-form-control py-1.5 fs-xs" [(ngModel)]="starterChoice" name="starterChoice">
+                    <option value="">-- Choix de l'Entrée --</option>
+                    <option *ngFor="let item of starters()" [value]="item.name">
+                      {{ item.name }} <span *ngIf="item.dietaryTag">({{ item.dietaryTag }})</span>
+                    </option>
+                  </select>
+                </div>
 
-              <!-- Plat Principal Selection -->
-              <div class="mb-4" *ngIf="mainDishes().length > 0">
-                <label class="form-label fw-bold text-gold text-uppercase fs-xs tracking-widest mb-2">Choix du Plat Principal <span class="text-danger">*</span></label>
-                <select class="form-select luxury-form-control" [(ngModel)]="mealChoice" name="mealChoice" required>
-                  <option value="">-- Sélectionnez votre plat principal --</option>
-                  <option *ngFor="let item of mainDishes()" [value]="item.name">
-                    {{ item.name }} <span *ngIf="item.dietaryTag">({{ item.dietaryTag }})</span>
-                  </option>
-                </select>
-              </div>
+                <!-- Plat Principal Selection -->
+                <div class="col-12 col-sm-6" *ngIf="mainDishes().length > 0">
+                  <select class="form-select luxury-form-control py-1.5 fs-xs" [(ngModel)]="mealChoice" name="mealChoice" required>
+                    <option value="">-- Choix du Plat Principal * --</option>
+                    <option *ngFor="let item of mainDishes()" [value]="item.name">
+                      {{ item.name }} <span *ngIf="item.dietaryTag">({{ item.dietaryTag }})</span>
+                    </option>
+                  </select>
+                </div>
 
-              <!-- Boisson Selection -->
-              <div class="mb-4" *ngIf="beverages().length > 0">
-                <label class="form-label fw-bold text-gold text-uppercase fs-xs tracking-widest mb-2">Choix de la Boisson</label>
-                <select class="form-select luxury-form-control" [(ngModel)]="beverageChoice" name="beverageChoice">
-                  <option value="">-- Sélectionnez votre boisson --</option>
-                  <option *ngFor="let item of beverages()" [value]="item.name">
-                    {{ item.name }} <span *ngIf="item.dietaryTag">({{ item.dietaryTag }})</span>
-                  </option>
-                </select>
+                <!-- Dessert Selection -->
+                <div class="col-12 col-sm-6" *ngIf="desserts().length > 0">
+                  <select class="form-select luxury-form-control py-1.5 fs-xs" [(ngModel)]="dessertChoice" name="dessertChoice">
+                    <option value="">-- Choix du Dessert --</option>
+                    <option *ngFor="let item of desserts()" [value]="item.name">
+                      {{ item.name }} <span *ngIf="item.dietaryTag">({{ item.dietaryTag }})</span>
+                    </option>
+                  </select>
+                </div>
+
+                <!-- Boisson Selection -->
+                <div class="col-12 col-sm-6" *ngIf="beverages().length > 0">
+                  <select class="form-select luxury-form-control py-1.5 fs-xs" [(ngModel)]="beverageChoice" name="beverageChoice">
+                    <option value="">-- Choix de la Boisson --</option>
+                    <option *ngFor="let item of beverages()" [value]="item.name">
+                      {{ item.name }} <span *ngIf="item.dietaryTag">({{ item.dietaryTag }})</span>
+                    </option>
+                  </select>
+                </div>
               </div>
             </div>
 
-            <!-- Formule Mixte (Hybrid Buffet & Service assis) -->
+            <!-- Formule Mixte (Hybrid Buffet & Service assis) without redundant labels -->
             <div *ngIf="isMix()">
               <!-- Informative Buffet Entrees -->
-              <div class="mb-4 p-3 border rounded bg-cream" *ngIf="starters().length > 0 || beverages().length > 0">
-                <h5 class="fs-xs fw-bold text-gold text-uppercase mb-2">Partie 1 : Buffet Libre-service</h5>
-                <p class="fs-xxs text-muted mb-2">Les entrées et boissons suivantes seront servies en formule buffet :</p>
-                <ul class="mb-0 ps-3 fs-xs text-dark">
-                  <li *ngFor="let item of starters()">{{ item.name }}</li>
-                  <li *ngFor="let item of beverages()">{{ item.name }}</li>
-                </ul>
+              <div class="mb-2 p-2 border rounded bg-cream text-start" *ngIf="starters().length > 0 || beverages().length > 0">
+                <h5 class="fs-xxs fw-bold text-gold text-uppercase mb-1">Buffet Libre-service</h5>
+                <p class="fs-xxs text-muted mb-1">Entrées & boissons servies en buffet libre-service :</p>
+                <div class="d-flex flex-wrap gap-1">
+                  <span class="badge bg-white text-dark border px-2 py-0.5 fs-xxs" *ngFor="let item of starters()">{{ item.name }}</span>
+                  <span class="badge bg-white text-dark border px-2 py-0.5 fs-xxs" *ngFor="let item of beverages()">{{ item.name }}</span>
+                </div>
               </div>
 
-              <!-- Plat Principal Selection -->
-              <div class="mb-4" *ngIf="mainDishes().length > 0">
-                <label class="form-label fw-bold text-gold text-uppercase fs-xs tracking-widest mb-2">Choix du Plat Principal assis <span class="text-danger">*</span></label>
-                <select class="form-select luxury-form-control" [(ngModel)]="mealChoice" name="mealChoice" required>
-                  <option value="">-- Sélectionnez votre plat principal --</option>
-                  <option *ngFor="let item of mainDishes()" [value]="item.name">
-                    {{ item.name }} <span *ngIf="item.dietaryTag">({{ item.dietaryTag }})</span>
-                  </option>
-                </select>
+              <div class="row g-2 mb-2 text-start">
+                <!-- Plat Principal Selection -->
+                <div class="col-12 col-sm-6" *ngIf="mainDishes().length > 0">
+                  <select class="form-select luxury-form-control py-1.5 fs-xs" [(ngModel)]="mealChoice" name="mealChoice" required>
+                    <option value="">-- Choix du Plat assis * --</option>
+                    <option *ngFor="let item of mainDishes()" [value]="item.name">
+                      {{ item.name }} <span *ngIf="item.dietaryTag">({{ item.dietaryTag }})</span>
+                    </option>
+                  </select>
+                </div>
+
+                <!-- Dessert Selection if present -->
+                <div class="col-12 col-sm-6" *ngIf="desserts().length > 0">
+                  <select class="form-select luxury-form-control py-1.5 fs-xs" [(ngModel)]="dessertChoice" name="dessertChoice">
+                    <option value="">-- Choix du Dessert --</option>
+                    <option *ngFor="let item of desserts()" [value]="item.name">
+                      {{ item.name }} <span *ngIf="item.dietaryTag">({{ item.dietaryTag }})</span>
+                    </option>
+                  </select>
+                </div>
               </div>
             </div>
 
             <!-- Formule Buffet -->
             <div *ngIf="isBuffet()">
-              <div class="p-4 border rounded bg-cream text-center mb-4">
-                <i class="fa fa-utensils fs-2 text-gold mb-3"></i>
-                <h5 class="fs-sm fw-bold text-gold text-uppercase mb-2">Formule Buffet Libre-Service</h5>
-                <p class="fs-xs text-dark mb-0">Un buffet varié et d'exception sera à votre disposition tout au long de la réception.</p>
+              <div class="p-3 border rounded bg-cream text-center mb-3">
+                <i class="fa fa-utensils fs-4 text-gold mb-2"></i>
+                <h5 class="fs-xs fw-bold text-gold text-uppercase mb-1">Formule Buffet Libre-Service</h5>
+                <p class="fs-xxs text-dark mb-0">Un buffet varié et d'exception sera à votre disposition tout au long de la réception.</p>
               </div>
 
               <!-- Stations overview if items configured -->
-              <div class="mb-4 text-start" *ngIf="starters().length > 0 || mainDishes().length > 0 || desserts().length > 0">
-                <h6 class="fs-xs fw-bold text-gold text-uppercase mb-3">Aperçu du menu proposé</h6>
-                <div class="row g-3">
-                  <div class="col-md-6" *ngIf="starters().length > 0">
+              <div class="mb-3 text-start" *ngIf="starters().length > 0 || mainDishes().length > 0 || desserts().length > 0">
+                <div class="row g-2">
+                  <div class="col-6" *ngIf="starters().length > 0">
                     <div class="p-2 border rounded bg-white h-100">
-                      <div class="fs-xxs fw-bold text-gold-muted uppercase mb-1">Entrées & Salad Bar</div>
+                      <div class="fs-xxs fw-bold text-gold-muted uppercase mb-1">Entrées</div>
                       <ul class="ps-3 mb-0 fs-xxs text-dark">
                         <li *ngFor="let item of starters()">{{ item.name }}</li>
                       </ul>
                     </div>
                   </div>
-                  <div class="col-md-6" *ngIf="mainDishes().length > 0">
+                  <div class="col-6" *ngIf="mainDishes().length > 0">
                     <div class="p-2 border rounded bg-white h-100">
-                      <div class="fs-xxs fw-bold text-gold-muted uppercase mb-1">Stations Plats Chauds</div>
+                      <div class="fs-xxs fw-bold text-gold-muted uppercase mb-1">Plats Chauds</div>
                       <ul class="ps-3 mb-0 fs-xxs text-dark">
                         <li *ngFor="let item of mainDishes()">{{ item.name }}</li>
                       </ul>
                     </div>
                   </div>
-                  <div class="col-md-6" *ngIf="desserts().length > 0">
+                  <div class="col-6" *ngIf="desserts().length > 0">
                     <div class="p-2 border rounded bg-white h-100">
-                      <div class="fs-xxs fw-bold text-gold-muted uppercase mb-1">Station Desserts</div>
+                      <div class="fs-xxs fw-bold text-gold-muted uppercase mb-1">Desserts</div>
                       <ul class="ps-3 mb-0 fs-xxs text-dark">
                         <li *ngFor="let item of desserts()">{{ item.name }}</li>
                       </ul>
                     </div>
                   </div>
-                  <div class="col-md-6" *ngIf="beverages().length > 0">
+                  <div class="col-6" *ngIf="beverages().length > 0">
                     <div class="p-2 border rounded bg-white h-100">
                       <div class="fs-xxs fw-bold text-gold-muted uppercase mb-1">Boissons</div>
                       <ul class="ps-3 mb-0 fs-xxs text-dark">
@@ -658,11 +678,11 @@
             </div>
 
             <!-- Navigation Buttons in Step 1 -->
-            <div class="d-flex gap-3 justify-content-between mt-4">
-              <button type="button" class="btn btn-alt-secondary w-50 py-2.5 fs-xs fw-semibold rounded-pill" (click)="goToPrevStep()">
+            <div class="d-flex gap-3 justify-content-between mt-3">
+              <button type="button" class="btn btn-alt-secondary w-50 py-2 fs-xs fw-semibold rounded-pill" (click)="goToPrevStep()">
                 <i class="fa fa-arrow-left me-1"></i> Précédent
               </button>
-              <button type="button" class="btn btn-gold-success w-50 py-2.5 fs-xs fw-semibold rounded-pill" (click)="goToNextStep()">
+              <button type="button" class="btn btn-gold-success w-50 py-2 fs-xs fw-semibold rounded-pill" (click)="goToNextStep()">
                 Suivant <i class="fa fa-arrow-right ms-1"></i>
               </button>
             </div>
@@ -744,10 +764,12 @@
                 <ng-container *ngIf="isPlated()">
                   <div class="fs-sm text-dark mb-1" *ngIf="starterChoice"><strong>Entrée :</strong> {{ starterChoice }}</div>
                   <div class="fs-sm text-dark mb-1"><strong>Plat Principal :</strong> {{ mealChoice || 'Non spécifié' }}</div>
+                  <div class="fs-sm text-dark mb-1" *ngIf="dessertChoice"><strong>Dessert :</strong> {{ dessertChoice }}</div>
                   <div class="fs-sm text-dark mb-1" *ngIf="beverageChoice"><strong>Boisson :</strong> {{ beverageChoice }}</div>
                 </ng-container>
                 <ng-container *ngIf="isMix()">
                   <div class="fs-sm text-dark mb-1"><strong>Plat Principal (assis) :</strong> {{ mealChoice || 'Non spécifié' }}</div>
+                  <div class="fs-sm text-dark mb-1" *ngIf="dessertChoice"><strong>Dessert :</strong> {{ dessertChoice }}</div>
                   <div class="fs-sm text-muted mb-1">Entrées & Boissons d'accueil servis en buffet libre-service</div>
                 </ng-container>
                 <ng-container *ngIf="isBuffet()">
@@ -771,12 +793,12 @@
               </label>
 
               <!-- Side-by-side choices (Visible until one is selected) -->
-              <div class="d-flex gap-2.5 justify-content-center mb-3" *ngIf="selectedAttendanceChoice() === null">
-                <button type="button" class="btn btn-presence-yes flex-fill py-3 fs-xs fw-bold rounded-pill"
+              <div class="d-flex gap-2 justify-content-center mb-2.5" *ngIf="selectedAttendanceChoice() === null">
+                <button type="button" class="btn btn-presence-yes flex-fill py-2 fs-xxs fw-semibold rounded-pill"
                   (click)="selectAttendanceChoice('CONFIRMED')">
                   <i class="fa fa-check me-1.5"></i> Je serai présent
                 </button>
-                <button type="button" class="btn btn-presence-no flex-fill py-3 fs-xs fw-bold rounded-pill"
+                <button type="button" class="btn btn-presence-no flex-fill py-2 fs-xxs fw-semibold rounded-pill"
                   (click)="selectAttendanceChoice('DECLINED')">
                   <i class="fa fa-times me-1.5"></i> Je ne pourrai pas venir
                 </button>
@@ -786,7 +808,7 @@
               <div *ngIf="selectedAttendanceChoice() !== null" class="animate__animated animate__fadeIn">
                 
                 <!-- Choice Feedback Badge -->
-                <div class="p-2.5 rounded-pill mb-3 d-flex align-items-center justify-content-between px-3"
+                <div class="p-2 rounded-pill mb-2.5 d-flex align-items-center justify-content-between px-3"
                   [ngClass]="selectedAttendanceChoice() === 'CONFIRMED' ? 'bg-success-subtle text-success border border-success' : 'bg-danger-subtle text-danger border border-danger'">
                   <span class="fs-xs fw-bold">
                     <i class="fa me-1.5" [ngClass]="selectedAttendanceChoice() === 'CONFIRMED' ? 'fa-check-circle' : 'fa-times-circle'"></i>
@@ -800,7 +822,7 @@
                 </div>
 
                 <!-- Single Confirmation Submission Button -->
-                <button type="button" class="btn w-100 py-3 fs-sm text-uppercase fw-bold rounded-pill shadow mb-2"
+                <button type="button" class="btn w-100 py-2 fs-xs text-uppercase fw-bold rounded-pill shadow mb-2"
                   [ngClass]="selectedAttendanceChoice() === 'CONFIRMED' ? 'btn-luxury-submit' : 'btn-presence-no'"
                   (click)="confirmRsvpSubmission()" [disabled]="isSubmitting()">
                   <span *ngIf="!isSubmitting()">

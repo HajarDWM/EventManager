@@ -129,6 +129,7 @@ export class GuestRsvp implements OnInit {
   // Specific category selections for PLATS_FIXES (Regular properties for ngModel)
   public starterChoice = '';
   public mealChoice = '';
+  public dessertChoice = '';
   public beverageChoice = '';
 
   // Dietary options (comprehensive list as regular properties)
@@ -265,6 +266,11 @@ export class GuestRsvp implements OnInit {
               this.mealChoice = mealPrefix.replace('Plat: ', '');
             }
 
+            const dessertPrefix = diets.find(d => d.startsWith('Dessert: '));
+            if (dessertPrefix) {
+              this.dessertChoice = dessertPrefix.replace('Dessert: ', '');
+            }
+
             const beveragePrefix = diets.find(d => d.startsWith('Boisson: '));
             if (beveragePrefix) {
               this.beverageChoice = beveragePrefix.replace('Boisson: ', '');
@@ -277,7 +283,7 @@ export class GuestRsvp implements OnInit {
             'sans gluten', 'gluten-free', 'sans lactose', 'lactose-free',
             'sans arachides', 'sans arachide', 'arachides-free', 'halal',
             'sans fruits de mer', 'fruits-de-mer-free', 'sans sucre', 'sucre-free',
-            'entrée: ', 'plat: ', 'menu: ', 'boisson: '
+            'entrée: ', 'plat: ', 'dessert: ', 'menu: ', 'boisson: '
           ];
           const remaining = diets.filter(d => !standard.some(s => d.toLowerCase().includes(s)));
           if (remaining.length > 0) {
@@ -357,6 +363,9 @@ export class GuestRsvp implements OnInit {
       }
       if (this.mealChoice) {
         activeDiets.push(`Plat: ${this.mealChoice}`);
+      }
+      if (this.dessertChoice) {
+        activeDiets.push(`Dessert: ${this.dessertChoice}`);
       }
       if (this.beverageChoice) {
         activeDiets.push(`Boisson: ${this.beverageChoice}`);

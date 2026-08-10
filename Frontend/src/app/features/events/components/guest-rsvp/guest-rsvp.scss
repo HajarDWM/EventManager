@@ -1565,9 +1565,9 @@ textarea.luxury-form-control::placeholder {
 .dietary-pills-container {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
+  gap: 8px;
   width: 100%;
-  margin-top: 12px;
+  margin-top: 8px;
   
   @media (max-width: 576px) {
     grid-template-columns: repeat(2, 1fr);
@@ -1579,15 +1579,19 @@ textarea.luxury-form-control::placeholder {
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 10px 14px;
+  padding: 6px 12px;
   border-radius: 50px;
-  font-size: 0.8rem;
+  font-size: 0.74rem;
   font-weight: 600;
   cursor: pointer;
   user-select: none;
-  min-height: 44px;
+  min-height: 34px;
   transition: all 0.25s ease;
   box-sizing: border-box;
+  
+  .pill-check-icon {
+    font-size: 0.65rem;
+  }
   
   .dietary-checkbox {
     display: none !important;
@@ -1729,15 +1733,19 @@ textarea.luxury-form-control::placeholder {
   .btn-presence-yes {
     background-color: rgba(40, 167, 69, 0.08);
     color: #2e7d32;
-    border: 1.5px solid rgba(40, 167, 69, 0.3);
+    border: 1px solid rgba(40, 167, 69, 0.3);
+    padding: 6px 12px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    min-height: 34px;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
 
     &:hover, &.active {
       background-color: #2e7d32;
       color: #ffffff;
       border-color: #2e7d32;
-      box-shadow: 0 6px 16px rgba(46, 125, 50, 0.3);
+      box-shadow: 0 4px 12px rgba(46, 125, 50, 0.25);
       transform: translateY(-1px);
     }
   }
@@ -1745,15 +1753,19 @@ textarea.luxury-form-control::placeholder {
   .btn-presence-no {
     background-color: rgba(220, 53, 69, 0.08);
     color: #c62828;
-    border: 1.5px solid rgba(220, 53, 69, 0.3);
+    border: 1px solid rgba(220, 53, 69, 0.3);
+    padding: 6px 12px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    min-height: 34px;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
 
     &:hover, &.active {
       background-color: #c62828;
       color: #ffffff;
       border-color: #c62828;
-      box-shadow: 0 6px 16px rgba(198, 40, 40, 0.3);
+      box-shadow: 0 4px 12px rgba(198, 40, 40, 0.25);
       transform: translateY(-1px);
     }
   }
@@ -1762,12 +1774,15 @@ textarea.luxury-form-control::placeholder {
     background: linear-gradient(135deg, #d4af37 0%, #aa8524 100%);
     border: none;
     color: #ffffff;
+    padding: 7px 14px;
+    font-size: 0.74rem;
+    min-height: 34px;
     transition: all 0.3s ease;
     
     &:hover {
       background: linear-gradient(135deg, #dfbc45 0%, #ba9534 100%);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(212, 175, 55, 0.35) !important;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(212, 175, 55, 0.3) !important;
     }
   }
 }
