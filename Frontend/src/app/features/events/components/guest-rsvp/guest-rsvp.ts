@@ -385,7 +385,7 @@ export class GuestRsvp implements OnInit, OnDestroy {
 
   protected goToNextStep(): void {
     const step = this.currentRsvpStep();
-    if (step < 3) {
+    if (step < 2) {
       this.currentRsvpStep.set(step + 1);
     }
   }
@@ -394,6 +394,14 @@ export class GuestRsvp implements OnInit, OnDestroy {
     const step = this.currentRsvpStep();
     if (step > 0) {
       this.currentRsvpStep.set(step - 1);
+    }
+  }
+
+  protected handleTopNavPrev(): void {
+    if (this.currentRsvpStep() === 0) {
+      this.closeMenuAndRsvp();
+    } else {
+      this.goToPrevStep();
     }
   }
 
@@ -424,6 +432,19 @@ export class GuestRsvp implements OnInit, OnDestroy {
     if (this.otherAllergies.trim()) list.push(this.otherAllergies.trim());
 
     return list.length > 0 ? list.join(', ') : 'Aucune restriction ou allergie';
+  }
+
+  public getSelectedDietsArray(): string[] {
+    const list: string[] = [];
+    if (this.hasVegetarien) list.push('Végétarien');
+    if (this.hasVegan) list.push('Vegan');
+    if (this.hasGlutenFree) list.push('Sans gluten');
+    if (this.hasLactoseFree) list.push('Sans lactose');
+    if (this.hasArachidesFree) list.push('Sans arachides');
+    if (this.hasHalal) list.push('Halal');
+    if (this.hasFruitsDeMerFree) list.push('Sans fruits de mer');
+    if (this.hasSucreFree) list.push('Sans sucre');
+    return list;
   }
 
   protected submitResponse(): void {
