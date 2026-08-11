@@ -28,6 +28,7 @@ export interface PublicRsvpDetail {
   accentColor?: string;
   backgroundColor?: string;
   templateBackgroundImageUrl?: string;
+  templateMusicUrl?: string;
   menuItems?: any[];
 }
 
@@ -547,15 +548,16 @@ export class GuestRsvp implements OnInit, OnDestroy {
   private webAudioOscillators: any[] = [];
   private isSynthesizing = false;
 
-  // Royalty-free romantic acoustic background track
-  private readonly defaultMusicUrl = 'https://cdn.pixabay.com/download/audio/2022/05/16/audio_db6591201e.mp3';
+  // Calm Moroccan & Arab-Andalusian Oud Wedding Background Track
+  private readonly defaultMusicUrl = 'https://cdn.pixabay.com/download/audio/2022/11/06/audio_c3c3933c06.mp3';
 
   private initAudio(): void {
     if (!this.audioElement && typeof Audio !== 'undefined') {
       this.audioElement = new Audio();
-      this.audioElement.src = this.defaultMusicUrl;
+      const customMusic = this.guest()?.templateMusicUrl;
+      this.audioElement.src = (customMusic && customMusic.trim()) ? customMusic.trim() : this.defaultMusicUrl;
       this.audioElement.loop = true;
-      this.audioElement.volume = 0.4;
+      this.audioElement.volume = 0.45;
 
       this.audioElement.addEventListener('ended', () => {
         if (this.isMusicPlaying()) {
@@ -564,7 +566,7 @@ export class GuestRsvp implements OnInit, OnDestroy {
       });
 
       this.audioElement.addEventListener('error', () => {
-        console.warn('Network audio stream unavailable, switching to harmonic ambient chords.');
+        console.warn('Network audio stream unavailable, switching to Moroccan Andalusian acoustic synthesis.');
         if (this.isMusicPlaying()) {
           this.playHarmonicChords();
         }
@@ -585,7 +587,7 @@ export class GuestRsvp implements OnInit, OnDestroy {
             this.isMusicPlaying.set(true);
           })
           .catch(err => {
-            console.warn('Direct audio stream failed, activating harmonic synthesis:', err);
+            console.warn('Direct audio stream failed, activating Andalusian acoustic synthesis:', err);
             this.playHarmonicChords();
             this.isMusicPlaying.set(true);
           });
@@ -617,11 +619,12 @@ export class GuestRsvp implements OnInit, OnDestroy {
       }
 
       this.isSynthesizing = true;
+      // Calm Moroccan Andalusian Mode / Maqam Hijaz & Bayati Inspired Chords
       const chords = [
-        [261.63, 329.63, 392.00, 493.88], // Cmaj7
-        [220.00, 261.63, 329.63, 392.00], // Amin7
-        [174.61, 220.00, 261.63, 329.63], // Fmaj7
-        [196.00, 246.94, 293.66, 392.00]  // G6
+        [146.83, 220.00, 293.66, 369.99], // D - A - D - F# (Calm Andalusian Hijaz root)
+        [196.00, 246.94, 293.66, 392.00], // G - B - D - G (Subtle Warmth)
+        [220.00, 277.18, 329.63, 440.00], // A - C# - E - A (Traditional Cadence)
+        [174.61, 220.00, 261.63, 349.23]  // F - A - C - F (Lyrical Transition)
       ];
 
       let chordIndex = 0;
@@ -631,17 +634,18 @@ export class GuestRsvp implements OnInit, OnDestroy {
         chordIndex++;
 
         const now = this.webAudioCtx.currentTime;
-        const duration = 4.0;
+        const duration = 4.5;
 
         currentChord.forEach(freq => {
           const osc = this.webAudioCtx.createOscillator();
           const gain = this.webAudioCtx.createGain();
 
-          osc.type = 'sine';
+          // Triangle + Sine blending for acoustic string / oud warmth
+          osc.type = 'triangle';
           osc.frequency.setValueAtTime(freq, now);
 
           gain.gain.setValueAtTime(0.001, now);
-          gain.gain.linearRampToValueAtTime(0.025, now + 1.2);
+          gain.gain.linearRampToValueAtTime(0.03, now + 0.8);
           gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
 
           osc.connect(gain);
@@ -653,7 +657,7 @@ export class GuestRsvp implements OnInit, OnDestroy {
         });
 
         if (this.isSynthesizing) {
-          setTimeout(() => playNextChord(), 3500);
+          setTimeout(() => playNextChord(), 3800);
         }
       };
 

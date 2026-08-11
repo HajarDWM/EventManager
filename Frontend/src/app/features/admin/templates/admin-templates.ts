@@ -41,11 +41,22 @@ export class AdminTemplates implements OnInit {
   protected descriptionField = '';
   protected imageUrlField = '';
   protected backgroundImageUrlField = '';
+  protected musicUrlField = '';
   protected templateKeyField = '';
   protected decorativeFrameField = 'floral-frame';
   protected accentColorField = '#d4af37';
   protected backgroundColorField = '#faf6ee';
   protected htmlContentField = '';
+
+  // Audio Preview & Presets
+  protected readonly isPreviewAudioPlaying = signal(false);
+  private previewAudioElement: HTMLAudioElement | null = null;
+  protected readonly musicPresets = [
+    { label: 'Mariage Marocain & Oud Calme', url: 'https://cdn.pixabay.com/download/audio/2022/11/06/audio_c3c3933c06.mp3' },
+    { label: 'Romantique & Acoustique', url: 'https://cdn.pixabay.com/download/audio/2022/05/16/audio_db6591201e.mp3' },
+    { label: 'Andalou Traditionnel', url: 'https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0a13f69d2.mp3' },
+    { label: 'Lounge & Jazz Élégant', url: 'https://cdn.pixabay.com/download/audio/2022/03/24/audio_33bd95d2c6.mp3' }
+  ];
 
   public ngOnInit(): void {
     this.loadTemplates();
@@ -116,6 +127,64 @@ export class AdminTemplates implements OnInit {
     this.backgroundImageUrlField = '';
   }
 
+  protected onAudioFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const rawResult = e.target?.result as string;
+        if (rawResult) {
+          this.musicUrlField = rawResult;
+          this.stopPreviewAudio();
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  protected removeMusic(): void {
+    this.musicUrlField = '';
+    this.stopPreviewAudio();
+  }
+
+  protected selectMusicPreset(url: string): void {
+    this.musicUrlField = url;
+    this.stopPreviewAudio();
+  }
+
+  protected togglePreviewAudio(): void {
+    if (!this.musicUrlField) return;
+
+    if (this.isPreviewAudioPlaying()) {
+      this.stopPreviewAudio();
+    } else {
+      if (!this.previewAudioElement) {
+        this.previewAudioElement = new Audio();
+        this.previewAudioElement.addEventListener('ended', () => {
+          this.isPreviewAudioPlaying.set(false);
+        });
+        this.previewAudioElement.addEventListener('error', () => {
+          this.isPreviewAudioPlaying.set(false);
+        });
+      }
+      this.previewAudioElement.src = this.musicUrlField;
+      this.previewAudioElement.play()
+        .then(() => this.isPreviewAudioPlaying.set(true))
+        .catch(() => this.isPreviewAudioPlaying.set(false));
+    }
+  }
+
+  protected stopPreviewAudio(): void {
+    if (this.previewAudioElement) {
+      try {
+        this.previewAudioElement.pause();
+        this.previewAudioElement.currentTime = 0;
+      } catch (e) { }
+    }
+    this.isPreviewAudioPlaying.set(false);
+  }
+
   protected openAddModal(): void {
     this.isEditing.set(false);
     this.editingId.set(null);
@@ -124,12 +193,14 @@ export class AdminTemplates implements OnInit {
     this.descriptionField = '';
     this.imageUrlField = '';
     this.backgroundImageUrlField = '';
+    this.musicUrlField = '';
     this.templateKeyField = '';
     this.decorativeFrameField = 'floral-frame';
     this.accentColorField = '#d4af37';
     this.backgroundColorField = '#faf6ee';
     this.htmlContentField = '';
     this.errorMessage.set('');
+    this.stopPreviewAudio();
     this.isModalOpen.set(true);
   }
 
@@ -141,16 +212,19 @@ export class AdminTemplates implements OnInit {
     this.descriptionField = template.description || '';
     this.imageUrlField = template.imageUrl || '';
     this.backgroundImageUrlField = template.backgroundImageUrl || '';
+    this.musicUrlField = template.musicUrl || '';
     this.templateKeyField = template.templateKey || '';
     this.decorativeFrameField = template.decorativeFrame || ('Mariage' === template.category ? 'floral-frame' : 'geometric-frame');
     this.accentColorField = template.accentColor || '#d4af37';
     this.backgroundColorField = template.backgroundColor || ('Mariage' === template.category ? '#faf6ee' : '#f8f9fa');
     this.htmlContentField = template.htmlContent || '';
     this.errorMessage.set('');
+    this.stopPreviewAudio();
     this.isModalOpen.set(true);
   }
 
   protected closeAddModal(): void {
+    this.stopPreviewAudio();
     this.isModalOpen.set(false);
   }
 
@@ -189,6 +263,7 @@ export class AdminTemplates implements OnInit {
       description: this.descriptionField.trim(),
       imageUrl: this.imageUrlField.trim() || undefined,
       backgroundImageUrl: this.backgroundImageUrlField.trim() || undefined,
+      musicUrl: this.musicUrlField.trim() || undefined,
       templateKey: this.templateKeyField.trim() || undefined,
       decorativeFrame: this.decorativeFrameField,
       accentColor: this.accentColorField,

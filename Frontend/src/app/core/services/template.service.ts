@@ -13,6 +13,7 @@ export interface DigitalTemplate {
   accentColor?: string;
   backgroundColor?: string;
   backgroundImageUrl?: string;
+  musicUrl?: string;
   htmlContent?: string;
 }
 

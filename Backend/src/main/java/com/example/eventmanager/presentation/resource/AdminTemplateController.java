@@ -79,6 +79,9 @@ public class AdminTemplateController {
             if (updated.getHtmlContent() != null) {
                 existing.setHtmlContent(updated.getHtmlContent());
             }
+            if (updated.getMusicUrl() != null) {
+                existing.setMusicUrl(updated.getMusicUrl());
+            }
             return ResponseEntity.ok(repository.save(existing));
         }).orElse(ResponseEntity.notFound().build());
     }

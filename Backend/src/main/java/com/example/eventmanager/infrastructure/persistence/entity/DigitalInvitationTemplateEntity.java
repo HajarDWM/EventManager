@@ -45,4 +45,7 @@ public class DigitalInvitationTemplateEntity {
 
     @Column(name = "html_content", columnDefinition = "LONGTEXT")
     private String htmlContent;
+
+    @Column(name = "music_url", columnDefinition = "LONGTEXT")
+    private String musicUrl;
 }

@@ -1954,11 +1954,12 @@ textarea.luxury-form-control::placeholder {
    ========================================================================== */
 
 .floating-music-widget {
-  position: fixed;
-  top: 14px;
-  right: 18px;
-  z-index: 9999;
-  display: flex;
+  position: absolute;
+  top: -54px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1050;
+  display: inline-flex;
   align-items: center;
   gap: 8px;
   cursor: pointer;
@@ -1966,8 +1967,7 @@ textarea.luxury-form-control::placeholder {
   transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 
   @media (max-width: 576px) {
-    top: 10px;
-    right: 12px;
+    top: -50px;
   }
 
   .music-toggle-btn {

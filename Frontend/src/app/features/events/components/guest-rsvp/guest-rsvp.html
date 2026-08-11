@@ -19,44 +19,44 @@
     <div class="ambient-particle particle-6"></div>
   </div>
 
-  <!-- Floating Minimal Audio Player Widget -->
-  <div class="floating-music-widget animate__animated animate__fadeIn" [class.is-playing]="isMusicPlaying()"
-    (click)="toggleMusic()"
-    [attr.aria-label]="isMusicPlaying() ? 'Mettre la musique en pause' : 'Lancer la musique d\'ambiance'">
+  <div class="invitation-outer-container w-100 position-relative" style="max-width: 600px;">
 
-    <!-- Rotating Halo Glow -->
-    <div class="music-disc-glow" *ngIf="isMusicPlaying()"></div>
+    <!-- Floating Audio Player Widget (Positioned directly above the card) -->
+    <div class="floating-music-widget animate__animated animate__fadeIn" [class.is-playing]="isMusicPlaying()"
+      (click)="toggleMusic()"
+      [attr.aria-label]="isMusicPlaying() ? 'Mettre la musique en pause' : 'Lancer la musique d\'ambiance'">
 
-    <!-- Main Circular Button -->
-    <button type="button" class="music-toggle-btn" [class.playing-btn]="isMusicPlaying()">
-      <span class="music-icon-wrapper" [class.spinning-vinyl]="isMusicPlaying()">
-        <i class="fa" [ngClass]="isMusicPlaying() ? 'fa-compact-disc' : 'fa-music'"></i>
-      </span>
+      <!-- Rotating Halo Glow -->
+      <div class="music-disc-glow" *ngIf="isMusicPlaying()"></div>
 
-      <!-- Equalizer Sound Wave Bars -->
-      <span class="sound-wave-bars" *ngIf="isMusicPlaying()">
-        <span class="wave-bar bar-1"></span>
-        <span class="wave-bar bar-2"></span>
-        <span class="wave-bar bar-3"></span>
-      </span>
-    </button>
+      <!-- Main Circular Button -->
+      <button type="button" class="music-toggle-btn" [class.playing-btn]="isMusicPlaying()">
+        <span class="music-icon-wrapper" [class.spinning-vinyl]="isMusicPlaying()">
+          <i class="fa" [ngClass]="isMusicPlaying() ? 'fa-compact-disc' : 'fa-music'"></i>
+        </span>
 
-    <!-- Floating Notes Particles when active -->
-    <div class="floating-notes-container" *ngIf="isMusicPlaying()">
-      <span class="floating-note note-1">♪</span>
-      <span class="floating-note note-2">♫</span>
-      <span class="floating-note note-3">♩</span>
+        <!-- Equalizer Sound Wave Bars -->
+        <span class="sound-wave-bars" *ngIf="isMusicPlaying()">
+          <span class="wave-bar bar-1"></span>
+          <span class="wave-bar bar-2"></span>
+          <span class="wave-bar bar-3"></span>
+        </span>
+      </button>
+
+      <!-- Floating Notes Particles when active -->
+      <div class="floating-notes-container" *ngIf="isMusicPlaying()">
+        <span class="floating-note note-1">♪</span>
+        <span class="floating-note note-2">♫</span>
+        <span class="floating-note note-3">♩</span>
+      </div>
+
+      <!-- Tooltip / Label (Always Clear) -->
+      <div class="music-widget-label d-flex align-items-center">
+        <span class="music-status-text">
+          {{ isMusicPlaying() ? 'Pause' : 'Musique' }}
+        </span>
+      </div>
     </div>
-
-    <!-- Tooltip / Label (Always Clear) -->
-    <div class="music-widget-label d-flex align-items-center">
-      <span class="music-status-text">
-        {{ isMusicPlaying() ? 'Pause' : 'Musique' }}
-      </span>
-    </div>
-  </div>
-
-  <div class="invitation-outer-container w-100" style="max-width: 600px;">
 
     <!-- Loading State -->
     <div class="text-center py-5" *ngIf="isLoading()">

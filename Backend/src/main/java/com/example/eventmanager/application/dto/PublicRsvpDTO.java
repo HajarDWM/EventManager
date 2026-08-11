@@ -36,5 +36,6 @@ public class PublicRsvpDTO {
     private String accentColor;
     private String backgroundColor;
     private String templateBackgroundImageUrl;
+    private String templateMusicUrl;
     private java.util.List<MenuItemDTO> menuItems;
 }

@@ -42,6 +42,7 @@ public class PublicRsvpController {
         String accentColor = null;
         String backgroundColor = null;
         String templateBackgroundImageUrl = null;
+        String templateMusicUrl = null;
         String resolvedTemplateKey = event.getTemplateId();
 
         if (event.getDigitalTemplateId() != null) {
@@ -54,6 +55,7 @@ public class PublicRsvpController {
                 accentColor = tpl.getAccentColor();
                 backgroundColor = tpl.getBackgroundColor();
                 templateBackgroundImageUrl = tpl.getBackgroundImageUrl();
+                templateMusicUrl = tpl.getMusicUrl();
                 if (resolvedTemplateKey == null || resolvedTemplateKey.isBlank()) {
                     resolvedTemplateKey = tpl.getTemplateKey();
                 }
@@ -84,6 +86,7 @@ public class PublicRsvpController {
                 .accentColor(accentColor)
                 .backgroundColor(backgroundColor)
                 .templateBackgroundImageUrl(templateBackgroundImageUrl)
+                .templateMusicUrl(templateMusicUrl)
                 .menuItems(menuItems)
                 .build();
 
@@ -129,6 +132,7 @@ public class PublicRsvpController {
         String accentColor = null;
         String backgroundColor = null;
         String templateBackgroundImageUrl = null;
+        String templateMusicUrl = null;
         String resolvedTemplateKey = event.getTemplateId();
 
         if (event.getDigitalTemplateId() != null) {
@@ -141,6 +145,7 @@ public class PublicRsvpController {
                 accentColor = tpl.getAccentColor();
                 backgroundColor = tpl.getBackgroundColor();
                 templateBackgroundImageUrl = tpl.getBackgroundImageUrl();
+                templateMusicUrl = tpl.getMusicUrl();
                 if (resolvedTemplateKey == null || resolvedTemplateKey.isBlank()) {
                     resolvedTemplateKey = tpl.getTemplateKey();
                 }
@@ -171,6 +176,7 @@ public class PublicRsvpController {
                 .accentColor(accentColor)
                 .backgroundColor(backgroundColor)
                 .templateBackgroundImageUrl(templateBackgroundImageUrl)
+                .templateMusicUrl(templateMusicUrl)
                 .menuItems(menuItems)
                 .build();
 
