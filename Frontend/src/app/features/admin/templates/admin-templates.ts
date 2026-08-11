@@ -40,6 +40,7 @@ export class AdminTemplates implements OnInit {
   protected categoryField = 'Mariage';
   protected descriptionField = '';
   protected imageUrlField = '';
+  protected backgroundImageUrlField = '';
   protected templateKeyField = '';
   protected decorativeFrameField = 'floral-frame';
   protected accentColorField = '#d4af37';
@@ -69,6 +70,52 @@ export class AdminTemplates implements OnInit {
     this.activeCategoryFilter.set(category);
   }
 
+  protected onBackgroundFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const rawResult = e.target?.result as string;
+        if (!rawResult) return;
+
+        const img = new Image();
+        img.onload = () => {
+          const maxDim = 1600;
+          let width = img.width;
+          let height = img.height;
+
+          if (width > maxDim || height > maxDim) {
+            if (width > height) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            } else {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+          }
+
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          if (ctx) {
+            ctx.drawImage(img, 0, 0, width, height);
+            this.backgroundImageUrlField = canvas.toDataURL('image/jpeg', 0.88);
+          } else {
+            this.backgroundImageUrlField = rawResult;
+          }
+        };
+        img.src = rawResult;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  protected removeBackgroundImage(): void {
+    this.backgroundImageUrlField = '';
+  }
+
   protected openAddModal(): void {
     this.isEditing.set(false);
     this.editingId.set(null);
@@ -76,6 +123,7 @@ export class AdminTemplates implements OnInit {
     this.categoryField = 'Mariage';
     this.descriptionField = '';
     this.imageUrlField = '';
+    this.backgroundImageUrlField = '';
     this.templateKeyField = '';
     this.decorativeFrameField = 'floral-frame';
     this.accentColorField = '#d4af37';
@@ -92,6 +140,7 @@ export class AdminTemplates implements OnInit {
     this.categoryField = template.category || 'Mariage';
     this.descriptionField = template.description || '';
     this.imageUrlField = template.imageUrl || '';
+    this.backgroundImageUrlField = template.backgroundImageUrl || '';
     this.templateKeyField = template.templateKey || '';
     this.decorativeFrameField = template.decorativeFrame || ('Mariage' === template.category ? 'floral-frame' : 'geometric-frame');
     this.accentColorField = template.accentColor || '#d4af37';
@@ -139,6 +188,7 @@ export class AdminTemplates implements OnInit {
       category: this.categoryField,
       description: this.descriptionField.trim(),
       imageUrl: this.imageUrlField.trim() || undefined,
+      backgroundImageUrl: this.backgroundImageUrlField.trim() || undefined,
       templateKey: this.templateKeyField.trim() || undefined,
       decorativeFrame: this.decorativeFrameField,
       accentColor: this.accentColorField,

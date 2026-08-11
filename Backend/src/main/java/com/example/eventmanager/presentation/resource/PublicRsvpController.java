@@ -41,6 +41,7 @@ public class PublicRsvpController {
         String decorativeFrame = null;
         String accentColor = null;
         String backgroundColor = null;
+        String templateBackgroundImageUrl = null;
         String resolvedTemplateKey = event.getTemplateId();
 
         if (event.getDigitalTemplateId() != null) {
@@ -52,6 +53,7 @@ public class PublicRsvpController {
                 decorativeFrame = tpl.getDecorativeFrame();
                 accentColor = tpl.getAccentColor();
                 backgroundColor = tpl.getBackgroundColor();
+                templateBackgroundImageUrl = tpl.getBackgroundImageUrl();
                 if (resolvedTemplateKey == null || resolvedTemplateKey.isBlank()) {
                     resolvedTemplateKey = tpl.getTemplateKey();
                 }
@@ -81,6 +83,7 @@ public class PublicRsvpController {
                 .decorativeFrame(decorativeFrame)
                 .accentColor(accentColor)
                 .backgroundColor(backgroundColor)
+                .templateBackgroundImageUrl(templateBackgroundImageUrl)
                 .menuItems(menuItems)
                 .build();
 
@@ -125,6 +128,7 @@ public class PublicRsvpController {
         String decorativeFrame = null;
         String accentColor = null;
         String backgroundColor = null;
+        String templateBackgroundImageUrl = null;
         String resolvedTemplateKey = event.getTemplateId();
 
         if (event.getDigitalTemplateId() != null) {
@@ -136,6 +140,7 @@ public class PublicRsvpController {
                 decorativeFrame = tpl.getDecorativeFrame();
                 accentColor = tpl.getAccentColor();
                 backgroundColor = tpl.getBackgroundColor();
+                templateBackgroundImageUrl = tpl.getBackgroundImageUrl();
                 if (resolvedTemplateKey == null || resolvedTemplateKey.isBlank()) {
                     resolvedTemplateKey = tpl.getTemplateKey();
                 }
@@ -165,6 +170,7 @@ public class PublicRsvpController {
                 .decorativeFrame(decorativeFrame)
                 .accentColor(accentColor)
                 .backgroundColor(backgroundColor)
+                .templateBackgroundImageUrl(templateBackgroundImageUrl)
                 .menuItems(menuItems)
                 .build();
 

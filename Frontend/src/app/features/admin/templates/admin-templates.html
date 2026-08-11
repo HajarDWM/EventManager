@@ -112,6 +112,9 @@
           <span class="badge bg-light text-muted border px-2 py-1 fs-xxs">
             Clé : {{ template.templateKey || 'automatique' }}
           </span>
+          <span class="badge bg-success-light text-success border border-success-light px-2 py-1 fs-xxs" *ngIf="template.backgroundImageUrl">
+            🖼️ Fond Graphique Intégré
+          </span>
         </div>
       </div>
 
@@ -226,9 +229,52 @@
                       [(ngModel)]="descriptionField" name="description"></textarea>
           </div>
 
-          <!-- Image Preview URL -->
+          <!-- Dedicated Background Template Image / Asset Field (Full Card Graphic) -->
+          <div class="mb-3 p-3 bg-light rounded-3 border border-dashed border-2 border-primary-light">
+            <div class="d-flex justify-content-between align-items-center mb-1.5">
+              <label class="form-label fw-bold text-dark mb-0">
+                <i class="fa fa-image text-primary me-1"></i> Image / Asset de fond complet (Carte Graphique Pré-designée)
+              </label>
+              <span class="badge bg-primary-light text-primary fs-xxs">Option Avancée</span>
+            </div>
+            <p class="fs-xs text-muted mb-2">
+              Importez une illustration de carte complète (avec bordures florales, cadres dorés ou décors intégrés). La page RSVP appliquera ce visuel en fond de conteneur avec les données dynamiques parfaitement superposées.
+            </p>
+
+            <div class="alert alert-info py-2 px-3 fs-xs rounded-2 mb-2.5 d-flex align-items-center gap-2 border-0 bg-info-light text-info">
+              <i class="fa fa-lightbulb fs-base flex-shrink-0"></i>
+              <div>
+                <strong>Conseil de design :</strong> Utilisez des visuels de fond <em>purement décoratifs</em> (avec bordures florales, cadres ou dorures sur les contours et un centre dégagé sans noms ni dates pré-imprimés). Le faire-part affiche automatiquement les informations dynamiques de chaque événement dans un élégant encart central.
+              </div>
+            </div>
+            
+            <div class="input-group mb-2">
+              <span class="input-group-text bg-white border-light text-muted"><i class="fa fa-link"></i></span>
+              <input type="url" class="form-control border-light bg-white" 
+                     placeholder="URL directe de l'image de fond (https://...)" 
+                     [(ngModel)]="backgroundImageUrlField" name="backgroundImageUrl">
+            </div>
+
+            <div class="d-flex align-items-center gap-2">
+              <label class="btn btn-sm btn-alt-primary mb-0 cursor-pointer">
+                <i class="fa fa-upload me-1.5"></i> Importer un fichier image (PNG, JPG, WebP)
+                <input type="file" accept="image/*" class="d-none" (change)="onBackgroundFileSelected($event)">
+              </label>
+              <button type="button" class="btn btn-sm btn-alt-danger" *ngIf="backgroundImageUrlField" (click)="removeBackgroundImage()">
+                <i class="fa fa-times me-1"></i> Retirer le fond
+              </button>
+            </div>
+
+            <!-- Live Background Preview -->
+            <div class="mt-3 p-2 bg-white rounded border text-center position-relative overflow-hidden" *ngIf="backgroundImageUrlField" style="max-height: 200px;">
+              <span class="position-absolute top-0 start-0 m-2 badge bg-dark bg-opacity-75 text-white fs-xxs">Aperçu du Fond Graphique</span>
+              <img [src]="backgroundImageUrlField" alt="Aperçu Fond Carte" class="img-fluid rounded shadow-sm" style="max-height: 180px; object-fit: contain;">
+            </div>
+          </div>
+
+          <!-- Image Preview URL (Thumbnail / Catalog) -->
           <div class="mb-3">
-            <label class="form-label fw-semibold text-muted">URL de l'image d'illustration / aperçu</label>
+            <label class="form-label fw-semibold text-muted">URL de la vignette d'illustration (Catalogue Admin)</label>
             <input type="url" class="form-control border-light shadow-sm bg-body-light" 
                    placeholder="Ex: https://images.unsplash.com/..." [(ngModel)]="imageUrlField" name="imageUrl">
           </div>

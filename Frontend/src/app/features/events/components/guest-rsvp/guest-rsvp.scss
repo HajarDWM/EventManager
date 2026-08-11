@@ -1,12 +1,128 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Pinyon+Script&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Alex+Brush&family=Cinzel:wght@400;600;700&family=Cinzel+Decorative:wght@700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Great+Vibes&family=Montserrat:wght@300;400;500;600;700&family=Pinyon+Script&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
 
 .rsvp-luxury-wrapper {
   min-height: 100vh;
   font-family: 'Plus Jakarta Sans', sans-serif;
   transition: all 0.5s ease;
   
+  /* --- OR ET VELOURS THEME (Dark Royal Black & Gold) --- */
+  &.or-et-velours-theme {
+    background: radial-gradient(circle at center, #1a160d 0%, #0a0805 100%);
+    color: #e0e0e0;
+    
+    .luxury-card {
+      border: 1px solid rgba(212, 175, 55, 0.35) !important;
+      box-shadow: 0 30px 70px rgba(0, 0, 0, 0.55) !important;
+      border-radius: 16px;
+      overflow: hidden;
+      background-color: #0b0b0b !important;
+    }
+    
+    .luxury-inner-border {
+      border: 1px solid rgba(212, 175, 55, 0.18);
+      margin: 12px;
+      padding: 24px 16px;
+      border-radius: 12px;
+      background-color: #0d0d0d;
+      
+      @media (min-width: 576px) {
+        margin: 18px;
+        padding: 36px 24px;
+      }
+
+      @media (min-width: 768px) {
+        margin: 24px;
+        padding: 48px 36px;
+      }
+    }
+
+    .invitation-frosted-content-card {
+      background: rgba(13, 13, 13, 0.88) !important;
+      backdrop-filter: blur(16px) !important;
+      -webkit-backdrop-filter: blur(16px) !important;
+      border: 1px solid rgba(212, 175, 55, 0.35) !important;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5), inset 0 0 25px rgba(212, 175, 55, 0.05) !important;
+    }
+  }
+
+  /* --- FLEURS DE COTON THEME (Light Romantic Floral Wedding) --- */
+  &.fleurs-de-coton-theme {
+    background: radial-gradient(circle at center, #faf7f2 0%, #f0ebe1 100%);
+    color: #2b221b;
+    
+    .luxury-card {
+      border: 1px solid rgba(212, 175, 55, 0.3) !important;
+      box-shadow: 0 20px 50px rgba(180, 150, 100, 0.15) !important;
+      border-radius: 16px;
+      overflow: hidden;
+      background-color: #ffffff !important;
+    }
+    
+    .luxury-inner-border {
+      border: 1px solid rgba(212, 175, 55, 0.2);
+      margin: 12px;
+      padding: 24px 16px;
+      border-radius: 12px;
+      background-color: transparent !important;
+      
+      @media (min-width: 576px) {
+        margin: 18px;
+        padding: 36px 24px;
+      }
+
+      @media (min-width: 768px) {
+        margin: 24px;
+        padding: 48px 36px;
+      }
+    }
+
+    .wedding-names, .invitation-main-title {
+      color: #2b221b !important;
+    }
+
+    .wedding-greeting, .salutation-invitation-message {
+      color: #4a4036 !important;
+    }
+
+    .salutation-guest-badge {
+      background: rgba(255, 255, 255, 0.85) !important;
+      border: 1px solid rgba(212, 175, 55, 0.35) !important;
+    }
+
+    .salutation-honorific {
+      color: #8c6d1f !important;
+    }
+
+    .salutation-guest-name {
+      color: #2b221b !important;
+    }
+
+    .date-center-num {
+      color: #2b221b !important;
+      border-color: rgba(212, 175, 55, 0.35) !important;
+    }
+
+    .date-side-part {
+      color: #8c6d1f !important;
+    }
+
+    .location-value {
+      color: #2b221b !important;
+    }
+
+    .location-title, .artistic-time {
+      color: #8c6d1f !important;
+    }
+
+    .bg-cream, .carousel-card-wrapper {
+      background-color: #faf7f2 !important;
+      border-color: rgba(212, 175, 55, 0.25) !important;
+      color: #2b221b !important;
+    }
+  }
+
   /* --- CORPORATE THEME (Dark Luxury Black & Gold) --- */
-  &.corporate-theme, &.corporate-gold-theme, &.fleurs-de-coton-theme {
+  &.corporate-theme, &.corporate-gold-theme {
     background: radial-gradient(circle at center, #faf6ee 0%, #f1ebe0 100%);
     color: #e0e0e0;
     
@@ -20,14 +136,19 @@
     
     .luxury-inner-border {
       border: 1px solid rgba(212, 175, 55, 0.18);
-      margin: 16px;
-      padding: 32px 24px;
+      margin: 12px;
+      padding: 24px 16px;
       border-radius: 12px;
       background-color: #0d0d0d;
       
+      @media (min-width: 576px) {
+        margin: 18px;
+        padding: 36px 24px;
+      }
+
       @media (min-width: 768px) {
         margin: 24px;
-        padding: 48px;
+        padding: 48px 36px;
       }
     }
     
@@ -50,7 +171,7 @@
     }
     
     .crest-letters {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Cinzel', serif;
       font-size: 1.3rem;
       font-weight: 700;
       color: #d4af37;
@@ -65,27 +186,25 @@
     }
     
     .luxury-subtitle {
-      font-family: 'Pinyon Script', cursive;
-      font-size: 2.2rem;
+      font-family: 'Alex Brush', 'Pinyon Script', cursive;
+      font-size: clamp(1.6rem, 5vw, 2.4rem);
       color: #d4af37;
       text-transform: none;
       letter-spacing: normal;
       font-weight: 400;
       margin-bottom: -5px;
+      line-height: 1.3;
     }
     
-    .wedding-names {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 2.4rem;
+    .wedding-names, .invitation-main-title {
+      font-family: 'Cinzel', 'Playfair Display', 'Cormorant Garamond', serif;
+      font-size: clamp(1.6rem, 5.5vw, 2.8rem);
       font-weight: 700;
       color: #ffffff;
       line-height: 1.25;
       text-transform: uppercase;
-      letter-spacing: 3px;
-      
-      @media (min-width: 768px) {
-        font-size: 3rem;
-      }
+      letter-spacing: clamp(1px, 0.5vw, 3px);
+      word-wrap: break-word;
     }
     
     .wedding-title {
@@ -2073,9 +2192,6 @@ textarea.luxury-form-control::placeholder {
   }
   50% {
     transform: translate(25px, -30px) scale(1.15);
-    opacity: 0.55;
-  }
-  100% {
     transform: translate(-20px, 20px) scale(0.9);
     opacity: 0.2;
   }
@@ -2177,6 +2293,744 @@ textarea.luxury-form-control::placeholder {
     }
     .luxury-inner-border {
       border-radius: 2px !important;
+    }
+  }
+}
+
+/* ==========================================================================
+   Structural Layering: Textures, Hanging Lanterns, Side Florals & Text Overlay
+   ========================================================================== */
+
+/* CUSTOM UPLOADED BACKGROUND CARD ASSET (Clean Luxury Floating Design) */
+.luxury-card.has-custom-bg-card {
+  background-size: cover !important;
+  background-position: center top !important;
+  background-repeat: no-repeat !important;
+  background-color: transparent !important;
+  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.1) !important;
+  border: none !important;
+  border-radius: 20px;
+  min-height: 820px;
+
+  @media (min-width: 576px) {
+    background-size: 100% 100% !important;
+    background-position: center center !important;
+  }
+
+  .invitation-custom-bg-asset-layer {
+    display: none !important;
+  }
+
+  /* Completely remove any container boxes so elements float directly */
+  .luxury-inner-border {
+    background-color: transparent !important;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    padding: 30px 14px 4px !important;
+  }
+
+  /* Floating Classic Typography with High-Contrast Dark Charcoal / Slate Grey Palette */
+  .wedding-names, .invitation-main-title {
+    font-family: 'Cinzel', 'Playfair Display', 'Cormorant Garamond', serif !important;
+    font-size: clamp(2rem, 6.5vw, 3.2rem) !important;
+    font-weight: 700 !important;
+    color: #0f172a !important;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.95), 0 2px 6px rgba(0, 0, 0, 0.06) !important;
+    letter-spacing: 2px !important;
+    text-transform: uppercase !important;
+    line-height: 1.2 !important;
+    max-width: 440px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .luxury-subtitle {
+    font-family: 'Alex Brush', 'Great Vibes', 'Pinyon Script', cursive !important;
+    font-size: clamp(1.8rem, 5.5vw, 2.6rem) !important;
+    color: #1f2937 !important;
+    font-weight: 400 !important;
+    line-height: 1.15 !important;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.95) !important;
+  }
+
+  .salutation-guest-badge {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    display: inline-block;
+  }
+
+  .salutation-honorific {
+    font-family: 'Cormorant Garamond', serif !important;
+    font-style: italic !important;
+    font-size: 1.15rem !important;
+    color: #1f2937 !important;
+    font-weight: 600 !important;
+    margin-right: 4px;
+  }
+
+  .salutation-guest-name {
+    font-family: 'Cinzel', serif !important;
+    font-weight: 800 !important;
+    font-size: 1.15rem !important;
+    color: #0f172a !important;
+    letter-spacing: 0.5px !important;
+  }
+
+  .salutation-invitation-message {
+    font-family: 'Cormorant Garamond', serif !important;
+    font-style: italic !important;
+    font-size: 1.05rem !important;
+    color: #1f2937 !important;
+    font-weight: 600 !important;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.95) !important;
+    max-width: 380px;
+    margin: 0 auto;
+    line-height: 1.45;
+  }
+
+  .date-header-line, .date-footer-line {
+    background: linear-gradient(90deg, transparent 0%, rgba(15, 23, 42, 0.6) 50%, transparent 100%) !important;
+    height: 1.5px !important;
+  }
+
+  .date-side-part {
+    font-family: 'Cinzel', serif !important;
+    font-size: 0.88rem !important;
+    font-weight: 700 !important;
+    color: #0f172a !important;
+    letter-spacing: 1px !important;
+  }
+
+  .date-center-num {
+    font-family: 'Cinzel', serif !important;
+    font-size: clamp(2.4rem, 7.5vw, 3.6rem) !important;
+    font-weight: 800 !important;
+    color: #0f172a !important;
+    border: 2px solid #1f2937 !important;
+    border-radius: 8px;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.95) !important;
+  }
+
+  .artistic-time {
+    font-family: 'Cinzel', serif !important;
+    font-size: 0.85rem !important;
+    font-weight: 700 !important;
+    color: #0f172a !important;
+  }
+
+  .location-icon-wrapper {
+    color: #0f172a !important;
+    background: transparent !important;
+    border: 1.5px solid #1f2937 !important;
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 0.78rem !important;
+  }
+
+  .location-title {
+    font-family: 'Cinzel', serif !important;
+    font-size: 0.68rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 2px !important;
+    color: #1f2937 !important;
+  }
+
+  .location-value {
+    font-family: 'Cormorant Garamond', serif !important;
+    font-size: 1.25rem !important;
+    font-weight: 700 !important;
+    color: #0f172a !important;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.9) !important;
+  }
+
+  .details-gps-link {
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    font-size: 0.7rem !important;
+    font-weight: 700 !important;
+    color: #0f172a !important;
+    background: rgba(255, 255, 255, 0.75) !important;
+    border: 1.5px solid #1f2937 !important;
+    border-radius: 20px !important;
+    padding: 3px 14px !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+  }
+
+  /* Clean Discover Menu & RSVP Action Button */
+  .btn-discover-rsvp {
+    background: #0f172a !important;
+    color: #ffffff !important;
+    border: 1px solid #0f172a !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    font-size: 0.78rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.5px !important;
+    padding: 9px 24px !important;
+    border-radius: 30px !important;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.18) !important;
+    transition: all 0.3s ease !important;
+
+    &:hover {
+      background: #000000 !important;
+      border-color: #000000 !important;
+      color: #ffffff !important;
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25) !important;
+    }
+  }
+
+  /* Dedicated Menu & RSVP View Container (Completely transparent floating layer without white container box) */
+  .menu-rsvp-container {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    margin: 0 auto !important;
+    padding: 16px 10px 36px !important;
+    max-width: 440px;
+    width: 100%;
+    min-height: 760px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+  }
+
+  /* Enhanced Top Action Navigation Buttons */
+  .btn-nav-back-invitation {
+    background: rgba(255, 255, 255, 0.88) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+    border: 1.5px solid #0f172a !important;
+    color: #0f172a !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    font-weight: 700 !important;
+    font-size: 0.72rem !important;
+    padding: 4px 14px !important;
+    border-radius: 20px !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+    transition: all 0.2s ease !important;
+
+    &:hover {
+      background: #0f172a !important;
+      color: #ffffff !important;
+      transform: translateY(-1px);
+    }
+  }
+
+  /* Menu Highlights Spotlight Section & Step Containers (Raised slightly for optimal vertical balance) */
+  .menu-highlight-spotlight-section {
+    transform: translateY(8px);
+  }
+
+  .menu-selection-container, .extra-rsvp-sections, .rsvp-summary-container {
+    transform: translateY(-10px);
+  }
+
+  /* Navigation Action Buttons under Menu (Retour & Suivant) */
+  .btn-page2-nav-prev {
+    background: rgba(255, 255, 255, 0.88) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+    border: 1.5px solid rgba(15, 23, 42, 0.3) !important;
+    color: #0f172a !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    font-weight: 700 !important;
+    font-size: 0.68rem !important;
+    border-radius: 20px !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05) !important;
+    transition: all 0.2s ease !important;
+
+    &:hover {
+      background: #0f172a !important;
+      color: #ffffff !important;
+      transform: translateY(-1px);
+    }
+  }
+
+  .btn-page2-nav-next {
+    background: #0f172a !important;
+    border: 1.5px solid #0f172a !important;
+    color: #ffffff !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    font-weight: 700 !important;
+    font-size: 0.68rem !important;
+    border-radius: 20px !important;
+    box-shadow: 0 3px 10px rgba(15, 23, 42, 0.2) !important;
+    transition: all 0.2s ease !important;
+
+    &:hover {
+      background: #000000 !important;
+      border-color: #000000 !important;
+      transform: translateY(-1px);
+    }
+  }
+
+  /* Page 2 Menu Header Cleanup & Refinement */
+  .spotlight-title-wrapper {
+    .luxury-subtitle {
+      font-size: 1.25rem !important;
+      line-height: 1.1 !important;
+      color: #374151 !important;
+      margin-bottom: 2px !important;
+    }
+
+    .page2-menu-title, h3.wedding-names {
+      font-family: 'Cinzel', 'Playfair Display', serif !important;
+      font-size: 0.95rem !important;
+      line-height: 1.3 !important;
+      font-weight: 700 !important;
+      letter-spacing: 1px !important;
+      color: #0f172a !important;
+      margin: 0 !important;
+      text-shadow: 0 1px 2px rgba(255, 255, 255, 0.95);
+      text-transform: uppercase;
+    }
+  }
+
+  /* Centered Compact Menu Spotlight Card & Step Visual Gourmet Cards */
+  .carousel-card-wrapper, .step-dish-visual-card {
+    background: rgba(255, 255, 255, 0.75) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+    border: 1px solid rgba(0, 0, 0, 0.12) !important;
+    border-radius: 14px !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08) !important;
+
+    h4 {
+      color: #0f172a !important;
+      font-weight: 700 !important;
+      font-size: 0.85rem !important;
+    }
+  }
+
+  /* Scaled Down Compact Interactive Buttons */
+  .btn-alt-gold {
+    font-size: 0.74rem !important;
+    padding: 6px 18px !important;
+    border-radius: 25px !important;
+    background: rgba(255, 255, 255, 0.75) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+    border: 1.5px solid rgba(15, 23, 42, 0.25) !important;
+    color: #0f172a !important;
+    font-weight: 700 !important;
+  }
+
+  .form-control, .form-select {
+    background-color: rgba(255, 255, 255, 0.85) !important;
+    color: #0f172a !important;
+    border: 1.5px solid rgba(15, 23, 42, 0.25) !important;
+    font-size: 0.78rem !important;
+    font-weight: 600 !important;
+    border-radius: 10px !important;
+  }
+
+  .final-rsvp-actions {
+    max-width: 270px;
+    margin: 0 auto;
+
+    .btn-presence-yes {
+      font-size: 0.65rem !important;
+      padding: 4px 10px !important;
+      border-radius: 18px !important;
+      background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%) !important;
+      color: #ffffff !important;
+      font-weight: 700 !important;
+      box-shadow: 0 2px 8px rgba(46, 125, 50, 0.2) !important;
+      letter-spacing: 0.3px;
+    }
+
+    .btn-presence-no {
+      font-size: 0.65rem !important;
+      padding: 4px 10px !important;
+      border-radius: 18px !important;
+      background: rgba(255, 255, 255, 0.85) !important;
+      color: #a82323 !important;
+      border: 1.2px solid rgba(168, 35, 35, 0.4) !important;
+      font-weight: 700 !important;
+      letter-spacing: 0.3px;
+    }
+  }
+
+  .btn-luxury-submit {
+    font-size: 0.7rem !important;
+    padding: 5px 14px !important;
+    border-radius: 18px !important;
+    background: linear-gradient(135deg, #0f172a 0%, #000000 100%) !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.18) !important;
+  }
+}
+
+/* LAYER 0: Subtle Luxury Background Texture */
+.invitation-layer-texture {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+
+  .texture-damask-watermark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: radial-gradient(rgba(212, 175, 55, 0.06) 1px, transparent 1px);
+    background-size: 16px 16px;
+    opacity: 0.6;
+  }
+
+  .texture-radial-glow {
+    position: absolute;
+    top: 15%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 320px;
+    height: 320px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(212, 175, 55, 0.12) 0%, rgba(212, 175, 55, 0) 70%);
+    filter: blur(20px);
+  }
+}
+
+/* LAYER 1: Hanging Ornate Lanterns (Lamps & Gentle Candlelight) */
+.invitation-layer-lanterns {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  pointer-events: none;
+  z-index: 3;
+
+  .hanging-lantern {
+    position: absolute;
+    top: -4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transform-origin: top center;
+
+    &.lantern-left {
+      left: 12px;
+      animation: swingLantern 7s ease-in-out infinite alternate;
+      @media (min-width: 576px) {
+        left: 24px;
+      }
+    }
+
+    &.lantern-right {
+      right: 12px;
+      animation: swingLantern 6.5s ease-in-out 1.2s infinite alternate-reverse;
+      @media (min-width: 576px) {
+        right: 24px;
+      }
+    }
+
+    .lantern-chain {
+      width: 1px;
+      height: 36px;
+      background: linear-gradient(180deg, rgba(212, 175, 55, 0.8) 0%, rgba(212, 175, 55, 0.4) 100%);
+      box-shadow: 0 0 3px rgba(212, 175, 55, 0.4);
+      @media (min-width: 576px) {
+        height: 48px;
+      }
+    }
+
+    .lantern-body {
+      position: relative;
+      width: 28px;
+      height: 48px;
+      @media (min-width: 576px) {
+        width: 34px;
+        height: 56px;
+      }
+
+      .lantern-svg {
+        width: 100%;
+        height: 100%;
+        filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.5));
+      }
+
+      .flame-pulse {
+        animation: flameFlicker 2.5s ease-in-out infinite alternate;
+      }
+      .flame-delay {
+        animation: flameFlicker 2.8s ease-in-out 0.6s infinite alternate;
+      }
+
+      .lantern-ambient-halo {
+        position: absolute;
+        top: 40%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(251, 191, 36, 0.35) 0%, rgba(245, 158, 11, 0) 70%);
+        filter: blur(4px);
+        pointer-events: none;
+      }
+    }
+  }
+}
+
+@keyframes swingLantern {
+  0% {
+    transform: rotate(-3deg);
+  }
+  50% {
+    transform: rotate(2.5deg);
+  }
+  100% {
+    transform: rotate(-3deg);
+  }
+}
+
+@keyframes flameFlicker {
+  0%, 100% {
+    opacity: 0.85;
+    transform: scale(0.95);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+}
+
+/* LAYER 2: Side Florals & Botanical Garlands */
+.invitation-layer-side-florals {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 2;
+  overflow: hidden;
+
+  .side-floral {
+    position: absolute;
+    width: 85px;
+    height: 85px;
+    pointer-events: none;
+    opacity: 0.75;
+    transition: all 0.5s ease;
+
+    @media (min-width: 576px) {
+      width: 110px;
+      height: 110px;
+      opacity: 0.85;
+    }
+
+    &.floral-top-left {
+      top: 0;
+      left: 0;
+    }
+    &.floral-top-right {
+      top: 0;
+      right: 0;
+    }
+    &.floral-bottom-left {
+      bottom: 0;
+      left: 0;
+    }
+    &.floral-bottom-right {
+      bottom: 0;
+      right: 0;
+    }
+  }
+}
+
+/* LAYER 4: Centered Dynamic Text Overlay */
+.invitation-dynamic-text-overlay {
+  position: relative;
+  z-index: 4;
+  padding: 8px 6px;
+  max-width: 520px;
+  margin: 0 auto;
+
+  @media (min-width: 576px) {
+    padding: 14px 18px;
+  }
+
+  /* Emblem / Couple Silhouette Vector */
+  .invitation-emblem-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    .couple-vector-badge {
+      display: inline-block;
+      margin: 0 auto;
+
+      .couple-silhouette-svg {
+        width: 80px;
+        height: 46px;
+        filter: drop-shadow(0 2px 8px rgba(212, 175, 55, 0.3));
+
+        @media (min-width: 576px) {
+          width: 100px;
+          height: 56px;
+        }
+      }
+    }
+
+    .emblem-divider-line {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 140px;
+      height: 1px;
+      margin: 8px auto 0;
+      background: linear-gradient(90deg, rgba(212, 175, 55, 0) 0%, rgba(212, 175, 55, 0.6) 50%, rgba(212, 175, 55, 0) 100%);
+      position: relative;
+
+      .divider-diamond {
+        position: absolute;
+        top: -6px;
+        font-size: 0.55rem;
+        color: #d4af37;
+        background-color: transparent;
+        padding: 0 4px;
+      }
+    }
+  }
+
+  /* Dynamic Subtitle / Intro Header */
+  .invitation-header-tag {
+    .luxury-subtitle {
+      font-family: 'Alex Brush', 'Great Vibes', 'Pinyon Script', cursive;
+      font-size: clamp(1.8rem, 5.5vw, 2.6rem);
+      color: #c59b27;
+      letter-spacing: 0.5px;
+      font-weight: 400;
+      display: inline-block;
+      line-height: 1.15;
+      text-shadow: 0 1px 2px rgba(255, 255, 255, 0.95), 0 2px 8px rgba(184, 134, 11, 0.25);
+    }
+  }
+
+  /* Dynamic Main Couple / Event Title */
+  .invitation-main-title {
+    font-family: 'Cinzel', 'Playfair Display', 'Cormorant Garamond', serif;
+    font-size: clamp(2rem, 6.5vw, 3.2rem);
+    font-weight: 700;
+    color: #b8860b;
+    line-height: 1.2;
+    letter-spacing: clamp(1.5px, 0.5vw, 2.5px);
+    text-transform: uppercase;
+    text-shadow: 0 1px 3px rgba(255, 255, 255, 0.95), 0 2px 10px rgba(184, 134, 11, 0.25);
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* Personalized Dynamic Guest Salutation */
+  .invitation-guest-salutation {
+    .salutation-guest-badge {
+      display: inline-block;
+      background: rgba(212, 175, 55, 0.08);
+      border: 1px solid rgba(212, 175, 55, 0.25);
+      border-radius: 30px;
+      padding: 4px 14px;
+      backdrop-filter: blur(4px);
+
+      .salutation-honorific {
+        font-family: 'Cormorant Garamond', serif;
+        font-style: italic;
+        font-size: 0.95rem;
+        color: #d1d5db;
+        margin-right: 4px;
+      }
+
+      .salutation-guest-name {
+        font-family: 'Cinzel', 'Plus Jakarta Sans', sans-serif;
+        font-weight: 700;
+        font-size: 0.95rem;
+        color: #d4af37;
+        letter-spacing: 0.5px;
+      }
+    }
+
+    .salutation-invitation-message {
+      font-family: 'Cormorant Garamond', 'Playfair Display', serif;
+      font-size: clamp(0.95rem, 2.8vw, 1.15rem);
+      font-style: italic;
+      line-height: 1.55;
+      color: #e5e7eb;
+      max-width: 420px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
+
+  /* Location Pin & Address */
+  .artistic-location-block {
+    .location-icon-wrapper {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(212, 175, 55, 0.12);
+      border: 1px solid rgba(212, 175, 55, 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto;
+      color: #d4af37;
+      font-size: 0.85rem;
+    }
+
+    .location-title {
+      font-family: 'Cinzel', 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.68rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #9ca3af;
+      margin-top: 4px;
+      font-weight: 600;
+    }
+
+    .location-value {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.05rem, 3vw, 1.3rem);
+      font-weight: 600;
+      color: #f3f4f6;
+      line-height: 1.35;
+      margin-top: 2px;
+    }
+
+    .details-gps-link {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      color: #d4af37;
+      text-decoration: none;
+      background: rgba(212, 175, 55, 0.1);
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      padding: 4px 12px;
+      border-radius: 20px;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background: rgba(212, 175, 55, 0.22);
+        border-color: #d4af37;
+        color: #ffffff;
+        transform: translateY(-1px);
+      }
     }
   }
 }

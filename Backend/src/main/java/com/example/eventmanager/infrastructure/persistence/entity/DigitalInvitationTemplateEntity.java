@@ -25,7 +25,7 @@ public class DigitalInvitationTemplateEntity {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Column(name = "image_url", length = 2000)
+    @Column(name = "image_url", columnDefinition = "LONGTEXT")
     private String imageUrl;
 
     @Column(name = "template_key")
@@ -40,6 +40,9 @@ public class DigitalInvitationTemplateEntity {
     @Column(name = "background_color", length = 50)
     private String backgroundColor;
 
-    @Column(name = "html_content", columnDefinition = "TEXT")
+    @Column(name = "background_image_url", columnDefinition = "LONGTEXT")
+    private String backgroundImageUrl;
+
+    @Column(name = "html_content", columnDefinition = "LONGTEXT")
     private String htmlContent;
 }

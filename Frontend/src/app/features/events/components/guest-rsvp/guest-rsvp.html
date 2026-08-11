@@ -20,20 +20,19 @@
   </div>
 
   <!-- Floating Minimal Audio Player Widget -->
-  <div class="floating-music-widget animate__animated animate__fadeIn"
-       [class.is-playing]="isMusicPlaying()"
-       (click)="toggleMusic()"
-       [attr.aria-label]="isMusicPlaying() ? 'Mettre la musique en pause' : 'Lancer la musique d\'ambiance'">
-    
+  <div class="floating-music-widget animate__animated animate__fadeIn" [class.is-playing]="isMusicPlaying()"
+    (click)="toggleMusic()"
+    [attr.aria-label]="isMusicPlaying() ? 'Mettre la musique en pause' : 'Lancer la musique d\'ambiance'">
+
     <!-- Rotating Halo Glow -->
     <div class="music-disc-glow" *ngIf="isMusicPlaying()"></div>
-    
+
     <!-- Main Circular Button -->
     <button type="button" class="music-toggle-btn" [class.playing-btn]="isMusicPlaying()">
       <span class="music-icon-wrapper" [class.spinning-vinyl]="isMusicPlaying()">
         <i class="fa" [ngClass]="isMusicPlaying() ? 'fa-compact-disc' : 'fa-music'"></i>
       </span>
-      
+
       <!-- Equalizer Sound Wave Bars -->
       <span class="sound-wave-bars" *ngIf="isMusicPlaying()">
         <span class="wave-bar bar-1"></span>
@@ -110,416 +109,463 @@
       </div>
     </div>
 
-    <!-- Invitation Form Card -->
-    <div class="luxury-card" *ngIf="!isLoading() && !isSuccess() && guest()">
+    <!-- Invitation Form Card with Multi-Layered Structural Assets -->
+    <div class="luxury-card position-relative overflow-hidden" [class.has-custom-bg-card]="!!resolvedBackgroundImage"
+      [style.background-image]="resolvedBackgroundImage ? 'url(' + resolvedBackgroundImage + ')' : null"
+      *ngIf="!isLoading() && !isSuccess() && guest()">
 
-      <!-- Corner Leaf Accents -->
-      <div class="corner-leaves-wrapper" [ngSwitch]="resolvedTemplateId">
-        <!-- Corporate Gold Leaves -->
-        <ng-container *ngSwitchCase="'or-et-velours'">
-          <!-- Top Right Leaf -->
-          <svg viewBox="0 0 120 120" class="corner-leaf corner-leaf-top-right" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="goldGradientLeaf" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#f3e0aa" />
-                <stop offset="50%" stop-color="#d4af37" />
-                <stop offset="100%" stop-color="#aa8524" />
-              </linearGradient>
-            </defs>
-            <path d="M10,110 Q50,70 110,10" stroke="url(#goldGradientLeaf)" stroke-width="2" fill="none" />
-            <path d="M40,80 Q30,60 20,50 Q35,60 45,75 Z" fill="url(#goldGradientLeaf)" />
-            <path d="M50,70 Q40,48 30,35 Q45,50 55,65 Z" fill="url(#goldGradientLeaf)" />
-            <path d="M60,60 Q50,35 40,20 Q55,38 65,55 Z" fill="url(#goldGradientLeaf)" />
-            <path d="M70,50 Q60,25 52,10 Q65,28 75,45 Z" fill="url(#goldGradientLeaf)" />
-            <path d="M80,40 Q72,18 68,2 Q78,20 85,35 Z" fill="url(#goldGradientLeaf)" />
-            <path d="M90,30 Q85,12 85,0 Q92,15 95,27 Z" fill="url(#goldGradientLeaf)" />
+      <!-- Custom Uploaded Background Card Graphic Layer (Clean without dark overlays) -->
+      <div class="invitation-custom-bg-asset-layer" *ngIf="resolvedBackgroundImage" aria-hidden="true"></div>
 
-            <path d="M50,82 Q65,75 75,70 Q62,80 48,84 Z" fill="url(#goldGradientLeaf)" />
-            <path d="M60,72 Q75,65 85,60 Q72,70 58,74 Z" fill="url(#goldGradientLeaf)" />
-            <path d="M70,62 Q85,55 95,50 Q82,60 68,64 Z" fill="url(#goldGradientLeaf)" />
-            <path d="M80,52 Q95,45 105,40 Q92,50 78,54 Z" fill="url(#goldGradientLeaf)" />
-            <path d="M90,42 Q105,35 115,30 Q102,40 88,44 Z" fill="url(#goldGradientLeaf)" />
-          </svg>
-
-          <!-- Bottom Left Leaf -->
-          <svg viewBox="0 0 120 120" class="corner-leaf corner-leaf-bottom-left" xmlns="http://www.w3.org/2000/svg">
-            <path d="M110,10 Q70,50 10,110" stroke="url(#goldGradientLeaf)" stroke-width="2" fill="none" />
-            <path d="M80,40 Q90,60 100,70 Q85,60 75,45 Z" fill="url(#goldGradientLeaf)" />
-            <path d="M70,50 Q80,72 90,85 Q75,70 65,55 Z" fill="url(#goldGradientLeaf)" />
-            <path d="M60,60 Q70,85 80,100 Q65,82 55,65 Z" fill="url(#goldGradientLeaf)" />
-            <path d="M50,70 Q60,95 68,110 Q55,92 45,75 Z" fill="url(#goldGradientLeaf)" />
-            <path d="M40,80 Q48,102 52,118 Q42,100 35,85 Z" fill="url(#goldGradientLeaf)" />
-            <path d="M30,90 Q35,108 35,120 Q28,105 25,93 Z" fill="url(#goldGradientLeaf)" />
-
-            <path d="M70,38 Q55,45 45,50 Q58,40 72,36 Z" fill="url(#goldGradientLeaf)" />
-            <path d="M60,48 Q45,55 35,60 Q48,50 62,46 Z" fill="url(#goldGradientLeaf)" />
-            <path d="M50,58 Q35,65 25,70 Q38,60 52,56 Z" fill="url(#goldGradientLeaf)" />
-            <path d="M40,68 Q25,75 15,80 Q28,70 42,66 Z" fill="url(#goldGradientLeaf)" />
-            <path d="M30,78 Q15,85 5,90 Q18,80 32,76 Z" fill="url(#goldGradientLeaf)" />
-          </svg>
-        </ng-container>
-
-        <!-- Wedding Botanical Leaves -->
-        <ng-container *ngSwitchCase="'fleurs-de-coton'">
-          <!-- Top Right Eucalyptus Leaf -->
-          <svg viewBox="0 0 120 120" class="corner-leaf corner-leaf-top-right" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="eucalyptusGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#c5d3cb" />
-                <stop offset="50%" stop-color="#9cb0a4" />
-                <stop offset="100%" stop-color="#738a7c" />
-              </linearGradient>
-            </defs>
-            <path d="M10,110 C40,90 80,50 110,10" stroke="url(#eucalyptusGradient)" stroke-width="2" fill="none" />
-            <circle cx="35" cy="85" r="12" fill="url(#eucalyptusGradient)" opacity="0.85" />
-            <circle cx="50" cy="65" r="14" fill="url(#eucalyptusGradient)" opacity="0.85" />
-            <circle cx="70" cy="50" r="13" fill="url(#eucalyptusGradient)" opacity="0.85" />
-            <circle cx="88" cy="32" r="11" fill="url(#eucalyptusGradient)" opacity="0.85" />
-            <circle cx="102" cy="18" r="8" fill="url(#eucalyptusGradient)" opacity="0.85" />
-            <circle cx="20" cy="98" r="10" fill="url(#eucalyptusGradient)" opacity="0.85" />
-            <circle cx="35" cy="70" r="12" fill="url(#eucalyptusGradient)" opacity="0.85" />
-            <circle cx="58" cy="50" r="13" fill="url(#eucalyptusGradient)" opacity="0.85" />
-            <circle cx="75" cy="35" r="11" fill="url(#eucalyptusGradient)" opacity="0.85" />
-            <circle cx="92" cy="20" r="8" fill="url(#eucalyptusGradient)" opacity="0.85" />
-          </svg>
-
-          <!-- Bottom Left Eucalyptus Leaf -->
-          <svg viewBox="0 0 120 120" class="corner-leaf corner-leaf-bottom-left" xmlns="http://www.w3.org/2000/svg">
-            <path d="M110,10 C80,30 40,70 10,110" stroke="url(#eucalyptusGradient)" stroke-width="2" fill="none" />
-            <circle cx="85" cy="35" r="12" fill="url(#eucalyptusGradient)" opacity="0.85" />
-            <circle cx="65" cy="50" r="14" fill="url(#eucalyptusGradient)" opacity="0.85" />
-            <circle cx="50" cy="70" r="13" fill="url(#eucalyptusGradient)" opacity="0.85" />
-            <circle cx="32" cy="88" r="11" fill="url(#eucalyptusGradient)" opacity="0.85" />
-            <circle cx="18" cy="102" r="8" fill="url(#eucalyptusGradient)" opacity="0.85" />
-            <circle cx="98" cy="20" r="10" fill="url(#eucalyptusGradient)" opacity="0.85" />
-            <circle cx="70" cy="35" r="12" fill="url(#eucalyptusGradient)" opacity="0.85" />
-            <circle cx="50" cy="58" r="13" fill="url(#eucalyptusGradient)" opacity="0.85" />
-            <circle cx="35" cy="75" r="11" fill="url(#eucalyptusGradient)" opacity="0.85" />
-            <circle cx="20" cy="92" r="8" fill="url(#eucalyptusGradient)" opacity="0.85" />
-          </svg>
-        </ng-container>
-
-        <!-- Bohemian Floral Leaves -->
-        <ng-container *ngSwitchCase="'boheme-chic'">
-          <svg viewBox="0 0 120 120" class="corner-leaf corner-leaf-top-right" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="bohemeRoseGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#f8d7da" />
-                <stop offset="50%" stop-color="#c27ba0" />
-                <stop offset="100%" stop-color="#8e4a73" />
-              </linearGradient>
-            </defs>
-            <path d="M10,110 C40,90 80,50 110,10" stroke="url(#bohemeRoseGradient)" stroke-width="2" fill="none" />
-            <circle cx="35" cy="85" r="12" fill="url(#bohemeRoseGradient)" opacity="0.85" />
-            <circle cx="50" cy="65" r="14" fill="url(#bohemeRoseGradient)" opacity="0.85" />
-            <circle cx="70" cy="50" r="13" fill="url(#bohemeRoseGradient)" opacity="0.85" />
-            <circle cx="88" cy="32" r="11" fill="url(#bohemeRoseGradient)" opacity="0.85" />
-            <circle cx="102" cy="18" r="8" fill="url(#bohemeRoseGradient)" opacity="0.85" />
-            <circle cx="20" cy="98" r="10" fill="url(#bohemeRoseGradient)" opacity="0.85" />
-            <circle cx="35" cy="70" r="12" fill="url(#bohemeRoseGradient)" opacity="0.85" />
-            <circle cx="58" cy="50" r="13" fill="url(#bohemeRoseGradient)" opacity="0.85" />
-            <circle cx="75" cy="35" r="11" fill="url(#bohemeRoseGradient)" opacity="0.85" />
-            <circle cx="92" cy="20" r="8" fill="url(#bohemeRoseGradient)" opacity="0.85" />
-          </svg>
-          <svg viewBox="0 0 120 120" class="corner-leaf corner-leaf-bottom-left" xmlns="http://www.w3.org/2000/svg">
-            <path d="M110,10 C80,30 40,70 10,110" stroke="url(#bohemeRoseGradient)" stroke-width="2" fill="none" />
-            <circle cx="85" cy="35" r="12" fill="url(#bohemeRoseGradient)" opacity="0.85" />
-            <circle cx="65" cy="50" r="14" fill="url(#bohemeRoseGradient)" opacity="0.85" />
-            <circle cx="50" cy="70" r="13" fill="url(#bohemeRoseGradient)" opacity="0.85" />
-            <circle cx="32" cy="88" r="11" fill="url(#bohemeRoseGradient)" opacity="0.85" />
-            <circle cx="18" cy="102" r="8" fill="url(#bohemeRoseGradient)" opacity="0.85" />
-            <circle cx="98" cy="20" r="10" fill="url(#bohemeRoseGradient)" opacity="0.85" />
-            <circle cx="70" cy="35" r="12" fill="url(#bohemeRoseGradient)" opacity="0.85" />
-            <circle cx="50" cy="58" r="13" fill="url(#bohemeRoseGradient)" opacity="0.85" />
-            <circle cx="35" cy="75" r="11" fill="url(#bohemeRoseGradient)" opacity="0.85" />
-            <circle cx="20" cy="92" r="8" fill="url(#bohemeRoseGradient)" opacity="0.85" />
-          </svg>
-        </ng-container>
-
-        <!-- Luxury Minimal (no leaves) -->
-        <ng-container *ngSwitchCase="'luxury-minimal'"></ng-container>
-        <ng-container *ngSwitchCase="'corporate-professional'"></ng-container>
-
-        <!-- Fallback based on category -->
-        <ng-container *ngSwitchDefault>
-          <!-- Corporate Theme Fallback -->
-          <ng-container *ngIf="guest()?.templateCategory !== 'Mariage'">
-            <svg viewBox="0 0 120 120" class="corner-leaf corner-leaf-top-right" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <linearGradient id="goldGradientLeafFallback" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stop-color="#f3e0aa" />
-                  <stop offset="50%" stop-color="#d4af37" />
-                  <stop offset="100%" stop-color="#aa8524" />
-                </linearGradient>
-              </defs>
-              <path d="M10,110 Q50,70 110,10" stroke="url(#goldGradientLeafFallback)" stroke-width="2" fill="none" />
-              <path d="M40,80 Q30,60 20,50 Q35,60 45,75 Z" fill="url(#goldGradientLeafFallback)" />
-              <path d="M50,70 Q40,48 30,35 Q45,50 55,65 Z" fill="url(#goldGradientLeafFallback)" />
-              <path d="M60,60 Q50,35 40,20 Q55,38 65,55 Z" fill="url(#goldGradientLeafFallback)" />
-              <path d="M70,50 Q60,25 52,10 Q65,28 75,45 Z" fill="url(#goldGradientLeafFallback)" />
-              <path d="M80,40 Q72,18 68,2 Q78,20 85,35 Z" fill="url(#goldGradientLeafFallback)" />
-              <path d="M90,30 Q85,12 85,0 Q92,15 95,27 Z" fill="url(#goldGradientLeafFallback)" />
-              <path d="M50,82 Q65,75 75,70 Q62,80 48,84 Z" fill="url(#goldGradientLeafFallback)" />
-              <path d="M60,72 Q75,65 85,60 Q72,70 58,74 Z" fill="url(#goldGradientLeafFallback)" />
-              <path d="M70,62 Q85,55 95,50 Q82,60 68,64 Z" fill="url(#goldGradientLeafFallback)" />
-              <path d="M80,52 Q95,45 105,40 Q92,50 78,54 Z" fill="url(#goldGradientLeafFallback)" />
-              <path d="M90,42 Q105,35 115,30 Q102,40 88,44 Z" fill="url(#goldGradientLeafFallback)" />
-            </svg>
-            <svg viewBox="0 0 120 120" class="corner-leaf corner-leaf-bottom-left" xmlns="http://www.w3.org/2000/svg">
-              <path d="M110,10 Q70,50 10,110" stroke="url(#goldGradientLeafFallback)" stroke-width="2" fill="none" />
-              <path d="M80,40 Q90,60 100,70 Q85,60 75,45 Z" fill="url(#goldGradientLeafFallback)" />
-              <path d="M70,50 Q80,72 90,85 Q75,70 65,55 Z" fill="url(#goldGradientLeafFallback)" />
-              <path d="M60,60 Q70,85 80,100 Q65,82 55,65 Z" fill="url(#goldGradientLeafFallback)" />
-              <path d="M50,70 Q60,95 68,110 Q55,92 45,75 Z" fill="url(#goldGradientLeafFallback)" />
-              <path d="M40,80 Q48,102 52,118 Q42,100 35,85 Z" fill="url(#goldGradientLeafFallback)" />
-              <path d="M30,90 Q35,108 35,120 Q28,105 25,93 Z" fill="url(#goldGradientLeafFallback)" />
-              <path d="M70,38 Q55,45 45,50 Q58,40 72,36 Z" fill="url(#goldGradientLeafFallback)" />
-              <path d="M60,48 Q45,55 35,60 Q48,50 62,46 Z" fill="url(#goldGradientLeafFallback)" />
-              <path d="M50,58 Q35,65 25,70 Q38,60 52,56 Z" fill="url(#goldGradientLeafFallback)" />
-              <path d="M40,68 Q25,75 15,80 Q28,70 42,66 Z" fill="url(#goldGradientLeafFallback)" />
-              <path d="M30,78 Q15,85 5,90 Q18,80 32,76 Z" fill="url(#goldGradientLeafFallback)" />
-            </svg>
-          </ng-container>
-          <!-- Wedding Theme Fallback -->
-          <ng-container *ngIf="guest()?.templateCategory === 'Mariage'">
-            <svg viewBox="0 0 120 120" class="corner-leaf corner-leaf-top-right" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <linearGradient id="eucalyptusGradientFallback" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stop-color="#c5d3cb" />
-                  <stop offset="50%" stop-color="#9cb0a4" />
-                  <stop offset="100%" stop-color="#738a7c" />
-                </linearGradient>
-              </defs>
-              <path d="M10,110 C40,90 80,50 110,10" stroke="url(#eucalyptusGradientFallback)" stroke-width="2"
-                fill="none" />
-              <circle cx="35" cy="85" r="12" fill="url(#eucalyptusGradientFallback)" opacity="0.85" />
-              <circle cx="50" cy="65" r="14" fill="url(#eucalyptusGradientFallback)" opacity="0.85" />
-              <circle cx="70" cy="50" r="13" fill="url(#eucalyptusGradientFallback)" opacity="0.85" />
-              <circle cx="88" cy="32" r="11" fill="url(#eucalyptusGradientFallback)" opacity="0.85" />
-              <circle cx="102" cy="18" r="8" fill="url(#eucalyptusGradientFallback)" opacity="0.85" />
-              <circle cx="20" cy="98" r="10" fill="url(#eucalyptusGradientFallback)" opacity="0.85" />
-              <circle cx="35" cy="70" r="12" fill="url(#eucalyptusGradientFallback)" opacity="0.85" />
-              <circle cx="58" cy="50" r="13" fill="url(#eucalyptusGradientFallback)" opacity="0.85" />
-              <circle cx="75" cy="35" r="11" fill="url(#eucalyptusGradientFallback)" opacity="0.85" />
-              <circle cx="92" cy="20" r="8" fill="url(#eucalyptusGradientFallback)" opacity="0.85" />
-            </svg>
-            <svg viewBox="0 0 120 120" class="corner-leaf corner-leaf-bottom-left" xmlns="http://www.w3.org/2000/svg">
-              <path d="M110,10 C80,30 40,70 10,110" stroke="url(#eucalyptusGradientFallback)" stroke-width="2"
-                fill="none" />
-              <circle cx="85" cy="35" r="12" fill="url(#eucalyptusGradientFallback)" opacity="0.85" />
-              <circle cx="65" cy="50" r="14" fill="url(#eucalyptusGradientFallback)" opacity="0.85" />
-              <circle cx="50" cy="70" r="13" fill="url(#eucalyptusGradientFallback)" opacity="0.85" />
-              <circle cx="32" cy="88" r="11" fill="url(#eucalyptusGradientFallback)" opacity="0.85" />
-              <circle cx="18" cy="102" r="8" fill="url(#eucalyptusGradientFallback)" opacity="0.85" />
-              <circle cx="98" cy="20" r="10" fill="url(#eucalyptusGradientFallback)" opacity="0.85" />
-              <circle cx="70" cy="35" r="12" fill="url(#eucalyptusGradientFallback)" opacity="0.85" />
-              <circle cx="50" cy="58" r="13" fill="url(#eucalyptusGradientFallback)" opacity="0.85" />
-              <circle cx="35" cy="75" r="11" fill="url(#eucalyptusGradientFallback)" opacity="0.85" />
-              <circle cx="20" cy="92" r="8" fill="url(#eucalyptusGradientFallback)" opacity="0.85" />
-            </svg>
-          </ng-container>
-        </ng-container>
+      <!-- LAYER 0: Subtle Luxury Background Texture & Ambient Glow (Active when no custom uploaded background) -->
+      <div class="invitation-layer-texture" *ngIf="!resolvedBackgroundImage" aria-hidden="true">
+        <div class="texture-damask-watermark"></div>
+        <div class="texture-radial-glow"></div>
       </div>
 
-      <div class="luxury-inner-border">
+      <!-- LAYER 1: Hanging Ornate Lanterns (Lamps & Gentle Candlelight) -->
+      <div class="invitation-layer-lanterns" aria-hidden="true"
+        *ngIf="!resolvedBackgroundImage && (resolvedTemplateId === 'or-et-velours' || resolvedTemplateId === 'boheme-chic' || resolvedDecorativeFrame === 'gold-border')">
 
-        <!-- Royal Corner Ornaments for Or & Velours theme -->
-        <ng-container *ngIf="resolvedTemplateId === 'or-et-velours'">
+        <!-- Left Hanging Lantern -->
+        <div class="hanging-lantern lantern-left">
+          <div class="lantern-chain"></div>
+          <div class="lantern-body">
+            <svg viewBox="0 0 36 60" fill="none" xmlns="http://www.w3.org/2000/svg" class="lantern-svg">
+              <defs>
+                <linearGradient id="lanternGold" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#fdf4d8" />
+                  <stop offset="50%" stop-color="#d4af37" />
+                  <stop offset="100%" stop-color="#8a6c1e" />
+                </linearGradient>
+                <radialGradient id="candleFlameGlow" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stop-color="#fff6cc" />
+                  <stop offset="40%" stop-color="#f59e0b" stop-opacity="0.9" />
+                  <stop offset="100%" stop-color="#d97706" stop-opacity="0" />
+                </radialGradient>
+              </defs>
+              <!-- Top Cap & Finial -->
+              <path d="M18,2 L18,8 M14,8 Q18,3 22,8 L24,14 L12,14 Z" stroke="url(#lanternGold)" stroke-width="1.2"
+                fill="url(#lanternGold)" fill-opacity="0.3" />
+              <!-- Glass Dome -->
+              <path d="M11,14 Q7,32 12,48 L24,48 Q29,32 25,14 Z" stroke="url(#lanternGold)" stroke-width="1.2"
+                fill="#000000" fill-opacity="0.2" />
+              <!-- Decorative Arabesque Metal Ribs -->
+              <path d="M18,14 L18,48 M13,26 Q18,34 23,26 M12,38 Q18,46 24,38" stroke="url(#lanternGold)"
+                stroke-width="0.8" opacity="0.8" />
+              <!-- Internal Candle Flame -->
+              <circle cx="18" cy="32" r="7" fill="url(#candleFlameGlow)" class="flame-pulse" />
+              <path d="M18,27 Q19.5,31 18,34 Q16.5,31 18,27 Z" fill="#ffffff" />
+              <!-- Bottom Base & Tassel -->
+              <path d="M12,48 L24,48 L20,53 L16,53 Z" fill="url(#lanternGold)" />
+              <path d="M18,53 L18,59" stroke="url(#lanternGold)" stroke-width="1.2" />
+              <circle cx="18" cy="59" r="1.5" fill="url(#lanternGold)" />
+            </svg>
+            <div class="lantern-ambient-halo"></div>
+          </div>
+        </div>
+
+        <!-- Right Hanging Lantern -->
+        <div class="hanging-lantern lantern-right">
+          <div class="lantern-chain"></div>
+          <div class="lantern-body">
+            <svg viewBox="0 0 36 60" fill="none" xmlns="http://www.w3.org/2000/svg" class="lantern-svg">
+              <!-- Top Cap -->
+              <path d="M18,2 L18,8 M14,8 Q18,3 22,8 L24,14 L12,14 Z" stroke="url(#lanternGold)" stroke-width="1.2"
+                fill="url(#lanternGold)" fill-opacity="0.3" />
+              <!-- Glass Dome -->
+              <path d="M11,14 Q7,32 12,48 L24,48 Q29,32 25,14 Z" stroke="url(#lanternGold)" stroke-width="1.2"
+                fill="#000000" fill-opacity="0.2" />
+              <!-- Decorative Ribs -->
+              <path d="M18,14 L18,48 M13,26 Q18,34 23,26 M12,38 Q18,46 24,38" stroke="url(#lanternGold)"
+                stroke-width="0.8" opacity="0.8" />
+              <!-- Candle Flame -->
+              <circle cx="18" cy="32" r="7" fill="url(#candleFlameGlow)" class="flame-pulse flame-delay" />
+              <path d="M18,27 Q19.5,31 18,34 Q16.5,31 18,27 Z" fill="#ffffff" />
+              <!-- Bottom Base -->
+              <path d="M12,48 L24,48 L20,53 L16,53 Z" fill="url(#lanternGold)" />
+              <path d="M18,53 L18,59" stroke="url(#lanternGold)" stroke-width="1.2" />
+              <circle cx="18" cy="59" r="1.5" fill="url(#lanternGold)" />
+            </svg>
+            <div class="lantern-ambient-halo"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LAYER 2: Side Florals & Botanical Garlands -->
+      <div class="invitation-layer-side-florals" aria-hidden="true"
+        *ngIf="!resolvedBackgroundImage && (resolvedTemplateId === 'fleurs-de-coton' || resolvedTemplateId === 'boheme-chic' || resolvedDecorativeFrame === 'floral-frame')">
+
+        <!-- Top Left Botanical Branch -->
+        <svg viewBox="0 0 140 140" class="side-floral floral-top-left" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="botanicalSageGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#dce6df" />
+              <stop offset="50%" stop-color="#9bb3a3" />
+              <stop offset="100%" stop-color="#698573" />
+            </linearGradient>
+            <linearGradient id="rosePetalGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#fdf2f4" />
+              <stop offset="60%" stop-color="#e8a2b8" />
+              <stop offset="100%" stop-color="#b85d7b" />
+            </linearGradient>
+          </defs>
+          <path d="M5,5 Q50,20 120,5 C100,45 60,80 5,120 Z" fill="none" />
+          <path d="M5,10 Q40,35 110,15" stroke="url(#botanicalSageGrad)" stroke-width="2" fill="none" />
+          <!-- Eucalyptus round leaves -->
+          <circle cx="35" cy="30" r="14" fill="url(#botanicalSageGrad)" opacity="0.8" />
+          <circle cx="65" cy="24" r="16" fill="url(#botanicalSageGrad)" opacity="0.85" />
+          <circle cx="95" cy="18" r="12" fill="url(#botanicalSageGrad)" opacity="0.75" />
+          <circle cx="20" cy="55" r="12" fill="url(#botanicalSageGrad)" opacity="0.8" />
+          <circle cx="48" cy="50" r="15" fill="url(#botanicalSageGrad)" opacity="0.85" />
+          <!-- Soft Rose Flower Blossom -->
+          <circle cx="38" cy="42" r="11" fill="url(#rosePetalGrad)" opacity="0.9" />
+          <circle cx="38" cy="42" r="6" fill="#ffffff" opacity="0.6" />
+          <circle cx="80" cy="30" r="9" fill="url(#rosePetalGrad)" opacity="0.85" />
+        </svg>
+
+        <!-- Top Right Botanical Branch -->
+        <svg viewBox="0 0 140 140" class="side-floral floral-top-right" xmlns="http://www.w3.org/2000/svg">
+          <path d="M135,10 Q100,35 30,15" stroke="url(#botanicalSageGrad)" stroke-width="2" fill="none" />
+          <circle cx="105" cy="30" r="14" fill="url(#botanicalSageGrad)" opacity="0.8" />
+          <circle cx="75" cy="24" r="16" fill="url(#botanicalSageGrad)" opacity="0.85" />
+          <circle cx="45" cy="18" r="12" fill="url(#botanicalSageGrad)" opacity="0.75" />
+          <circle cx="120" cy="55" r="12" fill="url(#botanicalSageGrad)" opacity="0.8" />
+          <circle cx="92" cy="50" r="15" fill="url(#botanicalSageGrad)" opacity="0.85" />
+          <circle cx="102" cy="42" r="11" fill="url(#rosePetalGrad)" opacity="0.9" />
+          <circle cx="102" cy="42" r="6" fill="#ffffff" opacity="0.6" />
+          <circle cx="60" cy="30" r="9" fill="url(#rosePetalGrad)" opacity="0.85" />
+        </svg>
+
+        <!-- Bottom Left Botanical Branch -->
+        <svg viewBox="0 0 140 140" class="side-floral floral-bottom-left" xmlns="http://www.w3.org/2000/svg">
+          <path d="M5,130 Q40,105 110,125" stroke="url(#botanicalSageGrad)" stroke-width="2" fill="none" />
+          <circle cx="35" cy="110" r="14" fill="url(#botanicalSageGrad)" opacity="0.8" />
+          <circle cx="65" cy="116" r="16" fill="url(#botanicalSageGrad)" opacity="0.85" />
+          <circle cx="20" cy="85" r="12" fill="url(#botanicalSageGrad)" opacity="0.8" />
+          <circle cx="38" cy="98" r="11" fill="url(#rosePetalGrad)" opacity="0.9" />
+        </svg>
+
+        <!-- Bottom Right Botanical Branch -->
+        <svg viewBox="0 0 140 140" class="side-floral floral-bottom-right" xmlns="http://www.w3.org/2000/svg">
+          <path d="M135,130 Q100,105 30,125" stroke="url(#botanicalSageGrad)" stroke-width="2" fill="none" />
+          <circle cx="105" cy="110" r="14" fill="url(#botanicalSageGrad)" opacity="0.8" />
+          <circle cx="75" cy="116" r="16" fill="url(#botanicalSageGrad)" opacity="0.85" />
+          <circle cx="120" cy="85" r="12" fill="url(#botanicalSageGrad)" opacity="0.8" />
+          <circle cx="102" cy="98" r="11" fill="url(#rosePetalGrad)" opacity="0.9" />
+        </svg>
+      </div>
+
+      <!-- LAYER 3: Classic Framed Architecture & Baroque Gold Corners -->
+      <div class="luxury-inner-border position-relative">
+
+        <!-- Royal Baroque Corner Filigree (Or & Velours / Corporate Gold) -->
+        <ng-container
+          *ngIf="!resolvedBackgroundImage && (resolvedTemplateId === 'or-et-velours' || resolvedDecorativeFrame === 'gold-border')">
           <div class="royal-corner-ornament royal-top-left">
             <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M0,0 H100 C80,0 60,10 50,30 C40,50 30,60 30,70 C30,80 20,90 0,100 V0Z"
-                fill="url(#goldGradientLeaf)" opacity="0.1" />
-              <path d="M10,10 H60 C40,10 30,20 30,40 C30,50 20,60 10,60 V10Z" stroke="url(#goldGradientLeaf)"
-                stroke-width="1.5" />
-              <path d="M5,5 H80 C50,5 40,15 40,40 C40,65 15,75 5,80 V5Z" stroke="url(#goldGradientLeaf)"
-                stroke-width="0.75" stroke-dasharray="2,2" />
-              <path d="M15,15 Q30,30 45,15" stroke="url(#goldGradientLeaf)" stroke-width="1.25" />
-              <circle cx="15" cy="15" r="2" fill="url(#goldGradientLeaf)" />
+              <path d="M0,0 H100 C80,0 60,10 50,30 C40,50 30,60 30,70 C30,80 20,90 0,100 V0Z" fill="#d4af37"
+                opacity="0.08" />
+              <path d="M8,8 H60 C40,8 30,18 30,38 C30,48 20,58 8,58 V8Z" stroke="#d4af37" stroke-width="1.4" />
+              <path d="M4,4 H78 C48,4 38,14 38,38 C38,62 14,72 4,78 V4Z" stroke="#d4af37" stroke-width="0.7"
+                stroke-dasharray="2,2" />
+              <circle cx="14" cy="14" r="2" fill="#d4af37" />
             </svg>
           </div>
           <div class="royal-corner-ornament royal-top-right">
             <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M100,0 H0 C20,0 40,10 50,30 C60,50 70,60 70,70 C70,80 80,90 100,100 V0Z"
-                fill="url(#goldGradientLeaf)" opacity="0.1" />
-              <path d="M90,10 H40 C60,10 70,20 70,40 C70,50 80,60 90,60 V10Z" stroke="url(#goldGradientLeaf)"
-                stroke-width="1.5" />
-              <path d="M95,5 H20 C50,5 60,15 60,40 C60,65 85,75 95,80 V5Z" stroke="url(#goldGradientLeaf)"
-                stroke-width="0.75" stroke-dasharray="2,2" />
-              <path d="M85,15 Q70,30 55,15" stroke="url(#goldGradientLeaf)" stroke-width="1.25" />
-              <circle cx="85" cy="15" r="2" fill="url(#goldGradientLeaf)" />
+              <path d="M100,0 H0 C20,0 40,10 50,30 C60,50 70,60 70,70 C70,80 80,90 100,100 V0Z" fill="#d4af37"
+                opacity="0.08" />
+              <path d="M92,8 H40 C60,8 70,18 70,38 C70,48 80,58 92,58 V8Z" stroke="#d4af37" stroke-width="1.4" />
+              <path d="M96,4 H22 C52,4 62,14 62,38 C62,62 86,72 96,78 V4Z" stroke="#d4af37" stroke-width="0.7"
+                stroke-dasharray="2,2" />
+              <circle cx="86" cy="14" r="2" fill="#d4af37" />
             </svg>
           </div>
           <div class="royal-corner-ornament royal-bottom-left">
             <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M0,100 H100 C80,100 60,90 50,70 C40,50 30,40 30,30 C30,20 20,10 0,0 V100Z"
-                fill="url(#goldGradientLeaf)" opacity="0.1" />
-              <path d="M10,90 H60 C40,90 30,80 30,60 C30,50 20,40 10,40 V90Z" stroke="url(#goldGradientLeaf)"
-                stroke-width="1.5" />
-              <path d="M5,95 H80 C50,95 40,85 40,60 C40,35 15,25 5,20 V95Z" stroke="url(#goldGradientLeaf)"
-                stroke-width="0.75" stroke-dasharray="2,2" />
-              <path d="M15,85 Q30,70 45,85" stroke="url(#goldGradientLeaf)" stroke-width="1.25" />
-              <circle cx="15" cy="85" r="2" fill="url(#goldGradientLeaf)" />
+              <path d="M0,100 H100 C80,100 60,90 50,70 C40,50 30,40 30,30 C30,20 20,10 0,0 V100Z" fill="#d4af37"
+                opacity="0.08" />
+              <path d="M8,92 H60 C40,92 30,82 30,62 C30,52 20,42 8,42 V92Z" stroke="#d4af37" stroke-width="1.4" />
+              <path d="M4,96 H78 C48,96 38,86 38,62 C38,38 14,28 4,22 V96Z" stroke="#d4af37" stroke-width="0.7"
+                stroke-dasharray="2,2" />
+              <circle cx="14" cy="86" r="2" fill="#d4af37" />
             </svg>
           </div>
           <div class="royal-corner-ornament royal-bottom-right">
             <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M100,100 H0 C20,100 40,90 50,70 C60,50 70,40 70,30 C70,20 80,10 100,0 V100Z"
-                fill="url(#goldGradientLeaf)" opacity="0.1" />
-              <path d="M90,90 H40 C60,90 70,80 70,60 C70,50 80,40 90,40 V90Z" stroke="url(#goldGradientLeaf)"
-                stroke-width="1.5" />
-              <path d="M95,95 H20 C50,95 60,85 60,60 C60,35 85,25 95,20 V95Z" stroke="url(#goldGradientLeaf)"
-                stroke-width="0.75" stroke-dasharray="2,2" />
-              <path d="M85,85 Q70,70 55,85" stroke="url(#goldGradientLeaf)" stroke-width="1.25" />
-              <circle cx="85" cy="85" r="2" fill="url(#goldGradientLeaf)" />
+              <path d="M100,100 H0 C20,100 40,90 50,70 C60,50 70,40 70,30 C70,20 80,10 100,0 V100Z" fill="#d4af37"
+                opacity="0.08" />
+              <path d="M92,92 H40 C60,92 70,82 70,62 C70,52 80,42 92,42 V92Z" stroke="#d4af37" stroke-width="1.4" />
+              <path d="M96,96 H22 C52,96 62,86 62,62 C62,38 86,28 96,22 V96Z" stroke="#d4af37" stroke-width="0.7"
+                stroke-dasharray="2,2" />
+              <circle cx="86" cy="86" r="2" fill="#d4af37" />
             </svg>
           </div>
         </ng-container>
 
-        <!-- Top Crest / Monogram -->
-        <!-- Overlapping Rings for Fleurs de Coton -->
-        <div class="crest-wrapper mb-4" *ngIf="resolvedTemplateId === 'fleurs-de-coton'">
-          <div class="rings-monogram">
-            <svg viewBox="0 0 100 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="38" cy="30" r="18" stroke="#879b8c" stroke-width="2" />
-              <circle cx="38" cy="30" r="15" stroke="#879b8c" stroke-width="0.5" stroke-dasharray="1,1" />
-              <circle cx="62" cy="30" r="18" stroke="#879b8c" stroke-width="2" />
-              <circle cx="62" cy="30" r="15" stroke="#879b8c" stroke-width="0.5" stroke-dasharray="1,1" />
-              <path d="M50,12 L50,18 M47,15 L53,15" stroke="#879b8c" stroke-width="1" />
-            </svg>
-          </div>
-          <div class="crest-line"></div>
-        </div>
+        <!-- LAYER 4: Centered Dynamic Text Floating Directly over Background (Clean Invitation View) -->
+        <div class="invitation-dynamic-text-overlay text-center mx-auto" *ngIf="!isMenuRsvpOpen()">
 
-        <!-- Standard Crest Circle for other themes -->
-        <div class="crest-wrapper mb-4" *ngIf="resolvedTemplateId !== 'fleurs-de-coton'">
-          <div class="crest-circle">
-            <span class="crest-letters">{{ guest()?.invitationTitle ? guest()?.invitationTitle!.substring(0, 1) : 'E'
-              }}</span>
-          </div>
-          <div class="crest-line"></div>
-        </div>
+          <!-- Dynamic Emblem / Couple Silhouette Vector / Monogram (Only on built-in vector themes) -->
+          <div class="invitation-emblem-container mb-3" *ngIf="!resolvedBackgroundImage">
 
-        <!-- Header Titles -->
-        <div class="text-center mb-4">
-          <span class="luxury-subtitle d-block mb-1">Invitation d'exception</span>
-          <h1 class="wedding-names mb-4">{{ guest()?.invitationTitle || guest()?.eventTitle }}</h1>
-          <div class="wedding-greeting">
-            Cher(e) <span class="guest-highlight">{{ guest()?.guestName }}</span>,<br>
-            nous serions honorés de vous compter parmi nos invités.
-          </div>
-        </div>
+            <!-- Romantic Bride & Groom Silhouette / Intertwined Wreath for Weddings -->
+            <div class="couple-vector-badge"
+              *ngIf="guest()?.templateCategory === 'Mariage' || resolvedTemplateId === 'fleurs-de-coton' || resolvedTemplateId === 'boheme-chic' || resolvedTemplateId === 'or-et-velours'">
+              <svg viewBox="0 0 120 70" class="couple-silhouette-svg" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <linearGradient id="emblemGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#fef0cd" />
+                    <stop offset="50%" stop-color="#d4af37" />
+                    <stop offset="100%" stop-color="#997722" />
+                  </linearGradient>
+                </defs>
+                <!-- Laurel Wreath Laurel Leaves -->
+                <path d="M25,50 C18,38 20,22 32,14 C36,12 42,12 45,15" stroke="url(#emblemGoldGrad)" stroke-width="1.5"
+                  fill="none" />
+                <path d="M95,50 C102,38 100,22 88,14 C84,12 78,12 75,15" stroke="url(#emblemGoldGrad)"
+                  stroke-width="1.5" fill="none" />
+                <!-- Wreath Leaves Left -->
+                <ellipse cx="22" cy="42" rx="4" ry="2" transform="rotate(-30 22 42)" fill="url(#emblemGoldGrad)"
+                  opacity="0.85" />
+                <ellipse cx="20" cy="30" rx="4.5" ry="2.2" transform="rotate(-50 20 30)" fill="url(#emblemGoldGrad)"
+                  opacity="0.85" />
+                <ellipse cx="24" cy="20" rx="4" ry="2" transform="rotate(-70 24 20)" fill="url(#emblemGoldGrad)"
+                  opacity="0.85" />
+                <ellipse cx="32" cy="14" rx="3.8" ry="1.8" transform="rotate(-90 32 14)" fill="url(#emblemGoldGrad)"
+                  opacity="0.85" />
+                <!-- Wreath Leaves Right -->
+                <ellipse cx="98" cy="42" rx="4" ry="2" transform="rotate(30 98 42)" fill="url(#emblemGoldGrad)"
+                  opacity="0.85" />
+                <ellipse cx="100" cy="30" rx="4.5" ry="2.2" transform="rotate(50 100 30)" fill="url(#emblemGoldGrad)"
+                  opacity="0.85" />
+                <ellipse cx="96" cy="20" rx="4" ry="2" transform="rotate(70 96 20)" fill="url(#emblemGoldGrad)"
+                  opacity="0.85" />
+                <ellipse cx="88" cy="14" rx="3.8" ry="1.8" transform="rotate(90 88 14)" fill="url(#emblemGoldGrad)"
+                  opacity="0.85" />
+                <!-- Artistic Silhouette Figures / Intertwined Rings -->
+                <!-- Groom Head & Tuxedo Line -->
+                <circle cx="53" cy="24" r="5" fill="url(#emblemGoldGrad)" />
+                <path d="M47,38 Q53,30 59,38 Z" fill="url(#emblemGoldGrad)" opacity="0.9" />
+                <!-- Bride Head & Veil/Dress Line -->
+                <circle cx="67" cy="26" r="4.5" fill="url(#emblemGoldGrad)" />
+                <path d="M62,39 Q67,31 73,42 Q68,44 62,39 Z" fill="url(#emblemGoldGrad)" opacity="0.85" />
+                <!-- Small Heart between -->
+                <path
+                  d="M60,18 C60,15 57,14 55,16 C53,14 50,15 50,18 C50,21 55,25 60,28 C65,25 70,21 70,18 C70,15 67,14 65,16 C63,14 60,15 60,18 Z"
+                  transform="scale(0.35) translate(80, 20)" fill="#d4af37" />
+              </svg>
+            </div>
 
-        <!-- Artistic Invitation Date & Location Details -->
-        <div class="artistic-invitation-details mb-5">
-
-          <!-- Date Block -->
-          <div class="artistic-date-block">
-            <div class="date-header-line"></div>
-            <div class="artistic-date-flex">
-              <div class="date-side-part text-end">
-                <span class="day-name">{{ eventDayName }}</span>
-              </div>
-              <div class="date-center-num">
-                {{ eventDayNum }}
-              </div>
-              <div class="date-side-part text-start">
-                <span class="month-year">{{ eventMonth }} &bull; {{ eventYear }}</span>
+            <!-- Monogram Initial Circle for Corporate & Gala Events -->
+            <div class="corporate-emblem-badge"
+              *ngIf="guest()?.templateCategory !== 'Mariage' && resolvedTemplateId !== 'fleurs-de-coton' && resolvedTemplateId !== 'boheme-chic' && resolvedTemplateId !== 'or-et-velours'">
+              <div class="crest-circle">
+                <span class="crest-letters">{{ guest()?.invitationTitle ? guest()?.invitationTitle!.substring(0, 1) :
+                  'E' }}</span>
               </div>
             </div>
-            <div class="artistic-time">À {{ eventTime }}</div>
-            <div class="date-footer-line"></div>
-          </div>
 
-          <!-- Location Block -->
-          <div class="artistic-location-block mt-4 text-center">
-            <div class="location-icon-wrapper mb-2">
-              <i class="fa fa-map-marker-alt"></i>
+            <!-- Subtle Filigree Divider Line -->
+            <div class="emblem-divider-line">
+              <span class="divider-diamond">◆</span>
             </div>
-            <div class="location-title">Lieu de la Réception</div>
-            <div class="location-value">{{ guest()?.invitationLocation || guest()?.eventLocation }}</div>
-            <a href="https://maps.google.com/?q={{ guest()?.invitationLocation || guest()?.eventLocation }}"
-              target="_blank" class="details-gps-link mt-2 d-inline-block">
-              <i class="fa fa-location-arrow me-1"></i> Itinéraire GPS
-            </a>
           </div>
-        </div>
 
-        <!-- Menu Highlights Spotlight Carousel Section -->
-        <div class="menu-highlight-spotlight-section mb-3.5 text-center">
-          <div class="spotlight-title-wrapper mb-2.5">
-            <span class="luxury-subtitle d-block mb-1">Aperçu Gastronomique</span>
-            <h3 class="wedding-names fs-4 mb-1.5">Les Saveurs de l'Événement</h3>
-            <div class="spotlight-underline"></div>
+          <!-- Dynamic Subtitle / Intro Header -->
+          <div class="invitation-header-tag mb-1">
+            <span class="luxury-subtitle">
+              {{ guest()?.templateCategory === 'Mariage' ? 'Le Mariage de' : (guest()?.templateCategory === 'Corporate'
+              ? 'Cérémonie & Réception' : 'Invitation d\'Exception') }}
+            </span>
           </div>
-          <p class="text-gold-muted fs-xs font-serif mb-3" style="color: #cda82d !important; font-size: 0.72rem !important;">Faites glisser pour découvrir le menu</p>
+
+          <!-- Dynamic Main Couple / Event Title -->
+          <h1 class="invitation-main-title mb-2.5">
+            {{ guest()?.invitationTitle || guest()?.eventTitle }}
+          </h1>
+
+          <!-- Personalized Dynamic Guest Salutation -->
+          <div class="invitation-guest-salutation mb-3">
+            <div class="salutation-guest-badge">
+              <span class="salutation-honorific">Cher(e)</span>
+              <span class="salutation-guest-name">{{ guest()?.guestName }}</span>
+            </div>
+            <p class="salutation-invitation-message mt-1.5 mb-0">
+              Nous serions infiniment honorés de vous compter parmi nos invités d'honneur pour partager ce moment
+              précieux.
+            </p>
+          </div>
+
+          <!-- Artistic Dynamic Date & Time Section -->
+          <div class="artistic-invitation-details mb-3">
+            <div class="artistic-date-block">
+              <div class="date-header-line"></div>
+              <div class="artistic-date-flex">
+                <div class="date-side-part text-end">
+                  <span class="day-name">{{ eventDayName }}</span>
+                </div>
+                <div class="date-center-num">
+                  {{ eventDayNum }}
+                </div>
+                <div class="date-side-part text-start">
+                  <span class="month-year">{{ eventMonth }} &bull; {{ eventYear }}</span>
+                </div>
+              </div>
+              <div class="artistic-time">
+                <i class="far fa-clock me-1 text-gold"></i> À {{ eventTime }}
+              </div>
+              <div class="date-footer-line"></div>
+            </div>
+
+            <!-- Dynamic Venue Location Block -->
+            <div class="artistic-location-block mt-2.5 text-center">
+              <div class="location-icon-wrapper mb-1">
+                <i class="fa fa-map-marker-alt"></i>
+              </div>
+              <div class="location-title">LIEU DE LA RÉCEPTION</div>
+              <div class="location-value">{{ guest()?.invitationLocation || guest()?.eventLocation }}</div>
+              <a href="https://maps.google.com/?q={{ guest()?.invitationLocation || guest()?.eventLocation }}"
+                target="_blank" class="details-gps-link mt-2 d-inline-flex align-items-center">
+                <i class="fa fa-location-arrow me-1.5"></i> Itinéraire GPS
+              </a>
+            </div>
+          </div>
+
+          <!-- Clean Elegant Action Button: Découvrir le menu & RSVP ➔ -->
+          <div class="mt-4 mb-2 text-center animate__animated animate__fadeIn">
+            <button type="button" class="btn btn-discover-rsvp rounded-pill px-4 py-2.5 fs-xs fw-bold shadow"
+              (click)="openMenuAndRsvp()">
+              <i class="fa fa-utensils me-2"></i> Découvrir le menu & RSVP <i class="fa fa-arrow-right ms-1.5"></i>
+            </button>
+          </div>
+
+        </div>
+        <!-- END Centered Dynamic Text Overlay -->
+
+      </div>
+      <!-- END luxury-inner-border -->
+
+      <!-- Dedicated Menu & RSVP View (Smooth transition when triggered) -->
+      <div class="p-2 p-md-3 menu-rsvp-container animate__animated animate__fadeIn text-center mx-auto"
+        *ngIf="isMenuRsvpOpen()">
+
+        <!-- STEP 0: Menu Highlights Spotlight Carousel Section (Only in Step 0) -->
+        <div
+          class="menu-highlight-spotlight-section my-auto text-center mx-auto w-100 animate__animated animate__fadeIn"
+          *ngIf="currentRsvpStep() === 0" style="max-width: 380px;">
+          <div class="spotlight-title-wrapper mb-2 text-center">
+            <span class="luxury-subtitle d-block mb-1"
+              style="font-size: 1.35rem !important; line-height: 1.1 !important; color: #374151 !important;">Aperçu
+              Gastronomique</span>
+            <h3 class="page2-menu-title text-uppercase fw-bold m-0"
+              style="font-family: 'Cinzel', 'Playfair Display', serif; font-size: 0.98rem !important; line-height: 1.3 !important; color: #0f172a !important; letter-spacing: 1.2px !important;">
+              Les Saveurs de l'Événement
+            </h3>
+            <div class="spotlight-underline mx-auto mt-1.5"
+              style="width: 40px; height: 1.5px; background: #0f172a; opacity: 0.45;"></div>
+          </div>
+          <p class="text-muted fs-xxs font-serif mb-2.5" style="color: #4b5563 !important;">Faites glisser pour
+            découvrir le menu</p>
 
           <!-- Interactive Carousel Container -->
-          <div class="carousel-spotlight-container position-relative mx-auto mb-2.5" style="max-width: 380px; width: 100%;"
-               (touchstart)="onTouchStart($event)" (touchend)="onTouchEnd($event)">
-            
+          <div class="carousel-spotlight-container position-relative mx-auto mb-2.5"
+            style="max-width: 360px; width: 100%;" (touchstart)="onTouchStart($event)" (touchend)="onTouchEnd($event)">
+
             <!-- Left Arrow -->
-            <button type="button" class="carousel-arrow arrow-left" (click)="prevCarouselItem()" aria-label="Précédent" *ngIf="carouselItems().length > 1">
+            <button type="button" class="carousel-arrow arrow-left" (click)="prevCarouselItem()" aria-label="Précédent"
+              *ngIf="carouselItems().length > 1">
               <i class="fa fa-chevron-left"></i>
             </button>
 
             <!-- Active Card -->
-            <div class="carousel-card-wrapper border border-light rounded-3 bg-cream-light p-2.5 position-relative overflow-hidden shadow-sm w-100" style="box-sizing: border-box;">
+            <div
+              class="carousel-card-wrapper border border-light rounded-3 bg-cream-light p-2.5 position-relative overflow-hidden shadow-sm w-100"
+              style="box-sizing: border-box;">
               <div class="carousel-card-image-container mb-2 position-relative">
-                <img [src]="carouselItems()[activeCarouselIndex()]?.image" [alt]="carouselItems()[activeCarouselIndex()]?.name"
-                     class="w-100 object-fit-cover rounded-2 shadow-sm" style="height: 125px;">
+                <img [src]="carouselItems()[activeCarouselIndex()]?.image"
+                  [alt]="carouselItems()[activeCarouselIndex()]?.name"
+                  class="w-100 object-fit-cover rounded-2 shadow-sm" style="height: 125px;">
               </div>
               <div class="carousel-card-info">
-                <span class="badge bg-gold-success px-2.5 py-0.5 rounded-pill fs-xxs text-uppercase fw-semibold mb-1 d-inline-block" style="font-size: 0.62rem;">
+                <span
+                  class="badge bg-dark bg-opacity-75 text-white px-2.5 py-0.5 rounded-pill fs-xxs text-uppercase fw-semibold mb-1 d-inline-block"
+                  style="font-size: 0.62rem;">
                   {{ carouselItems()[activeCarouselIndex()]?.categoryLabel }}
                 </span>
-                <h4 class="fs-xs fw-bold font-serif mb-0" style="color: #d4af37; min-height: 28px; display: flex; align-items: center; justify-content: center; font-size: 0.82rem; line-height: 1.25;">
+                <h4 class="fs-xs fw-bold font-serif mb-0"
+                  style="color: #0f172a; min-height: 26px; display: flex; align-items: center; justify-content: center; font-size: 0.84rem; line-height: 1.25;">
                   {{ carouselItems()[activeCarouselIndex()]?.name }}
                 </h4>
               </div>
             </div>
 
             <!-- Right Arrow -->
-            <button type="button" class="carousel-arrow arrow-right" (click)="nextCarouselItem()" aria-label="Suivant" *ngIf="carouselItems().length > 1">
+            <button type="button" class="carousel-arrow arrow-right" (click)="nextCarouselItem()" aria-label="Suivant"
+              *ngIf="carouselItems().length > 1">
               <i class="fa fa-chevron-right"></i>
             </button>
           </div>
 
           <!-- Secondary Button to open Full Menu Modal -->
-          <div class="mt-2 mb-3">
-            <button type="button" class="btn btn-sm btn-alt-gold rounded-pill px-3.5 fs-xxs fw-semibold py-1.5" (click)="isFullMenuModalOpen.set(true)">
+          <div class="mt-2 mb-2">
+            <button type="button" class="btn btn-sm btn-alt-gold rounded-pill px-3.5 fs-xxs fw-semibold py-1.5"
+              (click)="isFullMenuModalOpen.set(true)">
               <i class="fa fa-utensils me-1"></i> Voir le menu complet
+            </button>
+          </div>
+
+          <!-- Navigation Action Buttons (Retour & Suivant) under Voir Menu -->
+          <div class="d-flex gap-3 justify-content-center align-items-center mt-3 pt-1 mx-auto"
+            style="max-width: 280px; width: 100%;">
+            <button type="button" class="btn btn-page2-nav-prev flex-fill py-1.5 px-3 fs-xxs fw-bold rounded-pill"
+              (click)="closeMenuAndRsvp()">
+              <i class="fa fa-arrow-left me-1"></i> Retour
+            </button>
+            <button type="button" class="btn btn-page2-nav-next flex-fill py-1.5 px-3 fs-xxs fw-bold rounded-pill"
+              (click)="goToNextStep()">
+              Suivant <i class="fa fa-arrow-right ms-1"></i>
             </button>
           </div>
         </div>
 
         <!-- Full Menu Modal Overlay -->
-        <div class="modal d-block bg-dark bg-opacity-75" tabindex="-1" *ngIf="isFullMenuModalOpen()" style="backdrop-filter: blur(4px); z-index: 1060;">
+        <div class="modal d-block bg-dark bg-opacity-75" tabindex="-1" *ngIf="isFullMenuModalOpen()"
+          style="backdrop-filter: blur(4px); z-index: 1060;">
           <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" style="max-width: 480px;">
             <div class="modal-content border border-light bg-luxury-modal p-4 shadow-lg text-center position-relative">
               <!-- Close button -->
-              <button type="button" class="btn-close position-absolute top-0 end-0 m-3" (click)="isFullMenuModalOpen.set(false)"></button>
-              
+              <button type="button" class="btn-close position-absolute top-0 end-0 m-3"
+                (click)="isFullMenuModalOpen.set(false)"></button>
+
               <div class="luxury-inner-border p-3 m-1">
                 <div class="crest-wrapper mb-3">
-                  <div class="crest-circle" style="width: 40px; height: 40px; border-radius: 50%; border: 1px solid #d4af37; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
-                    <i class="fa fa-utensils text-gold fs-sm"></i>
+                  <div class="crest-circle"
+                    style="width: 40px; height: 40px; border-radius: 50%; border: 1px solid #1f2937; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                    <i class="fa fa-utensils text-dark fs-sm"></i>
                   </div>
-                  <div class="crest-line" style="width: 80px; height: 1px; background: linear-gradient(90deg, rgba(212, 175, 55, 0) 0%, rgba(212, 175, 55, 0.5) 50%, rgba(212, 175, 55, 0) 100%); margin: 8px auto 0;"></div>
+                  <div class="crest-line"
+                    style="width: 80px; height: 1px; background: linear-gradient(90deg, rgba(31, 41, 55, 0) 0%, rgba(31, 41, 55, 0.5) 50%, rgba(31, 41, 55, 0) 100%); margin: 8px auto 0;">
+                  </div>
                 </div>
-                
-                <h3 class="wedding-names fs-4 mb-1">{{ guest()?.eventTitle || 'Le Menu Complet' }}</h3>
-                <p class="text-gold-muted fs-xxs font-serif mb-4 uppercase tracking-wider" style="color: #cda82d !important;">Création gastronomique pour notre réception</p>
+
+                <h3 class="wedding-names fs-4 mb-1 text-dark">{{ guest()?.eventTitle || 'Le Menu Complet' }}</h3>
+                <p class="fs-xxs font-serif mb-4 uppercase tracking-wider" style="color: #4b5563 !important;">Création
+                  gastronomique pour notre réception</p>
 
                 <!-- Categorized Full Menu Details -->
                 <div class="full-menu-scrollable text-start">
-                  
+
                   <!-- Entrées -->
                   <div class="menu-cat-group mb-3" *ngIf="starters().length > 0">
-                    <h5 class="fs-xxs text-uppercase fw-bold text-gold border-bottom border-light pb-1 mb-2">Entrées</h5>
+                    <h5 class="fs-xxs text-uppercase fw-bold text-dark border-bottom border-light pb-1 mb-2">Entrées
+                    </h5>
                     <div class="menu-modal-item mb-2" *ngFor="let item of starters()">
                       <div class="d-flex justify-content-between align-items-center">
                         <span class="fs-xs fw-bold text-dark">{{ item.name }}</span>
-                        <span class="badge bg-light text-dark fs-xxs" *ngIf="item.dietaryTag">{{ item.dietaryTag }}</span>
+                        <span class="badge bg-light text-dark fs-xxs" *ngIf="item.dietaryTag">{{ item.dietaryTag
+                          }}</span>
                       </div>
                       <p class="fs-xxs text-muted mb-0" *ngIf="item.description">{{ item.description }}</p>
                     </div>
@@ -527,11 +573,13 @@
 
                   <!-- Plats Principaux -->
                   <div class="menu-cat-group mb-3" *ngIf="mainDishes().length > 0">
-                    <h5 class="fs-xxs text-uppercase fw-bold text-gold border-bottom border-light pb-1 mb-2">Plats Principaux</h5>
+                    <h5 class="fs-xxs text-uppercase fw-bold text-dark border-bottom border-light pb-1 mb-2">Plats
+                      Principaux</h5>
                     <div class="menu-modal-item mb-2" *ngFor="let item of mainDishes()">
                       <div class="d-flex justify-content-between align-items-center">
                         <span class="fs-xs fw-bold text-dark">{{ item.name }}</span>
-                        <span class="badge bg-light text-dark fs-xxs" *ngIf="item.dietaryTag">{{ item.dietaryTag }}</span>
+                        <span class="badge bg-light text-dark fs-xxs" *ngIf="item.dietaryTag">{{ item.dietaryTag
+                          }}</span>
                       </div>
                       <p class="fs-xxs text-muted mb-0" *ngIf="item.description">{{ item.description }}</p>
                     </div>
@@ -539,11 +587,13 @@
 
                   <!-- Desserts -->
                   <div class="menu-cat-group mb-3" *ngIf="desserts().length > 0">
-                    <h5 class="fs-xxs text-uppercase fw-bold text-gold border-bottom border-light pb-1 mb-2">Desserts</h5>
+                    <h5 class="fs-xxs text-uppercase fw-bold text-dark border-bottom border-light pb-1 mb-2">Desserts
+                    </h5>
                     <div class="menu-modal-item mb-2" *ngFor="let item of desserts()">
                       <div class="d-flex justify-content-between align-items-center">
                         <span class="fs-xs fw-bold text-dark">{{ item.name }}</span>
-                        <span class="badge bg-light text-dark fs-xxs" *ngIf="item.dietaryTag">{{ item.dietaryTag }}</span>
+                        <span class="badge bg-light text-dark fs-xxs" *ngIf="item.dietaryTag">{{ item.dietaryTag
+                          }}</span>
                       </div>
                       <p class="fs-xxs text-muted mb-0" *ngIf="item.description">{{ item.description }}</p>
                     </div>
@@ -551,11 +601,13 @@
 
                   <!-- Boissons -->
                   <div class="menu-cat-group mb-3" *ngIf="beverages().length > 0">
-                    <h5 class="fs-xxs text-uppercase fw-bold text-gold border-bottom border-light pb-1 mb-2">Boissons</h5>
+                    <h5 class="fs-xxs text-uppercase fw-bold text-dark border-bottom border-light pb-1 mb-2">Boissons
+                    </h5>
                     <div class="menu-modal-item mb-2" *ngFor="let item of beverages()">
                       <div class="d-flex justify-content-between align-items-center">
                         <span class="fs-xs fw-bold text-dark">{{ item.name }}</span>
-                        <span class="badge bg-light text-dark fs-xxs" *ngIf="item.dietaryTag">{{ item.dietaryTag }}</span>
+                        <span class="badge bg-light text-dark fs-xxs" *ngIf="item.dietaryTag">{{ item.dietaryTag
+                          }}</span>
                       </div>
                       <p class="fs-xxs text-muted mb-0" *ngIf="item.description">{{ item.description }}</p>
                     </div>
@@ -563,7 +615,8 @@
 
                 </div>
 
-                <button type="button" class="btn btn-sm btn-alt-gold rounded-pill px-4 mt-3 py-2" (click)="isFullMenuModalOpen.set(false)">
+                <button type="button" class="btn btn-sm btn-alt-gold rounded-pill px-4 mt-3 py-2"
+                  (click)="isFullMenuModalOpen.set(false)">
                   Fermer
                 </button>
               </div>
@@ -571,73 +624,55 @@
           </div>
         </div>
 
-        <!-- RSVP Form Section -->
-        <form #rsvpForm="ngForm">
+        <!-- RSVP Multi-Step Form & Persistent Bottom RSVP Section -->
+        <form #rsvpForm="ngForm" class="w-100 mx-auto d-flex flex-column justify-content-between flex-grow-1"
+          style="max-width: 380px;">
 
-          <!-- STEP 0: Initial State / Overview on page load -->
-          <div *ngIf="currentRsvpStep() === 0" class="initial-rsvp-view animate__animated animate__fadeIn pt-2 mb-4">
-            
-            <!-- Action Trigger to begin choices / explore steps -->
-            <div class="text-center mb-4">
-              <button type="button" class="btn btn-alt-gold w-100 py-2.5 fs-xs fw-semibold rounded-pill" (click)="goToNextStep()">
-                <i class="fa fa-utensils me-2"></i>Personnaliser mon menu & préférences <i class="fa fa-arrow-right ms-1"></i>
+          <!-- STEP 1: Choix de votre Menu (Positioned upwards in top area) -->
+          <div *ngIf="currentRsvpStep() === 1"
+            class="menu-selection-container animate__animated animate__fadeIn mt-1 mb-auto">
+
+            <!-- Interactive Gourmet Dish Carousel with Arrows for Step 1 -->
+            <div class="carousel-spotlight-container position-relative mx-auto mb-2.5"
+              style="max-width: 340px; width: 100%;" (touchstart)="onTouchStart($event)"
+              (touchend)="onTouchEnd($event)">
+
+              <!-- Left Arrow -->
+              <button type="button" class="carousel-arrow arrow-left" (click)="prevCarouselItem()"
+                aria-label="Précédent" *ngIf="carouselItems().length > 1">
+                <i class="fa fa-chevron-left"></i>
+              </button>
+
+              <!-- Active Card -->
+              <div
+                class="carousel-card-wrapper border border-light rounded-3 bg-cream-light p-2.5 position-relative overflow-hidden shadow-sm w-100"
+                style="box-sizing: border-box;">
+                <div class="carousel-card-image-container mb-2 position-relative">
+                  <img [src]="carouselItems()[activeCarouselIndex()]?.image"
+                    [alt]="carouselItems()[activeCarouselIndex()]?.name"
+                    class="w-100 object-fit-cover rounded-2 shadow-sm" style="height: 115px;">
+                </div>
+                <div class="carousel-card-info text-center">
+                  <span
+                    class="badge bg-dark bg-opacity-75 text-white px-2.5 py-0.5 rounded-pill fs-xxs text-uppercase fw-semibold mb-1 d-inline-block"
+                    style="font-size: 0.62rem;">
+                    {{ carouselItems()[activeCarouselIndex()]?.categoryLabel }}
+                  </span>
+                  <h4 class="fs-xs fw-bold font-serif mb-0"
+                    style="color: #0f172a; min-height: 24px; display: flex; align-items: center; justify-content: center; font-size: 0.84rem; line-height: 1.25;">
+                    {{ carouselItems()[activeCarouselIndex()]?.name }}
+                  </h4>
+                </div>
+              </div>
+
+              <!-- Right Arrow -->
+              <button type="button" class="carousel-arrow arrow-right" (click)="nextCarouselItem()" aria-label="Suivant"
+                *ngIf="carouselItems().length > 1">
+                <i class="fa fa-chevron-right"></i>
               </button>
             </div>
 
-            <!-- Initial RSVP Action Section (Visible right from the start!) -->
-            <div class="final-rsvp-actions text-center mt-2">
-              <label class="form-label d-block text-center fw-bold text-gold text-uppercase fs-xs tracking-widest mb-3">
-                Votre Réponse
-              </label>
-
-              <!-- Side-by-side choices (Visible until one is selected) -->
-              <div class="d-flex gap-2 justify-content-center mb-2.5" *ngIf="selectedAttendanceChoice() === null">
-                <button type="button" class="btn btn-presence-yes flex-fill py-2 fs-xxs fw-semibold rounded-pill"
-                  (click)="selectAttendanceChoice('CONFIRMED')">
-                  <i class="fa fa-check me-1.5"></i> Je serai présent
-                </button>
-                <button type="button" class="btn btn-presence-no flex-fill py-2 fs-xxs fw-semibold rounded-pill"
-                  (click)="selectAttendanceChoice('DECLINED')">
-                  <i class="fa fa-times me-1.5"></i> Je ne pourrai pas venir
-                </button>
-              </div>
-
-              <!-- Dynamic Confirmation Button (Appears when choice is made) -->
-              <div *ngIf="selectedAttendanceChoice() !== null" class="animate__animated animate__fadeIn">
-                
-                <!-- Choice Feedback Badge -->
-                <div class="p-2 rounded-pill mb-2.5 d-flex align-items-center justify-content-between px-3"
-                  [ngClass]="selectedAttendanceChoice() === 'CONFIRMED' ? 'bg-success-subtle text-success border border-success' : 'bg-danger-subtle text-danger border border-danger'">
-                  <span class="fs-xs fw-bold">
-                    <i class="fa me-1.5" [ngClass]="selectedAttendanceChoice() === 'CONFIRMED' ? 'fa-check-circle' : 'fa-times-circle'"></i>
-                    Votre choix : {{ selectedAttendanceChoice() === 'CONFIRMED' ? 'Je serai présent' : 'Je ne pourrai pas venir' }}
-                  </span>
-                  <button type="button" class="btn btn-link btn-sm p-0 text-decoration-underline fs-xxs" 
-                    [ngClass]="selectedAttendanceChoice() === 'CONFIRMED' ? 'text-success' : 'text-danger'"
-                    (click)="selectedAttendanceChoice.set(null)">
-                    Modifier
-                  </button>
-                </div>
-
-                <!-- Single Confirmation Submission Button -->
-                <button type="button" class="btn w-100 py-2 fs-xs text-uppercase fw-bold rounded-pill shadow mb-2"
-                  [ngClass]="selectedAttendanceChoice() === 'CONFIRMED' ? 'btn-luxury-submit' : 'btn-presence-no'"
-                  (click)="confirmRsvpSubmission()" [disabled]="isSubmitting()">
-                  <span *ngIf="!isSubmitting()">
-                    <i class="fa fa-paper-plane me-2"></i>
-                    {{ selectedAttendanceChoice() === 'CONFIRMED' ? 'Confirmer ma présence' : 'Confirmer mon absence' }}
-                  </span>
-                  <span *ngIf="isSubmitting()"><i class="fa fa-spinner fa-spin me-2"></i>Enregistrement...</span>
-                </button>
-
-              </div>
-            </div>
-
-          </div>
-
-          <!-- STEP 1: Choix de votre Menu (Hidden by default, opened by Suivant) -->
-          <div *ngIf="currentRsvpStep() === 1" class="menu-selection-container animate__animated animate__fadeIn mb-4">
-            <h4 class="form-label d-block text-center fw-bold text-gold text-uppercase fs-xs tracking-widest mb-3">
+            <h4 class="form-label d-block text-center fw-bold text-dark text-uppercase fs-xs tracking-widest mb-2.5">
               Étape 1 : Choix de votre Menu
             </h4>
 
@@ -646,7 +681,8 @@
               <div class="row g-2 mb-2 text-start">
                 <!-- Entrée Selection -->
                 <div class="col-12 col-sm-6" *ngIf="starters().length > 0">
-                  <select class="form-select luxury-form-control py-1.5 fs-xs" [(ngModel)]="starterChoice" name="starterChoice">
+                  <select class="form-select luxury-form-control py-1.5 fs-xs" [(ngModel)]="starterChoice"
+                    name="starterChoice">
                     <option value="">-- Choix de l'Entrée --</option>
                     <option *ngFor="let item of starters()" [value]="item.name">
                       {{ item.name }} <span *ngIf="item.dietaryTag">({{ item.dietaryTag }})</span>
@@ -656,7 +692,8 @@
 
                 <!-- Plat Principal Selection -->
                 <div class="col-12 col-sm-6" *ngIf="mainDishes().length > 0">
-                  <select class="form-select luxury-form-control py-1.5 fs-xs" [(ngModel)]="mealChoice" name="mealChoice" required>
+                  <select class="form-select luxury-form-control py-1.5 fs-xs" [(ngModel)]="mealChoice"
+                    name="mealChoice" required>
                     <option value="">-- Choix du Plat Principal * --</option>
                     <option *ngFor="let item of mainDishes()" [value]="item.name">
                       {{ item.name }} <span *ngIf="item.dietaryTag">({{ item.dietaryTag }})</span>
@@ -666,7 +703,8 @@
 
                 <!-- Dessert Selection -->
                 <div class="col-12 col-sm-6" *ngIf="desserts().length > 0">
-                  <select class="form-select luxury-form-control py-1.5 fs-xs" [(ngModel)]="dessertChoice" name="dessertChoice">
+                  <select class="form-select luxury-form-control py-1.5 fs-xs" [(ngModel)]="dessertChoice"
+                    name="dessertChoice">
                     <option value="">-- Choix du Dessert --</option>
                     <option *ngFor="let item of desserts()" [value]="item.name">
                       {{ item.name }} <span *ngIf="item.dietaryTag">({{ item.dietaryTag }})</span>
@@ -676,7 +714,8 @@
 
                 <!-- Boisson Selection -->
                 <div class="col-12 col-sm-6" *ngIf="beverages().length > 0">
-                  <select class="form-select luxury-form-control py-1.5 fs-xs" [(ngModel)]="beverageChoice" name="beverageChoice">
+                  <select class="form-select luxury-form-control py-1.5 fs-xs" [(ngModel)]="beverageChoice"
+                    name="beverageChoice">
                     <option value="">-- Choix de la Boisson --</option>
                     <option *ngFor="let item of beverages()" [value]="item.name">
                       {{ item.name }} <span *ngIf="item.dietaryTag">({{ item.dietaryTag }})</span>
@@ -689,19 +728,23 @@
             <!-- Formule Mixte (Hybrid Buffet & Service assis) without redundant labels -->
             <div *ngIf="isMix()">
               <!-- Informative Buffet Entrees -->
-              <div class="mb-2 p-2 border rounded bg-cream text-start" *ngIf="starters().length > 0 || beverages().length > 0">
-                <h5 class="fs-xxs fw-bold text-gold text-uppercase mb-1">Buffet Libre-service</h5>
+              <div class="mb-2 p-2 border rounded bg-white bg-opacity-75 text-start"
+                *ngIf="starters().length > 0 || beverages().length > 0">
+                <h5 class="fs-xxs fw-bold text-dark text-uppercase mb-1">Buffet Libre-service</h5>
                 <p class="fs-xxs text-muted mb-1">Entrées & boissons servies en buffet libre-service :</p>
                 <div class="d-flex flex-wrap gap-1">
-                  <span class="badge bg-white text-dark border px-2 py-0.5 fs-xxs" *ngFor="let item of starters()">{{ item.name }}</span>
-                  <span class="badge bg-white text-dark border px-2 py-0.5 fs-xxs" *ngFor="let item of beverages()">{{ item.name }}</span>
+                  <span class="badge bg-white text-dark border px-2 py-0.5 fs-xxs" *ngFor="let item of starters()">{{
+                    item.name }}</span>
+                  <span class="badge bg-white text-dark border px-2 py-0.5 fs-xxs" *ngFor="let item of beverages()">{{
+                    item.name }}</span>
                 </div>
               </div>
 
               <div class="row g-2 mb-2 text-start">
                 <!-- Plat Principal Selection -->
                 <div class="col-12 col-sm-6" *ngIf="mainDishes().length > 0">
-                  <select class="form-select luxury-form-control py-1.5 fs-xs" [(ngModel)]="mealChoice" name="mealChoice" required>
+                  <select class="form-select luxury-form-control py-1.5 fs-xs" [(ngModel)]="mealChoice"
+                    name="mealChoice" required>
                     <option value="">-- Choix du Plat assis * --</option>
                     <option *ngFor="let item of mainDishes()" [value]="item.name">
                       {{ item.name }} <span *ngIf="item.dietaryTag">({{ item.dietaryTag }})</span>
@@ -711,7 +754,8 @@
 
                 <!-- Dessert Selection if present -->
                 <div class="col-12 col-sm-6" *ngIf="desserts().length > 0">
-                  <select class="form-select luxury-form-control py-1.5 fs-xs" [(ngModel)]="dessertChoice" name="dessertChoice">
+                  <select class="form-select luxury-form-control py-1.5 fs-xs" [(ngModel)]="dessertChoice"
+                    name="dessertChoice">
                     <option value="">-- Choix du Dessert --</option>
                     <option *ngFor="let item of desserts()" [value]="item.name">
                       {{ item.name }} <span *ngIf="item.dietaryTag">({{ item.dietaryTag }})</span>
@@ -723,18 +767,20 @@
 
             <!-- Formule Buffet -->
             <div *ngIf="isBuffet()">
-              <div class="p-3 border rounded bg-cream text-center mb-3">
-                <i class="fa fa-utensils fs-4 text-gold mb-2"></i>
-                <h5 class="fs-xs fw-bold text-gold text-uppercase mb-1">Formule Buffet Libre-Service</h5>
-                <p class="fs-xxs text-dark mb-0">Un buffet varié et d'exception sera à votre disposition tout au long de la réception.</p>
+              <div class="p-3 border rounded bg-white bg-opacity-75 text-center mb-3">
+                <i class="fa fa-utensils fs-4 text-dark mb-2"></i>
+                <h5 class="fs-xs fw-bold text-dark text-uppercase mb-1">Formule Buffet Libre-Service</h5>
+                <p class="fs-xxs text-dark mb-0">Un buffet varié et d'exception sera à votre disposition tout au long de
+                  la réception.</p>
               </div>
 
               <!-- Stations overview if items configured -->
-              <div class="mb-3 text-start" *ngIf="starters().length > 0 || mainDishes().length > 0 || desserts().length > 0">
+              <div class="mb-3 text-start"
+                *ngIf="starters().length > 0 || mainDishes().length > 0 || desserts().length > 0">
                 <div class="row g-2">
                   <div class="col-6" *ngIf="starters().length > 0">
                     <div class="p-2 border rounded bg-white h-100">
-                      <div class="fs-xxs fw-bold text-gold-muted uppercase mb-1">Entrées</div>
+                      <div class="fs-xxs fw-bold text-dark uppercase mb-1">Entrées</div>
                       <ul class="ps-3 mb-0 fs-xxs text-dark">
                         <li *ngFor="let item of starters()">{{ item.name }}</li>
                       </ul>
@@ -742,7 +788,7 @@
                   </div>
                   <div class="col-6" *ngIf="mainDishes().length > 0">
                     <div class="p-2 border rounded bg-white h-100">
-                      <div class="fs-xxs fw-bold text-gold-muted uppercase mb-1">Plats Chauds</div>
+                      <div class="fs-xxs fw-bold text-dark uppercase mb-1">Plats Chauds</div>
                       <ul class="ps-3 mb-0 fs-xxs text-dark">
                         <li *ngFor="let item of mainDishes()">{{ item.name }}</li>
                       </ul>
@@ -750,7 +796,7 @@
                   </div>
                   <div class="col-6" *ngIf="desserts().length > 0">
                     <div class="p-2 border rounded bg-white h-100">
-                      <div class="fs-xxs fw-bold text-gold-muted uppercase mb-1">Desserts</div>
+                      <div class="fs-xxs fw-bold text-dark uppercase mb-1">Desserts</div>
                       <ul class="ps-3 mb-0 fs-xxs text-dark">
                         <li *ngFor="let item of desserts()">{{ item.name }}</li>
                       </ul>
@@ -758,7 +804,7 @@
                   </div>
                   <div class="col-6" *ngIf="beverages().length > 0">
                     <div class="p-2 border rounded bg-white h-100">
-                      <div class="fs-xxs fw-bold text-gold-muted uppercase mb-1">Boissons</div>
+                      <div class="fs-xxs fw-bold text-dark uppercase mb-1">Boissons</div>
                       <ul class="ps-3 mb-0 fs-xxs text-dark">
                         <li *ngFor="let item of beverages()">{{ item.name }}</li>
                       </ul>
@@ -769,27 +815,73 @@
             </div>
 
             <!-- Navigation Buttons in Step 1 -->
-            <div class="d-flex gap-3 justify-content-between mt-3">
-              <button type="button" class="btn btn-alt-secondary w-50 py-2 fs-xs fw-semibold rounded-pill" (click)="goToPrevStep()">
+            <div class="d-flex gap-3 justify-content-between mt-3 mx-auto" style="max-width: 280px;">
+              <button type="button" class="btn btn-page2-nav-prev flex-fill py-1.5 px-3 fs-xxs fw-bold rounded-pill"
+                (click)="goToPrevStep()">
                 <i class="fa fa-arrow-left me-1"></i> Précédent
               </button>
-              <button type="button" class="btn btn-gold-success w-50 py-2 fs-xs fw-semibold rounded-pill" (click)="goToNextStep()">
+              <button type="button" class="btn btn-page2-nav-next flex-fill py-1.5 px-3 fs-xxs fw-bold rounded-pill"
+                (click)="goToNextStep()">
                 Suivant <i class="fa fa-arrow-right ms-1"></i>
               </button>
             </div>
           </div>
 
-          <!-- STEP 2: Allergies & Remarques -->
-          <div *ngIf="currentRsvpStep() === 2" class="extra-rsvp-sections animate__animated animate__fadeIn mb-4">
-            <h4 class="form-label d-block text-center fw-bold text-gold text-uppercase fs-xs tracking-widest mb-4">
+          <!-- STEP 2: Allergies & Remarques (Positioned upwards in top area) -->
+          <div *ngIf="currentRsvpStep() === 2"
+            class="extra-rsvp-sections animate__animated animate__fadeIn mt-1 mb-auto">
+
+            <!-- Interactive Gourmet Dish Carousel with Arrows for Step 2 -->
+            <div class="carousel-spotlight-container position-relative mx-auto mb-2.5"
+              style="max-width: 340px; width: 100%;" (touchstart)="onTouchStart($event)"
+              (touchend)="onTouchEnd($event)">
+
+              <!-- Left Arrow -->
+              <button type="button" class="carousel-arrow arrow-left" (click)="prevCarouselItem()"
+                aria-label="Précédent" *ngIf="carouselItems().length > 1">
+                <i class="fa fa-chevron-left"></i>
+              </button>
+
+              <!-- Active Card -->
+              <div
+                class="carousel-card-wrapper border border-light rounded-3 bg-cream-light p-2.5 position-relative overflow-hidden shadow-sm w-100"
+                style="box-sizing: border-box;">
+                <div class="carousel-card-image-container mb-2 position-relative">
+                  <img [src]="carouselItems()[activeCarouselIndex()]?.image"
+                    [alt]="carouselItems()[activeCarouselIndex()]?.name"
+                    class="w-100 object-fit-cover rounded-2 shadow-sm" style="height: 115px;">
+                </div>
+                <div class="carousel-card-info text-center">
+                  <span
+                    class="badge bg-dark bg-opacity-75 text-white px-2.5 py-0.5 rounded-pill fs-xxs text-uppercase fw-semibold mb-1 d-inline-block"
+                    style="font-size: 0.62rem;">
+                    {{ carouselItems()[activeCarouselIndex()]?.categoryLabel }}
+                  </span>
+                  <h4 class="fs-xs fw-bold font-serif mb-0"
+                    style="color: #0f172a; min-height: 24px; display: flex; align-items: center; justify-content: center; font-size: 0.84rem; line-height: 1.25;">
+                    {{ carouselItems()[activeCarouselIndex()]?.name }}
+                  </h4>
+                </div>
+              </div>
+
+              <!-- Right Arrow -->
+              <button type="button" class="carousel-arrow arrow-right" (click)="nextCarouselItem()" aria-label="Suivant"
+                *ngIf="carouselItems().length > 1">
+                <i class="fa fa-chevron-right"></i>
+              </button>
+            </div>
+
+            <h4 class="form-label d-block text-center fw-bold text-dark text-uppercase fs-xs tracking-widest mb-2.5">
               Étape 2 : Allergies & Remarques
             </h4>
 
-            <div class="mb-4">
-              <label class="form-label d-block fw-bold text-gold text-uppercase fs-xs tracking-widest mb-2">Régimes Particuliers & Allergies</label>
+            <div class="mb-3">
+              <label class="form-label d-block fw-bold text-dark text-uppercase fs-xxs tracking-widest mb-2">Régimes
+                Particuliers & Allergies</label>
               <div class="dietary-pills-container">
                 <label class="dietary-pill" [class.active-pill]="hasVegetarien" for="dietVeg">
-                  <input type="checkbox" id="dietVeg" [(ngModel)]="hasVegetarien" name="hasVegetarien" class="dietary-checkbox">
+                  <input type="checkbox" id="dietVeg" [(ngModel)]="hasVegetarien" name="hasVegetarien"
+                    class="dietary-checkbox">
                   <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasVegetarien"></i> Végétarien
                 </label>
                 <label class="dietary-pill" [class.active-pill]="hasVegan" for="dietVegan">
@@ -797,11 +889,13 @@
                   <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasVegan"></i> Vegan
                 </label>
                 <label class="dietary-pill" [class.active-pill]="hasGlutenFree" for="dietGluten">
-                  <input type="checkbox" id="dietGluten" [(ngModel)]="hasGlutenFree" name="hasGlutenFree" class="dietary-checkbox">
+                  <input type="checkbox" id="dietGluten" [(ngModel)]="hasGlutenFree" name="hasGlutenFree"
+                    class="dietary-checkbox">
                   <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasGlutenFree"></i> Sans gluten
                 </label>
                 <label class="dietary-pill" [class.active-pill]="hasLactoseFree" for="dietLactose">
-                  <input type="checkbox" id="dietLactose" [(ngModel)]="hasLactoseFree" name="hasLactoseFree" class="dietary-checkbox">
+                  <input type="checkbox" id="dietLactose" [(ngModel)]="hasLactoseFree" name="hasLactoseFree"
+                    class="dietary-checkbox">
                   <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasLactoseFree"></i> Sans lactose
                 </label>
                 <label class="dietary-pill" [class.active-pill]="hasHalal" for="dietHalal">
@@ -809,128 +903,147 @@
                   <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasHalal"></i> Halal
                 </label>
                 <label class="dietary-pill" [class.active-pill]="hasFruitsDeMerFree" for="dietFruitsDeMer">
-                  <input type="checkbox" id="dietFruitsDeMer" [(ngModel)]="hasFruitsDeMerFree" name="hasFruitsDeMerFree" class="dietary-checkbox">
+                  <input type="checkbox" id="dietFruitsDeMer" [(ngModel)]="hasFruitsDeMerFree" name="hasFruitsDeMerFree"
+                    class="dietary-checkbox">
                   <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasFruitsDeMerFree"></i> Sans Fruits de mer
                 </label>
                 <label class="dietary-pill" [class.active-pill]="hasSucreFree" for="dietSucre">
-                  <input type="checkbox" id="dietSucre" [(ngModel)]="hasSucreFree" name="hasSucreFree" class="dietary-checkbox">
+                  <input type="checkbox" id="dietSucre" [(ngModel)]="hasSucreFree" name="hasSucreFree"
+                    class="dietary-checkbox">
                   <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasSucreFree"></i> Sans Sucre
                 </label>
                 <label class="dietary-pill full-width-pill" [class.active-pill]="hasArachidesFree" for="dietArachides">
-                  <input type="checkbox" id="dietArachides" [(ngModel)]="hasArachidesFree" name="hasArachidesFree" class="dietary-checkbox">
-                  <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasArachidesFree"></i> Sans Arachides (Alerte Médicale)
+                  <input type="checkbox" id="dietArachides" [(ngModel)]="hasArachidesFree" name="hasArachidesFree"
+                    class="dietary-checkbox">
+                  <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasArachidesFree"></i> Sans Arachides (Alerte
+                  Médicale)
                 </label>
               </div>
             </div>
 
             <!-- Custom Allergies -->
-            <div class="mb-4">
-              <label class="form-label fw-bold text-gold text-uppercase fs-xs tracking-widest mb-2">Autres allergies ou restrictions</label>
-              <textarea class="form-control luxury-form-control py-2" rows="3" placeholder="Ex: sans arachide, allergie aux fraises, etc..." [(ngModel)]="otherAllergies" name="otherAllergies"></textarea>
+            <div class="mb-3">
+              <label class="form-label fw-bold text-dark text-uppercase fs-xxs tracking-widest mb-1.5">Autres allergies
+                ou restrictions</label>
+              <textarea class="form-control luxury-form-control py-1.5 fs-xs" rows="2"
+                placeholder="Ex: sans arachide, allergie aux fraises, etc..." [(ngModel)]="otherAllergies"
+                name="otherAllergies"></textarea>
             </div>
 
             <!-- Step Navigation Buttons -->
-            <div class="d-flex gap-3 justify-content-between mt-4">
-              <button type="button" class="btn btn-alt-secondary w-50 py-2.5 fs-xs fw-semibold rounded-pill" (click)="goToPrevStep()">
+            <div class="d-flex gap-3 justify-content-between mt-3 mx-auto" style="max-width: 280px;">
+              <button type="button" class="btn btn-page2-nav-prev flex-fill py-1.5 px-3 fs-xxs fw-bold rounded-pill"
+                (click)="goToPrevStep()">
                 <i class="fa fa-arrow-left me-1"></i> Précédent
               </button>
-              <button type="button" class="btn btn-gold-success w-50 py-2.5 fs-xs fw-semibold rounded-pill" (click)="goToNextStep()">
+              <button type="button" class="btn btn-page2-nav-next flex-fill py-1.5 px-3 fs-xxs fw-bold rounded-pill"
+                (click)="goToNextStep()">
                 Suivant <i class="fa fa-arrow-right ms-1"></i>
               </button>
             </div>
           </div>
 
-          <!-- STEP 3: Confirmation & Réponse Finale -->
-          <div *ngIf="currentRsvpStep() === 3" class="rsvp-summary-container animate__animated animate__fadeIn mb-4">
-            <h4 class="form-label d-block text-center fw-bold text-gold text-uppercase fs-xs tracking-widest mb-4">
-              Étape 3 : Confirmation & Réponse Finale
+          <!-- STEP 3: Confirmation & Récapitulatif (Positioned upwards in top area) -->
+          <div *ngIf="currentRsvpStep() === 3"
+            class="rsvp-summary-container animate__animated animate__fadeIn mt-1 mb-auto">
+            <h4 class="form-label d-block text-center fw-bold text-dark text-uppercase fs-xs tracking-widest mb-3">
+              Étape 3 : Récapitulatif de vos choix
             </h4>
 
-            <div class="summary-box p-4 rounded-2 bg-cream text-start mb-4">
-              <h5 class="fs-xs fw-bold text-gold uppercase tracking-wider mb-3">Vos choix pour la réception</h5>
-              
+            <div class="summary-box p-3 rounded-2 bg-white bg-opacity-80 border border-dark-subtle text-start mb-2">
+              <h5 class="fs-xxs fw-bold text-dark uppercase tracking-wider mb-2">Vos choix pour la réception</h5>
+
               <!-- Menu Selection Summary -->
-              <div class="mb-3">
-                <div class="fs-xs fw-bold text-gold-muted text-uppercase mb-1">Choix du Menu</div>
+              <div class="mb-2">
+                <div class="fs-xxs fw-bold text-dark text-uppercase mb-1">Choix du Menu</div>
                 <ng-container *ngIf="isPlated()">
-                  <div class="fs-sm text-dark mb-1" *ngIf="starterChoice"><strong>Entrée :</strong> {{ starterChoice }}</div>
-                  <div class="fs-sm text-dark mb-1"><strong>Plat Principal :</strong> {{ mealChoice || 'Non spécifié' }}</div>
-                  <div class="fs-sm text-dark mb-1" *ngIf="dessertChoice"><strong>Dessert :</strong> {{ dessertChoice }}</div>
-                  <div class="fs-sm text-dark mb-1" *ngIf="beverageChoice"><strong>Boisson :</strong> {{ beverageChoice }}</div>
+                  <div class="fs-xs text-dark mb-0.5" *ngIf="starterChoice"><strong>Entrée :</strong> {{ starterChoice
+                    }}</div>
+                  <div class="fs-xs text-dark mb-0.5"><strong>Plat Principal :</strong> {{ mealChoice || 'Non spécifié'
+                    }}</div>
+                  <div class="fs-xs text-dark mb-0.5" *ngIf="dessertChoice"><strong>Dessert :</strong> {{ dessertChoice
+                    }}</div>
+                  <div class="fs-xs text-dark mb-0.5" *ngIf="beverageChoice"><strong>Boisson :</strong> {{
+                    beverageChoice }}</div>
                 </ng-container>
                 <ng-container *ngIf="isMix()">
-                  <div class="fs-sm text-dark mb-1"><strong>Plat Principal (assis) :</strong> {{ mealChoice || 'Non spécifié' }}</div>
-                  <div class="fs-sm text-dark mb-1" *ngIf="dessertChoice"><strong>Dessert :</strong> {{ dessertChoice }}</div>
-                  <div class="fs-sm text-muted mb-1">Entrées & Boissons d'accueil servis en buffet libre-service</div>
+                  <div class="fs-xs text-dark mb-0.5"><strong>Plat Principal (assis) :</strong> {{ mealChoice || 'Non
+                    spécifié' }}</div>
+                  <div class="fs-xs text-dark mb-0.5" *ngIf="dessertChoice"><strong>Dessert :</strong> {{ dessertChoice
+                    }}</div>
+                  <div class="fs-xs text-muted mb-0.5">Entrées & Boissons d'accueil servis en buffet libre-service</div>
                 </ng-container>
                 <ng-container *ngIf="isBuffet()">
-                  <div class="fs-sm text-dark mb-1">Formule Buffet Libre-Service</div>
+                  <div class="fs-xs text-dark mb-0.5">Formule Buffet Libre-Service</div>
                 </ng-container>
               </div>
 
               <!-- Dietary & Allergies Summary -->
-              <div class="mb-2">
-                <div class="fs-xs fw-bold text-gold-muted text-uppercase mb-1">Régimes & Allergies</div>
-                <div class="fs-sm text-dark">
+              <div class="mb-1">
+                <div class="fs-xxs fw-bold text-dark text-uppercase mb-1">Régimes & Allergies</div>
+                <div class="fs-xs text-dark">
                   {{ getSelectedDietsSummary() }}
                 </div>
               </div>
             </div>
 
-            <!-- Final RSVP Action Section -->
-            <div class="final-rsvp-actions text-center mt-4">
-              <label class="form-label d-block text-center fw-bold text-gold text-uppercase fs-xs tracking-widest mb-3">
-                Votre Réponse Finale
-              </label>
+            <!-- Back to previous step link in Step 3 -->
+            <div class="text-center mb-1">
+              <button type="button" class="btn btn-link text-dark fs-xxs py-1 text-decoration-none fw-semibold"
+                (click)="goToPrevStep()">
+                <i class="fa fa-arrow-left me-1"></i> Modifier mes choix de menu
+              </button>
+            </div>
+          </div>
 
-              <!-- Side-by-side choices (Visible until one is selected) -->
-              <div class="d-flex gap-2 justify-content-center mb-2.5" *ngIf="selectedAttendanceChoice() === null">
-                <button type="button" class="btn btn-presence-yes flex-fill py-2 fs-xxs fw-semibold rounded-pill"
-                  (click)="selectAttendanceChoice('CONFIRMED')">
-                  <i class="fa fa-check me-1.5"></i> Je serai présent
-                </button>
-                <button type="button" class="btn btn-presence-no flex-fill py-2 fs-xxs fw-semibold rounded-pill"
-                  (click)="selectAttendanceChoice('DECLINED')">
-                  <i class="fa fa-times me-1.5"></i> Je ne pourrai pas venir
-                </button>
-              </div>
+          <!-- PERSISTENT RSVP ACTION SECTION (Visible across ALL steps in the exact same bottom place) -->
+          <div class="final-rsvp-actions text-center mt-auto mx-auto pt-2" style="max-width: 270px; width: 100%;">
+            <label class="form-label d-block text-center fw-bold text-dark text-uppercase tracking-widest mb-1.5"
+              style="letter-spacing: 1.5px; opacity: 0.9; font-size: 0.66rem;">
+              Votre Réponse
+            </label>
 
-              <!-- Dynamic Confirmation Button (Appears when choice is made) -->
-              <div *ngIf="selectedAttendanceChoice() !== null" class="animate__animated animate__fadeIn">
-                
-                <!-- Choice Feedback Badge -->
-                <div class="p-2 rounded-pill mb-2.5 d-flex align-items-center justify-content-between px-3"
-                  [ngClass]="selectedAttendanceChoice() === 'CONFIRMED' ? 'bg-success-subtle text-success border border-success' : 'bg-danger-subtle text-danger border border-danger'">
-                  <span class="fs-xs fw-bold">
-                    <i class="fa me-1.5" [ngClass]="selectedAttendanceChoice() === 'CONFIRMED' ? 'fa-check-circle' : 'fa-times-circle'"></i>
-                    Votre choix : {{ selectedAttendanceChoice() === 'CONFIRMED' ? 'Je serai présent' : 'Je ne pourrai pas venir' }}
-                  </span>
-                  <button type="button" class="btn btn-link btn-sm p-0 text-decoration-underline fs-xxs" 
-                    [ngClass]="selectedAttendanceChoice() === 'CONFIRMED' ? 'text-success' : 'text-danger'"
-                    (click)="selectedAttendanceChoice.set(null)">
-                    Modifier
-                  </button>
-                </div>
+            <!-- Side-by-side choices (Small, compact & elegant) -->
+            <div class="d-flex gap-2 justify-content-center mb-1" *ngIf="selectedAttendanceChoice() === null">
+              <button type="button" class="btn btn-presence-yes flex-fill py-1 px-2 fs-xxs fw-bold rounded-pill"
+                (click)="selectAttendanceChoice('CONFIRMED')">
+                <i class="fa fa-check me-1"></i> Accepté
+              </button>
+              <button type="button" class="btn btn-presence-no flex-fill py-1 px-2 fs-xxs fw-bold rounded-pill"
+                (click)="selectAttendanceChoice('DECLINED')">
+                <i class="fa fa-times me-1"></i> Décliné
+              </button>
+            </div>
 
-                <!-- Single Confirmation Submission Button -->
-                <button type="button" class="btn w-100 py-2 fs-xs text-uppercase fw-bold rounded-pill shadow mb-2"
-                  [ngClass]="selectedAttendanceChoice() === 'CONFIRMED' ? 'btn-luxury-submit' : 'btn-presence-no'"
-                  (click)="confirmRsvpSubmission()" [disabled]="isSubmitting()">
-                  <span *ngIf="!isSubmitting()">
-                    <i class="fa fa-paper-plane me-2"></i>
-                    {{ selectedAttendanceChoice() === 'CONFIRMED' ? 'Confirmer ma présence' : 'Confirmer mon absence' }}
-                  </span>
-                  <span *ngIf="isSubmitting()"><i class="fa fa-spinner fa-spin me-2"></i>Enregistrement...</span>
-                </button>
+            <!-- Dynamic Confirmation Button (Appears when choice is made) -->
+            <div *ngIf="selectedAttendanceChoice() !== null" class="animate__animated animate__fadeIn">
 
-              </div>
-
-              <!-- Back to previous step link -->
-              <div class="text-center mt-3">
-                <button type="button" class="btn btn-link text-muted fs-xs py-1" (click)="goToPrevStep()">
-                  <i class="fa fa-arrow-left me-1"></i> Précédent (Modifier mes choix)
+              <!-- Choice Feedback Badge -->
+              <div class="p-1.5 rounded-pill mb-2 d-flex align-items-center justify-content-between px-3"
+                [ngClass]="selectedAttendanceChoice() === 'CONFIRMED' ? 'bg-success-subtle text-success border border-success' : 'bg-danger-subtle text-danger border border-danger'">
+                <span class="fs-xxs fw-bold">
+                  <i class="fa me-1"
+                    [ngClass]="selectedAttendanceChoice() === 'CONFIRMED' ? 'fa-check-circle' : 'fa-times-circle'"></i>
+                  Votre choix : {{ selectedAttendanceChoice() === 'CONFIRMED' ? 'Accepté' : 'Décliné' }}
+                </span>
+                <button type="button" class="btn btn-link btn-sm p-0 text-decoration-underline fs-xxs"
+                  [ngClass]="selectedAttendanceChoice() === 'CONFIRMED' ? 'text-success' : 'text-danger'"
+                  (click)="selectedAttendanceChoice.set(null)">
+                  Modifier
                 </button>
               </div>
+
+              <!-- Single Confirmation Submission Button -->
+              <button type="button" class="btn w-100 py-2 fs-xs text-uppercase fw-bold rounded-pill shadow-sm mb-1"
+                [ngClass]="selectedAttendanceChoice() === 'CONFIRMED' ? 'btn-luxury-submit' : 'btn-presence-no'"
+                (click)="confirmRsvpSubmission()" [disabled]="isSubmitting()">
+                <span *ngIf="!isSubmitting()">
+                  <i class="fa fa-paper-plane me-1.5"></i>
+                  {{ selectedAttendanceChoice() === 'CONFIRMED' ? 'Confirmer ma présence' : 'Confirmer mon absence' }}
+                </span>
+                <span *ngIf="isSubmitting()"><i class="fa fa-spinner fa-spin me-1.5"></i>Enregistrement...</span>
+              </button>
+
             </div>
           </div>
 

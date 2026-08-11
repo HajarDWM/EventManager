@@ -12,6 +12,7 @@ export interface DigitalTemplate {
   decorativeFrame?: string; // floral-frame, gold-border, geometric-frame, minimal-edge
   accentColor?: string;
   backgroundColor?: string;
+  backgroundImageUrl?: string;
   htmlContent?: string;
 }
 

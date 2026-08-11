@@ -49,10 +49,16 @@ public class AdminTemplateController {
     @PutMapping("/{id}")
     public ResponseEntity<DigitalInvitationTemplateEntity> updateTemplate(@PathVariable Long id, @RequestBody DigitalInvitationTemplateEntity updated) {
         return repository.findById(id).map(existing -> {
-            existing.setTitle(updated.getTitle());
-            existing.setCategory(updated.getCategory());
-            existing.setDescription(updated.getDescription());
-            if (updated.getImageUrl() != null && !updated.getImageUrl().isBlank()) {
+            if (updated.getTitle() != null && !updated.getTitle().isBlank()) {
+                existing.setTitle(updated.getTitle());
+            }
+            if (updated.getCategory() != null && !updated.getCategory().isBlank()) {
+                existing.setCategory(updated.getCategory());
+            }
+            if (updated.getDescription() != null) {
+                existing.setDescription(updated.getDescription());
+            }
+            if (updated.getImageUrl() != null) {
                 existing.setImageUrl(updated.getImageUrl());
             }
             if (updated.getTemplateKey() != null && !updated.getTemplateKey().isBlank()) {
@@ -67,7 +73,10 @@ public class AdminTemplateController {
             if (updated.getBackgroundColor() != null && !updated.getBackgroundColor().isBlank()) {
                 existing.setBackgroundColor(updated.getBackgroundColor());
             }
-            if (updated.getHtmlContent() != null && !updated.getHtmlContent().isBlank()) {
+            if (updated.getBackgroundImageUrl() != null) {
+                existing.setBackgroundImageUrl(updated.getBackgroundImageUrl());
+            }
+            if (updated.getHtmlContent() != null) {
                 existing.setHtmlContent(updated.getHtmlContent());
             }
             return ResponseEntity.ok(repository.save(existing));

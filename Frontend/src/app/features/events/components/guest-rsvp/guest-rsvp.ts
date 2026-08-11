@@ -27,6 +27,7 @@ export interface PublicRsvpDetail {
   decorativeFrame?: string; // floral-frame, gold-border, geometric-frame, minimal-edge
   accentColor?: string;
   backgroundColor?: string;
+  templateBackgroundImageUrl?: string;
   menuItems?: any[];
 }
 
@@ -47,8 +48,17 @@ export class GuestRsvp implements OnInit, OnDestroy {
   protected readonly isSuccess = signal(false);
   protected readonly errorMessage = signal('');
   protected readonly isFullMenuModalOpen = signal(false);
+  protected readonly isMenuRsvpOpen = signal(false);
   protected readonly activeCarouselIndex = signal<number>(0);
   private touchStartX = 0;
+
+  protected openMenuAndRsvp(): void {
+    this.isMenuRsvpOpen.set(true);
+  }
+
+  protected closeMenuAndRsvp(): void {
+    this.isMenuRsvpOpen.set(false);
+  }
 
   protected readonly carouselItems = computed<any[]>(() => {
     const data = this.guest();
@@ -118,6 +128,37 @@ export class GuestRsvp implements OnInit, OnDestroy {
   protected readonly isBuffet = computed(() => !this.hasFormat('PLATS_FIXES'));
   protected readonly isPlated = computed(() => this.hasFormat('PLATS_FIXES') && !this.hasFormat('BUFFET_ENTREES'));
 
+  protected getStep1PreviewImage(): string {
+    const items = this.carouselItems();
+    if (items.length > 1) return items[1]?.image || items[0]?.image;
+    return '/assets/images/menu_main.png';
+  }
+
+  protected getStep1PreviewCategory(): string {
+    const items = this.carouselItems();
+    if (items.length > 1) return items[1]?.categoryLabel || 'Plat Principal';
+    return 'Plat Principal';
+  }
+
+  protected getStep1PreviewName(): string {
+    if (this.mealChoice) return this.mealChoice;
+    const items = this.carouselItems();
+    if (items.length > 1) return items[1]?.name || 'Plat Signature';
+    return 'Plat Signature';
+  }
+
+  protected getStep2PreviewImage(): string {
+    const items = this.carouselItems();
+    if (items.length > 2) return items[2]?.image || items[0]?.image;
+    return '/assets/images/menu_dessert.png';
+  }
+
+  protected getStep2PreviewName(): string {
+    const items = this.carouselItems();
+    if (items.length > 2) return items[2]?.name || 'Mille-feuille & Douceurs';
+    return 'Mille-feuille & Douceurs';
+  }
+
   // Categorized menu items
   protected readonly starters = signal<any[]>([]);
   protected readonly mainDishes = signal<any[]>([]);
@@ -126,7 +167,7 @@ export class GuestRsvp implements OnInit, OnDestroy {
 
   // Form states
   protected readonly status = signal<string>('PENDING'); // CONFIRMED, DECLINED, PENDING
-  
+
   // Explicit boolean visibility state requested by user
   public attendanceStatus: boolean | null = null;
 
@@ -145,7 +186,7 @@ export class GuestRsvp implements OnInit, OnDestroy {
   public hasHalal = false;
   public hasFruitsDeMerFree = false;
   public hasSucreFree = false;
-  
+
   public otherAllergies = '';
   public hasDietsChoice: boolean | null = null;
 
@@ -244,6 +285,10 @@ export class GuestRsvp implements OnInit, OnDestroy {
     return this.guest()?.backgroundColor || (this.resolvedTemplateId === 'or-et-velours' ? '#0b0b0b' : '#faf6ee');
   }
 
+  public get resolvedBackgroundImage(): string | null {
+    return this.guest()?.templateBackgroundImageUrl || null;
+  }
+
   public ngOnInit(): void {
     const guestId = this.route.snapshot.paramMap.get('id');
     if (!guestId) {
@@ -257,16 +302,16 @@ export class GuestRsvp implements OnInit, OnDestroy {
         console.log('Public RSVP data loaded:', data);
         this.guest.set(data);
         this.status.set(data.guestStatus || 'PENDING');
-        
+
         // Initialize attendanceStatus for natural exploration
         this.attendanceStatus = true;
-        
+
         if (data.mealType) {
           this.mealType.set(data.mealType);
         } else {
           this.mealType.set('PLATS_FIXES');
         }
-        
+
         // Categorize menu items
         if (data.menuItems) {
           this.starters.set(data.menuItems.filter(item => item.category === 'STARTER' || item.category === 'BUFFET_STARTER'));
@@ -279,7 +324,7 @@ export class GuestRsvp implements OnInit, OnDestroy {
         if (data.dietaryRequirements) {
           const diets = data.dietaryRequirements.split(',').map(d => d.trim());
           const lowerDiets = diets.map(d => d.toLowerCase());
-          
+
           if (lowerDiets.includes('végétarien') || lowerDiets.includes('vegetarien')) this.hasVegetarien = true;
           if (lowerDiets.includes('végétalien') || lowerDiets.includes('vegan') || lowerDiets.includes('végétalienne')) this.hasVegan = true;
           if (lowerDiets.includes('sans gluten') || lowerDiets.includes('gluten-free')) this.hasGlutenFree = true;
@@ -288,7 +333,7 @@ export class GuestRsvp implements OnInit, OnDestroy {
           if (lowerDiets.includes('halal')) this.hasHalal = true;
           if (lowerDiets.includes('sans fruits de mer') || lowerDiets.includes('fruits-de-mer-free')) this.hasFruitsDeMerFree = true;
           if (lowerDiets.includes('sans sucre') || lowerDiets.includes('sucre-free')) this.hasSucreFree = true;
-          
+
           // Reconstruct selected starters, mains, beverages if present (only if PLATS_FIXES is selected)
           if (this.hasFormat('PLATS_FIXES')) {
             const starterPrefix = diets.find(d => d.startsWith('Entrée: '));
@@ -325,7 +370,7 @@ export class GuestRsvp implements OnInit, OnDestroy {
             this.otherAllergies = remaining.join(', ');
           }
         }
-        
+
         this.isLoading.set(false);
       },
       error: (err) => {
@@ -377,7 +422,7 @@ export class GuestRsvp implements OnInit, OnDestroy {
     if (this.hasFruitsDeMerFree) list.push('Sans fruits de mer');
     if (this.hasSucreFree) list.push('Sans sucre');
     if (this.otherAllergies.trim()) list.push(this.otherAllergies.trim());
-    
+
     return list.length > 0 ? list.join(', ') : 'Aucune restriction ou allergie';
   }
 
@@ -390,7 +435,7 @@ export class GuestRsvp implements OnInit, OnDestroy {
 
     // Reconstruct dietaryRequirements field
     const activeDiets: string[] = [];
-    
+
     // Add specific dish selections only if CONFIRMED and PLATS_FIXES is selected
     if (this.attendanceStatus === true && this.hasFormat('PLATS_FIXES')) {
       if (this.starterChoice) {
@@ -418,7 +463,7 @@ export class GuestRsvp implements OnInit, OnDestroy {
         if (this.hasHalal) activeDiets.push('Halal');
         if (this.hasFruitsDeMerFree) activeDiets.push('Sans fruits de mer');
         if (this.hasSucreFree) activeDiets.push('Sans sucre');
-        
+
         if (this.otherAllergies.trim()) {
           activeDiets.push(this.otherAllergies.trim());
         }
@@ -534,7 +579,7 @@ export class GuestRsvp implements OnInit, OnDestroy {
     if (this.audioElement) {
       try {
         this.audioElement.pause();
-      } catch (e) {}
+      } catch (e) { }
     }
     this.stopHarmonicChords();
   }
@@ -600,11 +645,11 @@ export class GuestRsvp implements OnInit, OnDestroy {
   private stopHarmonicChords(): void {
     this.isSynthesizing = false;
     this.webAudioOscillators.forEach(osc => {
-      try { osc.stop(); } catch (e) {}
+      try { osc.stop(); } catch (e) { }
     });
     this.webAudioOscillators = [];
     if (this.webAudioCtx && this.webAudioCtx.state === 'running') {
-      try { this.webAudioCtx.suspend(); } catch (e) {}
+      try { this.webAudioCtx.suspend(); } catch (e) { }
     }
   }
 

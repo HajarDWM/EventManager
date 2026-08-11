@@ -35,5 +35,6 @@ public class PublicRsvpDTO {
     private String decorativeFrame; // floral-frame, gold-border, geometric-frame, minimal-edge
     private String accentColor;
     private String backgroundColor;
+    private String templateBackgroundImageUrl;
     private java.util.List<MenuItemDTO> menuItems;
 }
