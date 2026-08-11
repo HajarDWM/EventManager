@@ -77,6 +77,24 @@
                    [disabled]="isQuotaReached()">
           </div>
 
+          <!-- Thème & Modèle de Faire-part -->
+          <div class="mb-4" *ngIf="templates().length > 0">
+            <label class="form-label fs-sm fw-semibold" for="event-template">
+              <i class="fa fa-paint-brush me-1 text-primary"></i> Modèle & Thème de Faire-part Digital
+            </label>
+            <select class="form-select form-control-alt fs-sm"
+                    id="event-template" name="event-template"
+                    [ngModel]="selectedTemplateId()" (ngModelChange)="selectedTemplateId.set($event)"
+                    [disabled]="isQuotaReached()">
+              <option *ngFor="let tpl of templates()" [value]="tpl.id">
+                {{ tpl.title }} — {{ tpl.category }} ({{ tpl.decorativeFrame === 'floral-frame' ? '🌸 Cadre Floral' : (tpl.decorativeFrame === 'gold-border' ? '⚜️ Dorures & Velours' : (tpl.decorativeFrame === 'geometric-frame' ? '📐 Géométrique' : '✨ Minimaliste')) }})
+              </option>
+            </select>
+            <div class="form-text fs-xs text-muted">
+              Le style visuel, les calques décoratifs et l'ambiance de la page RSVP seront automatiquement appliqués.
+            </div>
+          </div>
+
           <!-- Actions -->
           <div class="mb-4 d-flex gap-2">
             <button type="submit" class="btn btn-primary fs-sm px-4" [disabled]="isQuotaReached() || isLoading()">

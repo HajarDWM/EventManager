@@ -1,8 +1,62 @@
-<div class="rsvp-luxury-wrapper py-5 px-3 d-flex align-items-center justify-content-center"
+<div class="rsvp-luxury-wrapper py-5 px-3 d-flex align-items-center justify-content-center position-relative"
   [class.fleurs-de-coton-theme]="resolvedTemplateId === 'fleurs-de-coton'"
   [class.or-et-velours-theme]="resolvedTemplateId === 'or-et-velours'"
   [class.corporate-professional-theme]="resolvedTemplateId === 'corporate-professional'"
-  [class.luxury-minimal-theme]="resolvedTemplateId === 'luxury-minimal'">
+  [class.luxury-minimal-theme]="resolvedTemplateId === 'luxury-minimal'"
+  [class.boheme-chic-theme]="resolvedTemplateId === 'boheme-chic'"
+  [class.floral-frame-layer]="resolvedDecorativeFrame === 'floral-frame'"
+  [class.gold-border-layer]="resolvedDecorativeFrame === 'gold-border'"
+  [class.geometric-frame-layer]="resolvedDecorativeFrame === 'geometric-frame'"
+  [class.minimal-edge-layer]="resolvedDecorativeFrame === 'minimal-edge'">
+
+  <!-- Ambient Luxury Gold Sparkles / Particles in Background -->
+  <div class="luxury-ambient-particles" aria-hidden="true">
+    <div class="ambient-particle particle-1"></div>
+    <div class="ambient-particle particle-2"></div>
+    <div class="ambient-particle particle-3"></div>
+    <div class="ambient-particle particle-4"></div>
+    <div class="ambient-particle particle-5"></div>
+    <div class="ambient-particle particle-6"></div>
+  </div>
+
+  <!-- Floating Minimal Audio Player Widget -->
+  <div class="floating-music-widget animate__animated animate__fadeIn"
+       [class.is-playing]="isMusicPlaying()"
+       (click)="toggleMusic()"
+       [attr.aria-label]="isMusicPlaying() ? 'Mettre la musique en pause' : 'Lancer la musique d\'ambiance'">
+    
+    <!-- Rotating Halo Glow -->
+    <div class="music-disc-glow" *ngIf="isMusicPlaying()"></div>
+    
+    <!-- Main Circular Button -->
+    <button type="button" class="music-toggle-btn" [class.playing-btn]="isMusicPlaying()">
+      <span class="music-icon-wrapper" [class.spinning-vinyl]="isMusicPlaying()">
+        <i class="fa" [ngClass]="isMusicPlaying() ? 'fa-compact-disc' : 'fa-music'"></i>
+      </span>
+      
+      <!-- Equalizer Sound Wave Bars -->
+      <span class="sound-wave-bars" *ngIf="isMusicPlaying()">
+        <span class="wave-bar bar-1"></span>
+        <span class="wave-bar bar-2"></span>
+        <span class="wave-bar bar-3"></span>
+      </span>
+    </button>
+
+    <!-- Floating Notes Particles when active -->
+    <div class="floating-notes-container" *ngIf="isMusicPlaying()">
+      <span class="floating-note note-1">♪</span>
+      <span class="floating-note note-2">♫</span>
+      <span class="floating-note note-3">♩</span>
+    </div>
+
+    <!-- Tooltip / Label -->
+    <div class="music-widget-label d-none d-sm-flex">
+      <span class="music-status-text">
+        {{ isMusicPlaying() ? 'Pause' : 'Musique' }}
+      </span>
+    </div>
+  </div>
+
   <div class="invitation-outer-container w-100" style="max-width: 600px;">
 
     <!-- Loading State -->
@@ -142,6 +196,43 @@
             <circle cx="50" cy="58" r="13" fill="url(#eucalyptusGradient)" opacity="0.85" />
             <circle cx="35" cy="75" r="11" fill="url(#eucalyptusGradient)" opacity="0.85" />
             <circle cx="20" cy="92" r="8" fill="url(#eucalyptusGradient)" opacity="0.85" />
+          </svg>
+        </ng-container>
+
+        <!-- Bohemian Floral Leaves -->
+        <ng-container *ngSwitchCase="'boheme-chic'">
+          <svg viewBox="0 0 120 120" class="corner-leaf corner-leaf-top-right" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="bohemeRoseGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#f8d7da" />
+                <stop offset="50%" stop-color="#c27ba0" />
+                <stop offset="100%" stop-color="#8e4a73" />
+              </linearGradient>
+            </defs>
+            <path d="M10,110 C40,90 80,50 110,10" stroke="url(#bohemeRoseGradient)" stroke-width="2" fill="none" />
+            <circle cx="35" cy="85" r="12" fill="url(#bohemeRoseGradient)" opacity="0.85" />
+            <circle cx="50" cy="65" r="14" fill="url(#bohemeRoseGradient)" opacity="0.85" />
+            <circle cx="70" cy="50" r="13" fill="url(#bohemeRoseGradient)" opacity="0.85" />
+            <circle cx="88" cy="32" r="11" fill="url(#bohemeRoseGradient)" opacity="0.85" />
+            <circle cx="102" cy="18" r="8" fill="url(#bohemeRoseGradient)" opacity="0.85" />
+            <circle cx="20" cy="98" r="10" fill="url(#bohemeRoseGradient)" opacity="0.85" />
+            <circle cx="35" cy="70" r="12" fill="url(#bohemeRoseGradient)" opacity="0.85" />
+            <circle cx="58" cy="50" r="13" fill="url(#bohemeRoseGradient)" opacity="0.85" />
+            <circle cx="75" cy="35" r="11" fill="url(#bohemeRoseGradient)" opacity="0.85" />
+            <circle cx="92" cy="20" r="8" fill="url(#bohemeRoseGradient)" opacity="0.85" />
+          </svg>
+          <svg viewBox="0 0 120 120" class="corner-leaf corner-leaf-bottom-left" xmlns="http://www.w3.org/2000/svg">
+            <path d="M110,10 C80,30 40,70 10,110" stroke="url(#bohemeRoseGradient)" stroke-width="2" fill="none" />
+            <circle cx="85" cy="35" r="12" fill="url(#bohemeRoseGradient)" opacity="0.85" />
+            <circle cx="65" cy="50" r="14" fill="url(#bohemeRoseGradient)" opacity="0.85" />
+            <circle cx="50" cy="70" r="13" fill="url(#bohemeRoseGradient)" opacity="0.85" />
+            <circle cx="32" cy="88" r="11" fill="url(#bohemeRoseGradient)" opacity="0.85" />
+            <circle cx="18" cy="102" r="8" fill="url(#bohemeRoseGradient)" opacity="0.85" />
+            <circle cx="98" cy="20" r="10" fill="url(#bohemeRoseGradient)" opacity="0.85" />
+            <circle cx="70" cy="35" r="12" fill="url(#bohemeRoseGradient)" opacity="0.85" />
+            <circle cx="50" cy="58" r="13" fill="url(#bohemeRoseGradient)" opacity="0.85" />
+            <circle cx="35" cy="75" r="11" fill="url(#bohemeRoseGradient)" opacity="0.85" />
+            <circle cx="20" cy="92" r="8" fill="url(#bohemeRoseGradient)" opacity="0.85" />
           </svg>
         </ng-container>
 

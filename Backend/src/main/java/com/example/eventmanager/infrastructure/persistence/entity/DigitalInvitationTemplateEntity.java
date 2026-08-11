@@ -28,6 +28,18 @@ public class DigitalInvitationTemplateEntity {
     @Column(name = "image_url", length = 2000)
     private String imageUrl;
 
+    @Column(name = "template_key")
+    private String templateKey;
+
+    @Column(name = "decorative_frame")
+    private String decorativeFrame;
+
+    @Column(name = "accent_color", length = 50)
+    private String accentColor;
+
+    @Column(name = "background_color", length = 50)
+    private String backgroundColor;
+
     @Column(name = "html_content", columnDefinition = "TEXT")
     private String htmlContent;
 }

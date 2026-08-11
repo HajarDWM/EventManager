@@ -199,19 +199,13 @@ export class OrganiserInvitationSetup implements OnInit {
     this.isSubmitting.set(true);
     this.errorMessage.set('');
 
-    // Combine date and time
     const combinedDate = new Date(`${this.invitationDateStr}T${this.invitationTimeStr}:00`);
 
-    let templateIdString = 'or-et-velours';
-    if (template.id === 1) {
-      templateIdString = 'fleurs-de-coton';
-    } else if (template.id === 2) {
-      templateIdString = 'or-et-velours';
-    } else if (template.id === 3) {
-      templateIdString = 'seminaire-imperial';
-    } else {
-      templateIdString = template.category === 'Mariage' ? 'fleurs-de-coton' : 'or-et-velours';
-    }
+    const templateIdString = template.templateKey || 
+      (template.id === 1 ? 'fleurs-de-coton' : 
+      (template.id === 2 ? 'or-et-velours' : 
+      (template.id === 3 ? 'corporate-professional' : 
+      (template.category === 'Mariage' ? 'fleurs-de-coton' : 'corporate-professional'))));
 
     const payload = {
       templateId: template.id,

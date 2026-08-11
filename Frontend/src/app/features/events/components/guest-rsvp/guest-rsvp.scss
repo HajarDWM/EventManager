@@ -1787,5 +1787,396 @@ textarea.luxury-form-control::placeholder {
   }
 }
 
+/* ==========================================================================
+   Floating Luxury Background Music Widget & Ambient Animations
+   ========================================================================== */
 
+.floating-music-widget {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 1050;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 
+  @media (max-width: 576px) {
+    top: 16px;
+    right: 16px;
+  }
+
+  .music-toggle-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1.5px solid rgba(212, 175, 55, 0.45);
+    color: #aa8524;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08), 0 0 12px rgba(212, 175, 55, 0.15);
+    transition: all 0.3s ease;
+    padding: 0;
+
+    .music-icon-wrapper {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.05rem;
+      transition: transform 0.3s ease;
+    }
+
+    &.playing-btn {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(250, 246, 238, 0.95) 100%);
+      border-color: #d4af37;
+      color: #8c6d1f;
+      box-shadow: 0 8px 25px rgba(212, 175, 55, 0.3), 0 0 16px rgba(212, 175, 55, 0.25);
+    }
+
+    &:hover {
+      transform: scale(1.08);
+      border-color: #d4af37;
+      color: #d4af37;
+    }
+  }
+
+  /* Rotating Vinyl Animation */
+  .spinning-vinyl {
+    animation: rotateVinyl 4s linear infinite;
+  }
+
+  /* Disc Pulsing Glow */
+  .music-disc-glow {
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(212, 175, 55, 0.3) 0%, rgba(212, 175, 55, 0) 70%);
+    animation: pulseDisc 2s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  /* Sound Wave Equalizer Bars */
+  .sound-wave-bars {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    display: flex;
+    align-items: flex-end;
+    gap: 1.5px;
+    height: 10px;
+
+    .wave-bar {
+      width: 2px;
+      background: #d4af37;
+      border-radius: 1px;
+
+      &.bar-1 {
+        height: 60%;
+        animation: waveAnim 1s ease-in-out infinite;
+      }
+      &.bar-2 {
+        height: 100%;
+        animation: waveAnim 1.2s ease-in-out 0.2s infinite;
+      }
+      &.bar-3 {
+        height: 40%;
+        animation: waveAnim 0.9s ease-in-out 0.4s infinite;
+      }
+    }
+  }
+
+  /* Floating Musical Notes */
+  .floating-notes-container {
+    position: absolute;
+    top: 0;
+    left: 12px;
+    width: 20px;
+    height: 20px;
+    pointer-events: none;
+
+    .floating-note {
+      position: absolute;
+      font-size: 0.85rem;
+      color: #d4af37;
+      opacity: 0;
+
+      &.note-1 {
+        animation: floatNote 3s ease-in-out infinite;
+      }
+      &.note-2 {
+        animation: floatNote 3s ease-in-out 1s infinite;
+        left: 8px;
+      }
+      &.note-3 {
+        animation: floatNote 3s ease-in-out 2s infinite;
+        left: -4px;
+      }
+    }
+  }
+
+  /* Tooltip pill label */
+  .music-widget-label {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    border-radius: 20px;
+    padding: 3px 10px;
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: #8c6d1f;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    opacity: 0.85;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+
+  &:hover {
+    .music-widget-label {
+      opacity: 1;
+      transform: translateX(2px);
+    }
+  }
+}
+
+/* Keyframes for Music Widget */
+@keyframes rotateVinyl {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulseDisc {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(0.95);
+    opacity: 0.4;
+  }
+}
+
+@keyframes waveAnim {
+  0%, 100% {
+    height: 30%;
+  }
+  50% {
+    height: 100%;
+  }
+}
+
+@keyframes floatNote {
+  0% {
+    transform: translateY(0) scale(0.7) rotate(0deg);
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.8;
+  }
+  80% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateY(-38px) scale(1.1) rotate(20deg);
+    opacity: 0;
+  }
+}
+
+/* ==========================================================================
+   Ambient Luxury Gold Dust Sparkles (Background Micro-Animations)
+   ========================================================================== */
+
+.luxury-ambient-particles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+
+  .ambient-particle {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(212, 175, 55, 0.4) 0%, rgba(212, 175, 55, 0) 70%);
+    filter: blur(1px);
+    pointer-events: none;
+
+    &.particle-1 {
+      width: 120px;
+      height: 120px;
+      top: 10%;
+      left: 5%;
+      animation: floatAmbient 12s ease-in-out infinite alternate;
+    }
+    &.particle-2 {
+      width: 180px;
+      height: 180px;
+      top: 35%;
+      right: 8%;
+      animation: floatAmbient 16s ease-in-out 2s infinite alternate-reverse;
+    }
+    &.particle-3 {
+      width: 90px;
+      height: 90px;
+      bottom: 20%;
+      left: 12%;
+      animation: floatAmbient 14s ease-in-out 4s infinite alternate;
+    }
+    &.particle-4 {
+      width: 140px;
+      height: 140px;
+      bottom: 5%;
+      right: 15%;
+      animation: floatAmbient 18s ease-in-out 1s infinite alternate-reverse;
+    }
+    &.particle-5 {
+      width: 60px;
+      height: 60px;
+      top: 70%;
+      left: 45%;
+      animation: floatAmbient 10s ease-in-out 3s infinite alternate;
+    }
+    &.particle-6 {
+      width: 100px;
+      height: 100px;
+      top: 5%;
+      right: 30%;
+      animation: floatAmbient 15s ease-in-out 5s infinite alternate-reverse;
+    }
+  }
+}
+
+@keyframes floatAmbient {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.25;
+  }
+  50% {
+    transform: translate(25px, -30px) scale(1.15);
+    opacity: 0.55;
+  }
+  100% {
+    transform: translate(-20px, 20px) scale(0.9);
+    opacity: 0.2;
+  }
+}
+
+/* ==========================================================================
+   Additional Dynamic Themes & Decorative Layers
+   ========================================================================== */
+
+.rsvp-luxury-wrapper {
+  /* --- BOHEMIAN CHIC THEME --- */
+  &.boheme-chic-theme {
+    background: radial-gradient(circle at center, #fff7f9 0%, #fae6ed 100%);
+
+    .luxury-card {
+      border: 1px solid rgba(194, 123, 160, 0.35) !important;
+      box-shadow: 0 25px 60px rgba(142, 74, 115, 0.15) !important;
+    }
+
+    .luxury-subtitle {
+      color: #c27ba0 !important;
+    }
+
+    .guest-highlight {
+      color: #c27ba0 !important;
+      border-bottom-color: rgba(194, 123, 160, 0.6) !important;
+    }
+
+    .date-side-part {
+      color: #c27ba0 !important;
+    }
+
+    .gold-top-border {
+      background: linear-gradient(90deg, #f8d7da, #c27ba0, #8e4a73) !important;
+    }
+
+    .btn-presence-yes {
+      background: linear-gradient(135deg, #c27ba0 0%, #8e4a73 100%) !important;
+      border-color: #8e4a73 !important;
+    }
+
+    .step-pill.active-pill {
+      background: #c27ba0 !important;
+    }
+
+    .badge-allergy.active {
+      background: #c27ba0 !important;
+      border-color: #c27ba0 !important;
+      color: #ffffff !important;
+    }
+  }
+
+  /* --- CORPORATE PROFESSIONAL THEME --- */
+  &.corporate-professional-theme {
+    background: radial-gradient(circle at center, #f4f7fb 0%, #e2e8f0 100%);
+
+    .gold-top-border {
+      background: linear-gradient(90deg, #60a5fa, #2b4c7e, #1e3a8a) !important;
+    }
+
+    .date-side-part, .crest-letters {
+      color: #2b4c7e !important;
+    }
+  }
+
+  /* --- LUXURY MINIMAL THEME --- */
+  &.luxury-minimal-theme {
+    background: #f8f9fa;
+
+    .luxury-card {
+      border: 1px solid #1a1a1a !important;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08) !important;
+    }
+
+    .gold-top-border {
+      height: 3px !important;
+      background: #1a1a1a !important;
+    }
+  }
+
+  /* --- DECORATIVE LAYERS --- */
+  &.floral-frame-layer {
+    .luxury-inner-border {
+      border-style: double !important;
+      border-width: 3px !important;
+    }
+  }
+
+  &.gold-border-layer {
+    .luxury-inner-border {
+      border: 1px solid rgba(212, 175, 55, 0.4) !important;
+      box-shadow: inset 0 0 15px rgba(212, 175, 55, 0.08);
+    }
+  }
+
+  &.geometric-frame-layer {
+    .luxury-card {
+      border-radius: 4px !important;
+    }
+    .luxury-inner-border {
+      border-radius: 2px !important;
+    }
+  }
+}

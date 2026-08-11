@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, inject } from '@angular/core';
+import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TemplateService, DigitalTemplate } from '../../../core/services/template.service';
@@ -18,8 +18,21 @@ export class AdminTemplates implements OnInit {
   protected readonly successMessage = signal('');
   protected readonly errorMessage = signal('');
 
+  // Category filter
+  protected readonly activeCategoryFilter = signal<string>('ALL');
+
+  protected readonly filteredTemplates = computed(() => {
+    const filter = this.activeCategoryFilter();
+    if (filter === 'ALL') {
+      return this.templates();
+    }
+    return this.templates().filter(t => t.category.toUpperCase() === filter.toUpperCase());
+  });
+
   // Modal & Form States
   protected readonly isModalOpen = signal(false);
+  protected readonly isEditing = signal(false);
+  protected readonly editingId = signal<number | null>(null);
   protected readonly isSubmitting = signal(false);
 
   // Form Fields
@@ -27,6 +40,10 @@ export class AdminTemplates implements OnInit {
   protected categoryField = 'Mariage';
   protected descriptionField = '';
   protected imageUrlField = '';
+  protected templateKeyField = '';
+  protected decorativeFrameField = 'floral-frame';
+  protected accentColorField = '#d4af37';
+  protected backgroundColorField = '#faf6ee';
   protected htmlContentField = '';
 
   public ngOnInit(): void {
@@ -48,12 +65,38 @@ export class AdminTemplates implements OnInit {
     });
   }
 
+  protected setCategoryFilter(category: string): void {
+    this.activeCategoryFilter.set(category);
+  }
+
   protected openAddModal(): void {
+    this.isEditing.set(false);
+    this.editingId.set(null);
     this.titleField = '';
     this.categoryField = 'Mariage';
     this.descriptionField = '';
     this.imageUrlField = '';
+    this.templateKeyField = '';
+    this.decorativeFrameField = 'floral-frame';
+    this.accentColorField = '#d4af37';
+    this.backgroundColorField = '#faf6ee';
     this.htmlContentField = '';
+    this.errorMessage.set('');
+    this.isModalOpen.set(true);
+  }
+
+  protected openEditModal(template: DigitalTemplate): void {
+    this.isEditing.set(true);
+    this.editingId.set(template.id || null);
+    this.titleField = template.title || '';
+    this.categoryField = template.category || 'Mariage';
+    this.descriptionField = template.description || '';
+    this.imageUrlField = template.imageUrl || '';
+    this.templateKeyField = template.templateKey || '';
+    this.decorativeFrameField = template.decorativeFrame || ('Mariage' === template.category ? 'floral-frame' : 'geometric-frame');
+    this.accentColorField = template.accentColor || '#d4af37';
+    this.backgroundColorField = template.backgroundColor || ('Mariage' === template.category ? '#faf6ee' : '#f8f9fa');
+    this.htmlContentField = template.htmlContent || '';
     this.errorMessage.set('');
     this.isModalOpen.set(true);
   }
@@ -62,42 +105,82 @@ export class AdminTemplates implements OnInit {
     this.isModalOpen.set(false);
   }
 
-  protected addTemplate(): void {
+  protected onCategoryChange(): void {
+    if (this.categoryField === 'Mariage') {
+      this.decorativeFrameField = 'floral-frame';
+      this.backgroundColorField = '#faf6ee';
+      this.accentColorField = '#d4af37';
+    } else if (this.categoryField === 'Corporate') {
+      this.decorativeFrameField = 'geometric-frame';
+      this.backgroundColorField = '#f8f9fa';
+      this.accentColorField = '#2b4c7e';
+    } else if (this.categoryField === 'Anniversaire') {
+      this.decorativeFrameField = 'floral-frame';
+      this.backgroundColorField = '#fff9f5';
+      this.accentColorField = '#c27ba0';
+    } else {
+      this.decorativeFrameField = 'minimal-edge';
+      this.backgroundColorField = '#ffffff';
+      this.accentColorField = '#1a1a1a';
+    }
+  }
+
+  protected saveTemplate(): void {
     if (!this.titleField.trim()) {
-      this.errorMessage.set('Le titre est requis.');
+      this.errorMessage.set('Le nom du modèle est obligatoire.');
       return;
     }
 
     this.isSubmitting.set(true);
     this.errorMessage.set('');
 
-    const newTemplate: DigitalTemplate = {
-      title: this.titleField,
+    const templatePayload: DigitalTemplate = {
+      title: this.titleField.trim(),
       category: this.categoryField,
-      description: this.descriptionField,
-      imageUrl: this.imageUrlField || undefined,
-      htmlContent: this.htmlContentField || undefined
+      description: this.descriptionField.trim(),
+      imageUrl: this.imageUrlField.trim() || undefined,
+      templateKey: this.templateKeyField.trim() || undefined,
+      decorativeFrame: this.decorativeFrameField,
+      accentColor: this.accentColorField,
+      backgroundColor: this.backgroundColorField,
+      htmlContent: this.htmlContentField.trim() || undefined
     };
 
-    this.templateService.createTemplate(newTemplate).subscribe({
-      next: (created) => {
-        this.templates.update(list => [...list, created]);
-        this.successMessage.set('Modèle créé avec succès.');
-        this.closeAddModal();
-        this.isSubmitting.set(false);
-        
-        setTimeout(() => this.successMessage.set(''), 3000);
-      },
-      error: (err) => {
-        console.error(err);
-        this.errorMessage.set('Une erreur est survenue lors de la création.');
-        this.isSubmitting.set(false);
-      }
-    });
+    if (this.isEditing() && this.editingId()) {
+      this.templateService.updateTemplate(this.editingId()!, templatePayload).subscribe({
+        next: (updated) => {
+          this.templates.update(list => list.map(t => t.id === updated.id ? updated : t));
+          this.successMessage.set('Modèle de faire-part mis à jour avec succès.');
+          this.closeAddModal();
+          this.isSubmitting.set(false);
+          setTimeout(() => this.successMessage.set(''), 3500);
+        },
+        error: (err) => {
+          console.error(err);
+          this.errorMessage.set('Une erreur est survenue lors de la mise à jour.');
+          this.isSubmitting.set(false);
+        }
+      });
+    } else {
+      this.templateService.createTemplate(templatePayload).subscribe({
+        next: (created) => {
+          this.templates.update(list => [...list, created]);
+          this.successMessage.set('Nouveau modèle de faire-part créé avec succès.');
+          this.closeAddModal();
+          this.isSubmitting.set(false);
+          setTimeout(() => this.successMessage.set(''), 3500);
+        },
+        error: (err) => {
+          console.error(err);
+          this.errorMessage.set('Une erreur est survenue lors de la création.');
+          this.isSubmitting.set(false);
+        }
+      });
+    }
   }
 
   protected deleteTemplate(id: number): void {
-    if (confirm('Êtes-vous sûr de vouloir supprimer ce modèle de faire-part ?')) {
+    if (confirm('Êtes-vous sûr de vouloir supprimer définitivement ce modèle de faire-part ?')) {
       this.templateService.deleteTemplate(id).subscribe({
         next: () => {
           this.templates.update(list => list.filter(t => t.id !== id));

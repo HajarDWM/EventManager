@@ -31,5 +31,9 @@ public class PublicRsvpDTO {
     private String mealType;
     private String templateCategory; // Mariage, Corporate, etc.
     private String templateId;
+    private String templateTitle;
+    private String decorativeFrame; // floral-frame, gold-border, geometric-frame, minimal-edge
+    private String accentColor;
+    private String backgroundColor;
     private java.util.List<MenuItemDTO> menuItems;
 }

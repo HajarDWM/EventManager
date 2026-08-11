@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { EventService } from '../../services/event.service';
+import { TemplateService, DigitalTemplate } from '../../../../core/services/template.service';
 
 @Component({
   selector: 'app-event-edit',
@@ -12,6 +13,7 @@ import { EventService } from '../../services/event.service';
 })
 export class EventEdit implements OnInit {
   private readonly eventService = inject(EventService);
+  private readonly templateService = inject(TemplateService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
 
@@ -22,6 +24,8 @@ export class EventEdit implements OnInit {
   protected readonly location = signal('');
   protected readonly guestCount = signal<number | null>(null);
   protected readonly status = signal<'DRAFT' | 'PLANNED' | 'COMPLETED' | 'CANCELLED'>('PLANNED');
+  protected readonly selectedTemplateId = signal<number | null>(null);
+  protected readonly templates = signal<DigitalTemplate[]>([]);
   
   protected readonly errorMessage = signal('');
   protected readonly isLoading = signal(false);
@@ -34,6 +38,11 @@ export class EventEdit implements OnInit {
       this.eventId.set(id);
       this.loadEvent(id);
     }
+
+    this.templateService.getTemplates().subscribe({
+      next: (tpls) => this.templates.set(tpls),
+      error: (err) => console.error('Erreur lors du chargement des modèles:', err)
+    });
   }
 
   private loadEvent(id: number): void {
@@ -64,6 +73,9 @@ export class EventEdit implements OnInit {
         if (data.status) {
           this.status.set(data.status);
         }
+        if (data.digitalTemplateId) {
+          this.selectedTemplateId.set(data.digitalTemplateId);
+        }
         this.isLoading.set(false);
       },
       error: (err) => {
@@ -89,6 +101,7 @@ export class EventEdit implements OnInit {
     this.errorMessage.set('');
 
     const dateVal = this.eventDateOnly() + (this.eventTimeOnly() ? 'T' + this.eventTimeOnly() : 'T00:00');
+    const chosenTemplate = this.templates().find(t => t.id === this.selectedTemplateId());
 
     this.eventService.updateEvent(this.eventId()!, {
       id: this.eventId()!,
@@ -96,7 +109,9 @@ export class EventEdit implements OnInit {
       eventDate: dateVal,
       location: this.location(),
       guestCount: this.guestCount(),
-      status: this.status()
+      status: this.status(),
+      digitalTemplateId: chosenTemplate?.id || undefined,
+      templateId: chosenTemplate?.templateKey || (chosenTemplate?.category === 'Mariage' ? 'fleurs-de-coton' : 'corporate-professional')
     }).subscribe({
       next: () => {
         this.isSaving.set(false);

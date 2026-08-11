@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { EventService } from '../../services/event.service';
 import { CatererService } from '../../../../core/services/caterer.service';
+import { TemplateService, DigitalTemplate } from '../../../../core/services/template.service';
 
 @Component({
   selector: 'app-event-create',
@@ -14,6 +15,7 @@ import { CatererService } from '../../../../core/services/caterer.service';
 export class EventCreate implements OnInit {
   private readonly eventService = inject(EventService);
   private readonly catererService = inject(CatererService);
+  private readonly templateService = inject(TemplateService);
   private readonly router = inject(Router);
 
   protected readonly title = signal('');
@@ -22,6 +24,8 @@ export class EventCreate implements OnInit {
   protected readonly location = signal('');
   protected readonly guestCount = signal<number | null>(null);
   protected readonly status = signal<'DRAFT' | 'PLANNED' | 'COMPLETED' | 'CANCELLED'>('DRAFT');
+  protected readonly selectedTemplateId = signal<number | null>(null);
+  protected readonly templates = signal<DigitalTemplate[]>([]);
   protected readonly errorMessage = signal('');
   protected readonly isLoading = signal(false);
   protected readonly isQuotaReached = signal(false);
@@ -43,6 +47,16 @@ export class EventCreate implements OnInit {
         console.error('Erreur lors du chargement du profil traiteur:', err);
       }
     });
+
+    this.templateService.getTemplates().subscribe({
+      next: (tpls) => {
+        this.templates.set(tpls);
+        if (tpls.length > 0 && !this.selectedTemplateId()) {
+          this.selectedTemplateId.set(tpls[0].id || null);
+        }
+      },
+      error: (err) => console.error('Erreur lors du chargement des modèles:', err)
+    });
   }
 
   protected onSubmit(): void {
@@ -60,6 +74,7 @@ export class EventCreate implements OnInit {
     this.errorMessage.set('');
 
     const dateVal = this.eventDateOnly() + (this.eventTimeOnly() ? 'T' + this.eventTimeOnly() : 'T00:00');
+    const chosenTemplate = this.templates().find(t => t.id === this.selectedTemplateId());
 
     this.eventService.createEvent({
       title: this.title(),
@@ -67,6 +82,8 @@ export class EventCreate implements OnInit {
       location: this.location(),
       guestCount: this.guestCount(),
       status: this.status(),
+      digitalTemplateId: chosenTemplate?.id || undefined,
+      templateId: chosenTemplate?.templateKey || (chosenTemplate?.category === 'Mariage' ? 'fleurs-de-coton' : 'corporate-professional'),
       mealType: 'PLATS_FIXES' // Default to PLATS_FIXES on creation, can be changed in Restaurations dashboard
     }).subscribe({
       next: () => {

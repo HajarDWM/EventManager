@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, inject, computed } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
@@ -23,6 +23,10 @@ export interface PublicRsvpDetail {
   mealType?: string; // BUFFET or PLATS_FIXES
   templateCategory?: string; // Mariage, Corporate, etc.
   templateId?: string;
+  templateTitle?: string;
+  decorativeFrame?: string; // floral-frame, gold-border, geometric-frame, minimal-edge
+  accentColor?: string;
+  backgroundColor?: string;
   menuItems?: any[];
 }
 
@@ -33,7 +37,7 @@ export interface PublicRsvpDetail {
   templateUrl: './guest-rsvp.html',
   styleUrls: ['./guest-rsvp.scss']
 })
-export class GuestRsvp implements OnInit {
+export class GuestRsvp implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly http = inject(HttpClient);
 
@@ -206,7 +210,38 @@ export class GuestRsvp implements OnInit {
     if (tId === 'luxury-minimal') {
       return 'luxury-minimal';
     }
+    if (tId === 'boheme-chic') {
+      return 'boheme-chic';
+    }
     return this.guest()?.templateCategory === 'Mariage' ? 'or-et-velours' : 'corporate-professional';
+  }
+
+  public get resolvedDecorativeFrame(): string {
+    if (this.guest()?.decorativeFrame) {
+      return this.guest()!.decorativeFrame!;
+    }
+    const theme = this.resolvedTemplateId;
+    if (theme === 'fleurs-de-coton' || theme === 'boheme-chic') {
+      return 'floral-frame';
+    }
+    if (theme === 'or-et-velours') {
+      return 'gold-border';
+    }
+    if (theme === 'corporate-professional') {
+      return 'geometric-frame';
+    }
+    if (theme === 'luxury-minimal') {
+      return 'minimal-edge';
+    }
+    return 'none';
+  }
+
+  public get customAccentColor(): string {
+    return this.guest()?.accentColor || '#d4af37';
+  }
+
+  public get customBgColor(): string {
+    return this.guest()?.backgroundColor || (this.resolvedTemplateId === 'or-et-velours' ? '#0b0b0b' : '#faf6ee');
   }
 
   public ngOnInit(): void {
@@ -435,5 +470,145 @@ export class GuestRsvp implements OnInit {
     } else if (diff < -50) {
       this.prevCarouselItem();
     }
+  }
+
+  // ==========================================
+  // Background Music Player & Audio Management
+  // ==========================================
+  protected readonly isMusicPlaying = signal<boolean>(false);
+  private audioElement: HTMLAudioElement | null = null;
+  private webAudioCtx: any = null;
+  private webAudioOscillators: any[] = [];
+  private isSynthesizing = false;
+
+  // Royalty-free romantic acoustic background track
+  private readonly defaultMusicUrl = 'https://cdn.pixabay.com/download/audio/2022/05/16/audio_db6591201e.mp3';
+
+  private initAudio(): void {
+    if (!this.audioElement && typeof Audio !== 'undefined') {
+      this.audioElement = new Audio();
+      this.audioElement.src = this.defaultMusicUrl;
+      this.audioElement.loop = true;
+      this.audioElement.volume = 0.4;
+
+      this.audioElement.addEventListener('ended', () => {
+        if (this.isMusicPlaying()) {
+          this.audioElement?.play();
+        }
+      });
+
+      this.audioElement.addEventListener('error', () => {
+        console.warn('Network audio stream unavailable, switching to harmonic ambient chords.');
+        if (this.isMusicPlaying()) {
+          this.playHarmonicChords();
+        }
+      });
+    }
+  }
+
+  protected toggleMusic(): void {
+    this.initAudio();
+
+    if (this.isMusicPlaying()) {
+      this.stopAllAudio();
+      this.isMusicPlaying.set(false);
+    } else {
+      if (this.audioElement) {
+        this.audioElement.play()
+          .then(() => {
+            this.isMusicPlaying.set(true);
+          })
+          .catch(err => {
+            console.warn('Direct audio stream failed, activating harmonic synthesis:', err);
+            this.playHarmonicChords();
+            this.isMusicPlaying.set(true);
+          });
+      } else {
+        this.playHarmonicChords();
+        this.isMusicPlaying.set(true);
+      }
+    }
+  }
+
+  private stopAllAudio(): void {
+    if (this.audioElement) {
+      try {
+        this.audioElement.pause();
+      } catch (e) {}
+    }
+    this.stopHarmonicChords();
+  }
+
+  private playHarmonicChords(): void {
+    try {
+      const AudioContextClass = (window as any).AudioContext || (window as any).webkitAudioContext;
+      if (!AudioContextClass) return;
+      if (!this.webAudioCtx || this.webAudioCtx.state === 'closed') {
+        this.webAudioCtx = new AudioContextClass();
+      }
+      if (this.webAudioCtx.state === 'suspended') {
+        this.webAudioCtx.resume();
+      }
+
+      this.isSynthesizing = true;
+      const chords = [
+        [261.63, 329.63, 392.00, 493.88], // Cmaj7
+        [220.00, 261.63, 329.63, 392.00], // Amin7
+        [174.61, 220.00, 261.63, 329.63], // Fmaj7
+        [196.00, 246.94, 293.66, 392.00]  // G6
+      ];
+
+      let chordIndex = 0;
+      const playNextChord = () => {
+        if (!this.isSynthesizing || !this.webAudioCtx) return;
+        const currentChord = chords[chordIndex % chords.length];
+        chordIndex++;
+
+        const now = this.webAudioCtx.currentTime;
+        const duration = 4.0;
+
+        currentChord.forEach(freq => {
+          const osc = this.webAudioCtx.createOscillator();
+          const gain = this.webAudioCtx.createGain();
+
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, now);
+
+          gain.gain.setValueAtTime(0.001, now);
+          gain.gain.linearRampToValueAtTime(0.025, now + 1.2);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+
+          osc.connect(gain);
+          gain.connect(this.webAudioCtx.destination);
+
+          osc.start(now);
+          osc.stop(now + duration);
+          this.webAudioOscillators.push(osc);
+        });
+
+        if (this.isSynthesizing) {
+          setTimeout(() => playNextChord(), 3500);
+        }
+      };
+
+      playNextChord();
+    } catch (e) {
+      console.warn('WebAudio harmonic generator error:', e);
+    }
+  }
+
+  private stopHarmonicChords(): void {
+    this.isSynthesizing = false;
+    this.webAudioOscillators.forEach(osc => {
+      try { osc.stop(); } catch (e) {}
+    });
+    this.webAudioOscillators = [];
+    if (this.webAudioCtx && this.webAudioCtx.state === 'running') {
+      try { this.webAudioCtx.suspend(); } catch (e) {}
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.stopAllAudio();
   }
 }

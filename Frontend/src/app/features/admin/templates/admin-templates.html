@@ -2,15 +2,15 @@
 <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-2 text-center text-md-start">
   <div class="flex-grow-1 mb-1 mb-md-0">
     <h1 class="h3 fw-bold mb-2">
-      Modèles de Faire-part Digitaux
+      Modèles & Thèmes de Faire-part Digitaux
     </h1>
     <h2 class="h6 fw-medium text-muted mb-0">
-      Gérez les designs de faire-part interactifs disponibles pour les RSVP de vos traiteurs.
+      Configurez les thèmes visuels, calques décoratifs et styles de faire-part interactifs pour les événements.
     </h2>
   </div>
   <div class="mt-2 mt-md-0">
     <button type="button" class="btn btn-primary" (click)="openAddModal()">
-      <i class="fa fa-plus me-1"></i> Nouveau Faire-part
+      <i class="fa fa-plus me-1"></i> Nouveau Modèle
     </button>
   </div>
 </div>
@@ -29,45 +29,107 @@
   <button type="button" class="btn-close ms-auto" (click)="errorMessage.set('')"></button>
 </div>
 
+<!-- Category Filter Pills -->
+<div class="d-flex flex-wrap gap-2 mt-4 pb-2 border-bottom border-light">
+  <button type="button" class="btn btn-sm rounded-pill"
+          [ngClass]="activeCategoryFilter() === 'ALL' ? 'btn-primary' : 'btn-alt-secondary'"
+          (click)="setCategoryFilter('ALL')">
+    Tous ({{ templates().length }})
+  </button>
+  <button type="button" class="btn btn-sm rounded-pill"
+          [ngClass]="activeCategoryFilter() === 'MARIAGE' ? 'btn-primary' : 'btn-alt-secondary'"
+          (click)="setCategoryFilter('MARIAGE')">
+    Mariage
+  </button>
+  <button type="button" class="btn btn-sm rounded-pill"
+          [ngClass]="activeCategoryFilter() === 'CORPORATE' ? 'btn-primary' : 'btn-alt-secondary'"
+          (click)="setCategoryFilter('CORPORATE')">
+    Corporate & Conférence
+  </button>
+  <button type="button" class="btn btn-sm rounded-pill"
+          [ngClass]="activeCategoryFilter() === 'ANNIVERSAIRE' ? 'btn-primary' : 'btn-alt-secondary'"
+          (click)="setCategoryFilter('ANNIVERSAIRE')">
+    Anniversaire & Privé
+  </button>
+  <button type="button" class="btn btn-sm rounded-pill"
+          [ngClass]="activeCategoryFilter() === 'AUTRE' ? 'btn-primary' : 'btn-alt-secondary'"
+          (click)="setCategoryFilter('AUTRE')">
+    Autre
+  </button>
+</div>
+
 <!-- Grid Templates -->
 <div class="row mt-4" *ngIf="!isLoading()">
-  <div class="col-md-6 col-xxl-4 mb-4" *ngFor="let template of templates()">
+  <div class="col-md-6 col-xxl-4 mb-4" *ngFor="let template of filteredTemplates()">
     <div class="block block-rounded bg-white shadow-sm border border-light h-100 d-flex flex-column overflow-hidden">
       
       <!-- Template Image Preview -->
-      <div class="position-relative bg-light" style="height: 200px; overflow: hidden;">
+      <div class="position-relative bg-light" style="height: 190px; overflow: hidden;">
         <img [src]="template.imageUrl || 'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=500'" 
              class="w-100 h-100 object-fit-cover" 
              [alt]="template.title">
         
         <!-- Category Badge overlay -->
-        <span class="position-absolute top-0 start-0 m-3 badge px-3 py-2 fs-xs rounded-pill"
+        <span class="position-absolute top-0 start-0 m-2.5 badge px-2.5 py-1.5 fs-xs rounded-pill shadow-sm"
               [ngClass]="{
                 'bg-success': template.category === 'Mariage',
                 'bg-primary': template.category === 'Corporate',
-                'bg-warning text-dark': template.category !== 'Mariage' && template.category !== 'Corporate'
+                'bg-warning text-dark': template.category === 'Anniversaire',
+                'bg-dark text-white': template.category !== 'Mariage' && template.category !== 'Corporate' && template.category !== 'Anniversaire'
               }">
           {{ template.category }}
+        </span>
+
+        <!-- Decorative Layer Frame Badge -->
+        <span class="position-absolute top-0 end-0 m-2.5 badge bg-dark bg-opacity-75 text-white px-2.5 py-1.5 fs-xs rounded-pill shadow-sm" style="backdrop-filter: blur(4px);">
+          <span *ngIf="template.decorativeFrame === 'floral-frame'">🌸 Cadre Floral</span>
+          <span *ngIf="template.decorativeFrame === 'gold-border'">⚜️ Dorures & Velours</span>
+          <span *ngIf="template.decorativeFrame === 'geometric-frame'">📐 Cadre Géométrique</span>
+          <span *ngIf="template.decorativeFrame === 'minimal-edge'">✨ Minimaliste</span>
+          <span *ngIf="!template.decorativeFrame || template.decorativeFrame === 'none'">Calque Classique</span>
         </span>
       </div>
 
       <div class="block-content p-3 flex-grow-1">
-        <h3 class="h5 fw-bold text-dark mb-2">{{ template.title }}</h3>
-        <p class="text-muted fs-sm mb-0">{{ template.description || 'Aucune description disponible.' }}</p>
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <h3 class="h5 fw-bold text-dark mb-0">{{ template.title }}</h3>
+          <!-- Color indicator circles -->
+          <div class="d-flex align-items-center gap-1.5 mt-1" *ngIf="template.accentColor || template.backgroundColor">
+            <span class="d-inline-block rounded-circle border border-white shadow-sm" 
+                  [style.backgroundColor]="template.accentColor || '#d4af37'" 
+                  style="width: 14px; height: 14px;" 
+                  title="Couleur d'accent"></span>
+            <span class="d-inline-block rounded-circle border border-secondary shadow-sm" 
+                  [style.backgroundColor]="template.backgroundColor || '#ffffff'" 
+                  style="width: 14px; height: 14px;" 
+                  title="Couleur de fond"></span>
+          </div>
+        </div>
+
+        <p class="text-muted fs-sm mb-2.5">{{ template.description || 'Aucune description disponible.' }}</p>
+        
+        <div class="d-flex align-items-center gap-2 mt-auto">
+          <span class="badge bg-light text-muted border px-2 py-1 fs-xxs">
+            Clé : {{ template.templateKey || 'automatique' }}
+          </span>
+        </div>
       </div>
 
       <div class="bg-body-light rounded-bottom border-top border-light p-2 d-flex justify-content-end gap-2">
-        <button type="button" class="btn btn-sm btn-alt-danger btn-table-action" (click)="deleteTemplate(template.id!)">
+        <button type="button" class="btn btn-sm btn-alt-primary" (click)="openEditModal(template)">
+          <i class="fa fa-pencil-alt me-1"></i> Modifier
+        </button>
+        <button type="button" class="btn btn-sm btn-alt-danger" (click)="deleteTemplate(template.id!)">
           <i class="fa fa-trash-alt me-1"></i> Supprimer
         </button>
       </div>
     </div>
   </div>
 
-  <div class="col-12 text-center py-5 text-muted" *ngIf="templates().length === 0">
+  <div class="col-12 text-center py-5 text-muted" *ngIf="filteredTemplates().length === 0">
     <i class="fa fa-images fs-1 text-muted mb-3"></i>
-    <h4 class="h5 fw-bold text-muted mb-1">Aucun modèle de faire-part</h4>
-    <p class="fs-sm text-muted">Ajoutez votre premier modèle pour commencer.</p>
+    <h4 class="h5 fw-bold text-muted mb-1">Aucun modèle de faire-part dans cette catégorie</h4>
+    <p class="fs-sm text-muted">Créez votre premier modèle pour enrichir le catalogue.</p>
   </div>
 </div>
 
@@ -77,51 +139,104 @@
   </div>
 </div>
 
-<!-- Modal: Add Template -->
+<!-- Modal: Add / Edit Template -->
 <div class="modal fade show" tabindex="-1" style="display: block; background: rgba(0,0,0,0.5);" *ngIf="isModalOpen()">
-  <div class="modal-dialog modal-md modal-dialog-centered">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content shadow-lg border-0 rounded-3">
       <div class="modal-header bg-body-light border-bottom p-3">
         <h5 class="modal-title fw-bold text-dark">
-          Créer un nouveau modèle de faire-part
+          {{ isEditing() ? 'Modifier le modèle de faire-part' : 'Créer un nouveau modèle de faire-part' }}
         </h5>
         <button type="button" class="btn-close" (click)="closeAddModal()"></button>
       </div>
       
-      <form (ngSubmit)="addTemplate()">
+      <form (ngSubmit)="saveTemplate()">
         <div class="modal-body p-4">
-          <div class="mb-3">
-            <label class="form-label fw-semibold text-muted">Titre du modèle</label>
-            <input type="text" class="form-control border-light shadow-sm bg-body-light" 
-                   placeholder="Ex: Fleurs de Coton" [(ngModel)]="titleField" name="title" required>
+          <div class="row">
+            <!-- Nom du modèle -->
+            <div class="col-md-7 mb-3">
+              <label class="form-label fw-semibold text-muted">Nom du modèle <span class="text-danger">*</span></label>
+              <input type="text" class="form-control border-light shadow-sm bg-body-light" 
+                     placeholder="Ex: Fleurs de Coton" [(ngModel)]="titleField" name="title" required>
+            </div>
+
+            <!-- Catégorie -->
+            <div class="col-md-5 mb-3">
+              <label class="form-label fw-semibold text-muted">Catégorie / Type d'événement</label>
+              <select class="form-select border-light shadow-sm bg-body-light" [(ngModel)]="categoryField" name="category" (change)="onCategoryChange()">
+                <option value="Mariage">Mariage</option>
+                <option value="Corporate">Corporate & Conférence</option>
+                <option value="Anniversaire">Anniversaire & Privé</option>
+                <option value="Autre">Autre</option>
+              </select>
+            </div>
           </div>
 
-          <div class="mb-3">
-            <label class="form-label fw-semibold text-muted">Catégorie</label>
-            <select class="form-select border-light shadow-sm bg-body-light" [(ngModel)]="categoryField" name="category">
-              <option value="Mariage">Mariage</option>
-              <option value="Corporate">Corporate</option>
-              <option value="Anniversaire">Anniversaire</option>
-              <option value="Autre">Autre</option>
-            </select>
+          <div class="row">
+            <!-- Clé de thème technique -->
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-semibold text-muted">Identifiant / Clé de Thème</label>
+              <input type="text" class="form-control border-light shadow-sm bg-body-light" 
+                     placeholder="Ex: fleurs-de-coton, or-et-velours" [(ngModel)]="templateKeyField" name="templateKey">
+              <div class="form-text fs-xxs text-muted">Permet la liaison CSS avec la page RSVP (laisser vide pour auto-génération).</div>
+            </div>
+
+            <!-- Calque / Cadre Décoratif -->
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-semibold text-muted">Calque Décoratif / Cadre graphique</label>
+              <select class="form-select border-light shadow-sm bg-body-light" [(ngModel)]="decorativeFrameField" name="decorativeFrame">
+                <option value="floral-frame">🌸 Cadre Floral (Botanique & Champêtre)</option>
+                <option value="gold-border">⚜️ Bordure Dorée & Ornement Géométrique</option>
+                <option value="geometric-frame">📐 Cadre Géométrique (Corporate & Moderne)</option>
+                <option value="minimal-edge">✨ Minimaliste (Lignes Épurées)</option>
+                <option value="none">Aucun calque particulier</option>
+              </select>
+            </div>
           </div>
 
+          <div class="row">
+            <!-- Couleur d'accent -->
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-semibold text-muted">Couleur d'accent (Titres & Boutons)</label>
+              <div class="input-group">
+                <input type="color" class="form-control form-control-color border-light bg-body-light" 
+                       [(ngModel)]="accentColorField" name="accentColorPicker" style="max-width: 48px;">
+                <input type="text" class="form-control border-light shadow-sm bg-body-light" 
+                       placeholder="#d4af37" [(ngModel)]="accentColorField" name="accentColor">
+              </div>
+            </div>
+
+            <!-- Couleur de fond -->
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-semibold text-muted">Couleur d'arrière-plan</label>
+              <div class="input-group">
+                <input type="color" class="form-control form-control-color border-light bg-body-light" 
+                       [(ngModel)]="backgroundColorField" name="backgroundColorPicker" style="max-width: 48px;">
+                <input type="text" class="form-control border-light shadow-sm bg-body-light" 
+                       placeholder="#faf6ee" [(ngModel)]="backgroundColorField" name="backgroundColor">
+              </div>
+            </div>
+          </div>
+
+          <!-- Description -->
           <div class="mb-3">
-            <label class="form-label fw-semibold text-muted">Description</label>
-            <textarea class="form-control border-light shadow-sm bg-body-light" rows="3" 
-                      placeholder="Décrivez brièvement le style visuel de ce modèle..." 
+            <label class="form-label fw-semibold text-muted">Description esthétique</label>
+            <textarea class="form-control border-light shadow-sm bg-body-light" rows="2" 
+                      placeholder="Décrivez brièvement l'ambiance et le style visuel de ce modèle..." 
                       [(ngModel)]="descriptionField" name="description"></textarea>
           </div>
 
+          <!-- Image Preview URL -->
           <div class="mb-3">
-            <label class="form-label fw-semibold text-muted">URL de l'image de couverture</label>
+            <label class="form-label fw-semibold text-muted">URL de l'image d'illustration / aperçu</label>
             <input type="url" class="form-control border-light shadow-sm bg-body-light" 
                    placeholder="Ex: https://images.unsplash.com/..." [(ngModel)]="imageUrlField" name="imageUrl">
           </div>
 
-          <div class="mb-3">
-            <label class="form-label fw-semibold text-muted">Code HTML / Contenu personnalisé</label>
-            <textarea class="form-control border-light shadow-sm bg-body-light" rows="5" 
+          <!-- HTML / Custom Content -->
+          <div class="mb-2">
+            <label class="form-label fw-semibold text-muted">Contenu / Titre personnalisé par défaut</label>
+            <textarea class="form-control border-light shadow-sm bg-body-light" rows="2" 
                       placeholder="Ex: <h1>Fleurs de Coton</h1><p>...</p>" 
                       [(ngModel)]="htmlContentField" name="htmlContent"></textarea>
           </div>
@@ -132,8 +247,8 @@
             Annuler
           </button>
           <button type="submit" class="btn btn-primary" [disabled]="isSubmitting()">
-            <span *ngIf="!isSubmitting()">Enregistrer le modèle</span>
-            <span *ngIf="isSubmitting()"><i class="fa fa-spinner fa-spin me-2"></i>Création...</span>
+            <span *ngIf="!isSubmitting()">{{ isEditing() ? 'Enregistrer les modifications' : 'Créer le modèle' }}</span>
+            <span *ngIf="isSubmitting()"><i class="fa fa-spinner fa-spin me-2"></i>Enregistrement...</span>
           </button>
         </div>
       </form>

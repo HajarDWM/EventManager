@@ -8,6 +8,10 @@ export interface DigitalTemplate {
   category: string;
   description?: string;
   imageUrl?: string;
+  templateKey?: string;
+  decorativeFrame?: string; // floral-frame, gold-border, geometric-frame, minimal-edge
+  accentColor?: string;
+  backgroundColor?: string;
   htmlContent?: string;
 }
 
@@ -25,6 +29,10 @@ export class TemplateService {
 
   public createTemplate(template: DigitalTemplate): Observable<DigitalTemplate> {
     return this.http.post<DigitalTemplate>(this.apiUrl, template);
+  }
+
+  public updateTemplate(id: number, template: DigitalTemplate): Observable<DigitalTemplate> {
+    return this.http.put<DigitalTemplate>(`${this.apiUrl}/${id}`, template);
   }
 
   public deleteTemplate(id: number): Observable<void> {

@@ -37,10 +37,25 @@ public class PublicRsvpController {
                 .toList();
 
         String templateCategory = "Corporate";
+        String templateTitle = null;
+        String decorativeFrame = null;
+        String accentColor = null;
+        String backgroundColor = null;
+        String resolvedTemplateKey = event.getTemplateId();
+
         if (event.getDigitalTemplateId() != null) {
-            templateCategory = templateRepository.findById(event.getDigitalTemplateId())
-                    .map(com.example.eventmanager.infrastructure.persistence.entity.DigitalInvitationTemplateEntity::getCategory)
-                    .orElse("Corporate");
+            var tplOpt = templateRepository.findById(event.getDigitalTemplateId());
+            if (tplOpt.isPresent()) {
+                var tpl = tplOpt.get();
+                templateCategory = tpl.getCategory();
+                templateTitle = tpl.getTitle();
+                decorativeFrame = tpl.getDecorativeFrame();
+                accentColor = tpl.getAccentColor();
+                backgroundColor = tpl.getBackgroundColor();
+                if (resolvedTemplateKey == null || resolvedTemplateKey.isBlank()) {
+                    resolvedTemplateKey = tpl.getTemplateKey();
+                }
+            }
         }
 
         PublicRsvpDTO dto = PublicRsvpDTO.builder()
@@ -61,7 +76,11 @@ public class PublicRsvpController {
                 .invitationLocation(event.getInvitationLocation())
                 .mealType(event.getMealType())
                 .templateCategory(templateCategory)
-                .templateId(event.getTemplateId())
+                .templateId(resolvedTemplateKey)
+                .templateTitle(templateTitle)
+                .decorativeFrame(decorativeFrame)
+                .accentColor(accentColor)
+                .backgroundColor(backgroundColor)
                 .menuItems(menuItems)
                 .build();
 
@@ -102,10 +121,25 @@ public class PublicRsvpController {
                 .toList();
 
         String templateCategory = "Corporate";
+        String templateTitle = null;
+        String decorativeFrame = null;
+        String accentColor = null;
+        String backgroundColor = null;
+        String resolvedTemplateKey = event.getTemplateId();
+
         if (event.getDigitalTemplateId() != null) {
-            templateCategory = templateRepository.findById(event.getDigitalTemplateId())
-                    .map(com.example.eventmanager.infrastructure.persistence.entity.DigitalInvitationTemplateEntity::getCategory)
-                    .orElse("Corporate");
+            var tplOpt = templateRepository.findById(event.getDigitalTemplateId());
+            if (tplOpt.isPresent()) {
+                var tpl = tplOpt.get();
+                templateCategory = tpl.getCategory();
+                templateTitle = tpl.getTitle();
+                decorativeFrame = tpl.getDecorativeFrame();
+                accentColor = tpl.getAccentColor();
+                backgroundColor = tpl.getBackgroundColor();
+                if (resolvedTemplateKey == null || resolvedTemplateKey.isBlank()) {
+                    resolvedTemplateKey = tpl.getTemplateKey();
+                }
+            }
         }
 
         PublicRsvpDTO responseDto = PublicRsvpDTO.builder()
@@ -126,7 +160,11 @@ public class PublicRsvpController {
                 .invitationLocation(event.getInvitationLocation())
                 .mealType(event.getMealType())
                 .templateCategory(templateCategory)
-                .templateId(event.getTemplateId())
+                .templateId(resolvedTemplateKey)
+                .templateTitle(templateTitle)
+                .decorativeFrame(decorativeFrame)
+                .accentColor(accentColor)
+                .backgroundColor(backgroundColor)
                 .menuItems(menuItems)
                 .build();
 
