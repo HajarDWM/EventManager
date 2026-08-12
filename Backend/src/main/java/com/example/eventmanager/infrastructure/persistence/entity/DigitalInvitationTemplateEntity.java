@@ -43,6 +43,15 @@ public class DigitalInvitationTemplateEntity {
     @Column(name = "background_image_url", columnDefinition = "LONGTEXT")
     private String backgroundImageUrl;
 
+    @Column(name = "primary_font", length = 100)
+    private String primaryFont;
+
+    @Column(name = "secondary_font", length = 100)
+    private String secondaryFont;
+
+    @Column(name = "secondary_font_color", length = 50)
+    private String secondaryFontColor;
+
     @Column(name = "html_content", columnDefinition = "LONGTEXT")
     private String htmlContent;
 

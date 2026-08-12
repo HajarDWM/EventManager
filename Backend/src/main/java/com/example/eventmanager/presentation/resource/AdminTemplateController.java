@@ -39,6 +39,15 @@ public class AdminTemplateController {
         if (template.getBackgroundColor() == null || template.getBackgroundColor().isBlank()) {
             template.setBackgroundColor("Mariage".equalsIgnoreCase(template.getCategory()) ? "#faf6ee" : "#f8f9fa");
         }
+        if (template.getPrimaryFont() == null || template.getPrimaryFont().isBlank()) {
+            template.setPrimaryFont("Mariage".equalsIgnoreCase(template.getCategory()) ? "Alex Brush" : "Playfair Display");
+        }
+        if (template.getSecondaryFont() == null || template.getSecondaryFont().isBlank()) {
+            template.setSecondaryFont("Mariage".equalsIgnoreCase(template.getCategory()) ? "Cinzel" : "Montserrat");
+        }
+        if (template.getSecondaryFontColor() == null || template.getSecondaryFontColor().isBlank()) {
+            template.setSecondaryFontColor("Mariage".equalsIgnoreCase(template.getCategory()) ? "#0f172a" : "#1e293b");
+        }
         if (template.getHtmlContent() == null || template.getHtmlContent().isBlank()) {
             template.setHtmlContent("<h1>" + template.getTitle() + "</h1><p>" + template.getDescription() + "</p>");
         }
@@ -64,17 +73,26 @@ public class AdminTemplateController {
             if (updated.getTemplateKey() != null && !updated.getTemplateKey().isBlank()) {
                 existing.setTemplateKey(updated.getTemplateKey());
             }
-            if (updated.getDecorativeFrame() != null && !updated.getDecorativeFrame().isBlank()) {
+            if (updated.getDecorativeFrame() != null) {
                 existing.setDecorativeFrame(updated.getDecorativeFrame());
             }
-            if (updated.getAccentColor() != null && !updated.getAccentColor().isBlank()) {
+            if (updated.getAccentColor() != null) {
                 existing.setAccentColor(updated.getAccentColor());
             }
-            if (updated.getBackgroundColor() != null && !updated.getBackgroundColor().isBlank()) {
+            if (updated.getBackgroundColor() != null) {
                 existing.setBackgroundColor(updated.getBackgroundColor());
             }
             if (updated.getBackgroundImageUrl() != null) {
                 existing.setBackgroundImageUrl(updated.getBackgroundImageUrl());
+            }
+            if (updated.getPrimaryFont() != null) {
+                existing.setPrimaryFont(updated.getPrimaryFont());
+            }
+            if (updated.getSecondaryFont() != null) {
+                existing.setSecondaryFont(updated.getSecondaryFont());
+            }
+            if (updated.getSecondaryFontColor() != null) {
+                existing.setSecondaryFontColor(updated.getSecondaryFontColor());
             }
             if (updated.getHtmlContent() != null) {
                 existing.setHtmlContent(updated.getHtmlContent());

@@ -28,6 +28,9 @@ export interface PublicRsvpDetail {
   accentColor?: string;
   backgroundColor?: string;
   templateBackgroundImageUrl?: string;
+  primaryFont?: string;
+  secondaryFont?: string;
+  secondaryFontColor?: string;
   templateMusicUrl?: string;
   menuItems?: any[];
 }
@@ -128,6 +131,26 @@ export class GuestRsvp implements OnInit, OnDestroy {
   protected readonly isMix = computed(() => this.hasFormat('BUFFET_ENTREES') && this.hasFormat('PLATS_FIXES'));
   protected readonly isBuffet = computed(() => !this.hasFormat('PLATS_FIXES'));
   protected readonly isPlated = computed(() => this.hasFormat('PLATS_FIXES') && !this.hasFormat('BUFFET_ENTREES'));
+
+  public getPrimaryFont(): string {
+    const f = this.guest()?.primaryFont;
+    if (f) return `'${f}', 'Alex Brush', 'Great Vibes', cursive`;
+    return "'Alex Brush', 'Great Vibes', cursive";
+  }
+
+  public getSecondaryFont(): string {
+    const f = this.guest()?.secondaryFont;
+    if (f) return `'${f}', 'Cinzel', 'Playfair Display', serif`;
+    return "'Cinzel', 'Playfair Display', serif";
+  }
+
+  public getPrimaryColor(): string {
+    return this.guest()?.accentColor || '#d4af37';
+  }
+
+  public getSecondaryFontColor(): string {
+    return this.guest()?.secondaryFontColor || '#0f172a';
+  }
 
   protected getStep1PreviewImage(): string {
     const items = this.carouselItems();

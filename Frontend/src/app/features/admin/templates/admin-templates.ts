@@ -47,7 +47,20 @@ export class AdminTemplates implements OnInit {
   protected decorativeFrameField = 'floral-frame';
   protected accentColorField = '#d4af37';
   protected backgroundColorField = '#faf6ee';
+  protected primaryFontField = 'Alex Brush';
+  protected secondaryFontField = 'Cinzel';
+  protected secondaryFontColorField = '#0f172a';
   protected htmlContentField = '';
+
+  // Available Luxury Google Fonts with direct live style binding
+  protected readonly availableFonts = [
+    { name: 'Playfair Display', label: 'Playfair Display (Serif Luxueux & Éditorial)', fontGroup: 'Serif', sample: 'Mariage d\'Exception' },
+    { name: 'Cormorant Garamond', label: 'Cormorant Garamond (Classique & Haute Joaillerie)', fontGroup: 'Serif', sample: 'Célébration Prestigieuse' },
+    { name: 'Montserrat', label: 'Montserrat (Moderne & Sans-Serif Épuré)', fontGroup: 'Sans-Serif', sample: 'Conférence & Événement' },
+    { name: 'Great Vibes', label: 'Great Vibes (Calligraphie Fluide & Romantique)', fontGroup: 'Cursive', sample: 'Yassine & Zineb' },
+    { name: 'Cinzel', label: 'Cinzel (Impérial & Monumental)', fontGroup: 'Serif', sample: 'RÉCEPTION ROYALE' },
+    { name: 'Alex Brush', label: 'Alex Brush (Script Délicat & Cérémonial)', fontGroup: 'Cursive', sample: 'Invitation Spéciale' }
+  ];
 
   // Audio Preview & Presets
   protected readonly isPreviewAudioPlaying = signal(false);
@@ -206,6 +219,9 @@ export class AdminTemplates implements OnInit {
     this.decorativeFrameField = 'floral-frame';
     this.accentColorField = '#d4af37';
     this.backgroundColorField = '#faf6ee';
+    this.primaryFontField = 'Alex Brush';
+    this.secondaryFontField = 'Cinzel';
+    this.secondaryFontColorField = '#0f172a';
     this.htmlContentField = '';
     this.errorMessage.set('');
     this.stopPreviewAudio();
@@ -225,6 +241,9 @@ export class AdminTemplates implements OnInit {
     this.decorativeFrameField = template.decorativeFrame || ('Mariage' === template.category ? 'floral-frame' : 'geometric-frame');
     this.accentColorField = template.accentColor || '#d4af37';
     this.backgroundColorField = template.backgroundColor || ('Mariage' === template.category ? '#faf6ee' : '#f8f9fa');
+    this.primaryFontField = template.primaryFont || ('Mariage' === template.category ? 'Alex Brush' : 'Playfair Display');
+    this.secondaryFontField = template.secondaryFont || ('Mariage' === template.category ? 'Cinzel' : 'Montserrat');
+    this.secondaryFontColorField = template.secondaryFontColor || ('Mariage' === template.category ? '#0f172a' : '#1e293b');
     this.htmlContentField = template.htmlContent || '';
     this.errorMessage.set('');
     this.stopPreviewAudio();
@@ -241,18 +260,30 @@ export class AdminTemplates implements OnInit {
       this.decorativeFrameField = 'floral-frame';
       this.backgroundColorField = '#faf6ee';
       this.accentColorField = '#d4af37';
+      this.primaryFontField = 'Alex Brush';
+      this.secondaryFontField = 'Cinzel';
+      this.secondaryFontColorField = '#0f172a';
     } else if (this.categoryField === 'Corporate') {
       this.decorativeFrameField = 'geometric-frame';
       this.backgroundColorField = '#f8f9fa';
       this.accentColorField = '#2b4c7e';
+      this.primaryFontField = 'Montserrat';
+      this.secondaryFontField = 'Playfair Display';
+      this.secondaryFontColorField = '#1e293b';
     } else if (this.categoryField === 'Anniversaire') {
       this.decorativeFrameField = 'floral-frame';
       this.backgroundColorField = '#fff9f5';
       this.accentColorField = '#c27ba0';
+      this.primaryFontField = 'Great Vibes';
+      this.secondaryFontField = 'Cormorant Garamond';
+      this.secondaryFontColorField = '#2c1810';
     } else {
       this.decorativeFrameField = 'minimal-edge';
       this.backgroundColorField = '#ffffff';
       this.accentColorField = '#1a1a1a';
+      this.primaryFontField = 'Playfair Display';
+      this.secondaryFontField = 'Montserrat';
+      this.secondaryFontColorField = '#333333';
     }
   }
 
@@ -268,21 +299,24 @@ export class AdminTemplates implements OnInit {
     const templatePayload: DigitalTemplate = {
       title: this.titleField.trim(),
       category: this.categoryField,
-      description: this.descriptionField.trim(),
-      imageUrl: this.imageUrlField.trim() || undefined,
-      backgroundImageUrl: this.backgroundImageUrlField.trim() || undefined,
-      musicUrl: this.musicUrlField.trim() || undefined,
-      templateKey: this.templateKeyField.trim() || undefined,
-      decorativeFrame: this.decorativeFrameField,
-      accentColor: this.accentColorField,
-      backgroundColor: this.backgroundColorField,
-      htmlContent: this.htmlContentField.trim() || undefined
+      description: this.descriptionField?.trim() || '',
+      imageUrl: this.imageUrlField?.trim() || undefined,
+      backgroundImageUrl: this.backgroundImageUrlField?.trim() || undefined,
+      musicUrl: this.musicUrlField?.trim() || undefined,
+      templateKey: this.templateKeyField?.trim() || undefined,
+      decorativeFrame: this.decorativeFrameField || 'floral-frame',
+      accentColor: this.accentColorField?.trim() || '#d4af37',
+      backgroundColor: this.backgroundColorField?.trim() || '#faf6ee',
+      primaryFont: this.primaryFontField?.trim() || 'Alex Brush',
+      secondaryFont: this.secondaryFontField?.trim() || 'Cinzel',
+      secondaryFontColor: this.secondaryFontColorField?.trim() || '#0f172a',
+      htmlContent: this.htmlContentField?.trim() || undefined
     };
 
     if (this.isEditing() && this.editingId()) {
       this.templateService.updateTemplate(this.editingId()!, templatePayload).subscribe({
         next: (updated) => {
-          this.templates.update(list => list.map(t => t.id === updated.id ? updated : t));
+          this.templates.update(list => list.map(t => t.id === updated.id ? { ...t, ...updated } : t));
           this.successMessage.set('Modèle de faire-part mis à jour avec succès.');
           this.closeAddModal();
           this.isSubmitting.set(false);
