@@ -552,10 +552,11 @@ export class GuestRsvp implements OnInit, OnDestroy {
   private readonly defaultMusicUrl = 'https://cdn.pixabay.com/download/audio/2022/11/06/audio_c3c3933c06.mp3';
 
   private initAudio(): void {
+    const customMusic = this.guest()?.templateMusicUrl;
+    const targetUrl = (customMusic && customMusic.trim()) ? customMusic.trim() : this.defaultMusicUrl;
+
     if (!this.audioElement && typeof Audio !== 'undefined') {
       this.audioElement = new Audio();
-      const customMusic = this.guest()?.templateMusicUrl;
-      this.audioElement.src = (customMusic && customMusic.trim()) ? customMusic.trim() : this.defaultMusicUrl;
       this.audioElement.loop = true;
       this.audioElement.volume = 0.45;
 
@@ -565,12 +566,17 @@ export class GuestRsvp implements OnInit, OnDestroy {
         }
       });
 
-      this.audioElement.addEventListener('error', () => {
-        console.warn('Network audio stream unavailable, switching to Moroccan Andalusian acoustic synthesis.');
+      this.audioElement.addEventListener('error', (e) => {
+        console.warn('Network audio stream unavailable, switching to Moroccan Andalusian acoustic synthesis.', e);
         if (this.isMusicPlaying()) {
           this.playHarmonicChords();
         }
       });
+    }
+
+    if (this.audioElement && this.audioElement.src !== targetUrl) {
+      this.audioElement.src = targetUrl;
+      this.audioElement.load();
     }
   }
 

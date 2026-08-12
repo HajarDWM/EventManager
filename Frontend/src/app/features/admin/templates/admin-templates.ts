@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, computed, inject } from '@angular/core';
+import { Component, OnInit, signal, computed, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TemplateService, DigitalTemplate } from '../../../core/services/template.service';
@@ -12,6 +12,7 @@ import { TemplateService, DigitalTemplate } from '../../../core/services/templat
 })
 export class AdminTemplates implements OnInit {
   private readonly templateService = inject(TemplateService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   protected readonly templates = signal<DigitalTemplate[]>([]);
   protected readonly isLoading = signal(false);
@@ -116,6 +117,7 @@ export class AdminTemplates implements OnInit {
           } else {
             this.backgroundImageUrlField = rawResult;
           }
+          this.cdr.markForCheck();
         };
         img.src = rawResult;
       };
@@ -137,7 +139,9 @@ export class AdminTemplates implements OnInit {
         if (rawResult) {
           this.musicUrlField = rawResult;
           this.stopPreviewAudio();
+          this.cdr.markForCheck();
         }
+        input.value = '';
       };
       reader.readAsDataURL(file);
     }
@@ -154,7 +158,7 @@ export class AdminTemplates implements OnInit {
   }
 
   protected togglePreviewAudio(): void {
-    if (!this.musicUrlField) return;
+    if (!this.musicUrlField?.trim()) return;
 
     if (this.isPreviewAudioPlaying()) {
       this.stopPreviewAudio();
@@ -168,7 +172,11 @@ export class AdminTemplates implements OnInit {
           this.isPreviewAudioPlaying.set(false);
         });
       }
-      this.previewAudioElement.src = this.musicUrlField;
+      const targetSrc = this.musicUrlField.trim();
+      if (this.previewAudioElement.src !== targetSrc) {
+        this.previewAudioElement.src = targetSrc;
+        this.previewAudioElement.load();
+      }
       this.previewAudioElement.play()
         .then(() => this.isPreviewAudioPlaying.set(true))
         .catch(() => this.isPreviewAudioPlaying.set(false));

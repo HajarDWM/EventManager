@@ -272,56 +272,48 @@
             </div>
           </div>
 
-          <!-- Dedicated Audio & Music Section (Modèle Audio Track) -->
-          <div class="mb-3 p-3 bg-light rounded-3 border border-dashed border-2 border-warning-subtle">
-            <div class="d-flex justify-content-between align-items-center mb-1.5">
-              <label class="form-label fw-bold text-dark mb-0">
+          <!-- Dedicated Audio & Music Section (Clean Standard Styling, No Border/Box) -->
+          <div class="mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <label class="form-label fw-semibold text-muted mb-0">
                 <i class="fa fa-music text-warning me-1"></i> Musique d'ambiance du modèle (Audio de fond)
               </label>
-              <span class="badge bg-warning-subtle text-dark fs-xxs">Audio d'ambiance</span>
+              <span class="badge bg-warning-subtle text-dark fs-xxs">Optionnel</span>
             </div>
-            <p class="fs-xs text-muted mb-2">
-              Définissez la musique qui se jouera lorsque les invités ouvriront un faire-part basé sur ce modèle. Vous pouvez importer un fichier MP3, renseigner une URL ou choisir un préréglage.
-            </p>
 
-            <!-- URL Input -->
-            <div class="input-group mb-2">
-              <span class="input-group-text bg-white border-light text-muted"><i class="fa fa-link"></i></span>
-              <input type="url" class="form-control border-light bg-white" 
-                     placeholder="URL directe de l'audio MP3 (https://...)" 
+            <!-- Input & Upload Row -->
+            <div class="input-group mb-2 shadow-sm">
+              <span class="input-group-text border-light bg-body-light text-muted"><i class="fa fa-link"></i></span>
+              <input type="url" class="form-control border-light bg-body-light" 
+                     placeholder="URL directe de l'audio MP3 ou importez un fichier..." 
                      [(ngModel)]="musicUrlField" name="musicUrl"
                      (input)="stopPreviewAudio()">
-            </div>
-
-            <!-- Upload & Actions -->
-            <div class="d-flex flex-wrap align-items-center gap-2 mb-2.5">
-              <label class="btn btn-sm btn-alt-warning mb-0 cursor-pointer">
-                <i class="fa fa-upload me-1.5"></i> Importer un fichier audio (MP3, WAV, M4A)
+              <label class="btn btn-alt-secondary border-light mb-0 cursor-pointer d-flex align-items-center" title="Importer un fichier audio">
+                <i class="fa fa-upload me-1.5"></i> Importer fichier
                 <input type="file" accept="audio/*" class="d-none" (change)="onAudioFileSelected($event)">
               </label>
+            </div>
 
-              <!-- Live Audio Preview Button -->
-              <button type="button" class="btn btn-sm btn-alt-success" *ngIf="musicUrlField" (click)="togglePreviewAudio()">
-                <i class="fa" [ngClass]="isPreviewAudioPlaying() ? 'fa-pause me-1.5' : 'fa-play me-1.5'"></i>
+            <!-- Active Audio Controls (Play Preview & Clear) -->
+            <div class="d-flex align-items-center gap-2 mb-2" *ngIf="musicUrlField">
+              <button type="button" class="btn btn-xs btn-alt-success rounded-pill px-2.5 py-1" (click)="togglePreviewAudio()">
+                <i class="fa" [ngClass]="isPreviewAudioPlaying() ? 'fa-pause me-1' : 'fa-play me-1'"></i>
                 {{ isPreviewAudioPlaying() ? 'Pause' : 'Écouter l\'extrait' }}
               </button>
-
-              <button type="button" class="btn btn-sm btn-alt-danger" *ngIf="musicUrlField" (click)="removeMusic()">
+              <button type="button" class="btn btn-xs btn-alt-danger rounded-pill px-2.5 py-1" (click)="removeMusic()">
                 <i class="fa fa-times me-1"></i> Retirer l'audio
               </button>
             </div>
 
-            <!-- Quick Presets -->
-            <div class="p-2 bg-white rounded border">
-              <span class="d-block fs-xxs text-muted fw-bold text-uppercase mb-1.5">Préréglages musicaux rapides :</span>
-              <div class="d-flex flex-wrap gap-1.5">
-                <button type="button" class="btn btn-xs rounded-pill" 
-                  *ngFor="let preset of musicPresets"
-                  [ngClass]="musicUrlField === preset.url ? 'btn-warning text-dark fw-bold' : 'btn-alt-secondary'"
-                  (click)="selectMusicPreset(preset.url)">
-                  <i class="fa fa-music me-1"></i> {{ preset.label }}
-                </button>
-              </div>
+            <!-- Quick Presets (Clean Pills, No Border Box) -->
+            <div class="d-flex flex-wrap align-items-center gap-1.5 pt-0.5">
+              <span class="fs-xxs text-muted fw-semibold me-1">Préréglages :</span>
+              <button type="button" class="btn btn-xs rounded-pill" 
+                *ngFor="let preset of musicPresets"
+                [ngClass]="musicUrlField === preset.url ? 'btn-warning text-dark fw-bold' : 'btn-alt-secondary'"
+                (click)="selectMusicPreset(preset.url)">
+                <i class="fa fa-music me-1"></i> {{ preset.label }}
+              </button>
             </div>
           </div>
 

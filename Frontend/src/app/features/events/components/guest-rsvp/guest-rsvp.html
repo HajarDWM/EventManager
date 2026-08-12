@@ -77,42 +77,10 @@
       </div>
     </div>
 
-    <!-- Success State -->
-    <div class="luxury-card text-center p-5" *ngIf="!isLoading() && isSuccess()">
-      <div class="luxury-inner-border p-4 p-md-5">
-        <!-- Top Monogram -->
-        <div class="crest-wrapper mb-4">
-          <div class="crest-circle">
-            <span class="crest-letters">R S V P</span>
-          </div>
-          <div class="crest-line"></div>
-        </div>
-
-        <h3 class="wedding-names mb-3">Merci infiniment</h3>
-        <p class="text-muted fs-sm mb-4">Votre participation a bien été enregistrée pour cet événement d'exception.</p>
-
-        <div class="summary-box p-4 rounded-2 bg-cream text-start mb-4">
-          <h4 class="fs-xs fw-bold text-gold uppercase tracking-wider mb-3">Récapitulatif de votre réponse</h4>
-          <div class="fs-sm text-dark mb-2"><strong>Invité :</strong> {{ guest()?.guestName }}</div>
-          <div class="fs-sm text-dark mb-2">
-            <strong>Statut :</strong>
-            <span class="badge rounded-pill" [ngClass]="status() === 'CONFIRMED' ? 'bg-gold-success' : 'bg-gold-muted'">
-              {{ status() === 'CONFIRMED' ? 'Présent' : 'Absent' }}
-            </span>
-          </div>
-          <div class="fs-sm text-dark" *ngIf="guest()?.dietaryRequirements">
-            <strong>Préférences & Régimes :</strong> {{ guest()?.dietaryRequirements }}
-          </div>
-        </div>
-
-        <p class="fs-xs text-muted font-serif">Vous pouvez fermer cet onglet en toute sérénité.</p>
-      </div>
-    </div>
-
     <!-- Invitation Form Card with Multi-Layered Structural Assets -->
     <div class="luxury-card position-relative overflow-hidden" [class.has-custom-bg-card]="!!resolvedBackgroundImage"
       [style.background-image]="resolvedBackgroundImage ? 'url(' + resolvedBackgroundImage + ')' : null"
-      *ngIf="!isLoading() && !isSuccess() && guest()">
+      *ngIf="!isLoading() && guest()">
 
       <!-- Custom Uploaded Background Card Graphic Layer (Clean without dark overlays) -->
       <div class="invitation-custom-bg-asset-layer" *ngIf="resolvedBackgroundImage" aria-hidden="true"></div>
@@ -305,7 +273,7 @@
         </ng-container>
 
         <!-- LAYER 4: Centered Dynamic Text Floating Directly over Background (Clean Invitation View) -->
-        <div class="invitation-dynamic-text-overlay text-center mx-auto" *ngIf="!isMenuRsvpOpen()">
+        <div class="invitation-dynamic-text-overlay text-center mx-auto" *ngIf="!isMenuRsvpOpen() && !isSuccess()">
 
           <!-- Dynamic Emblem / Couple Silhouette Vector / Monogram (Only on built-in vector themes) -->
           <div class="invitation-emblem-container mb-3" *ngIf="!resolvedBackgroundImage">
@@ -546,7 +514,7 @@
         </div>
 
         <!-- RSVP Multi-Step Form & Persistent Bottom RSVP Section -->
-        <form #rsvpForm="ngForm" class="w-100 mx-auto d-flex flex-column justify-content-between flex-grow-1"
+        <form #rsvpForm="ngForm" *ngIf="isMenuRsvpOpen() && !isSuccess()" class="w-100 mx-auto d-flex flex-column justify-content-between flex-grow-1"
           style="max-width: 380px;">
 
           <!-- TOP ARROW NAVIGATION BAR (Arrows only, without text) -->
@@ -915,36 +883,21 @@
             </label>
 
             <!-- Side-by-side choices (Small, compact & elegant) -->
-            <div class="d-flex gap-2 justify-content-center mb-1" *ngIf="selectedAttendanceChoice() === null">
-              <button type="button" class="btn btn-presence-yes flex-fill py-1 px-2 fs-xxs fw-bold rounded-pill"
+            <div class="d-flex gap-2 justify-content-center mb-1.5">
+              <button type="button" class="btn flex-fill py-1 px-2 fs-xxs fw-bold rounded-pill"
+                [ngClass]="selectedAttendanceChoice() === 'CONFIRMED' ? 'btn-presence-yes shadow-sm' : 'btn-presence-yes'"
                 (click)="selectAttendanceChoice('CONFIRMED')">
                 <i class="fa fa-check me-1"></i> Accepté
               </button>
-              <button type="button" class="btn btn-presence-no flex-fill py-1 px-2 fs-xxs fw-bold rounded-pill"
+              <button type="button" class="btn flex-fill py-1 px-2 fs-xxs fw-bold rounded-pill"
+                [ngClass]="selectedAttendanceChoice() === 'DECLINED' ? 'btn-presence-no shadow-sm' : 'btn-presence-no'"
                 (click)="selectAttendanceChoice('DECLINED')">
                 <i class="fa fa-times me-1"></i> Décliné
               </button>
             </div>
 
-            <!-- Dynamic Confirmation Button (Appears when choice is made) -->
+            <!-- Single Confirmation Submission Button (Appears when choice is made) -->
             <div *ngIf="selectedAttendanceChoice() !== null" class="animate__animated animate__fadeIn">
-
-              <!-- Choice Feedback Badge -->
-              <div class="p-1.5 rounded-pill mb-2 d-flex align-items-center justify-content-between px-3"
-                [ngClass]="selectedAttendanceChoice() === 'CONFIRMED' ? 'bg-success-subtle text-success border border-success' : 'bg-danger-subtle text-danger border border-danger'">
-                <span class="fs-xxs fw-bold">
-                  <i class="fa me-1"
-                    [ngClass]="selectedAttendanceChoice() === 'CONFIRMED' ? 'fa-check-circle' : 'fa-times-circle'"></i>
-                  Votre choix : {{ selectedAttendanceChoice() === 'CONFIRMED' ? 'Accepté' : 'Décliné' }}
-                </span>
-                <button type="button" class="btn btn-link btn-sm p-0 text-decoration-underline fs-xxs"
-                  [ngClass]="selectedAttendanceChoice() === 'CONFIRMED' ? 'text-success' : 'text-danger'"
-                  (click)="selectedAttendanceChoice.set(null)">
-                  Modifier
-                </button>
-              </div>
-
-              <!-- Single Confirmation Submission Button -->
               <button type="button" class="btn w-100 py-2 fs-xs text-uppercase fw-bold rounded-pill shadow-sm mb-1"
                 [ngClass]="selectedAttendanceChoice() === 'CONFIRMED' ? 'btn-luxury-submit' : 'btn-presence-no'"
                 (click)="confirmRsvpSubmission()" [disabled]="isSubmitting()">
@@ -954,11 +907,117 @@
                 </span>
                 <span *ngIf="isSubmitting()"><i class="fa fa-spinner fa-spin me-1.5"></i>Enregistrement...</span>
               </button>
-
             </div>
           </div>
 
         </form>
+
+        <!-- SUCCESS STATE: Integrated Luxury Confirmation Screen (Identical Background Graphic, Fonts, Framing & Compact Grouping) -->
+        <div *ngIf="isSuccess()"
+          class="success-recap-container animate__animated animate__fadeIn my-auto w-100 pt-5 pb-2"
+          style="padding-top: 55px !important;">
+
+          <!-- Top Success Header -->
+          <div class="spotlight-title-wrapper mb-3.5 text-center">
+            <span class="luxury-subtitle d-block mb-1"
+              style="font-size: 1.5rem !important; line-height: 1.1 !important; color: #374151 !important;">
+              Confirmation
+            </span>
+            <h3 class="page2-menu-title text-uppercase fw-bold m-0"
+              style="font-family: 'Cinzel', 'Playfair Display', serif; font-size: 1.12rem !important; line-height: 1.3 !important; color: #0f172a !important; letter-spacing: 1.5px !important;">
+              Merci infiniment
+            </h3>
+            <div class="spotlight-underline mx-auto mt-1.5 mb-2.5"
+              style="width: 45px; height: 1.5px; background: #0f172a; opacity: 0.45;"></div>
+
+            <p class="text-dark fs-xs mb-0 px-2" style="line-height: 1.4; opacity: 0.85; max-width: 330px; margin-left: auto; margin-right: auto; font-size: 0.76rem;">
+              Votre participation a bien été enregistrée pour cet événement d'exception.
+            </p>
+          </div>
+
+          <!-- Pure Typography Recap Section (Identical styling and layout to Step 2) -->
+          <div class="recap-content-wrapper mx-auto text-center mb-3.5" style="max-width: 370px;">
+            
+            <!-- Guest Name & Status Badge -->
+            <div class="mb-3 text-start px-2">
+              <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom border-dark border-opacity-10">
+                <span class="text-uppercase fw-bold text-muted" style="letter-spacing: 0.8px; font-size: 0.74rem;">Invité</span>
+                <span class="fw-bold text-dark text-end font-serif" style="font-size: 0.95rem; color: #0f172a;">{{ guest()?.guestName }}</span>
+              </div>
+              <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom border-dark border-opacity-10">
+                <span class="text-uppercase fw-bold text-muted" style="letter-spacing: 0.8px; font-size: 0.74rem;">Statut</span>
+                <span class="badge rounded-pill px-3 py-1 fw-bold fs-xxs"
+                  [ngClass]="status() === 'CONFIRMED' ? 'bg-success text-white' : 'bg-secondary text-white'">
+                  <i class="fa me-1" [ngClass]="status() === 'CONFIRMED' ? 'fa-check' : 'fa-times'"></i>
+                  {{ status() === 'CONFIRMED' ? 'Présent' : 'Absent' }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Menu choices if CONFIRMED and Plated / Mix -->
+            <div class="mb-3 text-start px-2" *ngIf="status() === 'CONFIRMED' && isPlated()">
+              <div class="fw-bold text-dark text-uppercase mb-2 text-center"
+                style="letter-spacing: 1.8px; opacity: 0.85; font-size: 0.76rem;">
+                — Choix du Menu —
+              </div>
+
+              <div class="d-flex flex-column gap-2">
+                <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom border-dark border-opacity-10" *ngIf="starterChoice">
+                  <span class="text-uppercase fw-bold text-muted" style="letter-spacing: 0.8px; font-size: 0.74rem;">Entrée</span>
+                  <span class="fw-semibold text-dark text-end font-serif" style="font-size: 0.95rem;">{{ starterChoice }}</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom border-dark border-opacity-10" *ngIf="mealChoice">
+                  <span class="text-uppercase fw-bold text-dark" style="letter-spacing: 0.8px; font-size: 0.74rem;">Plat Principal</span>
+                  <span class="fw-bold text-dark text-end font-serif" style="font-size: 0.98rem; color: #0f172a;">{{ mealChoice }}</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom border-dark border-opacity-10" *ngIf="dessertChoice">
+                  <span class="text-uppercase fw-bold text-muted" style="letter-spacing: 0.8px; font-size: 0.74rem;">Dessert</span>
+                  <span class="fw-semibold text-dark text-end font-serif" style="font-size: 0.95rem;">{{ dessertChoice }}</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom border-dark border-opacity-10" *ngIf="beverageChoice">
+                  <span class="text-uppercase fw-bold text-muted" style="letter-spacing: 0.8px; font-size: 0.74rem;">Boisson</span>
+                  <span class="fw-semibold text-dark text-end font-serif" style="font-size: 0.95rem;">{{ beverageChoice }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-3 text-start px-2" *ngIf="status() === 'CONFIRMED' && isMix()">
+              <div class="fw-bold text-dark text-uppercase mb-2 text-center"
+                style="letter-spacing: 1.8px; opacity: 0.85; font-size: 0.76rem;">
+                — Choix du Menu —
+              </div>
+              <div class="d-flex flex-column gap-2">
+                <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom border-dark border-opacity-10" *ngIf="mealChoice">
+                  <span class="text-uppercase fw-bold text-dark" style="letter-spacing: 0.8px; font-size: 0.74rem;">Plat assis</span>
+                  <span class="fw-bold text-dark text-end font-serif" style="font-size: 0.98rem; color: #0f172a;">{{ mealChoice }}</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom border-dark border-opacity-10" *ngIf="dessertChoice">
+                  <span class="text-uppercase fw-bold text-muted" style="letter-spacing: 0.8px; font-size: 0.74rem;">Dessert</span>
+                  <span class="fw-semibold text-dark text-end font-serif" style="font-size: 0.95rem;">{{ dessertChoice }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Dietary pills if any -->
+            <div class="mb-2 text-center px-2" *ngIf="status() === 'CONFIRMED' && (getSelectedDietsArray().length > 0 || (otherAllergies.trim() && otherAllergies.trim().toLowerCase() !== 'aucun' && otherAllergies.trim().toLowerCase() !== 'none'))">
+              <div class="fw-bold text-dark text-uppercase mb-2 text-center"
+                style="letter-spacing: 1.8px; opacity: 0.85; font-size: 0.76rem;">
+                — Régimes & Allergies —
+              </div>
+              <div class="d-flex flex-wrap gap-1.5 justify-content-center mb-1">
+                <span class="badge bg-dark bg-opacity-85 text-white rounded-pill px-3 py-1.5 fw-semibold shadow-xs"
+                  *ngFor="let diet of getSelectedDietsArray()" style="font-size: 0.78rem;">
+                  <i class="fa fa-check me-1" style="color: #fbbf24;"></i>{{ diet }}
+                </span>
+              </div>
+              <div class="text-dark fst-italic mt-1" *ngIf="otherAllergies.trim() && otherAllergies.trim().toLowerCase() !== 'aucun' && otherAllergies.trim().toLowerCase() !== 'none'" style="font-size: 0.8rem;">
+                <span class="fw-bold">Allergie :</span> {{ otherAllergies.trim() }}
+              </div>
+            </div>
+
+          </div>
+
+        </div>
 
       </div>
     </div>

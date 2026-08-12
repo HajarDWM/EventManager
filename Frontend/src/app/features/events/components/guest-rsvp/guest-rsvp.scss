@@ -2346,20 +2346,44 @@ textarea.luxury-form-control::placeholder {
    Structural Layering: Textures, Hanging Lanterns, Side Florals & Text Overlay
    ========================================================================== */
 
-    /* CUSTOM UPLOADED BACKGROUND CARD ASSET (Clean Luxury Floating Design) */
+    /* CUSTOM UPLOADED BACKGROUND CARD ASSET (Clean Luxury Floating Design - Responsive Full-Frame Fit) */
     .luxury-card.has-custom-bg-card {
-      background-size: cover !important;
-      background-position: center top !important;
+      background-size: 100% 100% !important;
+      background-position: center center !important;
       background-repeat: no-repeat !important;
       background-color: transparent !important;
       box-shadow: 0 15px 45px rgba(0, 0, 0, 0.1) !important;
       border: none !important;
       border-radius: 20px;
-      min-height: 820px;
+      width: 100%;
+      max-width: 520px;
+      min-height: clamp(620px, 88vh, 820px) !important;
+      margin: 0 auto;
+
+      @media (max-width: 575.98px) {
+        border-radius: 16px;
+        min-height: clamp(580px, 85vh, 720px) !important;
+
+        .success-recap-container,
+        .rsvp-summary-container,
+        .menu-selection-container {
+          padding-left: 10px !important;
+          padding-right: 10px !important;
+          max-width: 330px !important;
+        }
+
+        .page2-menu-title {
+          font-size: 1.05rem !important;
+        }
+
+        .luxury-subtitle {
+          font-size: 1.35rem !important;
+        }
+      }
 
       @media (min-width: 576px) {
         background-size: 100% 100% !important;
-        background-position: center center !important;
+        min-height: 820px !important;
       }
 
       .invitation-custom-bg-asset-layer {
