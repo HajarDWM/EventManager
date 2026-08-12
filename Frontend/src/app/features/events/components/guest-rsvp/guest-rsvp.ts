@@ -191,6 +191,37 @@ export class GuestRsvp implements OnInit, OnDestroy {
   public otherAllergies = '';
   public hasDietsChoice: boolean | null = null;
 
+  public selectDishFromModal(category: 'STARTER' | 'MAIN' | 'DESSERT' | 'BEVERAGE', dishName: string): void {
+    if (category === 'STARTER') {
+      this.starterChoice = this.starterChoice === dishName ? '' : dishName;
+    } else if (category === 'MAIN') {
+      this.mealChoice = this.mealChoice === dishName ? '' : dishName;
+    } else if (category === 'DESSERT') {
+      this.dessertChoice = this.dessertChoice === dishName ? '' : dishName;
+    } else if (category === 'BEVERAGE') {
+      this.beverageChoice = this.beverageChoice === dishName ? '' : dishName;
+    }
+
+    // Sync carousel view to this item if present
+    const items = this.carouselItems();
+    const foundIdx = items.findIndex(i => i.name.toLowerCase() === dishName.toLowerCase());
+    if (foundIdx !== -1) {
+      this.activeCarouselIndex.set(foundIdx);
+    }
+  }
+
+  public confirmMenuModal(): void {
+    const targetName = this.mealChoice || this.starterChoice || this.dessertChoice || this.beverageChoice;
+    if (targetName) {
+      const items = this.carouselItems();
+      const foundIdx = items.findIndex(i => i.name.toLowerCase() === targetName.toLowerCase());
+      if (foundIdx !== -1) {
+        this.activeCarouselIndex.set(foundIdx);
+      }
+    }
+    this.isFullMenuModalOpen.set(false);
+  }
+
   public resetDietSelections(): void {
     this.hasVegetarien = false;
     this.hasVegan = false;

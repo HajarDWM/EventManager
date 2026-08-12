@@ -419,94 +419,289 @@
       <div class="p-2 p-md-3 menu-rsvp-container animate__animated animate__fadeIn text-center mx-auto"
         *ngIf="isMenuRsvpOpen()">
 
-        <!-- Full Menu Modal Overlay -->
+        <!-- Full Menu Modal Overlay (Compact Luxury Card Modal) -->
         <div class="modal d-block bg-dark bg-opacity-75" tabindex="-1" *ngIf="isFullMenuModalOpen()"
-          style="backdrop-filter: blur(4px); z-index: 1060;">
-          <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" style="max-width: 480px;">
-            <div class="modal-content border border-light bg-luxury-modal p-4 shadow-lg text-center position-relative">
+          style="backdrop-filter: blur(6px); z-index: 1060;">
+          <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable mx-auto px-2" style="max-width: 410px;">
+            <div class="modal-content border-0 p-3 p-sm-4 shadow-2xl text-center position-relative rounded-4"
+              style="background: #faf7f2; border: 1px solid rgba(212, 175, 55, 0.35) !important;">
               <!-- Close button -->
-              <button type="button" class="btn-close position-absolute top-0 end-0 m-3"
-                (click)="isFullMenuModalOpen.set(false)"></button>
+              <button type="button" class="btn-close position-absolute top-0 end-0 m-3 shadow-none"
+                (click)="isFullMenuModalOpen.set(false)" aria-label="Fermer"></button>
 
-              <div class="luxury-inner-border p-3 m-1">
-                <div class="crest-wrapper mb-3">
-                  <div class="crest-circle"
-                    style="width: 40px; height: 40px; border-radius: 50%; border: 1px solid #1f2937; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
-                    <i class="fa fa-utensils text-dark fs-sm"></i>
-                  </div>
-                  <div class="crest-line"
-                    style="width: 80px; height: 1px; background: linear-gradient(90deg, rgba(31, 41, 55, 0) 0%, rgba(31, 41, 55, 0.5) 50%, rgba(31, 41, 55, 0) 100%); margin: 8px auto 0;">
+              <div class="p-1">
+                <!-- Crest Icon -->
+                <div class="mb-2 text-center">
+                  <div class="d-inline-flex align-items-center justify-content-center"
+                    style="width: 36px; height: 36px; border-radius: 50%; border: 1px solid rgba(15, 23, 42, 0.2); background: rgba(255, 255, 255, 0.7);">
+                    <i class="fa fa-utensils text-dark" style="font-size: 0.85rem;"></i>
                   </div>
                 </div>
 
-                <h3 class="wedding-names fs-4 mb-1 text-dark">{{ guest()?.eventTitle || 'Le Menu Complet' }}</h3>
-                <p class="fs-xxs font-serif mb-4 uppercase tracking-wider" style="color: #4b5563 !important;">Création
-                  gastronomique pour notre réception</p>
+                <!-- Title & Subtitle with Pure Readable Luxury Typography -->
+                <span class="luxury-subtitle d-block mb-1"
+                  style="font-family: 'Alex Brush', 'Great Vibes', cursive !important; font-size: 1.45rem !important; line-height: 1.1 !important; color: #374151 !important; text-shadow: none !important;">
+                  Menu de la Réception
+                </span>
+
+                <h3 class="m-0 text-center fw-bold"
+                  style="font-family: 'Cinzel', 'Playfair Display', serif !important; font-size: 1.12rem !important; line-height: 1.35 !important; color: #0f172a !important; letter-spacing: 1.2px !important; text-transform: uppercase !important; text-shadow: none !important;">
+                  {{ guest()?.eventTitle || 'Mariage d\'Exception' }}
+                </h3>
+
+                <div class="mx-auto mt-1.5 mb-2.5"
+                  style="width: 40px; height: 1.5px; background: #0f172a; opacity: 0.35;"></div>
+
+                <!-- Subtitle adapting to Service Formula -->
+                <p class="fs-xxs mb-3 text-uppercase tracking-wider"
+                  style="color: #64748b !important; letter-spacing: 1px; font-size: 0.68rem;">
+                  <span *ngIf="isBuffet()">Menu en buffet libre-service (Consultation)</span>
+                  <span *ngIf="isMix()">Choisissez votre Plat Principal (Entrées & Desserts au buffet)</span>
+                  <span *ngIf="isPlated()">Cliquez sur un plat pour l'ajouter à votre sélection</span>
+                </p>
 
                 <!-- Categorized Full Menu Details -->
-                <div class="full-menu-scrollable text-start">
+                <div class="full-menu-scrollable text-start pe-1" style="max-height: 350px; overflow-y: auto;">
 
                   <!-- Entrées -->
                   <div class="menu-cat-group mb-3" *ngIf="starters().length > 0">
-                    <h5 class="fs-xxs text-uppercase fw-bold text-dark border-bottom border-light pb-1 mb-2">Entrées
-                    </h5>
-                    <div class="menu-modal-item mb-2" *ngFor="let item of starters()">
-                      <div class="d-flex justify-content-between align-items-center">
-                        <span class="fs-xs fw-bold text-dark">{{ item.name }}</span>
-                        <span class="badge bg-light text-dark fs-xxs" *ngIf="item.dietaryTag">{{ item.dietaryTag
-                          }}</span>
-                      </div>
-                      <p class="fs-xxs text-muted mb-0" *ngIf="item.description">{{ item.description }}</p>
+                    <div class="fs-xxs text-uppercase fw-bold border-bottom border-dark border-opacity-10 pb-1 mb-1.5 text-center"
+                      style="letter-spacing: 1.5px; color: #0f172a !important; font-size: 0.74rem;">
+                      {{ isPlated() ? '— Entrées —' : '— Entrées en Buffet Libre-Service —' }}
                     </div>
+
+                    <!-- Plated: Selectable item -->
+                    <ng-container *ngIf="isPlated()">
+                      <div class="menu-modal-item mb-1.5 p-2 rounded-3 border transition-all cursor-pointer"
+                        *ngFor="let item of starters()"
+                        [ngStyle]="{'background': starterChoice === item.name ? '#ffffff' : 'rgba(255, 255, 255, 0.55)', 'border-color': starterChoice === item.name ? '#0f172a' : 'rgba(0,0,0,0.06)'}"
+                        (click)="selectDishFromModal('STARTER', item.name)">
+                        <div class="d-flex justify-content-between align-items-center gap-2">
+                          <div class="d-flex flex-column">
+                            <div>
+                              <span class="fw-bold text-dark font-serif" style="font-size: 0.88rem; color: #0f172a;">{{ item.name }}</span>
+                              <span class="badge bg-light text-dark border ms-1.5 px-2 py-0.5" style="font-size: 0.64rem;" *ngIf="item.dietaryTag">
+                                {{ item.dietaryTag }}
+                              </span>
+                            </div>
+                            <p class="text-muted mb-0 fst-italic mt-0.5" style="font-size: 0.74rem; line-height: 1.3;" *ngIf="item.description">{{ item.description }}</p>
+                          </div>
+                          <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 transition-all"
+                            style="width: 30px; height: 30px;"
+                            [ngClass]="starterChoice === item.name ? 'bg-dark text-white shadow-sm' : 'bg-white border text-secondary'">
+                            <i class="fa" [ngClass]="starterChoice === item.name ? 'fa-check text-warning' : 'fa-hand-pointer'" style="font-size: 0.75rem;"></i>
+                          </div>
+                        </div>
+                      </div>
+                    </ng-container>
+
+                    <!-- Buffet / Mixte: View-only item -->
+                    <ng-container *ngIf="!isPlated()">
+                      <div class="menu-modal-item mb-1.5 p-2 rounded-3 border border-transparent bg-white bg-opacity-50"
+                        *ngFor="let item of starters()">
+                        <div class="d-flex justify-content-between align-items-center gap-2">
+                          <div class="d-flex flex-column">
+                            <div>
+                              <span class="fw-bold text-dark font-serif" style="font-size: 0.88rem; color: #0f172a;">{{ item.name }}</span>
+                              <span class="badge bg-light text-dark border ms-1.5 px-2 py-0.5" style="font-size: 0.64rem;" *ngIf="item.dietaryTag">
+                                {{ item.dietaryTag }}
+                              </span>
+                            </div>
+                            <p class="text-muted mb-0 fst-italic mt-0.5" style="font-size: 0.74rem; line-height: 1.3;" *ngIf="item.description">{{ item.description }}</p>
+                          </div>
+                          <span class="badge bg-light text-muted border px-2 py-1 fs-xxs text-nowrap">
+                            Au buffet
+                          </span>
+                        </div>
+                      </div>
+                    </ng-container>
                   </div>
 
                   <!-- Plats Principaux -->
                   <div class="menu-cat-group mb-3" *ngIf="mainDishes().length > 0">
-                    <h5 class="fs-xxs text-uppercase fw-bold text-dark border-bottom border-light pb-1 mb-2">Plats
-                      Principaux</h5>
-                    <div class="menu-modal-item mb-2" *ngFor="let item of mainDishes()">
-                      <div class="d-flex justify-content-between align-items-center">
-                        <span class="fs-xs fw-bold text-dark">{{ item.name }}</span>
-                        <span class="badge bg-light text-dark fs-xxs" *ngIf="item.dietaryTag">{{ item.dietaryTag
-                          }}</span>
-                      </div>
-                      <p class="fs-xxs text-muted mb-0" *ngIf="item.description">{{ item.description }}</p>
+                    <div class="fs-xxs text-uppercase fw-bold border-bottom border-dark border-opacity-10 pb-1 mb-1.5 text-center"
+                      style="letter-spacing: 1.5px; color: #0f172a !important; font-size: 0.74rem;">
+                      {{ isBuffet() ? '— Plats en Buffet Libre-Service —' : (isMix() ? '— Plat Principal (Service à table) —' : '— Plats Principaux —') }}
                     </div>
+
+                    <!-- Plated & Mixte: Selectable item -->
+                    <ng-container *ngIf="!isBuffet()">
+                      <div class="menu-modal-item mb-1.5 p-2 rounded-3 border transition-all cursor-pointer"
+                        *ngFor="let item of mainDishes()"
+                        [ngStyle]="{'background': mealChoice === item.name ? '#ffffff' : 'rgba(255, 255, 255, 0.55)', 'border-color': mealChoice === item.name ? '#0f172a' : 'rgba(0,0,0,0.06)'}"
+                        (click)="selectDishFromModal('MAIN', item.name)">
+                        <div class="d-flex justify-content-between align-items-center gap-2">
+                          <div class="d-flex flex-column">
+                            <div>
+                              <span class="fw-bold text-dark font-serif" style="font-size: 0.88rem; color: #0f172a;">{{ item.name }}</span>
+                              <span class="badge bg-light text-dark border ms-1.5 px-2 py-0.5" style="font-size: 0.64rem;" *ngIf="item.dietaryTag">
+                                {{ item.dietaryTag }}
+                              </span>
+                            </div>
+                            <p class="text-muted mb-0 fst-italic mt-0.5" style="font-size: 0.74rem; line-height: 1.3;" *ngIf="item.description">{{ item.description }}</p>
+                          </div>
+                          <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 transition-all"
+                            style="width: 30px; height: 30px;"
+                            [ngClass]="mealChoice === item.name ? 'bg-dark text-white shadow-sm' : 'bg-white border text-secondary'">
+                            <i class="fa" [ngClass]="mealChoice === item.name ? 'fa-check text-warning' : 'fa-hand-pointer'" style="font-size: 0.75rem;"></i>
+                          </div>
+                        </div>
+                      </div>
+                    </ng-container>
+
+                    <!-- Buffet: View-only item -->
+                    <ng-container *ngIf="isBuffet()">
+                      <div class="menu-modal-item mb-1.5 p-2 rounded-3 border border-transparent bg-white bg-opacity-50"
+                        *ngFor="let item of mainDishes()">
+                        <div class="d-flex justify-content-between align-items-center gap-2">
+                          <div class="d-flex flex-column">
+                            <div>
+                              <span class="fw-bold text-dark font-serif" style="font-size: 0.88rem; color: #0f172a;">{{ item.name }}</span>
+                              <span class="badge bg-light text-dark border ms-1.5 px-2 py-0.5" style="font-size: 0.64rem;" *ngIf="item.dietaryTag">
+                                {{ item.dietaryTag }}
+                              </span>
+                            </div>
+                            <p class="text-muted mb-0 fst-italic mt-0.5" style="font-size: 0.74rem; line-height: 1.3;" *ngIf="item.description">{{ item.description }}</p>
+                          </div>
+                          <span class="badge bg-light text-muted border px-2 py-1 fs-xxs text-nowrap">
+                            Au buffet
+                          </span>
+                        </div>
+                      </div>
+                    </ng-container>
                   </div>
 
                   <!-- Desserts -->
                   <div class="menu-cat-group mb-3" *ngIf="desserts().length > 0">
-                    <h5 class="fs-xxs text-uppercase fw-bold text-dark border-bottom border-light pb-1 mb-2">Desserts
-                    </h5>
-                    <div class="menu-modal-item mb-2" *ngFor="let item of desserts()">
-                      <div class="d-flex justify-content-between align-items-center">
-                        <span class="fs-xs fw-bold text-dark">{{ item.name }}</span>
-                        <span class="badge bg-light text-dark fs-xxs" *ngIf="item.dietaryTag">{{ item.dietaryTag
-                          }}</span>
-                      </div>
-                      <p class="fs-xxs text-muted mb-0" *ngIf="item.description">{{ item.description }}</p>
+                    <div class="fs-xxs text-uppercase fw-bold border-bottom border-dark border-opacity-10 pb-1 mb-1.5 text-center"
+                      style="letter-spacing: 1.5px; color: #0f172a !important; font-size: 0.74rem;">
+                      {{ isPlated() ? '— Desserts —' : '— Desserts en Buffet Libre-Service —' }}
                     </div>
+
+                    <!-- Plated: Selectable item -->
+                    <ng-container *ngIf="isPlated()">
+                      <div class="menu-modal-item mb-1.5 p-2 rounded-3 border transition-all cursor-pointer"
+                        *ngFor="let item of desserts()"
+                        [ngStyle]="{'background': dessertChoice === item.name ? '#ffffff' : 'rgba(255, 255, 255, 0.55)', 'border-color': dessertChoice === item.name ? '#0f172a' : 'rgba(0,0,0,0.06)'}"
+                        (click)="selectDishFromModal('DESSERT', item.name)">
+                        <div class="d-flex justify-content-between align-items-center gap-2">
+                          <div class="d-flex flex-column">
+                            <div>
+                              <span class="fw-bold text-dark font-serif" style="font-size: 0.88rem; color: #0f172a;">{{ item.name }}</span>
+                              <span class="badge bg-light text-dark border ms-1.5 px-2 py-0.5" style="font-size: 0.64rem;" *ngIf="item.dietaryTag">
+                                {{ item.dietaryTag }}
+                              </span>
+                            </div>
+                            <p class="text-muted mb-0 fst-italic mt-0.5" style="font-size: 0.74rem; line-height: 1.3;" *ngIf="item.description">{{ item.description }}</p>
+                          </div>
+                          <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 transition-all"
+                            style="width: 30px; height: 30px;"
+                            [ngClass]="dessertChoice === item.name ? 'bg-dark text-white shadow-sm' : 'bg-white border text-secondary'">
+                            <i class="fa" [ngClass]="dessertChoice === item.name ? 'fa-check text-warning' : 'fa-hand-pointer'" style="font-size: 0.75rem;"></i>
+                          </div>
+                        </div>
+                      </div>
+                    </ng-container>
+
+                    <!-- Buffet / Mixte: View-only item -->
+                    <ng-container *ngIf="!isPlated()">
+                      <div class="menu-modal-item mb-1.5 p-2 rounded-3 border border-transparent bg-white bg-opacity-50"
+                        *ngFor="let item of desserts()">
+                        <div class="d-flex justify-content-between align-items-center gap-2">
+                          <div class="d-flex flex-column">
+                            <div>
+                              <span class="fw-bold text-dark font-serif" style="font-size: 0.88rem; color: #0f172a;">{{ item.name }}</span>
+                              <span class="badge bg-light text-dark border ms-1.5 px-2 py-0.5" style="font-size: 0.64rem;" *ngIf="item.dietaryTag">
+                                {{ item.dietaryTag }}
+                              </span>
+                            </div>
+                            <p class="text-muted mb-0 fst-italic mt-0.5" style="font-size: 0.74rem; line-height: 1.3;" *ngIf="item.description">{{ item.description }}</p>
+                          </div>
+                          <span class="badge bg-light text-muted border px-2 py-1 fs-xxs text-nowrap">
+                            Au buffet
+                          </span>
+                        </div>
+                      </div>
+                    </ng-container>
                   </div>
 
                   <!-- Boissons -->
                   <div class="menu-cat-group mb-3" *ngIf="beverages().length > 0">
-                    <h5 class="fs-xxs text-uppercase fw-bold text-dark border-bottom border-light pb-1 mb-2">Boissons
-                    </h5>
-                    <div class="menu-modal-item mb-2" *ngFor="let item of beverages()">
-                      <div class="d-flex justify-content-between align-items-center">
-                        <span class="fs-xs fw-bold text-dark">{{ item.name }}</span>
-                        <span class="badge bg-light text-dark fs-xxs" *ngIf="item.dietaryTag">{{ item.dietaryTag
-                          }}</span>
-                      </div>
-                      <p class="fs-xxs text-muted mb-0" *ngIf="item.description">{{ item.description }}</p>
+                    <div class="fs-xxs text-uppercase fw-bold border-bottom border-dark border-opacity-10 pb-1 mb-1.5 text-center"
+                      style="letter-spacing: 1.5px; color: #0f172a !important; font-size: 0.74rem;">
+                      {{ isPlated() ? '— Boissons —' : '— Boissons en Libre-Service —' }}
                     </div>
+
+                    <!-- Plated: Selectable item -->
+                    <ng-container *ngIf="isPlated()">
+                      <div class="menu-modal-item mb-1.5 p-2 rounded-3 border transition-all cursor-pointer"
+                        *ngFor="let item of beverages()"
+                        [ngStyle]="{'background': beverageChoice === item.name ? '#ffffff' : 'rgba(255, 255, 255, 0.55)', 'border-color': beverageChoice === item.name ? '#0f172a' : 'rgba(0,0,0,0.06)'}"
+                        (click)="selectDishFromModal('BEVERAGE', item.name)">
+                        <div class="d-flex justify-content-between align-items-center gap-2">
+                          <div class="d-flex flex-column">
+                            <div>
+                              <span class="fw-bold text-dark font-serif" style="font-size: 0.88rem; color: #0f172a;">{{ item.name }}</span>
+                              <span class="badge bg-light text-dark border ms-1.5 px-2 py-0.5" style="font-size: 0.64rem;" *ngIf="item.dietaryTag">
+                                {{ item.dietaryTag }}
+                              </span>
+                            </div>
+                            <p class="text-muted mb-0 fst-italic mt-0.5" style="font-size: 0.74rem; line-height: 1.3;" *ngIf="item.description">{{ item.description }}</p>
+                          </div>
+                          <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 transition-all"
+                            style="width: 30px; height: 30px;"
+                            [ngClass]="beverageChoice === item.name ? 'bg-dark text-white shadow-sm' : 'bg-white border text-secondary'">
+                            <i class="fa" [ngClass]="beverageChoice === item.name ? 'fa-check text-warning' : 'fa-hand-pointer'" style="font-size: 0.75rem;"></i>
+                          </div>
+                        </div>
+                      </div>
+                    </ng-container>
+
+                    <!-- Buffet / Mixte: View-only item -->
+                    <ng-container *ngIf="!isPlated()">
+                      <div class="menu-modal-item mb-1.5 p-2 rounded-3 border border-transparent bg-white bg-opacity-50"
+                        *ngFor="let item of beverages()">
+                        <div class="d-flex justify-content-between align-items-center gap-2">
+                          <div class="d-flex flex-column">
+                            <div>
+                              <span class="fw-bold text-dark font-serif" style="font-size: 0.88rem; color: #0f172a;">{{ item.name }}</span>
+                              <span class="badge bg-light text-dark border ms-1.5 px-2 py-0.5" style="font-size: 0.64rem;" *ngIf="item.dietaryTag">
+                                {{ item.dietaryTag }}
+                              </span>
+                            </div>
+                            <p class="text-muted mb-0 fst-italic mt-0.5" style="font-size: 0.74rem; line-height: 1.3;" *ngIf="item.description">{{ item.description }}</p>
+                          </div>
+                          <span class="badge bg-light text-muted border px-2 py-1 fs-xxs text-nowrap">
+                            Libre-service
+                          </span>
+                        </div>
+                      </div>
+                    </ng-container>
                   </div>
 
                 </div>
 
-                <button type="button" class="btn btn-sm btn-alt-gold rounded-pill px-4 mt-3 py-2"
+                <!-- Footer Action Button adapting to Formula -->
+                <button type="button" class="btn btn-sm btn-alt-secondary rounded-pill px-4 mt-3 py-2 fs-xs fw-bold text-uppercase shadow-sm"
+                  *ngIf="isBuffet()"
                   (click)="isFullMenuModalOpen.set(false)">
                   Fermer
+                </button>
+
+                <button type="button" class="btn btn-sm btn-dark rounded-pill px-4 mt-3 py-2 fs-xs fw-bold text-uppercase shadow-sm"
+                  style="letter-spacing: 1.2px; background: #0f172a !important;"
+                  *ngIf="isMix()"
+                  (click)="confirmMenuModal()">
+                  <i class="fa fa-check me-1.5 text-warning"></i>
+                  Confirmer mon plat
+                </button>
+
+                <button type="button" class="btn btn-sm btn-dark rounded-pill px-4 mt-3 py-2 fs-xs fw-bold text-uppercase shadow-sm"
+                  style="letter-spacing: 1.2px; background: #0f172a !important;"
+                  *ngIf="isPlated()"
+                  (click)="confirmMenuModal()">
+                  <i class="fa fa-check me-1.5 text-warning"></i>
+                  Confirmer
                 </button>
               </div>
             </div>
@@ -539,7 +734,7 @@
 
           <!-- STEP 0: Menu Discovery & Selection -->
           <div *ngIf="currentRsvpStep() === 0"
-            class="menu-selection-container animate__animated animate__fadeIn my-auto w-100 py-2">
+            class="menu-selection-container animate__animated animate__fadeIn my-auto w-100 pt-3 pt-md-4 pb-2">
 
             <!-- Title Header -->
             <div class="spotlight-title-wrapper mb-2 text-center">
@@ -598,100 +793,50 @@
               </button>
             </div>
 
-            <!-- Secondary Button to open Full Menu Modal -->
-            <div class="mb-2">
-              <button type="button" class="btn btn-sm btn-alt-gold rounded-pill px-3.5 fs-xxs fw-semibold py-1"
+            <!-- Secondary Button to open Full Menu Modal & Selected Dishes Chip -->
+            <div class="mb-2 text-center">
+              <button type="button" class="btn btn-sm btn-alt-gold rounded-pill px-3.5 fs-xxs fw-semibold py-1.5 shadow-sm"
                 (click)="isFullMenuModalOpen.set(true)">
-                <i class="fa fa-utensils me-1"></i> Voir le menu complet
+                <i class="fa fa-utensils me-1"></i>
+                <span *ngIf="isBuffet()">Voir le menu du buffet</span>
+                <span *ngIf="isMix()">Choisir mon plat principal & Voir le menu</span>
+                <span *ngIf="isPlated()">Voir le menu complet & Choisir</span>
               </button>
-            </div>
 
-            <!-- Plated (Service à table) - Two-column Side-by-Side Grid -->
-            <div *ngIf="isPlated()" class="mb-2">
-              <label class="form-label d-block text-center fw-bold text-dark text-uppercase fs-xxs tracking-widest mb-1.5"
-                style="letter-spacing: 1.2px; font-size: 0.68rem;">
-                Choix de votre Menu
-              </label>
-              <div class="row g-1.5 mb-1 text-start">
-                <!-- Entrée Selection -->
-                <div class="col-6" *ngIf="starters().length > 0">
-                  <select class="form-select luxury-form-control py-1 px-2 fs-xxs" [(ngModel)]="starterChoice"
-                    name="starterChoice" style="font-size: 0.72rem;">
-                    <option value="">-- Entrée --</option>
-                    <option *ngFor="let item of starters()" [value]="item.name">
-                      {{ item.name }}
-                    </option>
-                  </select>
-                </div>
-
-                <!-- Plat Principal Selection -->
-                <div class="col-6" *ngIf="mainDishes().length > 0">
-                  <select class="form-select luxury-form-control py-1 px-2 fs-xxs" [(ngModel)]="mealChoice"
-                    name="mealChoice" required style="font-size: 0.72rem;">
-                    <option value="">-- Plat Principal * --</option>
-                    <option *ngFor="let item of mainDishes()" [value]="item.name">
-                      {{ item.name }}
-                    </option>
-                  </select>
-                </div>
-
-                <!-- Dessert Selection -->
-                <div class="col-6" *ngIf="desserts().length > 0">
-                  <select class="form-select luxury-form-control py-1 px-2 fs-xxs" [(ngModel)]="dessertChoice"
-                    name="dessertChoice" style="font-size: 0.72rem;">
-                    <option value="">-- Dessert --</option>
-                    <option *ngFor="let item of desserts()" [value]="item.name">
-                      {{ item.name }}
-                    </option>
-                  </select>
-                </div>
-
-                <!-- Boisson Selection -->
-                <div class="col-6" *ngIf="beverages().length > 0">
-                  <select class="form-select luxury-form-control py-1 px-2 fs-xxs" [(ngModel)]="beverageChoice"
-                    name="beverageChoice" style="font-size: 0.72rem;">
-                    <option value="">-- Boisson --</option>
-                    <option *ngFor="let item of beverages()" [value]="item.name">
-                      {{ item.name }}
-                    </option>
-                  </select>
+              <!-- Active Selected Dishes Chip (Clean & Floating) -->
+              <div *ngIf="(isPlated() && (starterChoice || mealChoice || dessertChoice || beverageChoice)) || (isMix() && mealChoice)" class="mt-2 text-center">
+                <div class="d-inline-flex flex-wrap justify-content-center gap-1">
+                  <span class="badge bg-white border text-dark rounded-pill px-2.5 py-1 fs-xxs shadow-sm"
+                    *ngIf="isPlated() && starterChoice" style="border-color: rgba(15,23,42,0.12) !important;">
+                    <i class="fa fa-check text-success me-1"></i>{{ starterChoice }}
+                  </span>
+                  <span class="badge bg-white border text-dark rounded-pill px-2.5 py-1 fs-xxs shadow-sm"
+                    *ngIf="mealChoice" style="border-color: rgba(15,23,42,0.12) !important;">
+                    <i class="fa fa-check text-success me-1"></i>{{ isMix() ? 'Plat : ' + mealChoice : mealChoice }}
+                  </span>
+                  <span class="badge bg-white border text-dark rounded-pill px-2.5 py-1 fs-xxs shadow-sm"
+                    *ngIf="isPlated() && dessertChoice" style="border-color: rgba(15,23,42,0.12) !important;">
+                    <i class="fa fa-check text-success me-1"></i>{{ dessertChoice }}
+                  </span>
+                  <span class="badge bg-white border text-dark rounded-pill px-2.5 py-1 fs-xxs shadow-sm"
+                    *ngIf="isPlated() && beverageChoice" style="border-color: rgba(15,23,42,0.12) !important;">
+                    <i class="fa fa-check text-success me-1"></i>{{ beverageChoice }}
+                  </span>
                 </div>
               </div>
             </div>
 
-            <!-- Formule Mixte (Hybrid Buffet & Service assis) -->
-            <div *ngIf="isMix()" class="mb-2">
-              <label class="form-label d-block text-center fw-bold text-dark text-uppercase fs-xxs tracking-widest mb-1.5"
-                style="letter-spacing: 1.2px; font-size: 0.68rem;">
-                Choix du Plat assis
-              </label>
-              <div class="row g-1.5 mb-1 text-start">
-                <div class="col-6" *ngIf="mainDishes().length > 0">
-                  <select class="form-select luxury-form-control py-1 px-2 fs-xxs" [(ngModel)]="mealChoice"
-                    name="mealChoice" required style="font-size: 0.72rem;">
-                    <option value="">-- Plat assis * --</option>
-                    <option *ngFor="let item of mainDishes()" [value]="item.name">{{ item.name }}</option>
-                  </select>
-                </div>
-                <div class="col-6" *ngIf="desserts().length > 0">
-                  <select class="form-select luxury-form-control py-1 px-2 fs-xxs" [(ngModel)]="dessertChoice"
-                    name="dessertChoice" style="font-size: 0.72rem;">
-                    <option value="">-- Dessert --</option>
-                    <option *ngFor="let item of desserts()" [value]="item.name">{{ item.name }}</option>
-                  </select>
-                </div>
-              </div>
+            <!-- Formule Buffet: Transparent floating elegant note without white border box -->
+            <div *ngIf="isBuffet()" class="text-center mt-2.5 mb-1 px-3">
+              <span class="luxury-subtitle d-block mb-0.5"
+                style="font-size: 1.18rem !important; color: #374151 !important; line-height: 1.1;">
+                Buffet Libre-Service
+              </span>
+              <p class="fs-xxs mb-0 fst-italic"
+                style="color: #4b5563 !important; font-size: 0.72rem; line-height: 1.3;">
+                Un buffet varié d'exception sera à votre disposition
+              </p>
             </div>
-
-            <!-- Formule Buffet -->
-            <div *ngIf="isBuffet()" class="mb-2">
-              <div class="p-2 border rounded bg-white bg-opacity-75 text-center mb-1">
-                <i class="fa fa-utensils fs-5 text-dark mb-1"></i>
-                <h5 class="fs-xxs fw-bold text-dark text-uppercase mb-0.5">Buffet Libre-Service</h5>
-                <p class="fs-xxs text-dark mb-0" style="font-size: 0.65rem;">Un buffet varié d'exception sera à votre disposition.</p>
-              </div>
-            </div>
-
 
           </div>
 
