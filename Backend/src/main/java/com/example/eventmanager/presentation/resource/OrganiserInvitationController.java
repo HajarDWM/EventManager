@@ -46,6 +46,11 @@ public class OrganiserInvitationController {
             customLoc = event.getLocation();
         }
 
+        String customSubtitle = setupDTO.getInvitationSubtitle();
+        if (customSubtitle == null || customSubtitle.isBlank()) {
+            customSubtitle = event.getInvitationSubtitle();
+        }
+
         String customParking = setupDTO.getParkingLocation();
         if (customParking == null || customParking.isBlank()) {
             customParking = event.getParkingLocation();
@@ -57,6 +62,7 @@ public class OrganiserInvitationController {
                 setupDTO.getTemplateIdString(),
                 token,
                 customTitle,
+                customSubtitle,
                 customDate,
                 customLoc,
                 customParking
@@ -69,6 +75,7 @@ public class OrganiserInvitationController {
                 .templateIdString(savedEvent.getTemplateId())
                 .invitationToken(savedEvent.getInvitationToken())
                 .invitationTitle(savedEvent.getInvitationTitle())
+                .invitationSubtitle(savedEvent.getInvitationSubtitle())
                 .invitationDate(savedEvent.getInvitationDate())
                 .invitationLocation(savedEvent.getInvitationLocation())
                 .parkingLocation(savedEvent.getParkingLocation())

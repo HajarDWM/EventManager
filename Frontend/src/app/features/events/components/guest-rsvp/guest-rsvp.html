@@ -351,8 +351,7 @@
           <!-- Dynamic Subtitle / Intro Header -->
           <div class="invitation-header-tag mb-1">
             <span class="luxury-subtitle" [style.fontFamily]="getPrimaryFont()" [style.color]="getPrimaryColor()">
-              {{ guest()?.templateCategory === 'Mariage' ? 'Le Mariage de' : (guest()?.templateCategory === 'Corporate'
-              ? 'Cérémonie & Réception' : 'Invitation d\'Exception') }}
+              {{ getInvitationSubtitle() }}
             </span>
           </div>
 
@@ -794,7 +793,7 @@
                 [style.backgroundColor]="getPrimaryColor()"
                 style="width: 40px; height: 1.5px; opacity: 0.65;"></div>
             </div>
-            <p class="text-muted fs-xxs font-serif mb-2" [style.color]="getSecondaryFontColor()" style="opacity: 0.8;">
+            <p class="fs-xxs font-serif mb-2 text-center" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="opacity: 0.9;">
               Faites glisser pour découvrir le menu
             </p>
 
@@ -846,8 +845,7 @@
                 (click)="isFullMenuModalOpen.set(true)">
                 <i class="fa fa-utensils me-1"></i>
                 <span *ngIf="isBuffet()">Voir le menu du buffet</span>
-                <span *ngIf="isMix()">Choisir mon plat principal & Voir le menu</span>
-                <span *ngIf="isPlated()">Voir le menu complet & Choisir</span>
+                <span *ngIf="!isBuffet()">Voir le menu complet & Choisir</span>
               </button>
 
               <!-- Active Selected Dishes Chip (Clean & Floating) -->
@@ -855,19 +853,19 @@
                 <div class="d-inline-flex flex-wrap justify-content-center gap-1">
                   <span class="badge bg-white border text-dark rounded-pill px-2.5 py-1 fs-xxs shadow-sm"
                     *ngIf="isPlated() && starterChoice" style="border-color: rgba(15,23,42,0.12) !important;">
-                    <i class="fa fa-check text-success me-1"></i>{{ starterChoice }}
+                    <i class="fa fa-check text-warning me-1"></i> Entrée: {{ starterChoice }}
                   </span>
                   <span class="badge bg-white border text-dark rounded-pill px-2.5 py-1 fs-xxs shadow-sm"
                     *ngIf="mealChoice" style="border-color: rgba(15,23,42,0.12) !important;">
-                    <i class="fa fa-check text-success me-1"></i>{{ isMix() ? 'Plat : ' + mealChoice : mealChoice }}
+                    <i class="fa fa-check text-warning me-1"></i> Plat: {{ mealChoice }}
                   </span>
                   <span class="badge bg-white border text-dark rounded-pill px-2.5 py-1 fs-xxs shadow-sm"
                     *ngIf="isPlated() && dessertChoice" style="border-color: rgba(15,23,42,0.12) !important;">
-                    <i class="fa fa-check text-success me-1"></i>{{ dessertChoice }}
+                    <i class="fa fa-check text-warning me-1"></i> Dessert: {{ dessertChoice }}
                   </span>
                   <span class="badge bg-white border text-dark rounded-pill px-2.5 py-1 fs-xxs shadow-sm"
                     *ngIf="isPlated() && beverageChoice" style="border-color: rgba(15,23,42,0.12) !important;">
-                    <i class="fa fa-check text-success me-1"></i>{{ beverageChoice }}
+                    <i class="fa fa-check text-warning me-1"></i> Boisson: {{ beverageChoice }}
                   </span>
                 </div>
               </div>
@@ -882,8 +880,9 @@
                 Buffet Libre-Service
               </span>
               <p class="fs-xxs mb-0 fst-italic"
+                [style.fontFamily]="getSecondaryFont()"
                 [style.color]="getSecondaryFontColor()"
-                style="font-size: 0.72rem; line-height: 1.3; opacity: 0.85;">
+                style="font-size: 0.72rem; line-height: 1.3; opacity: 0.9;">
                 Un buffet varié d'exception sera à votre disposition
               </p>
             </div>
@@ -912,47 +911,48 @@
                 [style.backgroundColor]="getPrimaryColor()"
                 style="width: 40px; height: 1.5px; opacity: 0.65;"></div>
             </div>
-            <p class="text-muted fs-xxs font-serif mb-3.5" [style.color]="getSecondaryFontColor()" style="opacity: 0.8;">
+            <p class="fs-xxs font-serif mb-3.5 text-center" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="opacity: 0.9;">
               Indiquez vos régimes particuliers ou allergies pour une expérience sur-mesure
             </p>
 
             <!-- Dietary Pills Container -->
             <div class="mb-3.5 text-center">
               <label class="form-label d-block text-center fw-bold text-uppercase fs-xxs tracking-widest mb-2.5"
+                [style.fontFamily]="getSecondaryFont()"
                 [style.color]="getSecondaryFontColor()"
                 style="letter-spacing: 1.2px; font-size: 0.7rem;">
                 Régimes Alimentaires
               </label>
               <div class="dietary-pills-container d-flex flex-wrap gap-1.5 justify-content-center mb-2">
-                <label class="dietary-pill py-1.5 px-3" [class.active-pill]="hasVegetarien" for="dietVeg" style="font-size: 0.74rem;">
+                <label class="dietary-pill py-1.5 px-3" [class.active-pill]="hasVegetarien" for="dietVeg" [style.color]="hasVegetarien ? '#0f172a' : getSecondaryFontColor()" [style.borderColor]="getPrimaryColor()" style="font-size: 0.74rem;">
                   <input type="checkbox" id="dietVeg" [(ngModel)]="hasVegetarien" name="hasVegetarien" class="dietary-checkbox">
                   <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasVegetarien"></i> Végétarien
                 </label>
-                <label class="dietary-pill py-1.5 px-3" [class.active-pill]="hasVegan" for="dietVegan" style="font-size: 0.74rem;">
+                <label class="dietary-pill py-1.5 px-3" [class.active-pill]="hasVegan" for="dietVegan" [style.color]="hasVegan ? '#0f172a' : getSecondaryFontColor()" [style.borderColor]="getPrimaryColor()" style="font-size: 0.74rem;">
                   <input type="checkbox" id="dietVegan" [(ngModel)]="hasVegan" name="hasVegan" class="dietary-checkbox">
                   <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasVegan"></i> Vegan
                 </label>
-                <label class="dietary-pill py-1.5 px-3" [class.active-pill]="hasGlutenFree" for="dietGluten" style="font-size: 0.74rem;">
+                <label class="dietary-pill py-1.5 px-3" [class.active-pill]="hasGlutenFree" for="dietGluten" [style.color]="hasGlutenFree ? '#0f172a' : getSecondaryFontColor()" [style.borderColor]="getPrimaryColor()" style="font-size: 0.74rem;">
                   <input type="checkbox" id="dietGluten" [(ngModel)]="hasGlutenFree" name="hasGlutenFree" class="dietary-checkbox">
                   <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasGlutenFree"></i> Sans gluten
                 </label>
-                <label class="dietary-pill py-1.5 px-3" [class.active-pill]="hasLactoseFree" for="dietLactose" style="font-size: 0.74rem;">
+                <label class="dietary-pill py-1.5 px-3" [class.active-pill]="hasLactoseFree" for="dietLactose" [style.color]="hasLactoseFree ? '#0f172a' : getSecondaryFontColor()" [style.borderColor]="getPrimaryColor()" style="font-size: 0.74rem;">
                   <input type="checkbox" id="dietLactose" [(ngModel)]="hasLactoseFree" name="hasLactoseFree" class="dietary-checkbox">
                   <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasLactoseFree"></i> Sans lactose
                 </label>
-                <label class="dietary-pill py-1.5 px-3" [class.active-pill]="hasHalal" for="dietHalal" style="font-size: 0.74rem;">
+                <label class="dietary-pill py-1.5 px-3" [class.active-pill]="hasHalal" for="dietHalal" [style.color]="hasHalal ? '#0f172a' : getSecondaryFontColor()" [style.borderColor]="getPrimaryColor()" style="font-size: 0.74rem;">
                   <input type="checkbox" id="dietHalal" [(ngModel)]="hasHalal" name="hasHalal" class="dietary-checkbox">
                   <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasHalal"></i> Halal
                 </label>
-                <label class="dietary-pill py-1.5 px-3" [class.active-pill]="hasFruitsDeMerFree" for="dietFruitsDeMer" style="font-size: 0.74rem;">
+                <label class="dietary-pill py-1.5 px-3" [class.active-pill]="hasFruitsDeMerFree" for="dietFruitsDeMer" [style.color]="hasFruitsDeMerFree ? '#0f172a' : getSecondaryFontColor()" [style.borderColor]="getPrimaryColor()" style="font-size: 0.74rem;">
                   <input type="checkbox" id="dietFruitsDeMer" [(ngModel)]="hasFruitsDeMerFree" name="hasFruitsDeMerFree" class="dietary-checkbox">
                   <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasFruitsDeMerFree"></i> Sans fruits de mer
                 </label>
-                <label class="dietary-pill py-1.5 px-3" [class.active-pill]="hasSucreFree" for="dietSucre" style="font-size: 0.74rem;">
+                <label class="dietary-pill py-1.5 px-3" [class.active-pill]="hasSucreFree" for="dietSucre" [style.color]="hasSucreFree ? '#0f172a' : getSecondaryFontColor()" [style.borderColor]="getPrimaryColor()" style="font-size: 0.74rem;">
                   <input type="checkbox" id="dietSucre" [(ngModel)]="hasSucreFree" name="hasSucreFree" class="dietary-checkbox">
                   <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasSucreFree"></i> Sans sucre
                 </label>
-                <label class="dietary-pill py-1.5 px-3" [class.active-pill]="hasArachidesFree" for="dietArachides" style="font-size: 0.74rem;">
+                <label class="dietary-pill py-1.5 px-3" [class.active-pill]="hasArachidesFree" for="dietArachides" [style.color]="hasArachidesFree ? '#0f172a' : getSecondaryFontColor()" [style.borderColor]="getPrimaryColor()" style="font-size: 0.74rem;">
                   <input type="checkbox" id="dietArachides" [(ngModel)]="hasArachidesFree" name="hasArachidesFree" class="dietary-checkbox">
                   <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasArachidesFree"></i> Sans arachides
                 </label>
@@ -962,6 +962,7 @@
             <!-- Custom Allergies / Notes -->
             <div class="mb-3.5 text-start">
               <label class="form-label d-block text-center fw-bold text-uppercase fs-xxs tracking-widest mb-1.5"
+                [style.fontFamily]="getSecondaryFont()"
                 [style.color]="getSecondaryFontColor()"
                 style="letter-spacing: 1.2px; font-size: 0.68rem;">
                 Autres allergies ou restrictions
@@ -1004,75 +1005,83 @@
               
               <!-- Menu Choices List (Pure typography with soft dividers) -->
               <div class="mb-3.5 text-start px-2">
-                <div class="fw-bold text-dark text-uppercase mb-2.5 text-center"
-                  style="letter-spacing: 1.8px; opacity: 0.85; font-size: 0.76rem;">
+                <div class="fw-bold text-uppercase mb-2.5 text-center"
+                  [style.fontFamily]="getSecondaryFont()"
+                  [style.color]="getSecondaryFontColor()"
+                  style="letter-spacing: 1.8px; opacity: 0.95; font-size: 0.78rem;">
                   — Choix du Menu —
                 </div>
 
                 <div class="d-flex flex-column gap-2" *ngIf="isPlated()">
-                  <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom border-dark border-opacity-10" *ngIf="starterChoice">
-                    <span class="text-uppercase fw-bold text-muted" style="letter-spacing: 0.8px; font-size: 0.74rem;">Entrée</span>
-                    <span class="fw-semibold text-dark text-end font-serif" style="font-size: 0.95rem;">{{ starterChoice }}</span>
+                  <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom" [style.borderColor]="'rgba(212, 175, 55, 0.25)'" *ngIf="starterChoice">
+                    <span class="text-uppercase fw-bold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="letter-spacing: 0.8px; font-size: 0.74rem; opacity: 0.85;">Entrée</span>
+                    <span class="fw-semibold text-end font-serif" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.95rem;">{{ starterChoice }}</span>
                   </div>
 
-                  <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom border-dark border-opacity-10">
-                    <span class="text-uppercase fw-bold text-dark" style="letter-spacing: 0.8px; font-size: 0.74rem;">Plat Principal</span>
-                    <span class="fw-bold text-dark text-end font-serif" style="font-size: 0.98rem; color: #0f172a;">{{ mealChoice || 'Non spécifié' }}</span>
+                  <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom" [style.borderColor]="'rgba(212, 175, 55, 0.25)'">
+                    <span class="text-uppercase fw-bold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="letter-spacing: 0.8px; font-size: 0.74rem; opacity: 0.9;">Plat Principal</span>
+                    <span class="fw-bold text-end font-serif" [style.fontFamily]="getSecondaryFont()" [style.color]="getPrimaryColor()" style="font-size: 0.98rem;">{{ mealChoice || 'Non spécifié' }}</span>
                   </div>
 
-                  <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom border-dark border-opacity-10" *ngIf="dessertChoice">
-                    <span class="text-uppercase fw-bold text-muted" style="letter-spacing: 0.8px; font-size: 0.74rem;">Dessert</span>
-                    <span class="fw-semibold text-dark text-end font-serif" style="font-size: 0.95rem;">{{ dessertChoice }}</span>
+                  <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom" [style.borderColor]="'rgba(212, 175, 55, 0.25)'" *ngIf="dessertChoice">
+                    <span class="text-uppercase fw-bold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="letter-spacing: 0.8px; font-size: 0.74rem; opacity: 0.85;">Dessert</span>
+                    <span class="fw-semibold text-end font-serif" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.95rem;">{{ dessertChoice }}</span>
                   </div>
 
-                  <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom border-dark border-opacity-10" *ngIf="beverageChoice">
-                    <span class="text-uppercase fw-bold text-muted" style="letter-spacing: 0.8px; font-size: 0.74rem;">Boisson</span>
-                    <span class="fw-semibold text-dark text-end font-serif" style="font-size: 0.95rem;">{{ beverageChoice }}</span>
+                  <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom" [style.borderColor]="'rgba(212, 175, 55, 0.25)'" *ngIf="beverageChoice">
+                    <span class="text-uppercase fw-bold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="letter-spacing: 0.8px; font-size: 0.74rem; opacity: 0.85;">Boisson</span>
+                    <span class="fw-semibold text-end font-serif" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.95rem;">{{ beverageChoice }}</span>
                   </div>
                 </div>
 
                 <div class="d-flex flex-column gap-2" *ngIf="isMix()">
-                  <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom border-dark border-opacity-10">
-                    <span class="text-uppercase fw-bold text-dark" style="letter-spacing: 0.8px; font-size: 0.74rem;">Plat assis</span>
-                    <span class="fw-bold text-dark text-end font-serif" style="font-size: 0.98rem;">{{ mealChoice || 'Non spécifié' }}</span>
+                  <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom" [style.borderColor]="'rgba(212, 175, 55, 0.25)'">
+                    <span class="text-uppercase fw-bold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="letter-spacing: 0.8px; font-size: 0.74rem; opacity: 0.9;">Plat assis</span>
+                    <span class="fw-bold text-end font-serif" [style.fontFamily]="getSecondaryFont()" [style.color]="getPrimaryColor()" style="font-size: 0.98rem;">{{ mealChoice || 'Non spécifié' }}</span>
                   </div>
-                  <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom border-dark border-opacity-10" *ngIf="dessertChoice">
-                    <span class="text-uppercase fw-bold text-muted" style="letter-spacing: 0.8px; font-size: 0.74rem;">Dessert</span>
-                    <span class="fw-semibold text-dark text-end font-serif" style="font-size: 0.95rem;">{{ dessertChoice }}</span>
+                  <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom" [style.borderColor]="'rgba(212, 175, 55, 0.25)'" *ngIf="dessertChoice">
+                    <span class="text-uppercase fw-bold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="letter-spacing: 0.8px; font-size: 0.74rem; opacity: 0.85;">Dessert</span>
+                    <span class="fw-semibold text-end font-serif" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.95rem;">{{ dessertChoice }}</span>
                   </div>
-                  <div class="fs-xs text-muted mt-1 text-center fst-italic">Entrées & Boissons d'accueil au buffet libre-service</div>
+                  <div class="fs-xs mt-1 text-center fst-italic" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="opacity: 0.85;">Entrées & Boissons d'accueil au buffet libre-service</div>
                 </div>
 
                 <div *ngIf="isBuffet()" class="text-center py-2">
-                  <div class="fs-sm fw-bold text-dark font-serif">Formule Buffet Libre-Service</div>
+                  <div class="fs-sm fw-bold font-serif" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()">Formule Buffet Libre-Service</div>
                 </div>
               </div>
 
               <!-- Dietary & Allergies (Clean pills, no heavy container) -->
               <div class="mb-3.5 text-center px-2">
-                <div class="fw-bold text-dark text-uppercase mb-2.5 text-center"
-                  style="letter-spacing: 1.8px; opacity: 0.85; font-size: 0.76rem;">
+                <div class="fw-bold text-uppercase mb-2.5 text-center"
+                  [style.fontFamily]="getSecondaryFont()"
+                  [style.color]="getSecondaryFontColor()"
+                  style="letter-spacing: 1.8px; opacity: 0.95; font-size: 0.78rem;">
                   — Régimes & Allergies —
                 </div>
 
                 <div class="d-flex flex-wrap gap-1.5 justify-content-center mb-1.5" *ngIf="getSelectedDietsArray().length > 0">
                   <span class="badge bg-dark bg-opacity-85 text-white rounded-pill px-3 py-1.5 fw-semibold shadow-xs"
-                    *ngFor="let diet of getSelectedDietsArray()" style="font-size: 0.78rem;">
+                    *ngFor="let diet of getSelectedDietsArray()" [style.borderColor]="getPrimaryColor()" style="font-size: 0.78rem; border: 1px solid rgba(212, 175, 55, 0.4);">
                     <i class="fa fa-check me-1" style="color: #fbbf24;"></i>{{ diet }}
                   </span>
                 </div>
 
                 <!-- Custom allergy text if present and not 'aucun' -->
-                <div class="text-dark fst-italic mt-1.5"
+                <div class="fst-italic mt-1.5"
                   *ngIf="otherAllergies.trim() && otherAllergies.trim().toLowerCase() !== 'aucun' && otherAllergies.trim().toLowerCase() !== 'none'"
+                  [style.fontFamily]="getSecondaryFont()"
+                  [style.color]="getSecondaryFontColor()"
                   style="font-size: 0.8rem;">
-                  <span class="fw-bold">Allergie :</span> {{ otherAllergies.trim() }}
+                  <span class="fw-bold" [style.color]="getPrimaryColor()">Allergie :</span> {{ otherAllergies.trim() }}
                 </div>
 
                 <!-- No restriction message -->
-                <div class="text-muted fst-italic"
+                <div class="fst-italic"
                   *ngIf="getSelectedDietsArray().length === 0 && (!otherAllergies.trim() || otherAllergies.trim().toLowerCase() === 'aucun' || otherAllergies.trim().toLowerCase() === 'none')"
-                  style="font-size: 0.78rem;">
+                  [style.fontFamily]="getSecondaryFont()"
+                  [style.color]="getSecondaryFontColor()"
+                  style="font-size: 0.78rem; opacity: 0.85;">
                   Aucune restriction particulière
                 </div>
               </div>
@@ -1084,8 +1093,10 @@
 
           <!-- PERSISTENT RSVP ACTION SECTION (Visible across ALL steps in the exact same bottom place) -->
           <div class="final-rsvp-actions text-center mt-auto mx-auto pt-2" style="max-width: 270px; width: 100%;">
-            <label class="form-label d-block text-center fw-bold text-dark text-uppercase tracking-widest mb-1.5"
-              style="letter-spacing: 1.5px; opacity: 0.9; font-size: 0.66rem;">
+            <label class="form-label d-block text-center fw-bold text-uppercase tracking-widest mb-1.5"
+              [style.fontFamily]="getSecondaryFont()"
+              [style.color]="getSecondaryFontColor()"
+              style="letter-spacing: 1.5px; opacity: 0.95; font-size: 0.68rem;">
               Votre Réponse
             </label>
 
@@ -1127,17 +1138,22 @@
           <!-- Top Success Header -->
           <div class="spotlight-title-wrapper mb-3.5 text-center">
             <span class="luxury-subtitle d-block mb-1"
-              style="font-size: 1.5rem !important; line-height: 1.1 !important; color: #374151 !important;">
+              [style.fontFamily]="getPrimaryFont()"
+              [style.color]="getPrimaryColor()"
+              style="font-size: 1.5rem !important; line-height: 1.1 !important;">
               Confirmation
             </span>
             <h3 class="page2-menu-title text-uppercase fw-bold m-0"
-              style="font-family: 'Cinzel', 'Playfair Display', serif; font-size: 1.12rem !important; line-height: 1.3 !important; color: #0f172a !important; letter-spacing: 1.5px !important;">
+              [style.fontFamily]="getSecondaryFont()"
+              [style.color]="getSecondaryFontColor()"
+              style="font-size: 1.12rem !important; line-height: 1.3 !important; letter-spacing: 1.5px !important;">
               Merci infiniment
             </h3>
             <div class="spotlight-underline mx-auto mt-1.5 mb-2.5"
-              style="width: 45px; height: 1.5px; background: #0f172a; opacity: 0.45;"></div>
+              [style.backgroundColor]="getPrimaryColor()"
+              style="width: 45px; height: 1.5px; opacity: 0.65;"></div>
 
-            <p class="text-dark fs-xs mb-0 px-2" style="line-height: 1.4; opacity: 0.85; max-width: 330px; margin-left: auto; margin-right: auto; font-size: 0.76rem;">
+            <p class="fs-xs mb-0 px-2" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="line-height: 1.4; opacity: 0.9; max-width: 330px; margin-left: auto; margin-right: auto; font-size: 0.78rem;">
               Votre participation a bien été enregistrée pour cet événement d'exception.
             </p>
           </div>
@@ -1147,12 +1163,12 @@
             
             <!-- Guest Name & Status Badge -->
             <div class="mb-3 text-start px-2">
-              <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom border-dark border-opacity-10">
-                <span class="text-uppercase fw-bold text-muted" style="letter-spacing: 0.8px; font-size: 0.74rem;">Invité</span>
-                <span class="fw-bold text-dark text-end font-serif" style="font-size: 0.95rem; color: #0f172a;">{{ guest()?.guestName }}</span>
+              <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom" [style.borderColor]="'rgba(212, 175, 55, 0.25)'">
+                <span class="text-uppercase fw-bold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="letter-spacing: 0.8px; font-size: 0.74rem; opacity: 0.85;">Invité</span>
+                <span class="fw-bold text-end font-serif" [style.fontFamily]="getSecondaryFont()" [style.color]="getPrimaryColor()" style="font-size: 0.95rem;">{{ guest()?.guestName }}</span>
               </div>
-              <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom border-dark border-opacity-10">
-                <span class="text-uppercase fw-bold text-muted" style="letter-spacing: 0.8px; font-size: 0.74rem;">Statut</span>
+              <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom" [style.borderColor]="'rgba(212, 175, 55, 0.25)'">
+                <span class="text-uppercase fw-bold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="letter-spacing: 0.8px; font-size: 0.74rem; opacity: 0.85;">Statut</span>
                 <span class="badge rounded-pill px-3 py-1 fw-bold fs-xxs"
                   [ngClass]="status() === 'CONFIRMED' ? 'bg-success text-white' : 'bg-secondary text-white'">
                   <i class="fa me-1" [ngClass]="status() === 'CONFIRMED' ? 'fa-check' : 'fa-times'"></i>
@@ -1163,62 +1179,68 @@
 
             <!-- Menu choices if CONFIRMED and Plated / Mix -->
             <div class="mb-3 text-start px-2" *ngIf="status() === 'CONFIRMED' && isPlated()">
-              <div class="fw-bold text-dark text-uppercase mb-2 text-center"
-                style="letter-spacing: 1.8px; opacity: 0.85; font-size: 0.76rem;">
+              <div class="fw-bold text-uppercase mb-2 text-center"
+                [style.fontFamily]="getSecondaryFont()"
+                [style.color]="getSecondaryFontColor()"
+                style="letter-spacing: 1.8px; opacity: 0.95; font-size: 0.78rem;">
                 — Choix du Menu —
               </div>
 
               <div class="d-flex flex-column gap-2">
-                <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom border-dark border-opacity-10" *ngIf="starterChoice">
-                  <span class="text-uppercase fw-bold text-muted" style="letter-spacing: 0.8px; font-size: 0.74rem;">Entrée</span>
-                  <span class="fw-semibold text-dark text-end font-serif" style="font-size: 0.95rem;">{{ starterChoice }}</span>
+                <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom" [style.borderColor]="'rgba(212, 175, 55, 0.25)'" *ngIf="starterChoice">
+                  <span class="text-uppercase fw-bold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="letter-spacing: 0.8px; font-size: 0.74rem; opacity: 0.85;">Entrée</span>
+                  <span class="fw-semibold text-end font-serif" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.95rem;">{{ starterChoice }}</span>
                 </div>
-                <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom border-dark border-opacity-10" *ngIf="mealChoice">
-                  <span class="text-uppercase fw-bold text-dark" style="letter-spacing: 0.8px; font-size: 0.74rem;">Plat Principal</span>
-                  <span class="fw-bold text-dark text-end font-serif" style="font-size: 0.98rem; color: #0f172a;">{{ mealChoice }}</span>
+                <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom" [style.borderColor]="'rgba(212, 175, 55, 0.25)'" *ngIf="mealChoice">
+                  <span class="text-uppercase fw-bold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="letter-spacing: 0.8px; font-size: 0.74rem; opacity: 0.9;">Plat Principal</span>
+                  <span class="fw-bold text-end font-serif" [style.fontFamily]="getSecondaryFont()" [style.color]="getPrimaryColor()" style="font-size: 0.98rem;">{{ mealChoice }}</span>
                 </div>
-                <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom border-dark border-opacity-10" *ngIf="dessertChoice">
-                  <span class="text-uppercase fw-bold text-muted" style="letter-spacing: 0.8px; font-size: 0.74rem;">Dessert</span>
-                  <span class="fw-semibold text-dark text-end font-serif" style="font-size: 0.95rem;">{{ dessertChoice }}</span>
+                <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom" [style.borderColor]="'rgba(212, 175, 55, 0.25)'" *ngIf="dessertChoice">
+                  <span class="text-uppercase fw-bold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="letter-spacing: 0.8px; font-size: 0.74rem; opacity: 0.85;">Dessert</span>
+                  <span class="fw-semibold text-end font-serif" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.95rem;">{{ dessertChoice }}</span>
                 </div>
-                <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom border-dark border-opacity-10" *ngIf="beverageChoice">
-                  <span class="text-uppercase fw-bold text-muted" style="letter-spacing: 0.8px; font-size: 0.74rem;">Boisson</span>
-                  <span class="fw-semibold text-dark text-end font-serif" style="font-size: 0.95rem;">{{ beverageChoice }}</span>
+                <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom" [style.borderColor]="'rgba(212, 175, 55, 0.25)'" *ngIf="beverageChoice">
+                  <span class="text-uppercase fw-bold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="letter-spacing: 0.8px; font-size: 0.74rem; opacity: 0.85;">Boisson</span>
+                  <span class="fw-semibold text-end font-serif" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.95rem;">{{ beverageChoice }}</span>
                 </div>
               </div>
             </div>
 
             <div class="mb-3 text-start px-2" *ngIf="status() === 'CONFIRMED' && isMix()">
-              <div class="fw-bold text-dark text-uppercase mb-2 text-center"
-                style="letter-spacing: 1.8px; opacity: 0.85; font-size: 0.76rem;">
+              <div class="fw-bold text-uppercase mb-2 text-center"
+                [style.fontFamily]="getSecondaryFont()"
+                [style.color]="getSecondaryFontColor()"
+                style="letter-spacing: 1.8px; opacity: 0.95; font-size: 0.78rem;">
                 — Choix du Menu —
               </div>
               <div class="d-flex flex-column gap-2">
-                <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom border-dark border-opacity-10" *ngIf="mealChoice">
-                  <span class="text-uppercase fw-bold text-dark" style="letter-spacing: 0.8px; font-size: 0.74rem;">Plat assis</span>
-                  <span class="fw-bold text-dark text-end font-serif" style="font-size: 0.98rem; color: #0f172a;">{{ mealChoice }}</span>
+                <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom" [style.borderColor]="'rgba(212, 175, 55, 0.25)'" *ngIf="mealChoice">
+                  <span class="text-uppercase fw-bold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="letter-spacing: 0.8px; font-size: 0.74rem; opacity: 0.9;">Plat assis</span>
+                  <span class="fw-bold text-end font-serif" [style.fontFamily]="getSecondaryFont()" [style.color]="getPrimaryColor()" style="font-size: 0.98rem;">{{ mealChoice }}</span>
                 </div>
-                <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom border-dark border-opacity-10" *ngIf="dessertChoice">
-                  <span class="text-uppercase fw-bold text-muted" style="letter-spacing: 0.8px; font-size: 0.74rem;">Dessert</span>
-                  <span class="fw-semibold text-dark text-end font-serif" style="font-size: 0.95rem;">{{ dessertChoice }}</span>
+                <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom" [style.borderColor]="'rgba(212, 175, 55, 0.25)'" *ngIf="dessertChoice">
+                  <span class="text-uppercase fw-bold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="letter-spacing: 0.8px; font-size: 0.74rem; opacity: 0.85;">Dessert</span>
+                  <span class="fw-semibold text-end font-serif" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.95rem;">{{ dessertChoice }}</span>
                 </div>
               </div>
             </div>
 
             <!-- Dietary pills if any -->
             <div class="mb-2 text-center px-2" *ngIf="status() === 'CONFIRMED' && (getSelectedDietsArray().length > 0 || (otherAllergies.trim() && otherAllergies.trim().toLowerCase() !== 'aucun' && otherAllergies.trim().toLowerCase() !== 'none'))">
-              <div class="fw-bold text-dark text-uppercase mb-2 text-center"
-                style="letter-spacing: 1.8px; opacity: 0.85; font-size: 0.76rem;">
+              <div class="fw-bold text-uppercase mb-2 text-center"
+                [style.fontFamily]="getSecondaryFont()"
+                [style.color]="getSecondaryFontColor()"
+                style="letter-spacing: 1.8px; opacity: 0.95; font-size: 0.78rem;">
                 — Régimes & Allergies —
               </div>
               <div class="d-flex flex-wrap gap-1.5 justify-content-center mb-1">
                 <span class="badge bg-dark bg-opacity-85 text-white rounded-pill px-3 py-1.5 fw-semibold shadow-xs"
-                  *ngFor="let diet of getSelectedDietsArray()" style="font-size: 0.78rem;">
+                  *ngFor="let diet of getSelectedDietsArray()" [style.borderColor]="getPrimaryColor()" style="font-size: 0.78rem; border: 1px solid rgba(212, 175, 55, 0.4);">
                   <i class="fa fa-check me-1" style="color: #fbbf24;"></i>{{ diet }}
                 </span>
               </div>
-              <div class="text-dark fst-italic mt-1" *ngIf="otherAllergies.trim() && otherAllergies.trim().toLowerCase() !== 'aucun' && otherAllergies.trim().toLowerCase() !== 'none'" style="font-size: 0.8rem;">
-                <span class="fw-bold">Allergie :</span> {{ otherAllergies.trim() }}
+              <div class="fst-italic mt-1" *ngIf="otherAllergies.trim() && otherAllergies.trim().toLowerCase() !== 'aucun' && otherAllergies.trim().toLowerCase() !== 'none'" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.8rem;">
+                <span class="fw-bold" [style.color]="getPrimaryColor()">Allergie :</span> {{ otherAllergies.trim() }}
               </div>
             </div>
 

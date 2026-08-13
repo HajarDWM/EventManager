@@ -24,6 +24,7 @@ public class EventDTO {
     private String templateId;
     private String invitationToken;
     private String invitationTitle;
+    private String invitationSubtitle;
     private LocalDateTime invitationDate;
     private String invitationLocation;
     private String parkingLocation;

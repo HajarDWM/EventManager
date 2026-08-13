@@ -9,6 +9,7 @@ export interface Event {
   digitalTemplateId?: number;
   invitationToken?: string;
   invitationTitle?: string;
+  invitationSubtitle?: string;
   invitationDate?: string;
   invitationLocation?: string;
   parkingLocation?: string;

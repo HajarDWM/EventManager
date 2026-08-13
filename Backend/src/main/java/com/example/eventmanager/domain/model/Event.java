@@ -24,19 +24,25 @@ public class Event {
     private String templateId;
     private String invitationToken;
     private String invitationTitle;
+    private String invitationSubtitle;
     private LocalDateTime invitationDate;
     private String invitationLocation;
     private String parkingLocation;
 
     public void setupInvitation(Long templateId, String templateIdStr, String token, String title, LocalDateTime date, String location) {
-        setupInvitation(templateId, templateIdStr, token, title, date, location, this.parkingLocation);
+        setupInvitation(templateId, templateIdStr, token, title, this.invitationSubtitle, date, location, this.parkingLocation);
     }
 
     public void setupInvitation(Long templateId, String templateIdStr, String token, String title, LocalDateTime date, String location, String parkingLocation) {
+        setupInvitation(templateId, templateIdStr, token, title, this.invitationSubtitle, date, location, parkingLocation);
+    }
+
+    public void setupInvitation(Long templateId, String templateIdStr, String token, String title, String subtitle, LocalDateTime date, String location, String parkingLocation) {
         this.digitalTemplateId = templateId;
         this.templateId = templateIdStr;
         this.invitationToken = token;
         this.invitationTitle = title;
+        this.invitationSubtitle = subtitle;
         this.invitationDate = date;
         this.invitationLocation = location;
         this.parkingLocation = parkingLocation;

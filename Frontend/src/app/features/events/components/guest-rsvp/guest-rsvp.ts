@@ -19,6 +19,7 @@ export interface PublicRsvpDetail {
   eventLocation: string;
   digitalTemplateId?: number;
   invitationTitle?: string;
+  invitationSubtitle?: string;
   invitationDate?: string;
   invitationLocation?: string;
   parkingLocation?: string;
@@ -134,38 +135,62 @@ export class GuestRsvp implements OnInit, OnDestroy {
   protected readonly isBuffet = computed(() => !this.hasFormat('PLATS_FIXES'));
   protected readonly isPlated = computed(() => this.hasFormat('PLATS_FIXES') && !this.hasFormat('BUFFET_ENTREES'));
 
+  public getInvitationSubtitle(): string {
+    const subtitle = this.guest()?.invitationSubtitle;
+    if (subtitle && subtitle.trim()) {
+      return subtitle.trim();
+    }
+    const cat = this.guest()?.templateCategory;
+    if (cat === 'Mariage') {
+      return 'Le Mariage de';
+    }
+    if (cat === 'Corporate') {
+      return 'Événement d\'Entreprise';
+    }
+    return 'Invitation d\'Exception';
+  }
+
   public getPrimaryFont(): string {
     const f = this.guest()?.primaryFont;
-    if (f) {
-      loadGoogleFont(f);
-      return `'${f}', 'Alex Brush', 'Great Vibes', cursive`;
+    if (f && f.trim()) {
+      loadGoogleFont(f.trim());
+      return `'${f.trim()}', cursive, serif`;
     }
+    const cat = this.guest()?.templateCategory;
+    if (cat === 'Corporate') return "'Montserrat', sans-serif";
+    if (cat === 'Anniversaire') return "'Great Vibes', cursive";
     return "'Alex Brush', 'Great Vibes', cursive";
   }
 
   public getPrimaryFontSize(): string {
     const s = this.guest()?.primaryFontSize;
     if (s && s.trim()) return s.trim();
-    return 'clamp(2rem, 6.5vw, 3.2rem)';
+    return '36px';
   }
 
   public getSecondaryFont(): string {
     const f = this.guest()?.secondaryFont;
-    if (f) {
-      loadGoogleFont(f);
-      return `'${f}', 'Cinzel', 'Playfair Display', serif`;
+    if (f && f.trim()) {
+      loadGoogleFont(f.trim());
+      return `'${f.trim()}', sans-serif, serif`;
     }
+    const cat = this.guest()?.templateCategory;
+    if (cat === 'Corporate') return "'Playfair Display', serif";
+    if (cat === 'Anniversaire') return "'Cormorant Garamond', serif";
     return "'Cinzel', 'Playfair Display', serif";
   }
 
   public getSecondaryFontSize(): string {
     const s = this.guest()?.secondaryFontSize;
     if (s && s.trim()) return s.trim();
-    return '1rem';
+    return '16px';
   }
 
   public getPrimaryColor(): string {
-    return this.guest()?.accentColor || '#d4af37';
+    if (this.guest()?.accentColor && this.guest()!.accentColor!.trim()) {
+      return this.guest()!.accentColor!.trim();
+    }
+    return '#d4af37';
   }
 
   public getDirectionsUrl(destination?: string): string {
@@ -188,12 +213,13 @@ export class GuestRsvp implements OnInit, OnDestroy {
   }
 
   public getSecondaryFontColor(): string {
-    if (this.guest()?.secondaryFontColor) {
-      return this.guest()!.secondaryFontColor!;
+    if (this.guest()?.secondaryFontColor && this.guest()!.secondaryFontColor!.trim()) {
+      return this.guest()!.secondaryFontColor!.trim();
     }
-    if (this.resolvedBackgroundImage || this.guest()?.templateCategory === 'Corporate' || this.isDarkBg(this.guest()?.backgroundColor)) {
-      return '#e2e8f0';
-    }
+    const cat = this.guest()?.templateCategory;
+    if (cat === 'Corporate') return '#2b4c7e';
+    if (cat === 'Mariage') return '#0f172a';
+    if (cat === 'Anniversaire') return '#2c1810';
     return '#1e293b';
   }
 

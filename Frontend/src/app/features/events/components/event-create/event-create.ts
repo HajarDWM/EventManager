@@ -19,6 +19,7 @@ export class EventCreate implements OnInit {
   private readonly router = inject(Router);
 
   protected readonly title = signal('');
+  protected readonly invitationSubtitle = signal('');
   protected readonly eventDateOnly = signal('');
   protected readonly eventTimeOnly = signal('');
   protected readonly location = signal('');
@@ -83,6 +84,7 @@ export class EventCreate implements OnInit {
       location: this.location(),
       invitationLocation: this.location(),
       invitationTitle: this.title(),
+      invitationSubtitle: this.invitationSubtitle() || undefined,
       invitationDate: dateVal,
       parkingLocation: this.parkingLocation() || undefined,
       guestCount: this.guestCount(),

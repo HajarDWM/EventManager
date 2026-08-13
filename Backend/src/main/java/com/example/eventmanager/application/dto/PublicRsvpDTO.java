@@ -26,6 +26,7 @@ public class PublicRsvpDTO {
     
     private Long digitalTemplateId;
     private String invitationTitle;
+    private String invitationSubtitle;
     private LocalDateTime invitationDate;
     private String invitationLocation;
     private String parkingLocation;

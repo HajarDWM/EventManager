@@ -56,6 +56,7 @@ export class OrganiserInvitationSetup implements OnInit {
 
   // Customized invitation fields
   protected invitationTitle = '';
+  protected invitationSubtitle = '';
   protected invitationDateStr = '';
   protected invitationTimeStr = '';
   protected invitationLocation = '';
@@ -133,6 +134,7 @@ export class OrganiserInvitationSetup implements OnInit {
             
             // Pre-fill customization fields with existing invitation info or default to event details
             this.invitationTitle = evt.invitationTitle || evt.title;
+            this.invitationSubtitle = evt.invitationSubtitle || '';
             this.invitationLocation = evt.invitationLocation || evt.location;
             this.invitationParking = evt.parkingLocation || '';
             
@@ -178,6 +180,9 @@ export class OrganiserInvitationSetup implements OnInit {
     const evt = this.event();
     if (evt) {
       if (!this.invitationTitle) this.invitationTitle = evt.title;
+      if (!this.invitationSubtitle) {
+        this.invitationSubtitle = evt.invitationSubtitle || (template.category === 'Mariage' ? 'Le Mariage de' : (template.category === 'Corporate' ? 'Événement d\'Entreprise & Gala' : 'Invitation d\'Exception'));
+      }
       if (!this.invitationLocation) this.invitationLocation = evt.location;
       if (!this.invitationParking) this.invitationParking = evt.parkingLocation || '';
       if (!this.invitationDateStr) {
@@ -214,6 +219,7 @@ export class OrganiserInvitationSetup implements OnInit {
       templateId: template.id,
       templateIdString: templateIdString,
       invitationTitle: this.invitationTitle,
+      invitationSubtitle: this.invitationSubtitle,
       invitationDate: combinedDate.toISOString(),
       invitationLocation: this.invitationLocation,
       parkingLocation: this.invitationParking
@@ -231,6 +237,7 @@ export class OrganiserInvitationSetup implements OnInit {
           digitalTemplateId: template.id,
           templateId: res.templateIdString,
           invitationTitle: res.invitationTitle,
+          invitationSubtitle: res.invitationSubtitle,
           invitationDate: res.invitationDate,
           invitationLocation: res.invitationLocation,
           parkingLocation: res.parkingLocation,

@@ -37,8 +37,38 @@
             <label class="form-label fs-sm fw-semibold" for="event-title">Nom de l'événement <span
                 class="text-danger">*</span></label>
             <input type="text" class="form-control form-control-alt fs-sm" id="event-title" name="event-title"
-              placeholder="Ex: Mariage de Sarah & Marc" [ngModel]="title()" (ngModelChange)="title.set($event)"
+              placeholder="Ex: Yassine & Zineb ou BrainToys" [ngModel]="title()" (ngModelChange)="title.set($event)"
               required>
+          </div>
+
+          <!-- Type / Sous-titre de l'événement (pour le faire-part) -->
+          <div class="mb-4">
+            <label class="form-label fs-sm fw-semibold" for="event-subtitle">
+              <i class="fa fa-tag text-primary me-1"></i> Type / Nature de l'événement (Sous-titre du faire-part)
+            </label>
+            <input type="text" class="form-control form-control-alt fs-sm"
+                   id="event-subtitle" name="event-subtitle"
+                   list="subtitle-suggestions-edit"
+                   placeholder="Ex: Le Mariage de, Soirée de Gala, Dîner d'Affaires, L'Anniversaire de..."
+                   [ngModel]="invitationSubtitle()" (ngModelChange)="invitationSubtitle.set($event)">
+            <datalist id="subtitle-suggestions-edit">
+              <option value="Le Mariage de">
+              <option value="Les Fiançailles de">
+              <option value="Soirée de Gala">
+              <option value="Dîner d'Affaires">
+              <option value="Événement d'Entreprise">
+              <option value="Lancement de Produit">
+              <option value="Conférence & Réception">
+              <option value="L'Anniversaire de">
+              <option value="La Célébration de Naissance de">
+              <option value="L'Aqiqah de">
+              <option value="La Circoncision de">
+              <option value="Soirée Henné de">
+              <option value="Invitation d'Exception">
+            </datalist>
+            <div class="form-text fs-xs text-muted">
+              Ce texte apparaîtra au-dessus du nom sur le faire-part (choisissez une suggestion ou écrivez votre propre texte).
+            </div>
           </div>
 
           <!-- Date & Heure -->

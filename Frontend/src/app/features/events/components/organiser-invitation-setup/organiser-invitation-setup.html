@@ -289,9 +289,37 @@
           </p>
 
           <div class="mb-3">
-            <label class="form-label fw-semibold text-muted">Titre de l'invitation (Couple ou Événement)</label>
+            <label class="form-label fw-semibold text-muted">Nom de l'invitation (Nom du Couple, Entreprise ou Événement)</label>
             <input type="text" class="form-control border-light shadow-sm bg-body-light" 
-                   placeholder="Ex: Nom 1 & Nom 2" [(ngModel)]="invitationTitle" name="invTitle" required>
+                   placeholder="Ex: Yassine & Zineb ou BrainToys" [(ngModel)]="invitationTitle" name="invTitle" required>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold text-muted">
+              <i class="fa fa-tag text-primary me-1"></i> Type / Nature de l'événement (Sous-titre)
+            </label>
+            <input type="text" class="form-control border-light shadow-sm bg-body-light" 
+                   list="modal-subtitle-suggestions"
+                   placeholder="Ex: Le Mariage de, Soirée de Gala, Dîner d'Affaires, L'Anniversaire de..." 
+                   [(ngModel)]="invitationSubtitle" name="invSubtitle">
+            <datalist id="modal-subtitle-suggestions">
+              <option value="Le Mariage de">
+              <option value="Les Fiançailles de">
+              <option value="Soirée de Gala">
+              <option value="Dîner d'Affaires">
+              <option value="Événement d'Entreprise">
+              <option value="Lancement de Produit">
+              <option value="Conférence & Réception">
+              <option value="L'Anniversaire de">
+              <option value="La Célébration de Naissance de">
+              <option value="L'Aqiqah de">
+              <option value="La Circoncision de">
+              <option value="Soirée Henné de">
+              <option value="Invitation d'Exception">
+            </datalist>
+            <div class="form-text fs-xs text-muted">
+              Ce texte apparaîtra au-dessus du titre sur le faire-part.
+            </div>
           </div>
 
           <div class="row g-3 mb-3">

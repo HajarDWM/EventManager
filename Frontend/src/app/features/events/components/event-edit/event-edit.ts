@@ -19,6 +19,7 @@ export class EventEdit implements OnInit {
 
   protected readonly eventId = signal<number | null>(null);
   protected readonly title = signal('');
+  protected readonly invitationSubtitle = signal('');
   protected readonly eventDateOnly = signal('');
   protected readonly eventTimeOnly = signal('');
   protected readonly location = signal('');
@@ -51,6 +52,7 @@ export class EventEdit implements OnInit {
     this.eventService.getEventById(id).subscribe({
       next: (data) => {
         this.title.set(data.title);
+        this.invitationSubtitle.set(data.invitationSubtitle || '');
         // Formater la date pour <input type="datetime-local"> (yyyy-MM-ddTHH:mm)
         if (data.eventDate) {
           if (data.eventDate.includes('T')) {
@@ -112,6 +114,7 @@ export class EventEdit implements OnInit {
       location: this.location(),
       invitationLocation: this.location(),
       invitationTitle: this.title(),
+      invitationSubtitle: this.invitationSubtitle() || undefined,
       invitationDate: dateVal,
       parkingLocation: this.parkingLocation() || undefined,
       guestCount: this.guestCount(),

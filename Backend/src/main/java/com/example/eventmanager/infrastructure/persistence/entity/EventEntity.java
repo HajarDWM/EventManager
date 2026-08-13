@@ -62,6 +62,9 @@ public class EventEntity {
     @Column(name = "invitation_title")
     private String invitationTitle;
 
+    @Column(name = "invitation_subtitle")
+    private String invitationSubtitle;
+
     @Column(name = "invitation_date")
     private LocalDateTime invitationDate;
 

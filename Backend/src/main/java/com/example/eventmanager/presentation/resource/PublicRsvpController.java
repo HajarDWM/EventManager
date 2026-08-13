@@ -86,6 +86,7 @@ public class PublicRsvpController {
                 .eventLocation(event.getLocation())
                 .digitalTemplateId(event.getDigitalTemplateId())
                 .invitationTitle(event.getInvitationTitle())
+                .invitationSubtitle(event.getInvitationSubtitle())
                 .invitationDate(event.getInvitationDate())
                 .invitationLocation(event.getInvitationLocation())
                 .parkingLocation(event.getParkingLocation())
@@ -148,6 +149,11 @@ public class PublicRsvpController {
         String accentColor = null;
         String backgroundColor = null;
         String templateBackgroundImageUrl = null;
+        String primaryFont = null;
+        String primaryFontSize = null;
+        String secondaryFont = null;
+        String secondaryFontSize = null;
+        String secondaryFontColor = null;
         String templateMusicUrl = null;
         String resolvedTemplateKey = event.getTemplateId();
 
@@ -161,6 +167,11 @@ public class PublicRsvpController {
                 accentColor = tpl.getAccentColor();
                 backgroundColor = tpl.getBackgroundColor();
                 templateBackgroundImageUrl = tpl.getBackgroundImageUrl();
+                primaryFont = tpl.getPrimaryFont();
+                primaryFontSize = tpl.getPrimaryFontSize();
+                secondaryFont = tpl.getSecondaryFont();
+                secondaryFontSize = tpl.getSecondaryFontSize();
+                secondaryFontColor = tpl.getSecondaryFontColor();
                 templateMusicUrl = tpl.getMusicUrl();
                 if (resolvedTemplateKey == null || resolvedTemplateKey.isBlank()) {
                     resolvedTemplateKey = tpl.getTemplateKey();
@@ -182,8 +193,10 @@ public class PublicRsvpController {
                 .eventLocation(event.getLocation())
                 .digitalTemplateId(event.getDigitalTemplateId())
                 .invitationTitle(event.getInvitationTitle())
+                .invitationSubtitle(event.getInvitationSubtitle())
                 .invitationDate(event.getInvitationDate())
                 .invitationLocation(event.getInvitationLocation())
+                .parkingLocation(event.getParkingLocation())
                 .mealType(event.getMealType())
                 .templateCategory(templateCategory)
                 .templateId(resolvedTemplateKey)
@@ -192,6 +205,11 @@ public class PublicRsvpController {
                 .accentColor(accentColor)
                 .backgroundColor(backgroundColor)
                 .templateBackgroundImageUrl(templateBackgroundImageUrl)
+                .primaryFont(primaryFont)
+                .primaryFontSize(primaryFontSize)
+                .secondaryFont(secondaryFont)
+                .secondaryFontSize(secondaryFontSize)
+                .secondaryFontColor(secondaryFontColor)
                 .templateMusicUrl(templateMusicUrl)
                 .menuItems(menuItems)
                 .build();

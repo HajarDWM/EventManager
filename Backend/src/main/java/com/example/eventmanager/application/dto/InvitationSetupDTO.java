@@ -11,6 +11,7 @@ public class InvitationSetupDTO {
     private Long templateId;
     private String templateIdString;
     private String invitationTitle;
+    private String invitationSubtitle;
     private LocalDateTime invitationDate;
     private String invitationLocation;
     private String parkingLocation;
