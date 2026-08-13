@@ -26,6 +26,7 @@ public class EventMapper {
                 .invitationTitle(dto.getInvitationTitle())
                 .invitationDate(dto.getInvitationDate())
                 .invitationLocation(dto.getInvitationLocation())
+                .parkingLocation(dto.getParkingLocation())
                 .mealType(dto.getMealType())
                 .templateId(dto.getTemplateId());
 
@@ -56,6 +57,7 @@ public class EventMapper {
                 .invitationTitle(event.getInvitationTitle())
                 .invitationDate(event.getInvitationDate())
                 .invitationLocation(event.getInvitationLocation())
+                .parkingLocation(event.getParkingLocation())
                 .mealType(event.getMealType())
                 .build();
     }

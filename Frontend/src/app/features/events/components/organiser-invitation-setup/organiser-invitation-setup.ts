@@ -59,6 +59,7 @@ export class OrganiserInvitationSetup implements OnInit {
   protected invitationDateStr = '';
   protected invitationTimeStr = '';
   protected invitationLocation = '';
+  protected invitationParking = '';
   protected invitationToken = '';
 
   // Generated Link Info
@@ -133,6 +134,7 @@ export class OrganiserInvitationSetup implements OnInit {
             // Pre-fill customization fields with existing invitation info or default to event details
             this.invitationTitle = evt.invitationTitle || evt.title;
             this.invitationLocation = evt.invitationLocation || evt.location;
+            this.invitationParking = evt.parkingLocation || '';
             
             const rawDate = evt.invitationDate ? new Date(evt.invitationDate) : new Date(evt.eventDate);
             this.invitationDateStr = rawDate.toISOString().split('T')[0];
@@ -177,6 +179,7 @@ export class OrganiserInvitationSetup implements OnInit {
     if (evt) {
       if (!this.invitationTitle) this.invitationTitle = evt.title;
       if (!this.invitationLocation) this.invitationLocation = evt.location;
+      if (!this.invitationParking) this.invitationParking = evt.parkingLocation || '';
       if (!this.invitationDateStr) {
         const rawDate = new Date(evt.eventDate);
         this.invitationDateStr = rawDate.toISOString().split('T')[0];
@@ -212,7 +215,8 @@ export class OrganiserInvitationSetup implements OnInit {
       templateIdString: templateIdString,
       invitationTitle: this.invitationTitle,
       invitationDate: combinedDate.toISOString(),
-      invitationLocation: this.invitationLocation
+      invitationLocation: this.invitationLocation,
+      parkingLocation: this.invitationParking
     };
 
     this.eventService.setupInvitation(evt.id!, payload).subscribe({
@@ -229,6 +233,7 @@ export class OrganiserInvitationSetup implements OnInit {
           invitationTitle: res.invitationTitle,
           invitationDate: res.invitationDate,
           invitationLocation: res.invitationLocation,
+          parkingLocation: res.parkingLocation,
           invitationToken: res.invitationToken
         } : null);
 

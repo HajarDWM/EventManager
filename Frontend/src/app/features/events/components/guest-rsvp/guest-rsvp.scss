@@ -2539,14 +2539,23 @@ textarea.luxury-form-control::placeholder {
 
       .details-gps-link {
         font-family: var(--secondary-font, 'Plus Jakarta Sans', sans-serif);
-        font-size: 0.7rem;
+        font-size: 0.72rem;
         font-weight: 700;
         color: var(--primary-color, #f0dd9e);
-        background: rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.12);
         border: 1.5px solid var(--primary-color, #f0dd9e);
         border-radius: 20px;
-        padding: 3px 14px;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+        padding: 4px 14px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        text-decoration: none;
+        transition: all 0.25s ease;
+
+        &:hover {
+          background: var(--primary-color, #f0dd9e);
+          color: #0f172a !important;
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
       }
 
       /* Clean Discover Menu & RSVP Action Button */

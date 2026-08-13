@@ -28,6 +28,7 @@ public class PublicRsvpDTO {
     private String invitationTitle;
     private LocalDateTime invitationDate;
     private String invitationLocation;
+    private String parkingLocation;
     private String mealType;
     private String templateCategory; // Mariage, Corporate, etc.
     private String templateId;

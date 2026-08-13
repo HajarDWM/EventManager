@@ -28,6 +28,7 @@ public class EventPersistenceMapper {
                 .invitationTitle(entity.getInvitationTitle())
                 .invitationDate(entity.getInvitationDate())
                 .invitationLocation(entity.getInvitationLocation())
+                .parkingLocation(entity.getParkingLocation())
                 .mealType(entity.getMealType())
                 .templateId(entity.getTemplateId())
                 .build();
@@ -54,6 +55,7 @@ public class EventPersistenceMapper {
                 .invitationTitle(domain.getInvitationTitle())
                 .invitationDate(domain.getInvitationDate())
                 .invitationLocation(domain.getInvitationLocation())
+                .parkingLocation(domain.getParkingLocation())
                 .mealType(domain.getMealType())
                 .build();
     }

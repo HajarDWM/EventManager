@@ -88,6 +88,7 @@ public class PublicRsvpController {
                 .invitationTitle(event.getInvitationTitle())
                 .invitationDate(event.getInvitationDate())
                 .invitationLocation(event.getInvitationLocation())
+                .parkingLocation(event.getParkingLocation())
                 .mealType(event.getMealType())
                 .templateCategory(templateCategory)
                 .templateId(resolvedTemplateKey)

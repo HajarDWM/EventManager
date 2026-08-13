@@ -46,6 +46,11 @@ public class OrganiserInvitationController {
             customLoc = event.getLocation();
         }
 
+        String customParking = setupDTO.getParkingLocation();
+        if (customParking == null || customParking.isBlank()) {
+            customParking = event.getParkingLocation();
+        }
+
         // Set setup details on domain model
         event.setupInvitation(
                 setupDTO.getTemplateId(),
@@ -53,7 +58,8 @@ public class OrganiserInvitationController {
                 token,
                 customTitle,
                 customDate,
-                customLoc
+                customLoc,
+                customParking
         );
 
         Event savedEvent = eventRepositoryPort.save(event);
@@ -65,6 +71,7 @@ public class OrganiserInvitationController {
                 .invitationTitle(savedEvent.getInvitationTitle())
                 .invitationDate(savedEvent.getInvitationDate())
                 .invitationLocation(savedEvent.getInvitationLocation())
+                .parkingLocation(savedEvent.getParkingLocation())
                 .build();
 
         return ResponseEntity.ok(response);

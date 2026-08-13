@@ -26,5 +26,6 @@ public class EventDTO {
     private String invitationTitle;
     private LocalDateTime invitationDate;
     private String invitationLocation;
+    private String parkingLocation;
     private String mealType;
 }

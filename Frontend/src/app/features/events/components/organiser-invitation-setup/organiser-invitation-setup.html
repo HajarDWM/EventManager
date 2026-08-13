@@ -308,9 +308,20 @@
           </div>
 
           <div class="mb-3">
-            <label class="form-label fw-semibold text-muted">Adresse / Lieu exact</label>
+            <label class="form-label fw-semibold text-muted">Adresse / Lieu exact de la salle</label>
             <input type="text" class="form-control border-light shadow-sm bg-body-light" 
                    placeholder="Ex: Château de Versailles, France" [(ngModel)]="invitationLocation" name="invLoc" required>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold text-muted">
+              <i class="fa fa-parking text-primary me-1"></i> Zone de Parking (facultatif)
+            </label>
+            <input type="text" class="form-control border-light shadow-sm bg-body-light" 
+                   placeholder="Ex: Parking P1 - Entrée Sud, Rue des Fleurs" [(ngModel)]="invitationParking" name="invParking">
+            <div class="form-text fs-xxs text-muted">
+              Permet aux invités d'obtenir un itinéraire GPS direct vers le parking dédié.
+            </div>
           </div>
         </div>
 

@@ -59,13 +59,27 @@
             </div>
           </div>
 
-          <!-- Lieu -->
+          <!-- Lieu de la Salle -->
           <div class="mb-4">
-            <label class="form-label fs-sm fw-semibold" for="event-location">Lieu <span class="text-danger">*</span></label>
+            <label class="form-label fs-sm fw-semibold" for="event-location">Lieu / Salle de réception <span class="text-danger">*</span></label>
             <input type="text" class="form-control form-control-alt fs-sm"
-                   id="event-location" name="event-location" placeholder="Ex: Château de Versailles, Galerie des Glaces"
+                   id="event-location" name="event-location" placeholder="Ex: Palais des Roses, Galerie des Glaces, Casablanca"
                    [ngModel]="location()" (ngModelChange)="location.set($event)" required
                    [disabled]="isQuotaReached()">
+          </div>
+
+          <!-- Zone de Parking -->
+          <div class="mb-4">
+            <label class="form-label fs-sm fw-semibold" for="event-parking">
+              <i class="fa fa-parking text-primary me-1"></i> Zone de Parking (facultatif)
+            </label>
+            <input type="text" class="form-control form-control-alt fs-sm"
+                   id="event-parking" name="event-parking" placeholder="Ex: Parking VIP & Visiteurs - Entrée Sud, Boulevard d'Anfa"
+                   [ngModel]="parkingLocation()" (ngModelChange)="parkingLocation.set($event)"
+                   [disabled]="isQuotaReached()">
+            <div class="form-text fs-xs text-muted">
+              Permet aux invités d'obtenir un itinéraire GPS direct vers le parking sur leur faire-part.
+            </div>
           </div>
 
           <!-- Nombre d'invités -->

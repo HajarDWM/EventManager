@@ -394,18 +394,42 @@
               <div class="date-footer-line" [style.background]="'linear-gradient(90deg, transparent 0%, ' + getPrimaryColor() + ' 50%, transparent 100%)'"></div>
             </div>
 
-            <!-- Dynamic Venue Location Block -->
-            <div class="artistic-location-block mt-2.5 text-center">
-              <div class="location-icon-wrapper mb-1" [style.color]="getPrimaryColor()" [style.borderColor]="getPrimaryColor()">
+            <!-- Unified Venue Location & Access Block -->
+            <div class="artistic-location-block mt-3 text-center">
+              <div class="location-icon-wrapper mb-1 mx-auto" [style.color]="getPrimaryColor()" [style.borderColor]="getPrimaryColor()">
                 <i class="fa fa-map-marker-alt"></i>
               </div>
               <div class="location-title" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()">LIEU DE LA RÉCEPTION</div>
-              <div class="location-value" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()">{{ guest()?.invitationLocation || guest()?.eventLocation }}</div>
-              <a href="https://maps.google.com/?q={{ guest()?.invitationLocation || guest()?.eventLocation }}"
-                target="_blank" class="details-gps-link mt-2 d-inline-flex align-items-center"
-                [style.fontFamily]="getSecondaryFont()" [style.color]="getPrimaryColor()" [style.borderColor]="getPrimaryColor()">
-                <i class="fa fa-location-arrow me-1.5"></i> Itinéraire GPS
-              </a>
+              <div class="location-value" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()">
+                {{ guest()?.eventLocation || guest()?.invitationLocation }}
+              </div>
+
+              <!-- Note Parking spécifique si différente du nom de la salle -->
+              <div *ngIf="guest()?.parkingLocation && guest()?.parkingLocation !== (guest()?.eventLocation || guest()?.invitationLocation)"
+                   class="location-parking-subtitle fs-xs mt-1"
+                   [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="opacity: 0.9;">
+                <i class="fa fa-parking me-1 text-primary"></i> Parking : {{ guest()?.parkingLocation }}
+              </div>
+
+              <!-- Onglets / Boutons d'itinéraires GPS -->
+              <div class="d-inline-flex flex-wrap justify-content-center gap-2 mt-2.5">
+                <!-- Onglet Salle -->
+                <a [href]="getDirectionsUrl(guest()?.eventLocation || guest()?.invitationLocation)"
+                  target="_blank" rel="noopener noreferrer"
+                  class="details-gps-link d-inline-flex align-items-center"
+                  [style.fontFamily]="getSecondaryFont()" [style.color]="getPrimaryColor()" [style.borderColor]="getPrimaryColor()">
+                  <i class="fa fa-map-marker-alt me-1.5"></i> Salle
+                </a>
+
+                <!-- Onglet Parking (si renseigné) -->
+                <a *ngIf="guest()?.parkingLocation"
+                  [href]="getDirectionsUrl(guest()?.parkingLocation)"
+                  target="_blank" rel="noopener noreferrer"
+                  class="details-gps-link d-inline-flex align-items-center"
+                  [style.fontFamily]="getSecondaryFont()" [style.color]="getPrimaryColor()" [style.borderColor]="getPrimaryColor()">
+                  <i class="fa fa-parking me-1.5"></i> Parking
+                </a>
+              </div>
             </div>
           </div>
 

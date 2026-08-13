@@ -107,6 +107,15 @@ public class EventApplicationService implements CreateEventUseCase, GetEventUseC
         if (eventToSave.getStatus() == null) {
             eventToSave.setStatus(EventStatus.DRAFT);
         }
+        if (eventToSave.getInvitationLocation() == null || eventToSave.getInvitationLocation().isBlank()) {
+            eventToSave.setInvitationLocation(eventToSave.getLocation());
+        }
+        if (eventToSave.getInvitationTitle() == null || eventToSave.getInvitationTitle().isBlank()) {
+            eventToSave.setInvitationTitle(eventToSave.getTitle());
+        }
+        if (eventToSave.getInvitationDate() == null) {
+            eventToSave.setInvitationDate(eventToSave.getEventDate());
+        }
 
         Event savedEvent = eventRepositoryPort.save(eventToSave);
         return eventMapper.toDTO(savedEvent);
@@ -134,6 +143,10 @@ public class EventApplicationService implements CreateEventUseCase, GetEventUseC
         existingEvent.setTitle(eventDTO.getTitle());
         existingEvent.setEventDate(eventDTO.getEventDate());
         existingEvent.setLocation(eventDTO.getLocation());
+        existingEvent.setParkingLocation(eventDTO.getParkingLocation());
+        existingEvent.setInvitationLocation(eventDTO.getLocation());
+        existingEvent.setInvitationTitle(eventDTO.getTitle());
+        existingEvent.setInvitationDate(eventDTO.getEventDate());
         existingEvent.setGuestCount(eventDTO.getGuestCount());
         if (eventDTO.getMealType() != null) {
             existingEvent.setMealType(eventDTO.getMealType());

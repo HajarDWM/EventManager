@@ -13,5 +13,6 @@ public class InvitationSetupDTO {
     private String invitationTitle;
     private LocalDateTime invitationDate;
     private String invitationLocation;
+    private String parkingLocation;
     private String invitationToken;
 }

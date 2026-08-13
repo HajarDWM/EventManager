@@ -21,6 +21,7 @@ export interface PublicRsvpDetail {
   invitationTitle?: string;
   invitationDate?: string;
   invitationLocation?: string;
+  parkingLocation?: string;
   mealType?: string; // BUFFET or PLATS_FIXES
   templateCategory?: string; // Mariage, Corporate, etc.
   templateId?: string;
@@ -165,6 +166,13 @@ export class GuestRsvp implements OnInit, OnDestroy {
 
   public getPrimaryColor(): string {
     return this.guest()?.accentColor || '#d4af37';
+  }
+
+  public getDirectionsUrl(destination?: string): string {
+    if (!destination || !destination.trim()) {
+      return 'https://maps.google.com';
+    }
+    return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(destination.trim())}`;
   }
 
   public getDiscoverButtonBgColor(): string {

@@ -1,5 +1,6 @@
 <!-- Hero -->
-<div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-2 text-center text-md-start">
+<div
+  class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-2 text-center text-md-start">
   <div class="flex-grow-1 mb-1 mb-md-0">
     <h1 class="h3 fw-bold mb-2">
       Modifier l'événement
@@ -33,50 +34,63 @@
         <form (ngSubmit)="onSubmit()" *ngIf="!isLoading()">
           <!-- Titre -->
           <div class="mb-4">
-            <label class="form-label fs-sm fw-semibold" for="event-title">Nom de l'événement <span class="text-danger">*</span></label>
-            <input type="text" class="form-control form-control-alt fs-sm"
-                   id="event-title" name="event-title" placeholder="Ex: Mariage de Sarah & Marc"
-                   [ngModel]="title()" (ngModelChange)="title.set($event)" required>
+            <label class="form-label fs-sm fw-semibold" for="event-title">Nom de l'événement <span
+                class="text-danger">*</span></label>
+            <input type="text" class="form-control form-control-alt fs-sm" id="event-title" name="event-title"
+              placeholder="Ex: Mariage de Sarah & Marc" [ngModel]="title()" (ngModelChange)="title.set($event)"
+              required>
           </div>
 
           <!-- Date & Heure -->
           <div class="row mb-4">
             <div class="col-sm-8">
-              <label class="form-label fs-sm fw-semibold" for="event-date">Date de l'événement <span class="text-danger">*</span></label>
-              <input type="date" class="form-control form-control-alt fs-sm"
-                     id="event-date" name="event-date"
-                     [ngModel]="eventDateOnly()" (ngModelChange)="eventDateOnly.set($event)" required>
+              <label class="form-label fs-sm fw-semibold" for="event-date">Date de l'événement <span
+                  class="text-danger">*</span></label>
+              <input type="date" class="form-control form-control-alt fs-sm" id="event-date" name="event-date"
+                [ngModel]="eventDateOnly()" (ngModelChange)="eventDateOnly.set($event)" required>
             </div>
             <div class="col-sm-4">
               <label class="form-label fs-sm fw-semibold" for="event-time">Heure (facultatif)</label>
-              <input type="time" class="form-control form-control-alt fs-sm"
-                     id="event-time" name="event-time"
-                     [ngModel]="eventTimeOnly()" (ngModelChange)="eventTimeOnly.set($event)">
+              <input type="time" class="form-control form-control-alt fs-sm" id="event-time" name="event-time"
+                [ngModel]="eventTimeOnly()" (ngModelChange)="eventTimeOnly.set($event)">
             </div>
           </div>
 
-          <!-- Lieu -->
+          <!-- Lieu de la Salle -->
           <div class="mb-4">
-            <label class="form-label fs-sm fw-semibold" for="event-location">Lieu <span class="text-danger">*</span></label>
-            <input type="text" class="form-control form-control-alt fs-sm"
-                   id="event-location" name="event-location" placeholder="Ex: Château de Versailles, Galerie des Glaces"
-                   [ngModel]="location()" (ngModelChange)="location.set($event)" required>
+            <label class="form-label fs-sm fw-semibold" for="event-location">Lieu <span
+                class="text-danger">*</span></label>
+            <input type="text" class="form-control form-control-alt fs-sm" id="event-location" name="event-location"
+              placeholder="Ex: Palais des Roses, Galerie des Glaces, Casablanca" [ngModel]="location()"
+              (ngModelChange)="location.set($event)" required>
+          </div>
+
+          <!-- Zone de Parking -->
+          <div class="mb-4">
+            <label class="form-label fs-sm fw-semibold" for="event-parking">
+              <i class="fa fa-parking text-primary me-1"></i> Zone de Parking (facultatif)
+            </label>
+            <input type="text" class="form-control form-control-alt fs-sm" id="event-parking" name="event-parking"
+              placeholder="Ex: Parking VIP & Visiteurs - Entrée Sud, Boulevard d'Anfa" [ngModel]="parkingLocation()"
+              (ngModelChange)="parkingLocation.set($event)">
+            <div class="form-text fs-xs text-muted">
+              Permet aux invités d'obtenir un itinéraire GPS direct vers le parking sur leur faire-part.
+            </div>
           </div>
 
           <!-- Nombre d'invités -->
           <div class="mb-4">
             <label class="form-label fs-sm fw-semibold" for="event-guests">Nombre d'invités attendus</label>
-            <input type="number" class="form-control form-control-alt fs-sm"
-                   id="event-guests" name="event-guests" placeholder="Ex: 150 (facultatif)" min="1"
-                   [ngModel]="guestCount()" (ngModelChange)="guestCount.set($event)">
+            <input type="number" class="form-control form-control-alt fs-sm" id="event-guests" name="event-guests"
+              placeholder="Ex: 150 (facultatif)" min="1" [ngModel]="guestCount()"
+              (ngModelChange)="guestCount.set($event)">
           </div>
 
           <!-- Statut -->
           <div class="mb-4">
             <label class="form-label fs-sm fw-semibold" for="event-status">Statut de la prestation</label>
-            <select class="form-select form-control-alt fs-sm"
-                    id="event-status" name="event-status"
-                    [ngModel]="status()" (ngModelChange)="status.set($event)">
+            <select class="form-select form-control-alt fs-sm" id="event-status" name="event-status"
+              [ngModel]="status()" (ngModelChange)="status.set($event)">
               <option value="PLANNED">Planifié</option>
               <option value="DRAFT">Brouillon</option>
               <option value="COMPLETED">Terminé</option>
@@ -89,11 +103,12 @@
             <label class="form-label fs-sm fw-semibold" for="event-template">
               <i class="fa fa-paint-brush me-1 text-primary"></i> Modèle & Thème de Faire-part Digital
             </label>
-            <select class="form-select form-control-alt fs-sm"
-                    id="event-template" name="event-template"
-                    [ngModel]="selectedTemplateId()" (ngModelChange)="selectedTemplateId.set($event)">
+            <select class="form-select form-control-alt fs-sm" id="event-template" name="event-template"
+              [ngModel]="selectedTemplateId()" (ngModelChange)="selectedTemplateId.set($event)">
               <option *ngFor="let tpl of templates()" [value]="tpl.id">
-                {{ tpl.title }} — {{ tpl.category }} ({{ tpl.decorativeFrame === 'floral-frame' ? '🌸 Cadre Floral' : (tpl.decorativeFrame === 'gold-border' ? '⚜️ Dorures & Velours' : (tpl.decorativeFrame === 'geometric-frame' ? '📐 Géométrique' : '✨ Minimaliste')) }})
+                {{ tpl.title }} — {{ tpl.category }} ({{ tpl.decorativeFrame === 'floral-frame' ? '🌸 Cadre Floral' :
+                (tpl.decorativeFrame === 'gold-border' ? '⚜️ Dorures & Velours' : (tpl.decorativeFrame ===
+                'geometric-frame' ? '📐 Géométrique' : '✨ Minimaliste')) }})
               </option>
             </select>
             <div class="form-text fs-xs text-muted">

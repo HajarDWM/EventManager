@@ -22,6 +22,7 @@ export class EventEdit implements OnInit {
   protected readonly eventDateOnly = signal('');
   protected readonly eventTimeOnly = signal('');
   protected readonly location = signal('');
+  protected readonly parkingLocation = signal('');
   protected readonly guestCount = signal<number | null>(null);
   protected readonly status = signal<'DRAFT' | 'PLANNED' | 'COMPLETED' | 'CANCELLED'>('PLANNED');
   protected readonly selectedTemplateId = signal<number | null>(null);
@@ -69,6 +70,7 @@ export class EventEdit implements OnInit {
           }
         }
         this.location.set(data.location);
+        this.parkingLocation.set(data.parkingLocation || '');
         this.guestCount.set(data.guestCount ?? null);
         if (data.status) {
           this.status.set(data.status);
@@ -108,6 +110,10 @@ export class EventEdit implements OnInit {
       title: this.title(),
       eventDate: dateVal,
       location: this.location(),
+      invitationLocation: this.location(),
+      invitationTitle: this.title(),
+      invitationDate: dateVal,
+      parkingLocation: this.parkingLocation() || undefined,
       guestCount: this.guestCount(),
       status: this.status(),
       digitalTemplateId: chosenTemplate?.id || undefined,
