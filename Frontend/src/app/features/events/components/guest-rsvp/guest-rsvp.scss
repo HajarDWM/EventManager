@@ -78,43 +78,58 @@
 
     .wedding-names,
     .invitation-main-title {
-      color: #2b221b !important;
+      color: var(--primary-color, #d4af37);
+      font-family: var(--primary-font, inherit);
+    }
+
+    .luxury-subtitle {
+      color: var(--primary-color, #d4af37);
+      font-family: var(--primary-font, inherit);
     }
 
     .wedding-greeting,
     .salutation-invitation-message {
-      color: #4a4036 !important;
+      color: var(--secondary-color, #4a4036);
+      font-family: var(--secondary-font, inherit);
     }
 
     .salutation-guest-badge {
-      background: rgba(255, 255, 255, 0.85) !important;
-      border: 1px solid rgba(212, 175, 55, 0.35) !important;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--primary-color, rgba(212, 175, 55, 0.35));
     }
 
     .salutation-honorific {
-      color: #8c6d1f !important;
+      color: var(--secondary-color, #8c6d1f);
+      font-family: var(--secondary-font, inherit);
     }
 
     .salutation-guest-name {
-      color: #2b221b !important;
+      color: var(--primary-color, #2b221b);
+      font-family: var(--secondary-font, inherit);
     }
 
     .date-center-num {
-      color: #2b221b !important;
-      border-color: rgba(212, 175, 55, 0.35) !important;
+      color: var(--primary-color, #2b221b);
+      border-color: var(--primary-color, rgba(212, 175, 55, 0.35));
+      font-family: var(--secondary-font, inherit);
     }
 
-    .date-side-part {
-      color: #8c6d1f !important;
+    .date-side-part,
+    .day-name,
+    .month-year {
+      color: var(--secondary-color, #8c6d1f);
+      font-family: var(--secondary-font, inherit);
     }
 
     .location-value {
-      color: #2b221b !important;
+      color: var(--secondary-color, #2b221b);
+      font-family: var(--secondary-font, inherit);
     }
 
     .location-title,
     .artistic-time {
-      color: #8c6d1f !important;
+      color: var(--secondary-color, #8c6d1f);
+      font-family: var(--secondary-font, inherit);
     }
 
     .bg-cream,
@@ -2402,63 +2417,63 @@ textarea.luxury-form-control::placeholder {
         padding: 30px 14px 4px !important;
       }
 
-      /* Floating Classic Typography with High-Contrast Dark Charcoal / Slate Grey Palette */
+      /* Floating Dynamic Typography that honors Admin Customizations */
       .wedding-names,
       .invitation-main-title {
-        font-family: 'Cinzel', 'Playfair Display', 'Cormorant Garamond', serif !important;
-        font-size: clamp(2rem, 6.5vw, 3.2rem) !important;
-        font-weight: 700 !important;
-        color: #0f172a !important;
-        text-shadow: 0 1px 2px rgba(255, 255, 255, 0.95), 0 2px 6px rgba(0, 0, 0, 0.06) !important;
-        letter-spacing: 2px !important;
-        text-transform: uppercase !important;
-        line-height: 1.2 !important;
+        font-family: var(--primary-font, 'Playfair Display', serif);
+        font-size: clamp(2rem, 6.5vw, 3.2rem);
+        font-weight: 700;
+        color: var(--primary-color, #d4af37);
+        text-shadow: none;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        line-height: 1.2;
         max-width: 440px;
         margin-left: auto;
         margin-right: auto;
       }
 
       .luxury-subtitle {
-        font-family: 'Alex Brush', 'Great Vibes', 'Pinyon Script', cursive !important;
-        font-size: clamp(1.8rem, 5.5vw, 2.6rem) !important;
-        color: #1f2937 !important;
-        font-weight: 400 !important;
-        line-height: 1.15 !important;
-        text-shadow: 0 1px 2px rgba(255, 255, 255, 0.95) !important;
+        font-family: var(--primary-font, 'Alex Brush', cursive);
+        font-size: clamp(1.8rem, 5.5vw, 2.6rem);
+        color: var(--primary-color, #d4af37);
+        font-weight: 400;
+        line-height: 1.15;
+        text-shadow: none;
       }
 
       .salutation-guest-badge {
-        background: transparent !important;
-        border: none !important;
-        box-shadow: none !important;
-        padding: 0 !important;
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        padding: 0;
         display: inline-block;
       }
 
       .salutation-honorific {
-        font-family: 'Cormorant Garamond', serif !important;
-        font-style: italic !important;
-        font-size: 1.15rem !important;
-        color: #1f2937 !important;
-        font-weight: 600 !important;
+        font-family: var(--secondary-font, 'Cormorant Garamond', serif);
+        font-style: italic;
+        font-size: 1.15rem;
+        color: var(--secondary-color, #b8b7a8);
+        font-weight: 600;
         margin-right: 4px;
       }
 
       .salutation-guest-name {
-        font-family: 'Cinzel', serif !important;
-        font-weight: 800 !important;
-        font-size: 1.15rem !important;
-        color: #0f172a !important;
-        letter-spacing: 0.5px !important;
+        font-family: var(--secondary-font, 'Cinzel', serif);
+        font-weight: 800;
+        font-size: 1.15rem;
+        color: var(--primary-color, #f0dd9e);
+        letter-spacing: 0.5px;
       }
 
       .salutation-invitation-message {
-        font-family: 'Cormorant Garamond', serif !important;
-        font-style: italic !important;
-        font-size: 1.05rem !important;
-        color: #1f2937 !important;
-        font-weight: 600 !important;
-        text-shadow: 0 1px 2px rgba(255, 255, 255, 0.95) !important;
+        font-family: var(--secondary-font, 'Cormorant Garamond', serif);
+        font-style: italic;
+        font-size: 1.05rem;
+        color: var(--secondary-color, #b8b7a8);
+        font-weight: 600;
+        text-shadow: none;
         max-width: 380px;
         margin: 0 auto;
         line-height: 1.45;
@@ -2466,92 +2481,99 @@ textarea.luxury-form-control::placeholder {
 
       .date-header-line,
       .date-footer-line {
-        background: linear-gradient(90deg, transparent 0%, rgba(15, 23, 42, 0.6) 50%, transparent 100%) !important;
-        height: 1.5px !important;
+        background: linear-gradient(90deg, transparent 0%, var(--primary-color, rgba(212, 175, 55, 0.6)) 50%, transparent 100%);
+        height: 1.5px;
       }
 
-      .date-side-part {
-        font-family: 'Cinzel', serif !important;
-        font-size: 0.88rem !important;
-        font-weight: 700 !important;
-        color: #0f172a !important;
-        letter-spacing: 1px !important;
+      .date-side-part,
+      .day-name,
+      .month-year {
+        font-family: var(--secondary-font, 'Cinzel', serif);
+        font-size: 0.88rem;
+        font-weight: 700;
+        color: var(--secondary-color, #b8b7a8);
+        letter-spacing: 1px;
       }
 
       .date-center-num {
-        font-family: 'Cinzel', serif !important;
-        font-size: clamp(2.4rem, 7.5vw, 3.6rem) !important;
-        font-weight: 800 !important;
-        color: #0f172a !important;
-        border: 2px solid #1f2937 !important;
+        font-family: var(--secondary-font, 'Cinzel', serif);
+        font-size: clamp(2.4rem, 7.5vw, 3.6rem);
+        font-weight: 800;
+        color: var(--primary-color, #f0dd9e);
+        border: 2px solid var(--primary-color, #f0dd9e);
         border-radius: 8px;
-        text-shadow: 0 1px 2px rgba(255, 255, 255, 0.95) !important;
+        text-shadow: none;
       }
 
       .artistic-time {
-        font-family: 'Cinzel', serif !important;
-        font-size: 0.85rem !important;
-        font-weight: 700 !important;
-        color: #0f172a !important;
+        font-family: var(--secondary-font, 'Cinzel', serif);
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--secondary-color, #b8b7a8);
       }
 
       .location-icon-wrapper {
-        color: #0f172a !important;
-        background: transparent !important;
-        border: 1.5px solid #1f2937 !important;
-        width: 28px !important;
-        height: 28px !important;
-        font-size: 0.78rem !important;
+        color: var(--primary-color, #f0dd9e);
+        background: transparent;
+        border: 1.5px solid var(--primary-color, #f0dd9e);
+        width: 28px;
+        height: 28px;
+        font-size: 0.78rem;
       }
 
       .location-title {
-        font-family: 'Cinzel', serif !important;
-        font-size: 0.68rem !important;
-        font-weight: 700 !important;
-        letter-spacing: 2px !important;
-        color: #1f2937 !important;
+        font-family: var(--secondary-font, 'Cinzel', serif);
+        font-size: 0.68rem;
+        font-weight: 700;
+        letter-spacing: 2px;
+        color: var(--secondary-color, #b8b7a8);
       }
 
       .location-value {
-        font-family: 'Cormorant Garamond', serif !important;
-        font-size: 1.25rem !important;
-        font-weight: 700 !important;
-        color: #0f172a !important;
-        text-shadow: 0 1px 2px rgba(255, 255, 255, 0.9) !important;
+        font-family: var(--secondary-font, 'Cormorant Garamond', serif);
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--secondary-color, #b8b7a8);
+        text-shadow: none;
       }
 
       .details-gps-link {
-        font-family: 'Plus Jakarta Sans', sans-serif !important;
-        font-size: 0.7rem !important;
-        font-weight: 700 !important;
-        color: #0f172a !important;
-        background: rgba(255, 255, 255, 0.75) !important;
-        border: 1.5px solid #1f2937 !important;
-        border-radius: 20px !important;
-        padding: 3px 14px !important;
+        font-family: var(--secondary-font, 'Plus Jakarta Sans', sans-serif);
+        font-size: 0.7rem;
+        font-weight: 700;
+        color: var(--primary-color, #f0dd9e);
+        background: rgba(255, 255, 255, 0.1);
+        border: 1.5px solid var(--primary-color, #f0dd9e);
+        border-radius: 20px;
+        padding: 3px 14px;
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
       }
 
       /* Clean Discover Menu & RSVP Action Button */
       .btn-discover-rsvp {
-        background: #0f172a !important;
+        background: var(--primary-color, #d4af37) !important;
         color: #ffffff !important;
-        border: 1px solid #0f172a !important;
-        font-family: 'Plus Jakarta Sans', sans-serif !important;
-        font-size: 0.78rem !important;
+        border: 1.5px solid var(--primary-color, #d4af37) !important;
+        font-family: var(--secondary-font, 'Plus Jakarta Sans', sans-serif) !important;
+        font-size: 0.85rem !important;
         font-weight: 700 !important;
-        letter-spacing: 0.5px !important;
-        padding: 9px 24px !important;
+        letter-spacing: 0.6px !important;
+        padding: 10px 28px !important;
         border-radius: 30px !important;
-        box-shadow: 0 8px 22px rgba(0, 0, 0, 0.18) !important;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28) !important;
         transition: all 0.3s ease !important;
+        margin-top: 24px !important;
+        margin-bottom: 24px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45) !important;
 
         &:hover {
-          background: #000000 !important;
-          border-color: #000000 !important;
+          filter: brightness(1.12);
           color: #ffffff !important;
           transform: translateY(-2px);
-          box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25) !important;
+          box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35) !important;
         }
       }
 

@@ -42,8 +42,14 @@ public class AdminTemplateController {
         if (template.getPrimaryFont() == null || template.getPrimaryFont().isBlank()) {
             template.setPrimaryFont("Mariage".equalsIgnoreCase(template.getCategory()) ? "Alex Brush" : "Playfair Display");
         }
+        if (template.getPrimaryFontSize() == null || template.getPrimaryFontSize().isBlank()) {
+            template.setPrimaryFontSize("36px");
+        }
         if (template.getSecondaryFont() == null || template.getSecondaryFont().isBlank()) {
             template.setSecondaryFont("Mariage".equalsIgnoreCase(template.getCategory()) ? "Cinzel" : "Montserrat");
+        }
+        if (template.getSecondaryFontSize() == null || template.getSecondaryFontSize().isBlank()) {
+            template.setSecondaryFontSize("16px");
         }
         if (template.getSecondaryFontColor() == null || template.getSecondaryFontColor().isBlank()) {
             template.setSecondaryFontColor("Mariage".equalsIgnoreCase(template.getCategory()) ? "#0f172a" : "#1e293b");
@@ -88,8 +94,14 @@ public class AdminTemplateController {
             if (updated.getPrimaryFont() != null) {
                 existing.setPrimaryFont(updated.getPrimaryFont());
             }
+            if (updated.getPrimaryFontSize() != null) {
+                existing.setPrimaryFontSize(updated.getPrimaryFontSize());
+            }
             if (updated.getSecondaryFont() != null) {
                 existing.setSecondaryFont(updated.getSecondaryFont());
+            }
+            if (updated.getSecondaryFontSize() != null) {
+                existing.setSecondaryFontSize(updated.getSecondaryFontSize());
             }
             if (updated.getSecondaryFontColor() != null) {
                 existing.setSecondaryFontColor(updated.getSecondaryFontColor());

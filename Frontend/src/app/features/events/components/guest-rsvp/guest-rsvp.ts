@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { loadGoogleFont } from '../../../../core/utils/font-loader';
 
 export interface PublicRsvpDetail {
   guestId: number;
@@ -29,7 +30,9 @@ export interface PublicRsvpDetail {
   backgroundColor?: string;
   templateBackgroundImageUrl?: string;
   primaryFont?: string;
+  primaryFontSize?: string;
   secondaryFont?: string;
+  secondaryFontSize?: string;
   secondaryFontColor?: string;
   templateMusicUrl?: string;
   menuItems?: any[];
@@ -115,17 +118,15 @@ export class GuestRsvp implements OnInit, OnDestroy {
       return {
         name: item.name,
         categoryLabel: catLabel,
+        description: item.description,
         image: img
       };
     });
   });
 
-  // Service configuration
-  protected readonly mealType = signal<string>('PLATS_FIXES');
-
-  protected hasFormat(format: string): boolean {
-    const current = this.mealType() || '';
-    return current.split(',').map(s => s.trim()).includes(format);
+  private hasFormat(format: string): boolean {
+    const m = this.guest()?.mealType;
+    return !!m && m.toUpperCase().includes(format.toUpperCase());
   }
 
   protected readonly isMix = computed(() => this.hasFormat('BUFFET_ENTREES') && this.hasFormat('PLATS_FIXES'));
@@ -134,22 +135,69 @@ export class GuestRsvp implements OnInit, OnDestroy {
 
   public getPrimaryFont(): string {
     const f = this.guest()?.primaryFont;
-    if (f) return `'${f}', 'Alex Brush', 'Great Vibes', cursive`;
+    if (f) {
+      loadGoogleFont(f);
+      return `'${f}', 'Alex Brush', 'Great Vibes', cursive`;
+    }
     return "'Alex Brush', 'Great Vibes', cursive";
+  }
+
+  public getPrimaryFontSize(): string {
+    const s = this.guest()?.primaryFontSize;
+    if (s && s.trim()) return s.trim();
+    return 'clamp(2rem, 6.5vw, 3.2rem)';
   }
 
   public getSecondaryFont(): string {
     const f = this.guest()?.secondaryFont;
-    if (f) return `'${f}', 'Cinzel', 'Playfair Display', serif`;
+    if (f) {
+      loadGoogleFont(f);
+      return `'${f}', 'Cinzel', 'Playfair Display', serif`;
+    }
     return "'Cinzel', 'Playfair Display', serif";
+  }
+
+  public getSecondaryFontSize(): string {
+    const s = this.guest()?.secondaryFontSize;
+    if (s && s.trim()) return s.trim();
+    return '1rem';
   }
 
   public getPrimaryColor(): string {
     return this.guest()?.accentColor || '#d4af37';
   }
 
+  public getDiscoverButtonBgColor(): string {
+    return this.getPrimaryColor();
+  }
+
+  public getDiscoverButtonTextColor(): string {
+    const bg = this.getDiscoverButtonBgColor();
+    if (this.isDarkBg(bg)) {
+      return '#ffffff';
+    }
+    return '#0f172a';
+  }
+
   public getSecondaryFontColor(): string {
-    return this.guest()?.secondaryFontColor || '#0f172a';
+    if (this.guest()?.secondaryFontColor) {
+      return this.guest()!.secondaryFontColor!;
+    }
+    if (this.resolvedBackgroundImage || this.guest()?.templateCategory === 'Corporate' || this.isDarkBg(this.guest()?.backgroundColor)) {
+      return '#e2e8f0';
+    }
+    return '#1e293b';
+  }
+
+  private isDarkBg(color?: string): boolean {
+    if (!color) return false;
+    if (color.startsWith('#') && color.length >= 7) {
+      const r = parseInt(color.substring(1, 3), 16);
+      const g = parseInt(color.substring(3, 5), 16);
+      const b = parseInt(color.substring(5, 7), 16);
+      return (r * 0.299 + g * 0.587 + b * 0.114) < 128;
+    }
+    return false;
   }
 
   protected getStep1PreviewImage(): string {
@@ -360,12 +408,6 @@ export class GuestRsvp implements OnInit, OnDestroy {
 
         // Initialize attendanceStatus for natural exploration
         this.attendanceStatus = true;
-
-        if (data.mealType) {
-          this.mealType.set(data.mealType);
-        } else {
-          this.mealType.set('PLATS_FIXES');
-        }
 
         // Categorize menu items
         if (data.menuItems) {

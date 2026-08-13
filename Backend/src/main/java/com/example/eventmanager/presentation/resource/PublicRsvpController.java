@@ -43,7 +43,9 @@ public class PublicRsvpController {
         String backgroundColor = null;
         String templateBackgroundImageUrl = null;
         String primaryFont = null;
+        String primaryFontSize = null;
         String secondaryFont = null;
+        String secondaryFontSize = null;
         String secondaryFontColor = null;
         String templateMusicUrl = null;
         String resolvedTemplateKey = event.getTemplateId();
@@ -59,7 +61,9 @@ public class PublicRsvpController {
                 backgroundColor = tpl.getBackgroundColor();
                 templateBackgroundImageUrl = tpl.getBackgroundImageUrl();
                 primaryFont = tpl.getPrimaryFont();
+                primaryFontSize = tpl.getPrimaryFontSize();
                 secondaryFont = tpl.getSecondaryFont();
+                secondaryFontSize = tpl.getSecondaryFontSize();
                 secondaryFontColor = tpl.getSecondaryFontColor();
                 templateMusicUrl = tpl.getMusicUrl();
                 if (resolvedTemplateKey == null || resolvedTemplateKey.isBlank()) {
@@ -93,7 +97,9 @@ public class PublicRsvpController {
                 .backgroundColor(backgroundColor)
                 .templateBackgroundImageUrl(templateBackgroundImageUrl)
                 .primaryFont(primaryFont)
+                .primaryFontSize(primaryFontSize)
                 .secondaryFont(secondaryFont)
+                .secondaryFontSize(secondaryFontSize)
                 .secondaryFontColor(secondaryFontColor)
                 .templateMusicUrl(templateMusicUrl)
                 .menuItems(menuItems)

@@ -2,6 +2,7 @@ import { Component, OnInit, signal, computed, inject, ChangeDetectorRef } from '
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TemplateService, DigitalTemplate } from '../../../core/services/template.service';
+import { loadGoogleFont } from '../../../core/utils/font-loader';
 
 @Component({
   selector: 'app-admin-templates',
@@ -48,19 +49,37 @@ export class AdminTemplates implements OnInit {
   protected accentColorField = '#d4af37';
   protected backgroundColorField = '#faf6ee';
   protected primaryFontField = 'Alex Brush';
+  protected primaryFontSizeField = '36px';
   protected secondaryFontField = 'Cinzel';
+  protected secondaryFontSizeField = '16px';
   protected secondaryFontColorField = '#0f172a';
   protected htmlContentField = '';
 
-  // Available Luxury Google Fonts with direct live style binding
+  // Preset Font Sizes
+  protected readonly primaryFontSizeOptions = ['28px', '32px', '36px', '40px', '48px', '56px'];
+  protected readonly secondaryFontSizeOptions = ['13px', '14px', '16px', '18px', '20px', '22px'];
+
+  // Available Luxury Google Fonts with direct live style binding & suggestions
   protected readonly availableFonts = [
+    { name: 'Alex Brush', label: 'Alex Brush (Script Délicat & Cérémonial)', fontGroup: 'Cursive', sample: 'Invitation Spéciale' },
+    { name: 'Great Vibes', label: 'Great Vibes (Calligraphie Fluide & Romantique)', fontGroup: 'Cursive', sample: 'Yassine & Zineb' },
+    { name: 'Dancing Script', label: 'Dancing Script (Moderne & Enjoué)', fontGroup: 'Cursive', sample: 'Soirée de Gala' },
+    { name: 'Allura', label: 'Allura (Calligraphie Majestueuse)', fontGroup: 'Cursive', sample: 'Mariage Royal' },
+    { name: 'Pinyon Script', label: 'Pinyon Script (Élégance Aristocratique)', fontGroup: 'Cursive', sample: 'Réception d\'Honneur' },
+    { name: 'Parisienne', label: 'Parisienne (Romantisme Parisien)', fontGroup: 'Cursive', sample: 'Dîner aux Chandelles' },
     { name: 'Playfair Display', label: 'Playfair Display (Serif Luxueux & Éditorial)', fontGroup: 'Serif', sample: 'Mariage d\'Exception' },
     { name: 'Cormorant Garamond', label: 'Cormorant Garamond (Classique & Haute Joaillerie)', fontGroup: 'Serif', sample: 'Célébration Prestigieuse' },
-    { name: 'Montserrat', label: 'Montserrat (Moderne & Sans-Serif Épuré)', fontGroup: 'Sans-Serif', sample: 'Conférence & Événement' },
-    { name: 'Great Vibes', label: 'Great Vibes (Calligraphie Fluide & Romantique)', fontGroup: 'Cursive', sample: 'Yassine & Zineb' },
     { name: 'Cinzel', label: 'Cinzel (Impérial & Monumental)', fontGroup: 'Serif', sample: 'RÉCEPTION ROYALE' },
-    { name: 'Alex Brush', label: 'Alex Brush (Script Délicat & Cérémonial)', fontGroup: 'Cursive', sample: 'Invitation Spéciale' }
+    { name: 'Cinzel Decorative', label: 'Cinzel Decorative (Baroque Ornemental)', fontGroup: 'Serif', sample: 'GALA PRESTIGE' },
+    { name: 'Prata', label: 'Prata (Serif Didone Raffiné)', fontGroup: 'Serif', sample: 'Cérémonie Privée' },
+    { name: 'Bodoni Moda', label: 'Bodoni Moda (Haute Couture & Vogue)', fontGroup: 'Serif', sample: 'L\'Excellence' },
+    { name: 'Montserrat', label: 'Montserrat (Moderne & Sans-Serif Épuré)', fontGroup: 'Sans-Serif', sample: 'Conférence & Événement' },
+    { name: 'Plus Jakarta Sans', label: 'Plus Jakarta Sans (Contemporain & Lisible)', fontGroup: 'Sans-Serif', sample: 'Événement Corporate' }
   ];
+
+  // Quick Preset Font Pills for One-Click Selection
+  protected readonly popularPrimaryFonts = ['Alex Brush', 'Great Vibes', 'Dancing Script', 'Allura', 'Playfair Display', 'Cinzel'];
+  protected readonly popularSecondaryFonts = ['Cormorant Garamond', 'Cinzel', 'Montserrat', 'Playfair Display', 'Plus Jakarta Sans', 'Prata'];
 
   // Audio Preview & Presets
   protected readonly isPreviewAudioPlaying = signal(false);
@@ -71,6 +90,26 @@ export class AdminTemplates implements OnInit {
     { label: 'Andalou Traditionnel', url: 'https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0a13f69d2.mp3' },
     { label: 'Lounge & Jazz Élégant', url: 'https://cdn.pixabay.com/download/audio/2022/03/24/audio_33bd95d2c6.mp3' }
   ];
+
+  public onPrimaryFontChange(val: string): void {
+    this.primaryFontField = val;
+    loadGoogleFont(val);
+  }
+
+  public selectPrimaryFont(fontName: string): void {
+    this.primaryFontField = fontName;
+    loadGoogleFont(fontName);
+  }
+
+  public onSecondaryFontChange(val: string): void {
+    this.secondaryFontField = val;
+    loadGoogleFont(val);
+  }
+
+  public selectSecondaryFont(fontName: string): void {
+    this.secondaryFontField = fontName;
+    loadGoogleFont(fontName);
+  }
 
   public ngOnInit(): void {
     this.loadTemplates();
@@ -220,7 +259,9 @@ export class AdminTemplates implements OnInit {
     this.accentColorField = '#d4af37';
     this.backgroundColorField = '#faf6ee';
     this.primaryFontField = 'Alex Brush';
+    this.primaryFontSizeField = '36px';
     this.secondaryFontField = 'Cinzel';
+    this.secondaryFontSizeField = '16px';
     this.secondaryFontColorField = '#0f172a';
     this.htmlContentField = '';
     this.errorMessage.set('');
@@ -242,7 +283,9 @@ export class AdminTemplates implements OnInit {
     this.accentColorField = template.accentColor || '#d4af37';
     this.backgroundColorField = template.backgroundColor || ('Mariage' === template.category ? '#faf6ee' : '#f8f9fa');
     this.primaryFontField = template.primaryFont || ('Mariage' === template.category ? 'Alex Brush' : 'Playfair Display');
+    this.primaryFontSizeField = template.primaryFontSize || '36px';
     this.secondaryFontField = template.secondaryFont || ('Mariage' === template.category ? 'Cinzel' : 'Montserrat');
+    this.secondaryFontSizeField = template.secondaryFontSize || '16px';
     this.secondaryFontColorField = template.secondaryFontColor || ('Mariage' === template.category ? '#0f172a' : '#1e293b');
     this.htmlContentField = template.htmlContent || '';
     this.errorMessage.set('');
@@ -261,28 +304,36 @@ export class AdminTemplates implements OnInit {
       this.backgroundColorField = '#faf6ee';
       this.accentColorField = '#d4af37';
       this.primaryFontField = 'Alex Brush';
+      this.primaryFontSizeField = '36px';
       this.secondaryFontField = 'Cinzel';
+      this.secondaryFontSizeField = '16px';
       this.secondaryFontColorField = '#0f172a';
     } else if (this.categoryField === 'Corporate') {
       this.decorativeFrameField = 'geometric-frame';
       this.backgroundColorField = '#f8f9fa';
       this.accentColorField = '#2b4c7e';
       this.primaryFontField = 'Montserrat';
+      this.primaryFontSizeField = '32px';
       this.secondaryFontField = 'Playfair Display';
+      this.secondaryFontSizeField = '15px';
       this.secondaryFontColorField = '#1e293b';
     } else if (this.categoryField === 'Anniversaire') {
       this.decorativeFrameField = 'floral-frame';
       this.backgroundColorField = '#fff9f5';
       this.accentColorField = '#c27ba0';
       this.primaryFontField = 'Great Vibes';
+      this.primaryFontSizeField = '38px';
       this.secondaryFontField = 'Cormorant Garamond';
+      this.secondaryFontSizeField = '16px';
       this.secondaryFontColorField = '#2c1810';
     } else {
       this.decorativeFrameField = 'minimal-edge';
       this.backgroundColorField = '#ffffff';
       this.accentColorField = '#1a1a1a';
       this.primaryFontField = 'Playfair Display';
+      this.primaryFontSizeField = '34px';
       this.secondaryFontField = 'Montserrat';
+      this.secondaryFontSizeField = '15px';
       this.secondaryFontColorField = '#333333';
     }
   }
@@ -308,7 +359,9 @@ export class AdminTemplates implements OnInit {
       accentColor: this.accentColorField?.trim() || '#d4af37',
       backgroundColor: this.backgroundColorField?.trim() || '#faf6ee',
       primaryFont: this.primaryFontField?.trim() || 'Alex Brush',
+      primaryFontSize: this.primaryFontSizeField?.trim() || '36px',
       secondaryFont: this.secondaryFontField?.trim() || 'Cinzel',
+      secondaryFontSize: this.secondaryFontSizeField?.trim() || '16px',
       secondaryFontColor: this.secondaryFontColorField?.trim() || '#0f172a',
       htmlContent: this.htmlContentField?.trim() || undefined
     };

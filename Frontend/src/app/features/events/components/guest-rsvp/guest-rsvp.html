@@ -79,7 +79,14 @@
 
     <!-- Invitation Form Card with Multi-Layered Structural Assets -->
     <div class="luxury-card position-relative overflow-hidden" [class.has-custom-bg-card]="!!resolvedBackgroundImage"
+      [style.background-color]="guest()?.backgroundColor || '#1e1f1f'"
       [style.background-image]="resolvedBackgroundImage ? 'url(' + resolvedBackgroundImage + ')' : null"
+      [style.--primary-font]="getPrimaryFont()"
+      [style.--primary-font-size]="getPrimaryFontSize()"
+      [style.--secondary-font]="getSecondaryFont()"
+      [style.--secondary-font-size]="getSecondaryFontSize()"
+      [style.--primary-color]="getPrimaryColor()"
+      [style.--secondary-color]="getSecondaryFontColor()"
       *ngIf="!isLoading() && guest()">
 
       <!-- Custom Uploaded Background Card Graphic Layer (Clean without dark overlays) -->
@@ -350,17 +357,17 @@
           </div>
 
           <!-- Dynamic Main Couple / Event Title -->
-          <h1 class="invitation-main-title mb-2.5" [style.fontFamily]="getPrimaryFont()" [style.color]="getPrimaryColor()">
+          <h1 class="invitation-main-title mb-2.5" [style.fontFamily]="getPrimaryFont()" [style.fontSize]="getPrimaryFontSize()" [style.color]="getPrimaryColor()">
             {{ guest()?.invitationTitle || guest()?.eventTitle }}
           </h1>
 
           <!-- Personalized Dynamic Guest Salutation -->
           <div class="invitation-guest-salutation mb-3">
-            <div class="salutation-guest-badge">
-              <span class="salutation-honorific">Cher(e)</span>
-              <span class="salutation-guest-name">{{ guest()?.guestName }}</span>
+            <div class="salutation-guest-badge" [style.borderColor]="getPrimaryColor()">
+              <span class="salutation-honorific" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()">Cher(e)</span>
+              <span class="salutation-guest-name" [style.fontFamily]="getSecondaryFont()" [style.color]="getPrimaryColor()">{{ guest()?.guestName }}</span>
             </div>
-            <p class="salutation-invitation-message mt-1.5 mb-0">
+            <p class="salutation-invitation-message mt-1.5 mb-0" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()">
               Nous serions infiniment honorés de vous compter parmi nos invités d'honneur pour partager ce moment
               précieux.
             </p>
@@ -369,42 +376,47 @@
           <!-- Artistic Dynamic Date & Time Section -->
           <div class="artistic-invitation-details mb-3">
             <div class="artistic-date-block">
-              <div class="date-header-line"></div>
+              <div class="date-header-line" [style.background]="'linear-gradient(90deg, transparent 0%, ' + getPrimaryColor() + ' 50%, transparent 100%)'"></div>
               <div class="artistic-date-flex">
                 <div class="date-side-part text-end">
-                  <span class="day-name">{{ eventDayName }}</span>
+                  <span class="day-name" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()">{{ eventDayName }}</span>
                 </div>
-                <div class="date-center-num">
+                <div class="date-center-num" [style.fontFamily]="getSecondaryFont()" [style.color]="getPrimaryColor()" [style.borderColor]="getPrimaryColor()">
                   {{ eventDayNum }}
                 </div>
                 <div class="date-side-part text-start">
-                  <span class="month-year">{{ eventMonth }} &bull; {{ eventYear }}</span>
+                  <span class="month-year" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()">{{ eventMonth }} &bull; {{ eventYear }}</span>
                 </div>
               </div>
-              <div class="artistic-time">
-                <i class="far fa-clock me-1 text-gold"></i> À {{ eventTime }}
+              <div class="artistic-time" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()">
+                <i class="far fa-clock me-1" [style.color]="getPrimaryColor()"></i> À {{ eventTime }}
               </div>
-              <div class="date-footer-line"></div>
+              <div class="date-footer-line" [style.background]="'linear-gradient(90deg, transparent 0%, ' + getPrimaryColor() + ' 50%, transparent 100%)'"></div>
             </div>
 
             <!-- Dynamic Venue Location Block -->
             <div class="artistic-location-block mt-2.5 text-center">
-              <div class="location-icon-wrapper mb-1">
+              <div class="location-icon-wrapper mb-1" [style.color]="getPrimaryColor()" [style.borderColor]="getPrimaryColor()">
                 <i class="fa fa-map-marker-alt"></i>
               </div>
-              <div class="location-title">LIEU DE LA RÉCEPTION</div>
-              <div class="location-value">{{ guest()?.invitationLocation || guest()?.eventLocation }}</div>
+              <div class="location-title" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()">LIEU DE LA RÉCEPTION</div>
+              <div class="location-value" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()">{{ guest()?.invitationLocation || guest()?.eventLocation }}</div>
               <a href="https://maps.google.com/?q={{ guest()?.invitationLocation || guest()?.eventLocation }}"
-                target="_blank" class="details-gps-link mt-2 d-inline-flex align-items-center">
+                target="_blank" class="details-gps-link mt-2 d-inline-flex align-items-center"
+                [style.fontFamily]="getSecondaryFont()" [style.color]="getPrimaryColor()" [style.borderColor]="getPrimaryColor()">
                 <i class="fa fa-location-arrow me-1.5"></i> Itinéraire GPS
               </a>
             </div>
           </div>
 
           <!-- Clean Elegant Action Button: Découvrir le menu & RSVP ➔ -->
-          <div class="mt-4 mb-2 text-center animate__animated animate__fadeIn">
-            <button type="button" class="btn btn-discover-rsvp rounded-pill px-4 py-2.5 fs-xs fw-bold shadow"
-              (click)="openMenuAndRsvp()">
+          <div class="mt-5 pt-3 mb-3 text-center animate__animated animate__fadeIn">
+            <button type="button" class="btn btn-discover-rsvp rounded-pill px-4 py-2.5 fs-xs fw-bold shadow-lg"
+              (click)="openMenuAndRsvp()"
+              [style.backgroundColor]="getDiscoverButtonBgColor()"
+              [style.borderColor]="getDiscoverButtonBgColor()"
+              [style.color]="getDiscoverButtonTextColor()"
+              style="letter-spacing: 0.6px; font-weight: 700;">
               <i class="fa fa-utensils me-2"></i> Découvrir le menu & RSVP <i class="fa fa-arrow-right ms-1.5"></i>
             </button>
           </div>

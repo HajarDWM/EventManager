@@ -46,8 +46,14 @@ public class DigitalInvitationTemplateEntity {
     @Column(name = "primary_font", length = 100)
     private String primaryFont;
 
+    @Column(name = "primary_font_size", length = 30)
+    private String primaryFontSize;
+
     @Column(name = "secondary_font", length = 100)
     private String secondaryFont;
+
+    @Column(name = "secondary_font_size", length = 30)
+    private String secondaryFontSize;
 
     @Column(name = "secondary_font_color", length = 50)
     private String secondaryFontColor;
