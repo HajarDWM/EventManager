@@ -166,19 +166,32 @@
   </div>
 </div>
 
-<!-- Modal: Add / Edit Template -->
-<div class="modal fade show" tabindex="-1" style="display: block; background: rgba(0,0,0,0.5);" *ngIf="isModalOpen()">
+<div class="modal fade show animate__animated animate__fadeIn" tabindex="-1" style="display: block; background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(8px);" *ngIf="isModalOpen()">
   <div class="modal-dialog modal-lg modal-dialog-centered">
-    <div class="modal-content shadow-lg border-0 rounded-3">
-      <div class="modal-header bg-body-light border-bottom p-3">
-        <h5 class="modal-title fw-bold text-dark">
-          {{ isEditing() ? 'Modifier le modèle d\'invitation' : 'Créer un nouveau modèle d\'invitation' }}
-        </h5>
+    <div class="modal-content luxury-modal-content">
+      
+      <!-- Luxury Modal Header -->
+      <div class="luxury-modal-header d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center gap-2.5">
+          <div class="rounded-circle bg-primary-subtle text-primary p-2 d-flex align-items-center justify-content-center flex-shrink-0" style="width: 38px; height: 38px;">
+            <i class="fa fa-palette"></i>
+          </div>
+          <div>
+            <div class="d-flex align-items-center gap-2">
+              <h4 class="modal-title fw-bold text-dark mb-0">
+                {{ isEditing() ? 'Modifier le Modèle d\'Invitation' : 'Créer un Modèle d\'Invitation' }}
+              </h4>
+              <span class="badge bg-warning text-dark fw-bold px-2.5 py-1 fs-xs rounded-pill" *ngIf="subCategoryField">
+                <i class="fa fa-sparkles me-1"></i> {{ subCategoryField }}
+              </span>
+            </div>
+          </div>
+        </div>
         <button type="button" class="btn-close" (click)="closeAddModal()"></button>
       </div>
       
       <form (ngSubmit)="saveTemplate()">
-        <div class="modal-body p-4">
+        <div class="modal-body p-4 bg-light">
           <div class="row">
             <!-- Nom du modèle -->
             <div class="col-md-6 mb-3">
@@ -560,13 +573,14 @@
           </div>
         </div>
         
-        <div class="modal-footer bg-body-light border-top p-3 justify-content-end gap-2">
-          <button type="button" class="btn btn-alt-secondary" (click)="closeAddModal()">
+        <!-- Luxury Modal Footer -->
+        <div class="luxury-modal-footer">
+          <button type="button" class="btn btn-cancel" (click)="closeAddModal()">
             Annuler
           </button>
-          <button type="submit" class="btn btn-primary" [disabled]="isSubmitting()">
-            <span *ngIf="!isSubmitting()">{{ isEditing() ? 'Enregistrer les modifications' : 'Créer le modèle' }}</span>
-            <span *ngIf="isSubmitting()"><i class="fa fa-spinner fa-spin me-2"></i>Enregistrement...</span>
+          <button type="submit" class="btn btn-submit-luxury" [disabled]="isSubmitting()">
+            <span *ngIf="!isSubmitting()"><i class="fa fa-check-circle me-1.5"></i> {{ isEditing() ? 'Enregistrer les Modifications' : 'Créer le Modèle' }}</span>
+            <span *ngIf="isSubmitting()"><i class="fa fa-spinner fa-spin me-1.5"></i> Enregistrement en cours...</span>
           </button>
         </div>
       </form>
