@@ -70,6 +70,9 @@ public class AdminTemplateController {
             if (updated.getCategory() != null && !updated.getCategory().isBlank()) {
                 existing.setCategory(updated.getCategory());
             }
+            if (updated.getSubCategory() != null) {
+                existing.setSubCategory(updated.getSubCategory());
+            }
             if (updated.getDescription() != null) {
                 existing.setDescription(updated.getDescription());
             }

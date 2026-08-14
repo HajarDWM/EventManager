@@ -22,6 +22,9 @@ public class DigitalInvitationTemplateEntity {
     @Column(nullable = false)
     private String category;
 
+    @Column(name = "sub_category", length = 100)
+    private String subCategory;
+
     @Column(columnDefinition = "TEXT")
     private String description;
 

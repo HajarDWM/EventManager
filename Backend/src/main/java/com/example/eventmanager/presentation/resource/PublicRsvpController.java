@@ -37,6 +37,7 @@ public class PublicRsvpController {
                 .toList();
 
         String templateCategory = "Corporate";
+        String templateSubCategory = null;
         String templateTitle = null;
         String decorativeFrame = null;
         String accentColor = null;
@@ -55,6 +56,7 @@ public class PublicRsvpController {
             if (tplOpt.isPresent()) {
                 var tpl = tplOpt.get();
                 templateCategory = tpl.getCategory();
+                templateSubCategory = tpl.getSubCategory();
                 templateTitle = tpl.getTitle();
                 decorativeFrame = tpl.getDecorativeFrame();
                 accentColor = tpl.getAccentColor();
@@ -92,6 +94,7 @@ public class PublicRsvpController {
                 .parkingLocation(event.getParkingLocation())
                 .mealType(event.getMealType())
                 .templateCategory(templateCategory)
+                .templateSubCategory(templateSubCategory)
                 .templateId(resolvedTemplateKey)
                 .templateTitle(templateTitle)
                 .decorativeFrame(decorativeFrame)
@@ -144,6 +147,7 @@ public class PublicRsvpController {
                 .toList();
 
         String templateCategory = "Corporate";
+        String templateSubCategory = null;
         String templateTitle = null;
         String decorativeFrame = null;
         String accentColor = null;
@@ -162,6 +166,7 @@ public class PublicRsvpController {
             if (tplOpt.isPresent()) {
                 var tpl = tplOpt.get();
                 templateCategory = tpl.getCategory();
+                templateSubCategory = tpl.getSubCategory();
                 templateTitle = tpl.getTitle();
                 decorativeFrame = tpl.getDecorativeFrame();
                 accentColor = tpl.getAccentColor();
@@ -199,6 +204,7 @@ public class PublicRsvpController {
                 .parkingLocation(event.getParkingLocation())
                 .mealType(event.getMealType())
                 .templateCategory(templateCategory)
+                .templateSubCategory(templateSubCategory)
                 .templateId(resolvedTemplateKey)
                 .templateTitle(templateTitle)
                 .decorativeFrame(decorativeFrame)

@@ -41,10 +41,10 @@
               required>
           </div>
 
-          <!-- Type / Sous-titre de l'événement (pour le faire-part) -->
+          <!-- Type / Sous-titre de l'événement (pour l'invitation) -->
           <div class="mb-4">
             <label class="form-label fs-sm fw-semibold" for="event-subtitle">
-              <i class="fa fa-tag text-primary me-1"></i> Type / Nature de l'événement (Sous-titre du faire-part)
+              <i class="fa fa-tag text-primary me-1"></i> Type / Nature de l'événement (Sous-titre de l'invitation)
             </label>
             <input type="text" class="form-control form-control-alt fs-sm"
                    id="event-subtitle" name="event-subtitle"
@@ -67,7 +67,7 @@
               <option value="Invitation d'Exception">
             </datalist>
             <div class="form-text fs-xs text-muted">
-              Ce texte apparaîtra au-dessus du nom sur le faire-part (choisissez une suggestion ou écrivez votre propre texte).
+              Ce texte apparaîtra au-dessus du nom sur l'invitation (choisissez une suggestion ou écrivez votre propre texte).
             </div>
           </div>
 
@@ -91,8 +91,8 @@
             <label class="form-label fs-sm fw-semibold" for="event-location">Lieu <span
                 class="text-danger">*</span></label>
             <input type="text" class="form-control form-control-alt fs-sm" id="event-location" name="event-location"
-              placeholder="Ex: Palais des Roses, Galerie des Glaces, Casablanca" [ngModel]="location()"
-              (ngModelChange)="location.set($event)" required>
+                placeholder="Ex: Palais des Roses, Galerie des Glaces, Casablanca" [ngModel]="location()"
+                (ngModelChange)="location.set($event)" required>
           </div>
 
           <!-- Zone de Parking -->
@@ -104,7 +104,7 @@
               placeholder="Ex: Parking VIP & Visiteurs - Entrée Sud, Boulevard d'Anfa" [ngModel]="parkingLocation()"
               (ngModelChange)="parkingLocation.set($event)">
             <div class="form-text fs-xs text-muted">
-              Permet aux invités d'obtenir un itinéraire GPS direct vers le parking sur leur faire-part.
+              Permet aux invités d'obtenir un itinéraire GPS direct vers le parking sur leur invitation.
             </div>
           </div>
 
@@ -128,10 +128,10 @@
             </select>
           </div>
 
-          <!-- Thème & Modèle de Faire-part -->
+          <!-- Thème & Modèle d'Invitation -->
           <div class="mb-4" *ngIf="templates().length > 0">
             <label class="form-label fs-sm fw-semibold" for="event-template">
-              <i class="fa fa-paint-brush me-1 text-primary"></i> Modèle & Thème de Faire-part Digital
+              <i class="fa fa-paint-brush me-1 text-primary"></i> Modèle & Thème d'Invitation Digitale
             </label>
             <select class="form-select form-control-alt fs-sm" id="event-template" name="event-template"
               [ngModel]="selectedTemplateId()" (ngModelChange)="selectedTemplateId.set($event)">

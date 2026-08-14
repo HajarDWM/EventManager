@@ -6,6 +6,12 @@ import { EventService } from '../../services/event.service';
 import { TemplateService, DigitalTemplate } from '../../../../core/services/template.service';
 import { GuestService, Guest } from '../../../../core/services/guest.service';
 import { Event } from '../../models/event.model';
+import { 
+  TEMPLATE_TAXONOMY, 
+  MainCategoryInfo, 
+  SubCategoryInfo, 
+  getCategoryTaxonomy 
+} from '../../../../core/constants/template-taxonomy.constants';
 
 @Component({
   selector: 'app-organiser-invitation-setup',
@@ -41,13 +47,33 @@ export class OrganiserInvitationSetup implements OnInit {
   protected readonly successMessage = signal('');
   protected readonly errorMessage = signal('');
 
-  // Tabs/Filter
-  protected readonly selectedCategory = signal<string>('Mariage'); // 'Mariage' | 'Corporate'
+  // Taxonomy & Filters
+  protected readonly taxonomy = TEMPLATE_TAXONOMY;
+  protected readonly selectedCategory = signal<string>('TRADITIONAL');
+  protected readonly selectedSubCategory = signal<string>('ALL');
+
+  protected readonly currentMainCategoryInfo = computed(() => getCategoryTaxonomy(this.selectedCategory()));
+  protected readonly availableSubCategoriesForFilter = computed(() => this.currentMainCategoryInfo()?.subCategories || []);
 
   // Filtered templates
   protected readonly filteredTemplates = computed(() => {
-    const category = this.selectedCategory();
-    return this.templates().filter(t => t.category === category);
+    const cat = this.selectedCategory();
+    const sub = this.selectedSubCategory();
+    const mainCat = getCategoryTaxonomy(cat);
+    
+    let list = this.templates();
+    if (mainCat) {
+      list = list.filter(t => {
+        const tMain = getCategoryTaxonomy(t.category);
+        return tMain?.id === mainCat.id || t.category === mainCat.name;
+      });
+    }
+
+    if (sub !== 'ALL') {
+      list = list.filter(t => t.subCategory === sub);
+    }
+
+    return list;
   });
 
   // Modal / Form state
@@ -81,6 +107,32 @@ export class OrganiserInvitationSetup implements OnInit {
 
   protected setCategory(category: string): void {
     this.selectedCategory.set(category);
+    this.selectedSubCategory.set('ALL');
+  }
+
+  protected setSubCategory(subCategory: string): void {
+    this.selectedSubCategory.set(subCategory);
+  }
+
+  public setQuickSubtitle(subtitle: string): void {
+    this.invitationSubtitle = subtitle;
+  }
+
+  public getMainCategoryBadgeClass(category: string): string {
+    const tax = getCategoryTaxonomy(category);
+    return tax ? tax.badgeClass : 'bg-secondary-subtle text-secondary';
+  }
+
+  public getMainCategoryIcon(category: string): string {
+    const tax = getCategoryTaxonomy(category);
+    return tax ? tax.icon : 'fa-tag';
+  }
+
+  public getSubCategoryIcon(category: string, subCategory?: string): string {
+    if (!subCategory) return 'fa-folder';
+    const tax = getCategoryTaxonomy(category);
+    const sub = tax?.subCategories.find(s => s.name.toLowerCase() === subCategory.toLowerCase());
+    return sub ? sub.icon : 'fa-star';
   }
 
   private loadData(eventId: number): void {
@@ -152,7 +204,13 @@ export class OrganiserInvitationSetup implements OnInit {
               const selected = templateList.find(t => t.id === evt.digitalTemplateId);
               if (selected) {
                 this.selectedTemplate.set(selected);
-                this.selectedCategory.set(selected.category);
+                const tax = getCategoryTaxonomy(selected.category);
+                if (tax) {
+                  this.selectedCategory.set(tax.id);
+                  if (selected.subCategory) {
+                    this.selectedSubCategory.set(selected.subCategory);
+                  }
+                }
               }
             }
 
@@ -167,7 +225,7 @@ export class OrganiserInvitationSetup implements OnInit {
       },
       error: (err) => {
         console.error(err);
-        this.errorMessage.set('Impossible de charger les modèles de faire-part.');
+        this.errorMessage.set('Impossible de charger les modèles d\'invitation.');
         this.isLoading.set(false);
       }
     });
@@ -176,13 +234,16 @@ export class OrganiserInvitationSetup implements OnInit {
   protected selectTemplate(template: DigitalTemplate): void {
     this.selectedTemplate.set(template);
     
-    // Auto fill defaults if they are blank
+    // Auto fill defaults corresponding to the chosen celebration
     const evt = this.event();
     if (evt) {
       if (!this.invitationTitle) this.invitationTitle = evt.title;
-      if (!this.invitationSubtitle) {
-        this.invitationSubtitle = evt.invitationSubtitle || (template.category === 'Mariage' ? 'Le Mariage de' : (template.category === 'Corporate' ? 'Événement d\'Entreprise & Gala' : 'Invitation d\'Exception'));
-      }
+      
+      // Auto-set subtitle according to the template's celebration subcategory
+      const tax = getCategoryTaxonomy(template.category);
+      const sub = tax?.subCategories.find(s => s.name.toLowerCase() === template.subCategory?.toLowerCase());
+      this.invitationSubtitle = sub?.defaultSubtitle || evt.invitationSubtitle || 'Invitation d\'Exception';
+      
       if (!this.invitationLocation) this.invitationLocation = evt.location;
       if (!this.invitationParking) this.invitationParking = evt.parkingLocation || '';
       if (!this.invitationDateStr) {
@@ -227,7 +288,7 @@ export class OrganiserInvitationSetup implements OnInit {
 
     this.eventService.setupInvitation(evt.id!, payload).subscribe({
       next: (res) => {
-        this.successMessage.set('Faire-part personnalisé avec succès !');
+        this.successMessage.set('Invitation personnalisée avec succès !');
         this.invitationToken = res.invitationToken;
         this.updateInvitationLink(res.invitationToken);
         
@@ -345,7 +406,7 @@ export class OrganiserInvitationSetup implements OnInit {
       this.selectedGuestIds.set(newSelection);
 
       this.isSending.set(false);
-      this.sendSuccessMessage.set(`Félicitations ! Les faire-part ont été envoyés avec succès à ${selectedCount} invité(s) via ${channelLabel}.`);
+      this.sendSuccessMessage.set(`Félicitations ! Les invitations ont été envoyées avec succès à ${selectedCount} invité(s) via ${channelLabel}.`);
       setTimeout(() => this.sendSuccessMessage.set(''), 5000);
     }, 1500);
   }

@@ -32,6 +32,7 @@ public class PublicRsvpDTO {
     private String parkingLocation;
     private String mealType;
     private String templateCategory; // Mariage, Corporate, etc.
+    private String templateSubCategory;
     private String templateId;
     private String templateTitle;
     private String decorativeFrame; // floral-frame, gold-border, geometric-frame, minimal-edge

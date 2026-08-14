@@ -1,12 +1,195 @@
+// Admin Templates Luxury Styles
 .block {
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   
   &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.08) !important;
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08) !important;
   }
 }
 
 .object-fit-cover {
   object-fit: cover;
+}
+
+// Category Navigation Container
+.taxonomy-filter-wrapper {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  padding: 16px;
+  margin-top: 24px;
+}
+
+// Level 1: Main Category Tabs (Segmented Bar)
+.category-tab-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.category-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #475569;
+  background-color: #f1f5f9;
+  border: 1px solid transparent;
+  transition: all 0.22s ease-in-out;
+  cursor: pointer;
+  user-select: none;
+
+  .tab-icon {
+    font-size: 0.95rem;
+    transition: transform 0.2s ease;
+  }
+
+  .tab-count {
+    display: inline-block;
+    padding: 2px 7px;
+    font-size: 0.72rem;
+    border-radius: 9999px;
+    background: rgba(0, 0, 0, 0.08);
+    color: inherit;
+    font-weight: 700;
+  }
+
+  &:hover {
+    color: #0f172a;
+    background-color: #e2e8f0;
+    transform: translateY(-1px);
+
+    .tab-icon {
+      transform: scale(1.1);
+    }
+  }
+
+  &.active {
+    color: #ffffff;
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.25);
+    border-color: #0f172a;
+
+    .tab-count {
+      background: rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+    }
+  }
+
+  &.active-traditional {
+    background: linear-gradient(135deg, #e11d48 0%, #be123c 100%);
+    box-shadow: 0 4px 14px rgba(225, 29, 72, 0.3);
+    border-color: #e11d48;
+  }
+
+  &.active-family {
+    background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+    box-shadow: 0 4px 14px rgba(217, 119, 6, 0.3);
+    border-color: #d97706;
+  }
+
+  &.active-corporate {
+    background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+    box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);
+    border-color: #4f46e5;
+  }
+
+  &.active-seasonal {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    box-shadow: 0 4px 14px rgba(5, 150, 105, 0.3);
+    border-color: #059669;
+  }
+}
+
+// Level 2: Subcategory Filter Strip
+.subcategory-strip {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid #f1f5f9;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  .strip-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #64748b;
+    margin-right: 4px;
+  }
+}
+
+.subcategory-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  border-radius: 9999px;
+  color: #334155;
+  background-color: #ffffff;
+  border: 1px solid #cbd5e1;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+  user-select: none;
+
+  i {
+    font-size: 0.8rem;
+    opacity: 0.8;
+  }
+
+  &:hover {
+    color: #0f172a;
+    border-color: #94a3b8;
+    background-color: #f8fafc;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  }
+
+  &.active {
+    color: #0f172a;
+    font-weight: 700;
+    background-color: #f1f5f9;
+    border-color: #0f172a;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+
+    i {
+      opacity: 1;
+      color: #0f172a;
+    }
+  }
+}
+
+// Card Badges Styling
+.card-category-badge {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  backdrop-filter: blur(8px);
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.card-subcategory-badge {
+  font-size: 0.68rem;
+  font-weight: 500;
+  padding: 3px 8px;
+  border-radius: 9999px;
+  backdrop-filter: blur(8px);
+  background: rgba(15, 23, 42, 0.85);
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
 }

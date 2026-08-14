@@ -1,30 +1,348 @@
+// Organiser Invitation Setup Luxury Styles
 .selected-card {
-  box-shadow: 0 8px 30px rgba(6, 182, 212, 0.15) !important;
-  border-width: 2px !important;
-}
-
-.bg-light-primary {
-  background-color: rgba(6, 182, 212, 0.05) !important;
+  box-shadow: 0 10px 30px rgba(79, 70, 229, 0.18) !important;
+  border: 2px solid #4f46e5 !important;
 }
 
 .object-fit-cover {
   object-fit: cover;
 }
 
-.nav-tabs-alt .nav-link {
-  color: #666;
-  background-color: transparent;
-  border: 1px solid transparent;
-  transition: all 0.25s ease;
-  
+// Main Taxonomy Category Cards Grid
+.category-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.category-choice-card {
+  position: relative;
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
   &:hover {
-    color: #333;
-    background-color: #f0edf0;
+    transform: translateY(-2px);
+    border-color: #cbd5e1;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
   }
-  
+
+  .card-icon-bubble {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+    transition: transform 0.2s ease;
+  }
+
+  .card-category-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 4px;
+    line-height: 1.3;
+  }
+
+  .card-category-subtext {
+    font-size: 0.75rem;
+    color: #64748b;
+    line-height: 1.35;
+  }
+
+  // Active State styling per category
   &.active {
-    color: #fff;
-    background-color: #333;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    background: #ffffff;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+
+    .card-icon-bubble {
+      transform: scale(1.1);
+    }
+  }
+
+  &.active-traditional {
+    border-color: #e11d48;
+    .card-icon-bubble {
+      background: #ffe4e6;
+      color: #e11d48;
+    }
+    .card-category-title {
+      color: #be123c;
+    }
+  }
+
+  &.active-family {
+    border-color: #d97706;
+    .card-icon-bubble {
+      background: #fef3c7;
+      color: #d97706;
+    }
+    .card-category-title {
+      color: #b45309;
+    }
+  }
+
+  &.active-corporate {
+    border-color: #4f46e5;
+    .card-icon-bubble {
+      background: #e0e7ff;
+      color: #4f46e5;
+    }
+    .card-category-title {
+      color: #4338ca;
+    }
+  }
+
+  &.active-seasonal {
+    border-color: #059669;
+    .card-icon-bubble {
+      background: #d1fae5;
+      color: #059669;
+    }
+    .card-category-title {
+      color: #047857;
+    }
+  }
+}
+
+// Subcategory Chips Bar
+.sub-filter-strip {
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 12px 14px;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  .strip-title {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #475569;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-right: 6px;
+  }
+}
+
+.sub-chip-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  border-radius: 9999px;
+  background-color: #ffffff;
+  color: #334155;
+  border: 1px solid #cbd5e1;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+  user-select: none;
+
+  &:hover {
+    color: #0f172a;
+    border-color: #94a3b8;
+    background-color: #f1f5f9;
+    transform: translateY(-1px);
+  }
+
+  &.active {
+    background: #0f172a;
+    color: #ffffff;
+    border-color: #0f172a;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.2);
+
+    i {
+      color: #ffffff;
+    }
+  }
+}
+
+// -------------------------------------------------------------
+// LUXURY CUSTOMIZATION MODAL STYLES
+// -------------------------------------------------------------
+.luxury-modal-content {
+  border-radius: 20px !important;
+  border: none !important;
+  overflow: hidden;
+  box-shadow: 0 25px 60px -12px rgba(15, 23, 42, 0.35) !important;
+}
+
+.luxury-modal-header {
+  background: #ffffff;
+  color: #0f172a;
+  padding: 18px 24px;
+  border-bottom: 1px solid #e2e8f0;
+  position: relative;
+}
+
+.modal-template-preview-bar {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+
+  .preview-thumb {
+    width: 64px;
+    height: 48px;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+  }
+}
+
+.modal-section-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 18px 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+
+  .section-badge-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: #475569;
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #f1f5f9;
+  }
+}
+
+.luxury-input-group {
+  position: relative;
+
+  .input-icon-box {
+    background-color: #f1f5f9;
+    border-color: #cbd5e1;
+    color: #64748b;
+    padding: 0.55rem 0.85rem;
+    font-size: 0.95rem;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+  }
+
+  .form-control {
+    border-color: #cbd5e1;
+    background-color: #f8fafc;
+    font-size: 0.925rem;
+    font-weight: 500;
+    color: #0f172a;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    padding: 0.6rem 0.85rem;
+    transition: all 0.2s ease;
+
+    &:focus {
+      background-color: #ffffff;
+      border-color: #4f46e5;
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+    }
+
+    &::placeholder {
+      color: #94a3b8;
+      font-weight: 400;
+    }
+  }
+}
+
+.quick-subtitle-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+
+  .quick-tag-btn {
+    font-size: 0.72rem;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 9999px;
+    background-color: #f1f5f9;
+    color: #475569;
+    border: 1px solid #e2e8f0;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    user-select: none;
+
+    &:hover {
+      background-color: #e0e7ff;
+      color: #4338ca;
+      border-color: #c7d2fe;
+      transform: translateY(-1px);
+    }
+
+    &.active-tag {
+      background-color: #4f46e5;
+      color: #ffffff;
+      border-color: #4f46e5;
+      font-weight: 600;
+    }
+  }
+}
+
+.luxury-modal-footer {
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+  padding: 16px 24px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+
+  .btn-cancel {
+    border-radius: 10px;
+    font-weight: 600;
+    padding: 8px 20px;
+    color: #64748b;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+
+    &:hover {
+      background: #f1f5f9;
+      color: #0f172a;
+    }
+  }
+
+  .btn-submit-luxury {
+    border-radius: 10px;
+    font-weight: 600;
+    padding: 8px 24px;
+    background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+    border: none;
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);
+    transition: all 0.2s ease;
+
+    &:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4);
+    }
   }
 }

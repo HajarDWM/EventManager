@@ -2,10 +2,10 @@
 <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-2 text-center text-md-start">
   <div class="flex-grow-1 mb-1 mb-md-0">
     <h1 class="h3 fw-bold mb-2">
-      Modèles & Thèmes de Faire-part Digitaux
+      Modèles & Thèmes d'Invitations Digitales
     </h1>
     <h2 class="h6 fw-medium text-muted mb-0">
-      Configurez les thèmes visuels, calques décoratifs et styles de faire-part interactifs pour les événements.
+      Configurez les thèmes visuels, calques décoratifs et styles d'invitations interactives pour les événements.
     </h2>
   </div>
   <div class="mt-2 mt-md-0">
@@ -29,33 +29,54 @@
   <button type="button" class="btn-close ms-auto" (click)="errorMessage.set('')"></button>
 </div>
 
-<!-- Category Filter Pills -->
-<div class="d-flex flex-wrap gap-2 mt-4 pb-2 border-bottom border-light">
-  <button type="button" class="btn btn-sm rounded-pill"
-          [ngClass]="activeCategoryFilter() === 'ALL' ? 'btn-primary' : 'btn-alt-secondary'"
-          (click)="setCategoryFilter('ALL')">
-    Tous ({{ templates().length }})
-  </button>
-  <button type="button" class="btn btn-sm rounded-pill"
-          [ngClass]="activeCategoryFilter() === 'MARIAGE' ? 'btn-primary' : 'btn-alt-secondary'"
-          (click)="setCategoryFilter('MARIAGE')">
-    Mariage
-  </button>
-  <button type="button" class="btn btn-sm rounded-pill"
-          [ngClass]="activeCategoryFilter() === 'CORPORATE' ? 'btn-primary' : 'btn-alt-secondary'"
-          (click)="setCategoryFilter('CORPORATE')">
-    Corporate & Conférence
-  </button>
-  <button type="button" class="btn btn-sm rounded-pill"
-          [ngClass]="activeCategoryFilter() === 'ANNIVERSAIRE' ? 'btn-primary' : 'btn-alt-secondary'"
-          (click)="setCategoryFilter('ANNIVERSAIRE')">
-    Anniversaire & Privé
-  </button>
-  <button type="button" class="btn btn-sm rounded-pill"
-          [ngClass]="activeCategoryFilter() === 'AUTRE' ? 'btn-primary' : 'btn-alt-secondary'"
-          (click)="setCategoryFilter('AUTRE')">
-    Autre
-  </button>
+<!-- Luxury Category & SubCategory Filter Header -->
+<div class="taxonomy-filter-wrapper">
+  <!-- Level 1: Main Category Segmented Tabs -->
+  <div class="category-tab-group">
+    <button type="button" class="category-tab-btn"
+            [class.active]="activeCategoryFilter() === 'ALL'"
+            (click)="setCategoryFilter('ALL')">
+      <i class="fa fa-layer-group tab-icon"></i>
+      <span>Tous les modèles</span>
+      <span class="tab-count">{{ templates().length }}</span>
+    </button>
+
+    <button type="button" class="category-tab-btn"
+            *ngFor="let cat of taxonomy"
+            [class.active]="activeCategoryFilter() === cat.id"
+            [class.active-traditional]="activeCategoryFilter() === cat.id && cat.id === 'TRADITIONAL'"
+            [class.active-family]="activeCategoryFilter() === cat.id && cat.id === 'FAMILY'"
+            [class.active-corporate]="activeCategoryFilter() === cat.id && cat.id === 'CORPORATE'"
+            [class.active-seasonal]="activeCategoryFilter() === cat.id && cat.id === 'SEASONAL_SOCIAL'"
+            (click)="setCategoryFilter(cat.id)">
+      <i class="fa {{ cat.icon }} tab-icon"></i>
+      <span>{{ cat.shortName }}</span>
+      <span class="tab-count">{{ getTemplateCountForCategory(cat.id) }}</span>
+    </button>
+  </div>
+
+  <!-- Level 2: SubCategory Filter Strip (Appears when a category is selected) -->
+  <div class="subcategory-strip animate__animated animate__fadeIn"
+       *ngIf="activeCategoryFilter() !== 'ALL' && availableSubCategoriesForFilter().length > 0">
+    <span class="strip-label">
+      <i class="fa fa-sparkles text-warning"></i> Célébrations :
+    </span>
+    
+    <button type="button" class="subcategory-chip"
+            [class.active]="activeSubCategoryFilter() === 'ALL'"
+            (click)="setSubCategoryFilter('ALL')">
+      <i class="fa fa-asterisk"></i>
+      <span>Toutes</span>
+    </button>
+
+    <button type="button" class="subcategory-chip"
+            *ngFor="let sub of availableSubCategoriesForFilter()"
+            [class.active]="activeSubCategoryFilter() === sub.name"
+            (click)="setSubCategoryFilter(sub.name)">
+      <i class="fa {{ sub.icon }}"></i>
+      <span>{{ sub.name }}</span>
+    </button>
+  </div>
 </div>
 
 <!-- Grid Templates -->
@@ -69,16 +90,15 @@
              class="w-100 h-100 object-fit-cover" 
              [alt]="template.title">
         
-        <!-- Category Badge overlay -->
-        <span class="position-absolute top-0 start-0 m-2.5 badge px-2.5 py-1.5 fs-xs rounded-pill shadow-sm"
-              [ngClass]="{
-                'bg-success': template.category === 'Mariage',
-                'bg-primary': template.category === 'Corporate',
-                'bg-warning text-dark': template.category === 'Anniversaire',
-                'bg-dark text-white': template.category !== 'Mariage' && template.category !== 'Corporate' && template.category !== 'Anniversaire'
-              }">
-          {{ template.category }}
-        </span>
+        <!-- Category & Subcategory Badges overlay -->
+        <div class="position-absolute top-0 start-0 m-2 d-flex flex-column gap-1 align-items-start" style="z-index: 2;">
+          <span class="badge px-2.5 py-1 fs-xxs rounded-pill shadow-sm {{ getMainCategoryBadgeClass(template.category) }}">
+            <i class="fa {{ getMainCategoryIcon(template.category) }} me-1"></i> {{ template.category }}
+          </span>
+          <span class="badge bg-dark bg-opacity-85 text-white px-2.5 py-0.5 fs-xxs rounded-pill shadow-xs" *ngIf="template.subCategory" style="backdrop-filter: blur(4px);">
+            <i class="fa {{ getSubCategoryIcon(template.category, template.subCategory) }} me-1"></i> {{ template.subCategory }}
+          </span>
+        </div>
 
         <!-- Decorative Layer Frame Badge -->
         <span class="position-absolute top-0 end-0 m-2.5 badge bg-dark bg-opacity-75 text-white px-2.5 py-1.5 fs-xs rounded-pill shadow-sm" style="backdrop-filter: blur(4px);">
@@ -138,12 +158,6 @@
       </div>
     </div>
   </div>
-
-  <div class="col-12 text-center py-5 text-muted" *ngIf="filteredTemplates().length === 0">
-    <i class="fa fa-images fs-1 text-muted mb-3"></i>
-    <h4 class="h5 fw-bold text-muted mb-1">Aucun modèle de faire-part dans cette catégorie</h4>
-    <p class="fs-sm text-muted">Créez votre premier modèle pour enrichir le catalogue.</p>
-  </div>
 </div>
 
 <div class="text-center py-5" *ngIf="isLoading()">
@@ -158,7 +172,7 @@
     <div class="modal-content shadow-lg border-0 rounded-3">
       <div class="modal-header bg-body-light border-bottom p-3">
         <h5 class="modal-title fw-bold text-dark">
-          {{ isEditing() ? 'Modifier le modèle de faire-part' : 'Créer un nouveau modèle de faire-part' }}
+          {{ isEditing() ? 'Modifier le modèle d\'invitation' : 'Créer un nouveau modèle d\'invitation' }}
         </h5>
         <button type="button" class="btn-close" (click)="closeAddModal()"></button>
       </div>
@@ -167,20 +181,29 @@
         <div class="modal-body p-4">
           <div class="row">
             <!-- Nom du modèle -->
-            <div class="col-md-7 mb-3">
+            <div class="col-md-6 mb-3">
               <label class="form-label fw-semibold text-muted">Nom du modèle <span class="text-danger">*</span></label>
               <input type="text" class="form-control border-light shadow-sm bg-body-light" 
                      placeholder="Ex: Fleurs de Coton" [(ngModel)]="titleField" name="title" required>
             </div>
 
-            <!-- Catégorie -->
-            <div class="col-md-5 mb-3">
-              <label class="form-label fw-semibold text-muted">Catégorie / Type d'événement</label>
+            <!-- Catégorie Principale -->
+            <div class="col-md-3 mb-3">
+              <label class="form-label fw-semibold text-muted">Catégorie Principale</label>
               <select class="form-select border-light shadow-sm bg-body-light" [(ngModel)]="categoryField" name="category" (change)="onCategoryChange()">
-                <option value="Mariage">Mariage</option>
-                <option value="Corporate">Corporate & Conférence</option>
-                <option value="Anniversaire">Anniversaire & Privé</option>
-                <option value="Autre">Autre</option>
+                <option *ngFor="let cat of taxonomy" [value]="cat.name">
+                  {{ cat.name }}
+                </option>
+              </select>
+            </div>
+
+            <!-- Sous-Catégorie -->
+            <div class="col-md-3 mb-3">
+              <label class="form-label fw-semibold text-muted">Sous-Catégorie</label>
+              <select class="form-select border-light shadow-sm bg-body-light" [(ngModel)]="subCategoryField" name="subCategory">
+                <option *ngFor="let sub of availableSubCategoriesForForm()" [value]="sub.name">
+                  {{ sub.name }}
+                </option>
               </select>
             </div>
           </div>
@@ -448,7 +471,7 @@
             <div class="alert alert-info py-2 px-3 fs-xs rounded-2 mb-2.5 d-flex align-items-center gap-2 border-0 bg-info-light text-info">
               <i class="fa fa-lightbulb fs-base flex-shrink-0"></i>
               <div>
-                <strong>Conseil de design :</strong> Utilisez des visuels de fond <em>purement décoratifs</em> (avec bordures florales, cadres ou dorures sur les contours et un centre dégagé sans noms ni dates pré-imprimés). Le faire-part affiche automatiquement les informations dynamiques de chaque événement dans un élégant encart central.
+                <strong>Conseil de design :</strong> Utilisez des visuels de fond <em>purement décoratifs</em> (avec bordures florales, cadres ou dorures sur les contours et un centre dégagé sans noms ni dates pré-imprimés). L'invitation affiche automatiquement les informations dynamiques de chaque événement dans un élégant encart central.
               </div>
             </div>
             

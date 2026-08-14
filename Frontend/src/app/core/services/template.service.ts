@@ -6,6 +6,7 @@ export interface DigitalTemplate {
   id?: number;
   title: string;
   category: string;
+  subCategory?: string;
   description?: string;
   imageUrl?: string;
   templateKey?: string;

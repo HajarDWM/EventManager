@@ -3,6 +3,13 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TemplateService, DigitalTemplate } from '../../../core/services/template.service';
 import { loadGoogleFont } from '../../../core/utils/font-loader';
+import { 
+  TEMPLATE_TAXONOMY, 
+  MainCategoryInfo, 
+  SubCategoryInfo, 
+  getCategoryTaxonomy, 
+  getAllSubcategoriesForCategory 
+} from '../../../core/constants/template-taxonomy.constants';
 
 @Component({
   selector: 'app-admin-templates',
@@ -20,15 +27,36 @@ export class AdminTemplates implements OnInit {
   protected readonly successMessage = signal('');
   protected readonly errorMessage = signal('');
 
-  // Category filter
+  // Taxonomy Reference
+  protected readonly taxonomy = TEMPLATE_TAXONOMY;
+
+  // Category & SubCategory Filters
   protected readonly activeCategoryFilter = signal<string>('ALL');
+  protected readonly activeSubCategoryFilter = signal<string>('ALL');
+
+  protected readonly currentMainCategoryInfo = computed(() => getCategoryTaxonomy(this.activeCategoryFilter()));
+  protected readonly availableSubCategoriesForFilter = computed(() => this.currentMainCategoryInfo()?.subCategories || []);
 
   protected readonly filteredTemplates = computed(() => {
-    const filter = this.activeCategoryFilter();
-    if (filter === 'ALL') {
-      return this.templates();
+    const catFilter = this.activeCategoryFilter();
+    const subFilter = this.activeSubCategoryFilter();
+    let list = this.templates();
+
+    if (catFilter !== 'ALL') {
+      const mainCat = getCategoryTaxonomy(catFilter);
+      if (mainCat) {
+        list = list.filter(t => {
+          const tMain = getCategoryTaxonomy(t.category);
+          return tMain?.id === mainCat.id || t.category === mainCat.name;
+        });
+      }
     }
-    return this.templates().filter(t => t.category.toUpperCase() === filter.toUpperCase());
+
+    if (subFilter !== 'ALL') {
+      list = list.filter(t => t.subCategory === subFilter);
+    }
+
+    return list;
   });
 
   // Modal & Form States
@@ -39,7 +67,8 @@ export class AdminTemplates implements OnInit {
 
   // Form Fields
   protected titleField = '';
-  protected categoryField = 'Mariage';
+  protected categoryField = 'Célébrations Traditionnelles & Culturelles';
+  protected subCategoryField = 'Mariage';
   protected descriptionField = '';
   protected imageUrlField = '';
   protected backgroundImageUrlField = '';
@@ -54,6 +83,10 @@ export class AdminTemplates implements OnInit {
   protected secondaryFontSizeField = '16px';
   protected secondaryFontColorField = '#0f172a';
   protected htmlContentField = '';
+
+  protected readonly availableSubCategoriesForForm = computed(() => {
+    return getAllSubcategoriesForCategory(this.categoryField);
+  });
 
   // Preset Font Sizes
   protected readonly primaryFontSizeOptions = ['28px', '32px', '36px', '40px', '48px', '56px'];
@@ -124,14 +157,46 @@ export class AdminTemplates implements OnInit {
       },
       error: (err) => {
         console.error(err);
-        this.errorMessage.set('Impossible de charger les modèles de faire-part.');
+        this.errorMessage.set('Impossible de charger les modèles d\'invitation.');
         this.isLoading.set(false);
       }
     });
   }
 
-  protected setCategoryFilter(category: string): void {
-    this.activeCategoryFilter.set(category);
+  protected setCategoryFilter(categoryId: string): void {
+    this.activeCategoryFilter.set(categoryId);
+    this.activeSubCategoryFilter.set('ALL');
+  }
+
+  protected setSubCategoryFilter(subCategory: string): void {
+    this.activeSubCategoryFilter.set(subCategory);
+  }
+
+  public getTemplateCountForCategory(catId: string): number {
+    if (catId === 'ALL') return this.templates().length;
+    const mainCat = getCategoryTaxonomy(catId);
+    if (!mainCat) return 0;
+    return this.templates().filter(t => {
+      const tMain = getCategoryTaxonomy(t.category);
+      return tMain?.id === mainCat.id || t.category === mainCat.name;
+    }).length;
+  }
+
+  public getMainCategoryBadgeClass(category: string): string {
+    const tax = getCategoryTaxonomy(category);
+    return tax ? tax.badgeClass : 'bg-secondary-subtle text-secondary';
+  }
+
+  public getMainCategoryIcon(category: string): string {
+    const tax = getCategoryTaxonomy(category);
+    return tax ? tax.icon : 'fa-tag';
+  }
+
+  public getSubCategoryIcon(category: string, subCategory?: string): string {
+    if (!subCategory) return 'fa-folder';
+    const tax = getCategoryTaxonomy(category);
+    const sub = tax?.subCategories.find(s => s.name.toLowerCase() === subCategory.toLowerCase());
+    return sub ? sub.icon : 'fa-star';
   }
 
   protected onBackgroundFileSelected(event: Event): void {
@@ -249,7 +314,8 @@ export class AdminTemplates implements OnInit {
     this.isEditing.set(false);
     this.editingId.set(null);
     this.titleField = '';
-    this.categoryField = 'Mariage';
+    this.categoryField = 'Célébrations Traditionnelles & Culturelles';
+    this.subCategoryField = 'Mariage';
     this.descriptionField = '';
     this.imageUrlField = '';
     this.backgroundImageUrlField = '';
@@ -273,20 +339,25 @@ export class AdminTemplates implements OnInit {
     this.isEditing.set(true);
     this.editingId.set(template.id || null);
     this.titleField = template.title || '';
-    this.categoryField = template.category || 'Mariage';
+    
+    // Normalize category to full taxonomy title if needed
+    const tax = getCategoryTaxonomy(template.category);
+    this.categoryField = tax ? tax.name : (template.category || 'Célébrations Traditionnelles & Culturelles');
+    this.subCategoryField = template.subCategory || (tax?.subCategories[0]?.name || 'Mariage');
+
     this.descriptionField = template.description || '';
     this.imageUrlField = template.imageUrl || '';
     this.backgroundImageUrlField = template.backgroundImageUrl || '';
     this.musicUrlField = template.musicUrl || '';
     this.templateKeyField = template.templateKey || '';
-    this.decorativeFrameField = template.decorativeFrame || ('Mariage' === template.category ? 'floral-frame' : 'geometric-frame');
+    this.decorativeFrameField = template.decorativeFrame || ('floral-frame');
     this.accentColorField = template.accentColor || '#d4af37';
-    this.backgroundColorField = template.backgroundColor || ('Mariage' === template.category ? '#faf6ee' : '#f8f9fa');
-    this.primaryFontField = template.primaryFont || ('Mariage' === template.category ? 'Alex Brush' : 'Playfair Display');
+    this.backgroundColorField = template.backgroundColor || '#faf6ee';
+    this.primaryFontField = template.primaryFont || 'Alex Brush';
     this.primaryFontSizeField = template.primaryFontSize || '36px';
-    this.secondaryFontField = template.secondaryFont || ('Mariage' === template.category ? 'Cinzel' : 'Montserrat');
+    this.secondaryFontField = template.secondaryFont || 'Cinzel';
     this.secondaryFontSizeField = template.secondaryFontSize || '16px';
-    this.secondaryFontColorField = template.secondaryFontColor || ('Mariage' === template.category ? '#0f172a' : '#1e293b');
+    this.secondaryFontColorField = template.secondaryFontColor || '#0f172a';
     this.htmlContentField = template.htmlContent || '';
     this.errorMessage.set('');
     this.stopPreviewAudio();
@@ -299,7 +370,13 @@ export class AdminTemplates implements OnInit {
   }
 
   protected onCategoryChange(): void {
-    if (this.categoryField === 'Mariage') {
+    const subs = getAllSubcategoriesForCategory(this.categoryField);
+    if (subs.length > 0) {
+      this.subCategoryField = subs[0].name;
+    }
+
+    const tax = getCategoryTaxonomy(this.categoryField);
+    if (tax?.id === 'TRADITIONAL') {
       this.decorativeFrameField = 'floral-frame';
       this.backgroundColorField = '#faf6ee';
       this.accentColorField = '#d4af37';
@@ -308,16 +385,7 @@ export class AdminTemplates implements OnInit {
       this.secondaryFontField = 'Cinzel';
       this.secondaryFontSizeField = '16px';
       this.secondaryFontColorField = '#0f172a';
-    } else if (this.categoryField === 'Corporate') {
-      this.decorativeFrameField = 'geometric-frame';
-      this.backgroundColorField = '#f8f9fa';
-      this.accentColorField = '#2b4c7e';
-      this.primaryFontField = 'Montserrat';
-      this.primaryFontSizeField = '32px';
-      this.secondaryFontField = 'Playfair Display';
-      this.secondaryFontSizeField = '15px';
-      this.secondaryFontColorField = '#1e293b';
-    } else if (this.categoryField === 'Anniversaire') {
+    } else if (tax?.id === 'FAMILY') {
       this.decorativeFrameField = 'floral-frame';
       this.backgroundColorField = '#fff9f5';
       this.accentColorField = '#c27ba0';
@@ -326,15 +394,24 @@ export class AdminTemplates implements OnInit {
       this.secondaryFontField = 'Cormorant Garamond';
       this.secondaryFontSizeField = '16px';
       this.secondaryFontColorField = '#2c1810';
-    } else {
-      this.decorativeFrameField = 'minimal-edge';
-      this.backgroundColorField = '#ffffff';
-      this.accentColorField = '#1a1a1a';
-      this.primaryFontField = 'Playfair Display';
-      this.primaryFontSizeField = '34px';
-      this.secondaryFontField = 'Montserrat';
+    } else if (tax?.id === 'CORPORATE') {
+      this.decorativeFrameField = 'geometric-frame';
+      this.backgroundColorField = '#f8f9fa';
+      this.accentColorField = '#2b4c7e';
+      this.primaryFontField = 'Montserrat';
+      this.primaryFontSizeField = '32px';
+      this.secondaryFontField = 'Playfair Display';
       this.secondaryFontSizeField = '15px';
-      this.secondaryFontColorField = '#333333';
+      this.secondaryFontColorField = '#1e293b';
+    } else if (tax?.id === 'SEASONAL_SOCIAL') {
+      this.decorativeFrameField = 'gold-border';
+      this.backgroundColorField = '#0b0b0b';
+      this.accentColorField = '#fbbf24';
+      this.primaryFontField = 'Playfair Display';
+      this.primaryFontSizeField = '36px';
+      this.secondaryFontField = 'Cinzel';
+      this.secondaryFontSizeField = '16px';
+      this.secondaryFontColorField = '#f0dd9e';
     }
   }
 
@@ -350,6 +427,7 @@ export class AdminTemplates implements OnInit {
     const templatePayload: DigitalTemplate = {
       title: this.titleField.trim(),
       category: this.categoryField,
+      subCategory: this.subCategoryField,
       description: this.descriptionField?.trim() || '',
       imageUrl: this.imageUrlField?.trim() || undefined,
       backgroundImageUrl: this.backgroundImageUrlField?.trim() || undefined,
@@ -370,7 +448,7 @@ export class AdminTemplates implements OnInit {
       this.templateService.updateTemplate(this.editingId()!, templatePayload).subscribe({
         next: (updated) => {
           this.templates.update(list => list.map(t => t.id === updated.id ? { ...t, ...updated } : t));
-          this.successMessage.set('Modèle de faire-part mis à jour avec succès.');
+          this.successMessage.set('Modèle d\'invitation mis à jour avec succès.');
           this.closeAddModal();
           this.isSubmitting.set(false);
           setTimeout(() => this.successMessage.set(''), 3500);
@@ -385,7 +463,7 @@ export class AdminTemplates implements OnInit {
       this.templateService.createTemplate(templatePayload).subscribe({
         next: (created) => {
           this.templates.update(list => [...list, created]);
-          this.successMessage.set('Nouveau modèle de faire-part créé avec succès.');
+          this.successMessage.set('Nouveau modèle d\'invitation créé avec succès.');
           this.closeAddModal();
           this.isSubmitting.set(false);
           setTimeout(() => this.successMessage.set(''), 3500);
@@ -400,7 +478,7 @@ export class AdminTemplates implements OnInit {
   }
 
   protected deleteTemplate(id: number): void {
-    if (confirm('Êtes-vous sûr de vouloir supprimer définitivement ce modèle de faire-part ?')) {
+    if (confirm('Êtes-vous sûr de vouloir supprimer définitivement ce modèle d\'invitation ?')) {
       this.templateService.deleteTemplate(id).subscribe({
         next: () => {
           this.templates.update(list => list.filter(t => t.id !== id));
