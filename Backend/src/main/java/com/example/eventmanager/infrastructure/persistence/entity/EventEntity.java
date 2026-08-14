@@ -77,4 +77,17 @@ public class EventEntity {
     @Column(name = "meal_type", nullable = false)
     @Builder.Default
     private String mealType = "PLATS_FIXES";
+
+    @Column(name = "is_paid_event", nullable = false)
+    @Builder.Default
+    private boolean isPaidEvent = false;
+
+    @Column(name = "ticket_price")
+    @Builder.Default
+    private Double ticketPrice = 0.0;
+
+    @Column(name = "currency")
+    @Builder.Default
+    private String currency = "MAD";
 }
+

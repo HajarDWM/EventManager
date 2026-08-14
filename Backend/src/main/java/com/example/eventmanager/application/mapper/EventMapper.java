@@ -29,7 +29,10 @@ public class EventMapper {
                 .invitationLocation(dto.getInvitationLocation())
                 .parkingLocation(dto.getParkingLocation())
                 .mealType(dto.getMealType())
-                .templateId(dto.getTemplateId());
+                .templateId(dto.getTemplateId())
+                .isPaidEvent(dto.getIsPaidEvent() != null ? dto.getIsPaidEvent() : false)
+                .ticketPrice(dto.getTicketPrice() != null ? dto.getTicketPrice() : 0.0)
+                .currency(dto.getCurrency() != null ? dto.getCurrency() : "MAD");
 
         if (dto.getStatus() != null) {
             builder.status(EventStatus.valueOf(dto.getStatus()));
@@ -61,6 +64,9 @@ public class EventMapper {
                 .invitationLocation(event.getInvitationLocation())
                 .parkingLocation(event.getParkingLocation())
                 .mealType(event.getMealType())
+                .isPaidEvent(event.isPaidEvent())
+                .ticketPrice(event.getTicketPrice())
+                .currency(event.getCurrency())
                 .build();
     }
 }

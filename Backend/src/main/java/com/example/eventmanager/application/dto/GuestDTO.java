@@ -20,4 +20,8 @@ public class GuestDTO {
     private String tableNumber;
     private String dietaryRequirements;
     private String groupName;
+    private String paymentStatus;
+    private Double paidAmount;
+    private String paymentReference;
+    private java.time.LocalDateTime paymentDate;
 }

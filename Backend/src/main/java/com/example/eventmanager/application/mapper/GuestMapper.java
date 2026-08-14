@@ -20,6 +20,10 @@ public class GuestMapper {
                 .tableNumber(dto.getTableNumber())
                 .dietaryRequirements(dto.getDietaryRequirements())
                 .groupName(dto.getGroupName())
+                .paymentStatus(dto.getPaymentStatus() != null ? dto.getPaymentStatus() : "NOT_REQUIRED")
+                .paidAmount(dto.getPaidAmount() != null ? dto.getPaidAmount() : 0.0)
+                .paymentReference(dto.getPaymentReference())
+                .paymentDate(dto.getPaymentDate())
                 .build();
     }
 
@@ -35,6 +39,10 @@ public class GuestMapper {
                 .tableNumber(domain.getTableNumber())
                 .dietaryRequirements(domain.getDietaryRequirements())
                 .groupName(domain.getGroupName())
+                .paymentStatus(domain.getPaymentStatus())
+                .paidAmount(domain.getPaidAmount())
+                .paymentReference(domain.getPaymentReference())
+                .paymentDate(domain.getPaymentDate())
                 .build();
     }
 
@@ -50,6 +58,10 @@ public class GuestMapper {
         entity.setTableNumber(domain.getTableNumber());
         entity.setDietaryRequirements(domain.getDietaryRequirements());
         entity.setGroupName(domain.getGroupName());
+        entity.setPaymentStatus(domain.getPaymentStatus() != null ? domain.getPaymentStatus() : "NOT_REQUIRED");
+        entity.setPaidAmount(domain.getPaidAmount() != null ? domain.getPaidAmount() : 0.0);
+        entity.setPaymentReference(domain.getPaymentReference());
+        entity.setPaymentDate(domain.getPaymentDate());
         return entity;
     }
 
@@ -65,6 +77,10 @@ public class GuestMapper {
                 .tableNumber(entity.getTableNumber())
                 .dietaryRequirements(entity.getDietaryRequirements())
                 .groupName(entity.getGroupName())
+                .paymentStatus(entity.getPaymentStatus() != null ? entity.getPaymentStatus() : "NOT_REQUIRED")
+                .paidAmount(entity.getPaidAmount() != null ? entity.getPaidAmount() : 0.0)
+                .paymentReference(entity.getPaymentReference())
+                .paymentDate(entity.getPaymentDate())
                 .build();
     }
 }

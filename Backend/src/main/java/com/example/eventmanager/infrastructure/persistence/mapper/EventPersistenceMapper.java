@@ -32,6 +32,9 @@ public class EventPersistenceMapper {
                 .parkingLocation(entity.getParkingLocation())
                 .mealType(entity.getMealType())
                 .templateId(entity.getTemplateId())
+                .isPaidEvent(entity.isPaidEvent())
+                .ticketPrice(entity.getTicketPrice())
+                .currency(entity.getCurrency())
                 .build();
     }
 
@@ -59,6 +62,9 @@ public class EventPersistenceMapper {
                 .invitationLocation(domain.getInvitationLocation())
                 .parkingLocation(domain.getParkingLocation())
                 .mealType(domain.getMealType())
+                .isPaidEvent(domain.isPaidEvent())
+                .ticketPrice(domain.getTicketPrice())
+                .currency(domain.getCurrency())
                 .build();
     }
 }

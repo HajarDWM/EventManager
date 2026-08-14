@@ -123,7 +123,8 @@
             <th>Nom Complet</th>
             <th>Contact</th>
             <th>Groupe</th>
-            <th>Statut</th>
+            <th>Statut Présence</th>
+            <th *ngIf="event()?.isPaidEvent">Paiement / Billet</th>
             <th>Position</th>
             <th>Régime / Notes</th>
             <th class="text-end" style="min-width: 180px;">Actions</th>
@@ -149,6 +150,17 @@
               </span>
               <span class="badge bg-danger-light text-danger px-3 py-2 rounded-pill fw-bold" *ngIf="g.status === 'DECLINED'">
                 <i class="fa fa-times-circle me-1"></i> Décliné
+              </span>
+            </td>
+            <td *ngIf="event()?.isPaidEvent">
+              <span class="badge bg-success text-white px-2.5 py-1.5 rounded-pill fw-bold" *ngIf="g.paymentStatus === 'PAID'">
+                <i class="fa fa-check-circle me-1"></i> Payé ({{ g.paidAmount || event()?.ticketPrice }} {{ event()?.currency || 'MAD' }})
+              </span>
+              <span class="badge bg-warning text-dark px-2.5 py-1.5 rounded-pill fw-bold" *ngIf="g.paymentStatus === 'UNPAID' || (g.status === 'CONFIRMED' && g.paymentStatus !== 'PAID')">
+                <i class="fa fa-clock me-1"></i> Non réglé ({{ event()?.ticketPrice }} {{ event()?.currency || 'MAD' }})
+              </span>
+              <span class="badge bg-secondary-light text-secondary px-2.5 py-1.5 rounded-pill" *ngIf="g.paymentStatus !== 'PAID' && g.paymentStatus !== 'UNPAID' && g.status !== 'CONFIRMED'">
+                En attente
               </span>
             </td>
             <td class="fs-sm">

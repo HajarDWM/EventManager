@@ -29,4 +29,7 @@ public class EventDTO {
     private String invitationLocation;
     private String parkingLocation;
     private String mealType;
+    private Boolean isPaidEvent;
+    private Double ticketPrice;
+    private String currency;
 }

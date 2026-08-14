@@ -38,6 +38,13 @@ export interface PublicRsvpDetail {
   secondaryFontColor?: string;
   templateMusicUrl?: string;
   menuItems?: any[];
+  isPaidEvent?: boolean;
+  ticketPrice?: number;
+  currency?: string;
+  paymentStatus?: string;
+  paidAmount?: number;
+  paymentReference?: string;
+  paymentDate?: string;
 }
 
 @Component({
@@ -58,6 +65,13 @@ export class GuestRsvp implements OnInit, OnDestroy {
   protected readonly errorMessage = signal('');
   protected readonly isFullMenuModalOpen = signal(false);
   protected readonly isMenuRsvpOpen = signal(false);
+  protected readonly isPaymentModalOpen = signal(false);
+  protected readonly isProcessingPayment = signal(false);
+  protected readonly paymentMethod = signal<'CARD' | 'TRANSFER'>('CARD');
+  protected readonly cardNumber = signal('•••• •••• •••• 4242');
+  protected readonly cardExpiry = signal('12/28');
+  protected readonly cardCvc = signal('•••');
+  protected readonly cardHolder = signal('');
   protected readonly activeCarouselIndex = signal<number>(0);
   private touchStartX = 0;
 
@@ -547,7 +561,15 @@ export class GuestRsvp implements OnInit, OnDestroy {
     if (!choice) return;
     this.status.set(choice);
     this.attendanceStatus = (choice === 'CONFIRMED');
-    this.submitResponse();
+
+    const currentGuest = this.guest();
+    if (choice === 'CONFIRMED' && currentGuest?.isPaidEvent && currentGuest?.paymentStatus !== 'PAID') {
+      // Save preferences first, then open payment modal
+      this.submitResponse(false);
+      this.isPaymentModalOpen.set(true);
+    } else {
+      this.submitResponse(true);
+    }
   }
 
   public getSelectedDietsSummary(): string {
@@ -578,7 +600,7 @@ export class GuestRsvp implements OnInit, OnDestroy {
     return list;
   }
 
-  protected submitResponse(): void {
+  protected submitResponse(markSuccess: boolean = true): void {
     const currentGuest = this.guest();
     if (!currentGuest) return;
 
@@ -589,24 +611,24 @@ export class GuestRsvp implements OnInit, OnDestroy {
     const activeDiets: string[] = [];
 
     // Add specific dish selections only if CONFIRMED and PLATS_FIXES is selected
-    if (this.attendanceStatus === true && this.hasFormat('PLATS_FIXES')) {
-      if (this.starterChoice) {
+    if (this.attendanceStatus === true && (this.hasFormat('PLATS_FIXES') || this.isMix())) {
+      if (this.starterChoice && !this.isMix()) {
         activeDiets.push(`Entrée: ${this.starterChoice}`);
       }
       if (this.mealChoice) {
         activeDiets.push(`Plat: ${this.mealChoice}`);
       }
-      if (this.dessertChoice) {
+      if (this.dessertChoice && !this.isMix()) {
         activeDiets.push(`Dessert: ${this.dessertChoice}`);
       }
-      if (this.beverageChoice) {
+      if (this.beverageChoice && !this.isMix()) {
         activeDiets.push(`Boisson: ${this.beverageChoice}`);
       }
     }
 
     // Add dietary options only if CONFIRMED
     if (this.attendanceStatus === true) {
-      if (this.hasFormat('PLATS_FIXES') || this.hasDietsChoice === true) {
+      if (this.hasFormat('PLATS_FIXES') || this.hasDietsChoice === true || this.isMix() || this.isBuffet()) {
         if (this.hasVegetarien) activeDiets.push('Végétarien');
         if (this.hasVegan) activeDiets.push('Vegan');
         if (this.hasGlutenFree) activeDiets.push('Sans gluten');
@@ -632,12 +654,50 @@ export class GuestRsvp implements OnInit, OnDestroy {
       next: (updated) => {
         this.guest.set(updated);
         this.isSubmitting.set(false);
-        this.isSuccess.set(true);
+        if (markSuccess) {
+          this.isSuccess.set(true);
+        }
       },
       error: (err) => {
         console.error(err);
         this.errorMessage.set('Une erreur est survenue lors de l\'enregistrement de votre réponse.');
         this.isSubmitting.set(false);
+      }
+    });
+  }
+
+  protected openPaymentModal(): void {
+    this.isPaymentModalOpen.set(true);
+  }
+
+  protected closePaymentModal(): void {
+    this.isPaymentModalOpen.set(false);
+  }
+
+  protected processPayment(): void {
+    const currentGuest = this.guest();
+    if (!currentGuest) return;
+
+    this.isProcessingPayment.set(true);
+    this.errorMessage.set('');
+
+    const payload = {
+      amount: currentGuest.ticketPrice || 0,
+      paymentMethod: this.paymentMethod(),
+      reference: 'PAY-' + this.paymentMethod() + '-' + Date.now()
+    };
+
+    this.http.post<PublicRsvpDetail>(`/api/public/rsvp/${currentGuest.guestId}/pay`, payload).subscribe({
+      next: (updated) => {
+        this.guest.set(updated);
+        this.isProcessingPayment.set(false);
+        this.isPaymentModalOpen.set(false);
+        this.isSuccess.set(true);
+      },
+      error: (err) => {
+        console.error('Erreur de paiement:', err);
+        this.errorMessage.set('Une erreur est survenue lors du règlement. Veuillez réessayer.');
+        this.isProcessingPayment.set(false);
       }
     });
   }

@@ -13,6 +13,7 @@ public class StripeWebhookResource {
     private final com.example.eventmanager.application.port.out.CatererRepositoryPort catererRepositoryPort;
     private final com.example.eventmanager.application.port.in.RecordTransactionUseCase recordTransactionUseCase;
     private final com.example.eventmanager.application.port.out.BillingSettingRepositoryPort billingSettingRepositoryPort;
+    private final com.example.eventmanager.application.port.out.GuestRepositoryPort guestRepositoryPort;
 
     @PostMapping("/stripe")
     public ResponseEntity<Void> handleStripeWebhook(@RequestBody Map<String, Object> event) {
@@ -23,6 +24,24 @@ public class StripeWebhookResource {
             Map<String, Object> object = (Map<String, Object>) data.get("object");
             Map<String, Object> metadata = (Map<String, Object>) object.get("metadata");
             
+            // Handle Guest Ticket Payment
+            if (metadata != null && metadata.containsKey("guestId")) {
+                Long guestId = Long.valueOf((String) metadata.get("guestId"));
+                var guestOpt = guestRepositoryPort.findById(guestId);
+                if (guestOpt.isPresent()) {
+                    var guest = guestOpt.get();
+                    Double amount = metadata.containsKey("amount") ? Double.valueOf((String) metadata.get("amount")) : 0.0;
+                    String ref = object.containsKey("id") ? (String) object.get("id") : ("STRIPE-" + System.currentTimeMillis());
+                    guest.recordPayment(amount, ref);
+                    guestRepositoryPort.save(guest);
+                }
+                return ResponseEntity.ok().build();
+            }
+
+            if (metadata == null || !metadata.containsKey("catererId")) {
+                return ResponseEntity.ok().build();
+            }
+
             Long catererId = Long.valueOf((String) metadata.get("catererId"));
             String plan = (String) metadata.get("plan");
 

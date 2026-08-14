@@ -108,6 +108,13 @@ public class PublicRsvpController {
                 .secondaryFontColor(secondaryFontColor)
                 .templateMusicUrl(templateMusicUrl)
                 .menuItems(menuItems)
+                .isPaidEvent(event.isPaidEvent())
+                .ticketPrice(event.getTicketPrice())
+                .currency(event.getCurrency())
+                .paymentStatus(guest.getPaymentStatus())
+                .paidAmount(guest.getPaidAmount())
+                .paymentReference(guest.getPaymentReference())
+                .paymentDate(guest.getPaymentDate())
                 .build();
 
         return ResponseEntity.ok(dto);
@@ -120,6 +127,9 @@ public class PublicRsvpController {
 
         Guest guest = guestRepositoryPort.findById(guestId)
                 .orElseThrow(() -> new IllegalArgumentException("Invité non trouvé avec l'id : " + guestId));
+
+        Event event = eventRepositoryPort.findById(guest.getEventId())
+                .orElseThrow(() -> new IllegalArgumentException("Événement non trouvé avec l'id : " + guest.getEventId()));
 
         GuestStatus statusVal = guest.getStatus();
         if (rsvpDTO.getGuestStatus() != null) {
@@ -136,10 +146,18 @@ public class PublicRsvpController {
                 guest.getGroupName()
         );
 
-        Guest savedGuest = guestRepositoryPort.save(guest);
+        // If it's a paid event and guest is confirming, set paymentStatus accordingly
+        if (event.isPaidEvent()) {
+            if ("NOT_REQUIRED".equalsIgnoreCase(guest.getPaymentStatus()) || guest.getPaymentStatus() == null) {
+                if (statusVal == GuestStatus.CONFIRMED) {
+                    guest.setPaymentStatus("UNPAID");
+                }
+            }
+        } else {
+            guest.setPaymentStatus("NOT_REQUIRED");
+        }
 
-        Event event = eventRepositoryPort.findById(savedGuest.getEventId())
-                .orElseThrow(() -> new IllegalArgumentException("Événement non trouvé avec l'id : " + savedGuest.getEventId()));
+        Guest savedGuest = guestRepositoryPort.save(guest);
 
         java.util.List<com.example.eventmanager.application.dto.MenuItemDTO> menuItems = menuItemRepositoryPort.findByEventId(event.getId())
                 .stream()
@@ -218,8 +236,42 @@ public class PublicRsvpController {
                 .secondaryFontColor(secondaryFontColor)
                 .templateMusicUrl(templateMusicUrl)
                 .menuItems(menuItems)
+                .isPaidEvent(event.isPaidEvent())
+                .ticketPrice(event.getTicketPrice())
+                .currency(event.getCurrency())
+                .paymentStatus(savedGuest.getPaymentStatus())
+                .paidAmount(savedGuest.getPaidAmount())
+                .paymentReference(savedGuest.getPaymentReference())
+                .paymentDate(savedGuest.getPaymentDate())
                 .build();
 
         return ResponseEntity.ok(responseDto);
+    }
+
+    @PostMapping("/{guestId}/pay")
+    public ResponseEntity<PublicRsvpDTO> processGuestPayment(
+            @PathVariable Long guestId,
+            @RequestBody java.util.Map<String, Object> paymentPayload) {
+
+        Guest guest = guestRepositoryPort.findById(guestId)
+                .orElseThrow(() -> new IllegalArgumentException("Invité non trouvé avec l'id : " + guestId));
+
+        Event event = eventRepositoryPort.findById(guest.getEventId())
+                .orElseThrow(() -> new IllegalArgumentException("Événement non trouvé avec l'id : " + guest.getEventId()));
+
+        Double amount = event.getTicketPrice() != null ? event.getTicketPrice() : 0.0;
+        if (paymentPayload.containsKey("amount") && paymentPayload.get("amount") != null) {
+            amount = Double.valueOf(paymentPayload.get("amount").toString());
+        }
+
+        String reference = "PAY-" + System.currentTimeMillis() + "-" + guestId;
+        if (paymentPayload.containsKey("reference") && paymentPayload.get("reference") != null) {
+            reference = paymentPayload.get("reference").toString();
+        }
+
+        guest.recordPayment(amount, reference);
+        Guest saved = guestRepositoryPort.save(guest);
+
+        return getPublicRsvpDetail(saved.getId());
     }
 }

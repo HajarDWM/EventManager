@@ -25,6 +25,9 @@ export class EventEdit implements OnInit {
   protected readonly location = signal('');
   protected readonly parkingLocation = signal('');
   protected readonly guestCount = signal<number | null>(null);
+  protected readonly isPaidEvent = signal<boolean>(false);
+  protected readonly ticketPrice = signal<number>(0);
+  protected readonly currency = signal<string>('MAD');
   protected readonly status = signal<'DRAFT' | 'PLANNED' | 'COMPLETED' | 'CANCELLED'>('PLANNED');
   protected readonly selectedTemplateId = signal<number | null>(null);
   protected readonly templates = signal<DigitalTemplate[]>([]);
@@ -53,6 +56,9 @@ export class EventEdit implements OnInit {
       next: (data) => {
         this.title.set(data.title);
         this.invitationSubtitle.set(data.invitationSubtitle || '');
+        this.isPaidEvent.set(data.isPaidEvent || false);
+        this.ticketPrice.set(data.ticketPrice || 0);
+        this.currency.set(data.currency || 'MAD');
         // Formater la date pour <input type="datetime-local"> (yyyy-MM-ddTHH:mm)
         if (data.eventDate) {
           if (data.eventDate.includes('T')) {
@@ -120,7 +126,10 @@ export class EventEdit implements OnInit {
       guestCount: this.guestCount(),
       status: this.status(),
       digitalTemplateId: chosenTemplate?.id || undefined,
-      templateId: chosenTemplate?.templateKey || (chosenTemplate?.category === 'Mariage' ? 'fleurs-de-coton' : 'corporate-professional')
+      templateId: chosenTemplate?.templateKey || (chosenTemplate?.category === 'Mariage' ? 'fleurs-de-coton' : 'corporate-professional'),
+      isPaidEvent: this.isPaidEvent(),
+      ticketPrice: this.isPaidEvent() ? this.ticketPrice() : 0,
+      currency: this.currency()
     }).subscribe({
       next: () => {
         this.isSaving.set(false);

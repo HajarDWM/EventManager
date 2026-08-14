@@ -92,6 +92,19 @@ public class GuestApplicationService implements CreateGuestUseCase, GetGuestsByE
                 guestDTO.getGroupName()
         );
 
+        if (guestDTO.getPaymentStatus() != null) {
+            existing.setPaymentStatus(guestDTO.getPaymentStatus());
+        }
+        if (guestDTO.getPaidAmount() != null) {
+            existing.setPaidAmount(guestDTO.getPaidAmount());
+        }
+        if (guestDTO.getPaymentReference() != null) {
+            existing.setPaymentReference(guestDTO.getPaymentReference());
+        }
+        if (guestDTO.getPaymentDate() != null) {
+            existing.setPaymentDate(guestDTO.getPaymentDate());
+        }
+
         Guest updated = guestRepositoryPort.save(existing);
         return guestMapper.toDTO(updated);
     }

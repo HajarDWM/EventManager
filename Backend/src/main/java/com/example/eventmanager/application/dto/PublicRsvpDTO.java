@@ -46,4 +46,12 @@ public class PublicRsvpDTO {
     private String secondaryFontColor;
     private String templateMusicUrl;
     private java.util.List<MenuItemDTO> menuItems;
+
+    private Boolean isPaidEvent;
+    private Double ticketPrice;
+    private String currency;
+    private String paymentStatus;
+    private Double paidAmount;
+    private String paymentReference;
+    private LocalDateTime paymentDate;
 }

@@ -128,21 +128,41 @@
             </select>
           </div>
 
-          <!-- Thème & Modèle d'Invitation -->
-          <div class="mb-4" *ngIf="templates().length > 0">
-            <label class="form-label fs-sm fw-semibold" for="event-template">
-              <i class="fa fa-paint-brush me-1 text-primary"></i> Modèle & Thème d'Invitation Digitale
-            </label>
-            <select class="form-select form-control-alt fs-sm" id="event-template" name="event-template"
-              [ngModel]="selectedTemplateId()" (ngModelChange)="selectedTemplateId.set($event)">
-              <option *ngFor="let tpl of templates()" [value]="tpl.id">
-                {{ tpl.title }} — {{ tpl.category }} ({{ tpl.decorativeFrame === 'floral-frame' ? '🌸 Cadre Floral' :
-                (tpl.decorativeFrame === 'gold-border' ? '⚜️ Dorures & Velours' : (tpl.decorativeFrame ===
-                'geometric-frame' ? '📐 Géométrique' : '✨ Minimaliste')) }})
-              </option>
-            </select>
-            <div class="form-text fs-xs text-muted">
-              Le style visuel, les calques décoratifs et l'ambiance de la page RSVP seront automatiquement synchronisés.
+          <!-- Billetterie & Format d'Accès (Gratuit / Payant) -->
+          <div class="mb-4 p-3 bg-body-light border rounded-3">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <div>
+                <label class="form-label fs-sm fw-bold text-dark mb-0">
+                  <i class="fa fa-ticket text-primary me-1"></i> Format d'accès & Participation financière
+                </label>
+                <div class="fs-xs text-muted">Activez la billetterie si les invités doivent régler leur participation d'avance.</div>
+              </div>
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="isPaidEventSwitchEdit"
+                       [checked]="isPaidEvent()"
+                       (change)="isPaidEvent.set($any($event.target).checked)">
+              </div>
+            </div>
+
+            <!-- Champs de tarification si Payant activé -->
+            <div *ngIf="isPaidEvent()" class="row g-2 mt-2 pt-2 border-top animate__animated animate__fadeIn">
+              <div class="col-sm-7">
+                <label class="form-label fs-xs fw-semibold text-dark mb-1">Tarif / Prix par invité <span class="text-danger">*</span></label>
+                <div class="input-group input-group-sm">
+                  <span class="input-group-text"><i class="fa fa-coins text-warning"></i></span>
+                  <input type="number" class="form-control" placeholder="Ex: 350" min="1"
+                         [ngModel]="ticketPrice()" (ngModelChange)="ticketPrice.set($event)"
+                         name="ticketPrice" required>
+                </div>
+              </div>
+              <div class="col-sm-5">
+                <label class="form-label fs-xs fw-semibold text-dark mb-1">Devise</label>
+                <select class="form-select form-select-sm" [ngModel]="currency()" (ngModelChange)="currency.set($event)" name="currency">
+                  <option value="MAD">MAD (Dirham)</option>
+                  <option value="EUR">EUR (€)</option>
+                  <option value="USD">USD ($)</option>
+                </select>
+              </div>
             </div>
           </div>
 

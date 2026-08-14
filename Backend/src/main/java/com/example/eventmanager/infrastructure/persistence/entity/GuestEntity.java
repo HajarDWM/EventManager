@@ -38,4 +38,16 @@ public class GuestEntity {
 
     @Column(name = "group_name")
     private String groupName;
+
+    @Column(name = "payment_status")
+    private String paymentStatus = "NOT_REQUIRED";
+
+    @Column(name = "paid_amount")
+    private Double paidAmount = 0.0;
+
+    @Column(name = "payment_reference")
+    private String paymentReference;
+
+    @Column(name = "payment_date")
+    private java.time.LocalDateTime paymentDate;
 }

@@ -1086,13 +1086,39 @@
                 </div>
               </div>
 
+              <!-- Participation Financière (Si Événement Payant) -->
+              <div class="mb-3.5 text-start px-2" *ngIf="guest()?.isPaidEvent">
+                <div class="fw-bold text-uppercase mb-2 text-center"
+                  [style.fontFamily]="getSecondaryFont()"
+                  [style.color]="getSecondaryFontColor()"
+                  style="letter-spacing: 1.8px; opacity: 0.95; font-size: 0.78rem;">
+                  — Participation & Accès —
+                </div>
+
+                <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom" [style.borderColor]="'rgba(212, 175, 55, 0.25)'">
+                  <span class="text-uppercase fw-bold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="letter-spacing: 0.8px; font-size: 0.74rem; opacity: 0.85;">Tarif du Billet</span>
+                  <span class="fw-bold text-end font-serif" [style.fontFamily]="getSecondaryFont()" [style.color]="getPrimaryColor()" style="font-size: 1.05rem;">
+                    {{ guest()?.ticketPrice || 0 }} {{ guest()?.currency || 'MAD' }}
+                  </span>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom" [style.borderColor]="'rgba(212, 175, 55, 0.25)'">
+                  <span class="text-uppercase fw-bold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="letter-spacing: 0.8px; font-size: 0.74rem; opacity: 0.85;">Statut Paiement</span>
+                  <span class="badge rounded-pill px-2.5 py-1 fw-bold fs-xxs"
+                    [ngClass]="guest()?.paymentStatus === 'PAID' ? 'bg-success text-white' : 'bg-warning text-dark'">
+                    <i class="fa me-1" [ngClass]="guest()?.paymentStatus === 'PAID' ? 'fa-check' : 'fa-clock'"></i>
+                    {{ guest()?.paymentStatus === 'PAID' ? 'Réglé' : 'À régler pour valider' }}
+                  </span>
+                </div>
+              </div>
+
             </div>
 
 
           </div>
 
           <!-- PERSISTENT RSVP ACTION SECTION (Visible across ALL steps in the exact same bottom place) -->
-          <div class="final-rsvp-actions text-center mt-auto mx-auto pt-2" style="max-width: 270px; width: 100%;">
+          <div class="final-rsvp-actions text-center mt-auto mx-auto pt-2" style="max-width: 290px; width: 100%;">
             <label class="form-label d-block text-center fw-bold text-uppercase tracking-widest mb-1.5"
               [style.fontFamily]="getSecondaryFont()"
               [style.color]="getSecondaryFontColor()"
@@ -1105,12 +1131,12 @@
               <button type="button" class="btn flex-fill py-1 px-2 fs-xxs fw-bold rounded-pill"
                 [ngClass]="selectedAttendanceChoice() === 'CONFIRMED' ? 'btn-presence-yes shadow-sm' : 'btn-presence-yes'"
                 (click)="selectAttendanceChoice('CONFIRMED')">
-                <i class="fa fa-check me-1"></i> Accepté
+                <i class="fa fa-check me-1"></i> Présent(e)
               </button>
               <button type="button" class="btn flex-fill py-1 px-2 fs-xxs fw-bold rounded-pill"
                 [ngClass]="selectedAttendanceChoice() === 'DECLINED' ? 'btn-presence-no shadow-sm' : 'btn-presence-no'"
                 (click)="selectAttendanceChoice('DECLINED')">
-                <i class="fa fa-times me-1"></i> Décliné
+                <i class="fa fa-times me-1"></i> Absent(e)
               </button>
             </div>
 
@@ -1120,8 +1146,14 @@
                 [ngClass]="selectedAttendanceChoice() === 'CONFIRMED' ? 'btn-luxury-submit' : 'btn-presence-no'"
                 (click)="confirmRsvpSubmission()" [disabled]="isSubmitting()">
                 <span *ngIf="!isSubmitting()">
-                  <i class="fa fa-paper-plane me-1.5"></i>
-                  {{ selectedAttendanceChoice() === 'CONFIRMED' ? 'Confirmer ma présence' : 'Confirmer mon absence' }}
+                  <i class="fa me-1.5" [ngClass]="selectedAttendanceChoice() === 'CONFIRMED' && guest()?.isPaidEvent && guest()?.paymentStatus !== 'PAID' ? 'fa-lock' : (selectedAttendanceChoice() === 'CONFIRMED' ? 'fa-paper-plane' : 'fa-times-circle')"></i>
+                  <ng-container *ngIf="selectedAttendanceChoice() === 'CONFIRMED'">
+                    <span *ngIf="guest()?.isPaidEvent && guest()?.paymentStatus !== 'PAID'">Régler ({{ guest()?.ticketPrice }} {{ guest()?.currency || 'MAD' }}) & Confirmer</span>
+                    <span *ngIf="!guest()?.isPaidEvent || guest()?.paymentStatus === 'PAID'">Confirmer ma présence</span>
+                  </ng-container>
+                  <ng-container *ngIf="selectedAttendanceChoice() === 'DECLINED'">
+                    Confirmer mon absence
+                  </ng-container>
                 </span>
                 <span *ngIf="isSubmitting()"><i class="fa fa-spinner fa-spin me-1.5"></i>Enregistrement...</span>
               </button>
@@ -1173,6 +1205,14 @@
                   [ngClass]="status() === 'CONFIRMED' ? 'bg-success text-white' : 'bg-secondary text-white'">
                   <i class="fa me-1" [ngClass]="status() === 'CONFIRMED' ? 'fa-check' : 'fa-times'"></i>
                   {{ status() === 'CONFIRMED' ? 'Présent' : 'Absent' }}
+                </span>
+              </div>
+              <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom" [style.borderColor]="'rgba(212, 175, 55, 0.25)'" *ngIf="guest()?.isPaidEvent && status() === 'CONFIRMED'">
+                <span class="text-uppercase fw-bold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="letter-spacing: 0.8px; font-size: 0.74rem; opacity: 0.85;">Billet / Pass</span>
+                <span class="badge rounded-pill px-3 py-1 fw-bold fs-xxs"
+                  [ngClass]="guest()?.paymentStatus === 'PAID' ? 'bg-success text-white' : 'bg-warning text-dark'">
+                  <i class="fa me-1" [ngClass]="guest()?.paymentStatus === 'PAID' ? 'fa-check-circle' : 'fa-clock'"></i>
+                  {{ guest()?.paymentStatus === 'PAID' ? 'Payé (' + (guest()?.paidAmount || guest()?.ticketPrice) + ' ' + (guest()?.currency || 'MAD') + ')' : 'En attente de règlement' }}
                 </span>
               </div>
             </div>
@@ -1246,6 +1286,133 @@
 
           </div>
 
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: LUXURY PAYMENT GATEWAY MODAL -->
+  <div class="modal show d-block animate__animated animate__fadeIn" tabindex="-1" role="dialog" *ngIf="isPaymentModalOpen()" style="background-color: rgba(15, 23, 42, 0.75); backdrop-filter: blur(10px); z-index: 1060;">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 440px;" role="document">
+      <div class="modal-content border-0 shadow-2xl rounded-4 overflow-hidden" style="background: #ffffff;">
+        
+        <!-- Header -->
+        <div class="p-3.5 px-4 bg-white border-bottom d-flex align-items-center justify-content-between">
+          <div class="d-flex align-items-center gap-2.5">
+            <div class="rounded-circle bg-warning bg-opacity-10 text-warning d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
+              <i class="fa fa-shield-alt fs-5"></i>
+            </div>
+            <div>
+              <h5 class="modal-title fs-sm fw-bold text-dark mb-0">Règlement Sécurisé de Participation</h5>
+              <div class="fs-xxs text-muted">{{ guest()?.eventTitle }}</div>
+            </div>
+          </div>
+          <button type="button" class="btn-close fs-xs" aria-label="Fermer" (click)="closePaymentModal()"></button>
+        </div>
+
+        <!-- Body -->
+        <div class="modal-body p-4 bg-body-light bg-opacity-40">
+
+          <!-- Price Summary Card -->
+          <div class="p-3 bg-white border rounded-3 text-center mb-3 shadow-xs">
+            <span class="fs-xxs text-uppercase fw-semibold text-muted tracking-wider d-block mb-1">Montant à régler</span>
+            <div class="fs-2 fw-bold text-dark font-serif" style="color: #0f172a !important;">
+              {{ guest()?.ticketPrice || 0 }} <span class="fs-6 fw-normal text-muted">{{ guest()?.currency || 'MAD' }}</span>
+            </div>
+            <div class="fs-xxs text-success mt-1 fw-semibold">
+              <i class="fa fa-check-circle me-1"></i> Billet d'entrée nominatif pour {{ guest()?.guestName }}
+            </div>
+          </div>
+
+          <!-- Payment Method Segmented Tabs -->
+          <div class="d-flex gap-2 mb-3">
+            <button type="button" class="btn btn-sm flex-fill py-2 rounded-3 fs-xs fw-semibold transition-all border"
+              [ngClass]="paymentMethod() === 'CARD' ? 'btn-dark text-white shadow-sm' : 'btn-white text-muted'"
+              (click)="paymentMethod.set('CARD')">
+              <i class="fa fa-credit-card me-1.5"></i> Carte Bancaire
+            </button>
+            <button type="button" class="btn btn-sm flex-fill py-2 rounded-3 fs-xs fw-semibold transition-all border"
+              [ngClass]="paymentMethod() === 'TRANSFER' ? 'btn-dark text-white shadow-sm' : 'btn-white text-muted'"
+              (click)="paymentMethod.set('TRANSFER')">
+              <i class="fa fa-university me-1.5"></i> Virement
+            </button>
+          </div>
+
+          <!-- Card Payment Form -->
+          <div *ngIf="paymentMethod() === 'CARD'" class="animate__animated animate__fadeIn">
+            <div class="mb-2.5">
+              <label class="form-label fs-xxs fw-bold text-dark text-uppercase tracking-wider mb-1">Numéro de carte</label>
+              <div class="input-group input-group-sm">
+                <span class="input-group-text bg-white"><i class="fa fa-credit-card text-muted"></i></span>
+                <input type="text" class="form-control form-control-sm bg-white" placeholder="4532 •••• •••• 8890" [(ngModel)]="cardNumber">
+                <span class="input-group-text bg-white"><i class="fab fa-cc-visa text-primary fs-6"></i></span>
+              </div>
+            </div>
+
+            <div class="row g-2 mb-2.5">
+              <div class="col-6">
+                <label class="form-label fs-xxs fw-bold text-dark text-uppercase tracking-wider mb-1">Expiration</label>
+                <input type="text" class="form-control form-control-sm bg-white" placeholder="MM/AA" [(ngModel)]="cardExpiry">
+              </div>
+              <div class="col-6">
+                <label class="form-label fs-xxs fw-bold text-dark text-uppercase tracking-wider mb-1">CVC / CVV</label>
+                <input type="text" class="form-control form-control-sm bg-white" placeholder="123" [(ngModel)]="cardCvc">
+              </div>
+            </div>
+
+            <div class="mb-2">
+              <label class="form-label fs-xxs fw-bold text-dark text-uppercase tracking-wider mb-1">Titulaire de la carte</label>
+              <input type="text" class="form-control form-control-sm bg-white" placeholder="Nom tel qu'indiqué sur la carte" [value]="guest()?.guestName">
+            </div>
+          </div>
+
+          <!-- Bank Transfer Form -->
+          <div *ngIf="paymentMethod() === 'TRANSFER'" class="animate__animated animate__fadeIn">
+            <div class="p-3 bg-white border rounded-3 mb-2 fs-xs">
+              <div class="d-flex justify-content-between mb-1.5 pb-1 border-bottom">
+                <span class="text-muted">Bénéficiaire :</span>
+                <span class="fw-semibold text-dark">EventManager S.A.R.L</span>
+              </div>
+              <div class="d-flex justify-content-between mb-1.5 pb-1 border-bottom">
+                <span class="text-muted">Banque :</span>
+                <span class="fw-semibold text-dark">Attijariwafa Bank</span>
+              </div>
+              <div class="d-flex justify-content-between mb-1.5 pb-1 border-bottom">
+                <span class="text-muted">RIB :</span>
+                <span class="fw-semibold text-dark font-monospace">007 780 0001234567890123 45</span>
+              </div>
+              <div class="d-flex justify-content-between">
+                <span class="text-muted">Référence à mentionner :</span>
+                <span class="badge bg-warning-light text-dark font-monospace fw-bold">TICKET-{{ guest()?.guestId }}</span>
+              </div>
+            </div>
+            <div class="fs-xxs text-muted fst-italic text-center">
+              Votre place sera validée et réservée automatiquement.
+            </div>
+          </div>
+
+          <!-- Error Alert -->
+          <div class="alert alert-danger p-2 fs-xxs rounded-3 mt-3 mb-0 d-flex align-items-center gap-2" *ngIf="errorMessage()">
+            <i class="fa fa-exclamation-circle text-danger"></i>
+            <span>{{ errorMessage() }}</span>
+          </div>
+
+        </div>
+
+        <!-- Footer -->
+        <div class="p-3 px-4 bg-white border-top d-flex align-items-center justify-content-between">
+          <button type="button" class="btn btn-sm btn-alt-secondary rounded-pill px-3 fs-xs" (click)="closePaymentModal()" [disabled]="isProcessingPayment()">
+            Annuler
+          </button>
+          <button type="button" class="btn btn-sm btn-dark rounded-pill px-4 fs-xs fw-bold shadow-sm" (click)="processPayment()" [disabled]="isProcessingPayment()">
+            <span *ngIf="!isProcessingPayment()">
+              <i class="fa fa-lock me-1"></i> Payer {{ guest()?.ticketPrice || 0 }} {{ guest()?.currency || 'MAD' }}
+            </span>
+            <span *ngIf="isProcessingPayment()">
+              <i class="fa fa-spinner fa-spin me-1"></i> Traitement...
+            </span>
+          </button>
         </div>
 
       </div>

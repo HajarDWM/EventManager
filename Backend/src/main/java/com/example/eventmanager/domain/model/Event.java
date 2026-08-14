@@ -28,6 +28,12 @@ public class Event {
     private LocalDateTime invitationDate;
     private String invitationLocation;
     private String parkingLocation;
+    @Builder.Default
+    private boolean isPaidEvent = false;
+    @Builder.Default
+    private Double ticketPrice = 0.0;
+    @Builder.Default
+    private String currency = "MAD";
 
     public void setupInvitation(Long templateId, String templateIdStr, String token, String title, LocalDateTime date, String location) {
         setupInvitation(templateId, templateIdStr, token, title, this.invitationSubtitle, date, location, this.parkingLocation);

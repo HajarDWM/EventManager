@@ -15,4 +15,7 @@ export interface Event {
   parkingLocation?: string;
   mealType?: string;
   templateId?: string;
+  isPaidEvent?: boolean;
+  ticketPrice?: number;
+  currency?: string;
 }

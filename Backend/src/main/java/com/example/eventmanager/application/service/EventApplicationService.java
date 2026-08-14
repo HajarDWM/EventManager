@@ -163,6 +163,15 @@ public class EventApplicationService implements CreateEventUseCase, GetEventUseC
         if (eventDTO.getTemplateId() != null) {
             existingEvent.setTemplateId(eventDTO.getTemplateId());
         }
+        if (eventDTO.getIsPaidEvent() != null) {
+            existingEvent.setPaidEvent(eventDTO.getIsPaidEvent());
+        }
+        if (eventDTO.getTicketPrice() != null) {
+            existingEvent.setTicketPrice(eventDTO.getTicketPrice());
+        }
+        if (eventDTO.getCurrency() != null) {
+            existingEvent.setCurrency(eventDTO.getCurrency());
+        }
 
         Event updatedEvent = eventRepositoryPort.save(existingEvent);
         return eventMapper.toDTO(updatedEvent);
