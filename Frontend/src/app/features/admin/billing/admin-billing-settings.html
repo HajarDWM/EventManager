@@ -40,7 +40,7 @@
             <div class="col-md-6 mb-3 mb-md-0">
               <label class="form-label fw-semibold text-muted">Taux de TVA (%)</label>
               <div class="input-group">
-                <input type="number" step="0.1" class="form-control border-light shadow-sm bg-body-light" [(ngModel)]="vatRate" name="vatRate">
+                <input type="number" step="0.1" class="form-control border-light shadow-sm bg-body-light" [ngModel]="vatRate()" (ngModelChange)="vatRate.set($event)" name="vatRate">
                 <span class="input-group-text border-light bg-light">%</span>
               </div>
               <div class="form-text fs-xs text-muted">Appliqué par défaut sur toutes les prestations générées.</div>
@@ -48,7 +48,7 @@
             
             <div class="col-md-6">
               <label class="form-label fw-semibold text-muted">Devise Système</label>
-              <select class="form-select border-light shadow-sm bg-body-light" [(ngModel)]="currency" name="currency">
+              <select class="form-select border-light shadow-sm bg-body-light" [ngModel]="currency()" (ngModelChange)="onCurrencyChange($event)" name="currency">
                 <option value="CAD">CAD - Dollar Canadien ($)</option>
                 <option value="MAD">MAD - Dirham Marocain (DH)</option>
                 <option value="EUR">EUR - Euro (€)</option>
@@ -64,19 +64,19 @@
           <h5 class="fw-bold text-dark border-bottom pb-2 mb-3 mt-4"><i class="fa fa-tags me-2 text-success"></i> Tarification des abonnements SaaS</h5>
           <div class="row mb-4">
             <div class="col-md-6 mb-3 mb-md-0">
-              <label class="form-label fw-semibold text-muted">Abonnement STANDARD ({{ currency() }}/mois)</label>
+              <label class="form-label fw-semibold text-muted">Abonnement STANDARD ({{ currencySymbol() }}/mois)</label>
               <div class="input-group">
-                <input type="number" step="0.01" class="form-control border-light shadow-sm bg-body-light" [(ngModel)]="subscriptionPriceStandard" name="priceStandard">
-                <span class="input-group-text border-light bg-light">{{ currency() }}</span>
+                <input type="number" step="0.01" class="form-control border-light shadow-sm bg-body-light" [ngModel]="subscriptionPriceStandard()" (ngModelChange)="subscriptionPriceStandard.set($event)" name="priceStandard">
+                <span class="input-group-text border-light bg-light">{{ currencySymbol() }}</span>
               </div>
               <div class="form-text fs-xs text-muted">Prix mensuel pour le niveau intermédiaire.</div>
             </div>
             
             <div class="col-md-6">
-              <label class="form-label fw-semibold text-muted">Abonnement PREMIUM ({{ currency() }}/mois)</label>
+              <label class="form-label fw-semibold text-muted">Abonnement PREMIUM ({{ currencySymbol() }}/mois)</label>
               <div class="input-group">
-                <input type="number" step="0.01" class="form-control border-light shadow-sm bg-body-light" [(ngModel)]="subscriptionPricePremium" name="pricePremium">
-                <span class="input-group-text border-light bg-light">{{ currency() }}</span>
+                <input type="number" step="0.01" class="form-control border-light shadow-sm bg-body-light" [ngModel]="subscriptionPricePremium()" (ngModelChange)="subscriptionPricePremium.set($event)" name="pricePremium">
+                <span class="input-group-text border-light bg-light">{{ currencySymbol() }}</span>
               </div>
               <div class="form-text fs-xs text-muted">Prix mensuel pour le niveau entreprise / illimité.</div>
             </div>
@@ -88,7 +88,7 @@
             <div class="col-md-12">
               <label class="form-label fw-semibold text-muted">Durée de la Période de Grâce après échéance de facturation (Jours)</label>
               <div class="input-group">
-                <input type="number" min="1" max="30" class="form-control border-light shadow-sm bg-body-light" [(ngModel)]="gracePeriodDays" name="gracePeriodDays">
+                <input type="number" min="1" max="30" class="form-control border-light shadow-sm bg-body-light" [ngModel]="gracePeriodDays()" (ngModelChange)="gracePeriodDays.set($event)" name="gracePeriodDays">
                 <span class="input-group-text border-light bg-light">Jours (Max 10 jours recommandé)</span>
               </div>
               <div class="form-text fs-xs text-muted">Durant cette période après le dépassement de la date de facturation, le compte de l'organisateur reste actif normalement avec des notifications de rappel amicales avant suspension effective.</div>
@@ -100,7 +100,7 @@
           <div class="row mb-4">
             <div class="col-md-12">
               <label class="form-label fw-semibold text-muted">Adresse Email du support de facturation</label>
-              <input type="email" class="form-control border-light shadow-sm bg-body-light" placeholder="Ex: billing@eventmanager.com" [(ngModel)]="billingContactEmail" name="billingContactEmail">
+              <input type="email" class="form-control border-light shadow-sm bg-body-light" placeholder="Ex: billing@eventmanager.com" [ngModel]="billingContactEmail()" (ngModelChange)="billingContactEmail.set($event)" name="billingContactEmail">
               <div class="form-text fs-xs text-muted">Cette adresse est affichée aux organisateurs pour toute demande concernant leurs abonnements.</div>
             </div>
           </div>

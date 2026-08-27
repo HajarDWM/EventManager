@@ -23,7 +23,7 @@
       <div class="block block-rounded text-center shadow-sm border border-light h-100 d-flex flex-column justify-content-between bg-white">
         <div class="block-content block-content-full bg-body-light py-2.5 border-bottom border-light">
           <div class="h6 fw-bold text-uppercase text-muted mb-1">Pack Free</div>
-          <div class="h3 fw-bold text-dark mb-0">0 € <span class="fs-sm text-muted">/ mois</span></div>
+          <div class="h3 fw-bold text-dark mb-0">0 {{ currencySymbol() }} <span class="fs-sm text-muted">/ mois</span></div>
         </div>
         <div class="block-content py-2.5 text-start">
           <ul class="list-unstyled fs-sm mb-0">
@@ -93,7 +93,7 @@
         <div class="block-content block-content-full bg-primary-light py-2 border-bottom border-light">
           <span class="badge bg-primary text-white rounded-pill px-2.5 py-0.5 mb-1 fs-xs">Recommandé</span>
           <div class="h6 fw-bold text-uppercase text-primary mb-1">Pack Standard Pro</div>
-          <div class="h3 fw-bold text-dark mb-0">29.90 € <span class="fs-sm text-muted">/ mois</span></div>
+          <div class="h3 fw-bold text-dark mb-0">{{ standardPrice() }} {{ currencySymbol() }} <span class="fs-sm text-muted">/ mois</span></div>
         </div>
         <div class="block-content py-2.5 text-start">
           <ul class="list-unstyled fs-sm mb-0">
@@ -162,7 +162,7 @@
       <div class="block block-rounded text-center shadow-sm border border-light h-100 d-flex flex-column justify-content-between bg-white">
         <div class="block-content block-content-full bg-body-light py-2.5 border-bottom border-light">
           <div class="h6 fw-bold text-uppercase text-muted mb-1">Pack Premium VIP</div>
-          <div class="h3 fw-bold text-dark mb-0">59.90 € <span class="fs-sm text-muted">/ mois</span></div>
+          <div class="h3 fw-bold text-dark mb-0">{{ premiumPrice() }} {{ currencySymbol() }} <span class="fs-sm text-muted">/ mois</span></div>
         </div>
         <div class="block-content py-2.5 text-start">
           <ul class="list-unstyled fs-sm mb-0">
@@ -239,7 +239,7 @@
           <div class="text-center mb-4">
             <span class="fs-sm text-muted">Abonnement choisi</span>
             <h4 class="fw-bold text-dark mt-1 mb-2">{{ selectedPlanLabel() }}</h4>
-            <div class="h3 fw-bold text-primary mb-0">{{ selectedPlanPrice() }} € <span class="fs-xs text-muted">/ mois</span></div>
+            <div class="h3 fw-bold text-primary mb-0">{{ selectedPlanPrice() }} {{ currencySymbol() }} <span class="fs-xs text-muted">/ mois</span></div>
           </div>
           
           <form (ngSubmit)="confirmPayment()">

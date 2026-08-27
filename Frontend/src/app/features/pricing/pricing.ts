@@ -20,6 +20,12 @@ export class Pricing implements OnInit {
   protected readonly successMessage = signal('');
   protected readonly errorMessage = signal('');
 
+  // Dynamic Billing Settings
+  protected readonly currency = signal('EUR');
+  protected readonly currencySymbol = signal('€');
+  protected readonly standardPrice = signal(29.90);
+  protected readonly premiumPrice = signal(59.90);
+
   // Payment simulation state
   protected readonly showPaymentModal = signal(false);
   protected readonly selectedPlan = signal('');
@@ -32,6 +38,30 @@ export class Pricing implements OnInit {
 
   public ngOnInit(): void {
     this.loadProfile();
+    this.loadBillingSettings();
+  }
+
+  private loadBillingSettings(): void {
+    this.http.get<any>('/api/admin/billing-settings').subscribe({
+      next: (settings) => {
+        if (settings) {
+          this.currency.set(settings.currency || 'EUR');
+          this.standardPrice.set(settings.subscriptionPriceStandard ?? 29.90);
+          this.premiumPrice.set(settings.subscriptionPricePremium ?? 59.90);
+
+          switch (settings.currency) {
+            case 'EUR': this.currencySymbol.set('€'); break;
+            case 'USD': this.currencySymbol.set('$'); break;
+            case 'GBP': this.currencySymbol.set('£'); break;
+            case 'CAD': this.currencySymbol.set('$'); break;
+            case 'MAD': this.currencySymbol.set('DH'); break;
+            case 'CHF': this.currencySymbol.set('CHF'); break;
+            default: this.currencySymbol.set(settings.currency || '€'); break;
+          }
+        }
+      },
+      error: () => {} // Silent fallback to defaults
+    });
   }
 
   private loadProfile(): void {
@@ -71,10 +101,10 @@ export class Pricing implements OnInit {
     this.selectedPlan.set(plan);
     if (plan === 'STANDARD') {
       this.selectedPlanLabel.set('Pack Standard Pro');
-      this.selectedPlanPrice.set(29.90);
+      this.selectedPlanPrice.set(this.standardPrice());
     } else if (plan === 'PREMIUM') {
       this.selectedPlanLabel.set('Pack Premium VIP');
-      this.selectedPlanPrice.set(59.90);
+      this.selectedPlanPrice.set(this.premiumPrice());
     }
 
     this.isLoading.set(true);

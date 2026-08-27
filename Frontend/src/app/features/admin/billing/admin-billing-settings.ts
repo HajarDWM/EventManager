@@ -26,6 +26,25 @@ export class AdminBillingSettings implements OnInit {
   protected billingContactEmail = signal('billing@eventmanager.com');
   protected gracePeriodDays = signal(10);
 
+  // Default prices for each currency
+  protected readonly currencyPriceDefaults: Record<string, { standard: number; premium: number }> = {
+    EUR: { standard: 29.90, premium: 59.90 },
+    USD: { standard: 29.90, premium: 59.90 },
+    CAD: { standard: 39.90, premium: 79.90 },
+    MAD: { standard: 299.00, premium: 599.00 },
+    GBP: { standard: 24.90, premium: 49.90 },
+    CHF: { standard: 29.90, premium: 59.90 }
+  };
+
+  protected onCurrencyChange(newCurrency: string): void {
+    this.currency.set(newCurrency);
+    const defaults = this.currencyPriceDefaults[newCurrency];
+    if (defaults) {
+      this.subscriptionPriceStandard.set(defaults.standard);
+      this.subscriptionPricePremium.set(defaults.premium);
+    }
+  }
+
   // Preview States & Computeds
   protected readonly previewPlan = signal<'standard' | 'premium'>('standard');
 
