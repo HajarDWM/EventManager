@@ -2,6 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CatererService, CatererProfile } from '../../core/services/caterer.service';
+import { CurrencyService } from '../../core/services/currency.service';
 
 @Component({
   selector: 'app-profile',
@@ -11,11 +12,15 @@ import { CatererService, CatererProfile } from '../../core/services/caterer.serv
 })
 export class Profile implements OnInit {
   private readonly catererService = inject(CatererService);
+  protected readonly currencyService = inject(CurrencyService);
 
   // Profile Data
   protected readonly businessName = signal('');
   protected readonly email = signal('');
   protected readonly accountStatus = signal('ACTIVE');
+
+  // Currency Preferences
+  protected readonly selectedCurrency = signal('EUR');
 
   // Password Form Data
   protected readonly currentPassword = signal('');
@@ -35,6 +40,7 @@ export class Profile implements OnInit {
 
   public ngOnInit(): void {
     this.loadProfile();
+    this.selectedCurrency.set(this.currencyService.activeCurrency());
   }
 
   protected loadProfile(): void {
@@ -129,5 +135,18 @@ export class Profile implements OnInit {
         console.error(err);
       }
     });
+  }
+
+  protected onCurrencyChange(code: string): void {
+    this.selectedCurrency.set(code);
+    this.currencyService.setManualCurrency(code);
+    this.profileSuccessMessage.set(`Devise préférée mise à jour vers ${code}.`);
+  }
+
+  protected async onResetAutoDetection(): Promise<void> {
+    this.currencyService.resetToAutoDetection();
+    const detected = await this.currencyService.initCurrency();
+    this.selectedCurrency.set(detected);
+    this.profileSuccessMessage.set(`Détection automatique de la devise réactivée (${detected}).`);
   }
 }

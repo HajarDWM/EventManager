@@ -69,6 +69,32 @@
             </div>
           </div>
 
+          <!-- Currency Preference Section -->
+          <div class="mb-4 pt-3 border-top border-light">
+            <label class="form-label fs-sm fw-semibold d-flex justify-content-between align-items-center">
+              <span><i class="fa fa-globe text-primary me-1"></i> Devise d'affichage & facturation</span>
+              <span class="badge bg-info-light text-info fs-xs" *ngIf="currencyService.isAutoDetected()">
+                <i class="fa fa-map-marker-alt me-1"></i> Détectée par IP ({{ currencyService.detectedCountry() || 'Auto' }})
+              </span>
+              <span class="badge bg-secondary-light text-dark fs-xs" *ngIf="!currencyService.isAutoDetected()">
+                <i class="fa fa-user-cog me-1"></i> Manuel
+              </span>
+            </label>
+            <div class="input-group">
+              <select class="form-select fs-sm border-light shadow-sm" [ngModel]="selectedCurrency()" (ngModelChange)="onCurrencyChange($event)" name="selectedCurrency">
+                <option *ngFor="let curr of currencyService.supportedCurrencies" [value]="curr.code">
+                  {{ curr.label }}
+                </option>
+              </select>
+              <button type="button" class="btn btn-alt-secondary btn-sm" (click)="onResetAutoDetection()" title="Réinitialiser la détection automatique par localisation">
+                <i class="fa fa-sync-alt me-1"></i> Auto
+              </button>
+            </div>
+            <div class="form-text fs-xs text-muted">
+              Détectée automatiquement selon votre localisation IP ou modifiable manuellement à tout moment.
+            </div>
+          </div>
+
           <!-- Submit Button -->
           <div class="mb-4">
             <button type="submit" class="btn btn-primary fs-sm px-4" [disabled]="isSavingProfile()">

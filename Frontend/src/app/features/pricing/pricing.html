@@ -1,7 +1,21 @@
-<div class="d-flex flex-column justify-content-md-between py-2 text-center text-md-start">
-  <div class="flex-grow-1 mb-1 mb-md-0">
+<div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-2 text-center text-md-start">
+  <div class="flex-grow-1 mb-2 mb-md-0">
     <h1 class="h3 fw-bold mb-2">Choisissez votre forfait</h1>
     <h2 class="h6 fw-medium text-muted mb-0">Trouvez la formule idéale pour organiser vos prestations.</h2>
+  </div>
+  <!-- Currency Selector & Auto-Detection Badge -->
+  <div class="d-flex align-items-center justify-content-center gap-2">
+    <span class="badge bg-info-light text-info fs-xs" *ngIf="currencyService.isAutoDetected()">
+      <i class="fa fa-map-marker-alt me-1"></i> {{ currencyService.detectedCountry() || 'Auto-Détecté' }}
+    </span>
+    <div class="input-group input-group-sm" style="width: 220px;">
+      <span class="input-group-text bg-body-light border-light text-muted"><i class="fa fa-globe"></i></span>
+      <select class="form-select form-select-sm border-light shadow-sm" [ngModel]="currencyService.activeCurrency()" (ngModelChange)="onCurrencySelect($event)">
+        <option *ngFor="let curr of currencyService.supportedCurrencies" [value]="curr.code">
+          {{ curr.label }}
+        </option>
+      </select>
+    </div>
   </div>
 </div>
 

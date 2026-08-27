@@ -1,18 +1,21 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { CatererService } from '../../core/services/caterer.service';
+import { CurrencyService } from '../../core/services/currency.service';
 import { EventService } from '../events/services/event.service';
 import { HttpClient } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-subscription',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './subscription.html'
 })
 export class SubscriptionComponent implements OnInit {
   private readonly catererService = inject(CatererService);
+  protected readonly currencyService = inject(CurrencyService);
   private readonly eventService = inject(EventService);
   private readonly router = inject(Router);
   private readonly http = inject(HttpClient);
@@ -26,6 +29,11 @@ export class SubscriptionComponent implements OnInit {
   protected readonly isLoading = signal(false);
   protected readonly successMessage = signal('');
   protected readonly errorMessage = signal('');
+
+  // Dynamic Currency & Pricing via CurrencyService
+  protected readonly currencySymbol = computed(() => this.currencyService.activeSymbol());
+  protected readonly standardPrice = computed(() => this.currencyService.activePrices().standard);
+  protected readonly premiumPrice = computed(() => this.currencyService.activePrices().premium);
 
   // Usage statistics
   protected readonly eventsUsed = signal(0);
@@ -99,10 +107,10 @@ export class SubscriptionComponent implements OnInit {
     this.selectedPlan.set(plan);
     if (plan === 'STANDARD') {
       this.selectedPlanLabel.set('Pack Standard Pro');
-      this.selectedPlanPrice.set(29.90);
+      this.selectedPlanPrice.set(this.standardPrice());
     } else if (plan === 'PREMIUM') {
       this.selectedPlanLabel.set('Pack Premium VIP');
-      this.selectedPlanPrice.set(59.90);
+      this.selectedPlanPrice.set(this.premiumPrice());
     }
 
     this.isLoading.set(true);
@@ -183,5 +191,9 @@ export class SubscriptionComponent implements OnInit {
         this.errorMessage.set('Une erreur est survenue lors de l\'activation en Mode Test.');
       }
     });
+  }
+
+  protected onCurrencySelect(code: string): void {
+    this.currencyService.setManualCurrency(code);
   }
 }

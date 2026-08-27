@@ -1,17 +1,20 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { CatererService } from '../../core/services/caterer.service';
+import { CurrencyService } from '../../core/services/currency.service';
 import { HttpClient } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-pricing',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './pricing.html'
 })
 export class Pricing implements OnInit {
   private readonly catererService = inject(CatererService);
+  protected readonly currencyService = inject(CurrencyService);
   private readonly router = inject(Router);
   private readonly http = inject(HttpClient);
 
@@ -20,11 +23,10 @@ export class Pricing implements OnInit {
   protected readonly successMessage = signal('');
   protected readonly errorMessage = signal('');
 
-  // Dynamic Billing Settings
-  protected readonly currency = signal('EUR');
-  protected readonly currencySymbol = signal('€');
-  protected readonly standardPrice = signal(29.90);
-  protected readonly premiumPrice = signal(59.90);
+  // Dynamic Currency & Pricing via CurrencyService
+  protected readonly currencySymbol = computed(() => this.currencyService.activeSymbol());
+  protected readonly standardPrice = computed(() => this.currencyService.activePrices().standard);
+  protected readonly premiumPrice = computed(() => this.currencyService.activePrices().premium);
 
   // Payment simulation state
   protected readonly showPaymentModal = signal(false);
@@ -38,30 +40,10 @@ export class Pricing implements OnInit {
 
   public ngOnInit(): void {
     this.loadProfile();
-    this.loadBillingSettings();
   }
 
-  private loadBillingSettings(): void {
-    this.http.get<any>('/api/admin/billing-settings').subscribe({
-      next: (settings) => {
-        if (settings) {
-          this.currency.set(settings.currency || 'EUR');
-          this.standardPrice.set(settings.subscriptionPriceStandard ?? 29.90);
-          this.premiumPrice.set(settings.subscriptionPricePremium ?? 59.90);
-
-          switch (settings.currency) {
-            case 'EUR': this.currencySymbol.set('€'); break;
-            case 'USD': this.currencySymbol.set('$'); break;
-            case 'GBP': this.currencySymbol.set('£'); break;
-            case 'CAD': this.currencySymbol.set('$'); break;
-            case 'MAD': this.currencySymbol.set('DH'); break;
-            case 'CHF': this.currencySymbol.set('CHF'); break;
-            default: this.currencySymbol.set(settings.currency || '€'); break;
-          }
-        }
-      },
-      error: () => {} // Silent fallback to defaults
-    });
+  protected onCurrencySelect(code: string): void {
+    this.currencyService.setManualCurrency(code);
   }
 
   private loadProfile(): void {

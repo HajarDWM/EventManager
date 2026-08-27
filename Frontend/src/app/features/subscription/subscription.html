@@ -1,7 +1,21 @@
-<div class="d-flex flex-column justify-content-md-between py-2 text-center text-md-start">
-  <div class="flex-grow-1 mb-1 mb-md-0">
+<div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-2 text-center text-md-start">
+  <div class="flex-grow-1 mb-2 mb-md-0">
     <h1 class="h3 fw-bold mb-2">Abonnement</h1>
     <h2 class="h6 fw-medium text-muted mb-0">Suivez votre consommation de quota et gérez votre forfait.</h2>
+  </div>
+  <!-- Currency Selector & Auto-Detection Badge -->
+  <div class="d-flex align-items-center justify-content-center gap-2">
+    <span class="badge bg-info-light text-info fs-xs" *ngIf="currencyService.isAutoDetected()">
+      <i class="fa fa-map-marker-alt me-1"></i> {{ currencyService.detectedCountry() || 'Auto' }}
+    </span>
+    <div class="input-group input-group-sm" style="width: 220px;">
+      <span class="input-group-text bg-body-light border-light text-muted"><i class="fa fa-globe"></i></span>
+      <select class="form-select form-select-sm border-light shadow-sm" [ngModel]="currencyService.activeCurrency()" (ngModelChange)="onCurrencySelect($event)">
+        <option *ngFor="let curr of currencyService.supportedCurrencies" [value]="curr.code">
+          {{ curr.label }}
+        </option>
+      </select>
+    </div>
   </div>
 </div>
 
@@ -111,7 +125,7 @@
       <div class="block block-rounded text-center shadow-sm border border-light h-100 d-flex flex-column justify-content-between bg-white">
         <div class="block-content block-content-full bg-body-light py-2.5 border-bottom border-light">
           <div class="h6 fw-bold text-uppercase text-muted mb-1">Pack Free</div>
-          <div class="h3 fw-bold text-dark mb-0">0 € <span class="fs-sm text-muted">/ mois</span></div>
+          <div class="h3 fw-bold text-dark mb-0">0 {{ currencySymbol() }} <span class="fs-sm text-muted">/ mois</span></div>
         </div>
         <div class="block-content py-2.5 text-start">
           <ul class="list-unstyled fs-sm mb-0">
@@ -181,7 +195,7 @@
         <div class="block-content block-content-full bg-primary-light py-2 border-bottom border-light">
           <span class="badge bg-primary text-white rounded-pill px-2.5 py-0.5 mb-1 fs-xs">Recommandé</span>
           <div class="h6 fw-bold text-uppercase text-primary mb-1">Pack Standard Pro</div>
-          <div class="h3 fw-bold text-dark mb-0">29.90 € <span class="fs-sm text-muted">/ mois</span></div>
+          <div class="h3 fw-bold text-dark mb-0">{{ standardPrice() }} {{ currencySymbol() }} <span class="fs-sm text-muted">/ mois</span></div>
         </div>
         <div class="block-content py-2.5 text-start">
           <ul class="list-unstyled fs-sm mb-0">
@@ -250,7 +264,7 @@
       <div class="block block-rounded text-center shadow-sm border border-light h-100 d-flex flex-column justify-content-between bg-white">
         <div class="block-content block-content-full bg-body-light py-2.5 border-bottom border-light">
           <div class="h6 fw-bold text-uppercase text-muted mb-1">Pack Premium VIP</div>
-          <div class="h3 fw-bold text-dark mb-0">59.90 € <span class="fs-sm text-muted">/ mois</span></div>
+          <div class="h3 fw-bold text-dark mb-0">{{ premiumPrice() }} {{ currencySymbol() }} <span class="fs-sm text-muted">/ mois</span></div>
         </div>
         <div class="block-content py-2.5 text-start">
           <ul class="list-unstyled fs-sm mb-0">
@@ -337,7 +351,7 @@
           <div class="text-center mb-4">
             <span class="fs-sm text-muted">Abonnement choisi</span>
             <h4 class="fw-bold text-dark mt-1 mb-2">{{ selectedPlanLabel() }}</h4>
-            <div class="h3 fw-bold text-primary mb-0">{{ selectedPlanPrice() }} € <span class="fs-xs text-muted">/ mois</span></div>
+            <div class="h3 fw-bold text-primary mb-0">{{ selectedPlanPrice() }} {{ currencySymbol() }} <span class="fs-xs text-muted">/ mois</span></div>
           </div>
           
           <form (ngSubmit)="confirmPayment()">
