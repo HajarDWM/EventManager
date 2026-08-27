@@ -189,6 +189,38 @@
       </div>
     </div>
 
+    <!-- Grace Period Reminder Notification Banner -->
+    <div class="content p-3 pb-0" *ngIf="inGracePeriod() && !isSubscriptionExpired() && !isSuperAdmin()">
+      <div class="alert alert-warning d-flex align-items-center justify-content-between shadow-sm border border-warning-light mb-0" role="alert">
+        <div class="d-flex align-items-center gap-2">
+          <i class="fa fa-exclamation-circle text-warning fs-4 me-1"></i>
+          <div>
+            <span class="fw-semibold text-warning-dark">Rappel de paiement : Période de grâce active</span>
+            <span class="d-none d-sm-inline"> — Votre date de facturation est dépassée. Il vous reste <strong>{{ gracePeriodDaysRemaining() }} jour(s)</strong> de grâce pour régler votre abonnement. Votre compte reste actif pendant cette période.</span>
+          </div>
+        </div>
+        <a routerLink="/subscription" class="btn btn-sm btn-warning text-dark fw-bold rounded-pill ms-2">
+          <i class="fa fa-credit-card me-1"></i> Régler ma facture
+        </a>
+      </div>
+    </div>
+
+    <!-- Read-Only Restricted Access Banner (Expired Subscription) -->
+    <div class="content p-3 pb-0" *ngIf="isSubscriptionExpired() && !isSuperAdmin()">
+      <div class="alert alert-danger d-flex align-items-center justify-content-between shadow-sm border border-danger-light mb-0" role="alert">
+        <div class="d-flex align-items-center gap-2">
+          <i class="fa fa-lock text-danger fs-4 me-1"></i>
+          <div>
+            <span class="fw-semibold text-danger-dark">Abonnement Expiré (Mode Consultation Uniquement)</span>
+            <span class="d-none d-sm-inline"> — Votre période de grâce est écoulée. Vous pouvez consulter vos événements et statistiques passés, mais la création d'événements, l'édition et l'envoi d'invitations sont restreints.</span>
+          </div>
+        </div>
+        <a routerLink="/subscription" class="btn btn-sm btn-danger fw-bold rounded-pill ms-2">
+          <i class="fa fa-sync me-1"></i> Renouveler mon abonnement
+        </a>
+      </div>
+    </div>
+
     <div class="content">
       <router-outlet></router-outlet>
     </div>

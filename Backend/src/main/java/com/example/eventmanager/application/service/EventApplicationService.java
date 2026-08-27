@@ -55,6 +55,15 @@ public class EventApplicationService implements CreateEventUseCase, GetEventUseC
             if (caterer.getAccountStatus() == com.example.eventmanager.domain.model.CatererStatus.SUSPENDED) {
                 throw new UnauthorizedAccessException("Votre compte est suspendu. Veuillez renouveler ou mettre à niveau votre abonnement pour créer des événements.");
             }
+            if (!"FREE".equalsIgnoreCase(caterer.getSubscriptionPlan())) {
+                java.time.LocalDateTime endDate = caterer.getSubscriptionEndDate();
+                if (endDate != null && java.time.LocalDateTime.now().isAfter(endDate.plusDays(10))) {
+                    throw new UnauthorizedAccessException("Abonnement expiré — Mode consultation uniquement. Veuillez renouveler votre abonnement pour créer des événements.");
+                }
+                if ("EXPIRED".equalsIgnoreCase(caterer.getSubscriptionStatus())) {
+                    throw new UnauthorizedAccessException("Abonnement expiré — Mode consultation uniquement. Veuillez renouveler votre abonnement pour créer des événements.");
+                }
+            }
             String plan = caterer.getSubscriptionPlan();
             int limit = switch (plan != null ? plan.toUpperCase() : "FREE") {
                 case "STANDARD", "STANDARD_PRO", "STANDARD PRO" -> 8;

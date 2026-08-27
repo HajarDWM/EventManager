@@ -82,6 +82,19 @@
             </div>
           </div>
           
+          <!-- Section Période de Grâce & Suspension -->
+          <h5 class="fw-bold text-dark border-bottom pb-2 mb-3 mt-4"><i class="fa fa-clock me-2 text-info"></i> Période de Grâce & Suspension</h5>
+          <div class="row mb-4">
+            <div class="col-md-12">
+              <label class="form-label fw-semibold text-muted">Durée de la Période de Grâce après échéance de facturation (Jours)</label>
+              <div class="input-group">
+                <input type="number" min="1" max="30" class="form-control border-light shadow-sm bg-body-light" [(ngModel)]="gracePeriodDays" name="gracePeriodDays">
+                <span class="input-group-text border-light bg-light">Jours (Max 10 jours recommandé)</span>
+              </div>
+              <div class="form-text fs-xs text-muted">Durant cette période après le dépassement de la date de facturation, le compte de l'organisateur reste actif normalement avec des notifications de rappel amicales avant suspension effective.</div>
+            </div>
+          </div>
+
           <!-- Section Support Facturation -->
           <h5 class="fw-bold text-dark border-bottom pb-2 mb-3 mt-4"><i class="fa fa-envelope me-2 text-warning"></i> Contact Facturation</h5>
           <div class="row mb-4">

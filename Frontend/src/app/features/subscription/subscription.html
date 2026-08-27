@@ -32,6 +32,21 @@
     </div>
   </div>
 
+  <!-- Grace Period Alert Banner -->
+  <div class="alert alert-warning d-flex flex-column flex-sm-row align-items-sm-center justify-content-between p-3 mb-3 rounded shadow-sm border-0 bg-warning-light text-warning-dark animate__animated animate__fadeIn" role="alert" *ngIf="inGracePeriod() && !isSubscriptionExpired()">
+    <div class="d-flex align-items-center gap-3 mb-2 mb-sm-0">
+      <div class="item item-circle bg-warning text-white fs-base">
+        <i class="fa fa-clock"></i>
+      </div>
+      <div>
+        <h4 class="alert-heading fs-sm fw-bold mb-1 text-warning-dark">Rappel de paiement — Période de grâce active</h4>
+        <p class="fs-sm fw-medium mb-0">
+          Votre date de facturation est dépassée. Vous bénéficiez d'une période de grâce de <strong>{{ gracePeriodDaysRemaining() }} jour(s)</strong> pour régulariser votre abonnement. Vos fonctionnalités restent toutes actives pendant cette période.
+        </p>
+      </div>
+    </div>
+  </div>
+
   <!-- Summary Dashboard Block (Compacted) -->
   <div class="block block-rounded shadow-sm border border-light bg-white mb-3">
     <div class="block-header block-header-default bg-body-light border-bottom border-light py-1.5 px-3">

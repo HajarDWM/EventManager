@@ -18,4 +18,5 @@ public class BillingSettingDTO {
     private Double subscriptionPriceStandard;
     private Double subscriptionPricePremium;
     private String billingContactEmail;
+    private Integer gracePeriodDays;
 }

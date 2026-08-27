@@ -31,6 +31,26 @@
   </div>
 </div>
 
+<!-- Grace Period Friendly Reminder Banner -->
+<div class="alert alert-warning d-flex flex-column flex-sm-row align-items-sm-center justify-content-between p-3 mt-3 mb-2 rounded shadow-sm border-0 bg-warning-light text-warning-dark" role="alert" *ngIf="inGracePeriod() && !isSubscriptionExpired()">
+  <div class="d-flex align-items-center gap-3 mb-2 mb-sm-0">
+    <div class="item item-circle bg-warning text-white fs-base">
+      <i class="fa fa-clock"></i>
+    </div>
+    <div>
+      <h4 class="alert-heading fs-sm fw-bold mb-1 text-warning-dark">Rappel de paiement — Période de Grâce Active</h4>
+      <p class="fs-sm fw-medium mb-0">
+        Votre date de facturation est dépassée. Vous disposez de <strong>{{ gracePeriodDaysRemaining() }} jour(s)</strong> de grâce pour effectuer le règlement. Vos fonctionnalités restent entièrement actives pendant cette période.
+      </p>
+    </div>
+  </div>
+  <div>
+    <a class="btn btn-warning text-dark btn-sm px-3 py-1.5 fw-bold w-100" routerLink="/subscription">
+      <i class="fa fa-credit-card me-1"></i> Régler ma facture
+    </a>
+  </div>
+</div>
+
 <!-- Stats Cards -->
 <div class="row items-push mt-3">
   <!-- Planned Events -->

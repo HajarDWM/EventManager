@@ -38,7 +38,7 @@ export class Login {
         this.catererService.getCurrentProfile().subscribe({
           next: (profile) => {
             this.isLoading.set(false);
-            const isSuspended = profile && (profile.accountStatus === 'SUSPENDED' || profile.subscriptionStatus === 'EXPIRED');
+            const isSuspended = profile && profile.accountStatus === 'SUSPENDED';
             if (profile && profile.role === 'SUPER_ADMIN') {
               this.router.navigate(['/admin/caterers']);
             } else if (isSuspended) {

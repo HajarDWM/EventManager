@@ -7,6 +7,7 @@ import { EventService } from '../../services/event.service';
 import { Event } from '../../models/event.model';
 import { forkJoin } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+import { CatererService } from '../../../../core/services/caterer.service';
 
 @Component({
   selector: 'app-guest-list',
@@ -19,6 +20,7 @@ export class GuestList implements OnInit {
   private readonly router = inject(Router);
   private readonly guestService = inject(GuestService);
   private readonly eventService = inject(EventService);
+  private readonly catererService = inject(CatererService);
   private readonly http = inject(HttpClient);
 
   protected readonly eventId = signal<number | null>(null);
@@ -28,6 +30,12 @@ export class GuestList implements OnInit {
   protected readonly isLoading = signal(true);
   protected readonly errorMessage = signal('');
   protected readonly successMessage = signal('');
+
+  protected readonly isSubscriptionExpired = computed(() => {
+    const profile = this.catererService.currentProfile();
+    if (profile && profile.role === 'SUPER_ADMIN') return false;
+    return profile && (!!profile.isExpired || !!profile.expired || profile.subscriptionStatus === 'EXPIRED');
+  });
 
   // Modal / Form state
   protected readonly isModalOpen = signal(false);
@@ -129,6 +137,10 @@ export class GuestList implements OnInit {
   }
 
   protected openAddModal(): void {
+    if (this.isSubscriptionExpired()) {
+      this.errorMessage.set("Abonnement expiré — Mode consultation uniquement. Veuillez renouveler votre abonnement pour ajouter de nouveaux invités.");
+      return;
+    }
     this.isEditing.set(false);
     this.editingGuestId.set(null);
     this.fullName.set('');
@@ -142,6 +154,10 @@ export class GuestList implements OnInit {
   }
 
   protected openEditModal(guest: Guest): void {
+    if (this.isSubscriptionExpired()) {
+      this.errorMessage.set("Abonnement expiré — Mode consultation uniquement. Veuillez renouveler votre abonnement pour modifier des invités.");
+      return;
+    }
     this.isEditing.set(true);
     this.editingGuestId.set(guest.id || null);
     this.fullName.set(guest.fullName || '');

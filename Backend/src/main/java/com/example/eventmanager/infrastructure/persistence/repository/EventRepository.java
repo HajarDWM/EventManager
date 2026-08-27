@@ -14,5 +14,6 @@ public interface EventRepository extends JpaRepository<EventEntity, Long> {
     List<EventEntity> findByArchivedFalse();
     Optional<EventEntity> findByIdAndArchivedFalse(Long id);
     long countByCatererId(Long catererId);
+    long countByCatererIdAndArchivedFalse(Long catererId);
     long countByCatererIdAndCreatedAtAfter(Long catererId, java.time.LocalDateTime createdAt);
 }

@@ -21,7 +21,8 @@ export const authGuard: CanActivateFn = (route, state) => {
   const isAllowedForSuspended = targetUrl.includes('/subscription') || targetUrl.includes('/profile');
 
   if (cachedProfile) {
-    const isSuspended = cachedProfile.accountStatus === 'SUSPENDED' || cachedProfile.subscriptionStatus === 'EXPIRED';
+    // Expiration does not block app navigation; user remains logged in in Read-Only / Restricted mode
+    const isSuspended = cachedProfile.accountStatus === 'SUSPENDED';
     if (isSuspended) {
       if (isAllowedForSuspended) {
         return true;
@@ -34,7 +35,7 @@ export const authGuard: CanActivateFn = (route, state) => {
 
   return catererService.getCurrentProfile().pipe(
     map(profile => {
-      const isSuspended = profile && (profile.accountStatus === 'SUSPENDED' || profile.subscriptionStatus === 'EXPIRED');
+      const isSuspended = profile && profile.accountStatus === 'SUSPENDED';
       if (isSuspended) {
         if (isAllowedForSuspended) {
           return true;

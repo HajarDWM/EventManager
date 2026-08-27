@@ -25,6 +25,7 @@ export interface BillingSettings {
   subscriptionPriceStandard: number;
   subscriptionPricePremium: number;
   billingContactEmail: string;
+  gracePeriodDays?: number;
 }
 
 @Injectable({

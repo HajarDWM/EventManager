@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MenuItemService, MenuItem } from '../../../../core/services/menu-item.service';
 import { EventService } from '../../services/event.service';
+import { CatererService } from '../../../../core/services/caterer.service';
 import { Event } from '../../models/event.model';
 
 @Component({
@@ -16,6 +17,7 @@ export class MenuList implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly menuItemService = inject(MenuItemService);
   private readonly eventService = inject(EventService);
+  private readonly catererService = inject(CatererService);
 
   protected readonly eventId = signal<number | null>(null);
   protected readonly event = signal<Event | null>(null);
@@ -27,6 +29,12 @@ export class MenuList implements OnInit {
   protected readonly isSaving = signal<boolean>(false);
   protected readonly successMessage = signal<string>('');
   protected readonly errorMessage = signal<string>('');
+
+  protected readonly isSubscriptionExpired = computed(() => {
+    const profile = this.catererService.currentProfile();
+    if (profile && profile.role === 'SUPER_ADMIN') return false;
+    return profile && (!!profile.isExpired || !!profile.expired || profile.subscriptionStatus === 'EXPIRED');
+  });
 
   // Category Filter
   protected readonly selectedCategory = signal<string>('ALL');
@@ -296,6 +304,10 @@ export class MenuList implements OnInit {
   }
 
   protected openAddModal(section?: 'BUFFET' | 'ASSIS'): void {
+    if (this.isSubscriptionExpired()) {
+      this.errorMessage.set("Abonnement expiré — Mode consultation uniquement. Veuillez renouveler votre abonnement pour ajouter des plats au menu.");
+      return;
+    }
     this.isEditing.set(false);
     this.editingItemId.set(null);
     this.name.set('');
@@ -360,6 +372,10 @@ export class MenuList implements OnInit {
   }
 
   protected openEditModal(item: MenuItem): void {
+    if (this.isSubscriptionExpired()) {
+      this.errorMessage.set("Abonnement expiré — Mode consultation uniquement. Veuillez renouveler votre abonnement pour modifier des plats.");
+      return;
+    }
     this.isEditing.set(true);
     this.editingItemId.set(item.id || null);
     this.name.set(item.name || '');

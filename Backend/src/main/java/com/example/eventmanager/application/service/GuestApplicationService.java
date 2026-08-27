@@ -33,6 +33,7 @@ public class GuestApplicationService implements CreateGuestUseCase, GetGuestsByE
 
     private final GuestRepositoryPort guestRepositoryPort;
     private final EventRepositoryPort eventRepositoryPort;
+    private final com.example.eventmanager.application.port.out.CatererRepositoryPort catererRepositoryPort;
     private final GuestMapper guestMapper;
     private final SecurityContextPort securityContextPort;
 
@@ -43,6 +44,28 @@ public class GuestApplicationService implements CreateGuestUseCase, GetGuestsByE
 
         if (event.getCatererId() != null && !event.getCatererId().equals(currentCatererId)) {
             throw new RuntimeException("Accès non autorisé à cet événement");
+        }
+    }
+
+    private void verifyActiveSubscription() {
+        Long currentCatererId = securityContextPort.getCurrentCatererId();
+        com.example.eventmanager.domain.model.Caterer caterer = catererRepositoryPort.findById(currentCatererId).orElse(null);
+        if (caterer != null && caterer.getRole() != com.example.eventmanager.domain.model.CatererRole.SUPER_ADMIN) {
+            java.time.LocalDateTime now = java.time.LocalDateTime.now();
+            boolean isExpired = false;
+            if (!"FREE".equalsIgnoreCase(caterer.getSubscriptionPlan())) {
+                java.time.LocalDateTime endDate = caterer.getSubscriptionEndDate();
+                if (endDate != null && now.isAfter(endDate.plusDays(10))) {
+                    isExpired = true;
+                } else if ("EXPIRED".equalsIgnoreCase(caterer.getSubscriptionStatus())) {
+                    isExpired = true;
+                }
+            }
+            if (isExpired) {
+                throw new com.example.eventmanager.domain.exception.UnauthorizedAccessException(
+                    "Abonnement expiré — Mode consultation uniquement. L'ajout d'invités et l'envoi d'invitations sont restreints. Veuillez renouveler votre abonnement."
+                );
+            }
         }
     }
 
@@ -59,6 +82,7 @@ public class GuestApplicationService implements CreateGuestUseCase, GetGuestsByE
     @Transactional
     public GuestDTO createGuest(Long eventId, GuestDTO guestDTO) {
         verifyEventOwnership(eventId);
+        verifyActiveSubscription();
         guestDTO.setEventId(eventId);
         Guest guestToSave = guestMapper.toDomain(guestDTO);
         Guest saved = guestRepositoryPort.save(guestToSave);
@@ -81,6 +105,7 @@ public class GuestApplicationService implements CreateGuestUseCase, GetGuestsByE
         Guest existing = guestRepositoryPort.findById(guestId)
                 .orElseThrow(() -> new RuntimeException("Invité introuvable avec l'id: " + guestId));
         verifyEventOwnership(existing.getEventId());
+        verifyActiveSubscription();
 
         existing.updateDetails(
                 guestDTO.getFullName(),
@@ -116,6 +141,7 @@ public class GuestApplicationService implements CreateGuestUseCase, GetGuestsByE
                 .orElseThrow(() -> new RuntimeException("Invité introuvable avec l'id: " + guestId));
         Long eventId = existing.getEventId();
         verifyEventOwnership(eventId);
+        verifyActiveSubscription();
 
         guestRepositoryPort.deleteById(guestId);
         syncEventGuestCount(eventId);
@@ -125,6 +151,7 @@ public class GuestApplicationService implements CreateGuestUseCase, GetGuestsByE
     @Transactional
     public List<GuestDTO> importGuests(Long eventId, InputStream fileInputStream, String filename) {
         verifyEventOwnership(eventId);
+        verifyActiveSubscription();
         List<GuestDTO> parsedGuests = new ArrayList<>();
         try {
             if (filename != null && filename.toLowerCase().endsWith(".xlsx")) {

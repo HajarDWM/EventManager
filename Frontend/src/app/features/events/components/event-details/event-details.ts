@@ -6,6 +6,7 @@ import { Event } from '../../models/event.model';
 import { GuestService, Guest } from '../../../../core/services/guest.service';
 import { BillingService, PaymentDTO } from '../../../../core/services/billing.service';
 import { MenuItemService, MenuItem } from '../../../../core/services/menu-item.service';
+import { CatererService } from '../../../../core/services/caterer.service';
 
 @Component({
   selector: 'app-event-details',
@@ -18,6 +19,7 @@ export class EventDetails implements OnInit {
   private readonly guestService = inject(GuestService);
   private readonly billingService = inject(BillingService);
   private readonly menuItemService = inject(MenuItemService);
+  private readonly catererService = inject(CatererService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
 
@@ -30,6 +32,12 @@ export class EventDetails implements OnInit {
 
   protected readonly isLoading = signal(true);
   protected readonly errorMessage = signal('');
+
+  protected readonly isSubscriptionExpired = computed(() => {
+    const profile = this.catererService.currentProfile();
+    if (profile && profile.role === 'SUPER_ADMIN') return false;
+    return profile && (!!profile.isExpired || !!profile.expired || profile.subscriptionStatus === 'EXPIRED');
+  });
 
   // Computed KPIs & stats for the Mini-Dashboard
   protected readonly confirmedGuestsCount = computed(() => 

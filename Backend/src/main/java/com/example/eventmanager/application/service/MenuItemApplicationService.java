@@ -27,6 +27,7 @@ public class MenuItemApplicationService implements CreateMenuItemUseCase, GetMen
 
     private final MenuItemRepositoryPort menuItemRepositoryPort;
     private final EventRepositoryPort eventRepositoryPort;
+    private final com.example.eventmanager.application.port.out.CatererRepositoryPort catererRepositoryPort;
     private final MenuItemMapper menuItemMapper;
     private final SecurityContextPort securityContextPort;
 
@@ -40,10 +41,33 @@ public class MenuItemApplicationService implements CreateMenuItemUseCase, GetMen
         }
     }
 
+    private void verifyActiveSubscription() {
+        Long currentCatererId = securityContextPort.getCurrentCatererId();
+        com.example.eventmanager.domain.model.Caterer caterer = catererRepositoryPort.findById(currentCatererId).orElse(null);
+        if (caterer != null && caterer.getRole() != com.example.eventmanager.domain.model.CatererRole.SUPER_ADMIN) {
+            java.time.LocalDateTime now = java.time.LocalDateTime.now();
+            boolean isExpired = false;
+            if (!"FREE".equalsIgnoreCase(caterer.getSubscriptionPlan())) {
+                java.time.LocalDateTime endDate = caterer.getSubscriptionEndDate();
+                if (endDate != null && now.isAfter(endDate.plusDays(10))) {
+                    isExpired = true;
+                } else if ("EXPIRED".equalsIgnoreCase(caterer.getSubscriptionStatus())) {
+                    isExpired = true;
+                }
+            }
+            if (isExpired) {
+                throw new UnauthorizedAccessException(
+                    "Abonnement expiré — Mode consultation uniquement. La modification des plats est restreinte. Veuillez renouveler votre abonnement."
+                );
+            }
+        }
+    }
+
     @Override
     @Transactional
     public MenuItemDTO createMenuItem(Long eventId, MenuItemDTO menuItemDTO) {
         verifyEventOwnership(eventId);
+        verifyActiveSubscription();
         menuItemDTO.setEventId(eventId);
         MenuItem menuItem = menuItemMapper.toDomain(menuItemDTO);
         MenuItem saved = menuItemRepositoryPort.save(menuItem);
@@ -74,6 +98,7 @@ public class MenuItemApplicationService implements CreateMenuItemUseCase, GetMen
         MenuItem existing = menuItemRepositoryPort.findById(id)
                 .orElseThrow(() -> new RuntimeException("Plat du menu introuvable avec l'id: " + id));
         verifyEventOwnership(existing.getEventId());
+        verifyActiveSubscription();
 
         MenuItemCategory categoryEnum = MenuItemCategory.STARTER;
         if (menuItemDTO.getCategory() != null) {
@@ -101,6 +126,7 @@ public class MenuItemApplicationService implements CreateMenuItemUseCase, GetMen
         MenuItem existing = menuItemRepositoryPort.findById(id)
                 .orElseThrow(() -> new RuntimeException("Plat du menu introuvable avec l'id: " + id));
         verifyEventOwnership(existing.getEventId());
+        verifyActiveSubscription();
 
         menuItemRepositoryPort.deleteById(id);
     }

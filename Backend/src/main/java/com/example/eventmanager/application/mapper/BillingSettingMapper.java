@@ -18,6 +18,7 @@ public class BillingSettingMapper {
                 .subscriptionPriceStandard(domain.getSubscriptionPriceStandard())
                 .subscriptionPricePremium(domain.getSubscriptionPricePremium())
                 .billingContactEmail(domain.getBillingContactEmail())
+                .gracePeriodDays(domain.getGracePeriodDays() != null ? domain.getGracePeriodDays() : 10)
                 .build();
     }
 
@@ -32,6 +33,7 @@ public class BillingSettingMapper {
                 .subscriptionPriceStandard(dto.getSubscriptionPriceStandard())
                 .subscriptionPricePremium(dto.getSubscriptionPricePremium())
                 .billingContactEmail(dto.getBillingContactEmail())
+                .gracePeriodDays(dto.getGracePeriodDays() != null ? dto.getGracePeriodDays() : 10)
                 .build();
     }
 }

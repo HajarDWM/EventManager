@@ -17,6 +17,8 @@ export interface CatererProfile {
   eventLimit?: number;
   expired?: boolean;
   isExpired?: boolean;
+  inGracePeriod?: boolean;
+  gracePeriodDaysRemaining?: number;
 }
 
 export interface ChangePasswordRequest {

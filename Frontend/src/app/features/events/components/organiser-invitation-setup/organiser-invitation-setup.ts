@@ -5,6 +5,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { EventService } from '../../services/event.service';
 import { TemplateService, DigitalTemplate } from '../../../../core/services/template.service';
 import { GuestService, Guest } from '../../../../core/services/guest.service';
+import { CatererService } from '../../../../core/services/caterer.service';
 import { Event } from '../../models/event.model';
 import { 
   TEMPLATE_TAXONOMY, 
@@ -26,10 +27,17 @@ export class OrganiserInvitationSetup implements OnInit {
   private readonly eventService = inject(EventService);
   private readonly templateService = inject(TemplateService);
   private readonly guestService = inject(GuestService);
+  private readonly catererService = inject(CatererService);
 
   protected readonly event = signal<Event | null>(null);
   protected readonly templates = signal<DigitalTemplate[]>([]);
   protected readonly guests = signal<Guest[]>([]);
+
+  protected readonly isSubscriptionExpired = computed(() => {
+    const profile = this.catererService.currentProfile();
+    if (profile && profile.role === 'SUPER_ADMIN') return false;
+    return profile && (!!profile.isExpired || !!profile.expired || profile.subscriptionStatus === 'EXPIRED');
+  });
   protected readonly selectedGuestIds = signal<Record<number, boolean>>({});
   protected readonly channelWhatsapp = signal(true);
   protected readonly channelEmail = signal(true);
@@ -232,6 +240,10 @@ export class OrganiserInvitationSetup implements OnInit {
   }
 
   protected selectTemplate(template: DigitalTemplate): void {
+    if (this.isSubscriptionExpired()) {
+      this.errorMessage.set("Abonnement expiré — Mode consultation uniquement. La modification du modèle est restreinte. Veuillez renouveler votre abonnement.");
+      return;
+    }
     this.selectedTemplate.set(template);
     
     // Auto fill defaults corresponding to the chosen celebration
@@ -356,6 +368,11 @@ export class OrganiserInvitationSetup implements OnInit {
   }
 
   protected sendInvitations(): void {
+    if (this.isSubscriptionExpired()) {
+      this.errorMessage.set("Abonnement expiré — Mode consultation uniquement. L'envoi d'invitations est restreint. Veuillez renouveler votre abonnement.");
+      setTimeout(() => this.errorMessage.set(''), 4000);
+      return;
+    }
     const selectedCount = this.getSelectedCount();
     if (selectedCount === 0) {
       this.errorMessage.set('Veuillez sélectionner au moins un invité à qui envoyer l\'invitation.');

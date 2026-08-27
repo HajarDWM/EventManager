@@ -44,4 +44,8 @@ public class BillingSettingEntity {
     @Builder.Default
     @Column(name = "billing_contact_email", nullable = false)
     private String billingContactEmail = "billing@eventmanager.com";
+
+    @Builder.Default
+    @Column(name = "grace_period_days", nullable = false)
+    private Integer gracePeriodDays = 10;
 }

@@ -26,6 +26,9 @@ export class Layout implements OnInit {
   protected readonly userEmail = signal('');
   protected readonly isSuperAdmin = signal(false);
   protected readonly isPending = signal(false);
+  protected readonly inGracePeriod = signal(false);
+  protected readonly gracePeriodDaysRemaining = signal(0);
+  protected readonly isSubscriptionExpired = signal(false);
 
   public ngOnInit(): void {
     this.loadCatererProfile();
@@ -39,6 +42,9 @@ export class Layout implements OnInit {
           this.userEmail.set(profile.email || '');
           this.isSuperAdmin.set(profile.role === 'SUPER_ADMIN');
           this.isPending.set(profile.accountStatus === 'PENDING');
+          this.inGracePeriod.set(!!profile.inGracePeriod);
+          this.gracePeriodDaysRemaining.set(profile.gracePeriodDaysRemaining || 0);
+          this.isSubscriptionExpired.set(!!profile.isExpired || !!profile.expired);
         }
       },
       error: (err) => {

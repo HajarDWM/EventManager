@@ -21,6 +21,8 @@ export class SubscriptionComponent implements OnInit {
   protected readonly subscriptionStatus = signal('INACTIF');
   protected readonly subscriptionEndDate = signal<string | null>(null);
   protected readonly isSubscriptionExpired = signal<boolean>(false);
+  protected readonly inGracePeriod = signal<boolean>(false);
+  protected readonly gracePeriodDaysRemaining = signal<number>(0);
   protected readonly isLoading = signal(false);
   protected readonly successMessage = signal('');
   protected readonly errorMessage = signal('');
@@ -51,6 +53,8 @@ export class SubscriptionComponent implements OnInit {
         this.subscriptionStatus.set(profile.subscriptionStatus || 'INACTIF');
         this.subscriptionEndDate.set(profile.subscriptionEndDate || null);
         this.isSubscriptionExpired.set(!!profile.isExpired || !!profile.expired);
+        this.inGracePeriod.set(!!profile.inGracePeriod);
+        this.gracePeriodDaysRemaining.set(profile.gracePeriodDaysRemaining || 0);
         this.catererId = profile.id;
         
         const limit = profile.eventLimit || 2;

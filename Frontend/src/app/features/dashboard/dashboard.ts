@@ -23,6 +23,8 @@ export class Dashboard implements OnInit {
   protected readonly isLoading = signal<boolean>(true);
 
   protected readonly isSubscriptionExpired = signal<boolean>(false);
+  protected readonly inGracePeriod = signal<boolean>(false);
+  protected readonly gracePeriodDaysRemaining = signal<number>(0);
 
   public ngOnInit(): void {
     const cachedProfile = this.catererService.currentProfile();
@@ -32,6 +34,8 @@ export class Dashboard implements OnInit {
         return;
       }
       this.isSubscriptionExpired.set(!!cachedProfile.isExpired || !!cachedProfile.expired);
+      this.inGracePeriod.set(!!cachedProfile.inGracePeriod);
+      this.gracePeriodDaysRemaining.set(cachedProfile.gracePeriodDaysRemaining || 0);
       this.loadMetrics();
     } else {
       this.catererService.getCurrentProfile().subscribe({
@@ -40,6 +44,8 @@ export class Dashboard implements OnInit {
             this.router.navigate(['/admin/dashboard']);
           } else {
             this.isSubscriptionExpired.set(!!profile.isExpired || !!profile.expired);
+            this.inGracePeriod.set(!!profile.inGracePeriod);
+            this.gracePeriodDaysRemaining.set(profile.gracePeriodDaysRemaining || 0);
             this.loadMetrics();
           }
         },

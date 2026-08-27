@@ -25,7 +25,13 @@ export class EventList implements OnInit {
 
   protected readonly isSuspended = computed(() => {
     const profile = this.catererService.currentProfile();
-    return profile && (profile.accountStatus === 'SUSPENDED' || profile.subscriptionStatus === 'EXPIRED');
+    return profile && profile.accountStatus === 'SUSPENDED';
+  });
+
+  protected readonly isSubscriptionExpired = computed(() => {
+    const profile = this.catererService.currentProfile();
+    if (profile && profile.role === 'SUPER_ADMIN') return false;
+    return profile && (!!profile.isExpired || !!profile.expired || profile.subscriptionStatus === 'EXPIRED');
   });
 
   // Feature toggle flag for modularity (can easily be set to false to completely turn off this feature)

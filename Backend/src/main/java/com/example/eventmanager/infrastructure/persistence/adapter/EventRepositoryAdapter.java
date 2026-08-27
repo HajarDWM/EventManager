@@ -51,7 +51,7 @@ public class EventRepositoryAdapter implements EventRepositoryPort {
 
     @Override
     public long countByCatererId(Long catererId) {
-        return eventRepository.countByCatererId(catererId);
+        return eventRepository.countByCatererIdAndArchivedFalse(catererId);
     }
 
     @Override

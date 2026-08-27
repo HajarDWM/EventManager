@@ -37,11 +37,17 @@ public class CatererDTO {
 
     private Integer eventCount;
 
+    private Integer totalEventsCount;
+
     private Integer eventLimit;
 
     private Long subscriptionRemainingDays;
 
     private Boolean expired;
+
+    private Boolean inGracePeriod;
+
+    private Long gracePeriodDaysRemaining;
 
     public Boolean getIsExpired() {
         return this.expired != null && this.expired;

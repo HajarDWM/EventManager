@@ -24,6 +24,7 @@ export class AdminBillingSettings implements OnInit {
   protected subscriptionPriceStandard = signal(29.90);
   protected subscriptionPricePremium = signal(59.90);
   protected billingContactEmail = signal('billing@eventmanager.com');
+  protected gracePeriodDays = signal(10);
 
   // Preview States & Computeds
   protected readonly previewPlan = signal<'standard' | 'premium'>('standard');
@@ -86,6 +87,7 @@ export class AdminBillingSettings implements OnInit {
           this.subscriptionPriceStandard.set(res.subscriptionPriceStandard);
           this.subscriptionPricePremium.set(res.subscriptionPricePremium);
           this.billingContactEmail.set(res.billingContactEmail);
+          this.gracePeriodDays.set(res.gracePeriodDays ?? 10);
         }
         this.isLoading.set(false);
       },
@@ -98,8 +100,8 @@ export class AdminBillingSettings implements OnInit {
   }
 
   protected saveSettings(): void {
-    if (this.vatRate() < 0 || this.subscriptionPriceStandard() < 0 || this.subscriptionPricePremium() < 0) {
-      this.errorMessage.set('Les taux et tarifs ne peuvent pas être négatifs.');
+    if (this.vatRate() < 0 || this.subscriptionPriceStandard() < 0 || this.subscriptionPricePremium() < 0 || this.gracePeriodDays() < 0) {
+      this.errorMessage.set('Les taux, tarifs et jours de grâce ne peuvent pas être négatifs.');
       return;
     }
 
@@ -113,7 +115,8 @@ export class AdminBillingSettings implements OnInit {
       currency: this.currency(),
       subscriptionPriceStandard: this.subscriptionPriceStandard(),
       subscriptionPricePremium: this.subscriptionPricePremium(),
-      billingContactEmail: this.billingContactEmail()
+      billingContactEmail: this.billingContactEmail(),
+      gracePeriodDays: this.gracePeriodDays()
     };
 
     this.isSaving.set(true);
@@ -130,6 +133,7 @@ export class AdminBillingSettings implements OnInit {
           this.subscriptionPriceStandard.set(updated.subscriptionPriceStandard);
           this.subscriptionPricePremium.set(updated.subscriptionPricePremium);
           this.billingContactEmail.set(updated.billingContactEmail);
+          this.gracePeriodDays.set(updated.gracePeriodDays ?? 10);
         }
       },
       error: (err) => {

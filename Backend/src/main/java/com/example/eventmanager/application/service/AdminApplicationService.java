@@ -84,6 +84,8 @@ public class AdminApplicationService implements AdminCatererUseCase, AdminStatsU
                         }
                     }
                     
+                    long totalCount = eventRepositoryPort.countByCatererId(c.getId());
+                    dto.setTotalEventsCount((int) totalCount);
                     dto.setEventCount((int) count);
                     dto.setEventLimit(getEventLimitForPlan(c.getSubscriptionPlan()));
                     dto.setSubscriptionRemainingDays(getRemainingDays(c.getSubscriptionEndDate()));
@@ -133,6 +135,8 @@ public class AdminApplicationService implements AdminCatererUseCase, AdminStatsU
             }
         }
         
+        long totalCount = eventRepositoryPort.countByCatererId(saved.getId());
+        dto.setTotalEventsCount((int) totalCount);
         dto.setEventCount((int) count);
         dto.setEventLimit(getEventLimitForPlan(saved.getSubscriptionPlan()));
         dto.setSubscriptionRemainingDays(getRemainingDays(saved.getSubscriptionEndDate()));
@@ -160,6 +164,7 @@ public class AdminApplicationService implements AdminCatererUseCase, AdminStatsU
         Caterer saved = catererRepositoryPort.save(caterer);
 
         CatererDTO savedDto = catererMapper.toDTO(saved);
+        savedDto.setTotalEventsCount(0);
         savedDto.setEventCount(0);
         savedDto.setEventLimit(getEventLimitForPlan(saved.getSubscriptionPlan()));
         savedDto.setSubscriptionRemainingDays(getRemainingDays(saved.getSubscriptionEndDate()));
@@ -255,6 +260,7 @@ public class AdminApplicationService implements AdminCatererUseCase, AdminStatsU
                             .subscriptionPriceStandard(29.90)
                             .subscriptionPricePremium(59.90)
                             .billingContactEmail("billing@eventmanager.com")
+                            .gracePeriodDays(10)
                             .build();
                     return billingSettingRepositoryPort.save(newBilling);
                 });
@@ -272,7 +278,8 @@ public class AdminApplicationService implements AdminCatererUseCase, AdminStatsU
                 dto.getCurrency() != null ? dto.getCurrency() : billing.getCurrency(),
                 dto.getSubscriptionPriceStandard() != null ? dto.getSubscriptionPriceStandard() : billing.getSubscriptionPriceStandard(),
                 dto.getSubscriptionPricePremium() != null ? dto.getSubscriptionPricePremium() : billing.getSubscriptionPricePremium(),
-                dto.getBillingContactEmail() != null ? dto.getBillingContactEmail() : billing.getBillingContactEmail()
+                dto.getBillingContactEmail() != null ? dto.getBillingContactEmail() : billing.getBillingContactEmail(),
+                dto.getGracePeriodDays() != null ? dto.getGracePeriodDays() : billing.getGracePeriodDays()
         );
 
         BillingSetting saved = billingSettingRepositoryPort.save(billing);

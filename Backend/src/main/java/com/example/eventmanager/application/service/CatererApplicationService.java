@@ -28,6 +28,7 @@ public class CatererApplicationService implements CreateCatererUseCase, GetCater
     private final PasswordEncoderPort passwordEncoderPort;
     private final SecurityContextPort securityContextPort;
     private final EventRepositoryPort eventRepositoryPort;
+    private final com.example.eventmanager.application.port.out.BillingSettingRepositoryPort billingSettingRepositoryPort;
 
     @Override
     @Transactional
@@ -65,14 +66,38 @@ public class CatererApplicationService implements CreateCatererUseCase, GetCater
 
         java.time.LocalDateTime now = java.time.LocalDateTime.now();
         boolean isExpired = false;
-        if (!"FREE".equalsIgnoreCase(caterer.getSubscriptionPlan())) {
-            if (caterer.getSubscriptionEndDate() != null && caterer.getSubscriptionEndDate().isBefore(now)) {
-                isExpired = true;
+        boolean inGracePeriod = false;
+        long gracePeriodDaysRemaining = 0;
+
+        int gracePeriodDays = billingSettingRepositoryPort.findById(1L)
+                .map(b -> b.getGracePeriodDays() != null ? b.getGracePeriodDays() : 10)
+                .orElse(10);
+
+        if (caterer.getRole() != com.example.eventmanager.domain.model.CatererRole.SUPER_ADMIN && !"FREE".equalsIgnoreCase(caterer.getSubscriptionPlan())) {
+            if (caterer.getSubscriptionEndDate() != null) {
+                java.time.LocalDateTime endDate = caterer.getSubscriptionEndDate();
+                java.time.LocalDateTime graceEndDate = endDate.plusDays(gracePeriodDays);
+
+                if (now.isAfter(endDate) && now.isBefore(graceEndDate)) {
+                    // La date de facturation est dépassée, mais dans la période de grâce (max 10 jours)
+                    inGracePeriod = true;
+                    isExpired = false; // Le compte reste actif normalement avec des rappels amicals
+                    gracePeriodDaysRemaining = Math.max(1, java.time.temporal.ChronoUnit.DAYS.between(now, graceEndDate));
+                    dto.setSubscriptionStatus("GRACE_PERIOD");
+                } else if (now.isAfter(graceEndDate)) {
+                    // Période de grâce terminée -> Le compte est réellement expiré/suspendu
+                    isExpired = true;
+                    dto.setSubscriptionStatus("EXPIRED");
+                } else if ("EXPIRED".equalsIgnoreCase(caterer.getSubscriptionStatus())) {
+                    isExpired = true;
+                }
             } else if ("EXPIRED".equalsIgnoreCase(caterer.getSubscriptionStatus())) {
                 isExpired = true;
             }
         }
         dto.setExpired(isExpired);
+        dto.setInGracePeriod(inGracePeriod);
+        dto.setGracePeriodDaysRemaining(gracePeriodDaysRemaining);
 
         if (caterer.getSubscriptionEndDate() != null) {
             long remaining = java.time.temporal.ChronoUnit.DAYS.between(now, caterer.getSubscriptionEndDate());
