@@ -195,8 +195,8 @@
         <div class="d-flex align-items-center gap-2">
           <i class="fa fa-exclamation-circle text-warning fs-4 me-1"></i>
           <div>
-            <span class="fw-semibold text-warning-dark">Rappel de paiement : Période de grâce active</span>
-            <span class="d-none d-sm-inline"> — Votre date de facturation est dépassée. Il vous reste <strong>{{ gracePeriodDaysRemaining() }} jour(s)</strong> de grâce pour régler votre abonnement. Votre compte reste actif pendant cette période.</span>
+            <span class="fw-bold text-warning-dark">Rappel : Période de grâce ⏳</span>
+            <span class="d-none d-sm-inline"> — Votre date de facturation est dépassée. Il vous reste <strong>{{ gracePeriodDaysRemaining() }} jour(s)</strong> de grâce pour régulariser votre abonnement et garder votre compte actif sans interruption.</span>
           </div>
         </div>
         <a routerLink="/subscription" class="btn btn-sm btn-warning text-dark fw-bold rounded-pill ms-2">
@@ -211,8 +211,8 @@
         <div class="d-flex align-items-center gap-2">
           <i class="fa fa-lock text-danger fs-4 me-1"></i>
           <div>
-            <span class="fw-semibold text-danger-dark">Abonnement Expiré (Mode Consultation Uniquement)</span>
-            <span class="d-none d-sm-inline"> — Votre période de grâce est écoulée. Vous pouvez consulter vos événements et statistiques passés, mais la création d'événements, l'édition et l'envoi d'invitations sont restreints.</span>
+            <span class="fw-bold text-danger-dark">Abonnement expiré : Mode consultation 🔒</span>
+            <span class="d-none d-sm-inline"> — La période de grâce est terminée. Vous pouvez uniquement consulter vos événements passés et vos statistiques ; la création, la modification et l’envoi d’invitations sont bloqués jusqu’au renouvellement de votre abonnement.</span>
           </div>
         </div>
         <a routerLink="/subscription" class="btn btn-sm btn-danger fw-bold rounded-pill ms-2">

@@ -158,4 +158,49 @@ class CatererApplicationServiceTest {
         assertFalse(Boolean.TRUE.equals(result.getInGracePeriod()));
         assertEquals("EXPIRED", result.getSubscriptionStatus());
     }
+
+    @Test
+    @DisplayName("Renewal after grace period or 2-3 months inactive -> Subscription starts fresh from exact payment date, 30 days full without grace deduction or retroactive charge")
+    void testRenewalAfterGracePeriodOrMonthsInactiveStartsFreshFromPaymentDate() {
+        // Organizer was inactive or past grace period by 60 days
+        LocalDateTime pastStart = LocalDateTime.now().minusDays(90);
+        LocalDateTime pastEnd = LocalDateTime.now().minusDays(60);
+        Caterer caterer = Caterer.builder()
+                .id(100L)
+                .businessName("Test Traiteur")
+                .email("traiteur@example.com")
+                .role(CatererRole.TRAITEUR)
+                .accountStatus(CatererStatus.APPROVED)
+                .subscriptionPlan("STANDARD")
+                .subscriptionStatus("EXPIRED")
+                .subscriptionStartDate(pastStart)
+                .subscriptionEndDate(pastEnd)
+                .build();
+
+        when(securityContextPort.getCurrentCatererId()).thenReturn(100L);
+        when(catererRepositoryPort.findById(100L)).thenReturn(Optional.of(caterer));
+        when(catererRepositoryPort.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+        when(catererMapper.toDTO(any())).thenAnswer(invocation -> {
+            Caterer c = invocation.getArgument(0);
+            return CatererDTO.builder()
+                    .id(c.getId())
+                    .subscriptionPlan(c.getSubscriptionPlan())
+                    .subscriptionStatus(c.getSubscriptionStatus())
+                    .subscriptionStartDate(c.getSubscriptionStartDate())
+                    .subscriptionEndDate(c.getSubscriptionEndDate())
+                    .build();
+        });
+
+        CatererDTO renewedDTO = catererApplicationService.upgradeSubscription("STANDARD");
+
+        assertNotNull(renewedDTO);
+        assertEquals("ACTIVE", renewedDTO.getSubscriptionStatus());
+        assertNotNull(renewedDTO.getSubscriptionStartDate());
+        assertNotNull(renewedDTO.getSubscriptionEndDate());
+        
+        // Starts fresh from payment date (now), end date is now + 30 days
+        assertTrue(renewedDTO.getSubscriptionStartDate().isAfter(pastEnd));
+        long daysDiff = java.time.temporal.ChronoUnit.DAYS.between(renewedDTO.getSubscriptionStartDate(), renewedDTO.getSubscriptionEndDate());
+        assertEquals(30, daysDiff, "Subscription cycle must be 30 full days from exact payment date without grace deduction");
+    }
 }
