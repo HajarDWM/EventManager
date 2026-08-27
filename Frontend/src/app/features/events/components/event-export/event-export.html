@@ -76,7 +76,7 @@
         <h3 class="h5 fw-bold text-uppercase tracking-wider text-dark mb-0">
           <i class="fa fa-utensils text-primary me-2"></i> Fiche Technique Restauration & Menus
         </h3>
-        <span class="fs-sm text-muted">Coût total menu : <strong>{{ pricePerPerson() | number:'1.2-2' }} € / pers</strong></span>
+        <span class="fs-sm text-muted">Coût total menu : <strong>{{ pricePerPerson() | number:'1.2-2' }} {{ currencySymbol() }} / pers</strong></span>
       </div>
 
       <!-- Menu Categories -->
@@ -89,7 +89,7 @@
               <div class="fs-xs text-muted" *ngIf="item.description">{{ item.description }}</div>
               <span class="badge bg-light text-dark fs-xs border me-1" *ngIf="item.dietaryTag"><i class="fa fa-leaf text-success me-1"></i>{{ item.dietaryTag }}</span>
             </div>
-            <div class="fw-bold text-primary fs-sm">{{ item.pricePerPerson | number:'1.2-2' }} €</div>
+            <div class="fw-bold text-primary fs-sm">{{ item.pricePerPerson | number:'1.2-2' }} {{ currencySymbol() }}</div>
           </li>
         </ul>
       </div>
@@ -103,7 +103,7 @@
               <div class="fs-xs text-muted" *ngIf="item.description">{{ item.description }}</div>
               <span class="badge bg-light text-dark fs-xs border me-1" *ngIf="item.dietaryTag"><i class="fa fa-leaf text-success me-1"></i>{{ item.dietaryTag }}</span>
             </div>
-            <div class="fw-bold text-primary fs-sm">{{ item.pricePerPerson | number:'1.2-2' }} €</div>
+            <div class="fw-bold text-primary fs-sm">{{ item.pricePerPerson | number:'1.2-2' }} {{ currencySymbol() }}</div>
           </li>
         </ul>
       </div>
@@ -117,7 +117,7 @@
               <div class="fs-xs text-muted" *ngIf="item.description">{{ item.description }}</div>
               <span class="badge bg-light text-dark fs-xs border me-1" *ngIf="item.dietaryTag"><i class="fa fa-leaf text-success me-1"></i>{{ item.dietaryTag }}</span>
             </div>
-            <div class="fw-bold text-primary fs-sm">{{ item.pricePerPerson | number:'1.2-2' }} €</div>
+            <div class="fw-bold text-primary fs-sm">{{ item.pricePerPerson | number:'1.2-2' }} {{ currencySymbol() }}</div>
           </li>
         </ul>
       </div>
@@ -131,7 +131,7 @@
               <div class="fs-xs text-muted" *ngIf="item.description">{{ item.description }}</div>
               <span class="badge bg-light text-dark fs-xs border me-1" *ngIf="item.dietaryTag"><i class="fa fa-leaf text-success me-1"></i>{{ item.dietaryTag }}</span>
             </div>
-            <div class="fw-bold text-primary fs-sm">{{ item.pricePerPerson | number:'1.2-2' }} €</div>
+            <div class="fw-bold text-primary fs-sm">{{ item.pricePerPerson | number:'1.2-2' }} {{ currencySymbol() }}</div>
           </li>
         </ul>
       </div>
@@ -145,7 +145,7 @@
               <div class="fs-xs text-muted" *ngIf="item.description">{{ item.description }}</div>
               <span class="badge bg-light text-dark fs-xs border me-1" *ngIf="item.dietaryTag"><i class="fa fa-leaf text-success me-1"></i>{{ item.dietaryTag }}</span>
             </div>
-            <div class="fw-bold text-primary fs-sm">{{ item.pricePerPerson | number:'1.2-2' }} €</div>
+            <div class="fw-bold text-primary fs-sm">{{ item.pricePerPerson | number:'1.2-2' }} {{ currencySymbol() }}</div>
           </li>
         </ul>
       </div>
@@ -305,11 +305,11 @@
           </div>
           <div class="col-4">
             <div class="text-muted fw-semibold">Prix Menu par Invité</div>
-            <div class="fs-5 fw-bold text-primary">{{ pricePerPerson() | number:'1.2-2' }} €</div>
+            <div class="fs-5 fw-bold text-primary">{{ pricePerPerson() | number:'1.2-2' }} {{ currencySymbol() }}</div>
           </div>
           <div class="col-4">
-            <div class="text-muted fw-semibold">Budget Restauration Total</div>
-            <div class="fs-5 fw-bold text-success">{{ totalCateringBudget() | number:'1.2-2' }} €</div>
+            <div class="text-muted fw-semibold">Budget Traiteur Total (Est.)</div>
+            <div class="fs-5 fw-bold text-success">{{ totalCateringBudget() | number:'1.2-2' }} {{ currencySymbol() }}</div>
           </div>
         </div>
       </div>

@@ -2,6 +2,7 @@ import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ExportPdfService, EventExportData } from '../../../../core/services/export-pdf.service';
+import { CurrencyService } from '../../../../core/services/currency.service';
 import { MenuItem } from '../../../../core/services/menu-item.service';
 import { EventTask } from '../../../../core/services/event-task.service';
 import { Guest } from '../../../../core/services/guest.service';
@@ -18,6 +19,9 @@ import { FormsModule } from '@angular/forms';
 export class EventExport implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly exportPdfService = inject(ExportPdfService);
+  protected readonly currencyService = inject(CurrencyService);
+
+  protected readonly currencySymbol = computed(() => this.currencyService.activeSymbol());
 
   protected readonly today = new Date();
   protected readonly eventId = signal<number | null>(null);

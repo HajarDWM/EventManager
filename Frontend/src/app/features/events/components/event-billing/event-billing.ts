@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { BillingService, QuoteDTO, QuoteItemDTO, InvoiceDTO, PaymentDTO, EventExpenseDTO } from '../../../../core/services/billing.service';
+import { CurrencyService } from '../../../../core/services/currency.service';
 
 @Component({
   selector: 'app-event-billing',
@@ -15,7 +16,10 @@ export class EventBilling implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly billingService = inject(BillingService);
+  protected readonly currencyService = inject(CurrencyService);
   private readonly http = inject(HttpClient);
+
+  protected readonly currencySymbol = computed(() => this.currencyService.activeSymbol());
 
   protected readonly eventId = signal<number>(0);
   protected readonly eventTitle = signal<string>('');
@@ -712,7 +716,7 @@ export class EventBilling implements OnInit {
               </tr>
               <tr class="amount-row">
                 <td><strong>Montant Total Reçu</strong></td>
-                <td class="amount-value">${pay.amount.toFixed(2)} €</td>
+                <td class="amount-value">${pay.amount.toFixed(2)} ${this.currencySymbol()}</td>
               </tr>
             </tbody>
           </table>
@@ -886,7 +890,7 @@ export class EventBilling implements OnInit {
               </tr>
               <tr class="amount-row">
                 <td><strong>Montant Total Payé (TTC)</strong></td>
-                <td class="amount-value">${exp.amount.toFixed(2)} €</td>
+                <td class="amount-value">${exp.amount.toFixed(2)} ${this.currencySymbol()}</td>
               </tr>
             </tbody>
           </table>

@@ -35,7 +35,7 @@
   <div class="col-6 col-lg-3">
     <div class="block block-rounded block-link-shadow text-center">
       <div class="block-content block-content-full">
-        <div class="fs-2 fw-bold text-success">{{ totalPricePerPerson() | number:'1.2-2' }} €</div>
+        <div class="fs-2 fw-bold text-success">{{ totalPricePerPerson() | number:'1.2-2' }} {{ currencySymbol() }}</div>
         <div class="fs-sm fw-semibold text-muted text-uppercase">Coût Menu par Invité</div>
       </div>
     </div>
@@ -43,7 +43,7 @@
   <div class="col-6 col-lg-3">
     <div class="block block-rounded block-link-shadow text-center">
       <div class="block-content block-content-full">
-        <div class="fs-2 fw-bold text-warning">{{ totalCateringBudget() | number:'1.2-2' }} €</div>
+        <div class="fs-2 fw-bold text-warning">{{ totalCateringBudget() | number:'1.2-2' }} {{ currencySymbol() }}</div>
         <div class="fs-sm fw-semibold text-muted text-uppercase">Budget Organisateur Total</div>
       </div>
     </div>
@@ -339,7 +339,7 @@
                     </div>
                   </td>
                   <td class="fs-xs text-muted" style="width: 45%;">{{ item.description || '-' }}</td>
-                  <td class="text-end fw-bold text-primary" style="width: 10%;">{{ item.pricePerPerson | number:'1.2-2' }} €</td>
+                  <td class="text-end fw-bold text-primary" style="width: 10%;">{{ item.pricePerPerson | number:'1.2-2' }} {{ currencySymbol() }}</td>
                   <td class="text-end text-nowrap" style="width: 15%;">
                     <button type="button" class="btn btn-sm btn-link text-primary py-0" (click)="openEditModal(item)"><i class="fa fa-pencil-alt"></i></button>
                     <button type="button" class="btn btn-sm btn-link text-danger py-0" (click)="onDeleteMenuItem(item)"><i class="fa fa-trash"></i></button>
@@ -375,7 +375,7 @@
                     </div>
                   </td>
                   <td class="fs-xs text-muted" style="width: 45%;">{{ item.description || '-' }}</td>
-                  <td class="text-end fw-bold text-primary" style="width: 10%;">{{ item.pricePerPerson | number:'1.2-2' }} €</td>
+                  <td class="text-end fw-bold text-primary" style="width: 10%;">{{ item.pricePerPerson | number:'1.2-2' }} {{ currencySymbol() }}</td>
                   <td class="text-end text-nowrap" style="width: 15%;">
                     <button type="button" class="btn btn-sm btn-link text-primary py-0" (click)="openEditModal(item)"><i class="fa fa-pencil-alt"></i></button>
                     <button type="button" class="btn btn-sm btn-link text-danger py-0" (click)="onDeleteMenuItem(item)"><i class="fa fa-trash"></i></button>
@@ -412,7 +412,7 @@
                       </div>
                     </td>
                     <td class="fs-xs text-muted" style="width: 45%;">{{ item.description || '-' }}</td>
-                    <td class="text-end fw-bold text-primary" style="width: 10%;">{{ item.pricePerPerson | number:'1.2-2' }} €</td>
+                    <td class="text-end fw-bold text-primary" style="width: 10%;">{{ item.pricePerPerson | number:'1.2-2' }} {{ currencySymbol() }}</td>
                     <td class="text-end text-nowrap" style="width: 15%;">
                       <button type="button" class="btn btn-sm btn-link text-primary py-0" (click)="openEditModal(item)"><i class="fa fa-pencil-alt"></i></button>
                       <button type="button" class="btn btn-sm btn-link text-danger py-0" (click)="onDeleteMenuItem(item)"><i class="fa fa-trash"></i></button>
@@ -443,7 +443,7 @@
                       </div>
                     </td>
                     <td class="fs-xs text-muted" style="width: 45%;">{{ item.description || '-' }}</td>
-                    <td class="text-end fw-bold text-primary" style="width: 10%;">{{ item.pricePerPerson | number:'1.2-2' }} €</td>
+                    <td class="text-end fw-bold text-primary" style="width: 10%;">{{ item.pricePerPerson | number:'1.2-2' }} {{ currencySymbol() }}</td>
                     <td class="text-end text-nowrap" style="width: 15%;">
                       <button type="button" class="btn btn-sm btn-link text-primary py-0" (click)="openEditModal(item)"><i class="fa fa-pencil-alt"></i></button>
                       <button type="button" class="btn btn-sm btn-link text-danger py-0" (click)="onDeleteMenuItem(item)"><i class="fa fa-trash"></i></button>
@@ -474,7 +474,7 @@
                       </div>
                     </td>
                     <td class="fs-xs text-muted" style="width: 45%;">{{ item.description || '-' }}</td>
-                    <td class="text-end fw-bold text-primary" style="width: 10%;">{{ item.pricePerPerson | number:'1.2-2' }} €</td>
+                    <td class="text-end fw-bold text-primary" style="width: 10%;">{{ item.pricePerPerson | number:'1.2-2' }} {{ currencySymbol() }}</td>
                     <td class="text-end text-nowrap" style="width: 15%;">
                       <button type="button" class="btn btn-sm btn-link text-primary py-0" (click)="openEditModal(item)"><i class="fa fa-pencil-alt"></i></button>
                       <button type="button" class="btn btn-sm btn-link text-danger py-0" (click)="onDeleteMenuItem(item)"><i class="fa fa-trash"></i></button>
@@ -505,7 +505,7 @@
                       </div>
                     </td>
                     <td class="fs-xs text-muted" style="width: 45%;">{{ item.description || '-' }}</td>
-                    <td class="text-end fw-bold text-primary" style="width: 10%;">{{ item.pricePerPerson | number:'1.2-2' }} €</td>
+                    <td class="text-end fw-bold text-primary" style="width: 10%;">{{ item.pricePerPerson | number:'1.2-2' }} {{ currencySymbol() }}</td>
                     <td class="text-end text-nowrap" style="width: 15%;">
                       <button type="button" class="btn btn-sm btn-link text-primary py-0" (click)="openEditModal(item)"><i class="fa fa-pencil-alt"></i></button>
                       <button type="button" class="btn btn-sm btn-link text-danger py-0" (click)="onDeleteMenuItem(item)"><i class="fa fa-trash"></i></button>
@@ -536,7 +536,7 @@
                       </div>
                     </td>
                     <td class="fs-xs text-muted" style="width: 45%;">{{ item.description || '-' }}</td>
-                    <td class="text-end fw-bold text-primary" style="width: 10%;">{{ item.pricePerPerson | number:'1.2-2' }} €</td>
+                    <td class="text-end fw-bold text-primary" style="width: 10%;">{{ item.pricePerPerson | number:'1.2-2' }} {{ currencySymbol() }}</td>
                     <td class="text-end text-nowrap" style="width: 15%;">
                       <button type="button" class="btn btn-sm btn-link text-primary py-0" (click)="openEditModal(item)"><i class="fa fa-pencil-alt"></i></button>
                       <button type="button" class="btn btn-sm btn-link text-danger py-0" (click)="onDeleteMenuItem(item)"><i class="fa fa-trash"></i></button>
@@ -588,7 +588,7 @@
                 {{ item.description || '-' }}
               </td>
               <td class="text-end fw-bold text-primary fs-base">
-                {{ item.pricePerPerson | number:'1.2-2' }} €
+                {{ item.pricePerPerson | number:'1.2-2' }} {{ currencySymbol() }}
               </td>
               <td class="text-end">
                 <div class="d-flex align-items-center justify-content-end gap-1">
@@ -643,7 +643,7 @@
                     <span class="fw-semibold text-dark fs-sm">{{ suggestion }}</span>
                     <div class="d-flex gap-1 align-items-center">
                       <span class="badge bg-light text-primary border" *ngIf="mergedSuggestionsDetail()[suggestion]?.price">
-                        {{ mergedSuggestionsDetail()[suggestion]?.price }} €
+                        {{ mergedSuggestionsDetail()[suggestion]?.price }} {{ currencySymbol() }}
                       </span>
                     </div>
                   </div>
@@ -729,7 +729,7 @@
               </select>
             </div>
             <div class="col-md-6">
-              <label class="form-label fs-sm fw-semibold">Prix par personne (€)</label>
+              <label class="form-label fs-sm fw-semibold">Prix par personne ({{ currencySymbol() }})</label>
               <input type="number" step="0.5" class="form-control form-control-alt fs-sm" placeholder="Ex: 24.50"
                 [ngModel]="pricePerPerson()" (ngModelChange)="pricePerPerson.set($event)" name="pricePerPerson">
             </div>

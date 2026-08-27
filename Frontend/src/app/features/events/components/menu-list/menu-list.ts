@@ -5,6 +5,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MenuItemService, MenuItem } from '../../../../core/services/menu-item.service';
 import { EventService } from '../../services/event.service';
 import { CatererService } from '../../../../core/services/caterer.service';
+import { CurrencyService } from '../../../../core/services/currency.service';
 import { Event } from '../../models/event.model';
 
 @Component({
@@ -18,6 +19,9 @@ export class MenuList implements OnInit {
   private readonly menuItemService = inject(MenuItemService);
   private readonly eventService = inject(EventService);
   private readonly catererService = inject(CatererService);
+  protected readonly currencyService = inject(CurrencyService);
+
+  protected readonly currencySymbol = computed(() => this.currencyService.activeSymbol());
 
   protected readonly eventId = signal<number | null>(null);
   protected readonly event = signal<Event | null>(null);
