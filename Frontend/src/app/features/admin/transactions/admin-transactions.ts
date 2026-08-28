@@ -1,8 +1,9 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AdminService } from '../../../core/services/admin.service';
+import { CurrencyService } from '../../../core/services/currency.service';
 
 export interface Transaction {
   id: string;
@@ -32,6 +33,21 @@ export interface Expense {
 })
 export class AdminTransactions implements OnInit {
   private readonly adminService = inject(AdminService);
+  protected readonly currencyService = inject(CurrencyService);
+
+  protected readonly currencySymbol = computed(() => this.currencyService.activeSymbol());
+
+  protected convert(amountInEUR: number | undefined | null): number {
+    return this.currencyService.convertFromEUR(amountInEUR);
+  }
+
+  protected convertTransactionHt(t: any): number {
+    return this.currencyService.convertTransactionAmountHt(t);
+  }
+
+  protected onCurrencySelect(code: string): void {
+    this.currencyService.setManualCurrency(code);
+  }
 
   // States
   protected readonly transactions = signal<Transaction[]>([]);

@@ -79,4 +79,11 @@ public class TransactionRepositoryAdapter implements TransactionRepositoryPort {
                 .map(transactionPersistenceMapper::toDomain)
                 .toList();
     }
+
+    @Override
+    public List<Transaction> findByCatererId(Long catererId) {
+        return jpaTransactionRepository.findByCatererIdOrderByPaymentDateDesc(catererId).stream()
+                .map(transactionPersistenceMapper::toDomain)
+                .toList();
+    }
 }

@@ -142,6 +142,10 @@ export class AdminService {
     return this.http.get<any>(`${this.apiUrl}/transactions`, { params });
   }
 
+  public getCatererTransactions(catererId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/transactions/caterer/${catererId}`);
+  }
+
   public getFinancialStats(period: string): Observable<any> {
     const params = new HttpParams().set('period', period);
     return this.http.get<any>(`${this.apiUrl}/transactions/stats`, { params });

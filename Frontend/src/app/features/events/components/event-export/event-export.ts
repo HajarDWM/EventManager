@@ -23,6 +23,10 @@ export class EventExport implements OnInit {
 
   protected readonly currencySymbol = computed(() => this.currencyService.activeSymbol());
 
+  protected convert(amountInEUR: number | undefined | null): number {
+    return this.currencyService.convertFromEUR(amountInEUR);
+  }
+
   protected readonly today = new Date();
   protected readonly eventId = signal<number | null>(null);
   protected readonly exportData = signal<EventExportData | null>(null);

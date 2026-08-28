@@ -48,7 +48,7 @@
       <div class="col-md-6">
         <div class="block block-rounded bg-white border border-light shadow-sm p-2.5 text-center h-100 d-flex flex-column justify-content-center">
           <div class="fs-xs fw-bold text-muted text-uppercase mb-1">Total Global de l'Événement</div>
-          <div class="fs-4 fw-extrabold text-primary">{{ eventTotalPrice() | number:'1.2-2' }} {{ currencySymbol() }}</div>
+          <div class="fs-4 fw-extrabold text-primary">{{ convert(eventTotalPrice()) | number:'1.2-2' }} {{ currencySymbol() }}</div>
           <div class="fs-xs text-muted mt-1">Tarif global convenu avec le client</div>
         </div>
       </div>
@@ -58,7 +58,7 @@
         <div class="block block-rounded bg-white border border-light shadow-sm p-2.5 text-center h-100 d-flex flex-column justify-content-center">
           <div class="fs-xs fw-bold text-muted text-uppercase mb-1">Bénéfice Net (Est.)</div>
           <div class="fs-4 fw-extrabold" [ngClass]="netProfitAmount() >= 0 ? 'text-success' : 'text-danger'">
-            {{ netProfitAmount() | number:'1.2-2' }} {{ currencySymbol() }}
+            {{ convert(netProfitAmount()) | number:'1.2-2' }} {{ currencySymbol() }}
           </div>
           <div class="fs-xs mt-1 fw-semibold" [ngClass]="netProfitAmount() >= 0 ? 'text-success' : 'text-danger'">
             {{ netProfitAmount() >= 0 ? 'Marge bénéficiaire positive' : 'Perte / Déficit' }}
@@ -83,7 +83,7 @@
           <div class="col-md-6">
             <div class="block block-rounded bg-body-light border border-light p-2.5 text-center h-100 d-flex flex-column justify-content-center">
               <div class="fs-xs fw-bold text-muted text-uppercase mb-1">Acompte / Avance Versé</div>
-              <div class="fs-5 fw-extrabold text-success">{{ totalPaidAmount() | number:'1.2-2' }} {{ currencySymbol() }}</div>
+              <div class="fs-5 fw-extrabold text-success">{{ convert(totalPaidAmount()) | number:'1.2-2' }} {{ currencySymbol() }}</div>
               <div class="fs-xs text-muted mt-1">Règlements reçus et encaissés</div>
             </div>
           </div>
@@ -91,7 +91,7 @@
             <div class="block block-rounded bg-body-light border border-light p-2.5 text-center h-100 d-flex flex-column justify-content-center">
               <div class="fs-xs fw-bold text-muted text-uppercase mb-1">Solde Restant Dû</div>
               <div class="fs-5 fw-extrabold" [ngClass]="remainingBalanceDue() > 0 ? 'text-danger' : 'text-muted'">
-                {{ remainingBalanceDue() | number:'1.2-2' }} {{ currencySymbol() }}
+                {{ convert(remainingBalanceDue()) | number:'1.2-2' }} {{ currencySymbol() }}
               </div>
               <div class="fs-xs mt-1 fw-semibold" [ngClass]="remainingBalanceDue() > 0 ? 'text-danger' : 'text-success'">
                 {{ remainingBalanceDue() > 0 ? 'En attente de paiement' : 'Facturation soldée' }}
@@ -194,7 +194,7 @@
                         </td>
                         <td class="fw-semibold">{{ getPaymentMethodLabel(pay.paymentMethod) }}</td>
                         <td class="text-muted">{{ pay.reference || '-' }}</td>
-                        <td class="text-end fw-bold text-success">+ {{ pay.amount | number:'1.2-2' }} {{ currencySymbol() }}</td>
+                        <td class="text-end fw-bold text-success">+ {{ convert(pay.amount) | number:'1.2-2' }} {{ currencySymbol() }}</td>
                         <td class="text-center">
                           <div class="d-flex align-items-center justify-content-center gap-1">
                             <button type="button" class="btn btn-sm btn-alt-info rounded-circle p-1 d-inline-flex align-items-center justify-content-center" 
@@ -248,7 +248,7 @@
           <div class="col-12">
             <div class="block block-rounded bg-body-light border border-light p-2.5 text-center h-100 d-flex flex-column justify-content-center">
               <div class="fs-xs fw-bold text-muted text-uppercase mb-1">Total des Charges / Dépenses</div>
-              <div class="fs-5 fw-extrabold text-danger">{{ totalExpensesAmount() | number:'1.2-2' }} {{ currencySymbol() }}</div>
+              <div class="fs-5 fw-extrabold text-danger">{{ convert(totalExpensesAmount()) | number:'1.2-2' }} {{ currencySymbol() }}</div>
               <div class="fs-xs text-muted mt-1">Cumul de tous les coûts de revient</div>
             </div>
           </div>
@@ -291,7 +291,7 @@
                     </td>
                     <td class="fw-semibold">{{ exp.description }}</td>
                     <td class="text-muted">{{ exp.providerName || '-' }}</td>
-                    <td class="text-end fw-bold text-danger">- {{ exp.amount | number:'1.2-2' }} {{ currencySymbol() }}</td>
+                    <td class="text-end fw-bold text-danger">- {{ convert(exp.amount) | number:'1.2-2' }} {{ currencySymbol() }}</td>
                     <td class="text-center">
                       <div class="d-flex align-items-center justify-content-center gap-1">
                         <button type="button" class="btn btn-sm btn-alt-info rounded-circle p-1 d-inline-flex align-items-center justify-content-center" 
@@ -343,7 +343,7 @@
           <div class="mb-3">
             <label class="form-label fs-sm fw-bold">Montant reçu ({{ currencySymbol() }})</label>
             <input type="number" class="form-control" [(ngModel)]="paymentAmountInput" name="paymentAmountInput" step="0.01">
-            <div class="form-text fs-xs text-danger">Solde restant dû : {{ remainingBalanceDue() | number:'1.2-2' }} {{ currencySymbol() }}</div>
+            <div class="form-text fs-xs text-danger">Solde restant dû : {{ convert(remainingBalanceDue()) | number:'1.2-2' }} {{ currencySymbol() }}</div>
           </div>
 
           <div class="mb-3">

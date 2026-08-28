@@ -42,6 +42,14 @@ public class TransactionApplicationService implements GetTransactionsUseCase, Re
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<TransactionDTO> getTransactionsByCatererId(Long catererId) {
+        return transactionRepositoryPort.findByCatererId(catererId).stream()
+                .map(transactionMapper::toDTO)
+                .toList();
+    }
+
+    @Override
     @Transactional
     public void recordTransaction(Long catererId, String plan, BigDecimal amountPaid, BigDecimal vatRate, String paymentStatus) {
         Caterer caterer = catererRepositoryPort.findById(catererId)

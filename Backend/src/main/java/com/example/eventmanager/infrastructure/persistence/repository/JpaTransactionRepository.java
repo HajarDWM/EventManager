@@ -26,4 +26,6 @@ public interface JpaTransactionRepository extends JpaRepository<TransactionEntit
     Page<TransactionEntity> findAllSince(@Param("sinceDate") java.time.LocalDateTime sinceDate, Pageable pageable);
 
     java.util.List<TransactionEntity> findByPaymentStatusAndPaymentDateAfter(String status, java.time.LocalDateTime sinceDate);
+
+    java.util.List<TransactionEntity> findByCatererIdOrderByPaymentDateDesc(Long catererId);
 }

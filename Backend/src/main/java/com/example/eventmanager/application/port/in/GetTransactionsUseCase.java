@@ -8,4 +8,5 @@ import java.util.List;
 public interface GetTransactionsUseCase {
     Page<TransactionDTO> getTransactions(String search, String period, Pageable pageable);
     List<TransactionDTO> getAllTransactionsForExport();
+    List<TransactionDTO> getTransactionsByCatererId(Long catererId);
 }

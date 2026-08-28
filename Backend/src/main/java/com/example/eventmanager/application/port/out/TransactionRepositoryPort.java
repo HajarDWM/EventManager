@@ -10,4 +10,5 @@ public interface TransactionRepositoryPort {
     Page<Transaction> findAll(String search, String period, Pageable pageable);
     List<Transaction> findAllForExport();
     List<Transaction> findSuccessfulTransactionsSince(java.time.LocalDateTime sinceDate);
+    List<Transaction> findByCatererId(Long catererId);
 }

@@ -9,6 +9,19 @@
     </h2>
   </div>
   <div class="mt-2 mt-md-0 ms-md-3 d-flex align-items-center gap-2">
+    <!-- Currency Selector & Auto-Detection Badge for Admin -->
+    <span class="badge bg-info-light text-info fs-xs" *ngIf="currencyService.isAutoDetected()">
+      <i class="fa fa-map-marker-alt me-1"></i> {{ currencyService.detectedCountry() || 'Auto' }}
+    </span>
+    <div class="input-group input-group-sm" style="width: 220px;">
+      <span class="input-group-text bg-body-light border-light text-muted"><i class="fa fa-globe"></i></span>
+      <select class="form-select form-select-sm border-light shadow-sm" [ngModel]="currencyService.activeCurrency()" (ngModelChange)="onCurrencySelect($event)">
+        <option *ngFor="let curr of currencyService.supportedCurrencies" [value]="curr.code">
+          {{ curr.label }}
+        </option>
+      </select>
+    </div>
+
     <button type="button" class="btn btn-alt-primary rounded-pill px-3" (click)="exportCsv()" [disabled]="isExporting()">
       <i class="fa fa-download me-1" *ngIf="!isExporting()"></i>
       <i class="fa fa-spinner fa-spin me-1" *ngIf="isExporting()"></i>
@@ -60,7 +73,7 @@
         <div>
           <span class="fs-xs fw-semibold text-uppercase text-muted d-block mb-1">Revenu (Mois En Cours)</span>
           <h4 class="fw-extrabold text-dark mb-0">
-            {{ (stats()?.totalRevenueCurrentMonth || 0) | currency:'EUR':'symbol':'1.2-2':'fr' }}
+            {{ convert(stats()?.totalRevenueCurrentMonth || 0) | number:'1.2-2' }} {{ currencySymbol() }}
           </h4>
         </div>
         <div class="item item-rounded bg-success-light text-success">
@@ -77,7 +90,7 @@
         <div>
           <span class="fs-xs fw-semibold text-uppercase text-muted d-block mb-1">Revenu (3 Derniers Mois)</span>
           <h4 class="fw-extrabold text-dark mb-0">
-            {{ (stats()?.totalRevenueLast3Months || 0) | currency:'EUR':'symbol':'1.2-2':'fr' }}
+            {{ convert(stats()?.totalRevenueLast3Months || 0) | number:'1.2-2' }} {{ currencySymbol() }}
           </h4>
         </div>
         <div class="item item-rounded bg-info-light text-info">
@@ -94,7 +107,7 @@
         <div>
           <span class="fs-xs fw-semibold text-uppercase text-muted d-block mb-1">Revenu (Dernière Année)</span>
           <h4 class="fw-extrabold text-dark mb-0">
-            {{ (stats()?.totalRevenueLastYear || 0) | currency:'EUR':'symbol':'1.2-2':'fr' }}
+            {{ convert(stats()?.totalRevenueLastYear || 0) | number:'1.2-2' }} {{ currencySymbol() }}
           </h4>
         </div>
         <div class="item item-rounded bg-primary-light text-primary">
@@ -121,7 +134,7 @@
           </span>
           <h4 class="fw-extrabold mb-0" 
               [ngClass]="(stats()?.netProfitSelectedPeriod || 0) >= 0 ? 'text-success' : 'text-danger'">
-            {{ (stats()?.netProfitSelectedPeriod || 0) | currency:'EUR':'symbol':'1.2-2':'fr' }}
+            {{ convert(stats()?.netProfitSelectedPeriod || 0) | number:'1.2-2' }} {{ currencySymbol() }}
           </h4>
         </div>
         <div class="item item-rounded" 
@@ -169,20 +182,16 @@
       <table class="table table-bordered table-striped table-vcenter fs-sm">
         <thead class="table-light">
           <tr>
-            <th style="width: 140px;">ID Transaction</th>
             <th>Organisateur</th>
-            <th style="width: 130px;">Forfait</th>
-            <th style="width: 140px;" class="text-end">Montant (HT)</th>
+            <th style="width: 140px;">Forfait</th>
+            <th style="width: 160px;" class="text-end">Montant (HT)</th>
             <th style="width: 100px;" class="text-center">TVA</th>
-            <th style="width: 160px;">Date & Heure</th>
+            <th style="width: 170px;">Date & Heure</th>
             <th style="width: 130px;" class="text-center">Statut</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let t of transactions()" [routerLink]="['/admin/caterers', t.catererId]" style="cursor: pointer;">
-            <td class="font-monospace text-muted fs-xs">
-              {{ t.id.substring(0, 8) }}...
-            </td>
             <td class="fw-semibold text-primary">
               {{ t.businessName }}
             </td>
@@ -192,7 +201,7 @@
               </span>
             </td>
             <td class="text-end fw-semibold text-dark">
-              {{ (t.amountHt || 0) | currency:'EUR':'symbol':'1.2-2':'fr' }}
+              {{ convertTransactionHt(t) | number:'1.2-2' }} {{ currencySymbol() }}
             </td>
             <td class="text-center text-muted">
               {{ t.vatRate }} %
@@ -278,7 +287,7 @@
               </span>
             </td>
             <td class="text-end fw-semibold text-danger">
-              -{{ exp.amount | currency:'EUR':'symbol':'1.2-2':'fr' }}
+              -{{ convert(exp.amount) | number:'1.2-2' }} {{ currencySymbol() }}
             </td>
             <td>{{ exp.expenseDate | date:'dd/MM/yyyy HH:mm' }}</td>
             <td class="text-center">
@@ -323,7 +332,7 @@
 
             <!-- Amount -->
             <div class="mb-3">
-              <label class="form-label fs-sm fw-semibold text-dark">Montant (€ HT)</label>
+              <label class="form-label fs-sm fw-semibold text-dark">Montant ({{ currencySymbol() }} HT)</label>
               <input type="number" step="0.01" class="form-control border-light fs-sm" placeholder="ex: 120.00" 
                      [(ngModel)]="newExpenseAmount" name="amount" required>
             </div>

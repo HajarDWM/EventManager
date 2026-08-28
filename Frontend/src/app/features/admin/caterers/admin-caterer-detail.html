@@ -133,4 +133,62 @@
       </div>
     </div>
   </div>
+
+  <!-- Subscription & Transaction History Section -->
+  <div class="col-12 mt-4">
+    <div class="block block-rounded bg-white shadow-sm border border-light">
+      <div class="block-header block-header-default border-bottom bg-body-light d-flex justify-content-between align-items-center">
+        <h3 class="block-title fw-bold">
+          <i class="fa fa-history text-primary me-2"></i>Historique des Abonnements & Transactions ({{ transactions().length }})
+        </h3>
+        <span class="badge bg-body-dark text-dark fs-xs">
+          Facturation Organisateur
+        </span>
+      </div>
+      <div class="block-content p-3">
+        <div class="table-responsive">
+          <table class="table table-bordered table-striped table-vcenter fs-sm mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>Forfait Souscrit</th>
+                <th style="width: 160px;" class="text-end">Montant Payé (HT)</th>
+                <th style="width: 100px;" class="text-center">TVA (%)</th>
+                <th style="width: 170px;">Date & Heure</th>
+                <th style="width: 130px;" class="text-center">Statut</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let t of transactions()">
+                <td>
+                  <span class="badge" [ngClass]="getPlanBadgeClass(t.subscriptionPlan)">
+                    {{ t.subscriptionPlan }}
+                  </span>
+                </td>
+                <td class="text-end fw-bold text-dark">
+                  {{ convertTransactionHt(t) | number:'1.2-2' }} {{ currencySymbol() }}
+                </td>
+                <td class="text-center text-muted">
+                  {{ t.vatRate }} %
+                </td>
+                <td class="text-dark">
+                  {{ t.paymentDate | date:'dd/MM/yyyy HH:mm' }}
+                </td>
+                <td class="text-center">
+                  <span class="badge px-2.5 py-1 rounded-pill" [ngClass]="getTransactionStatusBadgeClass(t.paymentStatus)">
+                    {{ getTransactionStatusLabel(t.paymentStatus) }}
+                  </span>
+                </td>
+              </tr>
+              <tr *ngIf="transactions().length === 0">
+                <td colspan="5" class="text-center py-4 text-muted">
+                  <i class="fa fa-receipt text-muted fs-3 mb-2 d-block opacity-50"></i>
+                  Aucune transaction ou renouvellement d'abonnement n'a encore été enregistré pour cet organisateur.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

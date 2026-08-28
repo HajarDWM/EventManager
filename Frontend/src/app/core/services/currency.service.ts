@@ -112,6 +112,63 @@ export class CurrencyService {
     }
   }
 
+  // Exchange Rates relative to 1 EUR
+  private readonly exchangeRates: Record<string, number> = {
+    EUR: 1.0,
+    MAD: 10.80,
+    USD: 1.08,
+    CAD: 1.48,
+    GBP: 0.85,
+    CHF: 0.95
+  };
+
+  /**
+   * Convert an amount from base currency (EUR) into the target currency.
+   * If targetCurrency is omitted, converts into activeCurrency.
+   */
+  public convertFromEUR(amountEUR: number | undefined | null, targetCurrency: string = this.activeCurrency()): number {
+    if (amountEUR == null || isNaN(amountEUR)) return 0;
+    const rate = this.exchangeRates[targetCurrency] || 1.0;
+    return amountEUR * rate;
+  }
+
+  /**
+   * Convert an amount from source currency back into base currency (EUR).
+   */
+  public convertToEUR(amount: number | undefined | null, sourceCurrency: string = this.activeCurrency()): number {
+    if (amount == null || isNaN(amount)) return 0;
+    const rate = this.exchangeRates[sourceCurrency] || 1.0;
+    return amount / rate;
+  }
+
+  /**
+   * Convert transaction amount HT based on subscription plan tier or exchange rate
+   */
+  public convertTransactionAmountHt(t: { subscriptionPlan?: string; amountHt?: number; amountPaid?: number; vatRate?: number }, targetCurrency: string = this.activeCurrency()): number {
+    const plan = (t.subscriptionPlan || '').toUpperCase();
+    const vatRate = t.vatRate != null ? t.vatRate : 20.0;
+    const vatFactor = 1 + vatRate / 100;
+
+    if (plan === 'STANDARD' || plan === 'PREMIUM') {
+      const found = this.supportedCurrencies.find(c => c.code === targetCurrency);
+      const prices = found ? { standard: found.standardPrice, premium: found.premiumPrice } : { standard: 299.00, premium: 599.00 };
+      const ttcPrice = plan === 'STANDARD' ? prices.standard : prices.premium;
+      return ttcPrice / vatFactor;
+    }
+
+    const rawHt = t.amountHt != null ? t.amountHt : (t.amountPaid ? t.amountPaid / vatFactor : 0);
+    return this.convertFromEUR(rawHt, targetCurrency);
+  }
+
+  /**
+   * Helper method to convert & format an amount from EUR to the active currency.
+   * Example: convertAndFormat(25) -> "270.00 DH" (if activeCurrency is MAD)
+   */
+  public convertAndFormat(amountEUR: number | undefined | null, targetCurrency: string = this.activeCurrency()): string {
+    const converted = this.convertFromEUR(amountEUR, targetCurrency);
+    return this.formatAmount(converted, targetCurrency);
+  }
+
   /**
    * Format amount with currency symbol
    */

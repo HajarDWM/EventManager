@@ -21,6 +21,10 @@ export class EventBilling implements OnInit {
 
   protected readonly currencySymbol = computed(() => this.currencyService.activeSymbol());
 
+  protected convert(amountInEUR: number | undefined | null): number {
+    return this.currencyService.convertFromEUR(amountInEUR);
+  }
+
   protected readonly eventId = signal<number>(0);
   protected readonly eventTitle = signal<string>('');
   protected readonly isLoading = signal<boolean>(true);
@@ -716,7 +720,7 @@ export class EventBilling implements OnInit {
               </tr>
               <tr class="amount-row">
                 <td><strong>Montant Total Reçu</strong></td>
-                <td class="amount-value">${pay.amount.toFixed(2)} ${this.currencySymbol()}</td>
+                <td class="amount-value">${this.currencyService.convertAndFormat(pay.amount)}</td>
               </tr>
             </tbody>
           </table>
@@ -890,7 +894,7 @@ export class EventBilling implements OnInit {
               </tr>
               <tr class="amount-row">
                 <td><strong>Montant Total Payé (TTC)</strong></td>
-                <td class="amount-value">${exp.amount.toFixed(2)} ${this.currencySymbol()}</td>
+                <td class="amount-value">${this.currencyService.convertAndFormat(exp.amount)}</td>
               </tr>
             </tbody>
           </table>

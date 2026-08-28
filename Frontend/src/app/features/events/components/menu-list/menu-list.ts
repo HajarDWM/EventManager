@@ -23,6 +23,10 @@ export class MenuList implements OnInit {
 
   protected readonly currencySymbol = computed(() => this.currencyService.activeSymbol());
 
+  protected convert(amountInEUR: number | undefined | null): number {
+    return this.currencyService.convertFromEUR(amountInEUR);
+  }
+
   protected readonly eventId = signal<number | null>(null);
   protected readonly event = signal<Event | null>(null);
   protected readonly menuItems = signal<MenuItem[]>([]);
