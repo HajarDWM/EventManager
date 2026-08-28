@@ -161,6 +161,21 @@ export class CurrencyService {
   }
 
   /**
+   * Convert transaction amount TTC based on subscription plan tier or exchange rate
+   */
+  public convertTransactionAmountTtc(t: { subscriptionPlan?: string; amountPaid?: number }, targetCurrency: string = this.activeCurrency()): number {
+    const plan = (t.subscriptionPlan || '').toUpperCase();
+    if (plan === 'STANDARD' || plan === 'PREMIUM') {
+      const found = this.supportedCurrencies.find(c => c.code === targetCurrency);
+      const prices = found ? { standard: found.standardPrice, premium: found.premiumPrice } : { standard: 299.00, premium: 599.00 };
+      return plan === 'STANDARD' ? prices.standard : prices.premium;
+    }
+
+    const rawTtc = t.amountPaid != null ? t.amountPaid : 0;
+    return this.convertFromEUR(rawTtc, targetCurrency);
+  }
+
+  /**
    * Helper method to convert & format an amount from EUR to the active currency.
    * Example: convertAndFormat(25) -> "270.00 DH" (if activeCurrency is MAD)
    */

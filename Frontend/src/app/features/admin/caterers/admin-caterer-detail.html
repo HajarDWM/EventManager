@@ -9,9 +9,9 @@
     </h2>
   </div>
   <div class="mt-2 mt-md-0">
-    <a class="btn btn-alt-secondary rounded-pill px-3" routerLink="/admin/caterers">
-      <i class="fa fa-arrow-left me-1"></i> Retour à la liste
-    </a>
+    <button type="button" class="btn btn-alt-secondary rounded-pill px-3" (click)="goBack()">
+      <i class="fa fa-arrow-left me-1"></i> Retour
+    </button>
   </div>
 </div>
 <!-- END Hero -->
@@ -141,8 +141,8 @@
         <h3 class="block-title fw-bold">
           <i class="fa fa-history text-primary me-2"></i>Historique des Abonnements & Transactions ({{ transactions().length }})
         </h3>
-        <span class="badge bg-body-dark text-dark fs-xs">
-          Facturation Organisateur
+        <span class="badge bg-success-light text-success fs-xs fw-bold px-3 py-1.5 rounded-pill">
+          Total Cumulé HT : {{ getTotalCumulativeHt() | number:'1.2-2' }} {{ currencySymbol() }}
         </span>
       </div>
       <div class="block-content p-3">
@@ -153,8 +153,7 @@
                 <th>Forfait Souscrit</th>
                 <th style="width: 150px;" class="text-end">Montant Payé (HT)</th>
                 <th style="width: 90px;" class="text-center">TVA (%)</th>
-                <th style="width: 150px;">Date de Paiement</th>
-                <th style="width: 250px;" class="text-center">Période d'Abonnement</th>
+                <th style="width: 320px;" class="text-center">Période de Validité</th>
                 <th style="width: 130px;" class="text-center">Statut Forfait</th>
               </tr>
             </thead>
@@ -171,16 +170,15 @@
                 <td class="text-center text-muted">
                   {{ t.vatRate }} %
                 </td>
-                <td class="text-dark">
-                  {{ t.paymentDate | date:'dd/MM/yyyy HH:mm' }}
-                </td>
                 <td class="text-center text-nowrap">
-                  <span class="badge bg-body-dark text-dark fw-semibold px-2 py-1 me-1">
-                    {{ getSubscriptionStartDate(t) | date:'dd/MM/yyyy' }}
+                  <span class="badge bg-body-dark text-dark fw-semibold px-2.5 py-1.5 me-1 fs-xs">
+                    <i class="fa fa-calendar-alt text-primary me-1"></i>
+                    {{ getSubscriptionStartDate(t) | date:'dd/MM/yyyy HH:mm' }}
                   </span>
                   <i class="fa fa-arrow-right text-muted mx-1 fs-xs"></i>
-                  <span class="badge bg-body-dark text-dark fw-semibold px-2 py-1 ms-1">
-                    {{ getSubscriptionEndDate(t) | date:'dd/MM/yyyy' }}
+                  <span class="badge bg-body-dark text-dark fw-semibold px-2.5 py-1.5 ms-1 fs-xs">
+                    <i class="fa fa-calendar-check text-success me-1"></i>
+                    {{ getSubscriptionEndDate(t) | date:'dd/MM/yyyy HH:mm' }}
                   </span>
                 </td>
                 <td class="text-center">
@@ -191,7 +189,7 @@
                 </td>
               </tr>
               <tr *ngIf="transactions().length === 0">
-                <td colspan="6" class="text-center py-4 text-muted">
+                <td colspan="5" class="text-center py-4 text-muted">
                   <i class="fa fa-receipt text-muted fs-3 mb-2 d-block opacity-50"></i>
                   Aucune transaction ou renouvellement d'abonnement n'a encore été enregistré pour cet organisateur.
                 </td>

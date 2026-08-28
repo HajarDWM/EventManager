@@ -182,109 +182,39 @@
       <table class="table table-bordered table-striped table-vcenter fs-sm">
         <thead class="table-light">
           <tr>
-            <th style="width: 40px;" class="text-center"></th>
             <th>Organisateur</th>
-            <th style="width: 140px;">Dernier Forfait</th>
-            <th style="width: 170px;" class="text-center">Souscriptions / Renouvellements</th>
-            <th style="width: 190px;" class="text-end">Total Recettes Encaissées (HT)</th>
-            <th style="width: 160px;">Dernier Règlement</th>
-            <th style="width: 110px;" class="text-center">Statut</th>
-            <th style="width: 90px;" class="text-center">Fiche</th>
+            <th style="width: 150px;">Dernier Forfait</th>
+            <th style="width: 150px;" class="text-center">Renouvellements</th>
+            <th style="width: 200px;" class="text-end">Total Recettes Encaissées (HT)</th>
+            <th style="width: 170px;">Dernier Règlement</th>
+            <th style="width: 120px;" class="text-center">Statut</th>
           </tr>
         </thead>
         <tbody>
-          <ng-container *ngFor="let org of consolidatedOrganizers()">
-            <!-- Main Consolidated Row -->
-            <tr style="cursor: pointer;" (click)="toggleExpand(org.catererId || org.businessName)">
-              <td class="text-center">
-                <button type="button" class="btn btn-sm btn-alt-secondary rounded-circle p-0 d-inline-flex align-items-center justify-content-center" 
-                        style="width: 24px; height: 24px;"
-                        (click)="toggleExpand(org.catererId || org.businessName, $event)">
-                  <i class="fa fs-xs" [ngClass]="isExpanded(org.catererId || org.businessName) ? 'fa-chevron-down text-primary' : 'fa-chevron-right text-muted'"></i>
-                </button>
-              </td>
-              <td class="fw-bold text-primary">
-                {{ org.businessName }}
-              </td>
-              <td>
-                <span class="badge" [ngClass]="getPlanBadgeClass(org.latestPlan)">
-                  {{ org.latestPlan }}
-                </span>
-              </td>
-              <td class="text-center">
-                <span class="badge bg-primary-light text-primary px-2.5 py-1 rounded-pill fw-bold">
-                  <i class="fa fa-sync me-1"></i> {{ org.transactionCount }} paiement(s)
-                </span>
-              </td>
-              <td class="text-end fw-bold text-success fs-base">
-                {{ getOrganizerTotalHt(org) | number:'1.2-2' }} {{ currencySymbol() }}
-              </td>
-              <td class="text-dark">
-                {{ org.latestPaymentDate | date:'dd/MM/yyyy HH:mm' }}
-              </td>
-              <td class="text-center">
-                <span class="badge" [ngClass]="getStatusBadgeClass(org.paymentStatus)">
-                  {{ getStatusLabel(org.paymentStatus) }}
-                </span>
-              </td>
-              <td class="text-center">
-                <a [routerLink]="['/admin/caterers', org.catererId]" 
-                   class="btn btn-sm btn-alt-primary rounded-pill py-0 px-2 fs-xs"
-                   (click)="$event.stopPropagation()"
-                   title="Voir le profil complet de l'organisateur">
-                  <i class="fa fa-user me-1"></i> Profil
-                </a>
-              </td>
-            </tr>
-
-            <!-- Expanded Sub-Table: Detailed Past Transactions -->
-            <tr *ngIf="isExpanded(org.catererId || org.businessName)" class="bg-body-light">
-              <td colspan="8" class="p-3">
-                <div class="block block-rounded border shadow-sm mb-0 bg-white">
-                  <div class="block-header block-header-default bg-body-light py-2 px-3 border-bottom d-flex justify-content-between align-items-center">
-                    <span class="fs-xs fw-bold text-uppercase text-muted">
-                      <i class="fa fa-receipt text-primary me-1"></i> Historique détaillé des paiements — {{ org.businessName }}
-                    </span>
-                    <span class="badge bg-success-light text-success fs-xs fw-bold">
-                      Total Cumulé HT : {{ getOrganizerTotalHt(org) | number:'1.2-2' }} {{ currencySymbol() }}
-                    </span>
-                  </div>
-                  <div class="block-content p-2">
-                    <table class="table table-sm table-striped table-hover table-vcenter fs-xs mb-0">
-                      <thead class="table-light">
-                        <tr>
-                          <th>Forfait</th>
-                          <th class="text-end">Montant (HT)</th>
-                          <th class="text-center">TVA</th>
-                          <th>Date & Heure du Paiement</th>
-                          <th class="text-center">Statut</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr *ngFor="let t of org.transactions">
-                          <td>
-                            <span class="badge" [ngClass]="getPlanBadgeClass(t.subscriptionPlan)">
-                              {{ t.subscriptionPlan }}
-                            </span>
-                          </td>
-                          <td class="text-end fw-bold text-dark">
-                            {{ convertTransactionHt(t) | number:'1.2-2' }} {{ currencySymbol() }}
-                          </td>
-                          <td class="text-center text-muted">{{ t.vatRate }} %</td>
-                          <td>{{ t.paymentDate | date:'dd/MM/yyyy HH:mm' }}</td>
-                          <td class="text-center">
-                            <span class="badge" [ngClass]="getStatusBadgeClass(t.paymentStatus)">
-                              {{ getStatusLabel(t.paymentStatus) }}
-                            </span>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </td>
-            </tr>
-          </ng-container>
+          <tr *ngFor="let org of consolidatedOrganizers()" [routerLink]="['/admin/caterers', org.catererId]" style="cursor: pointer;">
+            <td class="fw-bold text-primary">
+              {{ org.businessName }}
+            </td>
+            <td>
+              <span class="badge" [ngClass]="getPlanBadgeClass(org.latestPlan)">
+                {{ org.latestPlan }}
+              </span>
+            </td>
+            <td class="text-center fw-semibold text-dark">
+              {{ org.transactionCount }}
+            </td>
+            <td class="text-end fw-bold text-success fs-base">
+              {{ getOrganizerTotalHt(org) | number:'1.2-2' }} {{ currencySymbol() }}
+            </td>
+            <td class="text-dark">
+              {{ org.latestPaymentDate | date:'dd/MM/yyyy HH:mm' }}
+            </td>
+            <td class="text-center">
+              <span class="badge" [ngClass]="getStatusBadgeClass(org.paymentStatus)">
+                {{ getStatusLabel(org.paymentStatus) }}
+              </span>
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>

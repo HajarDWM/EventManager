@@ -18,6 +18,13 @@ public class SubscriptionCheckoutResource {
     private final CatererRepositoryPort catererRepositoryPort;
     private final com.example.eventmanager.application.port.in.RecordTransactionUseCase recordTransactionUseCase;
     private final com.example.eventmanager.application.port.out.BillingSettingRepositoryPort billingSettingRepositoryPort;
+    private final com.example.eventmanager.application.port.in.GetTransactionsUseCase getTransactionsUseCase;
+
+    @GetMapping("/my-history")
+    public ResponseEntity<java.util.List<com.example.eventmanager.application.dto.TransactionDTO>> getMySubscriptionHistory() {
+        Long catererId = securityContextPort.getCurrentCatererId();
+        return ResponseEntity.ok(getTransactionsUseCase.getTransactionsByCatererId(catererId));
+    }
 
     @PostMapping("/checkout")
     public ResponseEntity<Map<String, String>> createCheckoutSession(@RequestParam String plan) {

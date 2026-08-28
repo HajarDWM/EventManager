@@ -1,6 +1,6 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { CommonModule, Location } from '@angular/common';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AdminService } from '../../../core/services/admin.service';
 import { CurrencyService } from '../../../core/services/currency.service';
 import { EventService } from '../../events/services/event.service';
@@ -16,6 +16,16 @@ export class AdminCatererDetail implements OnInit {
   private readonly eventService = inject(EventService);
   protected readonly currencyService = inject(CurrencyService);
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly location = inject(Location);
+
+  protected goBack(): void {
+    if (window.history.length > 1) {
+      this.location.back();
+    } else {
+      this.router.navigate(['/admin/caterers']);
+    }
+  }
 
   protected readonly currencySymbol = computed(() => this.currencyService.activeSymbol());
 
@@ -25,6 +35,14 @@ export class AdminCatererDetail implements OnInit {
 
   protected convertTransactionHt(t: any): number {
     return this.currencyService.convertTransactionAmountHt(t);
+  }
+
+  protected getTotalCumulativeHt(): number {
+    let sum = 0;
+    for (const t of this.transactions()) {
+      sum += this.convertTransactionHt(t);
+    }
+    return sum;
   }
 
   // States
