@@ -41,6 +41,11 @@ public class TransactionResource {
         return ResponseEntity.ok(getTransactionsUseCase.getTransactionsByCatererId(catererId));
     }
 
+    @GetMapping("/all")
+    public ResponseEntity<List<TransactionDTO>> getAllTransactions() {
+        return ResponseEntity.ok(getTransactionsUseCase.getAllTransactionsForExport());
+    }
+
     @GetMapping("/export/csv")
     public ResponseEntity<byte[]> exportCsv() {
         List<TransactionDTO> list = getTransactionsUseCase.getAllTransactionsForExport();

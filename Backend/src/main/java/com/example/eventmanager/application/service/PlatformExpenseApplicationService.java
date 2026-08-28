@@ -99,7 +99,12 @@ public class PlatformExpenseApplicationService implements ManageExpensesUseCase 
         List<Transaction> txs = transactionRepositoryPort.findSuccessfulTransactionsSince(sinceDate);
         return txs.stream()
                 .map(t -> {
-                    // Compute HT Revenue: HT = amountPaid / (1 + vatRate / 100)
+                    String plan = t.getSubscriptionPlan() != null ? t.getSubscriptionPlan().toUpperCase() : "";
+                    if ("STANDARD".equals(plan)) {
+                        return BigDecimal.valueOf(29.90).divide(BigDecimal.valueOf(1.20), 4, java.math.RoundingMode.HALF_UP);
+                    } else if ("PREMIUM".equals(plan)) {
+                        return BigDecimal.valueOf(59.90).divide(BigDecimal.valueOf(1.20), 4, java.math.RoundingMode.HALF_UP);
+                    }
                     BigDecimal amount = t.getAmountPaid() != null ? t.getAmountPaid() : BigDecimal.ZERO;
                     BigDecimal vat = t.getVatRate() != null ? t.getVatRate() : BigDecimal.valueOf(20.0);
                     if (vat.compareTo(BigDecimal.ZERO) == 0) {

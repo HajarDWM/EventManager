@@ -129,7 +129,8 @@ export class CurrencyService {
   public convertFromEUR(amountEUR: number | undefined | null, targetCurrency: string = this.activeCurrency()): number {
     if (amountEUR == null || isNaN(amountEUR)) return 0;
     const rate = this.exchangeRates[targetCurrency] || 1.0;
-    return amountEUR * rate;
+    const val = amountEUR * rate;
+    return Math.round((val + Number.EPSILON) * 100) / 100;
   }
 
   /**
@@ -138,7 +139,8 @@ export class CurrencyService {
   public convertToEUR(amount: number | undefined | null, sourceCurrency: string = this.activeCurrency()): number {
     if (amount == null || isNaN(amount)) return 0;
     const rate = this.exchangeRates[sourceCurrency] || 1.0;
-    return amount / rate;
+    const val = amount / rate;
+    return Math.round((val + Number.EPSILON) * 100) / 100;
   }
 
   /**

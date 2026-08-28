@@ -151,6 +151,10 @@ export class AdminService {
     return this.http.get<any>(`${this.apiUrl}/transactions/stats`, { params });
   }
 
+  public getAllTransactionsList(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/transactions/all`);
+  }
+
   public downloadTransactionsCsv(): Observable<Blob> {
     return this.http.get(`${this.apiUrl}/transactions/export/csv`, { responseType: 'blob' });
   }

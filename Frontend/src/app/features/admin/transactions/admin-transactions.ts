@@ -61,15 +61,31 @@ export class AdminTransactions implements OnInit {
 
   // States
   protected readonly transactions = signal<Transaction[]>([]);
+  protected readonly allTransactions = signal<Transaction[]>([]);
   protected readonly expandedCaterers = signal<Set<string | number>>(new Set());
   protected readonly isLoading = signal(true);
   protected readonly isExporting = signal(false);
   protected readonly errorMessage = signal('');
 
+  // Dynamic KPI Metrics computed signal
+  protected readonly kpiStats = computed(() => {
+    const rev = this.getTotalRevenuesHt();
+    const exp = this.getTotalExpenses();
+    const netProfit = rev - exp;
+
+    return {
+      selectedPeriodRevenue: rev,
+      selectedPeriodExpenses: exp,
+      netProfitSelectedPeriod: netProfit
+    };
+  });
+
   // Grouped consolidated organizers computed signal
   protected readonly consolidatedOrganizers = computed(() => {
     const list = this.transactions();
     if (!list || list.length === 0) return [];
+
+    const query = this.searchInput().toLowerCase().trim();
 
     const map = new Map<string | number, ConsolidatedOrganizerTransaction>();
 
@@ -97,13 +113,35 @@ export class AdminTransactions implements OnInit {
       }
     }
 
-    return Array.from(map.values());
+    const items = Array.from(map.values());
+
+    if (!query) return items;
+
+    return items.filter(org =>
+      org.businessName && org.businessName.toLowerCase().includes(query)
+    );
   });
 
   protected getOrganizerTotalHt(org: ConsolidatedOrganizerTransaction): number {
     let sum = 0;
     for (const t of org.transactions) {
       sum += this.currencyService.convertTransactionAmountHt(t);
+    }
+    return sum;
+  }
+
+  protected getTotalRevenuesHt(): number {
+    let sum = 0;
+    for (const org of this.consolidatedOrganizers()) {
+      sum += this.getOrganizerTotalHt(org);
+    }
+    return sum;
+  }
+
+  protected getTotalExpenses(): number {
+    let sum = 0;
+    for (const exp of this.expenses()) {
+      sum += exp.amount || 0;
     }
     return sum;
   }
@@ -172,6 +210,27 @@ export class AdminTransactions implements OnInit {
         console.error(err);
       }
     });
+
+    this.adminService.getAllTransactionsList().subscribe({
+      next: (list) => {
+        this.allTransactions.set(list || []);
+      },
+      error: (err) => console.error('Error fetching all transactions for KPIs', err)
+    });
+  }
+
+  protected onSearchInput(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    const value = target ? target.value : '';
+    this.searchInput.set(value);
+    this.currentPage.set(0);
+    this.loadTransactions();
+  }
+
+  protected clearSearch(): void {
+    this.searchInput.set('');
+    this.currentPage.set(0);
+    this.loadTransactions();
   }
 
   protected onSearch(): void {

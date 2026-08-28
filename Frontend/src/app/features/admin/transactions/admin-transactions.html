@@ -1,5 +1,6 @@
 <!-- Hero -->
-<div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-2 text-center text-md-start border-bottom border-light pb-3">
+<div
+  class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-2 text-center text-md-start border-bottom border-light pb-3">
   <div class="flex-grow-1 mb-1 mb-md-0">
     <h1 class="h3 fw-bold mb-2">
       Tableau de Bord Financier & Audit
@@ -15,14 +16,16 @@
     </span>
     <div class="input-group input-group-sm" style="width: 220px;">
       <span class="input-group-text bg-body-light border-light text-muted"><i class="fa fa-globe"></i></span>
-      <select class="form-select form-select-sm border-light shadow-sm" [ngModel]="currencyService.activeCurrency()" (ngModelChange)="onCurrencySelect($event)">
+      <select class="form-select form-select-sm border-light shadow-sm" [ngModel]="currencyService.activeCurrency()"
+        (ngModelChange)="onCurrencySelect($event)">
         <option *ngFor="let curr of currencyService.supportedCurrencies" [value]="curr.code">
           {{ curr.label }}
         </option>
       </select>
     </div>
 
-    <button type="button" class="btn btn-alt-primary rounded-pill px-3" (click)="exportCsv()" [disabled]="isExporting()">
+    <button type="button" class="btn btn-alt-primary rounded-pill px-3" (click)="exportCsv()"
+      [disabled]="isExporting()">
       <i class="fa fa-download me-1" *ngIf="!isExporting()"></i>
       <i class="fa fa-spinner fa-spin me-1" *ngIf="isExporting()"></i>
       Exporter le rapport CSV
@@ -46,100 +49,70 @@
 <div class="d-flex justify-content-between align-items-center mb-3 mt-3.5">
   <div class="d-flex align-items-center gap-2">
     <span class="fs-xs fw-bold text-uppercase text-muted me-2">Analyse de la Période :</span>
-    <button class="btn btn-sm px-3 rounded-pill fw-semibold" 
-            [ngClass]="selectedPeriod() === '1_MONTH' ? 'btn-primary' : 'btn-alt-secondary'"
-            (click)="changePeriod('1_MONTH')">
+    <button class="btn btn-sm px-3 rounded-pill fw-semibold"
+      [ngClass]="selectedPeriod() === '1_MONTH' ? 'btn-primary' : 'btn-alt-secondary'"
+      (click)="changePeriod('1_MONTH')">
       1 Mois
     </button>
-    <button class="btn btn-sm px-3 rounded-pill fw-semibold" 
-            [ngClass]="selectedPeriod() === '3_MONTHS' ? 'btn-primary' : 'btn-alt-secondary'"
-            (click)="changePeriod('3_MONTHS')">
+    <button class="btn btn-sm px-3 rounded-pill fw-semibold"
+      [ngClass]="selectedPeriod() === '3_MONTHS' ? 'btn-primary' : 'btn-alt-secondary'"
+      (click)="changePeriod('3_MONTHS')">
       3 Mois
     </button>
-    <button class="btn btn-sm px-3 rounded-pill fw-semibold" 
-            [ngClass]="selectedPeriod() === '1_YEAR' ? 'btn-primary' : 'btn-alt-secondary'"
-            (click)="changePeriod('1_YEAR')">
+    <button class="btn btn-sm px-3 rounded-pill fw-semibold"
+      [ngClass]="selectedPeriod() === '1_YEAR' ? 'btn-primary' : 'btn-alt-secondary'" (click)="changePeriod('1_YEAR')">
       1 An
     </button>
   </div>
 </div>
 
-<!-- Financial KPI Cards -->
+<!-- Financial KPI Cards (2 Compact Side-by-Side Cards) -->
 <div class="row g-3 mb-4">
-  <!-- Card 1: Revenue Current Month -->
-  <div class="col-6 col-lg-3">
+  <!-- Dynamic Revenue Card -->
+  <div class="col-md-6">
     <div class="block block-rounded shadow-sm border border-light h-100 bg-white mb-0">
       <div class="block-content block-content-full d-flex align-items-center justify-content-between p-3">
         <div>
-          <span class="fs-xs fw-semibold text-uppercase text-muted d-block mb-1">Revenu (Mois En Cours)</span>
-          <h4 class="fw-extrabold text-dark mb-0">
-            {{ convert(stats()?.totalRevenueCurrentMonth || 0) | number:'1.2-2' }} {{ currencySymbol() }}
-          </h4>
+          <span class="fs-xs fw-semibold text-uppercase text-muted d-block mb-1">
+            Revenu
+            <span *ngIf="selectedPeriod() === '1_MONTH'">(Mois En Cours)</span>
+            <span *ngIf="selectedPeriod() === '3_MONTHS'">(3 Derniers Mois)</span>
+            <span *ngIf="selectedPeriod() === '1_YEAR'">(Dernière Année)</span>
+          </span>
+          <h3 class="fw-extrabold text-dark mb-0">
+            {{ kpiStats().selectedPeriodRevenue | number:'1.2-2' }} {{ currencySymbol() }}
+          </h3>
         </div>
-        <div class="item item-rounded bg-success-light text-success">
+        <div class="item item-rounded bg-success-light text-success fs-4">
           <i class="fa fa-chart-line"></i>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Card 2: Revenue Last 3 Months -->
-  <div class="col-6 col-lg-3">
-    <div class="block block-rounded shadow-sm border border-light h-100 bg-white mb-0">
-      <div class="block-content block-content-full d-flex align-items-center justify-content-between p-3">
-        <div>
-          <span class="fs-xs fw-semibold text-uppercase text-muted d-block mb-1">Revenu (3 Derniers Mois)</span>
-          <h4 class="fw-extrabold text-dark mb-0">
-            {{ convert(stats()?.totalRevenueLast3Months || 0) | number:'1.2-2' }} {{ currencySymbol() }}
-          </h4>
-        </div>
-        <div class="item item-rounded bg-info-light text-info">
-          <i class="fa fa-calendar-alt"></i>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Card 3: Revenue Last Year -->
-  <div class="col-6 col-lg-3">
-    <div class="block block-rounded shadow-sm border border-light h-100 bg-white mb-0">
-      <div class="block-content block-content-full d-flex align-items-center justify-content-between p-3">
-        <div>
-          <span class="fs-xs fw-semibold text-uppercase text-muted d-block mb-1">Revenu (Dernière Année)</span>
-          <h4 class="fw-extrabold text-dark mb-0">
-            {{ convert(stats()?.totalRevenueLastYear || 0) | number:'1.2-2' }} {{ currencySymbol() }}
-          </h4>
-        </div>
-        <div class="item item-rounded bg-primary-light text-primary">
-          <i class="fa fa-piggy-bank"></i>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Card 4: Net Profit (Selected Period) -->
-  <div class="col-6 col-lg-3">
-    <div class="block block-rounded shadow-sm border h-100 mb-0 bg-white" 
-         [ngClass]="{
-           'border-success': (stats()?.netProfitSelectedPeriod || 0) >= 0, 
-           'border-danger': (stats()?.netProfitSelectedPeriod || 0) < 0
+  <!-- Dynamic Net Profit Card -->
+  <div class="col-md-6">
+    <div class="block block-rounded shadow-sm border h-100 mb-0 bg-white" [ngClass]="{
+           'border-success': kpiStats().netProfitSelectedPeriod >= 0, 
+           'border-danger': kpiStats().netProfitSelectedPeriod < 0
          }">
       <div class="block-content block-content-full d-flex align-items-center justify-content-between p-3">
         <div>
           <span class="fs-xs fw-semibold text-uppercase text-muted d-block mb-1">
-            Bénéfice Net 
+            Bénéfice Net
             <span *ngIf="selectedPeriod() === '1_MONTH'">(1 Mois)</span>
             <span *ngIf="selectedPeriod() === '3_MONTHS'">(3 Mois)</span>
             <span *ngIf="selectedPeriod() === '1_YEAR'">(1 An)</span>
           </span>
-          <h4 class="fw-extrabold mb-0" 
-              [ngClass]="(stats()?.netProfitSelectedPeriod || 0) >= 0 ? 'text-success' : 'text-danger'">
-            {{ convert(stats()?.netProfitSelectedPeriod || 0) | number:'1.2-2' }} {{ currencySymbol() }}
-          </h4>
+          <h3 class="fw-extrabold mb-0"
+            [ngClass]="kpiStats().netProfitSelectedPeriod >= 0 ? 'text-success' : 'text-danger'">
+            {{ kpiStats().netProfitSelectedPeriod | number:'1.2-2' }} {{ currencySymbol() }}
+          </h3>
         </div>
-        <div class="item item-rounded" 
-             [ngClass]="(stats()?.netProfitSelectedPeriod || 0) >= 0 ? 'bg-success text-white' : 'bg-danger text-white'">
-          <i class="fa" [ngClass]="(stats()?.netProfitSelectedPeriod || 0) >= 0 ? 'fa-wallet' : 'fa-hand-holding-usd'"></i>
+        <div class="item item-rounded fs-4"
+          [ngClass]="kpiStats().netProfitSelectedPeriod >= 0 ? 'bg-success text-white' : 'bg-danger text-white'">
+          <i class="fa"
+            [ngClass]="kpiStats().netProfitSelectedPeriod >= 0 ? 'fa-wallet' : 'fa-hand-holding-usd'"></i>
         </div>
       </div>
     </div>
@@ -148,14 +121,17 @@
 
 <!-- Search and Table Block -->
 <div class="block block-rounded bg-white shadow-sm border border-light mt-4">
-  <div class="block-header block-header-default border-bottom bg-body-light d-flex justify-content-between align-items-center">
+  <div
+    class="block-header block-header-default border-bottom bg-body-light d-flex justify-content-between align-items-center">
     <h3 class="block-title fw-bold">Journal des Transactions</h3>
     <div class="d-flex align-items-center gap-2">
-      <div class="input-group input-group-sm" style="width: 280px;">
-        <input type="text" class="form-control" placeholder="Rechercher par ID ou Organisateur..."
-               [(ngModel)]="searchInput" (keyup.enter)="onSearch()">
-        <button class="btn btn-primary" type="button" (click)="onSearch()">
-          <i class="fa fa-search"></i>
+      <div class="input-group input-group-sm" style="width: 320px;">
+        <span class="input-group-text bg-white border-end-0 text-muted"><i class="fa fa-search"></i></span>
+        <input type="text" class="form-control border-start-0 ps-0" placeholder="Rechercher par Organisateur..."
+          [value]="searchInput()" (input)="onSearchInput($event)">
+        <button type="button" class="btn btn-alt-secondary" *ngIf="searchInput()" (click)="clearSearch()"
+          title="Effacer la recherche">
+          <i class="fa fa-times text-muted"></i>
         </button>
       </div>
     </div>
@@ -191,7 +167,8 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let org of consolidatedOrganizers()" [routerLink]="['/admin/caterers', org.catererId]" style="cursor: pointer;">
+          <tr *ngFor="let org of consolidatedOrganizers()" [routerLink]="['/admin/caterers', org.catererId]"
+            style="cursor: pointer;">
             <td class="fw-bold text-primary">
               {{ org.businessName }}
             </td>
@@ -216,13 +193,24 @@
             </td>
           </tr>
         </tbody>
+        <tfoot class="table-light fw-bold" *ngIf="consolidatedOrganizers().length > 0">
+          <tr>
+            <td colspan="3" class="text-end text-uppercase text-muted fs-xs">Total Recettes Encaissées (HT) :</td>
+            <td class="text-end text-success fs-base fw-bold">
+              {{ getTotalRevenuesHt() | number:'1.2-2' }} {{ currencySymbol() }}
+            </td>
+            <td colspan="2"></td>
+          </tr>
+        </tfoot>
       </table>
     </div>
 
     <!-- Pagination Controls -->
-    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 border-top border-light py-3 mt-2" *ngIf="!isLoading() && totalPages() > 1">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 border-top border-light py-3 mt-2"
+      *ngIf="!isLoading() && totalPages() > 1">
       <div class="fs-sm text-muted">
-        Affichage de <strong>{{ transactions().length }}</strong> transactions sur <strong>{{ totalElements() }}</strong> au total.
+        Affichage de <strong>{{ transactions().length }}</strong> transactions sur <strong>{{ totalElements()
+          }}</strong> au total.
       </div>
       <nav aria-label="Page navigation">
         <ul class="pagination pagination-sm mb-0">
@@ -231,7 +219,8 @@
               <span aria-hidden="true"><i class="fa fa-angle-left"></i></span>
             </button>
           </li>
-          <li class="page-item" *ngFor="let p of [].constructor(totalPages()); let i = index" [class.active]="i === currentPage()">
+          <li class="page-item" *ngFor="let p of [].constructor(totalPages()); let i = index"
+            [class.active]="i === currentPage()">
             <button class="page-link" (click)="changePage(i)">{{ i + 1 }}</button>
           </li>
           <li class="page-item" [class.disabled]="currentPage() === totalPages() - 1">
@@ -247,7 +236,8 @@
 
 <!-- Expense Management Block -->
 <div class="block block-rounded bg-white shadow-sm border border-light mt-4">
-  <div class="block-header block-header-default border-bottom bg-body-light d-flex justify-content-between align-items-center">
+  <div
+    class="block-header block-header-default border-bottom bg-body-light d-flex justify-content-between align-items-center">
     <h3 class="block-title fw-bold">Gestion des Dépenses Plateforme</h3>
     <div>
       <button class="btn btn-sm btn-danger rounded-pill px-3 fw-semibold" (click)="openExpenseModal()">
@@ -287,37 +277,51 @@
               </span>
             </td>
             <td class="text-end fw-semibold text-danger">
-              -{{ convert(exp.amount) | number:'1.2-2' }} {{ currencySymbol() }}
+              -{{ exp.amount | number:'1.2-2' }} {{ currencySymbol() }}
             </td>
             <td>{{ exp.expenseDate | date:'dd/MM/yyyy HH:mm' }}</td>
             <td class="text-center">
               <div class="d-flex align-items-center justify-content-center gap-2">
-                <button type="button" class="btn btn-sm btn-alt-primary border-0 p-1" (click)="openEditExpenseModal(exp)" title="Modifier la dépense">
+                <button type="button" class="btn btn-sm btn-alt-primary border-0 p-1"
+                  (click)="openEditExpenseModal(exp)" title="Modifier la dépense">
                   <i class="fa fa-pencil-alt text-primary"></i>
                 </button>
-                <button type="button" class="btn btn-sm btn-alt-danger border-0 p-1" (click)="deleteExpense(exp.id!)" title="Supprimer la dépense">
+                <button type="button" class="btn btn-sm btn-alt-danger border-0 p-1" (click)="deleteExpense(exp.id!)"
+                  title="Supprimer la dépense">
                   <i class="fa fa-trash-alt text-danger"></i>
                 </button>
               </div>
             </td>
           </tr>
         </tbody>
+        <tfoot class="table-light fw-bold" *ngIf="expenses().length > 0">
+          <tr>
+            <td colspan="2" class="text-end text-uppercase text-muted fs-xs">Total Dépenses Plateforme :</td>
+            <td class="text-end text-danger fs-base fw-bold">
+              -{{ getTotalExpenses() | number:'1.2-2' }} {{ currencySymbol() }}
+            </td>
+            <td colspan="2"></td>
+          </tr>
+        </tfoot>
       </table>
     </div>
   </div>
 </div>
 
 <!-- Modal : Ajouter une Dépense -->
-<div class="modal fade show" tabindex="-1" role="dialog" style="display: block; background: rgba(0,0,0,0.5); z-index: 1050;" *ngIf="showExpenseModal()">
+<div class="modal fade show" tabindex="-1" role="dialog"
+  style="display: block; background: rgba(0,0,0,0.5); z-index: 1050;" *ngIf="showExpenseModal()">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content border-0 shadow-lg bg-white">
       <div class="block block-rounded block-transparent mb-0">
-        <div class="block-header block-header-default bg-body-light border-bottom border-light d-flex justify-content-between align-items-center p-3">
+        <div
+          class="block-header block-header-default bg-body-light border-bottom border-light d-flex justify-content-between align-items-center p-3">
           <h3 class="block-title fw-bold text-dark mb-0">
             <i class="fa text-danger me-2" [ngClass]="isEditingExpense() ? 'fa-edit' : 'fa-plus-circle'"></i>
             {{ isEditingExpense() ? 'Modifier la Dépense Plateforme' : 'Déclarer une Dépense Plateforme' }}
           </h3>
-          <button type="button" class="btn btn-sm btn-alt-secondary" (click)="showExpenseModal.set(false)" style="border: none; background: transparent;">
+          <button type="button" class="btn btn-sm btn-alt-secondary" (click)="showExpenseModal.set(false)"
+            style="border: none; background: transparent;">
             <i class="fa fa-times text-dark"></i>
           </button>
         </div>
@@ -326,15 +330,16 @@
             <!-- Description -->
             <div class="mb-3">
               <label class="form-label fs-sm fw-semibold text-dark">Libellé / Description</label>
-              <input type="text" class="form-control border-light fs-sm" placeholder="ex: Serveur Cloud AWS, Licence Datadog..." 
-                     [(ngModel)]="newExpenseDescription" name="desc" required>
+              <input type="text" class="form-control border-light fs-sm"
+                placeholder="ex: Serveur Cloud AWS, Licence Datadog..." [(ngModel)]="newExpenseDescription" name="desc"
+                required>
             </div>
 
             <!-- Amount -->
             <div class="mb-3">
               <label class="form-label fs-sm fw-semibold text-dark">Montant ({{ currencySymbol() }} HT)</label>
-              <input type="number" step="0.01" class="form-control border-light fs-sm" placeholder="ex: 120.00" 
-                     [(ngModel)]="newExpenseAmount" name="amount" required>
+              <input type="number" step="0.01" class="form-control border-light fs-sm" placeholder="ex: 120.00"
+                [(ngModel)]="newExpenseAmount" name="amount" required>
             </div>
 
             <!-- Category -->
@@ -351,7 +356,8 @@
             <!-- Date -->
             <div class="mb-4">
               <label class="form-label fs-sm fw-semibold text-dark">Date d'effet</label>
-              <input type="datetime-local" class="form-control border-light fs-sm" [(ngModel)]="newExpenseDate" name="date">
+              <input type="datetime-local" class="form-control border-light fs-sm" [(ngModel)]="newExpenseDate"
+                name="date">
             </div>
 
             <!-- Actions -->
