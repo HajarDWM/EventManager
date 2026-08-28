@@ -38,4 +38,10 @@ public class TransactionEntity {
 
     @Column(name = "payment_status", nullable = false, length = 50)
     private String paymentStatus;
+
+    @Column(name = "start_date")
+    private LocalDateTime startDate;
+
+    @Column(name = "end_date")
+    private LocalDateTime endDate;
 }

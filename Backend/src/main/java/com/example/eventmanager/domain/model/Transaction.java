@@ -18,4 +18,6 @@ public class Transaction {
     private BigDecimal vatRate;
     private LocalDateTime paymentDate;
     private String paymentStatus;
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
 }

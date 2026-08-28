@@ -52,6 +52,13 @@ public class TransactionApplicationService implements GetTransactionsUseCase, Re
     @Override
     @Transactional
     public void recordTransaction(Long catererId, String plan, BigDecimal amountPaid, BigDecimal vatRate, String paymentStatus) {
+        LocalDateTime now = LocalDateTime.now();
+        recordTransaction(catererId, plan, amountPaid, vatRate, paymentStatus, now, now.plusDays(30));
+    }
+
+    @Override
+    @Transactional
+    public void recordTransaction(Long catererId, String plan, BigDecimal amountPaid, BigDecimal vatRate, String paymentStatus, LocalDateTime startDate, LocalDateTime endDate) {
         Caterer caterer = catererRepositoryPort.findById(catererId)
                 .orElseThrow(() -> new RuntimeException("Caterer not found for ID: " + catererId));
 
@@ -64,6 +71,8 @@ public class TransactionApplicationService implements GetTransactionsUseCase, Re
                 .vatRate(vatRate)
                 .paymentDate(LocalDateTime.now())
                 .paymentStatus(paymentStatus)
+                .startDate(startDate != null ? startDate : LocalDateTime.now())
+                .endDate(endDate != null ? endDate : (startDate != null ? startDate.plusDays(30) : LocalDateTime.now().plusDays(30)))
                 .build();
 
         transactionRepositoryPort.save(transaction);

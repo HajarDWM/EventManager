@@ -63,8 +63,8 @@ public class SubscriptionCheckoutResource {
         }
         java.math.BigDecimal vat = java.math.BigDecimal.valueOf(settings.getVatRate());
 
-        // Record audit transaction
-        recordTransactionUseCase.recordTransaction(catererId, plan, amount, vat, "SUCCESS");
+        // Record audit transaction with start and end dates
+        recordTransactionUseCase.recordTransaction(catererId, plan, amount, vat, "SUCCESS", now, newEndDate);
 
         return ResponseEntity.ok(Map.of(
             "status", "SUCCESS",

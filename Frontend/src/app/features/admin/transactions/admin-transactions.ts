@@ -17,6 +17,16 @@ export interface Transaction {
   amountHt: number;
 }
 
+export interface ConsolidatedOrganizerTransaction {
+  catererId: number;
+  businessName: string;
+  latestPlan: string;
+  transactionCount: number;
+  latestPaymentDate: string;
+  paymentStatus: string;
+  transactions: Transaction[];
+}
+
 export interface Expense {
   id?: number;
   description: string;
@@ -51,9 +61,69 @@ export class AdminTransactions implements OnInit {
 
   // States
   protected readonly transactions = signal<Transaction[]>([]);
+  protected readonly expandedCaterers = signal<Set<string | number>>(new Set());
   protected readonly isLoading = signal(true);
   protected readonly isExporting = signal(false);
   protected readonly errorMessage = signal('');
+
+  // Grouped consolidated organizers computed signal
+  protected readonly consolidatedOrganizers = computed(() => {
+    const list = this.transactions();
+    if (!list || list.length === 0) return [];
+
+    const map = new Map<string | number, ConsolidatedOrganizerTransaction>();
+
+    for (const t of list) {
+      const key = t.catererId || t.businessName;
+      if (!map.has(key)) {
+        map.set(key, {
+          catererId: t.catererId,
+          businessName: t.businessName,
+          latestPlan: t.subscriptionPlan,
+          transactionCount: 1,
+          latestPaymentDate: t.paymentDate,
+          paymentStatus: t.paymentStatus,
+          transactions: [t]
+        });
+      } else {
+        const item = map.get(key)!;
+        item.transactionCount += 1;
+        item.transactions.push(t);
+        if (new Date(t.paymentDate) > new Date(item.latestPaymentDate)) {
+          item.latestPaymentDate = t.paymentDate;
+          item.latestPlan = t.subscriptionPlan;
+          item.paymentStatus = t.paymentStatus;
+        }
+      }
+    }
+
+    return Array.from(map.values());
+  });
+
+  protected getOrganizerTotalHt(org: ConsolidatedOrganizerTransaction): number {
+    let sum = 0;
+    for (const t of org.transactions) {
+      sum += this.currencyService.convertTransactionAmountHt(t);
+    }
+    return sum;
+  }
+
+  protected toggleExpand(catererKey: string | number, event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
+    const current = new Set(this.expandedCaterers());
+    if (current.has(catererKey)) {
+      current.delete(catererKey);
+    } else {
+      current.add(catererKey);
+    }
+    this.expandedCaterers.set(current);
+  }
+
+  protected isExpanded(catererKey: string | number): boolean {
+    return this.expandedCaterers().has(catererKey);
+  }
 
   // Pagination & Search States
   protected readonly searchInput = signal('');

@@ -17,6 +17,16 @@ public class TransactionDTO {
     private BigDecimal vatRate;
     private LocalDateTime paymentDate;
     private String paymentStatus;
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
+
+    public LocalDateTime getEffectiveStartDate() {
+        return startDate != null ? startDate : paymentDate;
+    }
+
+    public LocalDateTime getEffectiveEndDate() {
+        return endDate != null ? endDate : (getEffectiveStartDate() != null ? getEffectiveStartDate().plusDays(30) : null);
+    }
 
     public BigDecimal getAmountHt() {
         if (amountPaid == null) return BigDecimal.ZERO;

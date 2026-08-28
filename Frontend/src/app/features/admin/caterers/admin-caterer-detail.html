@@ -151,10 +151,11 @@
             <thead class="table-light">
               <tr>
                 <th>Forfait Souscrit</th>
-                <th style="width: 160px;" class="text-end">Montant Payé (HT)</th>
-                <th style="width: 100px;" class="text-center">TVA (%)</th>
-                <th style="width: 170px;">Date & Heure</th>
-                <th style="width: 130px;" class="text-center">Statut</th>
+                <th style="width: 150px;" class="text-end">Montant Payé (HT)</th>
+                <th style="width: 90px;" class="text-center">TVA (%)</th>
+                <th style="width: 150px;">Date de Paiement</th>
+                <th style="width: 250px;" class="text-center">Période d'Abonnement</th>
+                <th style="width: 130px;" class="text-center">Statut Forfait</th>
               </tr>
             </thead>
             <tbody>
@@ -173,14 +174,24 @@
                 <td class="text-dark">
                   {{ t.paymentDate | date:'dd/MM/yyyy HH:mm' }}
                 </td>
+                <td class="text-center text-nowrap">
+                  <span class="badge bg-body-dark text-dark fw-semibold px-2 py-1 me-1">
+                    {{ getSubscriptionStartDate(t) | date:'dd/MM/yyyy' }}
+                  </span>
+                  <i class="fa fa-arrow-right text-muted mx-1 fs-xs"></i>
+                  <span class="badge bg-body-dark text-dark fw-semibold px-2 py-1 ms-1">
+                    {{ getSubscriptionEndDate(t) | date:'dd/MM/yyyy' }}
+                  </span>
+                </td>
                 <td class="text-center">
-                  <span class="badge px-2.5 py-1 rounded-pill" [ngClass]="getTransactionStatusBadgeClass(t.paymentStatus)">
-                    {{ getTransactionStatusLabel(t.paymentStatus) }}
+                  <span class="badge px-3 py-1.5 rounded-pill" [ngClass]="getSubscriptionStatusBadgeClass(t)">
+                    <i class="fa me-1" [ngClass]="isSubscriptionActive(t) ? 'fa-check-circle' : 'fa-clock'"></i>
+                    {{ getSubscriptionStatusLabel(t) }}
                   </span>
                 </td>
               </tr>
               <tr *ngIf="transactions().length === 0">
-                <td colspan="5" class="text-center py-4 text-muted">
+                <td colspan="6" class="text-center py-4 text-muted">
                   <i class="fa fa-receipt text-muted fs-3 mb-2 d-block opacity-50"></i>
                   Aucune transaction ou renouvellement d'abonnement n'a encore été enregistré pour cet organisateur.
                 </td>

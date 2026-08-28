@@ -18,6 +18,8 @@ public class TransactionPersistenceMapper {
                 .vatRate(domain.getVatRate())
                 .paymentDate(domain.getPaymentDate())
                 .paymentStatus(domain.getPaymentStatus())
+                .startDate(domain.getStartDate())
+                .endDate(domain.getEndDate())
                 .build();
     }
 
@@ -32,6 +34,8 @@ public class TransactionPersistenceMapper {
                 .vatRate(entity.getVatRate())
                 .paymentDate(entity.getPaymentDate())
                 .paymentStatus(entity.getPaymentStatus())
+                .startDate(entity.getStartDate())
+                .endDate(entity.getEndDate())
                 .build();
     }
 }

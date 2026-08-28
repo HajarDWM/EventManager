@@ -134,4 +134,39 @@ export class AdminCatererDetail implements OnInit {
       default: return 'bg-warning text-dark';
     }
   }
+
+  protected getSubscriptionStartDate(t: any): Date | null {
+    if (t.startDate) return new Date(t.startDate);
+    if (t.paymentDate) return new Date(t.paymentDate);
+    return null;
+  }
+
+  protected getSubscriptionEndDate(t: any): Date | null {
+    if (t.endDate) return new Date(t.endDate);
+    if (t.paymentDate) {
+      const d = new Date(t.paymentDate);
+      d.setDate(d.getDate() + 30);
+      return d;
+    }
+    return null;
+  }
+
+  protected isSubscriptionActive(t: any): boolean {
+    if (t.paymentStatus !== 'SUCCESS') return false;
+    const end = this.getSubscriptionEndDate(t);
+    if (!end) return false;
+    return new Date() <= end;
+  }
+
+  protected getSubscriptionStatusBadgeClass(t: any): string {
+    if (t.paymentStatus === 'FAILED') return 'bg-danger-light text-danger';
+    if (t.paymentStatus === 'PENDING') return 'bg-warning-light text-warning';
+    return this.isSubscriptionActive(t) ? 'bg-success-light text-success fw-bold' : 'bg-danger-light text-danger';
+  }
+
+  protected getSubscriptionStatusLabel(t: any): string {
+    if (t.paymentStatus === 'FAILED') return 'Échec';
+    if (t.paymentStatus === 'PENDING') return 'En attente';
+    return this.isSubscriptionActive(t) ? 'Actif' : 'Expiré';
+  }
 }

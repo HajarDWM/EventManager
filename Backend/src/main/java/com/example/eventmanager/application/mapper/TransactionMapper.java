@@ -18,6 +18,8 @@ public class TransactionMapper {
                 .vatRate(domain.getVatRate())
                 .paymentDate(domain.getPaymentDate())
                 .paymentStatus(domain.getPaymentStatus())
+                .startDate(domain.getStartDate())
+                .endDate(domain.getEndDate())
                 .build();
     }
 
@@ -32,6 +34,8 @@ public class TransactionMapper {
                 .vatRate(dto.getVatRate())
                 .paymentDate(dto.getPaymentDate())
                 .paymentStatus(dto.getPaymentStatus())
+                .startDate(dto.getStartDate())
+                .endDate(dto.getEndDate())
                 .build();
     }
 }
