@@ -277,7 +277,7 @@
               </span>
             </td>
             <td class="text-end fw-semibold text-danger">
-              -{{ exp.amount | number:'1.2-2' }} {{ currencySymbol() }}
+              -{{ exp.amount | number:'1.2-2' }} DH
             </td>
             <td>{{ exp.expenseDate | date:'dd/MM/yyyy HH:mm' }}</td>
             <td class="text-center">
@@ -298,7 +298,7 @@
           <tr>
             <td colspan="2" class="text-end text-uppercase text-muted fs-xs">Total Dépenses Plateforme :</td>
             <td class="text-end text-danger fs-base fw-bold">
-              -{{ getTotalExpenses() | number:'1.2-2' }} {{ currencySymbol() }}
+              -{{ getTotalExpenses() | number:'1.2-2' }} DH
             </td>
             <td colspan="2"></td>
           </tr>
@@ -335,11 +335,25 @@
                 required>
             </div>
 
-            <!-- Amount -->
+            <!-- Amount & Currency Input Group -->
             <div class="mb-3">
-              <label class="form-label fs-sm fw-semibold text-dark">Montant ({{ currencySymbol() }} HT)</label>
-              <input type="number" step="0.01" class="form-control border-light fs-sm" placeholder="ex: 120.00"
-                [(ngModel)]="newExpenseAmount" name="amount" required>
+              <label class="form-label fs-sm fw-semibold text-dark">Montant & Devise de Paiement</label>
+              <div class="input-group">
+                <input type="number" step="0.01" class="form-control border-light fs-sm" placeholder="ex: 120.00"
+                  [(ngModel)]="newExpenseAmount" name="amount" required>
+                <select class="form-select border-light fs-sm" style="max-width: 130px;" [(ngModel)]="newExpenseCurrency" name="expenseCurrency">
+                  <option value="MAD">MAD (DH)</option>
+                  <option value="EUR">EUR (€)</option>
+                  <option value="USD">USD ($)</option>
+                  <option value="CAD">CAD ($)</option>
+                  <option value="GBP">GBP (£)</option>
+                  <option value="CHF">CHF (CHF)</option>
+                </select>
+              </div>
+              <div class="form-text fs-xs text-muted mt-1" *ngIf="newExpenseCurrency !== 'MAD' && newExpenseAmount">
+                <i class="fa fa-info-circle me-1 text-primary"></i>
+                Sera automatiquement converti à environ <strong>{{ currencyService.convertToMAD(newExpenseAmount, newExpenseCurrency) | number:'1.2-2' }} DH</strong> dans la comptabilité.
+              </div>
             </div>
 
             <!-- Category -->

@@ -144,6 +144,32 @@ export class CurrencyService {
   }
 
   /**
+   * Convert an amount from any currency (e.g., USD, EUR) into MAD.
+   */
+  public convertToMAD(amount: number | undefined | null, sourceCurrency: string = 'MAD'): number {
+    if (amount == null || isNaN(amount)) return 0;
+    if (sourceCurrency === 'MAD') return Math.round((amount + Number.EPSILON) * 100) / 100;
+    const rateSource = this.exchangeRates[sourceCurrency] || 1.0;
+    const rateMAD = this.exchangeRates['MAD'] || 10.80;
+    const amountInEUR = amount / rateSource;
+    const amountInMAD = amountInEUR * rateMAD;
+    return Math.round((amountInMAD + Number.EPSILON) * 100) / 100;
+  }
+
+  /**
+   * Convert an amount from MAD into target currency (e.g., EUR, USD).
+   */
+  public convertFromMAD(amountMAD: number | undefined | null, targetCurrency: string = this.activeCurrency()): number {
+    if (amountMAD == null || isNaN(amountMAD)) return 0;
+    if (targetCurrency === 'MAD') return Math.round((amountMAD + Number.EPSILON) * 100) / 100;
+    const rateMAD = this.exchangeRates['MAD'] || 10.80;
+    const rateTarget = this.exchangeRates[targetCurrency] || 1.0;
+    const amountInEUR = amountMAD / rateMAD;
+    const amountInTarget = amountInEUR * rateTarget;
+    return Math.round((amountInTarget + Number.EPSILON) * 100) / 100;
+  }
+
+  /**
    * Convert transaction amount HT based on subscription plan tier or exchange rate
    */
   public convertTransactionAmountHt(t: { subscriptionPlan?: string; amountHt?: number; amountPaid?: number; vatRate?: number }, targetCurrency: string = this.activeCurrency()): number {

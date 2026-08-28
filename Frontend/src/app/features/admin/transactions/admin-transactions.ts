@@ -69,13 +69,15 @@ export class AdminTransactions implements OnInit {
 
   // Dynamic KPI Metrics computed signal
   protected readonly kpiStats = computed(() => {
+    const activeCurr = this.currencyService.activeCurrency();
     const rev = this.getTotalRevenuesHt();
-    const exp = this.getTotalExpenses();
-    const netProfit = rev - exp;
+    const totalExpMAD = this.getTotalExpenses();
+    const expConverted = this.currencyService.convertFromMAD(totalExpMAD, activeCurr);
+    const netProfit = rev - expConverted;
 
     return {
       selectedPeriodRevenue: rev,
-      selectedPeriodExpenses: exp,
+      selectedPeriodExpenses: expConverted,
       netProfitSelectedPeriod: netProfit
     };
   });
@@ -182,6 +184,7 @@ export class AdminTransactions implements OnInit {
   // Expense Form Properties
   protected newExpenseDescription = '';
   protected newExpenseAmount: number | null = null;
+  protected newExpenseCurrency = 'MAD';
   protected newExpenseCategory = 'SERVER';
   protected newExpenseDate = '';
 
@@ -332,6 +335,7 @@ export class AdminTransactions implements OnInit {
   protected openExpenseModal(): void {
     this.newExpenseDescription = '';
     this.newExpenseAmount = null;
+    this.newExpenseCurrency = 'MAD';
     this.newExpenseCategory = 'SERVER';
     this.newExpenseDate = new Date().toISOString().substring(0, 16);
     this.isEditingExpense.set(false);
@@ -342,6 +346,7 @@ export class AdminTransactions implements OnInit {
   protected openEditExpenseModal(expense: Expense): void {
     this.newExpenseDescription = expense.description;
     this.newExpenseAmount = expense.amount;
+    this.newExpenseCurrency = 'MAD';
     this.newExpenseCategory = expense.category;
     if (expense.expenseDate) {
       // Format to local date time-local format (YYYY-MM-DDTHH:mm) adjusting for local timezone offset
@@ -362,9 +367,12 @@ export class AdminTransactions implements OnInit {
       return;
     }
     this.isAddingExpense.set(true);
+
+    const amountInMAD = this.currencyService.convertToMAD(this.newExpenseAmount, this.newExpenseCurrency);
+
     const expenseData: Expense = {
       description: this.newExpenseDescription,
-      amount: this.newExpenseAmount,
+      amount: amountInMAD,
       expenseDate: this.newExpenseDate ? new Date(this.newExpenseDate).toISOString() : new Date().toISOString(),
       category: this.newExpenseCategory
     };
