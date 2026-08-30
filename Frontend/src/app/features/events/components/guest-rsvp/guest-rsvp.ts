@@ -17,6 +17,7 @@ export interface PublicRsvpDetail {
   eventTitle: string;
   eventDate: string;
   eventLocation: string;
+  locationMapUrl?: string;
   digitalTemplateId?: number;
   invitationTitle?: string;
   invitationSubtitle?: string;
@@ -207,7 +208,10 @@ export class GuestRsvp implements OnInit, OnDestroy {
     return '#d4af37';
   }
 
-  public getDirectionsUrl(destination?: string): string {
+  public getDirectionsUrl(destination?: string, exactUrl?: string): string {
+    if (exactUrl && exactUrl.trim()) {
+      return exactUrl.trim();
+    }
     if (!destination || !destination.trim()) {
       return 'https://maps.google.com';
     }

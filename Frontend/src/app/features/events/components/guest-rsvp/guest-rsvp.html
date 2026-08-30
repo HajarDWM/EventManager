@@ -403,17 +403,19 @@
                 {{ guest()?.eventLocation || guest()?.invitationLocation }}
               </div>
 
-              <!-- Note Parking spécifique si différente du nom de la salle -->
+              <!-- Note Parking spécifique masquée selon la demande -->
+              <!-- 
               <div *ngIf="guest()?.parkingLocation && guest()?.parkingLocation !== (guest()?.eventLocation || guest()?.invitationLocation)"
                    class="location-parking-subtitle fs-xs mt-1"
                    [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="opacity: 0.9;">
                 <i class="fa fa-parking me-1 text-primary"></i> Parking : {{ guest()?.parkingLocation }}
-              </div>
+              </div> 
+              -->
 
               <!-- Onglets / Boutons d'itinéraires GPS -->
               <div class="d-inline-flex flex-wrap justify-content-center gap-2 mt-2.5">
                 <!-- Onglet Salle -->
-                <a [href]="getDirectionsUrl(guest()?.eventLocation || guest()?.invitationLocation)"
+                <a [href]="getDirectionsUrl(guest()?.eventLocation || guest()?.invitationLocation, guest()?.locationMapUrl)"
                   target="_blank" rel="noopener noreferrer"
                   class="details-gps-link d-inline-flex align-items-center"
                   [style.fontFamily]="getSecondaryFont()" [style.color]="getPrimaryColor()" [style.borderColor]="getPrimaryColor()">

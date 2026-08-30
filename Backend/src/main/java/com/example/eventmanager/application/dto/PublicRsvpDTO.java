@@ -23,6 +23,7 @@ public class PublicRsvpDTO {
     private String eventTitle;
     private LocalDateTime eventDate;
     private String eventLocation;
+    private String locationMapUrl;
     
     private Long digitalTemplateId;
     private String invitationTitle;

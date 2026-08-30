@@ -3,6 +3,7 @@ export interface Event {
   title: string;
   eventDate: string;
   location: string;
+  locationMapUrl?: string;
   guestCount?: number | null;
   status?: 'DRAFT' | 'PLANNED' | 'COMPLETED' | 'CANCELLED';
   catererId?: number;

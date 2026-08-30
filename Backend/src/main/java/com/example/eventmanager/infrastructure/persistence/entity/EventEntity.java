@@ -28,6 +28,9 @@ public class EventEntity {
 
     private String location;
 
+    @Column(name = "location_map_url", length = 1024)
+    private String locationMapUrl;
+
     @Column(name = "guest_count")
     private Integer guestCount;
 

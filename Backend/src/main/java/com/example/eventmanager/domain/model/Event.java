@@ -12,6 +12,7 @@ public class Event {
     private String title;
     private LocalDateTime eventDate;
     private String location;
+    private String locationMapUrl;
     private Integer guestCount;
     @Builder.Default
     private EventStatus status = EventStatus.DRAFT;

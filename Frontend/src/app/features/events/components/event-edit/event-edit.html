@@ -88,11 +88,21 @@
 
           <!-- Lieu de la Salle -->
           <div class="mb-4">
-            <label class="form-label fs-sm fw-semibold" for="event-location">Lieu <span
-                class="text-danger">*</span></label>
-            <input type="text" class="form-control form-control-alt fs-sm" id="event-location" name="event-location"
-                placeholder="Ex: Palais des Roses, Galerie des Glaces, Casablanca" [ngModel]="location()"
-                (ngModelChange)="location.set($event)" required>
+            <label class="form-label fs-sm fw-semibold" for="event-location">Lieu / Nom de la salle <span class="text-danger">*</span></label>
+            <input type="text" class="form-control form-control-alt fs-sm"
+                   id="event-location" name="event-location" placeholder="Ex: Palais des Roses, Galerie des Glaces"
+                   [ngModel]="location()" (ngModelChange)="location.set($event)" required>
+          </div>
+
+          <!-- Lien Google Maps / Adresse exacte -->
+          <div class="mb-4">
+            <label class="form-label fs-sm fw-semibold" for="event-map-url">Adresse exacte / Lien Google Maps (facultatif)</label>
+            <input type="url" class="form-control form-control-alt fs-sm"
+                   id="event-map-url" name="event-map-url" placeholder="Ex: https://maps.app.goo.gl/... ou 123 Avenue Mohamed V, Casablanca"
+                   [ngModel]="locationMapUrl()" (ngModelChange)="locationMapUrl.set($event)">
+            <div class="form-text fs-xs text-muted">
+              Ce lien sera utilisé pour le bouton d'itinéraire sur l'invitation digitale.
+            </div>
           </div>
 
           <!-- Zone de Parking -->

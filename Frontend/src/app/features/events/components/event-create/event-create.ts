@@ -23,6 +23,7 @@ export class EventCreate implements OnInit {
   protected readonly eventDateOnly = signal('');
   protected readonly eventTimeOnly = signal('');
   protected readonly location = signal('');
+  protected readonly locationMapUrl = signal('');
   protected readonly parkingLocation = signal('');
   protected readonly guestCount = signal<number | null>(null);
   protected readonly isPaidEvent = signal<boolean>(false);
@@ -85,6 +86,7 @@ export class EventCreate implements OnInit {
       title: this.title(),
       eventDate: dateVal,
       location: this.location(),
+      locationMapUrl: this.locationMapUrl() || undefined,
       invitationLocation: this.location(),
       invitationTitle: this.title(),
       invitationSubtitle: this.invitationSubtitle() || undefined,

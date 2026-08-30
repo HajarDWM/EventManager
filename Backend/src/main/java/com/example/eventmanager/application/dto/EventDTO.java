@@ -16,6 +16,7 @@ public class EventDTO {
     private String title;
     private LocalDateTime eventDate;
     private String location;
+    private String locationMapUrl;
     private Integer guestCount;
     private String status;
     private Long catererId;
