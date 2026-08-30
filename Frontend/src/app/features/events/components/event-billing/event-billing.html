@@ -123,10 +123,13 @@
           <!-- Configuration -->
           <div class="col-lg-5">
             <div class="block block-rounded bg-white border border-light h-100">
-              <div class="block-header block-header-default border-bottom bg-body-light p-3">
+              <div class="block-header block-header-default border-bottom bg-body-light p-3 d-flex justify-content-between align-items-center">
                 <h5 class="block-title fw-bold mb-0">
                   <i class="fa fa-cogs text-primary me-2"></i>Configuration Tarifaire
                 </h5>
+                <button type="button" class="btn btn-success btn-sm rounded-pill px-3 fw-bold shadow-sm" [disabled]="eventTotalPrice() <= 0" (click)="openPaymentModal()">
+                  <i class="fa fa-plus me-1"></i> Enregistrer un Règlement
+                </button>
               </div>
               <div class="block-content p-3">
                 <div class="mb-4">
@@ -140,14 +143,6 @@
                   <div class="form-text fs-xs text-muted mt-2">
                     Mettre à jour ce montant ajustera automatiquement le solde restant dû du client.
                   </div>
-                </div>
-
-                <hr class="my-4 border-light">
-
-                <div class="d-flex flex-column gap-2">
-                  <button type="button" class="btn btn-success w-100 rounded-pill py-2.5 fw-bold" [disabled]="eventTotalPrice() <= 0" (click)="openPaymentModal()">
-                    <i class="fa fa-euro-sign me-1"></i> Enregistrer un Règlement
-                  </button>
                 </div>
               </div>
             </div>
@@ -248,7 +243,7 @@
           <div class="col-12">
             <div class="block block-rounded bg-body-light border border-light p-2.5 text-center h-100 d-flex flex-column justify-content-center">
               <div class="fs-xs fw-bold text-muted text-uppercase mb-1">Total des Charges / Dépenses</div>
-              <div class="fs-5 fw-extrabold text-danger">{{ convert(totalExpensesAmount()) | number:'1.2-2' }} {{ currencySymbol() }}</div>
+              <div class="fs-5 fw-extrabold text-danger">{{ totalExpensesAmount() | number:'1.2-2' }} {{ currencySymbol() }}</div>
               <div class="fs-xs text-muted mt-1">Cumul de tous les coûts de revient</div>
             </div>
           </div>
@@ -291,7 +286,7 @@
                     </td>
                     <td class="fw-semibold">{{ exp.description }}</td>
                     <td class="text-muted">{{ exp.providerName || '-' }}</td>
-                    <td class="text-end fw-bold text-danger">- {{ convert(exp.amount) | number:'1.2-2' }} {{ currencySymbol() }}</td>
+                    <td class="text-end fw-bold text-danger">- {{ exp.amount | number:'1.2-2' }} {{ currencySymbol() }}</td>
                     <td class="text-center">
                       <div class="d-flex align-items-center justify-content-center gap-1">
                         <button type="button" class="btn btn-sm btn-alt-info rounded-circle p-1 d-inline-flex align-items-center justify-content-center" 
@@ -343,7 +338,7 @@
           <div class="mb-3">
             <label class="form-label fs-sm fw-bold">Montant reçu ({{ currencySymbol() }})</label>
             <input type="number" class="form-control" [(ngModel)]="paymentAmountInput" name="paymentAmountInput" step="0.01">
-            <div class="form-text fs-xs text-danger">Solde restant dû : {{ convert(remainingBalanceDue()) | number:'1.2-2' }} {{ currencySymbol() }}</div>
+            <div class="form-text fs-xs text-danger">Solde restant dû : {{ remainingBalanceDue() | number:'1.2-2' }} {{ currencySymbol() }}</div>
           </div>
 
           <div class="mb-3">

@@ -203,26 +203,15 @@
                   <!-- Right side: Répartition breakdown -->
                   <div class="col-12 col-sm-6 border-start-sm">
                     <h5 class="fw-bold fs-xs text-uppercase text-muted border-bottom pb-1 mb-2">Répartition</h5>
-                    <div class="d-flex flex-column gap-2">
-                      <div class="d-flex justify-content-between align-items-center fs-xs">
-                        <span class="text-dark"><i class="fa fa-cookie text-muted me-1"></i> Entrées (Starter)</span>
-                        <span class="badge bg-body-dark text-black px-2">{{ startersCount() }}</span>
-                      </div>
-                      <div class="d-flex justify-content-between align-items-center fs-xs">
-                        <span class="text-dark"><i class="fa fa-drumstick-bite text-muted me-1"></i> Plats (Main)</span>
-                        <span class="badge bg-body-dark text-black px-2">{{ mainsCount() }}</span>
-                      </div>
-                      <div class="d-flex justify-content-between align-items-center fs-xs">
-                        <span class="text-dark"><i class="fa fa-birthday-cake text-muted me-1"></i> Desserts
-                          (Dessert)</span>
-                        <span class="badge bg-body-dark text-black px-2">{{ dessertsCount() }}</span>
-                      </div>
-                      <div class="d-flex justify-content-between align-items-center fs-xs">
-                        <span class="text-dark"><i class="fa fa-wine-glass text-muted me-1"></i> Boissons
-                          (Beverage)</span>
-                        <span class="badge bg-body-dark text-black px-2">{{ beveragesCount() }}</span>
+                    <div class="d-flex flex-column gap-2" *ngIf="menuCategoriesBreakdown().length > 0; else noBreakdown">
+                      <div class="d-flex justify-content-between align-items-center fs-xs" *ngFor="let item of menuCategoriesBreakdown()">
+                        <span class="text-dark"><i class="fa {{ item.icon }} text-muted me-1"></i> {{ item.label }}</span>
+                        <span class="badge bg-body-dark text-black px-2">{{ item.count }}</span>
                       </div>
                     </div>
+                    <ng-template #noBreakdown>
+                      <div class="text-muted fs-xs fst-italic">Aucun plat défini pour ce menu.</div>
+                    </ng-template>
                   </div>
                 </div>
               </ng-container>

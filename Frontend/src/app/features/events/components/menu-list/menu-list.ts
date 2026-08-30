@@ -630,8 +630,8 @@ export class MenuList implements OnInit {
     if (this.masterCateringMode() === 'MIX') {
       switch (cat) {
         case 'BEVERAGE': return "Boissons d'accueil";
-        case 'BUFFET_STARTER': return 'Amuse-gueule';
-        case 'STARTER': return 'Salades';
+        case 'BUFFET_STARTER': return 'Pièces cocktail';
+        case 'STARTER': return 'Salad Bar';
         case 'MAIN': return 'Plats';
         case 'DESSERT': return 'Desserts';
         case 'BUFFET_DESSERT': return 'Station Desserts (Buffet)';
@@ -644,7 +644,7 @@ export class MenuList implements OnInit {
       case 'DESSERT': return 'Desserts';
       case 'BEVERAGE': return 'Boissons';
       case 'OTHER': return 'Autres';
-      case 'BUFFET_STARTER': return 'Amuse-gueule';
+      case 'BUFFET_STARTER': return 'Pièces cocktail';
       case 'BUFFET_MAIN': return 'Plats Chauds';
       case 'BUFFET_DESSERT': return 'Station Desserts';
       default: return cat;

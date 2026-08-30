@@ -261,10 +261,10 @@
         <ng-container *ngIf="hasBuffetEntrees()">
           <button type="button" class="btn" [class.btn-primary]="selectedCategory() === 'BUFFET_STARTER'"
             [class.btn-alt-secondary]="selectedCategory() !== 'BUFFET_STARTER'"
-            (click)="selectedCategory.set('BUFFET_STARTER')">Amuse-gueule</button>
+            (click)="selectedCategory.set('BUFFET_STARTER')">Pièces cocktail</button>
           <button type="button" class="btn" [class.btn-primary]="selectedCategory() === 'STARTER'"
             [class.btn-alt-secondary]="selectedCategory() !== 'STARTER'"
-            (click)="selectedCategory.set('STARTER')">Salades</button>
+            (click)="selectedCategory.set('STARTER')">Salad Bar</button>
         </ng-container>
         
         <button *ngIf="isFormatSelected('PLATS_FIXES')" type="button" class="btn" [class.btn-primary]="selectedCategory() === 'MAIN'"

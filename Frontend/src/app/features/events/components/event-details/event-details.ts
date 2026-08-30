@@ -110,21 +110,101 @@ export class EventDetails implements OnInit {
     return new Set(list).size;
   });
 
-  protected readonly startersCount = computed(() => 
-    this.menuItems().filter(m => m.category === 'STARTER').length
-  );
+  protected readonly masterCateringMode = computed(() => {
+    const e = this.event();
+    if (!e || !e.mealType) return 'PLATS_FIXES';
+    const t = e.mealType;
+    if (t.includes('BUFFET_ENTREES') && t.includes('PLATS_FIXES')) {
+      return 'MIX';
+    } else if (t.startsWith('BUFFET') || t.includes('BUFFET_STANDARD')) {
+      return 'BUFFET';
+    }
+    return 'PLATS_FIXES';
+  });
 
-  protected readonly mainsCount = computed(() => 
-    this.menuItems().filter(m => m.category === 'MAIN').length
-  );
+  protected getCategoryLabel(cat: string, mode: string): string {
+    if (mode === 'MIX') {
+      switch (cat) {
+        case 'BEVERAGE': return "Boissons d'accueil";
+        case 'BUFFET_STARTER': return 'Pièces cocktail';
+        case 'STARTER': return 'Salad Bar';
+        case 'MAIN': return 'Plats';
+        case 'DESSERT': return 'Desserts';
+        case 'BUFFET_DESSERT': return 'Station Desserts (Buffet)';
+        default: return cat;
+      }
+    }
+    switch (cat) {
+      case 'STARTER': return 'Entrées';
+      case 'MAIN': return 'Plats';
+      case 'DESSERT': return 'Desserts';
+      case 'BEVERAGE': return 'Boissons';
+      case 'OTHER': return 'Autres';
+      case 'BUFFET_STARTER': return 'Pièces cocktail';
+      case 'BUFFET_MAIN': return 'Plats Chauds';
+      case 'BUFFET_DESSERT': return 'Station Desserts';
+      case 'BUFFET_BEVERAGES': return 'Boissons Buffet';
+      default: return cat;
+    }
+  }
 
-  protected readonly dessertsCount = computed(() => 
-    this.menuItems().filter(m => m.category === 'DESSERT').length
-  );
+  protected getCategoryIcon(cat: string): string {
+    switch (cat) {
+      case 'STARTER':
+      case 'BUFFET_STARTER': return 'fa-cookie';
+      case 'MAIN':
+      case 'BUFFET_MAIN': return 'fa-drumstick-bite';
+      case 'DESSERT':
+      case 'BUFFET_DESSERT': return 'fa-birthday-cake';
+      case 'BEVERAGE':
+      case 'BUFFET_BEVERAGES': return 'fa-wine-glass';
+      case 'OTHER': return 'fa-utensils';
+      default: return 'fa-utensils';
+    }
+  }
 
-  protected readonly beveragesCount = computed(() => 
-    this.menuItems().filter(m => m.category === 'BEVERAGE' || m.category === 'DRINK').length
-  );
+  protected readonly menuCategoriesBreakdown = computed(() => {
+    const items = this.menuItems();
+    const categoriesMap = new Map<string, number>();
+
+    items.forEach(item => {
+      const cat = item.category || 'UNKNOWN';
+      categoriesMap.set(cat, (categoriesMap.get(cat) || 0) + 1);
+    });
+
+    const mode = this.masterCateringMode();
+    let allowedCategories: string[] = [];
+    if (mode === 'PLATS_FIXES') {
+      allowedCategories = ['STARTER', 'MAIN', 'DESSERT', 'BEVERAGE'];
+    } else if (mode === 'BUFFET') {
+      allowedCategories = ['BUFFET_STARTER', 'BUFFET_MAIN', 'BUFFET_DESSERT', 'BUFFET_BEVERAGES'];
+    } else if (mode === 'MIX') {
+      allowedCategories = ['BUFFET_STARTER', 'STARTER', 'MAIN', 'BUFFET_DESSERT', 'DESSERT', 'BEVERAGE'];
+    }
+
+    const breakdown: { category: string, label: string, icon: string, count: number }[] = [];
+    categoriesMap.forEach((count, cat) => {
+      if (count > 0 && cat !== 'UNKNOWN' && cat !== 'OTHER' && allowedCategories.includes(cat)) {
+        breakdown.push({
+          category: cat,
+          label: this.getCategoryLabel(cat, mode),
+          icon: this.getCategoryIcon(cat),
+          count: count
+        });
+      }
+    });
+
+    const order = ['STARTER', 'BUFFET_STARTER', 'MAIN', 'BUFFET_MAIN', 'DESSERT', 'BUFFET_DESSERT', 'BEVERAGE', 'BUFFET_BEVERAGES'];
+    breakdown.sort((a, b) => {
+      let idxA = order.indexOf(a.category);
+      let idxB = order.indexOf(b.category);
+      if (idxA === -1) idxA = 99;
+      if (idxB === -1) idxB = 99;
+      return idxA - idxB;
+    });
+
+    return breakdown;
+  });
 
   protected readonly totalPlatesAndBeverages = computed(() => {
     const confirmCount = this.confirmedGuestsCount();
