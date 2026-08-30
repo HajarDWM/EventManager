@@ -72,6 +72,32 @@
   <!-- Main Grid Layout -->
   <ng-container *ngIf="!isLoading() && event()">
     <div class="col-12">
+      
+      <!-- Full-Width Client Portal Banner -->
+      <div class="block block-rounded shadow-sm mb-4 bg-primary-subtle border-0">
+        <div class="block-content p-4 d-flex flex-column flex-md-row align-items-center justify-content-between gap-4">
+          <div class="d-flex align-items-center gap-3 text-center text-md-start">
+            <div class="p-3 bg-white rounded-circle shadow-sm d-flex align-items-center justify-content-center text-primary flex-shrink-0" style="width: 56px; height: 56px;">
+              <i class="fa fa-share-nodes fa-lg"></i>
+            </div>
+            <div>
+              <h3 class="h5 fw-bold text-dark mb-1">Portail Client</h3>
+              <p class="text-muted fs-sm mb-0">Partagez ce lien sécurisé avec votre client pour qu'il puisse gérer sa liste d'invités.</p>
+            </div>
+          </div>
+          
+          <div class="w-100 flex-grow-1" style="max-width: 500px;">
+            <div class="input-group shadow-sm rounded-pill overflow-hidden bg-white">
+              <input type="text" class="form-control bg-transparent border-0 text-primary fw-semibold px-4" readonly [value]="clientPortalUrl()">
+              <button class="btn btn-primary fw-medium px-4" type="button" (click)="copyClientLink()" [disabled]="linkCopied()">
+                <i class="fa me-1" [ngClass]="linkCopied() ? 'fa-check' : 'fa-copy'"></i> 
+                {{ linkCopied() ? 'Copié !' : 'Copier le lien' }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="row g-4">
 
         <!-- Box 1: Gestion des Invités (Guests Summary) -->
@@ -392,38 +418,6 @@
               </div>
             </div>
           </div>
-          <!-- Box 4: Portail Client (Client Portal Link) -->
-        <div class="col-12 col-xl-6">
-          <div class="block block-rounded shadow-sm border border-light h-100 bg-white mb-0">
-            <div
-              class="block-header block-header-default border-bottom p-3 d-flex justify-content-between align-items-center">
-              <h3 class="block-title fw-bold fs-sm mb-0">
-                <i class="fa fa-link text-primary me-2"></i>Portail Client
-              </h3>
-            </div>
-            <div class="block-content p-4 text-center">
-              <div class="mb-3">
-                <i class="fa fa-share-alt fa-3x text-muted opacity-50 mb-3"></i>
-                <h5 class="fw-bold fs-sm">Partagez l'accès avec votre client</h5>
-                <p class="text-muted fs-xs mb-4">
-                  Envoyez ce lien sécurisé à votre client (le futur marié ou l'organisateur) pour qu'il puisse gérer lui-même sa liste d'invités.
-                </p>
-              </div>
-              
-              <div class="input-group mb-3">
-                <input type="text" class="form-control text-center bg-light" readonly [value]="clientPortalUrl()">
-                <button class="btn btn-outline-primary" type="button" (click)="copyClientLink()">
-                  <i class="fa fa-copy me-1"></i> Copier
-                </button>
-              </div>
-              
-              <div class="text-success fs-xs fw-medium" *ngIf="linkCopied()">
-                <i class="fa fa-check-circle me-1"></i> Lien copié dans le presse-papiers !
-              </div>
-            </div>
-          </div>
-        </div>
-
       </div>
 
       </div>

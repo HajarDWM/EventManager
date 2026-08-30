@@ -25,4 +25,8 @@ export class ClientGuestService {
   public deleteGuest(eventId: number, guestId: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/events/${eventId}/guests/${guestId}`);
   }
+
+  public downloadTemplate(eventId: number): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/events/${eventId}/guests/template`, { responseType: 'blob' });
+  }
 }

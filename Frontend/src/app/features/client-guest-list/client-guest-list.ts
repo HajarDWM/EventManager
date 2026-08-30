@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, inject, signal, computed, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
@@ -41,6 +41,33 @@ export class ClientGuestList implements OnInit {
 
   protected readonly confirmedCount = computed(() => this.guests().filter(g => g.status === 'CONFIRMED').length);
   protected readonly pendingCount = computed(() => this.guests().filter(g => g.status === 'PENDING').length);
+
+  protected readonly uniqueGroups = computed(() => {
+    const list = this.guests().map(g => g.groupName).filter((g): g is string => !!g);
+    return Array.from(new Set(list));
+  });
+
+  protected readonly groupSuggestions = computed(() => {
+    const globalGroups = [
+      'Famille Proche', 'Famille Élargie', 'Amis & Proches', 'Hommes', 'Femmes',
+      'VIP', 'Enfants', 'Direction / Management', 'Partenaires / Clients VIP',
+      'Équipe Interne / Salariés', 'Presse / Médias', 'Invités Externes',
+      'VIP / Sponsors', 'Table d\'Honneur', 'Grand Public / Standard',
+      'Presse & Officiels', 'Staff / Organisateurs'
+    ];
+    const currentUnique = this.uniqueGroups();
+    const combined = [...globalGroups, ...currentUnique];
+    return Array.from(new Set(combined));
+  });
+
+  protected readonly isGroupDropdownOpen = signal<boolean>(false);
+
+  protected readonly filteredGroupSuggestions = computed(() => {
+    const input = this.groupName().toLowerCase().trim();
+    const suggestions = this.groupSuggestions();
+    if (!input) return suggestions;
+    return suggestions.filter(s => s.toLowerCase().includes(input));
+  });
 
   public ngOnInit(): void {
     const idParam = this.route.snapshot.paramMap.get('id');
@@ -172,6 +199,52 @@ export class ClientGuestList implements OnInit {
           console.error(err);
         }
       });
+    }
+  }
+
+  protected onDownloadTemplate(): void {
+    const currentEventId = this.eventId();
+    if (!currentEventId) return;
+
+    this.clientGuestService.downloadTemplate(currentEventId).subscribe({
+      next: (blob) => {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.setAttribute('href', url);
+        link.setAttribute('download', 'modele_invites.xlsx');
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      },
+      error: (err) => {
+        this.errorMessage.set("Erreur lors du téléchargement du modèle.");
+        console.error(err);
+      }
+    });
+  }
+
+  protected toggleGroupDropdown(event: MouseEvent): void {
+    event.stopPropagation();
+    this.isGroupDropdownOpen.update(v => !v);
+  }
+
+  protected selectGroupSuggestion(grp: string): void {
+    this.groupName.set(grp);
+    this.isGroupDropdownOpen.set(false);
+  }
+
+  protected onGroupInputChange(val: string): void {
+    this.groupName.set(val);
+    this.isGroupDropdownOpen.set(true);
+  }
+
+  @HostListener('document:click', ['$event'])
+  protected onDocumentClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    if (target && !target.closest('.group-autocomplete-container')) {
+      this.isGroupDropdownOpen.set(false);
     }
   }
 }

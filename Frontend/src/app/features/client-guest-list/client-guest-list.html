@@ -3,7 +3,10 @@
     <h2><a routerLink="/client/dashboard" class="back-link"><i class="fas fa-arrow-left"></i></a> Gestion des Invités</h2>
     <p>Gérez la liste des personnes invitées à votre événement.</p>
   </div>
-  <div class="header-actions">
+  <div class="header-actions" style="display: flex; gap: 0.5rem;">
+    <button type="button" class="btn btn-outline-primary" (click)="onDownloadTemplate()" style="background: transparent; border: 1px solid #3b82f6; color: #3b82f6;">
+      <i class="fas fa-file-excel"></i> Télécharger modèle Excel
+    </button>
     <button class="btn btn-primary" (click)="openAddModal()">
       <i class="fas fa-plus"></i> Ajouter un invité
     </button>
@@ -97,66 +100,134 @@
   </button>
 </div>
 
-<!-- Modal for Add/Edit -->
-<div class="modal" *ngIf="isModalOpen()" [class.show]="isModalOpen()">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">{{ isEditing() ? 'Modifier l\'invité' : 'Ajouter un invité' }}</h5>
-        <button type="button" class="close" (click)="closeModal()">&times;</button>
+<!-- Modal Form (Unified Luxury Design) -->
+<div class="modal fade show animate__animated animate__fadeIn d-block" tabindex="-1" style="background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(8px);" *ngIf="isModalOpen()">
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 650px;">
+    <div class="modal-content luxury-modal-content">
+      
+      <!-- Luxury Modal Header -->
+      <div class="luxury-modal-header d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center gap-2.5">
+          <div class="rounded-circle bg-primary-subtle text-primary p-2 d-flex align-items-center justify-content-center flex-shrink-0" style="width: 38px; height: 38px;">
+            <i class="fa {{ isEditing() ? 'fa-user-pen' : 'fa-user-plus' }}"></i>
+          </div>
+          <div>
+            <h4 class="modal-title fw-bold text-dark mb-0">
+              {{ isEditing() ? 'Modifier l\'Invité' : 'Ajouter un Invité' }}
+            </h4>
+          </div>
+        </div>
+        <button type="button" class="btn-close" (click)="closeModal()"></button>
       </div>
-      <div class="modal-body">
-        <form (ngSubmit)="onSaveGuest()">
-          <div class="form-group mb-3">
-            <label>Nom complet *</label>
-            <input type="text" class="form-control" [ngModel]="fullName()" (ngModelChange)="fullName.set($event)" name="fullName" required>
-          </div>
+
+      <form (ngSubmit)="onSaveGuest()">
+        <div class="modal-body p-4 bg-light">
           
-          <div class="row">
-            <div class="col-md-6 form-group mb-3">
-              <label>Email</label>
-              <input type="email" class="form-control" [ngModel]="email()" (ngModelChange)="email.set($event)" name="email">
+          <div class="modal-section-card">
+            <div class="section-badge-header">
+              <i class="fa fa-id-card text-primary"></i> Informations Personnelles
             </div>
-            <div class="col-md-6 form-group mb-3">
-              <label>Téléphone</label>
-              <input type="tel" class="form-control" [ngModel]="phone()" (ngModelChange)="phone.set($event)" name="phone">
+
+            <div class="mb-3">
+              <label class="form-label fw-bold text-dark fs-sm mb-1.5">Nom complet <span class="text-danger">*</span></label>
+              <div class="input-group luxury-input-group">
+                <span class="input-group-text input-icon-box"><i class="fa fa-user"></i></span>
+                <input type="text" class="form-control"
+                       placeholder="Ex: Marie Dupont" [ngModel]="fullName()" (ngModelChange)="fullName.set($event)" name="fullName" required>
+              </div>
+            </div>
+
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label fw-bold text-dark fs-sm mb-1.5">Email</label>
+                <div class="input-group luxury-input-group">
+                  <span class="input-group-text input-icon-box"><i class="fa fa-envelope"></i></span>
+                  <input type="email" class="form-control"
+                         placeholder="marie@example.com" [ngModel]="email()" (ngModelChange)="email.set($event)" name="email">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-bold text-dark fs-sm mb-1.5">Téléphone</label>
+                <div class="input-group luxury-input-group">
+                  <span class="input-group-text input-icon-box"><i class="fa fa-phone"></i></span>
+                  <input type="text" class="form-control"
+                         placeholder="0612345678" [ngModel]="phone()" (ngModelChange)="phone.set($event)" name="phone">
+                </div>
+              </div>
             </div>
           </div>
-          
-          <div class="row">
-            <div class="col-md-4 form-group mb-3">
-              <label>Groupe</label>
-              <input type="text" class="form-control" [ngModel]="groupName()" (ngModelChange)="groupName.set($event)" name="groupName" placeholder="Ex: Amis, Famille...">
+
+          <div class="modal-section-card">
+            <div class="section-badge-header">
+              <i class="fa fa-chair text-primary"></i> Placement & Organisation
             </div>
-            <div class="col-md-4 form-group mb-3">
-              <label>N° Table</label>
-              <input type="text" class="form-control" [ngModel]="tableNumber()" (ngModelChange)="tableNumber.set($event)" name="tableNumber">
+
+            <div class="row g-3 mb-3">
+              <div class="col-md-6">
+                <label class="form-label fw-bold text-dark fs-sm mb-1.5">Statut de présence</label>
+                <select class="form-select form-control" [ngModel]="status()" (ngModelChange)="status.set($event)" name="status">
+                  <option value="PENDING">En attente</option>
+                  <option value="CONFIRMED">Confirmé</option>
+                  <option value="DECLINED">Décliné</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-bold text-dark fs-sm mb-1.5">Position / Table</label>
+                <div class="input-group luxury-input-group">
+                  <span class="input-group-text input-icon-box"><i class="fa fa-location-dot"></i></span>
+                  <input type="text" class="form-control"
+                         placeholder="Ex: Table A1, VIP..." [ngModel]="tableNumber()" (ngModelChange)="tableNumber.set($event)" name="tableNumber">
+                </div>
+              </div>
             </div>
-            <div class="col-md-4 form-group mb-3">
-              <label>Statut</label>
-              <select class="form-control" [ngModel]="status()" (ngModelChange)="status.set($event)" name="status">
-                <option value="PENDING">En attente</option>
-                <option value="CONFIRMED">Confirmé</option>
-                <option value="DECLINED">Refusé</option>
-              </select>
+
+            <div class="row g-3">
+              <div class="col-md-6 position-relative group-autocomplete-container">
+                <label class="form-label fw-bold text-dark fs-sm mb-1.5">Groupe</label>
+                <div class="input-group luxury-input-group">
+                  <span class="input-group-text input-icon-box"><i class="fa fa-users"></i></span>
+                  <input type="text" class="form-control"
+                         placeholder="Ex: Famille Proche, VIP, Staff..."
+                         [ngModel]="groupName()" (ngModelChange)="onGroupInputChange($event)"
+                         (focus)="isGroupDropdownOpen.set(true)"
+                         name="groupName" autocomplete="off">
+                  <button type="button" class="btn btn-outline-secondary" (click)="toggleGroupDropdown($event)">
+                    <i class="fa" [ngClass]="isGroupDropdownOpen() ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+                  </button>
+                </div>
+                <div class="dropdown-menu w-100 shadow border-light py-1 mt-1 show"
+                     style="position: absolute; z-index: 1050; max-height: 180px; overflow-y: auto;"
+                     *ngIf="isGroupDropdownOpen() && filteredGroupSuggestions().length > 0">
+                  <button type="button" class="dropdown-item fs-sm py-1.5 px-3 text-start w-100"
+                          *ngFor="let grp of filteredGroupSuggestions()"
+                          (click)="selectGroupSuggestion(grp)">
+                    {{ grp }}
+                  </button>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-bold text-dark fs-sm mb-1.5">Régime / Remarques</label>
+                <div class="input-group luxury-input-group">
+                  <span class="input-group-text input-icon-box"><i class="fa fa-utensils"></i></span>
+                  <input type="text" class="form-control"
+                         placeholder="Ex: Végétarien, sans gluten"
+                         [ngModel]="dietaryRequirements()" (ngModelChange)="dietaryRequirements.set($event)" name="dietaryRequirements">
+                </div>
+              </div>
             </div>
           </div>
-          
-          <div class="form-group mb-3">
-            <label>Régime alimentaire / Notes</label>
-            <textarea class="form-control" rows="2" [ngModel]="dietaryRequirements()" (ngModelChange)="dietaryRequirements.set($event)" name="dietaryRequirements"></textarea>
-          </div>
-          
-          <div class="modal-footer px-0 pb-0">
-            <button type="button" class="btn btn-secondary" (click)="closeModal()">Annuler</button>
-            <button type="submit" class="btn btn-primary" [disabled]="isSaving()">
-              <span *ngIf="isSaving()" class="spinner-border spinner-border-sm me-2"></span>
-              Enregistrer
-            </button>
-          </div>
-        </form>
-      </div>
+
+        </div>
+
+        <div class="luxury-modal-footer">
+          <button type="button" class="btn btn-cancel" (click)="closeModal()">Annuler</button>
+          <button type="submit" class="btn btn-submit-luxury" [disabled]="isSaving()">
+            <i class="fa fa-save me-1" *ngIf="!isSaving()"></i>
+            <i class="fa fa-circle-notch fa-spin me-1" *ngIf="isSaving()"></i>
+            {{ isEditing() ? 'Mettre à jour' : 'Enregistrer l\'Invité' }}
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 </div>
-<div class="modal-backdrop" *ngIf="isModalOpen()"></div>
