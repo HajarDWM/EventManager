@@ -7,6 +7,7 @@ import { GuestService, Guest } from '../../../../core/services/guest.service';
 import { BillingService, PaymentDTO } from '../../../../core/services/billing.service';
 import { MenuItemService, MenuItem } from '../../../../core/services/menu-item.service';
 import { CatererService } from '../../../../core/services/caterer.service';
+import { CurrencyService } from '../../../../core/services/currency.service';
 
 @Component({
   selector: 'app-event-details',
@@ -20,8 +21,11 @@ export class EventDetails implements OnInit {
   private readonly billingService = inject(BillingService);
   private readonly menuItemService = inject(MenuItemService);
   private readonly catererService = inject(CatererService);
+  private readonly currencyService = inject(CurrencyService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
+
+  protected readonly currencySymbol = computed(() => this.currencyService.activeSymbol());
 
   protected readonly event = signal<Event | null>(null);
   protected readonly guests = signal<Guest[]>([]);

@@ -180,7 +180,7 @@
                       <span class="fs-xxs fw-semibold text-uppercase text-muted d-block mb-1">Budget Traiteur
                         (Est.)</span>
                       <h4 class="fw-extrabold text-success mb-0">{{ cateringBudget() |
-                        currency:'EUR':'symbol':'1.2-2':'fr' }}</h4>
+                        number:'1.2-2':'fr' }} {{ currencySymbol() }}</h4>
                     </div>
                     <div class="border-top pt-2" *ngIf="dietaryGuests().length > 0">
                       <span class="fs-xxs fw-semibold text-uppercase text-muted d-block mb-1">Allergies &
@@ -359,18 +359,18 @@
               <div class="row g-2 mb-4 text-center border-bottom pb-3">
                 <div class="col-4 border-end">
                   <span class="fs-xxs fw-semibold text-uppercase text-muted d-block mb-1">Budget Total</span>
-                  <span class="fs-sm fw-bold text-dark">{{ totalBudget() | currency:'EUR':'symbol':'1.2-2':'fr'
-                    }}</span>
+                  <span class="fs-sm fw-bold text-dark">{{ totalBudget() | number:'1.2-2':'fr'
+                    }} {{ currencySymbol() }}</span>
                 </div>
                 <div class="col-4 border-end">
                   <span class="fs-xxs fw-semibold text-uppercase text-muted d-block mb-1">Acomptes Payés</span>
-                  <span class="fs-sm fw-bold text-success">{{ totalPaid() | currency:'EUR':'symbol':'1.2-2':'fr'
-                    }}</span>
+                  <span class="fs-sm fw-bold text-success">{{ totalPaid() | number:'1.2-2':'fr'
+                    }} {{ currencySymbol() }}</span>
                 </div>
                 <div class="col-4">
                   <span class="fs-xxs fw-semibold text-uppercase text-muted d-block mb-1">Solde Restant</span>
-                  <span class="fs-sm fw-bold text-danger">{{ remainingBudget() | currency:'EUR':'symbol':'1.2-2':'fr'
-                    }}</span>
+                  <span class="fs-sm fw-bold text-danger">{{ remainingBudget() | number:'1.2-2':'fr'
+                    }} {{ currencySymbol() }}</span>
                 </div>
               </div>
 
@@ -395,8 +395,8 @@
                         {{ p.reference || '-' }} ({{ p.paymentMethod === 'BANK_TRANSFER' ? 'Virement' : p.paymentMethod
                         === 'CREDIT_CARD' ? 'Carte Bancaire' : p.paymentMethod }})
                       </td>
-                      <td class="text-end fw-semibold text-success">{{ p.amount | currency:'EUR':'symbol':'1.2-2':'fr'
-                        }}</td>
+                      <td class="text-end fw-semibold text-success">{{ p.amount | number:'1.2-2':'fr'
+                        }} {{ currencySymbol() }}</td>
                     </tr>
                   </tbody>
                 </table>

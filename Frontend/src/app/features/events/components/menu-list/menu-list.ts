@@ -109,10 +109,10 @@ export class MenuList implements OnInit {
   protected readonly mergedSuggestionsDetail = computed(() => {
     const map: Record<string, { price: number, dietary: string, description?: string, imageUrl?: string }> = {};
     
-    // First populate with static template suggestions
+    // First populate with static template suggestions (convert EUR to active currency)
     Object.entries(this.staticSuggestionsDetail).forEach(([name, details]) => {
       map[name] = {
-        price: details.price,
+        price: this.convert(details.price),
         dietary: details.dietary,
         description: undefined,
         imageUrl: undefined
@@ -193,6 +193,40 @@ export class MenuList implements OnInit {
 
   protected readonly hasBuffetEntrees = computed(() => this.isFormatSelected('BUFFET_ENTREES'));
   protected readonly hasBuffetDesserts = computed(() => this.isFormatSelected('BUFFET_DESSERTS'));
+  protected readonly hasBuffetBeverages = computed(() => this.isFormatSelected('BUFFET_BEVERAGES'));
+
+  protected getMixPart1Title(): string {
+    const parts = [];
+    if (this.hasBuffetEntrees()) parts.push('Cocktail & Entrées');
+    if (this.hasBuffetDesserts()) parts.push('Desserts');
+    if (this.hasBuffetBeverages()) parts.push('Boissons');
+
+    if (parts.length === 0) return 'Partie 1 : Buffet Libre';
+    
+    let joined = parts[0];
+    if (parts.length > 1) {
+      const last = parts.pop();
+      joined = parts.join(', ') + ' & ' + last;
+    }
+    
+    return `Partie 1 : Buffet Libre (${joined})`;
+  }
+
+  protected getMixPart2Title(): string {
+    const parts = [];
+    if (this.isFormatSelected('PLATS_FIXES')) parts.push('Plat Principal');
+    if (!this.hasBuffetDesserts()) parts.push('Desserts');
+
+    if (parts.length === 0) return 'Partie 2 : Service à table';
+    
+    let joined = parts[0];
+    if (parts.length > 1) {
+      const last = parts.pop();
+      joined = parts.join(', ') + ' & ' + last;
+    }
+    
+    return `Partie 2 : Service à table (${joined})`;
+  }
 
   public ngOnInit(): void {
     const idParam = this.route.snapshot.paramMap.get('id');
@@ -241,11 +275,11 @@ export class MenuList implements OnInit {
     this.selectedCategory.set('ALL');
     let defaultType = '';
     if (mode === 'BUFFET') {
-      defaultType = 'BUFFET_STANDARD,BUFFET_VEG';
+      defaultType = 'BUFFET_STANDARD,BUFFET_VEG,BUFFET_HALAL,BUFFET_SUCRE_FREE,BUFFET_BEVERAGES';
     } else if (mode === 'PLATS_FIXES') {
-      defaultType = 'PLATS_FIXES,COURSE_MAIN';
+      defaultType = 'PLATS_FIXES,COURSE_ENTREE,COURSE_MAIN,COURSE_DESSERT,COURSE_BEVERAGE';
     } else if (mode === 'MIX') {
-      defaultType = 'BUFFET_ENTREES,PLATS_FIXES';
+      defaultType = 'BUFFET_ENTREES,PLATS_FIXES,BUFFET_DESSERTS,BUFFET_BEVERAGES';
     }
     this.saveMealType(defaultType);
   }
@@ -337,7 +371,8 @@ export class MenuList implements OnInit {
           allowed.push('BUFFET_DESSERT');
         }
       } else {
-        allowed.push('MAIN', 'DESSERT');
+        allowed.push('MAIN');
+        if (!this.hasBuffetDesserts()) allowed.push('DESSERT');
       }
       
       if (!allowed.includes(currentCat)) {
@@ -595,21 +630,21 @@ export class MenuList implements OnInit {
     if (this.masterCateringMode() === 'MIX') {
       switch (cat) {
         case 'BEVERAGE': return "Boissons d'accueil";
-        case 'BUFFET_STARTER': return 'Canapés & Amuse-bouches';
-        case 'STARTER': return 'Salades / Bar à salades';
-        case 'MAIN': return 'Plat Principal';
-        case 'DESSERT': return 'Dessert & Pièce montée';
+        case 'BUFFET_STARTER': return 'Amuse-gueule';
+        case 'STARTER': return 'Salades';
+        case 'MAIN': return 'Plats';
+        case 'DESSERT': return 'Desserts';
         case 'BUFFET_DESSERT': return 'Station Desserts (Buffet)';
         default: return cat;
       }
     }
     switch (cat) {
-      case 'STARTER': return 'Entrée';
-      case 'MAIN': return 'Plat Principal';
-      case 'DESSERT': return 'Dessert';
-      case 'BEVERAGE': return 'Boisson';
-      case 'OTHER': return 'Autre';
-      case 'BUFFET_STARTER': return 'Salad Bar / Entrée';
+      case 'STARTER': return 'Entrées';
+      case 'MAIN': return 'Plats';
+      case 'DESSERT': return 'Desserts';
+      case 'BEVERAGE': return 'Boissons';
+      case 'OTHER': return 'Autres';
+      case 'BUFFET_STARTER': return 'Amuse-gueule';
       case 'BUFFET_MAIN': return 'Plats Chauds';
       case 'BUFFET_DESSERT': return 'Station Desserts';
       default: return cat;

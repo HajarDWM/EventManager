@@ -19,41 +19,7 @@
 </div>
 <!-- END Hero Header -->
 
-<!-- Stats Cards -->
-<div class="row mt-4">
-  <div class="col-6 col-lg-3">
-    <div class="block block-rounded block-link-shadow text-center">
-      <div class="block-content block-content-full">
-        <div class="fs-2 fw-bold text-primary">{{ guests().length }}</div>
-        <div class="fs-sm fw-semibold text-muted text-uppercase">Total Invités</div>
-      </div>
-    </div>
-  </div>
-  <div class="col-6 col-lg-3">
-    <div class="block block-rounded block-link-shadow text-center">
-      <div class="block-content block-content-full">
-        <div class="fs-2 fw-bold text-success">{{ confirmedCount }}</div>
-        <div class="fs-sm fw-semibold text-muted text-uppercase">Confirmés</div>
-      </div>
-    </div>
-  </div>
-  <div class="col-6 col-lg-3">
-    <div class="block block-rounded block-link-shadow text-center">
-      <div class="block-content block-content-full">
-        <div class="fs-2 fw-bold text-warning">{{ pendingCount }}</div>
-        <div class="fs-sm fw-semibold text-muted text-uppercase">En Attente</div>
-      </div>
-    </div>
-  </div>
-  <div class="col-6 col-lg-3">
-    <div class="block block-rounded block-link-shadow text-center">
-      <div class="block-content block-content-full">
-        <div class="fs-2 fw-bold text-danger">{{ declinedCount }}</div>
-        <div class="fs-sm fw-semibold text-muted text-uppercase">Déclinés</div>
-      </div>
-    </div>
-  </div>
-</div>
+
 
 <!-- Alerts -->
 <div class="alert alert-success d-flex align-items-center gap-2 mt-2" role="alert" *ngIf="successMessage()">

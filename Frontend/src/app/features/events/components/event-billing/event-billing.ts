@@ -163,7 +163,7 @@ export class EventBilling implements OnInit {
   // --- SAVE/UPDATE TOTAL PRICE ---
   protected saveTotalPrice(): void {
     if (this.editTotalPrice <= 0) {
-      alert('Veuillez entrer un montant total valide supérieur à 0 €.');
+      alert(`Veuillez entrer un montant total valide supérieur à 0 ${this.currencySymbol()}.`);
       return;
     }
 
@@ -301,7 +301,7 @@ export class EventBilling implements OnInit {
 
   protected recordPayment(): void {
     if (this.paymentAmountInput <= 0) {
-      alert('Le montant du règlement doit être supérieur à 0 €.');
+      alert(`Le montant du règlement doit être supérieur à 0 ${this.currencySymbol()}.`);
       return;
     }
 
@@ -448,7 +448,7 @@ export class EventBilling implements OnInit {
 
   protected recordExpense(): void {
     if (this.expenseAmountInput <= 0) {
-      alert('Le montant de la dépense doit être supérieur à 0 €.');
+      alert(`Le montant de la dépense doit être supérieur à 0 ${this.currencySymbol()}.`);
       return;
     }
     if (!this.expenseDescriptionInput.trim()) {
