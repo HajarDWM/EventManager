@@ -16,8 +16,11 @@
       </div>
     </div>
     <div class="event-card-actions">
-      <a [routerLink]="['/client/events', event.id, 'guests']" class="btn btn-outline">
-        Gérer les invités <i class="fas fa-arrow-right"></i>
+      <a [routerLink]="['/client/events', event.id, 'guests']" class="btn btn-outline mb-2">
+        Gérer les invités <i class="fas fa-users"></i>
+      </a>
+      <a [routerLink]="['/client/events', event.id, 'menu']" class="btn btn-outline">
+        Voir le menu <i class="fas fa-utensils"></i>
       </a>
     </div>
   </div>

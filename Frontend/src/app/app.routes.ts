@@ -31,6 +31,7 @@ import { ClientLogin } from './core/auth/client-login/client-login';
 import { ClientLayout } from './core/client-layout/client-layout';
 import { ClientDashboard } from './features/client-dashboard/client-dashboard';
 import { ClientGuestList } from './features/client-guest-list/client-guest-list';
+import { ClientMenuList } from './features/client-menu-list/client-menu-list';
 import { clientGuard } from './core/auth/guards/client.guard';
 
 export const routes: Routes = [
@@ -68,6 +69,10 @@ export const routes: Routes = [
       {
         path: 'events/:id/guests',
         component: ClientGuestList
+      },
+      {
+        path: 'events/:id/menu',
+        component: ClientMenuList
       },
       {
         path: '',

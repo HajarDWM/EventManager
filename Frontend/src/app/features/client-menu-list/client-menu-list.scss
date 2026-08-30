@@ -1,0 +1,139 @@
+.guest-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+
+  .back-link {
+    color: #64748b;
+    margin-right: 0.5rem;
+    text-decoration: none;
+    font-size: 1.25rem;
+    
+    &:hover {
+      color: #0f172a;
+    }
+  }
+
+  h2 {
+    margin: 0 0 0.5rem;
+    font-size: 1.5rem;
+    color: #0f172a;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+  }
+  
+  p {
+    margin: 0;
+    color: #64748b;
+  }
+}
+
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px dashed #cbd5e1;
+  
+  .empty-icon {
+    font-size: 3rem;
+    color: #cbd5e1;
+    margin-bottom: 1rem;
+  }
+
+  h3 {
+    color: #334155;
+    margin: 0 0 0.5rem;
+  }
+
+  p {
+    color: #64748b;
+  }
+}
+
+.menu-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.menu-section {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+
+  .section-header {
+    background: #f8fafc;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    h3 {
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #334155;
+    }
+  }
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 0;
+
+  td {
+    padding: 1.25rem 1.5rem;
+    vertical-align: middle;
+    border-bottom: 1px solid #f1f5f9;
+    color: #334155;
+    font-size: 0.95rem;
+
+    &.menu-item-info {
+      width: 40%;
+      
+      strong {
+        color: #0f172a;
+        display: block;
+        margin-bottom: 0.25rem;
+        font-size: 1rem;
+      }
+
+      .dietary {
+        font-size: 0.8125rem;
+        color: #10b981;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+      }
+    }
+
+    &.menu-item-desc {
+      width: 60%;
+      color: #64748b;
+    }
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+}
+
+.badge {
+  background: #3b82f6;
+  color: white;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}

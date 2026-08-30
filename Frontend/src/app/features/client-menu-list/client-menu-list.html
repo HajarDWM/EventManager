@@ -1,0 +1,126 @@
+<div class="guest-list-header">
+  <div>
+    <a routerLink="/client/dashboard" class="back-link">
+      <i class="fas fa-arrow-left"></i> Retour au tableau de bord
+    </a>
+    <h2>Menu de l'Événement</h2>
+    <p>Consultez les plats et options de restauration prévus pour votre événement.</p>
+  </div>
+  <div class="header-actions" style="display: flex; gap: 0.5rem; align-items: center;">
+    <a [routerLink]="['/client/events', eventId(), 'guests']" class="btn btn-outline-primary" style="background: transparent; border: 1px solid #3b82f6; color: #3b82f6;">
+      <i class="fas fa-users"></i> Gérer les invités
+    </a>
+  </div>
+</div>
+
+<div class="alert alert-danger d-flex align-items-center gap-2 mt-2" role="alert" *ngIf="errorMessage()">
+  <i class="fas fa-exclamation-circle"></i>
+  <div class="fs-sm fw-medium">{{ errorMessage() }}</div>
+</div>
+
+<div class="text-center py-5" *ngIf="isLoading()">
+  <i class="fas fa-circle-notch fa-spin text-primary fs-2"></i>
+  <p class="mt-2 text-muted fs-sm">Chargement du menu...</p>
+</div>
+
+<div class="empty-state" *ngIf="!isLoading() && menuItems().length === 0">
+  <div class="empty-icon">
+    <i class="fas fa-utensils"></i>
+  </div>
+  <h3>Aucun plat trouvé</h3>
+  <p>Votre traiteur n'a pas encore ajouté de plats au menu de cet événement.</p>
+</div>
+
+<div class="menu-container" *ngIf="!isLoading() && menuItems().length > 0">
+  <!-- Entrées -->
+  <div class="menu-section" *ngIf="groupedItems().STARTER.length > 0">
+    <div class="section-header">
+      <h3>Entrées</h3>
+      <span class="badge">{{ groupedItems().STARTER.length }} plat(s)</span>
+    </div>
+    <div class="table-container">
+      <table class="table">
+        <tbody>
+          <tr *ngFor="let item of groupedItems().STARTER">
+            <td class="menu-item-info">
+              <strong>{{ item.name }}</strong>
+              <div class="dietary" *ngIf="item.dietaryTag">
+                <i class="fas fa-leaf"></i> {{ item.dietaryTag }}
+              </div>
+            </td>
+            <td class="menu-item-desc">{{ item.description || '-' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Plats Principaux -->
+  <div class="menu-section" *ngIf="groupedItems().MAIN.length > 0">
+    <div class="section-header">
+      <h3>Plats Principaux</h3>
+      <span class="badge">{{ groupedItems().MAIN.length }} plat(s)</span>
+    </div>
+    <div class="table-container">
+      <table class="table">
+        <tbody>
+          <tr *ngFor="let item of groupedItems().MAIN">
+            <td class="menu-item-info">
+              <strong>{{ item.name }}</strong>
+              <div class="dietary" *ngIf="item.dietaryTag">
+                <i class="fas fa-leaf"></i> {{ item.dietaryTag }}
+              </div>
+            </td>
+            <td class="menu-item-desc">{{ item.description || '-' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Desserts -->
+  <div class="menu-section" *ngIf="groupedItems().DESSERT.length > 0">
+    <div class="section-header">
+      <h3>Desserts</h3>
+      <span class="badge">{{ groupedItems().DESSERT.length }} plat(s)</span>
+    </div>
+    <div class="table-container">
+      <table class="table">
+        <tbody>
+          <tr *ngFor="let item of groupedItems().DESSERT">
+            <td class="menu-item-info">
+              <strong>{{ item.name }}</strong>
+              <div class="dietary" *ngIf="item.dietaryTag">
+                <i class="fas fa-leaf"></i> {{ item.dietaryTag }}
+              </div>
+            </td>
+            <td class="menu-item-desc">{{ item.description || '-' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Boissons -->
+  <div class="menu-section" *ngIf="groupedItems().BEVERAGE.length > 0">
+    <div class="section-header">
+      <h3>Boissons</h3>
+      <span class="badge">{{ groupedItems().BEVERAGE.length }} boisson(s)</span>
+    </div>
+    <div class="table-container">
+      <table class="table">
+        <tbody>
+          <tr *ngFor="let item of groupedItems().BEVERAGE">
+            <td class="menu-item-info">
+              <strong>{{ item.name }}</strong>
+              <div class="dietary" *ngIf="item.dietaryTag">
+                <i class="fas fa-leaf"></i> {{ item.dietaryTag }}
+              </div>
+            </td>
+            <td class="menu-item-desc">{{ item.description || '-' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
