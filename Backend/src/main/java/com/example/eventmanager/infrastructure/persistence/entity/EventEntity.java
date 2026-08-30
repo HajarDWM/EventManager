@@ -41,6 +41,9 @@ public class EventEntity {
     @Column(name = "caterer_id", nullable = false)
     private Long catererId;
 
+    @Column(name = "client_id")
+    private Long clientId;
+
     @Column(nullable = false)
     @Builder.Default
     private boolean archived = false;

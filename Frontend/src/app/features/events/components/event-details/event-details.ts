@@ -36,6 +36,8 @@ export class EventDetails implements OnInit {
 
   protected readonly isLoading = signal(true);
   protected readonly errorMessage = signal('');
+  
+  protected readonly linkCopied = signal(false);
 
   protected readonly isSubscriptionExpired = computed(() => {
     const profile = this.catererService.currentProfile();
@@ -390,4 +392,23 @@ export class EventDetails implements OnInit {
     const roles = ['Famille', 'Ami', 'Témoin', 'Marié', 'Mariée', 'Famille Proche', 'Prestataire', 'Ami d\'enfance'];
     return roles[guest.id % roles.length];
   }
+
+  protected clientPortalUrl(): string {
+    const e = this.event();
+    if (e && e.accessLinkToken) {
+      return `${window.location.origin}/client/login?token=${e.accessLinkToken}`;
+    }
+    return 'Lien non disponible';
+  }
+
+  protected copyClientLink(): void {
+    const url = this.clientPortalUrl();
+    if (url !== 'Lien non disponible') {
+      navigator.clipboard.writeText(url).then(() => {
+        this.linkCopied.set(true);
+        setTimeout(() => this.linkCopied.set(false), 3000);
+      });
+    }
+  }
 }
+

@@ -1,0 +1,38 @@
+<div class="client-login-container">
+  <div class="login-card">
+    <div class="logo-area">
+      <h1>Portail Client</h1>
+      <p class="subtitle">Accédez à la gestion de votre événement</p>
+    </div>
+
+    <form (ngSubmit)="login()">
+      <div class="form-group">
+        <label for="token">Jeton d'accès (Access Token)</label>
+        <input 
+          type="text" 
+          id="token" 
+          name="token" 
+          [ngModel]="accessLinkToken()" 
+          (ngModelChange)="accessLinkToken.set($event)"
+          placeholder="Ex: a1b2c3d4..." 
+          class="form-control"
+          [disabled]="isLoading()"
+          required
+        >
+      </div>
+
+      <div *ngIf="errorMessage()" class="alert alert-error">
+        {{ errorMessage() }}
+      </div>
+
+      <button type="submit" class="btn btn-primary w-100" [disabled]="isLoading() || !accessLinkToken()">
+        <span *ngIf="isLoading()" class="spinner"></span>
+        <span *ngIf="!isLoading()">Se Connecter</span>
+      </button>
+    </form>
+    
+    <div class="footer-links">
+      <p>Vous êtes traiteur ? <a routerLink="/login">Connexion Traiteur</a></p>
+    </div>
+  </div>
+</div>

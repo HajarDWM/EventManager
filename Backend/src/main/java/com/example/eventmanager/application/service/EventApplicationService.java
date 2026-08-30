@@ -42,6 +42,8 @@ public class EventApplicationService implements CreateEventUseCase, GetEventUseC
     private final MenuItemMapper menuItemMapper;
     private final EventTaskMapper eventTaskMapper;
     private final SecurityContextPort securityContextPort;
+    private final com.example.eventmanager.infrastructure.persistence.repository.ClientRepository clientRepository;
+    private final com.example.eventmanager.infrastructure.persistence.mapper.ClientPersistenceMapper clientPersistenceMapper;
 
     @Override
     @Transactional
@@ -126,8 +128,20 @@ public class EventApplicationService implements CreateEventUseCase, GetEventUseC
             eventToSave.setInvitationDate(eventToSave.getEventDate());
         }
 
+        // Auto-generate Client
+        com.example.eventmanager.domain.model.Client client = com.example.eventmanager.domain.model.Client.builder()
+                .name("Client pour " + eventToSave.getTitle())
+                .accessLinkToken(java.util.UUID.randomUUID().toString().replace("-", ""))
+                .build();
+        com.example.eventmanager.infrastructure.persistence.entity.ClientEntity savedClient = 
+                clientRepository.save(clientPersistenceMapper.toEntity(client));
+        
+        eventToSave.setClientId(savedClient.getId());
+
         Event savedEvent = eventRepositoryPort.save(eventToSave);
-        return eventMapper.toDTO(savedEvent);
+        EventDTO createdEventDTO = eventMapper.toDTO(savedEvent);
+        createdEventDTO.setAccessLinkToken(client.getAccessLinkToken());
+        return createdEventDTO;
     }
 
     @Override
@@ -221,7 +235,13 @@ public class EventApplicationService implements CreateEventUseCase, GetEventUseC
             throw new UnauthorizedAccessException("Vous n'êtes pas autorisé à accéder à cet événement.");
         }
         
-        return eventMapper.toDTO(event);
+        EventDTO eventDTO = eventMapper.toDTO(event);
+        if (event.getClientId() != null) {
+            clientRepository.findById(event.getClientId()).ifPresent(clientEntity -> 
+                eventDTO.setAccessLinkToken(clientEntity.getAccessLinkToken())
+            );
+        }
+        return eventDTO;
     }
     
     @Override
@@ -235,7 +255,15 @@ public class EventApplicationService implements CreateEventUseCase, GetEventUseC
         Long targetCatererId = (isSuperAdmin && catererId != null) ? catererId : currentCatererId;
 
         return eventRepositoryPort.findAllByCatererId(targetCatererId).stream()
-                .map(eventMapper::toDTO)
+                .map(event -> {
+                    EventDTO eventDTO = eventMapper.toDTO(event);
+                    if (event.getClientId() != null) {
+                        clientRepository.findById(event.getClientId()).ifPresent(clientEntity -> 
+                            eventDTO.setAccessLinkToken(clientEntity.getAccessLinkToken())
+                        );
+                    }
+                    return eventDTO;
+                })
                 .toList();
     }
 

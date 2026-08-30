@@ -17,6 +17,7 @@ public class Event {
     @Builder.Default
     private EventStatus status = EventStatus.DRAFT;
     private Long catererId;
+    private Long clientId;
     private boolean archived;
     @Builder.Default
     private String mealType = "PLATS_FIXES";

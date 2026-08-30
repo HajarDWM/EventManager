@@ -10,6 +10,7 @@ import java.util.Optional;
 @Repository
 public interface EventRepository extends JpaRepository<EventEntity, Long> {
     List<EventEntity> findByCatererId(Long catererId);
+    List<EventEntity> findByClientId(Long clientId);
     List<EventEntity> findByCatererIdAndArchivedFalse(Long catererId);
     List<EventEntity> findByArchivedFalse();
     Optional<EventEntity> findByIdAndArchivedFalse(Long id);

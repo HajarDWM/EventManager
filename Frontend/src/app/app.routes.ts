@@ -27,6 +27,11 @@ import { AdminTransactions } from './features/admin/transactions/admin-transacti
 import { GuestRsvp } from './features/events/components/guest-rsvp/guest-rsvp';
 import { EventDetails } from './features/events/components/event-details/event-details';
 import { EventBilling } from './features/events/components/event-billing/event-billing';
+import { ClientLogin } from './core/auth/client-login/client-login';
+import { ClientLayout } from './core/client-layout/client-layout';
+import { ClientDashboard } from './features/client-dashboard/client-dashboard';
+import { ClientGuestList } from './features/client-guest-list/client-guest-list';
+import { clientGuard } from './core/auth/guards/client.guard';
 
 export const routes: Routes = [
   {
@@ -46,6 +51,30 @@ export const routes: Routes = [
   {
     path: 'rsvp/:id',
     component: GuestRsvp
+  },
+  {
+    path: 'client/login',
+    component: ClientLogin
+  },
+  {
+    path: 'client',
+    component: ClientLayout,
+    canActivate: [clientGuard],
+    children: [
+      {
+        path: 'dashboard',
+        component: ClientDashboard
+      },
+      {
+        path: 'events/:id/guests',
+        component: ClientGuestList
+      },
+      {
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full'
+      }
+    ]
   },
   {
     path: '',

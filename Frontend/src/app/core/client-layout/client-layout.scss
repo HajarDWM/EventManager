@@ -1,0 +1,142 @@
+.client-layout-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f8f9fc;
+  font-family: 'Inter', sans-serif;
+}
+
+.client-sidebar {
+  width: 260px;
+  background: #ffffff;
+  border-right: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  height: 100vh;
+  z-index: 10;
+  transition: all 0.3s ease;
+}
+
+.sidebar-header {
+  padding: 2rem 1.5rem;
+  border-bottom: 1px solid #e2e8f0;
+  
+  h2 {
+    margin: 0;
+    color: #1e293b;
+    font-size: 1.25rem;
+    font-weight: 700;
+  }
+}
+
+.nav-links {
+  list-style: none;
+  padding: 1.5rem 1rem;
+  margin: 0;
+  flex: 1;
+
+  li {
+    margin-bottom: 0.5rem;
+
+    a {
+      display: flex;
+      align-items: center;
+      padding: 0.875rem 1rem;
+      color: #64748b;
+      text-decoration: none;
+      border-radius: 12px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+
+      i {
+        margin-right: 1rem;
+        font-size: 1.1rem;
+        width: 20px;
+        text-align: center;
+      }
+
+      &:hover {
+        background: #f1f5f9;
+        color: #3b82f6;
+      }
+
+      &.active {
+        background: #eff6ff;
+        color: #2563eb;
+        
+        i {
+          color: #3b82f6;
+        }
+      }
+    }
+  }
+}
+
+.sidebar-footer {
+  padding: 1.5rem 1rem;
+  border-top: 1px solid #e2e8f0;
+
+  .logout-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0.875rem 1rem;
+    background: transparent;
+    border: none;
+    border-radius: 12px;
+    color: #ef4444;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    i {
+      margin-right: 1rem;
+      font-size: 1.1rem;
+    }
+
+    &:hover {
+      background: #fef2f2;
+    }
+  }
+}
+
+.client-main-content {
+  flex: 1;
+  margin-left: 260px;
+  display: flex;
+  flex-direction: column;
+}
+
+.client-header {
+  background: #ffffff;
+  padding: 1.5rem 2.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e2e8f0;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+
+  h1 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #0f172a;
+    font-weight: 600;
+  }
+}
+
+.page-content {
+  padding: 2.5rem;
+  flex: 1;
+}
+
+@media (max-width: 768px) {
+  .client-sidebar {
+    transform: translateX(-100%);
+  }
+  .client-main-content {
+    margin-left: 0;
+  }
+}

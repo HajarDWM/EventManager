@@ -35,6 +35,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/caterers").permitAll()
                 .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/api/v1/client/auth/**").permitAll()
                 .requestMatchers("/api/webhooks/**").permitAll()
                 .requestMatchers("/api/public/rsvp/**").permitAll()
                 .requestMatchers("/api/admin/**").hasRole("SUPER_ADMIN")

@@ -43,6 +43,17 @@ public class JwtTokenProviderAdapter implements JwtServicePort {
     }
 
     @Override
+    public JwtToken generateClientToken(com.example.eventmanager.domain.model.Client client) {
+        String token = Jwts.builder()
+                .setSubject("CLIENT_" + client.getAccessLinkToken())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
+                .signWith(getSignInKey(), SignatureAlgorithm.HS256)
+                .compact();
+        return new JwtToken(token);
+    }
+
+    @Override
     public String extractEmail(String token) {
         return extractClaim(token, Claims::getSubject);
     }

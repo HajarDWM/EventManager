@@ -7,6 +7,8 @@ export interface Event {
   guestCount?: number | null;
   status?: 'DRAFT' | 'PLANNED' | 'COMPLETED' | 'CANCELLED';
   catererId?: number;
+  clientId?: number;
+  accessLinkToken?: string;
   digitalTemplateId?: number;
   invitationToken?: string;
   invitationTitle?: string;

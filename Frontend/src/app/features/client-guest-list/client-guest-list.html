@@ -1,0 +1,162 @@
+<div class="guest-list-header">
+  <div class="header-content">
+    <h2><a routerLink="/client/dashboard" class="back-link"><i class="fas fa-arrow-left"></i></a> Gestion des Invités</h2>
+    <p>Gérez la liste des personnes invitées à votre événement.</p>
+  </div>
+  <div class="header-actions">
+    <button class="btn btn-primary" (click)="openAddModal()">
+      <i class="fas fa-plus"></i> Ajouter un invité
+    </button>
+  </div>
+</div>
+
+<div class="stats-cards">
+  <div class="stat-card">
+    <div class="stat-icon"><i class="fas fa-users"></i></div>
+    <div class="stat-content">
+      <h3>Total</h3>
+      <p>{{ guests().length }}</p>
+    </div>
+  </div>
+  <div class="stat-card success">
+    <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+    <div class="stat-content">
+      <h3>Confirmés</h3>
+      <p>{{ confirmedCount() }}</p>
+    </div>
+  </div>
+  <div class="stat-card warning">
+    <div class="stat-icon"><i class="fas fa-clock"></i></div>
+    <div class="stat-content">
+      <h3>En attente</h3>
+      <p>{{ pendingCount() }}</p>
+    </div>
+  </div>
+</div>
+
+<div class="alert alert-success" *ngIf="successMessage()">
+  {{ successMessage() }}
+</div>
+
+<div class="alert alert-error" *ngIf="errorMessage()">
+  {{ errorMessage() }}
+</div>
+
+<div class="table-container" *ngIf="guests().length > 0">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Nom Complet</th>
+        <th>Email / Tél</th>
+        <th>Groupe</th>
+        <th>Statut</th>
+        <th>Table</th>
+        <th class="actions-col">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let guest of guests()">
+        <td>
+          <strong>{{ guest.fullName }}</strong>
+          <div class="dietary" *ngIf="guest.dietaryRequirements">
+            <i class="fas fa-utensils"></i> {{ guest.dietaryRequirements }}
+          </div>
+        </td>
+        <td>
+          <div *ngIf="guest.email"><i class="far fa-envelope"></i> {{ guest.email }}</div>
+          <div *ngIf="guest.phone"><i class="fas fa-phone"></i> {{ guest.phone }}</div>
+        </td>
+        <td>
+          <span class="badge" *ngIf="guest.groupName">{{ guest.groupName }}</span>
+        </td>
+        <td>
+          <span class="status-badge" [ngClass]="guest.status.toLowerCase()">
+            {{ guest.status === 'CONFIRMED' ? 'Confirmé' : (guest.status === 'DECLINED' ? 'Refusé' : 'En attente') }}
+          </span>
+        </td>
+        <td>{{ guest.tableNumber || '-' }}</td>
+        <td class="actions-col">
+          <button class="btn-icon" title="Modifier" (click)="openEditModal(guest)">
+            <i class="fas fa-edit"></i>
+          </button>
+          <button class="btn-icon text-danger" title="Supprimer" (click)="onDeleteGuest(guest)">
+            <i class="fas fa-trash-alt"></i>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="empty-state" *ngIf="!isLoading() && guests().length === 0">
+  <div class="empty-icon"><i class="fas fa-user-plus"></i></div>
+  <h3>Aucun invité</h3>
+  <p>Commencez à créer votre liste en ajoutant votre premier invité.</p>
+  <button class="btn btn-primary mt-3" (click)="openAddModal()">
+    Ajouter un invité
+  </button>
+</div>
+
+<!-- Modal for Add/Edit -->
+<div class="modal" *ngIf="isModalOpen()" [class.show]="isModalOpen()">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{{ isEditing() ? 'Modifier l\'invité' : 'Ajouter un invité' }}</h5>
+        <button type="button" class="close" (click)="closeModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="onSaveGuest()">
+          <div class="form-group mb-3">
+            <label>Nom complet *</label>
+            <input type="text" class="form-control" [ngModel]="fullName()" (ngModelChange)="fullName.set($event)" name="fullName" required>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6 form-group mb-3">
+              <label>Email</label>
+              <input type="email" class="form-control" [ngModel]="email()" (ngModelChange)="email.set($event)" name="email">
+            </div>
+            <div class="col-md-6 form-group mb-3">
+              <label>Téléphone</label>
+              <input type="tel" class="form-control" [ngModel]="phone()" (ngModelChange)="phone.set($event)" name="phone">
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-4 form-group mb-3">
+              <label>Groupe</label>
+              <input type="text" class="form-control" [ngModel]="groupName()" (ngModelChange)="groupName.set($event)" name="groupName" placeholder="Ex: Amis, Famille...">
+            </div>
+            <div class="col-md-4 form-group mb-3">
+              <label>N° Table</label>
+              <input type="text" class="form-control" [ngModel]="tableNumber()" (ngModelChange)="tableNumber.set($event)" name="tableNumber">
+            </div>
+            <div class="col-md-4 form-group mb-3">
+              <label>Statut</label>
+              <select class="form-control" [ngModel]="status()" (ngModelChange)="status.set($event)" name="status">
+                <option value="PENDING">En attente</option>
+                <option value="CONFIRMED">Confirmé</option>
+                <option value="DECLINED">Refusé</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="form-group mb-3">
+            <label>Régime alimentaire / Notes</label>
+            <textarea class="form-control" rows="2" [ngModel]="dietaryRequirements()" (ngModelChange)="dietaryRequirements.set($event)" name="dietaryRequirements"></textarea>
+          </div>
+          
+          <div class="modal-footer px-0 pb-0">
+            <button type="button" class="btn btn-secondary" (click)="closeModal()">Annuler</button>
+            <button type="submit" class="btn btn-primary" [disabled]="isSaving()">
+              <span *ngIf="isSaving()" class="spinner-border spinner-border-sm me-2"></span>
+              Enregistrer
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-backdrop" *ngIf="isModalOpen()"></div>
