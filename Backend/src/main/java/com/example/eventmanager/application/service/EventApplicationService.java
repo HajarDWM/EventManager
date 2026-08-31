@@ -129,8 +129,14 @@ public class EventApplicationService implements CreateEventUseCase, GetEventUseC
         }
 
         // Auto-generate Client
+        String cName = (eventDTO.getClientName() != null && !eventDTO.getClientName().isBlank()) 
+                ? eventDTO.getClientName() 
+                : "Client pour " + eventToSave.getTitle();
+                
         com.example.eventmanager.domain.model.Client client = com.example.eventmanager.domain.model.Client.builder()
-                .name("Client pour " + eventToSave.getTitle())
+                .name(cName)
+                .email(eventDTO.getClientEmail())
+                .phone(eventDTO.getClientPhone())
                 .accessLinkToken(java.util.UUID.randomUUID().toString().replace("-", ""))
                 .build();
         com.example.eventmanager.infrastructure.persistence.entity.ClientEntity savedClient = 
@@ -141,6 +147,9 @@ public class EventApplicationService implements CreateEventUseCase, GetEventUseC
         Event savedEvent = eventRepositoryPort.save(eventToSave);
         EventDTO createdEventDTO = eventMapper.toDTO(savedEvent);
         createdEventDTO.setAccessLinkToken(client.getAccessLinkToken());
+        createdEventDTO.setClientName(savedClient.getName());
+        createdEventDTO.setClientEmail(savedClient.getEmail());
+        createdEventDTO.setClientPhone(savedClient.getPhone());
         return createdEventDTO;
     }
 
@@ -197,6 +206,28 @@ public class EventApplicationService implements CreateEventUseCase, GetEventUseC
             existingEvent.setCurrency(eventDTO.getCurrency());
         }
 
+        // Update Client Entity if fields provided
+        if (existingEvent.getClientId() != null) {
+            clientRepository.findById(existingEvent.getClientId()).ifPresent(clientEntity -> {
+                boolean clientUpdated = false;
+                if (eventDTO.getClientName() != null && !eventDTO.getClientName().isBlank()) {
+                    clientEntity.setName(eventDTO.getClientName());
+                    clientUpdated = true;
+                }
+                if (eventDTO.getClientEmail() != null) {
+                    clientEntity.setEmail(eventDTO.getClientEmail());
+                    clientUpdated = true;
+                }
+                if (eventDTO.getClientPhone() != null) {
+                    clientEntity.setPhone(eventDTO.getClientPhone());
+                    clientUpdated = true;
+                }
+                if (clientUpdated) {
+                    clientRepository.save(clientEntity);
+                }
+            });
+        }
+
         Event updatedEvent = eventRepositoryPort.save(existingEvent);
         return eventMapper.toDTO(updatedEvent);
     }
@@ -238,9 +269,12 @@ public class EventApplicationService implements CreateEventUseCase, GetEventUseC
         
         EventDTO eventDTO = eventMapper.toDTO(event);
         if (event.getClientId() != null) {
-            clientRepository.findById(event.getClientId()).ifPresent(clientEntity -> 
-                eventDTO.setAccessLinkToken(clientEntity.getAccessLinkToken())
-            );
+            clientRepository.findById(event.getClientId()).ifPresent(clientEntity -> {
+                eventDTO.setAccessLinkToken(clientEntity.getAccessLinkToken());
+                eventDTO.setClientName(clientEntity.getName());
+                eventDTO.setClientEmail(clientEntity.getEmail());
+                eventDTO.setClientPhone(clientEntity.getPhone());
+            });
         }
         return eventDTO;
     }
@@ -259,9 +293,12 @@ public class EventApplicationService implements CreateEventUseCase, GetEventUseC
                 .map(event -> {
                     EventDTO eventDTO = eventMapper.toDTO(event);
                     if (event.getClientId() != null) {
-                        clientRepository.findById(event.getClientId()).ifPresent(clientEntity -> 
-                            eventDTO.setAccessLinkToken(clientEntity.getAccessLinkToken())
-                        );
+                        clientRepository.findById(event.getClientId()).ifPresent(clientEntity -> {
+                            eventDTO.setAccessLinkToken(clientEntity.getAccessLinkToken());
+                            eventDTO.setClientName(clientEntity.getName());
+                            eventDTO.setClientEmail(clientEntity.getEmail());
+                            eventDTO.setClientPhone(clientEntity.getPhone());
+                        });
                     }
                     return eventDTO;
                 })

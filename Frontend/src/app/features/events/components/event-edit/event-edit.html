@@ -41,6 +41,34 @@
               required>
           </div>
 
+          <!-- Informations du Client -->
+          <div class="mb-4 p-3 bg-body-light border rounded-3">
+            <h4 class="h6 fw-bold mb-3"><i class="fa fa-user-circle text-primary me-1"></i> Informations du Client (Accès Portail)</h4>
+            <div class="row g-3">
+              <div class="col-12">
+                <label class="form-label fs-xs fw-semibold text-dark mb-1" for="client-name">Nom complet du client / marié(s)</label>
+                <input type="text" class="form-control form-control-sm"
+                       id="client-name" name="client-name" placeholder="Ex: Yassine Berrada"
+                       [ngModel]="clientName()" (ngModelChange)="clientName.set($event)">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fs-xs fw-semibold text-dark mb-1" for="client-phone">Téléphone</label>
+                <input type="tel" class="form-control form-control-sm"
+                       id="client-phone" name="client-phone" placeholder="Ex: +212 600 000 000"
+                       [ngModel]="clientPhone()" (ngModelChange)="clientPhone.set($event)">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fs-xs fw-semibold text-dark mb-1" for="client-email">Email</label>
+                <input type="email" class="form-control form-control-sm"
+                       id="client-email" name="client-email" placeholder="Ex: client@email.com"
+                       [ngModel]="clientEmail()" (ngModelChange)="clientEmail.set($event)">
+              </div>
+            </div>
+            <div class="form-text fs-xs text-muted mt-2">
+              Ces informations permettront au client de s'identifier sur son espace privé (Portail Client).
+            </div>
+          </div>
+
           <!-- Type / Sous-titre de l'événement (pour l'invitation) -->
           <div class="mb-4">
             <label class="form-label fs-sm fw-semibold" for="event-subtitle">

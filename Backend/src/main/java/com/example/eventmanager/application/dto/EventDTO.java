@@ -20,7 +20,12 @@ public class EventDTO {
     private Integer guestCount;
     private String status;
     private Long catererId;
+    private String catererName;
+    private String catererEmail;
     private Long clientId;
+    private String clientName;
+    private String clientEmail;
+    private String clientPhone;
     private String accessLinkToken;
     private LocalDateTime createdAt;
     private Long digitalTemplateId;

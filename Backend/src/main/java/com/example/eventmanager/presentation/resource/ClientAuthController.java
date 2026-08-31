@@ -11,6 +11,7 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.example.eventmanager.infrastructure.persistence.repository.CatererRepository;
 
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,7 @@ public class ClientAuthController {
     private final EventPersistenceMapper eventPersistenceMapper;
     private final EventMapper eventMapper;
     private final com.example.eventmanager.infrastructure.persistence.repository.ClientRepository clientRepository;
+    private final CatererRepository catererRepository;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> request) {
@@ -40,7 +42,22 @@ public class ClientAuthController {
                     List<EventEntity> events = eventRepository.findByClientId(client.getId());
                     List<EventDTO> eventDTOs = events.stream()
                             .map(eventPersistenceMapper::toDomain)
-                            .map(eventMapper::toDTO)
+                            .map(event -> {
+                                EventDTO dto = eventMapper.toDTO(event);
+                                if (event.getCatererId() != null) {
+                                    catererRepository.findById(event.getCatererId())
+                                            .ifPresent(caterer -> {
+                                                dto.setCatererName(caterer.getBusinessName());
+                                                dto.setCatererEmail(caterer.getEmail());
+                                            });
+                                }
+                                
+                                dto.setClientName(client.getName());
+                                dto.setClientEmail(client.getEmail());
+                                dto.setClientPhone(client.getPhone());
+                                
+                                return dto;
+                            })
                             .collect(Collectors.toList());
 
                     return ResponseEntity.ok(new ClientAuthResponse(jwt.getToken(), eventDTOs));

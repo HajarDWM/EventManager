@@ -34,6 +34,7 @@ import { ClientGuestList } from './features/client-guest-list/client-guest-list'
 import { ClientMenuList } from './features/client-menu-list/client-menu-list';
 import { clientGuard } from './core/auth/guards/client.guard';
 import { ClientInvitationPreview } from './features/client-invitation-preview/client-invitation-preview';
+import { ClientProfile } from './features/client-profile/client-profile';
 
 export const routes: Routes = [
   {
@@ -70,6 +71,10 @@ export const routes: Routes = [
       {
         path: 'events/:id/guests',
         component: ClientGuestList
+      },
+      {
+        path: 'profile',
+        component: ClientProfile
       },
       {
         path: 'events/:id/menu',

@@ -4,6 +4,11 @@
     <div class="hero-content">
       <div class="hero-badge">Votre Événement</div>
       <h2>{{ events()[0].title }}</h2>
+      <p class="hero-subtitle mt-2 mb-0" *ngIf="events()[0].catererName || events()[0].clientName">
+        <span *ngIf="events()[0].clientName"><i class="fas fa-user-circle me-1"></i> {{ events()[0].clientName }}</span>
+        <span *ngIf="events()[0].clientName && events()[0].catererName" class="mx-2 opacity-50">|</span>
+        <span *ngIf="events()[0].catererName"><i class="fas fa-building me-1"></i> Organisé par : <strong>{{ events()[0].catererName }}</strong></span>
+      </p>
     </div>
   </div>
 

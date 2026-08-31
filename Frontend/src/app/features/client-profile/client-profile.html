@@ -1,0 +1,64 @@
+<div class="profile-container" *ngIf="events().length > 0">
+  <div class="profile-header">
+    <div class="profile-badge">Mon Espace</div>
+    <h2>Profil Client</h2>
+  </div>
+
+  <div class="profile-grid">
+    <!-- Client Details Card -->
+    <div class="profile-card">
+      <div class="card-header border-bottom pb-3 mb-3">
+        <h3 class="card-title fw-bold fs-5 mb-0 text-dark"><i class="fas fa-user-circle text-primary me-2"></i> Mes Coordonnées</h3>
+        <p class="text-muted fs-sm mb-0 mt-1">Vos informations enregistrées pour cet événement.</p>
+      </div>
+      
+      <div class="card-body">
+        <div class="info-group">
+          <label>Nom complet</label>
+          <div class="info-value text-dark fw-semibold">{{ events()[0].clientName || 'Non renseigné' }}</div>
+        </div>
+        <div class="info-group">
+          <label>Email</label>
+          <div class="info-value text-muted">{{ events()[0].clientEmail || 'Non renseigné' }}</div>
+        </div>
+        <div class="info-group">
+          <label>Téléphone</label>
+          <div class="info-value text-muted">{{ events()[0].clientPhone || 'Non renseigné' }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Organizer Details Card -->
+    <div class="profile-card organizer-card bg-primary-subtle border-0 shadow-sm">
+      <div class="card-header border-bottom border-white pb-3 mb-3">
+        <h3 class="card-title fw-bold fs-5 mb-0 text-dark"><i class="fas fa-building text-primary me-2"></i> Mon Organisateur</h3>
+        <p class="text-muted fs-sm mb-0 mt-1">Contactez votre traiteur/organisateur pour toute question.</p>
+      </div>
+      
+      <div class="card-body">
+        <div class="info-group">
+          <label>Entreprise</label>
+          <div class="info-value text-dark fw-bold fs-5">{{ events()[0].catererName || 'Organisateur' }}</div>
+        </div>
+        <div class="info-group mt-3">
+          <label>Email de contact</label>
+          <div class="info-value text-primary fw-medium">
+            <a [href]="'mailto:' + events()[0].catererEmail" *ngIf="events()[0].catererEmail; else noEmail" class="text-decoration-none text-primary">
+              <i class="fas fa-envelope me-1"></i> {{ events()[0].catererEmail }}
+            </a>
+            <ng-template #noEmail>Non renseigné</ng-template>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #emptyState>
+  <div class="empty-state">
+    <div class="empty-icon">
+      <i class="far fa-user"></i>
+    </div>
+    <h3>Aucun profil trouvé</h3>
+  </div>
+</ng-template>

@@ -19,6 +19,8 @@ import com.example.eventmanager.infrastructure.persistence.entity.InvoiceEntity;
 import com.example.eventmanager.infrastructure.persistence.entity.PaymentEntity;
 import com.example.eventmanager.infrastructure.persistence.repository.DigitalInvitationTemplateRepository;
 import com.example.eventmanager.infrastructure.persistence.entity.DigitalInvitationTemplateEntity;
+import com.example.eventmanager.infrastructure.persistence.repository.CatererRepository;
+import com.example.eventmanager.infrastructure.persistence.repository.ClientRepository;
 import java.math.BigDecimal;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +38,8 @@ public class ClientEventController {
     private final QuoteRepository quoteRepository;
     private final InvoiceRepository invoiceRepository;
     private final DigitalInvitationTemplateRepository templateRepository;
+    private final CatererRepository catererRepository;
+    private final ClientRepository clientRepository;
 
     @GetMapping
     @Transactional(readOnly = true)
@@ -85,6 +89,23 @@ public class ClientEventController {
                     if (event.getDigitalTemplateId() != null) {
                         templateRepository.findById(event.getDigitalTemplateId())
                                 .ifPresent(template -> dto.setTemplateBackgroundImageUrl(template.getBackgroundImageUrl()));
+                    }
+
+                    if (event.getCatererId() != null) {
+                        catererRepository.findById(event.getCatererId())
+                                .ifPresent(caterer -> {
+                                    dto.setCatererName(caterer.getBusinessName());
+                                    dto.setCatererEmail(caterer.getEmail());
+                                });
+                    }
+                    
+                    if (event.getClientId() != null) {
+                        clientRepository.findById(event.getClientId())
+                                .ifPresent(c -> {
+                                    dto.setClientName(c.getName());
+                                    dto.setClientEmail(c.getEmail());
+                                    dto.setClientPhone(c.getPhone());
+                                });
                     }
                     
                     return dto;

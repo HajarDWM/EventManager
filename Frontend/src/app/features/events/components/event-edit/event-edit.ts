@@ -19,6 +19,9 @@ export class EventEdit implements OnInit {
 
   protected readonly eventId = signal<number | null>(null);
   protected readonly title = signal('');
+  protected readonly clientName = signal('');
+  protected readonly clientPhone = signal('');
+  protected readonly clientEmail = signal('');
   protected readonly invitationSubtitle = signal('');
   protected readonly eventDateOnly = signal('');
   protected readonly eventTimeOnly = signal('');
@@ -56,6 +59,9 @@ export class EventEdit implements OnInit {
     this.eventService.getEventById(id).subscribe({
       next: (data) => {
         this.title.set(data.title);
+        this.clientName.set(data.clientName || '');
+        this.clientPhone.set(data.clientPhone || '');
+        this.clientEmail.set(data.clientEmail || '');
         this.invitationSubtitle.set(data.invitationSubtitle || '');
         this.isPaidEvent.set(data.isPaidEvent || false);
         this.ticketPrice.set(data.ticketPrice || 0);
@@ -118,6 +124,9 @@ export class EventEdit implements OnInit {
     this.eventService.updateEvent(this.eventId()!, {
       id: this.eventId()!,
       title: this.title(),
+      clientName: this.clientName() || undefined,
+      clientPhone: this.clientPhone() || undefined,
+      clientEmail: this.clientEmail() || undefined,
       eventDate: dateVal,
       location: this.location(),
       locationMapUrl: this.locationMapUrl() || undefined,
