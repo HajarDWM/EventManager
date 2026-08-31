@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ClientAuthService } from '../auth/services/client-auth.service';
@@ -10,8 +10,15 @@ import { ClientAuthService } from '../auth/services/client-auth.service';
   templateUrl: './client-layout.html',
   styleUrls: ['./client-layout.scss']
 })
-export class ClientLayout {
+export class ClientLayout implements OnInit {
   private readonly clientAuthService = inject(ClientAuthService);
+  public events = this.clientAuthService.clientEvents;
+
+  ngOnInit() {
+    if (this.events().length === 0) {
+      this.clientAuthService.fetchEvents().subscribe();
+    }
+  }
 
   public logout(): void {
     this.clientAuthService.logout();

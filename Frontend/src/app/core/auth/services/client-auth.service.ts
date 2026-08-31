@@ -46,4 +46,15 @@ export class ClientAuthService {
     this.clientEvents.set([]);
     this.router.navigate(['/client/login']);
   }
+
+  public fetchEvents(): Observable<any> {
+    if (!this.isTokenPresent()) return of([]);
+    return this.http.get<Event[]>('/api/v1/client/events').pipe(
+      tap(events => {
+        if (events) {
+          this.clientEvents.set(events);
+        }
+      })
+    );
+  }
 }

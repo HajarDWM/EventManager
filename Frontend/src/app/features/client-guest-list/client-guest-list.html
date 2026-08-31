@@ -4,9 +4,6 @@
     <p>Gérez la liste des personnes invitées à votre événement.</p>
   </div>
   <div class="header-actions" style="display: flex; gap: 0.5rem; align-items: center;">
-    <a [routerLink]="['/client/events', eventId(), 'menu']" class="btn btn-outline-primary" style="background: transparent; border: 1px solid #3b82f6; color: #3b82f6;">
-      <i class="fas fa-utensils"></i> Voir le Menu
-    </a>
     <button type="button" class="btn btn-outline-primary" (click)="onDownloadTemplate()" style="background: transparent; border: 1px solid #3b82f6; color: #3b82f6;">
       <i class="fas fa-file-excel"></i> Télécharger modèle Excel
     </button>
@@ -17,25 +14,32 @@
 </div>
 
 <div class="stats-cards">
-  <div class="stat-card">
+  <div class="stat-card clickable-card" [class.active-filter]="selectedFilter() === 'ALL'" (click)="setFilter('ALL')">
     <div class="stat-icon"><i class="fas fa-users"></i></div>
     <div class="stat-content">
       <h3>Total</h3>
       <p>{{ guests().length }}</p>
     </div>
   </div>
-  <div class="stat-card success">
+  <div class="stat-card success clickable-card" [class.active-filter]="selectedFilter() === 'CONFIRMED'" (click)="setFilter('CONFIRMED')">
     <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
     <div class="stat-content">
       <h3>Confirmés</h3>
       <p>{{ confirmedCount() }}</p>
     </div>
   </div>
-  <div class="stat-card warning">
+  <div class="stat-card warning clickable-card" [class.active-filter]="selectedFilter() === 'PENDING'" (click)="setFilter('PENDING')">
     <div class="stat-icon"><i class="fas fa-clock"></i></div>
     <div class="stat-content">
       <h3>En attente</h3>
       <p>{{ pendingCount() }}</p>
+    </div>
+  </div>
+  <div class="stat-card danger clickable-card" [class.active-filter]="selectedFilter() === 'DECLINED'" (click)="setFilter('DECLINED')">
+    <div class="stat-icon"><i class="fas fa-times-circle"></i></div>
+    <div class="stat-content">
+      <h3>Déclinés</h3>
+      <p>{{ declinedCount() }}</p>
     </div>
   </div>
 </div>
@@ -61,7 +65,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let guest of guests()">
+      <tr *ngFor="let guest of filteredGuests()">
         <td>
           <strong>{{ guest.fullName }}</strong>
           <div class="dietary" *ngIf="guest.dietaryRequirements">

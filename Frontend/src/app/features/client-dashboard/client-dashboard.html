@@ -1,35 +1,71 @@
-<div class="dashboard-header">
-  <h2>Vos Événements</h2>
-  <p>Sélectionnez un événement pour gérer la liste des invités</p>
-</div>
-
-<div class="events-grid" *ngIf="events().length > 0">
-  <div class="event-card" *ngFor="let event of events()">
-    <div class="event-card-content">
-      <div class="event-icon">
-        <i class="fas fa-calendar-alt"></i>
-      </div>
-      <div class="event-details">
-        <h3>{{ event.title }}</h3>
-        <p class="date"><i class="far fa-calendar"></i> {{ event.eventDate | date:'mediumDate' }}</p>
-        <p class="location"><i class="fas fa-map-marker-alt"></i> {{ event.location }}</p>
+<div *ngIf="events().length > 0; else emptyState">
+  <!-- Top Hero Header -->
+  <div class="dashboard-hero">
+    <div class="hero-content">
+      <div class="hero-badge">Votre Événement</div>
+      <h2>{{ events()[0].title }}</h2>
+      <div class="hero-meta">
+        <span class="meta-item"><i class="far fa-calendar"></i> {{ events()[0].eventDate | date:'fullDate' }}</span>
+        <span class="meta-item"><i class="fas fa-map-marker-alt"></i> {{ events()[0].location }}</span>
       </div>
     </div>
-    <div class="event-card-actions">
-      <a [routerLink]="['/client/events', event.id, 'guests']" class="btn btn-outline mb-2">
-        Gérer les invités <i class="fas fa-users"></i>
-      </a>
-      <a [routerLink]="['/client/events', event.id, 'menu']" class="btn btn-outline">
-        Voir le menu <i class="fas fa-utensils"></i>
-      </a>
+  </div>
+
+  <!-- Summary Cards Grid -->
+  <div class="summary-cards">
+    <!-- Card 1: Gestion des Invités -->
+    <div class="summary-card interactive-card">
+      <div class="card-icon blue-icon">
+        <i class="fas fa-users"></i>
+      </div>
+      <div class="card-content">
+        <h3>Gestion des Invités</h3>
+        <p>Gérez votre liste d'invités, téléchargez le modèle Excel et suivez le nombre de personnes attendues.</p>
+        <div class="stats-row" *ngIf="(events()[0].guestCount || 0) > 0">
+          <div class="stat-box">
+            <span class="stat-value">{{ events()[0].guestCount }}</span>
+            <span class="stat-label">Invités attendus</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-action">
+        <a [routerLink]="['/client/events', events()[0].id, 'guests']" class="btn btn-primary w-100 btn-luxury">
+          Accéder à la liste <i class="fas fa-arrow-right ms-2"></i>
+        </a>
+      </div>
+    </div>
+
+    <!-- Card 2: Menu & Invitation -->
+    <div class="summary-card interactive-card">
+      <div class="card-icon purple-icon">
+        <i class="fas fa-utensils"></i>
+      </div>
+      <div class="card-content">
+        <h3>Menu & Détails</h3>
+        <p>Consultez la sélection des plats de votre événement, les formules et les informations traiteur.</p>
+        <div class="image-preview">
+          <!-- Placeholder or decorative graphic for menu -->
+          <div class="preview-box">
+            <i class="fas fa-concierge-bell"></i>
+            <span>Menu sélectionné</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-action">
+        <a [routerLink]="['/client/events', events()[0].id, 'menu']" class="btn btn-outline-primary w-100 btn-luxury-outline">
+          Voir le Menu <i class="fas fa-arrow-right ms-2"></i>
+        </a>
+      </div>
     </div>
   </div>
 </div>
 
-<div class="empty-state" *ngIf="events().length === 0">
-  <div class="empty-icon">
-    <i class="far fa-folder-open"></i>
+<ng-template #emptyState>
+  <div class="empty-state">
+    <div class="empty-icon">
+      <i class="far fa-folder-open"></i>
+    </div>
+    <h3>Aucun événement trouvé</h3>
+    <p>Votre traiteur n'a pas encore associé d'événements à ce jeton d'accès.</p>
   </div>
-  <h3>Aucun événement trouvé</h3>
-  <p>Votre traiteur n'a pas encore associé d'événements à ce jeton d'accès.</p>
-</div>
+</ng-template>

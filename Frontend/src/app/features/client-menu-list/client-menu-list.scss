@@ -56,84 +56,70 @@
 .menu-container {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
 }
 
-.menu-section {
-  background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-  border: 1px solid #e2e8f0;
-  overflow: hidden;
-
-  .section-header {
-    background: #f8fafc;
-    padding: 1rem 1.5rem;
-    border-bottom: 1px solid #e2e8f0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    h3 {
-      margin: 0;
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: #334155;
-    }
-  }
-}
-
-.table-container {
+.table-responsive {
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .table {
   width: 100%;
-  border-collapse: collapse;
   margin-bottom: 0;
+  color: #334155;
+  vertical-align: top;
+  border-color: #e2e8f0;
 
+  th,
   td {
-    padding: 1.25rem 1.5rem;
-    vertical-align: middle;
-    border-bottom: 1px solid #f1f5f9;
-    color: #334155;
-    font-size: 0.95rem;
-
-    &.menu-item-info {
-      width: 40%;
-      
-      strong {
-        color: #0f172a;
-        display: block;
-        margin-bottom: 0.25rem;
-        font-size: 1rem;
-      }
-
-      .dietary {
-        font-size: 0.8125rem;
-        color: #10b981;
-        display: flex;
-        align-items: center;
-        gap: 0.25rem;
-      }
-    }
-
-    &.menu-item-desc {
-      width: 60%;
-      color: #64748b;
-    }
+    padding: 1rem 1.25rem;
+    background-color: var(--bs-table-bg);
+    border-bottom-width: 1px;
+    box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
   }
 
-  tr:last-child td {
-    border-bottom: none;
+  tbody tr {
+    transition: background-color 0.15s ease-in-out;
+    &:hover {
+      background-color: rgba(241, 245, 249, 0.5);
+    }
   }
 }
 
+.table-striped > tbody > tr:nth-of-type(odd) > * {
+  --bs-table-accent-bg: rgba(241, 245, 249, 0.4);
+}
+
+.table-vcenter td,
+.table-vcenter th {
+  vertical-align: middle;
+}
+
 .badge {
-  background: #3b82f6;
-  color: white;
-  padding: 0.25rem 0.6rem;
-  border-radius: 999px;
-  font-size: 0.75rem;
-  font-weight: 600;
+  display: inline-block;
+  padding: 0.35em 0.65em;
+  font-size: 0.75em;
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: 0.375rem;
+
+  &.bg-primary {
+    background-color: #3b82f6 !important;
+    color: #fff;
+  }
+  
+  &.bg-light {
+    background-color: #f8fafc !important;
+  }
+}
+
+.meal-type-card {
+  transition: all 0.2s ease-in-out;
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05) !important;
+  }
 }

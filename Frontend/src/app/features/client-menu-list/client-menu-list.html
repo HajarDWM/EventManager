@@ -1,4 +1,4 @@
-<div class="guest-list-header">
+<div class="guest-list-header mb-3">
   <div>
     <a routerLink="/client/dashboard" class="back-link">
       <i class="fas fa-arrow-left"></i> Retour au tableau de bord
@@ -6,10 +6,18 @@
     <h2>Menu de l'Événement</h2>
     <p>Consultez les plats et options de restauration prévus pour votre événement.</p>
   </div>
-  <div class="header-actions" style="display: flex; gap: 0.5rem; align-items: center;">
-    <a [routerLink]="['/client/events', eventId(), 'guests']" class="btn btn-outline-primary" style="background: transparent; border: 1px solid #3b82f6; color: #3b82f6;">
-      <i class="fas fa-users"></i> Gérer les invités
-    </a>
+</div>
+
+<!-- Format de Restauration Badge -->
+<div class="meal-type-card mb-4 animate__animated animate__fadeIn" *ngIf="event()">
+  <div class="d-flex align-items-center p-3 border rounded shadow-sm bg-white" style="border-left: 4px solid #3b82f6 !important;">
+    <div class="fs-2 text-primary me-3 flex-shrink-0" style="width: 48px; text-align: center;">
+      <i class="fa" [ngClass]="getMealTypeLabel(event()?.mealType).icon"></i>
+    </div>
+    <div style="min-width: 0;">
+      <h5 class="fw-bold fs-6 text-dark mb-0 text-truncate">Format de Restauration : {{ getMealTypeLabel(event()?.mealType).label }}</h5>
+      <span class="fs-sm text-muted">{{ getMealTypeLabel(event()?.mealType).desc }}</span>
+    </div>
   </div>
 </div>
 
@@ -32,93 +40,90 @@
 </div>
 
 <div class="menu-container" *ngIf="!isLoading() && menuItems().length > 0">
+  
+  <ng-template #itemRow let-item="item">
+    <tr>
+      <td class="fw-semibold" style="width: 35%;">
+        <div class="d-flex align-items-center gap-3">
+          <img *ngIf="item.imageUrl" [src]="item.imageUrl" alt="Aperçu" class="rounded object-fit-cover border shadow-sm" style="width: 48px; height: 48px;">
+          <div *ngIf="!item.imageUrl" class="rounded bg-light border d-flex align-items-center justify-content-center text-muted" style="width: 48px; height: 48px;" title="Aucune photo">
+            <i class="fa fa-utensils fs-sm" style="opacity: 0.5;"></i>
+          </div>
+          <span class="text-dark fs-base">{{ item.name }}</span>
+        </div>
+      </td>
+      <td style="width: 20%;">
+        <span class="badge bg-light text-dark border py-1.5 px-2" *ngIf="item.dietaryTag">
+          <i class="fa fa-leaf text-success me-1"></i> {{ item.dietaryTag }}
+        </span>
+      </td>
+      <td class="fs-sm text-muted" style="width: 45%;">{{ item.description || '-' }}</td>
+    </tr>
+  </ng-template>
+
   <!-- Entrées -->
-  <div class="menu-section" *ngIf="groupedItems().STARTER.length > 0">
-    <div class="section-header">
-      <h3>Entrées</h3>
-      <span class="badge">{{ groupedItems().STARTER.length }} plat(s)</span>
+  <div class="mb-4 border rounded p-3 bg-white shadow-sm" *ngIf="groupedItems().STARTER.length > 0">
+    <div class="bg-light text-dark border-bottom py-2.5 px-3 rounded fw-bold text-uppercase mb-3 d-flex justify-content-between align-items-center">
+      <span class="fs-sm"><i class="fa fa-seedling text-primary me-2"></i>Entrées & Mises en bouche</span>
+      <span class="badge bg-primary text-white">{{ groupedItems().STARTER.length }} option(s)</span>
     </div>
-    <div class="table-container">
-      <table class="table">
+    <div class="table-responsive">
+      <table class="table table-striped table-vcenter mb-0">
         <tbody>
-          <tr *ngFor="let item of groupedItems().STARTER">
-            <td class="menu-item-info">
-              <strong>{{ item.name }}</strong>
-              <div class="dietary" *ngIf="item.dietaryTag">
-                <i class="fas fa-leaf"></i> {{ item.dietaryTag }}
-              </div>
-            </td>
-            <td class="menu-item-desc">{{ item.description || '-' }}</td>
-          </tr>
+          <ng-container *ngFor="let item of groupedItems().STARTER">
+            <ng-container *ngTemplateOutlet="itemRow; context: { item: item }"></ng-container>
+          </ng-container>
         </tbody>
       </table>
     </div>
   </div>
 
   <!-- Plats Principaux -->
-  <div class="menu-section" *ngIf="groupedItems().MAIN.length > 0">
-    <div class="section-header">
-      <h3>Plats Principaux</h3>
-      <span class="badge">{{ groupedItems().MAIN.length }} plat(s)</span>
+  <div class="mb-4 border rounded p-3 bg-white shadow-sm" *ngIf="groupedItems().MAIN.length > 0">
+    <div class="bg-light text-dark border-bottom py-2.5 px-3 rounded fw-bold text-uppercase mb-3 d-flex justify-content-between align-items-center">
+      <span class="fs-sm"><i class="fa fa-concierge-bell text-primary me-2"></i>Plats Principaux</span>
+      <span class="badge bg-primary text-white">{{ groupedItems().MAIN.length }} option(s)</span>
     </div>
-    <div class="table-container">
-      <table class="table">
+    <div class="table-responsive">
+      <table class="table table-striped table-vcenter mb-0">
         <tbody>
-          <tr *ngFor="let item of groupedItems().MAIN">
-            <td class="menu-item-info">
-              <strong>{{ item.name }}</strong>
-              <div class="dietary" *ngIf="item.dietaryTag">
-                <i class="fas fa-leaf"></i> {{ item.dietaryTag }}
-              </div>
-            </td>
-            <td class="menu-item-desc">{{ item.description || '-' }}</td>
-          </tr>
+          <ng-container *ngFor="let item of groupedItems().MAIN">
+            <ng-container *ngTemplateOutlet="itemRow; context: { item: item }"></ng-container>
+          </ng-container>
         </tbody>
       </table>
     </div>
   </div>
 
   <!-- Desserts -->
-  <div class="menu-section" *ngIf="groupedItems().DESSERT.length > 0">
-    <div class="section-header">
-      <h3>Desserts</h3>
-      <span class="badge">{{ groupedItems().DESSERT.length }} plat(s)</span>
+  <div class="mb-4 border rounded p-3 bg-white shadow-sm" *ngIf="groupedItems().DESSERT.length > 0">
+    <div class="bg-light text-dark border-bottom py-2.5 px-3 rounded fw-bold text-uppercase mb-3 d-flex justify-content-between align-items-center">
+      <span class="fs-sm"><i class="fa fa-ice-cream text-primary me-2"></i>Desserts & Douceurs</span>
+      <span class="badge bg-primary text-white">{{ groupedItems().DESSERT.length }} option(s)</span>
     </div>
-    <div class="table-container">
-      <table class="table">
+    <div class="table-responsive">
+      <table class="table table-striped table-vcenter mb-0">
         <tbody>
-          <tr *ngFor="let item of groupedItems().DESSERT">
-            <td class="menu-item-info">
-              <strong>{{ item.name }}</strong>
-              <div class="dietary" *ngIf="item.dietaryTag">
-                <i class="fas fa-leaf"></i> {{ item.dietaryTag }}
-              </div>
-            </td>
-            <td class="menu-item-desc">{{ item.description || '-' }}</td>
-          </tr>
+          <ng-container *ngFor="let item of groupedItems().DESSERT">
+            <ng-container *ngTemplateOutlet="itemRow; context: { item: item }"></ng-container>
+          </ng-container>
         </tbody>
       </table>
     </div>
   </div>
 
   <!-- Boissons -->
-  <div class="menu-section" *ngIf="groupedItems().BEVERAGE.length > 0">
-    <div class="section-header">
-      <h3>Boissons</h3>
-      <span class="badge">{{ groupedItems().BEVERAGE.length }} boisson(s)</span>
+  <div class="mb-4 border rounded p-3 bg-white shadow-sm" *ngIf="groupedItems().BEVERAGE.length > 0">
+    <div class="bg-light text-dark border-bottom py-2.5 px-3 rounded fw-bold text-uppercase mb-3 d-flex justify-content-between align-items-center">
+      <span class="fs-sm"><i class="fa fa-glass-cheers text-primary me-2"></i>Boissons</span>
+      <span class="badge bg-primary text-white">{{ groupedItems().BEVERAGE.length }} option(s)</span>
     </div>
-    <div class="table-container">
-      <table class="table">
+    <div class="table-responsive">
+      <table class="table table-striped table-vcenter mb-0">
         <tbody>
-          <tr *ngFor="let item of groupedItems().BEVERAGE">
-            <td class="menu-item-info">
-              <strong>{{ item.name }}</strong>
-              <div class="dietary" *ngIf="item.dietaryTag">
-                <i class="fas fa-leaf"></i> {{ item.dietaryTag }}
-              </div>
-            </td>
-            <td class="menu-item-desc">{{ item.description || '-' }}</td>
-          </tr>
+          <ng-container *ngFor="let item of groupedItems().BEVERAGE">
+            <ng-container *ngTemplateOutlet="itemRow; context: { item: item }"></ng-container>
+          </ng-container>
         </tbody>
       </table>
     </div>

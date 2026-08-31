@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ClientMenuService } from '../../core/services/client-menu.service';
 import { MenuItem } from '../../core/services/menu-item.service';
+import { ClientAuthService } from '../../core/auth/services/client-auth.service';
 
 @Component({
   selector: 'app-client-menu-list',
@@ -14,8 +15,15 @@ import { MenuItem } from '../../core/services/menu-item.service';
 export class ClientMenuList implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly clientMenuService = inject(ClientMenuService);
+  private readonly clientAuthService = inject(ClientAuthService);
   
   protected readonly eventId = signal<number | null>(null);
+  
+  protected readonly event = computed(() => {
+    const id = this.eventId();
+    if (!id) return null;
+    return this.clientAuthService.clientEvents().find(e => e.id === id) || null;
+  });
   protected readonly menuItems = signal<MenuItem[]>([]);
   protected readonly isLoading = signal(true);
   protected readonly errorMessage = signal('');
@@ -24,12 +32,30 @@ export class ClientMenuList implements OnInit {
   protected readonly groupedItems = computed(() => {
     const items = this.menuItems();
     return {
-      STARTER: items.filter(i => i.category === 'STARTER'),
-      MAIN: items.filter(i => i.category === 'MAIN'),
-      DESSERT: items.filter(i => i.category === 'DESSERT'),
-      BEVERAGE: items.filter(i => i.category === 'BEVERAGE')
+      STARTER: items.filter(i => i.category === 'STARTER' || i.category === 'BUFFET_STARTER'),
+      MAIN: items.filter(i => i.category === 'MAIN' || i.category === 'BUFFET_MAIN'),
+      DESSERT: items.filter(i => i.category === 'DESSERT' || i.category === 'BUFFET_DESSERT'),
+      BEVERAGE: items.filter(i => i.category === 'BEVERAGE'),
+      OTHER: items.filter(i => i.category === 'OTHER')
     };
   });
+
+  protected getMealTypeLabel(mealType: string | undefined): { label: string, icon: string, desc: string } {
+    if (!mealType) return { label: 'Non défini', icon: 'fa-utensils', desc: '' };
+    const modes = mealType.split(',').map(m => m.trim());
+    
+    if (modes.includes('MIX')) {
+      return { label: 'Formule Combinée', icon: 'fa-blender', desc: 'Buffets & Service assis' };
+    }
+    if (modes.includes('PLATS_FIXES')) {
+      return { label: 'Service à l\'assiette', icon: 'fa-concierge-bell', desc: 'Service à table' };
+    }
+    if (modes.includes('BUFFET')) {
+      return { label: 'Formule Buffet', icon: 'fa-cheese', desc: 'Libre-service' };
+    }
+    
+    return { label: mealType, icon: 'fa-utensils', desc: '' };
+  }
 
   public ngOnInit(): void {
     const idParam = this.route.snapshot.paramMap.get('id');

@@ -41,6 +41,23 @@ export class ClientGuestList implements OnInit {
 
   protected readonly confirmedCount = computed(() => this.guests().filter(g => g.status === 'CONFIRMED').length);
   protected readonly pendingCount = computed(() => this.guests().filter(g => g.status === 'PENDING').length);
+  protected readonly declinedCount = computed(() => this.guests().filter(g => g.status === 'DECLINED').length);
+
+  protected readonly selectedFilter = signal<'ALL' | 'CONFIRMED' | 'PENDING' | 'DECLINED'>('ALL');
+
+  protected readonly filteredGuests = computed(() => {
+    const filter = this.selectedFilter();
+    if (filter === 'ALL') return this.guests();
+    return this.guests().filter(g => g.status === filter);
+  });
+
+  protected setFilter(filter: 'ALL' | 'CONFIRMED' | 'PENDING' | 'DECLINED'): void {
+    if (this.selectedFilter() === filter) {
+      this.selectedFilter.set('ALL');
+    } else {
+      this.selectedFilter.set(filter);
+    }
+  }
 
   protected readonly uniqueGroups = computed(() => {
     const list = this.guests().map(g => g.groupName).filter((g): g is string => !!g);
