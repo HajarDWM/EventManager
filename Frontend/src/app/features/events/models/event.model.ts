@@ -21,4 +21,8 @@ export interface Event {
   isPaidEvent?: boolean;
   ticketPrice?: number;
   currency?: string;
+  totalContractAmount?: number;
+  depositsPaid?: number;
+  balanceDue?: number;
+  templateBackgroundImageUrl?: string;
 }

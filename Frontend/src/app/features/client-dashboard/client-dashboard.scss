@@ -1,10 +1,11 @@
 .dashboard-hero {
-  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  background: #ffffff;
   border-radius: 20px;
   padding: 3rem 2.5rem;
   margin-bottom: 2.5rem;
-  color: white;
-  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.15);
+  color: #0f172a;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  border: 1px solid #f1f5f9;
   position: relative;
   overflow: hidden;
 
@@ -15,7 +16,7 @@
     right: -20%;
     width: 600px;
     height: 600px;
-    background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, rgba(255,255,255,0) 70%);
+    background: radial-gradient(circle, rgba(59, 130, 246, 0.05) 0%, rgba(255,255,255,0) 70%);
     border-radius: 50%;
     pointer-events: none;
   }
@@ -23,34 +24,41 @@
   .hero-content {
     position: relative;
     z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.25rem;
 
     .hero-badge {
       display: inline-block;
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(59, 130, 246, 0.1);
       backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(59, 130, 246, 0.2);
       padding: 0.35rem 1rem;
       border-radius: 20px;
       font-size: 0.75rem;
       font-weight: 600;
       letter-spacing: 1px;
       text-transform: uppercase;
-      margin-bottom: 1rem;
-      color: #93c5fd;
+      color: #3b82f6;
+      margin: 0;
     }
 
     h2 {
       font-size: 2.5rem;
       font-weight: 800;
-      margin: 0 0 1rem;
+      margin: 0;
       letter-spacing: -0.5px;
-      color: #ffffff;
+      color: #0f172a;
+      line-height: 1.2;
+      word-break: break-word;
     }
 
     .hero-meta {
       display: flex;
       flex-wrap: wrap;
       gap: 1.5rem;
+      margin-top: 0.5rem;
 
       .meta-item {
         display: flex;
@@ -126,6 +134,16 @@
       background: #f5f3ff;
       color: #8b5cf6;
     }
+
+    &.gold-icon {
+      background: #fffbeb;
+      color: #fbbf24;
+    }
+
+    &.green-icon {
+      background: #f0fdf4;
+      color: #22c55e;
+    }
   }
 
   .card-content {
@@ -175,6 +193,42 @@
     .image-preview {
       margin-bottom: 1.5rem;
       
+      .menu-graphic-preview {
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        border: 1px dashed #cbd5e1;
+        border-radius: 16px;
+        padding: 1.5rem 1rem;
+        
+        .menu-category {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 0.5rem;
+          
+          .icon-circle {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+          }
+          
+          span {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+          }
+          
+          .bg-success-light { background-color: #dcfce7; }
+          .bg-danger-light { background-color: #fee2e2; }
+          .bg-info-light { background-color: #e0f2fe; }
+        }
+      }
+      
       .preview-box {
         background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
         border: 1px dashed #cbd5e1;
@@ -195,6 +249,50 @@
           font-size: 0.875rem;
           font-weight: 500;
         }
+      }
+    }
+
+    .financial-widget {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 1.25rem;
+      margin-top: auto;
+
+      .finance-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.75rem;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+
+        .finance-label {
+          font-size: 0.875rem;
+          color: #64748b;
+        }
+
+        .finance-value {
+          font-weight: 600;
+          font-size: 1rem;
+        }
+
+        &.highlight {
+          .finance-label {
+            color: #0f172a;
+          }
+          .finance-value {
+            font-size: 1.25rem;
+          }
+        }
+      }
+
+      .finance-divider {
+        height: 1px;
+        background: #e2e8f0;
+        margin: 0.75rem 0;
       }
     }
   }

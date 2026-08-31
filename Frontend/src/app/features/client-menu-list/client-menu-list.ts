@@ -27,16 +27,29 @@ export class ClientMenuList implements OnInit {
   protected readonly menuItems = signal<MenuItem[]>([]);
   protected readonly isLoading = signal(true);
   protected readonly errorMessage = signal('');
+  
+  protected readonly selectedCategory = signal<string>('ALL');
 
   // Grouped items
   protected readonly groupedItems = computed(() => {
     const items = this.menuItems();
+    const active = this.selectedCategory();
+    
+    // Filter items based on active category
+    const filtered = active === 'ALL' ? items : items.filter(i => {
+      if (active === 'STARTER') return i.category === 'STARTER' || i.category === 'BUFFET_STARTER';
+      if (active === 'MAIN') return i.category === 'MAIN' || i.category === 'BUFFET_MAIN';
+      if (active === 'DESSERT') return i.category === 'DESSERT' || i.category === 'BUFFET_DESSERT';
+      if (active === 'BEVERAGE') return i.category === 'BEVERAGE';
+      return false;
+    });
+
     return {
-      STARTER: items.filter(i => i.category === 'STARTER' || i.category === 'BUFFET_STARTER'),
-      MAIN: items.filter(i => i.category === 'MAIN' || i.category === 'BUFFET_MAIN'),
-      DESSERT: items.filter(i => i.category === 'DESSERT' || i.category === 'BUFFET_DESSERT'),
-      BEVERAGE: items.filter(i => i.category === 'BEVERAGE'),
-      OTHER: items.filter(i => i.category === 'OTHER')
+      STARTER: filtered.filter(i => i.category === 'STARTER' || i.category === 'BUFFET_STARTER'),
+      MAIN: filtered.filter(i => i.category === 'MAIN' || i.category === 'BUFFET_MAIN'),
+      DESSERT: filtered.filter(i => i.category === 'DESSERT' || i.category === 'BUFFET_DESSERT'),
+      BEVERAGE: filtered.filter(i => i.category === 'BEVERAGE'),
+      OTHER: filtered.filter(i => i.category === 'OTHER')
     };
   });
 

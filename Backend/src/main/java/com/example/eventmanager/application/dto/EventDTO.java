@@ -35,4 +35,8 @@ public class EventDTO {
     private Boolean isPaidEvent;
     private Double ticketPrice;
     private String currency;
+    private Double totalContractAmount;
+    private Double depositsPaid;
+    private Double balanceDue;
+    private String templateBackgroundImageUrl;
 }

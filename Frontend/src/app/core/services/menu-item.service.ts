@@ -11,6 +11,7 @@ export interface MenuItem {
   dietaryTag?: string;
   description?: string;
   imageUrl?: string;
+  selectedCount?: number;
 }
 
 @Injectable({

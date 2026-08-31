@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, signal, inject, computed } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal, inject, computed, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
@@ -58,6 +58,9 @@ export interface PublicRsvpDetail {
 export class GuestRsvp implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly http = inject(HttpClient);
+
+  @Input() previewMode: boolean = false;
+  @Input() previewData?: PublicRsvpDetail | null;
 
   protected readonly guest = signal<PublicRsvpDetail | null>(null);
   protected readonly isLoading = signal(true);
@@ -445,6 +448,23 @@ export class GuestRsvp implements OnInit, OnDestroy {
   }
 
   public ngOnInit(): void {
+    if (this.previewMode && this.previewData) {
+      console.log('Running in Preview Mode', this.previewData);
+      this.guest.set(this.previewData);
+      this.status.set(this.previewData.guestStatus || 'PENDING');
+      this.attendanceStatus = true;
+      
+      if (this.previewData.menuItems) {
+        this.starters.set(this.previewData.menuItems.filter(item => item.category === 'STARTER' || item.category === 'BUFFET_STARTER'));
+        this.mainDishes.set(this.previewData.menuItems.filter(item => item.category === 'MAIN' || item.category === 'BUFFET_MAIN'));
+        this.beverages.set(this.previewData.menuItems.filter(item => item.category === 'BEVERAGE'));
+        this.desserts.set(this.previewData.menuItems.filter(item => item.category === 'DESSERT' || item.category === 'BUFFET_DESSERT'));
+      }
+      
+      this.isLoading.set(false);
+      return;
+    }
+
     const guestId = this.route.snapshot.paramMap.get('id');
     if (!guestId) {
       this.errorMessage.set('Lien d\'invitation invalide.');
@@ -604,7 +624,11 @@ export class GuestRsvp implements OnInit, OnDestroy {
     return list;
   }
 
-  protected submitResponse(markSuccess: boolean = true): void {
+  protected submitResponse(markSuccess: boolean = false): void {
+    if (this.previewMode) {
+      alert("Action désactivée en mode aperçu.");
+      return;
+    }
     const currentGuest = this.guest();
     if (!currentGuest) return;
 
@@ -679,6 +703,10 @@ export class GuestRsvp implements OnInit, OnDestroy {
   }
 
   protected processPayment(): void {
+    if (this.previewMode) {
+      alert("Paiement désactivé en mode aperçu.");
+      return;
+    }
     const currentGuest = this.guest();
     if (!currentGuest) return;
 

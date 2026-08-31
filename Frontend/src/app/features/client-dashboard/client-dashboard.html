@@ -4,10 +4,6 @@
     <div class="hero-content">
       <div class="hero-badge">Votre Événement</div>
       <h2>{{ events()[0].title }}</h2>
-      <div class="hero-meta">
-        <span class="meta-item"><i class="far fa-calendar"></i> {{ events()[0].eventDate | date:'fullDate' }}</span>
-        <span class="meta-item"><i class="fas fa-map-marker-alt"></i> {{ events()[0].location }}</span>
-      </div>
     </div>
   </div>
 
@@ -20,7 +16,7 @@
       </div>
       <div class="card-content">
         <h3>Gestion des Invités</h3>
-        <p>Gérez votre liste d'invités, téléchargez le modèle Excel et suivez le nombre de personnes attendues.</p>
+        <p>Gérez votre liste d'invités, envoyez les invitations et suivez les confirmations en temps réel.</p>
         <div class="stats-row" *ngIf="(events()[0].guestCount || 0) > 0">
           <div class="stat-box">
             <span class="stat-value">{{ events()[0].guestCount }}</span>
@@ -35,19 +31,36 @@
       </div>
     </div>
 
-    <!-- Card 2: Menu & Invitation -->
+    <!-- Card 2: Menu & Détails -->
     <div class="summary-card interactive-card">
       <div class="card-icon purple-icon">
         <i class="fas fa-utensils"></i>
       </div>
       <div class="card-content">
         <h3>Menu & Détails</h3>
-        <p>Consultez la sélection des plats de votre événement, les formules et les informations traiteur.</p>
+        <p>Consultez la sélection des plats, les formules et découvrez les options choisies par vos invités.</p>
         <div class="image-preview">
-          <!-- Placeholder or decorative graphic for menu -->
-          <div class="preview-box">
-            <i class="fas fa-concierge-bell"></i>
-            <span>Menu sélectionné</span>
+          <div class="menu-graphic-preview d-flex align-items-center justify-content-center gap-3">
+            <div class="menu-category text-center">
+              <div class="icon-circle bg-success-light text-success">
+                <i class="fas fa-leaf"></i>
+              </div>
+              <span>Entrées</span>
+            </div>
+            <i class="fas fa-chevron-right text-muted opacity-25 fs-sm"></i>
+            <div class="menu-category text-center">
+              <div class="icon-circle bg-danger-light text-danger">
+                <i class="fas fa-fire"></i>
+              </div>
+              <span>Plats</span>
+            </div>
+            <i class="fas fa-chevron-right text-muted opacity-25 fs-sm"></i>
+            <div class="menu-category text-center">
+              <div class="icon-circle bg-info-light text-info">
+                <i class="fas fa-ice-cream"></i>
+              </div>
+              <span>Desserts</span>
+            </div>
           </div>
         </div>
       </div>
@@ -56,6 +69,56 @@
           Voir le Menu <i class="fas fa-arrow-right ms-2"></i>
         </a>
       </div>
+    </div>
+
+    <!-- Card 3: Modèle d'Invitation -->
+    <div class="summary-card interactive-card">
+      <div class="card-icon gold-icon">
+        <i class="fas fa-envelope-open-text"></i>
+      </div>
+      <div class="card-content">
+        <h3>Modèle d'Invitation</h3>
+        <p>Prévisualisez la carte d'invitation digitale qui sera envoyée à vos invités avec le formulaire RSVP.</p>
+        <div class="image-preview">
+          <div class="preview-box" style="background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); border-color: #fde68a;">
+            <i class="fas fa-eye text-warning"></i>
+            <span class="text-warning-dark">Aperçu en direct</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-action">
+        <a [routerLink]="['/client/events', events()[0].id, 'invitation-preview']" class="btn btn-alt-warning w-100 btn-luxury-outline" style="border-color: #fcd34d; color: #b45309;">
+          Prévisualiser l'Invitation <i class="fas fa-arrow-right ms-2"></i>
+        </a>
+      </div>
+    </div>
+
+    <!-- Card 4: Suivi des Paiements -->
+    <div class="summary-card interactive-card">
+      <div class="card-icon green-icon">
+        <i class="fas fa-file-invoice-dollar"></i>
+      </div>
+      <div class="card-content">
+        <h3>Suivi des Paiements</h3>
+        <p>Consultez la situation financière globale de votre contrat et suivez le règlement de votre événement.</p>
+        
+        <div class="financial-widget">
+          <div class="finance-item">
+            <span class="finance-label">Montant Total</span>
+            <span class="finance-value text-dark">{{ (events()[0].totalContractAmount || 0) | number:'1.2-2' }} DH</span>
+          </div>
+          <div class="finance-item">
+            <span class="finance-label">Acomptes Versés</span>
+            <span class="finance-value text-success">{{ (events()[0].depositsPaid || 0) | number:'1.2-2' }} DH</span>
+          </div>
+          <div class="finance-divider"></div>
+          <div class="finance-item highlight">
+            <span class="finance-label fw-bold">Reste à Payer</span>
+            <span class="finance-value text-danger fw-bold fs-5">{{ (events()[0].balanceDue || 0) | number:'1.2-2' }} DH</span>
+          </div>
+        </div>
+      </div>
+      <!-- No primary action button needed, or maybe a "Voir le reçu" button, but UI suggests just a transparent widget -->
     </div>
   </div>
 </div>
