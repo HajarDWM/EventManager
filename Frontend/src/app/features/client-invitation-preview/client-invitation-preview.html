@@ -17,21 +17,16 @@
 <!-- END Hero Header -->
 
 <div class="row justify-content-center" *ngIf="event()">
-  <div class="col-md-10 col-lg-8">
-    
-    <!-- Info Alert -->
-    <div class="alert alert-warning d-flex align-items-center gap-3 shadow-sm rounded-3 mb-4 border-0">
-      <div class="flex-shrink-0">
-        <i class="fa fa-eye fa-2x text-warning"></i>
-      </div>
-      <div class="flex-grow-1">
-        <h4 class="alert-heading h6 fw-bold mb-1">Ceci est un aperçu</h4>
-        <p class="mb-0 fs-sm">Voici exactement ce que vos invités verront lorsqu'ils ouvriront le lien d'invitation. Assurez-vous que toutes les informations sont correctes avant l'envoi officiel.</p>
-      </div>
-    </div>
-
+  <div class="col-12">
     <!-- Embedded Guest RSVP Preview -->
-    <div class="preview-container shadow-lg rounded-4 overflow-hidden position-relative bg-white" style="min-height: 80vh;">
+    <div class="preview-container shadow-lg rounded-4 overflow-hidden position-relative bg-white" style="min-height: 85vh;">
+      <!-- Discreet Badge -->
+      <div class="position-absolute top-0 start-50 translate-middle-y mt-3 z-3">
+        <span class="badge bg-dark bg-opacity-75 text-white px-3 py-2 rounded-pill shadow-sm" style="backdrop-filter: blur(4px);">
+          <i class="fa fa-eye me-1 text-warning"></i> Mode Aperçu
+        </span>
+      </div>
+
       <app-guest-rsvp 
         *ngIf="rsvpPreviewData()" 
         [previewMode]="true" 
