@@ -39,6 +39,60 @@ export class EventCreate implements OnInit {
   protected readonly isLoading = signal(false);
   protected readonly isQuotaReached = signal(false);
 
+  // Stepper State
+  protected readonly activeStep = signal<number>(1);
+  protected readonly totalSteps = 3;
+
+  protected nextStep(): void {
+    if (this.activeStep() === 1) {
+      if (!this.title()) {
+        this.errorMessage.set('Veuillez spécifier le nom de l\'événement.');
+        return;
+      }
+      if (this.guestCount() !== null && this.guestCount() !== undefined && this.guestCount()! <= 0) {
+        this.errorMessage.set('Le nombre d\'invités doit être supérieur à 0.');
+        return;
+      }
+    } else if (this.activeStep() === 2) {
+      if (!this.eventDateOnly() || !this.location()) {
+        this.errorMessage.set('Veuillez spécifier la date et le lieu de l\'événement.');
+        return;
+      }
+    }
+
+    this.errorMessage.set('');
+    if (this.activeStep() < this.totalSteps) {
+      this.activeStep.update(s => s + 1);
+    }
+  }
+
+  protected prevStep(): void {
+    this.errorMessage.set('');
+    if (this.activeStep() > 1) {
+      this.activeStep.update(s => s - 1);
+    }
+  }
+
+  // Autocomplete state
+  protected readonly isSubtitleDropdownOpen = signal(false);
+  protected readonly allSubtitles = [
+    'Le Mariage de', 'Les Fiançailles de', 'Soirée de Gala', 'Dîner d\'Affaires',
+    'Événement d\'Entreprise', 'Lancement de Produit', 'Conférence & Réception',
+    'L\'Anniversaire de', 'La Célébration de Naissance de', 'L\'Aqiqah de',
+    'La Circoncision de', 'Soirée Henné de', 'Invitation d\'Exception'
+  ];
+
+  protected get filteredSubtitles(): string[] {
+    const term = this.invitationSubtitle()?.toLowerCase() || '';
+    if (!term) return this.allSubtitles;
+    return this.allSubtitles.filter(s => s.toLowerCase().includes(term));
+  }
+
+  protected selectSubtitle(subtitle: string): void {
+    this.invitationSubtitle.set(subtitle);
+    this.isSubtitleDropdownOpen.set(false);
+  }
+
   public ngOnInit(): void {
     this.catererService.getCurrentProfile().subscribe({
       next: (profile) => {
@@ -69,13 +123,20 @@ export class EventCreate implements OnInit {
   }
 
   protected onSubmit(): void {
+    // Validate Step 1/2 again just in case, though nextStep handles them
     if (!this.title() || !this.eventDateOnly() || !this.location()) {
-      this.errorMessage.set('Veuillez remplir tous les champs obligatoires.');
+      this.errorMessage.set('Veuillez remplir tous les champs obligatoires des étapes précédentes.');
       return;
     }
 
     if (this.guestCount() !== null && this.guestCount() !== undefined && this.guestCount()! <= 0) {
       this.errorMessage.set('Le nombre d\'invités doit être supérieur à 0.');
+      return;
+    }
+
+    // Validate Step 3 (Client Info)
+    if (!this.clientName() || !this.clientPhone() || !this.clientEmail()) {
+      this.errorMessage.set('Les informations du client (Nom, Téléphone et Email) sont obligatoires.');
       return;
     }
 

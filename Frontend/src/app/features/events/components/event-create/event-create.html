@@ -1,223 +1,259 @@
 <!-- Hero -->
-<div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-2 text-center text-md-start">
-  <div class="flex-grow-1 mb-1 mb-md-0">
-    <h1 class="h3 fw-bold mb-2">
-      Planifier un événement
-    </h1>
-    <h2 class="h6 fw-medium text-muted mb-0">
-      Remplissez le formulaire ci-dessous pour ajouter une nouvelle prestation.
-    </h2>
-  </div>
+<div class="d-flex flex-column justify-content-center align-items-center py-4 text-center mt-3">
+  <h1 class="display-6 fw-bolder mb-2 text-dark">Planifier un événement</h1>
+  <p class="fs-sm fw-medium text-muted mb-0">Configurez les détails de votre prestation en quelques étapes.</p>
 </div>
 <!-- END Hero -->
 
-<div class="row mt-3">
-  <div class="col-md-8 col-lg-6">
-    <div class="block block-rounded shadow-sm border border-light">
-      <div class="block-header block-header-default bg-body-light border-bottom border-light">
-        <h3 class="block-title">Détails de l'événement</h3>
+<div class="row justify-content-center">
+  <div class="col-md-10 col-lg-8 col-xl-7">
+    
+    <!-- Stepper Indicator -->
+    <div class="d-flex justify-content-between align-items-center mb-4 px-3 px-md-5">
+      <div class="text-center" [class.opacity-50]="activeStep() !== 1">
+        <div class="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2 shadow-sm"
+             [ngClass]="activeStep() === 1 ? 'bg-primary text-white' : 'bg-body-light text-muted'" 
+             style="width: 48px; height: 48px; transition: 0.3s;">
+          <i class="fa fa-info fa-lg"></i>
+        </div>
+        <span class="fs-xs fw-bold text-uppercase" [ngClass]="activeStep() === 1 ? 'text-primary' : 'text-muted'">Général</span>
       </div>
-      <div class="block-content">
+      
+      <div class="flex-grow-1 mx-2 mx-md-3" style="height: 3px; background-color: #e2e8f0; border-radius: 3px;">
+        <div class="bg-primary h-100" style="transition: width 0.3s ease; border-radius: 3px;" [style.width]="activeStep() >= 2 ? '100%' : '0%'"></div>
+      </div>
+
+      <div class="text-center" [class.opacity-50]="activeStep() !== 2">
+        <div class="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2 shadow-sm"
+             [ngClass]="activeStep() === 2 ? 'bg-primary text-white' : 'bg-body-light text-muted'" 
+             style="width: 48px; height: 48px; transition: 0.3s;">
+          <i class="fa fa-map-marker-alt fa-lg"></i>
+        </div>
+        <span class="fs-xs fw-bold text-uppercase" [ngClass]="activeStep() === 2 ? 'text-primary' : 'text-muted'">Lieu & Date</span>
+      </div>
+
+      <div class="flex-grow-1 mx-2 mx-md-3" style="height: 3px; background-color: #e2e8f0; border-radius: 3px;">
+        <div class="bg-primary h-100" style="transition: width 0.3s ease; border-radius: 3px;" [style.width]="activeStep() === 3 ? '100%' : '0%'"></div>
+      </div>
+
+      <div class="text-center" [class.opacity-50]="activeStep() !== 3">
+        <div class="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2 shadow-sm"
+             [ngClass]="activeStep() === 3 ? 'bg-primary text-white' : 'bg-body-light text-muted'" 
+             style="width: 48px; height: 48px; transition: 0.3s;">
+          <i class="fa fa-user fa-lg"></i>
+        </div>
+        <span class="fs-xs fw-bold text-uppercase" [ngClass]="activeStep() === 3 ? 'text-primary' : 'text-muted'">Client</span>
+      </div>
+    </div>
+
+    <!-- Main Card -->
+    <div class="block block-rounded shadow-sm border-0 rounded-4 overflow-hidden mb-5">
+      <div class="block-content p-4 p-md-5 bg-white">
+        
         <!-- Error Alert -->
-        <div class="alert alert-danger d-flex flex-column gap-2" role="alert" *ngIf="errorMessage()">
+        <div class="alert alert-danger d-flex flex-column gap-2 rounded-3 border-0 shadow-sm mb-4" role="alert" *ngIf="errorMessage()">
           <div class="d-flex align-items-center gap-2">
-            <i class="fa fa-exclamation-circle"></i>
-            <div class="fs-sm fw-medium">{{ errorMessage() }}</div>
+            <i class="fa fa-exclamation-circle text-danger"></i>
+            <div class="fs-sm fw-medium text-danger">{{ errorMessage() }}</div>
           </div>
           <div *ngIf="isQuotaReached()" class="mt-2">
-            <a routerLink="/subscription" class="btn btn-sm btn-alt-danger">
-              <i class="fa fa-arrow-up me-1"></i> Mettre à niveau mon forfait / Voir les tarifs
+            <a routerLink="/subscription" class="btn btn-sm btn-alt-danger rounded-pill">
+              <i class="fa fa-arrow-up me-1"></i> Mettre à niveau mon forfait
             </a>
           </div>
         </div>
 
-        <form (ngSubmit)="onSubmit()">
-          <!-- Titre -->
-          <div class="mb-4">
-            <label class="form-label fs-sm fw-semibold" for="event-title">Nom de l'événement <span class="text-danger">*</span></label>
-            <input type="text" class="form-control form-control-alt fs-sm"
-                   id="event-title" name="event-title" placeholder="Ex: Yassine & Zineb ou BrainToys"
-                   [ngModel]="title()" (ngModelChange)="title.set($event)" required
-                   [disabled]="isQuotaReached()">
-          </div>
-
-          <!-- Informations du Client -->
-          <div class="mb-4 p-3 bg-body-light border rounded-3">
-            <h4 class="h6 fw-bold mb-3"><i class="fa fa-user-circle text-primary me-1"></i> Informations du Client (Accès Portail)</h4>
-            <div class="row g-3">
-              <div class="col-12">
-                <label class="form-label fs-xs fw-semibold text-dark mb-1" for="client-name">Nom complet du client / marié(s)</label>
-                <input type="text" class="form-control form-control-sm"
-                       id="client-name" name="client-name" placeholder="Ex: Yassine Berrada"
-                       [ngModel]="clientName()" (ngModelChange)="clientName.set($event)"
-                       [disabled]="isQuotaReached()">
-              </div>
-              <div class="col-md-6">
-                <label class="form-label fs-xs fw-semibold text-dark mb-1" for="client-phone">Téléphone</label>
-                <input type="tel" class="form-control form-control-sm"
-                       id="client-phone" name="client-phone" placeholder="Ex: +212 600 000 000"
-                       [ngModel]="clientPhone()" (ngModelChange)="clientPhone.set($event)"
-                       [disabled]="isQuotaReached()">
-              </div>
-              <div class="col-md-6">
-                <label class="form-label fs-xs fw-semibold text-dark mb-1" for="client-email">Email</label>
-                <input type="email" class="form-control form-control-sm"
-                       id="client-email" name="client-email" placeholder="Ex: client@email.com"
-                       [ngModel]="clientEmail()" (ngModelChange)="clientEmail.set($event)"
-                       [disabled]="isQuotaReached()">
-              </div>
-            </div>
-            <div class="form-text fs-xs text-muted mt-2">
-              Ces informations permettront au client de s'identifier sur son espace privé (Portail Client).
-            </div>
-          </div>
-
-          <!-- Type / Sous-titre de l'événement (pour l'invitation) -->
-          <div class="mb-4">
-            <label class="form-label fs-sm fw-semibold" for="event-subtitle">
-              <i class="fa fa-tag text-primary me-1"></i> Type / Nature de l'événement (Sous-titre de l'invitation)
-            </label>
-            <input type="text" class="form-control form-control-alt fs-sm"
-                   id="event-subtitle" name="event-subtitle"
-                   list="subtitle-suggestions"
-                   placeholder="Ex: Le Mariage de, Soirée de Gala, Dîner d'Affaires, L'Anniversaire de..."
-                   [ngModel]="invitationSubtitle()" (ngModelChange)="invitationSubtitle.set($event)"
-                   [disabled]="isQuotaReached()">
-            <datalist id="subtitle-suggestions">
-              <option value="Le Mariage de">
-              <option value="Les Fiançailles de">
-              <option value="Soirée de Gala">
-              <option value="Dîner d'Affaires">
-              <option value="Événement d'Entreprise">
-              <option value="Lancement de Produit">
-              <option value="Conférence & Réception">
-              <option value="L'Anniversaire de">
-              <option value="La Célébration de Naissance de">
-              <option value="L'Aqiqah de">
-              <option value="La Circoncision de">
-              <option value="Soirée Henné de">
-              <option value="Invitation d'Exception">
-            </datalist>
-            <div class="form-text fs-xs text-muted">
-              Ce texte apparaîtra au-dessus du nom sur l'invitation (choisissez une suggestion ou écrivez votre propre texte).
-            </div>
-          </div>
-
-          <!-- Date & Heure -->
-          <div class="row mb-4">
-            <div class="col-sm-8">
-              <label class="form-label fs-sm fw-semibold" for="event-date">Date de l'événement <span class="text-danger">*</span></label>
-              <input type="date" class="form-control form-control-alt fs-sm"
-                     id="event-date" name="event-date"
-                     [ngModel]="eventDateOnly()" (ngModelChange)="eventDateOnly.set($event)" required
+        <form (ngSubmit)="activeStep() === totalSteps ? onSubmit() : nextStep()">
+          
+          <!-- ================= STEP 1: GENERAL ================= -->
+          <div *ngIf="activeStep() === 1" class="animate__animated animate__fadeIn">
+            <h3 class="h4 fw-bold mb-4 text-dark">Informations Générales</h3>
+            
+            <div class="mb-4">
+              <label class="form-label fs-sm fw-semibold text-muted" for="event-title">Nom de l'événement <span class="text-danger">*</span></label>
+              <input type="text" class="form-control form-control-lg form-control-alt rounded-3 fs-sm"
+                     id="event-title" name="event-title" placeholder="Ex: Yassine & Zineb ou BrainToys"
+                     [ngModel]="title()" (ngModelChange)="title.set($event)" required
                      [disabled]="isQuotaReached()">
             </div>
-            <div class="col-sm-4">
-              <label class="form-label fs-sm fw-semibold" for="event-time">Heure (facultatif)</label>
-              <input type="time" class="form-control form-control-alt fs-sm"
-                     id="event-time" name="event-time"
-                     [ngModel]="eventTimeOnly()" (ngModelChange)="eventTimeOnly.set($event)"
+            
+            <div class="mb-4 position-relative">
+              <label class="form-label fs-sm fw-semibold text-muted" for="event-subtitle">
+                <i class="fa fa-tag text-primary me-1"></i> Type / Nature (Sous-titre)
+              </label>
+              <input type="text" class="form-control form-control-lg form-control-alt rounded-3 fs-sm"
+                     id="event-subtitle" name="event-subtitle"
+                     autocomplete="off"
+                     placeholder="Ex: Le Mariage de, Soirée de Gala..."
+                     [ngModel]="invitationSubtitle()" (ngModelChange)="invitationSubtitle.set($event); isSubtitleDropdownOpen.set(true)"
+                     (focus)="isSubtitleDropdownOpen.set(true)"
+                     (blur)="isSubtitleDropdownOpen.set(false)"
                      [disabled]="isQuotaReached()">
-            </div>
-          </div>
-
-          <!-- Lieu de la Salle -->
-          <div class="mb-4">
-            <label class="form-label fs-sm fw-semibold" for="event-location">Lieu / Nom de la salle <span class="text-danger">*</span></label>
-            <input type="text" class="form-control form-control-alt fs-sm"
-                   id="event-location" name="event-location" placeholder="Ex: Palais des Roses, Galerie des Glaces"
-                   [ngModel]="location()" (ngModelChange)="location.set($event)" required
-                   [disabled]="isQuotaReached()">
-          </div>
-
-          <!-- Lien Google Maps / Adresse exacte -->
-          <div class="mb-4">
-            <label class="form-label fs-sm fw-semibold" for="event-map-url">Adresse exacte / Lien Google Maps (facultatif)</label>
-            <input type="url" class="form-control form-control-alt fs-sm"
-                   id="event-map-url" name="event-map-url" placeholder="Ex: https://maps.app.goo.gl/... ou 123 Avenue Mohamed V, Casablanca"
-                   [ngModel]="locationMapUrl()" (ngModelChange)="locationMapUrl.set($event)"
-                   [disabled]="isQuotaReached()">
-            <div class="form-text fs-xs text-muted">
-              Ce lien sera utilisé pour le bouton d'itinéraire sur l'invitation digitale.
-            </div>
-          </div>
-
-          <!-- Zone de Parking -->
-          <div class="mb-4">
-            <label class="form-label fs-sm fw-semibold" for="event-parking">
-              <i class="fa fa-parking text-primary me-1"></i> Zone de Parking (facultatif)
-            </label>
-            <input type="text" class="form-control form-control-alt fs-sm"
-                   id="event-parking" name="event-parking" placeholder="Ex: Parking VIP & Visiteurs - Entrée Sud, Boulevard d'Anfa"
-                   [ngModel]="parkingLocation()" (ngModelChange)="parkingLocation.set($event)"
-                   [disabled]="isQuotaReached()">
-            <div class="form-text fs-xs text-muted">
-              Permet aux invités d'obtenir un itinéraire GPS direct vers le parking sur leur invitation.
-            </div>
-          </div>
-
-          <!-- Nombre d'invités -->
-          <div class="mb-4">
-            <label class="form-label fs-sm fw-semibold" for="event-guests">Nombre d'invités attendus</label>
-            <input type="number" class="form-control form-control-alt fs-sm"
-                   id="event-guests" name="event-guests" placeholder="Ex: 150 (facultatif)" min="1"
-                   [ngModel]="guestCount()" (ngModelChange)="guestCount.set($event)"
-                   [disabled]="isQuotaReached()">
-          </div>
-
-          <!-- Billetterie & Format d'Accès (Gratuit / Payant) -->
-          <div class="mb-4 p-3 bg-body-light border rounded-3">
-            <div class="d-flex align-items-center justify-content-between mb-2">
-              <div>
-                <label class="form-label fs-sm fw-bold text-dark mb-0">
-                  <i class="fa fa-ticket text-primary me-1"></i> Format d'accès & Participation financière
-                </label>
-                <div class="fs-xs text-muted">Activez la billetterie si les invités doivent régler leur participation d'avance.</div>
-              </div>
-              <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" id="isPaidEventSwitch"
-                       [checked]="isPaidEvent()"
-                       (change)="isPaidEvent.set($any($event.target).checked)"
-                       [disabled]="isQuotaReached()">
-              </div>
-            </div>
-
-            <!-- Champs de tarification si Payant activé -->
-            <div *ngIf="isPaidEvent()" class="row g-2 mt-2 pt-2 border-top animate__animated animate__fadeIn">
-              <div class="col-sm-7">
-                <label class="form-label fs-xs fw-semibold text-dark mb-1">Tarif / Prix par invité <span class="text-danger">*</span></label>
-                <div class="input-group input-group-sm">
-                  <span class="input-group-text"><i class="fa fa-coins text-warning"></i></span>
-                  <input type="number" class="form-control" placeholder="Ex: 350" min="1"
-                         [ngModel]="ticketPrice()" (ngModelChange)="ticketPrice.set($event)"
-                         name="ticketPrice" required>
+              
+              <!-- Autocomplete Dropdown -->
+              <div *ngIf="isSubtitleDropdownOpen()" 
+                   class="position-absolute w-100 bg-white border border-light shadow-sm rounded-3 mt-1 py-1 z-3"
+                   style="max-height: 200px; overflow-y: auto; z-index: 1050;">
+                <div *ngIf="filteredSubtitles.length === 0" class="px-3 py-2 text-muted fs-sm">
+                  Utiliser ce texte personnalisé
+                </div>
+                <div *ngFor="let s of filteredSubtitles" 
+                     class="px-3 py-2 fs-sm text-dark"
+                     style="cursor: pointer; transition: background-color 0.2s;"
+                     onmouseover="this.style.backgroundColor='#f8f9fa'"
+                     onmouseout="this.style.backgroundColor='transparent'"
+                     (mousedown)="selectSubtitle(s); $event.preventDefault()">
+                  {{ s }}
                 </div>
               </div>
-              <div class="col-sm-5">
-                <label class="form-label fs-xs fw-semibold text-dark mb-1">Devise</label>
-                <select class="form-select form-select-sm" [ngModel]="currency()" (ngModelChange)="currency.set($event)" name="currency">
-                  <option value="MAD">MAD (Dirham)</option>
-                  <option value="EUR">EUR (€)</option>
-                  <option value="USD">USD ($)</option>
-                </select>
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label fs-sm fw-semibold text-muted" for="event-guests">Nombre d'invités attendus</label>
+              <input type="number" class="form-control form-control-lg form-control-alt rounded-3 fs-sm"
+                     id="event-guests" name="event-guests" placeholder="Ex: 150 (facultatif)" min="1"
+                     [ngModel]="guestCount()" (ngModelChange)="guestCount.set($event)"
+                     [disabled]="isQuotaReached()">
+            </div>
+
+            <!-- Billetterie & Format d'Accès -->
+            <div class="mb-2 p-4 bg-body-extra-light rounded-4">
+              <div class="d-flex align-items-center justify-content-between mb-2">
+                <div>
+                  <label class="form-label fs-sm fw-bold text-dark mb-0">
+                    <i class="fa fa-ticket-alt text-primary me-1"></i> Billetterie / Événement Payant
+                  </label>
+                  <div class="fs-xs text-muted">Activez si les invités doivent régler leur participation.</div>
+                </div>
+                <div class="form-check form-switch form-check-lg">
+                  <input class="form-check-input" type="checkbox" id="isPaidEventSwitch"
+                         [checked]="isPaidEvent()"
+                         (change)="isPaidEvent.set($any($event.target).checked)"
+                         [disabled]="isQuotaReached()">
+                </div>
+              </div>
+
+              <div *ngIf="isPaidEvent()" class="row g-3 mt-2 pt-3 border-top animate__animated animate__fadeIn">
+                <div class="col-sm-7">
+                  <label class="form-label fs-xs fw-semibold text-muted mb-1">Prix par billet <span class="text-danger">*</span></label>
+                  <div class="input-group input-group-lg">
+                    <span class="input-group-text border-0 bg-body-light rounded-start-3"><i class="fa fa-coins text-warning"></i></span>
+                    <input type="number" class="form-control form-control-alt border-0 bg-body-light rounded-end-3 fs-sm" placeholder="Ex: 350" min="1"
+                           [ngModel]="ticketPrice()" (ngModelChange)="ticketPrice.set($event)"
+                           name="ticketPrice" required>
+                  </div>
+                </div>
+                <div class="col-sm-5">
+                  <label class="form-label fs-xs fw-semibold text-muted mb-1">Devise</label>
+                  <select class="form-select form-select-lg form-control-alt rounded-3 fs-sm border-0 bg-body-light" [ngModel]="currency()" (ngModelChange)="currency.set($event)" name="currency">
+                    <option value="MAD">MAD (Dirham)</option>
+                    <option value="EUR">EUR (€)</option>
+                    <option value="USD">USD ($)</option>
+                  </select>
+                </div>
               </div>
             </div>
           </div>
 
-          <!-- Actions -->
-          <div class="mb-4 d-flex gap-2">
-            <button type="submit" class="btn btn-primary fs-sm px-4" [disabled]="isQuotaReached() || isLoading()">
-              <span *ngIf="!isLoading()">
-                <i class="fa fa-save me-1"></i> Enregistrer
-              </span>
-              <span *ngIf="isLoading()">
-                <i class="fa fa-circle-notch fa-spin me-1"></i> Enregistrement...
-              </span>
-            </button>
-            <a class="btn btn-alt-secondary fs-sm px-4" routerLink="/events">
-              Annuler
-            </a>
+          <!-- ================= STEP 2: DATE & LOCATION ================= -->
+          <div *ngIf="activeStep() === 2" class="animate__animated animate__fadeIn">
+            <h3 class="h4 fw-bold mb-4 text-dark">Date & Lieu</h3>
+            
+            <div class="row mb-4 g-3">
+              <div class="col-sm-8">
+                <label class="form-label fs-sm fw-semibold text-muted" for="event-date">Date de l'événement <span class="text-danger">*</span></label>
+                <input type="date" class="form-control form-control-lg form-control-alt rounded-3 fs-sm"
+                       id="event-date" name="event-date"
+                       [ngModel]="eventDateOnly()" (ngModelChange)="eventDateOnly.set($event)" required
+                       [disabled]="isQuotaReached()">
+              </div>
+              <div class="col-sm-4">
+                <label class="form-label fs-sm fw-semibold text-muted" for="event-time">Heure (facultatif)</label>
+                <input type="time" class="form-control form-control-lg form-control-alt rounded-3 fs-sm"
+                       id="event-time" name="event-time"
+                       [ngModel]="eventTimeOnly()" (ngModelChange)="eventTimeOnly.set($event)"
+                       [disabled]="isQuotaReached()">
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label fs-sm fw-semibold text-muted" for="event-location">Lieu / Nom de la salle <span class="text-danger">*</span></label>
+              <input type="text" class="form-control form-control-lg form-control-alt rounded-3 fs-sm"
+                     id="event-location" name="event-location" placeholder="Ex: Palais des Roses"
+                     [ngModel]="location()" (ngModelChange)="location.set($event)" required
+                     [disabled]="isQuotaReached()">
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label fs-sm fw-semibold text-muted" for="event-map-url">Adresse / Lien Google Maps (facultatif)</label>
+              <input type="url" class="form-control form-control-lg form-control-alt rounded-3 fs-sm"
+                     id="event-map-url" name="event-map-url" placeholder="Ex: https://maps.app.goo.gl/..."
+                     [ngModel]="locationMapUrl()" (ngModelChange)="locationMapUrl.set($event)"
+                     [disabled]="isQuotaReached()">
+            </div>
+
+            <div class="mb-2">
+              <label class="form-label fs-sm fw-semibold text-muted" for="event-parking">
+                <i class="fa fa-parking text-primary me-1"></i> Zone de Parking (facultatif)
+              </label>
+              <input type="text" class="form-control form-control-lg form-control-alt rounded-3 fs-sm"
+                     id="event-parking" name="event-parking" placeholder="Ex: Entrée Sud, Parking VIP"
+                     [ngModel]="parkingLocation()" (ngModelChange)="parkingLocation.set($event)"
+                     [disabled]="isQuotaReached()">
+            </div>
           </div>
+
+          <!-- ================= STEP 3: CLIENT INFO ================= -->
+          <div *ngIf="activeStep() === 3" class="animate__animated animate__fadeIn">
+            <h3 class="h4 fw-bold mb-4 text-dark">Informations du Client</h3>
+            <p class="fs-sm text-muted mb-4">Ces détails permettront à votre client d'accéder à son espace de suivi privé (Portail Client).</p>
+
+            <div class="mb-4">
+              <label class="form-label fs-sm fw-semibold text-muted" for="client-name">Nom complet / marié(s) <span class="text-danger">*</span></label>
+              <input type="text" class="form-control form-control-lg form-control-alt rounded-3 fs-sm"
+                     id="client-name" name="client-name" placeholder="Ex: Yassine Berrada"
+                     [ngModel]="clientName()" (ngModelChange)="clientName.set($event)"
+                     [disabled]="isQuotaReached()" required>
+            </div>
+            
+            <div class="mb-4">
+              <label class="form-label fs-sm fw-semibold text-muted" for="client-phone">Téléphone <span class="text-danger">*</span></label>
+              <input type="tel" class="form-control form-control-lg form-control-alt rounded-3 fs-sm"
+                     id="client-phone" name="client-phone" placeholder="Ex: +212 600 000 000"
+                     [ngModel]="clientPhone()" (ngModelChange)="clientPhone.set($event)"
+                     [disabled]="isQuotaReached()" required>
+            </div>
+
+            <div class="mb-2">
+              <label class="form-label fs-sm fw-semibold text-muted" for="client-email">Email <span class="text-danger">*</span></label>
+              <input type="email" class="form-control form-control-lg form-control-alt rounded-3 fs-sm"
+                     id="client-email" name="client-email" placeholder="Ex: client@email.com"
+                     [ngModel]="clientEmail()" (ngModelChange)="clientEmail.set($event)"
+                     [disabled]="isQuotaReached()" required>
+            </div>
+          </div>
+          
+          <!-- ================= NAVIGATION ================= -->
+          <div class="d-flex justify-content-between align-items-center mt-5 pt-4 border-top border-light">
+            <button type="button" class="btn btn-light btn-lg rounded-pill px-4 px-md-5 fw-medium text-dark shadow-sm" 
+                    *ngIf="activeStep() > 1" (click)="prevStep()">
+              <i class="fa fa-arrow-left me-2"></i> Précédent
+            </button>
+            
+            <div *ngIf="activeStep() === 1"></div> <!-- Spacer for alignment -->
+
+            <button type="button" class="btn btn-primary btn-lg rounded-pill px-4 px-md-5 fw-semibold shadow-sm" 
+                    *ngIf="activeStep() < totalSteps" (click)="nextStep()">
+              Suivant <i class="fa fa-arrow-right ms-2"></i>
+            </button>
+            
+            <button type="submit" class="btn btn-primary btn-lg rounded-pill px-4 px-md-5 fw-bold shadow-sm" 
+                    *ngIf="activeStep() === totalSteps" [disabled]="isQuotaReached() || isLoading()">
+              <span *ngIf="!isLoading()"><i class="fa fa-check me-2"></i> Terminer</span>
+              <span *ngIf="isLoading()"><i class="fa fa-circle-notch fa-spin me-2"></i> Création...</span>
+            </button>
+          </div>
+
         </form>
       </div>
     </div>
