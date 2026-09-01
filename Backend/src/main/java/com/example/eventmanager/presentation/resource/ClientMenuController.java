@@ -6,6 +6,7 @@ import com.example.eventmanager.infrastructure.persistence.entity.MenuItemEntity
 import com.example.eventmanager.infrastructure.persistence.repository.EventRepository;
 import com.example.eventmanager.infrastructure.persistence.repository.JpaMenuItemRepository;
 import com.example.eventmanager.infrastructure.security.model.ClientUserDetails;
+import com.example.eventmanager.application.port.out.GuestRepositoryPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -24,6 +25,7 @@ public class ClientMenuController {
 
     private final JpaMenuItemRepository menuItemRepository;
     private final EventRepository eventRepository;
+    private final GuestRepositoryPort guestRepositoryPort;
 
     private boolean isClientAuthorizedForEvent(Long clientId, Long eventId) {
         EventEntity event = eventRepository.findById(eventId).orElse(null);
@@ -40,7 +42,18 @@ public class ClientMenuController {
         }
 
         List<MenuItemEntity> entities = menuItemRepository.findByEventId(eventId);
-        List<MenuItemDTO> items = entities.stream().map(this::toDTO).collect(Collectors.toList());
+        List<com.example.eventmanager.domain.model.Guest> guests = guestRepositoryPort.findByEventId(eventId);
+        
+        List<MenuItemDTO> items = entities.stream().map(entity -> {
+            MenuItemDTO dto = toDTO(entity);
+            long count = guests.stream()
+                .filter(g -> g.getStatus() == com.example.eventmanager.domain.model.GuestStatus.CONFIRMED)
+                .filter(g -> g.getDietaryRequirements() != null && g.getDietaryRequirements().toLowerCase().contains(dto.getName().toLowerCase()))
+                .count();
+            dto.setSelectedCount((int) count);
+            return dto;
+        }).collect(Collectors.toList());
+        
         return ResponseEntity.ok(items);
     }
 
