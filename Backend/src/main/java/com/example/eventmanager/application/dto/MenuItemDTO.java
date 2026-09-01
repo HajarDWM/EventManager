@@ -20,4 +20,5 @@ public class MenuItemDTO {
     private String dietaryTag;
     private String description;
     private String imageUrl;
+    private Integer selectedCount;
 }

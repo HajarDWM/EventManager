@@ -215,8 +215,7 @@ export class EventDetails implements OnInit {
   });
 
   protected readonly cateringBudget = computed(() => {
-    const pricePerPerson = this.menuItems().reduce((sum, item) => sum + (item.pricePerPerson || 0), 0);
-    return pricePerPerson * this.confirmedGuestsCount();
+    return this.menuItems().reduce((sum, item) => sum + ((item.pricePerPerson || 0) * (item.selectedCount || 0)), 0);
   });
 
   protected readonly totalSentCount = computed(() => 
@@ -409,6 +408,28 @@ export class EventDetails implements OnInit {
         setTimeout(() => this.linkCopied.set(false), 3000);
       });
     }
+  }
+
+  protected whatsappShareUrl(): string {
+    const url = this.clientPortalUrl();
+    if (url === 'Lien non disponible') return '';
+    const text = `Bonjour,\n\nVoici le lien d'accès sécurisé pour votre événement :\n${url}\n\nCordialement.`;
+    return `https://wa.me/?text=${encodeURIComponent(text)}`;
+  }
+
+  protected emailShareUrl(): string {
+    const url = this.clientPortalUrl();
+    if (url === 'Lien non disponible') return '';
+    const subject = `Accès Portail Client - ${this.event()?.title || 'Votre événement'}`;
+    const body = `Bonjour,\n\nVoici le lien d'accès sécurisé pour votre événement :\n${url}\n\nCordialement.`;
+    return `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  }
+
+  protected smsShareUrl(): string {
+    const url = this.clientPortalUrl();
+    if (url === 'Lien non disponible') return '';
+    const body = `Bonjour, voici le lien d'accès à votre événement: ${url}`;
+    return `sms:?&body=${encodeURIComponent(body)}`;
   }
 }
 

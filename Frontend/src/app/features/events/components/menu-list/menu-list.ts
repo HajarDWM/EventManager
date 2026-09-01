@@ -162,13 +162,10 @@ export class MenuList implements OnInit {
     return items.filter(item => item.category === cat);
   });
 
-  protected readonly totalPricePerPerson = computed(() => {
-    return this.menuItems().reduce((sum, item) => sum + (item.pricePerPerson || 0), 0);
-  });
+
 
   protected readonly totalCateringBudget = computed(() => {
-    const guests = this.event()?.guestCount || 0;
-    return this.totalPricePerPerson() * guests;
+    return this.menuItems().reduce((sum, item) => sum + ((item.pricePerPerson || 0) * (item.selectedCount || 0)), 0);
   });
 
   protected readonly starterCount = computed(() => {

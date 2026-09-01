@@ -8,6 +8,7 @@ import com.example.eventmanager.application.port.in.GetMenuItemsByEventUseCase;
 import com.example.eventmanager.application.port.in.UpdateMenuItemUseCase;
 import com.example.eventmanager.application.port.out.EventRepositoryPort;
 import com.example.eventmanager.application.port.out.MenuItemRepositoryPort;
+import com.example.eventmanager.application.port.out.GuestRepositoryPort;
 import com.example.eventmanager.application.port.out.SecurityContextPort;
 import com.example.eventmanager.domain.exception.EventNotFoundException;
 import com.example.eventmanager.domain.exception.UnauthorizedAccessException;
@@ -27,6 +28,7 @@ public class MenuItemApplicationService implements CreateMenuItemUseCase, GetMen
 
     private final MenuItemRepositoryPort menuItemRepositoryPort;
     private final EventRepositoryPort eventRepositoryPort;
+    private final GuestRepositoryPort guestRepositoryPort;
     private final com.example.eventmanager.application.port.out.CatererRepositoryPort catererRepositoryPort;
     private final MenuItemMapper menuItemMapper;
     private final SecurityContextPort securityContextPort;
@@ -78,9 +80,21 @@ public class MenuItemApplicationService implements CreateMenuItemUseCase, GetMen
     @Transactional(readOnly = true)
     public List<MenuItemDTO> getMenuItemsByEventId(Long eventId) {
         verifyEventOwnership(eventId);
-        return menuItemRepositoryPort.findByEventId(eventId).stream()
+        List<MenuItemDTO> items = menuItemRepositoryPort.findByEventId(eventId).stream()
                 .map(menuItemMapper::toDTO)
                 .collect(Collectors.toList());
+
+        List<com.example.eventmanager.domain.model.Guest> guests = guestRepositoryPort.findByEventId(eventId);
+        
+        for (MenuItemDTO item : items) {
+            long count = guests.stream()
+                .filter(g -> g.getStatus() == com.example.eventmanager.domain.model.GuestStatus.CONFIRMED)
+                .filter(g -> g.getDietaryRequirements() != null && g.getDietaryRequirements().toLowerCase().contains(item.getName().toLowerCase()))
+                .count();
+            item.setSelectedCount((int) count);
+        }
+        
+        return items;
     }
 
     @Override
