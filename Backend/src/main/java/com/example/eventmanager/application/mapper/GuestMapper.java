@@ -24,6 +24,8 @@ public class GuestMapper {
                 .paidAmount(dto.getPaidAmount() != null ? dto.getPaidAmount() : 0.0)
                 .paymentReference(dto.getPaymentReference())
                 .paymentDate(dto.getPaymentDate())
+                .invitationToken(dto.getInvitationToken())
+                .invitationExpiry(dto.getInvitationExpiry())
                 .build();
     }
 
@@ -43,6 +45,8 @@ public class GuestMapper {
                 .paidAmount(domain.getPaidAmount())
                 .paymentReference(domain.getPaymentReference())
                 .paymentDate(domain.getPaymentDate())
+                .invitationToken(domain.getInvitationToken())
+                .invitationExpiry(domain.getInvitationExpiry())
                 .build();
     }
 
@@ -62,6 +66,8 @@ public class GuestMapper {
         entity.setPaidAmount(domain.getPaidAmount() != null ? domain.getPaidAmount() : 0.0);
         entity.setPaymentReference(domain.getPaymentReference());
         entity.setPaymentDate(domain.getPaymentDate());
+        entity.setInvitationToken(domain.getInvitationToken());
+        entity.setInvitationExpiry(domain.getInvitationExpiry());
         return entity;
     }
 
@@ -81,6 +87,8 @@ public class GuestMapper {
                 .paidAmount(entity.getPaidAmount() != null ? entity.getPaidAmount() : 0.0)
                 .paymentReference(entity.getPaymentReference())
                 .paymentDate(entity.getPaymentDate())
+                .invitationToken(entity.getInvitationToken())
+                .invitationExpiry(entity.getInvitationExpiry())
                 .build();
     }
 }

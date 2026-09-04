@@ -24,7 +24,7 @@ export class EventCreate implements OnInit {
   protected readonly clientEmail = signal('');
   protected readonly invitationSubtitle = signal('');
   protected readonly eventDateOnly = signal('');
-  protected readonly eventTimeOnly = signal('');
+  protected readonly eventTimeOnly = signal<string | null>(null);
   protected readonly location = signal('');
   protected readonly locationMapUrl = signal('');
   protected readonly parkingLocation = signal('');
@@ -49,8 +49,8 @@ export class EventCreate implements OnInit {
         this.errorMessage.set('Veuillez spécifier le nom de l\'événement.');
         return;
       }
-      if (this.guestCount() !== null && this.guestCount() !== undefined && this.guestCount()! <= 0) {
-        this.errorMessage.set('Le nombre d\'invités doit être supérieur à 0.');
+      if (this.guestCount() !== null && this.guestCount() !== undefined && this.guestCount()! < 0) {
+        this.errorMessage.set('Le nombre d\'invités ne peut pas être négatif.');
         return;
       }
     } else if (this.activeStep() === 2) {
@@ -129,8 +129,8 @@ export class EventCreate implements OnInit {
       return;
     }
 
-    if (this.guestCount() !== null && this.guestCount() !== undefined && this.guestCount()! <= 0) {
-      this.errorMessage.set('Le nombre d\'invités doit être supérieur à 0.');
+    if (this.guestCount() !== null && this.guestCount() !== undefined && this.guestCount()! < 0) {
+      this.errorMessage.set('Le nombre d\'invités ne peut pas être négatif.');
       return;
     }
 

@@ -54,6 +54,11 @@ export class GuestList implements OnInit {
 
   // Group Filtering state
   protected readonly selectedGroupFilter = signal<string>('ALL');
+  
+  // Status Filtering & Pagination
+  protected readonly selectedStatusFilter = signal<'ALL' | 'PENDING' | 'CONFIRMED' | 'DECLINED'>('ALL');
+  protected readonly currentPage = signal<number>(1);
+  protected readonly pageSize = signal<number>(10);
 
   protected readonly uniqueGroups = computed(() => {
     const list = this.guests().map(g => g.groupName).filter((g): g is string => !!g);
@@ -62,10 +67,53 @@ export class GuestList implements OnInit {
 
   protected readonly filteredGuests = computed(() => {
     const list = this.guests();
-    const filter = this.selectedGroupFilter();
-    if (filter === 'ALL') return list;
-    return list.filter(g => g.groupName === filter);
+    const groupFilter = this.selectedGroupFilter();
+    const statusFilter = this.selectedStatusFilter();
+    
+    return list.filter(g => {
+      const matchGroup = groupFilter === 'ALL' ? true : g.groupName === groupFilter;
+      const matchStatus = statusFilter === 'ALL' ? true : g.status === statusFilter;
+      return matchGroup && matchStatus;
+    });
   });
+
+  protected readonly paginatedGuests = computed(() => {
+    const list = this.filteredGuests();
+    const start = (this.currentPage() - 1) * this.pageSize();
+    return list.slice(start, start + this.pageSize());
+  });
+
+  protected readonly totalPages = computed(() => {
+    return Math.max(1, Math.ceil(this.filteredGuests().length / this.pageSize()));
+  });
+
+  protected setStatusFilter(status: 'ALL' | 'PENDING' | 'CONFIRMED' | 'DECLINED'): void {
+    this.selectedStatusFilter.set(status);
+    this.currentPage.set(1);
+  }
+
+  protected setGroupFilter(group: string): void {
+    this.selectedGroupFilter.set(group);
+    this.currentPage.set(1);
+  }
+
+  protected nextPage(): void {
+    if (this.currentPage() < this.totalPages()) {
+      this.currentPage.update(p => p + 1);
+    }
+  }
+
+  protected prevPage(): void {
+    if (this.currentPage() > 1) {
+      this.currentPage.update(p => p - 1);
+    }
+  }
+
+  protected goToPage(page: number): void {
+    if (page >= 1 && page <= this.totalPages()) {
+      this.currentPage.set(page);
+    }
+  }
 
   protected readonly groupSuggestions = computed(() => {
     const globalGroups = [

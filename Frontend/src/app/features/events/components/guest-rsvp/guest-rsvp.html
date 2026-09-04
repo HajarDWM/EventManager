@@ -1128,18 +1128,41 @@
               Votre Réponse
             </label>
 
-            <!-- Side-by-side choices (Small, compact & elegant) -->
-            <div class="d-flex gap-2 justify-content-center mb-1.5">
-              <button type="button" class="btn flex-fill py-1 px-2 fs-xxs fw-bold rounded-pill"
-                [ngClass]="selectedAttendanceChoice() === 'CONFIRMED' ? 'btn-presence-yes shadow-sm' : 'btn-presence-yes'"
+            <!-- Side-by-side choices with 70/30 split -->
+            <div class="d-flex gap-2 justify-content-center mb-2">
+              <button type="button" class="btn py-2 px-2 fs-sm fw-bold rounded-pill"
+                style="flex: 7;"
+                [ngClass]="selectedAttendanceChoice() === 'CONFIRMED' ? 'btn-presence-yes shadow' : 'btn-presence-yes'"
                 (click)="selectAttendanceChoice('CONFIRMED')">
-                <i class="fa fa-check me-1"></i> Présent(e)
+                <i class="fa fa-check me-1"></i> Accepter
               </button>
-              <button type="button" class="btn flex-fill py-1 px-2 fs-xxs fw-bold rounded-pill"
-                [ngClass]="selectedAttendanceChoice() === 'DECLINED' ? 'btn-presence-no shadow-sm' : 'btn-presence-no'"
+              <button type="button" class="btn py-2 px-2 fs-sm fw-bold rounded-pill"
+                style="flex: 3;"
+                [ngClass]="selectedAttendanceChoice() === 'DECLINED' ? 'btn-presence-no shadow' : 'btn-presence-no'"
                 (click)="selectAttendanceChoice('DECLINED')">
-                <i class="fa fa-times me-1"></i> Absent(e)
+                <i class="fa fa-times me-1"></i> Décliner
               </button>
+            </div>
+
+            <!-- Dietary Preferences (Shown only when Accepter is selected) -->
+            <div *ngIf="selectedAttendanceChoice() === 'CONFIRMED'" class="text-start mb-3 animate__animated animate__fadeIn">
+              <label class="form-label fs-xs fw-bold mb-2" [style.color]="getSecondaryFontColor()">Préférences & Allergies :</label>
+              <div class="d-flex flex-wrap gap-2 mb-2">
+                <div class="form-check form-check-inline m-0">
+                  <input class="form-check-input" type="checkbox" id="dietHalal" [(ngModel)]="hasHalal" name="dietHalal">
+                  <label class="form-check-label fs-xs text-light" for="dietHalal" [style.color]="getSecondaryFontColor()">Halal</label>
+                </div>
+                <div class="form-check form-check-inline m-0">
+                  <input class="form-check-input" type="checkbox" id="dietVeg" [(ngModel)]="hasVegetarien" name="dietVeg">
+                  <label class="form-check-label fs-xs text-light" for="dietVeg" [style.color]="getSecondaryFontColor()">Végétarien</label>
+                </div>
+                <div class="form-check form-check-inline m-0">
+                  <input class="form-check-input" type="checkbox" id="dietVegan" [(ngModel)]="hasVegan" name="dietVegan">
+                  <label class="form-check-label fs-xs text-light" for="dietVegan" [style.color]="getSecondaryFontColor()">Vegan</label>
+                </div>
+              </div>
+              <input type="text" class="form-control form-control-sm border-0 bg-white bg-opacity-75 rounded-pill px-3 fs-xs" 
+                [(ngModel)]="otherAllergies" name="otherAllergies" placeholder="Autres allergies (ex: arachides, gluten)...">
             </div>
 
             <!-- Single Confirmation Submission Button (Appears when choice is made) -->

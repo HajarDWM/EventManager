@@ -58,4 +58,10 @@ public class GuestRepositoryAdapter implements GuestRepositoryPort {
     public long count() {
         return jpaGuestRepository.count();
     }
+
+    @Override
+    public Optional<Guest> findByInvitationToken(String token) {
+        return jpaGuestRepository.findByInvitationToken(token)
+                .map(guestMapper::toDomainFromEntity);
+    }
 }

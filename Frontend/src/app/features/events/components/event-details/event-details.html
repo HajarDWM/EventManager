@@ -126,34 +126,91 @@
               </a>
             </div>
             <div class="block-content p-3">
-              <!-- Summary Statistics Badges inside the block -->
-              <div class="row g-2 mb-3 text-center border-bottom pb-3">
-                <div class="col-3 border-end">
-                  <div class="fs-xxs fw-semibold text-muted text-uppercase mb-1">Total Invités</div>
-                  <div class="fs-sm fw-bold text-dark">{{ guests().length }}</div>
+              <!-- Clickable Stats = Filter Buttons (all-in-one, no duplicate) -->
+              <div class="row g-0 mb-3 text-center border-bottom pb-3">
+                <!-- Total (ALL filter) -->
+                <div class="col-3 border-end px-1">
+                  <div class="rounded-2 py-2 px-1 cursor-pointer transition-all"
+                    (click)="setDashboardFilter('ALL')"
+                    [style.cursor]="'pointer'"
+                    [class.bg-primary]="dashboardStatusFilter() === 'ALL'"
+                    [class.text-white]="dashboardStatusFilter() === 'ALL'"
+                    [class.bg-body-light]="dashboardStatusFilter() !== 'ALL'"
+                    title="Afficher tous les invités">
+                    <div class="fs-xxs fw-semibold text-uppercase mb-1"
+                      [class.text-white]="dashboardStatusFilter() === 'ALL'"
+                      [class.text-muted]="dashboardStatusFilter() !== 'ALL'">Total Invités</div>
+                    <div class="fs-sm fw-bold"
+                      [class.text-white]="dashboardStatusFilter() === 'ALL'"
+                      [class.text-dark]="dashboardStatusFilter() !== 'ALL'">{{ guests().length }}</div>
+                  </div>
                 </div>
-                <div class="col-3 border-end">
-                  <div class="fs-xxs fw-semibold text-muted text-uppercase text-success mb-1">Confirmés</div>
-                  <div class="fs-sm fw-bold text-success">{{ confirmedGuestsCount() }}</div>
+                <!-- Confirmés -->
+                <div class="col-3 border-end px-1">
+                  <div class="rounded-2 py-2 px-1 cursor-pointer transition-all"
+                    (click)="setDashboardFilter('CONFIRMED')"
+                    [style.cursor]="'pointer'"
+                    [class.bg-success]="dashboardStatusFilter() === 'CONFIRMED'"
+                    [class.text-white]="dashboardStatusFilter() === 'CONFIRMED'"
+                    [class.bg-body-light]="dashboardStatusFilter() !== 'CONFIRMED'"
+                    title="Filtrer les confirmés">
+                    <div class="fs-xxs fw-semibold text-uppercase mb-1"
+                      [class.text-white]="dashboardStatusFilter() === 'CONFIRMED'"
+                      [class.text-success]="dashboardStatusFilter() !== 'CONFIRMED'">Confirmés</div>
+                    <div class="fs-sm fw-bold"
+                      [class.text-white]="dashboardStatusFilter() === 'CONFIRMED'"
+                      [class.text-success]="dashboardStatusFilter() !== 'CONFIRMED'">{{ confirmedGuestsCount() }}</div>
+                  </div>
                 </div>
-                <div class="col-3 border-end">
-                  <div class="fs-xxs fw-semibold text-muted text-uppercase text-warning-dark mb-1">En attente</div>
-                  <div class="fs-sm fw-bold text-warning-dark">{{ pendingGuestsCount() }}</div>
+                <!-- En attente -->
+                <div class="col-3 border-end px-1">
+                  <div class="rounded-2 py-2 px-1 cursor-pointer transition-all"
+                    (click)="setDashboardFilter('PENDING')"
+                    [style.cursor]="'pointer'"
+                    [class.bg-warning]="dashboardStatusFilter() === 'PENDING'"
+                    [class.text-white]="dashboardStatusFilter() === 'PENDING'"
+                    [class.bg-body-light]="dashboardStatusFilter() !== 'PENDING'"
+                    title="Filtrer les invités en attente">
+                    <div class="fs-xxs fw-semibold text-uppercase mb-1"
+                      [class.text-white]="dashboardStatusFilter() === 'PENDING'"
+                      [class.text-warning-dark]="dashboardStatusFilter() !== 'PENDING'">En attente</div>
+                    <div class="fs-sm fw-bold"
+                      [class.text-white]="dashboardStatusFilter() === 'PENDING'"
+                      [class.text-warning-dark]="dashboardStatusFilter() !== 'PENDING'">{{ pendingGuestsCount() }}</div>
+                  </div>
                 </div>
-                <div class="col-3">
-                  <div class="fs-xxs fw-semibold text-muted text-uppercase text-danger mb-1">Déclinés</div>
-                  <div class="fs-sm fw-bold text-danger">{{ declinedGuestsCount() }}</div>
+                <!-- Déclinés -->
+                <div class="col-3 px-1">
+                  <div class="rounded-2 py-2 px-1 cursor-pointer transition-all"
+                    (click)="setDashboardFilter('DECLINED')"
+                    [style.cursor]="'pointer'"
+                    [class.bg-danger]="dashboardStatusFilter() === 'DECLINED'"
+                    [class.text-white]="dashboardStatusFilter() === 'DECLINED'"
+                    [class.bg-body-light]="dashboardStatusFilter() !== 'DECLINED'"
+                    title="Filtrer les déclinés">
+                    <div class="fs-xxs fw-semibold text-uppercase mb-1"
+                      [class.text-white]="dashboardStatusFilter() === 'DECLINED'"
+                      [class.text-danger]="dashboardStatusFilter() !== 'DECLINED'">Déclinés</div>
+                    <div class="fs-sm fw-bold"
+                      [class.text-white]="dashboardStatusFilter() === 'DECLINED'"
+                      [class.text-danger]="dashboardStatusFilter() !== 'DECLINED'">{{ declinedGuestsCount() }}</div>
+                  </div>
                 </div>
               </div>
 
               <!-- Empty state -->
-              <div class="text-center py-4 text-muted fs-xs" *ngIf="recentGuests().length === 0">
+              <div class="text-center py-4 text-muted fs-xs" *ngIf="guests().length === 0">
                 <i class="fa fa-user-slash text-muted fs-3 mb-2"></i>
                 <p class="mb-0">Aucun convive enregistré pour le moment.</p>
               </div>
 
-              <!-- Top 10 Guests Table (with Position column instead of Table) -->
-              <div class="table-responsive" *ngIf="recentGuests().length > 0">
+              <!-- Empty state for current filter -->
+              <div class="text-center py-3 text-muted fs-xs" *ngIf="guests().length > 0 && dashboardFilteredGuests().length === 0">
+                <p class="mb-0">Aucun invité pour ce statut.</p>
+              </div>
+
+              <!-- Paginated Guests Table -->
+              <div class="table-responsive" *ngIf="dashboardPagedGuests().length > 0">
                 <table class="table table-sm table-striped table-vcenter fs-xs mb-0">
                   <thead>
                     <tr>
@@ -164,7 +221,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr *ngFor="let g of recentGuests().slice(0, 10)">
+                    <tr *ngFor="let g of dashboardPagedGuests()">
                       <td class="fw-semibold text-dark">{{ g.fullName }}</td>
                       <td class="text-muted">{{ g.email || '-' }}</td>
                       <td>
@@ -185,6 +242,20 @@
                   </tbody>
                 </table>
               </div>
+
+              <!-- Mini Pagination -->
+              <div class="d-flex justify-content-between align-items-center mt-2" *ngIf="dashboardFilteredGuests().length > dashboardPageSize">
+                <span class="fs-xxs text-muted">Page {{ dashboardCurrentPage() }} / {{ dashboardTotalPages() }}</span>
+                <div class="d-flex gap-1">
+                  <button class="btn btn-xs btn-alt-secondary rounded-pill px-2" (click)="dashboardPrevPage()" [disabled]="dashboardCurrentPage() === 1">
+                    <i class="fa fa-angle-left"></i>
+                  </button>
+                  <button class="btn btn-xs btn-alt-secondary rounded-pill px-2" (click)="dashboardNextPage()" [disabled]="dashboardCurrentPage() === dashboardTotalPages()">
+                    <i class="fa fa-angle-right"></i>
+                  </button>
+                </div>
+              </div>
+
             </div>
           </div>
         </div>

@@ -132,8 +132,9 @@
                 </button>
               </div>
               <div class="block-content p-3">
-                <div class="mb-4">
-                  <label class="form-label fw-semibold fs-sm text-dark mb-1">Montant forfaitaire TTC ({{ currencySymbol() }})</label>
+                <!-- If no active quote, show budget initial input -->
+                <div *ngIf="!activeQuote" class="mb-4">
+                  <label class="form-label fw-semibold fs-sm text-dark mb-1">Budget Initial TTC ({{ currencySymbol() }})</label>
                   <div class="input-group">
                     <input type="number" class="form-control" placeholder="Entrez le prix total" [(ngModel)]="editTotalPrice" name="editTotalPrice" min="0">
                     <button class="btn btn-primary" type="button" (click)="saveTotalPrice()">
@@ -142,6 +143,32 @@
                   </div>
                   <div class="form-text fs-xs text-muted mt-2">
                     Mettre à jour ce montant ajustera automatiquement le solde restant dû du client.
+                  </div>
+                </div>
+
+                <!-- If active quote exists, show history of items -->
+                <div *ngIf="activeQuote" class="mb-4">
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <label class="form-label fw-semibold fs-sm text-dark mb-0">Lignes du Budget</label>
+                    <button type="button" class="btn btn-sm btn-alt-primary rounded-pill px-3 fs-xs fw-semibold" (click)="openAvenantModal()">
+                      <i class="fa fa-plus me-1"></i> Ajouter un Avenant
+                    </button>
+                  </div>
+                  <div class="table-responsive rounded border mb-3">
+                    <table class="table table-sm table-vcenter table-striped fs-sm mb-0">
+                      <tbody>
+                        <tr *ngFor="let item of activeQuote.items">
+                          <td class="ps-3">{{ item.description }}</td>
+                          <td class="text-end pe-3 fw-bold" [ngClass]="item.unitPrice >= 0 ? 'text-success' : 'text-danger'">
+                            {{ item.unitPrice >= 0 ? '+' : '' }} {{ item.unitPrice | number:'1.2-2' }} {{ currencySymbol() }}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div class="d-flex justify-content-between align-items-center p-3 bg-body-light rounded">
+                    <span class="fs-sm fw-semibold text-muted">TOTAL DU BUDGET :</span>
+                    <span class="fs-5 fw-bold text-dark">{{ eventTotalPrice() | number:'1.2-2' }} {{ currencySymbol() }}</span>
                   </div>
                 </div>
               </div>
@@ -197,18 +224,6 @@
                                     title="Imprimer le reçu" 
                                     (click)="printPaymentReceipt(pay)">
                               <i class="fa fa-print fs-xs"></i>
-                            </button>
-                            <button type="button" class="btn btn-sm btn-alt-primary rounded-circle p-1 d-inline-flex align-items-center justify-content-center" 
-                                    style="width: 28px; height: 28px;"
-                                    title="Modifier ce règlement" 
-                                    (click)="openEditPaymentModal(pay)">
-                              <i class="fa fa-pencil-alt fs-xs"></i>
-                            </button>
-                            <button type="button" class="btn btn-sm btn-alt-danger rounded-circle p-1 d-inline-flex align-items-center justify-content-center" 
-                                    style="width: 28px; height: 28px;"
-                                    title="Supprimer ce règlement" 
-                                    (click)="deletePayment(pay.id!)">
-                              <i class="fa fa-trash-alt fs-xs"></i>
                             </button>
                           </div>
                         </td>
@@ -393,8 +408,6 @@
           <button type="button" class="btn-close" (click)="isRecordingExpenseModal.set(false)"></button>
         </div>
         <div class="block-content p-4">
-          <p class="fs-sm text-muted">Saisissez les détails de la dépense engagée pour cet événement.</p>
-          
           <div class="mb-3">
             <label class="form-label fs-sm fw-bold">Catégorie</label>
             <select class="form-select" [(ngModel)]="expenseCategoryInput" name="expenseCategoryInput">
@@ -403,31 +416,63 @@
               <option value="STAFF">Personnel / Sécurité</option>
               <option value="DECORATION">Décoration / Fleuriste</option>
               <option value="LOGISTICS">Logistique / Transport</option>
-              <option value="OTHER">Autre dépense</option>
+              <option value="OTHER">Autre charge</option>
             </select>
           </div>
-
           <div class="mb-3">
-            <label class="form-label fs-sm fw-bold">Description / Titre</label>
-            <input type="text" class="form-control" placeholder="Achat de boissons, location chaises..." [(ngModel)]="expenseDescriptionInput" name="expenseDescriptionInput">
+            <label class="form-label fs-sm fw-bold">Description / Motif</label>
+            <input type="text" class="form-control" [(ngModel)]="expenseDescriptionInput" name="expenseDescriptionInput" placeholder="Ex: Achat boissons">
           </div>
-
           <div class="mb-3">
-            <label class="form-label fs-sm fw-bold">Montant TTC ({{ currencySymbol() }})</label>
+            <label class="form-label fs-sm fw-bold">Fournisseur (Optionnel)</label>
+            <input type="text" class="form-control" [(ngModel)]="expenseProviderInput" name="expenseProviderInput" placeholder="Ex: Marjane, Fleuriste Z...">
+          </div>
+          <div class="mb-4">
+            <label class="form-label fs-sm fw-bold">Montant dépensé ({{ currencySymbol() }})</label>
             <input type="number" class="form-control" [(ngModel)]="expenseAmountInput" name="expenseAmountInput" step="0.01">
           </div>
-
-          <div class="mb-3">
-            <label class="form-label fs-sm fw-bold">Nom du fournisseur (Optionnel)</label>
-            <input type="text" class="form-control" placeholder="Nom de l'entreprise ou prestataire..." [(ngModel)]="expenseProviderInput" name="expenseProviderInput">
-          </div>
-
           <div class="d-flex justify-content-end gap-2 border-top pt-3 mt-4">
             <button type="button" class="btn btn-alt-secondary btn-sm rounded-pill px-3" (click)="isRecordingExpenseModal.set(false)">
               Annuler
             </button>
             <button type="button" class="btn btn-success btn-sm rounded-pill px-3" (click)="recordExpense()">
               {{ editingExpenseId() ? 'Enregistrer les modifications' : 'Enregistrer la Dépense' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- --- RECORD AVENANT MODAL --- -->
+<div class="modal fade show d-block" tabindex="-1" role="dialog" style="background-color: rgba(0,0,0,0.5);" *ngIf="isRecordingAvenantModal()">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content border-0 shadow-lg rounded">
+      <div class="block block-rounded block-transparent mb-0">
+        <div class="block-header block-header-default border-bottom bg-body-light p-3 d-flex justify-content-between align-items-center">
+          <h3 class="block-title fw-bold mb-0">
+            Ajouter un Avenant (Supplément / Réduction)
+          </h3>
+          <button type="button" class="btn-close" (click)="isRecordingAvenantModal.set(false)"></button>
+        </div>
+        <div class="block-content p-4">
+          <p class="fs-sm text-muted">Cette action ajoutera une ligne immuable au budget global de l'événement.</p>
+          <div class="mb-3">
+            <label class="form-label fs-sm fw-bold">Description de l'avenant</label>
+            <input type="text" class="form-control" [(ngModel)]="avenantDescriptionInput" name="avenantDescriptionInput" placeholder="Ex: Supplément table VIP">
+          </div>
+          <div class="mb-4">
+            <label class="form-label fs-sm fw-bold">Montant ({{ currencySymbol() }})</label>
+            <input type="number" class="form-control" [(ngModel)]="avenantAmountInput" name="avenantAmountInput" step="0.01">
+            <div class="form-text fs-xs text-muted">Saisissez un nombre négatif (ex: -200) pour une réduction.</div>
+          </div>
+          <div class="d-flex justify-content-end gap-2 border-top pt-3 mt-4">
+            <button type="button" class="btn btn-alt-secondary btn-sm rounded-pill px-3" (click)="isRecordingAvenantModal.set(false)">
+              Annuler
+            </button>
+            <button type="button" class="btn btn-primary btn-sm rounded-pill px-3" (click)="recordAvenant()">
+              Valider l'Avenant
             </button>
           </div>
         </div>

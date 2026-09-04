@@ -13,4 +13,5 @@ public interface GuestRepositoryPort {
     void deleteByEventId(Long eventId);
     long countByEventId(Long eventId);
     long count();
+    Optional<Guest> findByInvitationToken(String token);
 }

@@ -544,7 +544,8 @@ export class GuestRsvp implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.error(err);
-        this.errorMessage.set('Impossible de charger les détails de l\'invitation. Veuillez réessayer plus tard.');
+        const msg = err.error?.message || (typeof err.error === 'string' ? err.error : 'Lien d\'invitation expiré ou invalide.');
+        this.errorMessage.set(msg);
         this.isLoading.set(false);
       }
     });
@@ -678,7 +679,8 @@ export class GuestRsvp implements OnInit, OnDestroy {
       dietaryRequirements: activeDiets.join(', ')
     };
 
-    this.http.post<PublicRsvpDetail>(`/api/public/rsvp/${currentGuest.guestId}`, payload).subscribe({
+    const token = this.route.snapshot.paramMap.get('id');
+    this.http.post<PublicRsvpDetail>(`/api/public/rsvp/${token}`, payload).subscribe({
       next: (updated) => {
         this.guest.set(updated);
         this.isSubmitting.set(false);
@@ -719,7 +721,8 @@ export class GuestRsvp implements OnInit, OnDestroy {
       reference: 'PAY-' + this.paymentMethod() + '-' + Date.now()
     };
 
-    this.http.post<PublicRsvpDetail>(`/api/public/rsvp/${currentGuest.guestId}/pay`, payload).subscribe({
+    const token = this.route.snapshot.paramMap.get('id');
+    this.http.post<PublicRsvpDetail>(`/api/public/rsvp/${token}/pay`, payload).subscribe({
       next: (updated) => {
         this.guest.set(updated);
         this.isProcessingPayment.set(false);

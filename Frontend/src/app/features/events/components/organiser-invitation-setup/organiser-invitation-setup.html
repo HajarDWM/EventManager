@@ -281,7 +281,7 @@
                     </span>
                   </td>
                   <td class="text-center" (click)="$event.stopPropagation()">
-                    <a [routerLink]="['/rsvp', guest.id]" target="_blank" class="btn btn-xs btn-alt-warning d-inline-flex align-items-center gap-1 py-1 px-2" title="Tester RSVP">
+                    <a [routerLink]="['/rsvp', guest.invitationToken || guest.id]" target="_blank" class="btn btn-xs btn-alt-warning d-inline-flex align-items-center gap-1 py-1 px-2" title="Tester RSVP">
                       <i class="fa fa-external-link-alt"></i> Tester
                     </a>
                   </td>

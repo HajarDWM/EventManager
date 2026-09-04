@@ -1,5 +1,6 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { EventService } from '../../services/event.service';
 import { Event } from '../../models/event.model';
@@ -12,7 +13,7 @@ import { CurrencyService } from '../../../../core/services/currency.service';
 @Component({
   selector: 'app-event-details',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './event-details.html'
 })
 export class EventDetails implements OnInit {
@@ -84,6 +85,39 @@ export class EventDetails implements OnInit {
   protected readonly recentGuests = computed(() => 
     this.guests().slice(0, 10)
   );
+
+  // Dashboard filter & pagination
+  protected readonly dashboardStatusFilter = signal<'ALL' | 'PENDING' | 'CONFIRMED' | 'DECLINED'>('ALL');
+  protected readonly dashboardCurrentPage = signal<number>(1);
+  protected readonly dashboardPageSize = 5;
+
+  protected readonly dashboardFilteredGuests = computed(() => {
+    const f = this.dashboardStatusFilter();
+    if (f === 'ALL') return this.guests();
+    return this.guests().filter(g => g.status === f);
+  });
+
+  protected readonly dashboardTotalPages = computed(() =>
+    Math.max(1, Math.ceil(this.dashboardFilteredGuests().length / this.dashboardPageSize))
+  );
+
+  protected readonly dashboardPagedGuests = computed(() => {
+    const start = (this.dashboardCurrentPage() - 1) * this.dashboardPageSize;
+    return this.dashboardFilteredGuests().slice(start, start + this.dashboardPageSize);
+  });
+
+  protected setDashboardFilter(filter: 'ALL' | 'PENDING' | 'CONFIRMED' | 'DECLINED'): void {
+    this.dashboardStatusFilter.set(filter);
+    this.dashboardCurrentPage.set(1);
+  }
+
+  protected dashboardPrevPage(): void {
+    if (this.dashboardCurrentPage() > 1) this.dashboardCurrentPage.update(p => p - 1);
+  }
+
+  protected dashboardNextPage(): void {
+    if (this.dashboardCurrentPage() < this.dashboardTotalPages()) this.dashboardCurrentPage.update(p => p + 1);
+  }
 
   protected readonly remainingBudget = computed(() => {
     const rem = this.totalBudget() - this.totalPaid();

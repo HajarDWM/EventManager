@@ -9,4 +9,5 @@ public interface JpaGuestRepository extends JpaRepository<GuestEntity, Long> {
     List<GuestEntity> findByEventId(Long eventId);
     void deleteByEventId(Long eventId);
     long countByEventId(Long eventId);
+    java.util.Optional<GuestEntity> findByInvitationToken(String token);
 }

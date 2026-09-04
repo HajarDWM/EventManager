@@ -84,6 +84,20 @@ public class GuestApplicationService implements CreateGuestUseCase, GetGuestsByE
         verifyEventOwnership(eventId);
         verifyActiveSubscription();
         guestDTO.setEventId(eventId);
+        if (guestDTO.getInvitationToken() == null) {
+            guestDTO.setInvitationToken(java.util.UUID.randomUUID().toString());
+            Event event = eventRepositoryPort.findById(eventId).orElse(null);
+            if (event != null && event.getEventDate() != null) {
+                java.time.LocalDateTime calculatedExpiry = event.getEventDate().plusDays(2);
+                if (calculatedExpiry.isBefore(java.time.LocalDateTime.now())) {
+                    guestDTO.setInvitationExpiry(java.time.LocalDateTime.now().plusDays(30));
+                } else {
+                    guestDTO.setInvitationExpiry(calculatedExpiry);
+                }
+            } else {
+                guestDTO.setInvitationExpiry(java.time.LocalDateTime.now().plusDays(60));
+            }
+        }
         Guest guestToSave = guestMapper.toDomain(guestDTO);
         Guest saved = guestRepositoryPort.save(guestToSave);
         syncEventGuestCount(eventId);
@@ -163,9 +177,22 @@ public class GuestApplicationService implements CreateGuestUseCase, GetGuestsByE
             throw new RuntimeException("Erreur lors de la lecture du fichier : " + e.getMessage(), e);
         }
 
+        Event event = eventRepositoryPort.findById(eventId).orElse(null);
+        java.time.LocalDateTime defaultExpiry;
+        if (event != null && event.getEventDate() != null) {
+            java.time.LocalDateTime calc = event.getEventDate().plusDays(2);
+            defaultExpiry = calc.isBefore(java.time.LocalDateTime.now()) ? java.time.LocalDateTime.now().plusDays(30) : calc;
+        } else {
+            defaultExpiry = java.time.LocalDateTime.now().plusDays(60);
+        }
+
         List<GuestDTO> savedGuests = new ArrayList<>();
         for (GuestDTO dto : parsedGuests) {
             dto.setEventId(eventId);
+            if (dto.getInvitationToken() == null) {
+                dto.setInvitationToken(java.util.UUID.randomUUID().toString());
+                dto.setInvitationExpiry(defaultExpiry);
+            }
             Guest guestToSave = guestMapper.toDomain(dto);
             Guest saved = guestRepositoryPort.save(guestToSave);
             savedGuests.add(guestMapper.toDTO(saved));

@@ -24,4 +24,6 @@ public class GuestDTO {
     private Double paidAmount;
     private String paymentReference;
     private java.time.LocalDateTime paymentDate;
+    private String invitationToken;
+    private java.time.LocalDateTime invitationExpiry;
 }

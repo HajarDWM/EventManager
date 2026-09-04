@@ -20,6 +20,8 @@ export interface Guest {
   paidAmount?: number;
   paymentReference?: string;
   paymentDate?: string;
+  invitationToken?: string;
+  invitationExpiry?: string;
 }
 
 @Injectable({

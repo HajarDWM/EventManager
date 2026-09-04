@@ -23,6 +23,8 @@ public class Guest {
     private Double paidAmount = 0.0;
     private String paymentReference;
     private java.time.LocalDateTime paymentDate;
+    private String invitationToken;
+    private java.time.LocalDateTime invitationExpiry;
 
     public void updateDetails(String fullName, String email, String phone, GuestStatus status, String tableNumber, String dietaryRequirements, String groupName) {
         this.fullName = fullName;

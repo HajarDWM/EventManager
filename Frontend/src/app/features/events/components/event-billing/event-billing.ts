@@ -71,9 +71,14 @@ export class EventBilling implements OnInit {
   protected paymentReferenceInput = '';
   protected paymentLabelInput = 'AVANCE';
 
-  // Modal controls
+  // Modal controls for Payments
   protected readonly isRecordingPaymentModal = signal<boolean>(false);
   protected readonly editingPaymentId = signal<number | null>(null);
+
+  // Modal controls for Avenants (Budget History)
+  protected readonly isRecordingAvenantModal = signal<boolean>(false);
+  protected avenantDescriptionInput = '';
+  protected avenantAmountInput = 0;
 
   // Expense Modal controls & fields
   protected readonly isRecordingExpenseModal = signal<boolean>(false);
@@ -170,75 +175,101 @@ export class EventBilling implements OnInit {
     this.isLoading.set(true);
 
     if (this.activeQuote) {
-      // Update existing quote
-      const updatedQuote: QuoteDTO = {
-        ...this.activeQuote,
-        taxRate: 0.00, // Simplify: 0% tax for straightforward high-level tracking
-        items: [
-          {
-            id: this.activeQuote.items[0]?.id,
-            description: 'Prestation globale de l\'événement',
-            quantity: 1,
-            unitPrice: this.editTotalPrice,
-            totalPrice: this.editTotalPrice
-          }
-        ]
-      };
-
-      this.billingService.updateQuote(this.eventId(), this.activeQuote.id!, updatedQuote).subscribe({
-        next: (savedQuote) => {
-          this.activeQuote = savedQuote;
-          this.eventTotalPrice.set(savedQuote.totalTtc || 0);
-          
-          // Re-generate or adjust invoice total
-          this.syncInvoiceWithQuote();
-        },
-        error: (err) => {
-          console.error(err);
-          this.errorMessage.set('Erreur lors de la mise à jour du prix total.');
-          this.isLoading.set(false);
-        }
-      });
-    } else {
-      // Create a brand new global quote
-      const newQuote: QuoteDTO = {
-        eventId: this.eventId(),
-        taxRate: 0.00,
-        items: [
-          {
-            description: 'Prestation globale de l\'événement',
-            quantity: 1,
-            unitPrice: this.editTotalPrice,
-            totalPrice: this.editTotalPrice
-          }
-        ]
-      };
-
-      this.billingService.createQuote(this.eventId(), newQuote).subscribe({
-        next: (savedQuote) => {
-          this.activeQuote = savedQuote;
-          this.eventTotalPrice.set(savedQuote.totalTtc || 0);
-          
-          // Accept the quote automatically to make it billable
-          this.billingService.acceptQuote(this.eventId(), savedQuote.id!).subscribe({
-            next: (acceptedQuote) => {
-              this.activeQuote = acceptedQuote;
-              this.syncInvoiceWithQuote();
-            },
-            error: (err) => {
-              console.error(err);
-              this.errorMessage.set('Erreur lors de la validation du devis.');
-              this.isLoading.set(false);
-            }
-          });
-        },
-        error: (err) => {
-          console.error(err);
-          this.errorMessage.set('Erreur lors de la création du devis global.');
-          this.isLoading.set(false);
-        }
-      });
+      alert("Le budget initial a déjà été défini. Veuillez utiliser 'Ajouter un Avenant' pour modifier le budget.");
+      this.isLoading.set(false);
+      return;
     }
+
+    // Create a brand new global quote
+    const newQuote: QuoteDTO = {
+      eventId: this.eventId(),
+      taxRate: 0.00,
+      items: [
+        {
+          description: 'Budget initial',
+          quantity: 1,
+          unitPrice: this.editTotalPrice,
+          totalPrice: this.editTotalPrice
+        }
+      ]
+    };
+
+    this.billingService.createQuote(this.eventId(), newQuote).subscribe({
+      next: (savedQuote) => {
+        this.activeQuote = savedQuote;
+        this.eventTotalPrice.set(savedQuote.totalTtc || 0);
+        
+        // Accept the quote automatically to make it billable
+        this.billingService.acceptQuote(this.eventId(), savedQuote.id!).subscribe({
+          next: (acceptedQuote) => {
+            this.activeQuote = acceptedQuote;
+            this.syncInvoiceWithQuote();
+          },
+          error: (err) => {
+            console.error(err);
+            this.errorMessage.set('Erreur lors de la validation du devis.');
+            this.isLoading.set(false);
+          }
+        });
+      },
+      error: (err) => {
+        console.error(err);
+        this.errorMessage.set('Erreur lors de la création du budget initial.');
+        this.isLoading.set(false);
+      }
+    });
+  }
+
+  // --- RECORD AVENANT (BUDGET SUPPLEMENT) ---
+  protected openAvenantModal(): void {
+    if (!this.activeQuote) {
+      alert("Veuillez d'abord définir le budget initial.");
+      return;
+    }
+    this.avenantDescriptionInput = 'Supplément pour...';
+    this.avenantAmountInput = 0;
+    this.isRecordingAvenantModal.set(true);
+  }
+
+  protected recordAvenant(): void {
+    if (!this.avenantDescriptionInput.trim()) {
+      alert("Veuillez saisir une description pour l'avenant.");
+      return;
+    }
+    if (this.avenantAmountInput === 0) {
+      alert("Le montant de l'avenant ne peut pas être zéro.");
+      return;
+    }
+
+    this.isLoading.set(true);
+    this.isRecordingAvenantModal.set(false);
+
+    const newItem: QuoteItemDTO = {
+      description: this.avenantDescriptionInput,
+      quantity: 1,
+      unitPrice: this.avenantAmountInput,
+      totalPrice: this.avenantAmountInput
+    };
+
+    const updatedQuote: QuoteDTO = {
+      ...this.activeQuote!,
+      items: [...this.activeQuote!.items, newItem]
+    };
+
+    this.billingService.updateQuote(this.eventId(), this.activeQuote!.id!, updatedQuote).subscribe({
+      next: (savedQuote) => {
+        this.activeQuote = savedQuote;
+        this.eventTotalPrice.set(savedQuote.totalTtc || 0);
+        this.successMessage.set("L'avenant a été enregistré avec succès.");
+        this.syncInvoiceWithQuote();
+      },
+      error: (err) => {
+        console.error(err);
+        this.errorMessage.set('Erreur lors de la mise à jour du budget.');
+        this.isLoading.set(false);
+      }
+    });
+
   }
 
   private syncInvoiceWithQuote(): void {
@@ -289,15 +320,7 @@ export class EventBilling implements OnInit {
     this.isRecordingPaymentModal.set(true);
   }
 
-  protected openEditPaymentModal(pay: PaymentDTO): void {
-    if (!pay.id) return;
-    this.editingPaymentId.set(pay.id);
-    this.paymentAmountInput = pay.amount;
-    this.paymentMethodInput = pay.paymentMethod;
-    this.paymentReferenceInput = pay.reference || '';
-    this.paymentLabelInput = pay.label || 'AVANCE';
-    this.isRecordingPaymentModal.set(true);
-  }
+
 
   protected recordPayment(): void {
     if (this.paymentAmountInput <= 0) {
@@ -307,29 +330,6 @@ export class EventBilling implements OnInit {
 
     this.isLoading.set(true);
     this.isRecordingPaymentModal.set(false);
-
-    const paymentId = this.editingPaymentId();
-    if (paymentId) {
-      const payment: PaymentDTO = {
-        invoiceId: this.activeInvoice!.id!,
-        amount: this.paymentAmountInput,
-        paymentMethod: this.paymentMethodInput,
-        reference: this.paymentReferenceInput,
-        label: this.paymentLabelInput
-      };
-      this.billingService.updatePayment(this.eventId(), this.activeInvoice!.id!, paymentId, payment).subscribe({
-        next: () => {
-          this.successMessage.set('Règlement modifié avec succès.');
-          this.loadBillingData();
-        },
-        error: (err) => {
-          console.error(err);
-          this.errorMessage.set('Erreur lors de la modification du règlement.');
-          this.isLoading.set(false);
-        }
-      });
-      return;
-    }
 
     // Ensure invoice exists before recording payment
     if (!this.activeInvoice) {
@@ -395,25 +395,7 @@ export class EventBilling implements OnInit {
     }
   }
 
-  // --- DELETE PAYMENT ---
-  protected deletePayment(paymentId: number): void {
-    if (!this.activeInvoice || !this.activeInvoice.id) return;
 
-    if (confirm('Êtes-vous sûr de vouloir supprimer ce règlement ?')) {
-      this.isLoading.set(true);
-      this.billingService.deletePayment(this.eventId(), this.activeInvoice.id, paymentId).subscribe({
-        next: () => {
-          this.successMessage.set('Règlement supprimé avec succès.');
-          this.loadBillingData();
-        },
-        error: (err) => {
-          console.error(err);
-          this.errorMessage.set('Erreur lors de la suppression du règlement.');
-          this.isLoading.set(false);
-        }
-      });
-    }
-  }
 
   // --- EXPENSES MANAGEMENT ---
   protected loadExpenses(): void {

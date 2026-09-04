@@ -23,10 +23,14 @@ public class PublicRsvpController {
 
 
 
-    @GetMapping("/{guestId}")
-    public ResponseEntity<PublicRsvpDTO> getPublicRsvpDetail(@PathVariable Long guestId) {
-        Guest guest = guestRepositoryPort.findById(guestId)
-                .orElseThrow(() -> new IllegalArgumentException("Invité non trouvé avec l'id : " + guestId));
+    @GetMapping("/{token}")
+    public ResponseEntity<PublicRsvpDTO> getPublicRsvpDetail(@PathVariable String token) {
+        Guest guest = guestRepositoryPort.findByInvitationToken(token)
+                .orElseThrow(() -> new IllegalArgumentException("Lien d'invitation invalide ou introuvable."));
+
+        if (guest.getInvitationExpiry() != null && java.time.LocalDateTime.now().isAfter(guest.getInvitationExpiry())) {
+            throw new IllegalArgumentException("Ce lien d'invitation a expiré.");
+        }
 
         Event event = eventRepositoryPort.findById(guest.getEventId())
                 .orElseThrow(() -> new IllegalArgumentException("Événement non trouvé avec l'id : " + guest.getEventId()));
@@ -121,13 +125,14 @@ public class PublicRsvpController {
         return ResponseEntity.ok(dto);
     }
 
-    @PostMapping("/{guestId}")
+    @PostMapping("/{token}")
     public ResponseEntity<PublicRsvpDTO> updatePublicRsvpResponse(
-            @PathVariable Long guestId,
+            @PathVariable String token,
             @RequestBody PublicRsvpDTO rsvpDTO) {
 
-        Guest guest = guestRepositoryPort.findById(guestId)
-                .orElseThrow(() -> new IllegalArgumentException("Invité non trouvé avec l'id : " + guestId));
+        Guest guest = guestRepositoryPort.findByInvitationToken(token)
+                .orElseThrow(() -> new IllegalArgumentException("Lien d'invitation invalide ou introuvable."));
+
 
         Event event = eventRepositoryPort.findById(guest.getEventId())
                 .orElseThrow(() -> new IllegalArgumentException("Événement non trouvé avec l'id : " + guest.getEventId()));
@@ -250,13 +255,14 @@ public class PublicRsvpController {
         return ResponseEntity.ok(responseDto);
     }
 
-    @PostMapping("/{guestId}/pay")
+    @PostMapping("/{token}/pay")
     public ResponseEntity<PublicRsvpDTO> processGuestPayment(
-            @PathVariable Long guestId,
+            @PathVariable String token,
             @RequestBody java.util.Map<String, Object> paymentPayload) {
 
-        Guest guest = guestRepositoryPort.findById(guestId)
-                .orElseThrow(() -> new IllegalArgumentException("Invité non trouvé avec l'id : " + guestId));
+        Guest guest = guestRepositoryPort.findByInvitationToken(token)
+                .orElseThrow(() -> new IllegalArgumentException("Lien d'invitation invalide ou introuvable."));
+
 
         Event event = eventRepositoryPort.findById(guest.getEventId())
                 .orElseThrow(() -> new IllegalArgumentException("Événement non trouvé avec l'id : " + guest.getEventId()));
@@ -266,7 +272,7 @@ public class PublicRsvpController {
             amount = Double.valueOf(paymentPayload.get("amount").toString());
         }
 
-        String reference = "PAY-" + System.currentTimeMillis() + "-" + guestId;
+        String reference = "PAY-" + System.currentTimeMillis() + "-" + guest.getId();
         if (paymentPayload.containsKey("reference") && paymentPayload.get("reference") != null) {
             reference = paymentPayload.get("reference").toString();
         }
@@ -274,6 +280,6 @@ public class PublicRsvpController {
         guest.recordPayment(amount, reference);
         Guest saved = guestRepositoryPort.save(guest);
 
-        return getPublicRsvpDetail(saved.getId());
+        return getPublicRsvpDetail(saved.getInvitationToken());
     }
 }

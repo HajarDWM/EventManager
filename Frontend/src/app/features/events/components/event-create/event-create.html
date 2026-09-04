@@ -111,7 +111,7 @@
             <div class="mb-4">
               <label class="form-label fs-sm fw-semibold text-muted" for="event-guests">Nombre d'invités attendus</label>
               <input type="number" class="form-control form-control-lg form-control-alt rounded-3 fs-sm"
-                     id="event-guests" name="event-guests" placeholder="Ex: 150 (facultatif)" min="1"
+                     id="event-guests" name="event-guests" placeholder="Ex: 150 (facultatif)" min="0"
                      [ngModel]="guestCount()" (ngModelChange)="guestCount.set($event)"
                      [disabled]="isQuotaReached()">
             </div>

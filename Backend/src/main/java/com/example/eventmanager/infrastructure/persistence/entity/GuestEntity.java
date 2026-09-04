@@ -50,4 +50,10 @@ public class GuestEntity {
 
     @Column(name = "payment_date")
     private java.time.LocalDateTime paymentDate;
+
+    @Column(name = "invitation_token", unique = true)
+    private String invitationToken;
+
+    @Column(name = "invitation_expiry")
+    private java.time.LocalDateTime invitationExpiry;
 }
