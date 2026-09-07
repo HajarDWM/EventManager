@@ -1,6 +1,7 @@
-import { Component, inject, computed, OnInit } from '@angular/core';
+import { Component, inject, computed, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 import { ClientAuthService } from '../../core/auth/services/client-auth.service';
 import { GuestRsvp, PublicRsvpDetail } from '../events/components/guest-rsvp/guest-rsvp';
 
@@ -14,6 +15,9 @@ import { GuestRsvp, PublicRsvpDetail } from '../events/components/guest-rsvp/gue
 export class ClientInvitationPreview implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly clientAuthService = inject(ClientAuthService);
+  private readonly http = inject(HttpClient);
+
+  public readonly templates = signal<any[]>([]);
 
   public eventId = computed(() => {
     const id = this.route.snapshot.paramMap.get('id');
@@ -30,11 +34,15 @@ export class ClientInvitationPreview implements OnInit {
     const ev = this.event();
     if (!ev) return null;
 
-    // We don't have all exact fields (like template category, styling fields) directly on the Event interface in frontend,
-    // so we map what we have, and some properties might be mapped based on what's available.
+    const allTemplates = this.templates();
+    const tpl = allTemplates.find(t => 
+      (ev.digitalTemplateId && t.id === ev.digitalTemplateId) ||
+      (ev.templateId && t.templateKey === ev.templateId)
+    ) || allTemplates.find(t => t.templateKey === 'or-et-velours') || (allTemplates.length > 0 ? allTemplates[0] : null);
+
     return {
       guestId: 0,
-      guestName: 'Cher Invité(e)',
+      guestName: 'Cher(e) Invité(e)',
       guestEmail: 'invite@example.com',
       guestPhone: '',
       guestStatus: 'PENDING',
@@ -46,27 +54,40 @@ export class ClientInvitationPreview implements OnInit {
       eventLocation: ev.location,
       locationMapUrl: ev.locationMapUrl,
       digitalTemplateId: ev.digitalTemplateId,
-      templateId: ev.templateId,
+      templateId: tpl?.templateKey || ev.templateId,
+      templateTitle: tpl?.title,
+      templateCategory: tpl?.category || 'Mariage',
+      decorativeFrame: tpl?.decorativeFrame,
+      accentColor: tpl?.accentColor,
+      backgroundColor: tpl?.backgroundColor,
+      templateBackgroundImageUrl: tpl?.backgroundImageUrl || ev.templateBackgroundImageUrl,
+      primaryFont: tpl?.primaryFont,
+      primaryFontSize: tpl?.primaryFontSize,
+      secondaryFont: tpl?.secondaryFont,
+      secondaryFontSize: tpl?.secondaryFontSize,
+      secondaryFontColor: tpl?.secondaryFontColor,
+      templateMusicUrl: tpl?.musicUrl,
       invitationTitle: ev.invitationTitle,
       invitationSubtitle: ev.invitationSubtitle,
       invitationDate: ev.invitationDate,
       invitationLocation: ev.invitationLocation,
       parkingLocation: ev.parkingLocation,
       mealType: ev.mealType,
-      // Map other potential fields if they are fetched in the event model, or rely on GuestRsvp fallbacks
       isPaidEvent: ev.isPaidEvent,
       ticketPrice: ev.ticketPrice,
       currency: ev.currency,
       paymentStatus: 'UNPAID',
-      paidAmount: 0,
-      templateBackgroundImageUrl: ev.templateBackgroundImageUrl
+      paidAmount: 0
     };
   });
 
   ngOnInit() {
-    // Si la liste d'événements est vide, on peut rafraîchir
     if (this.clientAuthService.clientEvents().length === 0) {
       this.clientAuthService.fetchEvents().subscribe();
     }
+    this.http.get<any[]>('/api/templates').subscribe({
+      next: (data) => this.templates.set(data),
+      error: (err) => console.error('Failed to load templates in preview', err)
+    });
   }
 }

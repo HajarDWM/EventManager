@@ -69,6 +69,8 @@ export class GuestRsvp implements OnInit, OnDestroy {
   protected readonly errorMessage = signal('');
   protected readonly isFullMenuModalOpen = signal(false);
   protected readonly isMenuRsvpOpen = signal(false);
+  protected readonly isDeclineModalOpen = signal(false);
+  public declineMessage = '';
   protected readonly isPaymentModalOpen = signal(false);
   protected readonly isProcessingPayment = signal(false);
   protected readonly paymentMethod = signal<'CARD' | 'TRANSFER'>('CARD');
@@ -85,6 +87,65 @@ export class GuestRsvp implements OnInit, OnDestroy {
 
   protected closeMenuAndRsvp(): void {
     this.isMenuRsvpOpen.set(false);
+  }
+
+  public openDeclineModal(): void {
+    this.isDeclineModalOpen.set(true);
+  }
+
+  public closeDeclineModal(): void {
+    this.isDeclineModalOpen.set(false);
+  }
+
+  public getEventHostLabel(): string {
+    const cat = this.guest()?.templateCategory?.toLowerCase() || '';
+    if (cat.includes('mariage') || cat.includes('wedding')) return 'aux mariés';
+    if (cat.includes('corporate') || cat.includes('entreprise') || cat.includes('pro')) return 'aux organisateurs';
+    if (cat.includes('anniversaire')) return 'à la personne célébrée';
+    return 'aux hôtes';
+  }
+
+  public getSavedDeclineMessage(): string {
+    if (this.declineMessage && this.declineMessage.trim()) {
+      return this.declineMessage.trim();
+    }
+    const diets = this.guest()?.dietaryRequirements;
+    if (diets && diets.includes('Message:')) {
+      return diets.substring(diets.indexOf('Message:') + 8).trim();
+    }
+    return '';
+  }
+
+  public confirmDecline(): void {
+    this.status.set('DECLINED');
+    this.attendanceStatus = false;
+    this.selectedAttendanceChoice.set('DECLINED');
+    this.isDeclineModalOpen.set(false);
+    if (this.previewMode) {
+      this.isSuccess.set(true);
+      return;
+    }
+    this.submitResponse(true);
+  }
+
+  public startAcceptWorkflow(): void {
+    this.attendanceStatus = true;
+    this.selectedAttendanceChoice.set('CONFIRMED');
+    this.currentRsvpStep.set(0);
+    this.isMenuRsvpOpen.set(true);
+  }
+
+  public startExploreWorkflow(): void {
+    this.currentRsvpStep.set(0);
+    this.isMenuRsvpOpen.set(true);
+  }
+
+  public reopenRsvpToAccept(): void {
+    this.isSuccess.set(false);
+    this.status.set('CONFIRMED');
+    this.attendanceStatus = true;
+    this.selectedAttendanceChoice.set('CONFIRMED');
+    this.startAcceptWorkflow();
   }
 
   protected readonly carouselItems = computed<any[]>(() => {
@@ -168,6 +229,27 @@ export class GuestRsvp implements OnInit, OnDestroy {
     return 'Invitation d\'Exception';
   }
 
+  public getDisplayTitle(): string {
+    const invTitle = this.guest()?.invitationTitle?.trim();
+    const evTitle = this.guest()?.eventTitle?.trim();
+    const sub = this.getInvitationSubtitle()?.trim();
+    const rawTitle = invTitle || evTitle || 'Artila Web';
+
+    if (sub && rawTitle.toLowerCase().startsWith(sub.toLowerCase())) {
+      const clean = rawTitle.substring(sub.length).trim().replace(/^de\s+/i, '').trim();
+      if (clean) return clean;
+    }
+
+    if (invTitle && sub && invTitle.toLowerCase() === sub.toLowerCase()) {
+      if (evTitle && evTitle.toLowerCase() !== sub.toLowerCase()) {
+        return evTitle;
+      }
+      return 'Artila Web';
+    }
+
+    return rawTitle;
+  }
+
   public getPrimaryFont(): string {
     const f = this.guest()?.primaryFont;
     if (f && f.trim()) {
@@ -237,14 +319,10 @@ export class GuestRsvp implements OnInit, OnDestroy {
     if (this.guest()?.secondaryFontColor && this.guest()!.secondaryFontColor!.trim()) {
       return this.guest()!.secondaryFontColor!.trim();
     }
-    const cat = this.guest()?.templateCategory;
-    if (cat === 'Corporate') return '#2b4c7e';
-    if (cat === 'Mariage') return '#0f172a';
-    if (cat === 'Anniversaire') return '#2c1810';
-    return '#1e293b';
+    return this.isDarkBg(this.customBgColor) ? '#f8fafc' : '#1e293b';
   }
 
-  private isDarkBg(color?: string): boolean {
+  public isDarkBg(color?: string): boolean {
     if (!color) return false;
     if (color.startsWith('#') && color.length >= 7) {
       const r = parseInt(color.substring(1, 3), 16);
@@ -440,7 +518,7 @@ export class GuestRsvp implements OnInit, OnDestroy {
   }
 
   public get customBgColor(): string {
-    return this.guest()?.backgroundColor || (this.resolvedTemplateId === 'or-et-velours' ? '#0b0b0b' : '#faf6ee');
+    return this.guest()?.backgroundColor || '#fff9f5';
   }
 
   public get resolvedBackgroundImage(): string | null {
@@ -452,7 +530,14 @@ export class GuestRsvp implements OnInit, OnDestroy {
       console.log('Running in Preview Mode', this.previewData);
       this.guest.set(this.previewData);
       this.status.set(this.previewData.guestStatus || 'PENDING');
-      this.attendanceStatus = true;
+      this.attendanceStatus = this.previewData.guestStatus !== 'DECLINED';
+      if (this.previewData.guestStatus === 'DECLINED') {
+        this.selectedAttendanceChoice.set('DECLINED');
+        this.isSuccess.set(true);
+      } else if (this.previewData.guestStatus === 'CONFIRMED') {
+        this.selectedAttendanceChoice.set('CONFIRMED');
+        this.isSuccess.set(true);
+      }
       
       if (this.previewData.menuItems) {
         this.starters.set(this.previewData.menuItems.filter(item => item.category === 'STARTER' || item.category === 'BUFFET_STARTER'));
@@ -478,8 +563,19 @@ export class GuestRsvp implements OnInit, OnDestroy {
         this.guest.set(data);
         this.status.set(data.guestStatus || 'PENDING');
 
-        // Initialize attendanceStatus for natural exploration
-        this.attendanceStatus = true;
+        // Restore previous response state if guest already answered
+        if (data.guestStatus === 'DECLINED') {
+          this.attendanceStatus = false;
+          this.selectedAttendanceChoice.set('DECLINED');
+          this.isSuccess.set(true);
+        } else if (data.guestStatus === 'CONFIRMED') {
+          this.attendanceStatus = true;
+          this.selectedAttendanceChoice.set('CONFIRMED');
+          this.isSuccess.set(true);
+        } else {
+          // Initialize attendanceStatus for natural exploration
+          this.attendanceStatus = true;
+        }
 
         // Categorize menu items
         if (data.menuItems) {
@@ -627,7 +723,9 @@ export class GuestRsvp implements OnInit, OnDestroy {
 
   protected submitResponse(markSuccess: boolean = false): void {
     if (this.previewMode) {
-      alert("Action désactivée en mode aperçu.");
+      if (markSuccess) {
+        this.isSuccess.set(true);
+      }
       return;
     }
     const currentGuest = this.guest();
@@ -671,6 +769,8 @@ export class GuestRsvp implements OnInit, OnDestroy {
           activeDiets.push(this.otherAllergies.trim());
         }
       }
+    } else if (this.status() === 'DECLINED' && this.declineMessage.trim()) {
+      activeDiets.push(`Message: ${this.declineMessage.trim()}`);
     }
 
     const payload = {
@@ -683,6 +783,9 @@ export class GuestRsvp implements OnInit, OnDestroy {
     this.http.post<PublicRsvpDetail>(`/api/public/rsvp/${token}`, payload).subscribe({
       next: (updated) => {
         this.guest.set(updated);
+        if (updated.guestStatus) {
+          this.status.set(updated.guestStatus);
+        }
         this.isSubmitting.set(false);
         if (markSuccess) {
           this.isSuccess.set(true);

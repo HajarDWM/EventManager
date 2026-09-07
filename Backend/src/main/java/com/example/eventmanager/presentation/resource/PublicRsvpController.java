@@ -55,26 +55,33 @@ public class PublicRsvpController {
         String templateMusicUrl = null;
         String resolvedTemplateKey = event.getTemplateId();
 
+        java.util.Optional<com.example.eventmanager.infrastructure.persistence.entity.DigitalInvitationTemplateEntity> tplOpt = java.util.Optional.empty();
         if (event.getDigitalTemplateId() != null) {
-            var tplOpt = templateRepository.findById(event.getDigitalTemplateId());
-            if (tplOpt.isPresent()) {
-                var tpl = tplOpt.get();
-                templateCategory = tpl.getCategory();
-                templateSubCategory = tpl.getSubCategory();
-                templateTitle = tpl.getTitle();
-                decorativeFrame = tpl.getDecorativeFrame();
-                accentColor = tpl.getAccentColor();
-                backgroundColor = tpl.getBackgroundColor();
-                templateBackgroundImageUrl = tpl.getBackgroundImageUrl();
-                primaryFont = tpl.getPrimaryFont();
-                primaryFontSize = tpl.getPrimaryFontSize();
-                secondaryFont = tpl.getSecondaryFont();
-                secondaryFontSize = tpl.getSecondaryFontSize();
-                secondaryFontColor = tpl.getSecondaryFontColor();
-                templateMusicUrl = tpl.getMusicUrl();
-                if (resolvedTemplateKey == null || resolvedTemplateKey.isBlank()) {
-                    resolvedTemplateKey = tpl.getTemplateKey();
-                }
+            tplOpt = templateRepository.findById(event.getDigitalTemplateId());
+        }
+        if (tplOpt.isEmpty() && event.getTemplateId() != null && !event.getTemplateId().isBlank()) {
+            tplOpt = templateRepository.findAll().stream()
+                    .filter(t -> event.getTemplateId().equalsIgnoreCase(t.getTemplateKey()))
+                    .findFirst();
+        }
+
+        if (tplOpt.isPresent()) {
+            var tpl = tplOpt.get();
+            templateCategory = tpl.getCategory();
+            templateSubCategory = tpl.getSubCategory();
+            templateTitle = tpl.getTitle();
+            decorativeFrame = tpl.getDecorativeFrame();
+            accentColor = tpl.getAccentColor();
+            backgroundColor = tpl.getBackgroundColor();
+            templateBackgroundImageUrl = tpl.getBackgroundImageUrl();
+            primaryFont = tpl.getPrimaryFont();
+            primaryFontSize = tpl.getPrimaryFontSize();
+            secondaryFont = tpl.getSecondaryFont();
+            secondaryFontSize = tpl.getSecondaryFontSize();
+            secondaryFontColor = tpl.getSecondaryFontColor();
+            templateMusicUrl = tpl.getMusicUrl();
+            if (resolvedTemplateKey == null || resolvedTemplateKey.isBlank()) {
+                resolvedTemplateKey = tpl.getTemplateKey();
             }
         }
 

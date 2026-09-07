@@ -7,7 +7,15 @@
   [class.floral-frame-layer]="resolvedDecorativeFrame === 'floral-frame'"
   [class.gold-border-layer]="resolvedDecorativeFrame === 'gold-border'"
   [class.geometric-frame-layer]="resolvedDecorativeFrame === 'geometric-frame'"
-  [class.minimal-edge-layer]="resolvedDecorativeFrame === 'minimal-edge'">
+  [class.minimal-edge-layer]="resolvedDecorativeFrame === 'minimal-edge'"
+  [style.backgroundImage]="resolvedBackgroundImage ? 'url(' + resolvedBackgroundImage + ')' : null"
+  [style.backgroundColor]="guest()?.backgroundColor || null"
+  [style.--primary-color]="getPrimaryColor()"
+  [style.--secondary-color]="getSecondaryFontColor()"
+  [style.--primary-font]="getPrimaryFont()"
+  [style.--secondary-font]="getSecondaryFont()"
+  [style.backgroundSize]="'cover'"
+  [style.backgroundPosition]="'center'">
 
   <!-- Ambient Luxury Gold Sparkles / Particles in Background -->
   <div class="luxury-ambient-particles" aria-hidden="true">
@@ -19,7 +27,7 @@
     <div class="ambient-particle particle-6"></div>
   </div>
 
-  <div class="invitation-outer-container w-100 position-relative" style="max-width: 600px;">
+  <div class="invitation-outer-container w-100 position-relative">
 
     <!-- Floating Audio Player Widget (Positioned directly above the card) -->
     <div class="floating-music-widget animate__animated animate__fadeIn" [class.is-playing]="isMusicPlaying()"
@@ -60,10 +68,10 @@
 
     <!-- Loading State -->
     <div class="text-center py-5" *ngIf="isLoading()">
-      <div class="spinner-border text-gold" role="status">
+      <div class="spinner-border" [style.color]="getPrimaryColor()" role="status">
         <span class="visually-hidden">Chargement...</span>
       </div>
-      <p class="text-gold-muted mt-3">Préparation de votre invitation...</p>
+      <p class="mt-3" [style.color]="getPrimaryColor()">Préparation de votre invitation...</p>
     </div>
 
     <!-- Error State -->
@@ -77,10 +85,10 @@
       </div>
     </div>
 
-    <!-- Invitation Form Card with Multi-Layered Structural Assets -->
-    <div class="luxury-card position-relative overflow-hidden" [class.has-custom-bg-card]="!!resolvedBackgroundImage"
-      [style.background-color]="guest()?.backgroundColor || '#1e1f1f'"
-      [style.background-image]="resolvedBackgroundImage ? 'url(' + resolvedBackgroundImage + ')' : null"
+    <!-- Invitation Form Card - Step 1: Clean Foundation (Background Removed to Control Base Elements) -->
+    <div class="luxury-card card-clean-foundation position-relative overflow-hidden"
+      [style.backgroundColor]="customBgColor"
+      [style.borderColor]="getPrimaryColor() + '35'"
       [style.--primary-font]="getPrimaryFont()"
       [style.--primary-font-size]="getPrimaryFontSize()"
       [style.--secondary-font]="getSecondaryFont()"
@@ -89,197 +97,10 @@
       [style.--secondary-color]="getSecondaryFontColor()"
       *ngIf="!isLoading() && guest()">
 
-      <!-- Custom Uploaded Background Card Graphic Layer (Clean without dark overlays) -->
-      <div class="invitation-custom-bg-asset-layer" *ngIf="resolvedBackgroundImage" aria-hidden="true"></div>
+      <!-- Card Core Content (All Base Elements Protected & High Contrast) -->
+      <div class="luxury-inner-border position-relative" [style.borderColor]="getPrimaryColor() + '40'">
 
-      <!-- LAYER 0: Subtle Luxury Background Texture & Ambient Glow (Active when no custom uploaded background) -->
-      <div class="invitation-layer-texture" *ngIf="!resolvedBackgroundImage" aria-hidden="true">
-        <div class="texture-damask-watermark"></div>
-        <div class="texture-radial-glow"></div>
-      </div>
-
-      <!-- LAYER 1: Hanging Ornate Lanterns (Lamps & Gentle Candlelight) -->
-      <div class="invitation-layer-lanterns" aria-hidden="true"
-        *ngIf="!resolvedBackgroundImage && (resolvedTemplateId === 'or-et-velours' || resolvedTemplateId === 'boheme-chic' || resolvedDecorativeFrame === 'gold-border')">
-
-        <!-- Left Hanging Lantern -->
-        <div class="hanging-lantern lantern-left">
-          <div class="lantern-chain"></div>
-          <div class="lantern-body">
-            <svg viewBox="0 0 36 60" fill="none" xmlns="http://www.w3.org/2000/svg" class="lantern-svg">
-              <defs>
-                <linearGradient id="lanternGold" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stop-color="#fdf4d8" />
-                  <stop offset="50%" stop-color="#d4af37" />
-                  <stop offset="100%" stop-color="#8a6c1e" />
-                </linearGradient>
-                <radialGradient id="candleFlameGlow" cx="50%" cy="50%" r="50%">
-                  <stop offset="0%" stop-color="#fff6cc" />
-                  <stop offset="40%" stop-color="#f59e0b" stop-opacity="0.9" />
-                  <stop offset="100%" stop-color="#d97706" stop-opacity="0" />
-                </radialGradient>
-              </defs>
-              <!-- Top Cap & Finial -->
-              <path d="M18,2 L18,8 M14,8 Q18,3 22,8 L24,14 L12,14 Z" stroke="url(#lanternGold)" stroke-width="1.2"
-                fill="url(#lanternGold)" fill-opacity="0.3" />
-              <!-- Glass Dome -->
-              <path d="M11,14 Q7,32 12,48 L24,48 Q29,32 25,14 Z" stroke="url(#lanternGold)" stroke-width="1.2"
-                fill="#000000" fill-opacity="0.2" />
-              <!-- Decorative Arabesque Metal Ribs -->
-              <path d="M18,14 L18,48 M13,26 Q18,34 23,26 M12,38 Q18,46 24,38" stroke="url(#lanternGold)"
-                stroke-width="0.8" opacity="0.8" />
-              <!-- Internal Candle Flame -->
-              <circle cx="18" cy="32" r="7" fill="url(#candleFlameGlow)" class="flame-pulse" />
-              <path d="M18,27 Q19.5,31 18,34 Q16.5,31 18,27 Z" fill="#ffffff" />
-              <!-- Bottom Base & Tassel -->
-              <path d="M12,48 L24,48 L20,53 L16,53 Z" fill="url(#lanternGold)" />
-              <path d="M18,53 L18,59" stroke="url(#lanternGold)" stroke-width="1.2" />
-              <circle cx="18" cy="59" r="1.5" fill="url(#lanternGold)" />
-            </svg>
-            <div class="lantern-ambient-halo"></div>
-          </div>
-        </div>
-
-        <!-- Right Hanging Lantern -->
-        <div class="hanging-lantern lantern-right">
-          <div class="lantern-chain"></div>
-          <div class="lantern-body">
-            <svg viewBox="0 0 36 60" fill="none" xmlns="http://www.w3.org/2000/svg" class="lantern-svg">
-              <!-- Top Cap -->
-              <path d="M18,2 L18,8 M14,8 Q18,3 22,8 L24,14 L12,14 Z" stroke="url(#lanternGold)" stroke-width="1.2"
-                fill="url(#lanternGold)" fill-opacity="0.3" />
-              <!-- Glass Dome -->
-              <path d="M11,14 Q7,32 12,48 L24,48 Q29,32 25,14 Z" stroke="url(#lanternGold)" stroke-width="1.2"
-                fill="#000000" fill-opacity="0.2" />
-              <!-- Decorative Ribs -->
-              <path d="M18,14 L18,48 M13,26 Q18,34 23,26 M12,38 Q18,46 24,38" stroke="url(#lanternGold)"
-                stroke-width="0.8" opacity="0.8" />
-              <!-- Candle Flame -->
-              <circle cx="18" cy="32" r="7" fill="url(#candleFlameGlow)" class="flame-pulse flame-delay" />
-              <path d="M18,27 Q19.5,31 18,34 Q16.5,31 18,27 Z" fill="#ffffff" />
-              <!-- Bottom Base -->
-              <path d="M12,48 L24,48 L20,53 L16,53 Z" fill="url(#lanternGold)" />
-              <path d="M18,53 L18,59" stroke="url(#lanternGold)" stroke-width="1.2" />
-              <circle cx="18" cy="59" r="1.5" fill="url(#lanternGold)" />
-            </svg>
-            <div class="lantern-ambient-halo"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- LAYER 2: Side Florals & Botanical Garlands -->
-      <div class="invitation-layer-side-florals" aria-hidden="true"
-        *ngIf="!resolvedBackgroundImage && (resolvedTemplateId === 'fleurs-de-coton' || resolvedTemplateId === 'boheme-chic' || resolvedDecorativeFrame === 'floral-frame')">
-
-        <!-- Top Left Botanical Branch -->
-        <svg viewBox="0 0 140 140" class="side-floral floral-top-left" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="botanicalSageGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#dce6df" />
-              <stop offset="50%" stop-color="#9bb3a3" />
-              <stop offset="100%" stop-color="#698573" />
-            </linearGradient>
-            <linearGradient id="rosePetalGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#fdf2f4" />
-              <stop offset="60%" stop-color="#e8a2b8" />
-              <stop offset="100%" stop-color="#b85d7b" />
-            </linearGradient>
-          </defs>
-          <path d="M5,5 Q50,20 120,5 C100,45 60,80 5,120 Z" fill="none" />
-          <path d="M5,10 Q40,35 110,15" stroke="url(#botanicalSageGrad)" stroke-width="2" fill="none" />
-          <!-- Eucalyptus round leaves -->
-          <circle cx="35" cy="30" r="14" fill="url(#botanicalSageGrad)" opacity="0.8" />
-          <circle cx="65" cy="24" r="16" fill="url(#botanicalSageGrad)" opacity="0.85" />
-          <circle cx="95" cy="18" r="12" fill="url(#botanicalSageGrad)" opacity="0.75" />
-          <circle cx="20" cy="55" r="12" fill="url(#botanicalSageGrad)" opacity="0.8" />
-          <circle cx="48" cy="50" r="15" fill="url(#botanicalSageGrad)" opacity="0.85" />
-          <!-- Soft Rose Flower Blossom -->
-          <circle cx="38" cy="42" r="11" fill="url(#rosePetalGrad)" opacity="0.9" />
-          <circle cx="38" cy="42" r="6" fill="#ffffff" opacity="0.6" />
-          <circle cx="80" cy="30" r="9" fill="url(#rosePetalGrad)" opacity="0.85" />
-        </svg>
-
-        <!-- Top Right Botanical Branch -->
-        <svg viewBox="0 0 140 140" class="side-floral floral-top-right" xmlns="http://www.w3.org/2000/svg">
-          <path d="M135,10 Q100,35 30,15" stroke="url(#botanicalSageGrad)" stroke-width="2" fill="none" />
-          <circle cx="105" cy="30" r="14" fill="url(#botanicalSageGrad)" opacity="0.8" />
-          <circle cx="75" cy="24" r="16" fill="url(#botanicalSageGrad)" opacity="0.85" />
-          <circle cx="45" cy="18" r="12" fill="url(#botanicalSageGrad)" opacity="0.75" />
-          <circle cx="120" cy="55" r="12" fill="url(#botanicalSageGrad)" opacity="0.8" />
-          <circle cx="92" cy="50" r="15" fill="url(#botanicalSageGrad)" opacity="0.85" />
-          <circle cx="102" cy="42" r="11" fill="url(#rosePetalGrad)" opacity="0.9" />
-          <circle cx="102" cy="42" r="6" fill="#ffffff" opacity="0.6" />
-          <circle cx="60" cy="30" r="9" fill="url(#rosePetalGrad)" opacity="0.85" />
-        </svg>
-
-        <!-- Bottom Left Botanical Branch -->
-        <svg viewBox="0 0 140 140" class="side-floral floral-bottom-left" xmlns="http://www.w3.org/2000/svg">
-          <path d="M5,130 Q40,105 110,125" stroke="url(#botanicalSageGrad)" stroke-width="2" fill="none" />
-          <circle cx="35" cy="110" r="14" fill="url(#botanicalSageGrad)" opacity="0.8" />
-          <circle cx="65" cy="116" r="16" fill="url(#botanicalSageGrad)" opacity="0.85" />
-          <circle cx="20" cy="85" r="12" fill="url(#botanicalSageGrad)" opacity="0.8" />
-          <circle cx="38" cy="98" r="11" fill="url(#rosePetalGrad)" opacity="0.9" />
-        </svg>
-
-        <!-- Bottom Right Botanical Branch -->
-        <svg viewBox="0 0 140 140" class="side-floral floral-bottom-right" xmlns="http://www.w3.org/2000/svg">
-          <path d="M135,130 Q100,105 30,125" stroke="url(#botanicalSageGrad)" stroke-width="2" fill="none" />
-          <circle cx="105" cy="110" r="14" fill="url(#botanicalSageGrad)" opacity="0.8" />
-          <circle cx="75" cy="116" r="16" fill="url(#botanicalSageGrad)" opacity="0.85" />
-          <circle cx="120" cy="85" r="12" fill="url(#botanicalSageGrad)" opacity="0.8" />
-          <circle cx="102" cy="98" r="11" fill="url(#rosePetalGrad)" opacity="0.9" />
-        </svg>
-      </div>
-
-      <!-- LAYER 3: Classic Framed Architecture & Baroque Gold Corners -->
-      <div class="luxury-inner-border position-relative">
-
-        <!-- Royal Baroque Corner Filigree (Or & Velours / Corporate Gold) -->
-        <ng-container
-          *ngIf="!resolvedBackgroundImage && (resolvedTemplateId === 'or-et-velours' || resolvedDecorativeFrame === 'gold-border')">
-          <div class="royal-corner-ornament royal-top-left">
-            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M0,0 H100 C80,0 60,10 50,30 C40,50 30,60 30,70 C30,80 20,90 0,100 V0Z" fill="#d4af37"
-                opacity="0.08" />
-              <path d="M8,8 H60 C40,8 30,18 30,38 C30,48 20,58 8,58 V8Z" stroke="#d4af37" stroke-width="1.4" />
-              <path d="M4,4 H78 C48,4 38,14 38,38 C38,62 14,72 4,78 V4Z" stroke="#d4af37" stroke-width="0.7"
-                stroke-dasharray="2,2" />
-              <circle cx="14" cy="14" r="2" fill="#d4af37" />
-            </svg>
-          </div>
-          <div class="royal-corner-ornament royal-top-right">
-            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M100,0 H0 C20,0 40,10 50,30 C60,50 70,60 70,70 C70,80 80,90 100,100 V0Z" fill="#d4af37"
-                opacity="0.08" />
-              <path d="M92,8 H40 C60,8 70,18 70,38 C70,48 80,58 92,58 V8Z" stroke="#d4af37" stroke-width="1.4" />
-              <path d="M96,4 H22 C52,4 62,14 62,38 C62,62 86,72 96,78 V4Z" stroke="#d4af37" stroke-width="0.7"
-                stroke-dasharray="2,2" />
-              <circle cx="86" cy="14" r="2" fill="#d4af37" />
-            </svg>
-          </div>
-          <div class="royal-corner-ornament royal-bottom-left">
-            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M0,100 H100 C80,100 60,90 50,70 C40,50 30,40 30,30 C30,20 20,10 0,0 V100Z" fill="#d4af37"
-                opacity="0.08" />
-              <path d="M8,92 H60 C40,92 30,82 30,62 C30,52 20,42 8,42 V92Z" stroke="#d4af37" stroke-width="1.4" />
-              <path d="M4,96 H78 C48,96 38,86 38,62 C38,38 14,28 4,22 V96Z" stroke="#d4af37" stroke-width="0.7"
-                stroke-dasharray="2,2" />
-              <circle cx="14" cy="86" r="2" fill="#d4af37" />
-            </svg>
-          </div>
-          <div class="royal-corner-ornament royal-bottom-right">
-            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M100,100 H0 C20,100 40,90 50,70 C60,50 70,40 70,30 C70,20 80,10 100,0 V100Z" fill="#d4af37"
-                opacity="0.08" />
-              <path d="M92,92 H40 C60,92 70,82 70,62 C70,52 80,42 92,42 V92Z" stroke="#d4af37" stroke-width="1.4" />
-              <path d="M96,96 H22 C52,96 62,86 62,62 C62,38 86,28 96,22 V96Z" stroke="#d4af37" stroke-width="0.7"
-                stroke-dasharray="2,2" />
-              <circle cx="86" cy="86" r="2" fill="#d4af37" />
-            </svg>
-          </div>
-        </ng-container>
-
-        <!-- LAYER 4: Centered Dynamic Text Floating Directly over Background (Clean Invitation View) -->
+        <!-- LAYER: Centered Dynamic Text (Clean Invitation View) -->
         <div class="invitation-dynamic-text-overlay text-center mx-auto" *ngIf="!isMenuRsvpOpen() && !isSuccess()">
 
           <!-- Dynamic Emblem / Couple Silhouette Vector / Monogram (Only on built-in vector themes) -->
@@ -291,9 +112,9 @@
               <svg viewBox="0 0 120 70" class="couple-silhouette-svg" xmlns="http://www.w3.org/2000/svg">
                 <defs>
                   <linearGradient id="emblemGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stop-color="#fef0cd" />
-                    <stop offset="50%" stop-color="#d4af37" />
-                    <stop offset="100%" stop-color="#997722" />
+                    <stop offset="0%" [attr.stop-color]="getPrimaryColor()" />
+                    <stop offset="50%" [attr.stop-color]="getPrimaryColor()" />
+                    <stop offset="100%" [attr.stop-color]="getPrimaryColor()" />
                   </linearGradient>
                 </defs>
                 <!-- Laurel Wreath Laurel Leaves -->
@@ -321,140 +142,186 @@
                   opacity="0.85" />
                 <!-- Artistic Silhouette Figures / Intertwined Rings -->
                 <!-- Groom Head & Tuxedo Line -->
-                <circle cx="53" cy="24" r="5" fill="url(#emblemGoldGrad)" />
-                <path d="M47,38 Q53,30 59,38 Z" fill="url(#emblemGoldGrad)" opacity="0.9" />
+                <circle cx="53" cy="24" r="5" [attr.fill]="getPrimaryColor()" />
+                <path d="M47,38 Q53,30 59,38 Z" [attr.fill]="getPrimaryColor()" opacity="0.9" />
                 <!-- Bride Head & Veil/Dress Line -->
-                <circle cx="67" cy="26" r="4.5" fill="url(#emblemGoldGrad)" />
-                <path d="M62,39 Q67,31 73,42 Q68,44 62,39 Z" fill="url(#emblemGoldGrad)" opacity="0.85" />
+                <circle cx="67" cy="26" r="4.5" [attr.fill]="getPrimaryColor()" />
+                <path d="M62,39 Q67,31 73,42 Q68,44 62,39 Z" [attr.fill]="getPrimaryColor()" opacity="0.85" />
                 <!-- Small Heart between -->
                 <path
                   d="M60,18 C60,15 57,14 55,16 C53,14 50,15 50,18 C50,21 55,25 60,28 C65,25 70,21 70,18 C70,15 67,14 65,16 C63,14 60,15 60,18 Z"
-                  transform="scale(0.35) translate(80, 20)" fill="#d4af37" />
+                  transform="scale(0.35) translate(80, 20)" [attr.fill]="getPrimaryColor()" />
               </svg>
             </div>
 
             <!-- Monogram Initial Circle for Corporate & Gala Events -->
             <div class="corporate-emblem-badge"
               *ngIf="guest()?.templateCategory !== 'Mariage' && resolvedTemplateId !== 'fleurs-de-coton' && resolvedTemplateId !== 'boheme-chic' && resolvedTemplateId !== 'or-et-velours'">
-              <div class="crest-circle">
-                <span class="crest-letters">{{ guest()?.invitationTitle ? guest()?.invitationTitle!.substring(0, 1) :
+              <div class="crest-circle"
+                [style.borderColor]="getPrimaryColor()"
+                [style.backgroundColor]="getPrimaryColor() + '15'">
+                <span class="crest-letters"
+                  [style.fontFamily]="getPrimaryFont()"
+                  [style.color]="getPrimaryColor()">{{ guest()?.invitationTitle ? guest()?.invitationTitle!.substring(0, 1) :
                   'E' }}</span>
               </div>
             </div>
 
             <!-- Subtle Filigree Divider Line -->
-            <div class="emblem-divider-line">
-              <span class="divider-diamond">◆</span>
+            <div class="emblem-divider-line" [style.borderColor]="getPrimaryColor() + '40'">
+              <span class="divider-diamond" [style.color]="getPrimaryColor()">◆</span>
             </div>
           </div>
 
           <!-- Dynamic Subtitle / Intro Header -->
           <div class="invitation-header-tag mb-1">
-            <span class="luxury-subtitle" [style.fontFamily]="getPrimaryFont()" [style.color]="getPrimaryColor()">
+            <span class="luxury-subtitle"
+              [style.fontFamily]="getSecondaryFont()"
+              [style.fontSize]="getSecondaryFontSize()"
+              [style.color]="getSecondaryFontColor()"
+              style="text-shadow: none !important;">
               {{ getInvitationSubtitle() }}
             </span>
           </div>
 
           <!-- Dynamic Main Couple / Event Title -->
-          <h1 class="invitation-main-title mb-2.5" [style.fontFamily]="getPrimaryFont()" [style.fontSize]="getPrimaryFontSize()" [style.color]="getPrimaryColor()">
-            {{ guest()?.invitationTitle || guest()?.eventTitle }}
+          <h1 class="invitation-main-title mb-3"
+            [style.fontFamily]="getPrimaryFont()"
+            [style.fontSize]="getPrimaryFontSize()"
+            [style.color]="getPrimaryColor()"
+            style="text-shadow: none !important;">
+            {{ getDisplayTitle() }}
           </h1>
 
           <!-- Personalized Dynamic Guest Salutation -->
           <div class="invitation-guest-salutation mb-3">
-            <div class="salutation-guest-badge" [style.borderColor]="getPrimaryColor()">
-              <span class="salutation-honorific" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()">Cher(e)</span>
-              <span class="salutation-guest-name" [style.fontFamily]="getSecondaryFont()" [style.color]="getPrimaryColor()">{{ guest()?.guestName }}</span>
+            <div class="salutation-guest-badge"
+              [style.borderColor]="getPrimaryColor() + '45'"
+              [style.backgroundColor]="getPrimaryColor() + '10'">
+              <span class="salutation-honorific"
+                [style.fontFamily]="getSecondaryFont()"
+                [style.color]="getPrimaryColor()">Cher(e)</span>
+              <span class="salutation-guest-name"
+                [style.fontFamily]="getSecondaryFont()"
+                [style.color]="getSecondaryFontColor()">{{ guest()?.guestName }}</span>
             </div>
-            <p class="salutation-invitation-message mt-1.5 mb-0" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()">
-              Nous serions infiniment honorés de vous compter parmi nos invités d'honneur pour partager ce moment
-              précieux.
+            <p class="salutation-invitation-message mt-2 mb-0"
+              [style.fontFamily]="getSecondaryFont()"
+              [style.color]="getSecondaryFontColor()"
+              style="text-shadow: none !important;">
+              Nous serions infiniment honorés de vous compter parmi nos invités d'honneur pour partager ce moment précieux.
             </p>
           </div>
 
           <!-- Artistic Dynamic Date & Time Section -->
           <div class="artistic-invitation-details mb-3">
-            <div class="artistic-date-block">
-              <div class="date-header-line" [style.background]="'linear-gradient(90deg, transparent 0%, ' + getPrimaryColor() + ' 50%, transparent 100%)'"></div>
+            <div class="artistic-date-block"
+              [style.borderColor]="getPrimaryColor() + '30'">
+              <div class="date-header-line" [style.backgroundColor]="getPrimaryColor() + '35'"></div>
               <div class="artistic-date-flex">
                 <div class="date-side-part text-end">
-                  <span class="day-name" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()">{{ eventDayName }}</span>
+                  <span class="day-name"
+                    [style.fontFamily]="getSecondaryFont()"
+                    [style.color]="getSecondaryFontColor()"
+                    style="text-shadow: none !important;">{{ eventDayName }}</span>
                 </div>
-                <div class="date-center-num" [style.fontFamily]="getSecondaryFont()" [style.color]="getPrimaryColor()" [style.borderColor]="getPrimaryColor()">
+                <div class="date-center-num"
+                  [style.fontFamily]="getSecondaryFont()"
+                  [style.color]="getPrimaryColor()"
+                  [style.borderColor]="getPrimaryColor()"
+                  [style.backgroundColor]="getPrimaryColor() + '12'"
+                  style="text-shadow: none !important;">
                   {{ eventDayNum }}
                 </div>
                 <div class="date-side-part text-start">
-                  <span class="month-year" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()">{{ eventMonth }} &bull; {{ eventYear }}</span>
+                  <span class="month-year"
+                    [style.fontFamily]="getSecondaryFont()"
+                    [style.color]="getSecondaryFontColor()"
+                    style="text-shadow: none !important;">{{ eventMonth }} &bull; {{ eventYear }}</span>
                 </div>
               </div>
-              <div class="artistic-time" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()">
+              <div class="artistic-time"
+                [style.fontFamily]="getSecondaryFont()"
+                [style.color]="getPrimaryColor()"
+                style="text-shadow: none !important;">
                 <i class="far fa-clock me-1" [style.color]="getPrimaryColor()"></i> À {{ eventTime }}
               </div>
-              <div class="date-footer-line" [style.background]="'linear-gradient(90deg, transparent 0%, ' + getPrimaryColor() + ' 50%, transparent 100%)'"></div>
+              <div class="date-footer-line" [style.backgroundColor]="getPrimaryColor() + '35'"></div>
             </div>
 
             <!-- Unified Venue Location & Access Block -->
-            <div class="artistic-location-block mt-3 text-center">
-              <div class="location-icon-wrapper mb-1 mx-auto" [style.color]="getPrimaryColor()" [style.borderColor]="getPrimaryColor()">
-                <i class="fa fa-map-marker-alt"></i>
+            <div class="artistic-location-block mt-3 text-center"
+              [style.borderColor]="getPrimaryColor() + '30'">
+              <div class="location-icon-wrapper mb-2 mx-auto"
+                [style.color]="getPrimaryColor()"
+                [style.borderColor]="getPrimaryColor()"
+                [style.backgroundColor]="getPrimaryColor() + '15'">
+                <i class="fa fa-map-marker-alt" [style.color]="getPrimaryColor()"></i>
               </div>
-              <div class="location-title" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()">LIEU DE LA RÉCEPTION</div>
-              <div class="location-value" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()">
+              <div class="location-title"
+                [style.fontFamily]="getSecondaryFont()"
+                [style.color]="getPrimaryColor()"
+                style="text-shadow: none !important;">LIEU DE LA RÉCEPTION</div>
+              <div class="location-value"
+                [style.fontFamily]="getSecondaryFont()"
+                [style.color]="getSecondaryFontColor()"
+                style="text-shadow: none !important;"
+                *ngIf="guest()?.eventLocation || guest()?.invitationLocation">
                 {{ guest()?.eventLocation || guest()?.invitationLocation }}
               </div>
 
-              <!-- Note Parking spécifique masquée selon la demande -->
-              <!-- 
-              <div *ngIf="guest()?.parkingLocation && guest()?.parkingLocation !== (guest()?.eventLocation || guest()?.invitationLocation)"
-                   class="location-parking-subtitle fs-xs mt-1"
-                   [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="opacity: 0.9;">
-                <i class="fa fa-parking me-1 text-primary"></i> Parking : {{ guest()?.parkingLocation }}
-              </div> 
-              -->
-
-              <!-- Onglets / Boutons d'itinéraires GPS -->
-              <div class="d-inline-flex flex-wrap justify-content-center gap-2 mt-2.5">
-                <!-- Onglet Salle -->
-                <a [href]="getDirectionsUrl(guest()?.eventLocation || guest()?.invitationLocation, guest()?.locationMapUrl)"
-                  target="_blank" rel="noopener noreferrer"
-                  class="details-gps-link d-inline-flex align-items-center"
-                  [style.fontFamily]="getSecondaryFont()" [style.color]="getPrimaryColor()" [style.borderColor]="getPrimaryColor()">
-                  <i class="fa fa-map-marker-alt me-1.5"></i> Salle
-                </a>
-
-                <!-- Onglet Parking (si renseigné) -->
-                <a *ngIf="guest()?.parkingLocation"
-                  [href]="getDirectionsUrl(guest()?.parkingLocation)"
-                  target="_blank" rel="noopener noreferrer"
-                  class="details-gps-link d-inline-flex align-items-center"
-                  [style.fontFamily]="getSecondaryFont()" [style.color]="getPrimaryColor()" [style.borderColor]="getPrimaryColor()">
-                  <i class="fa fa-parking me-1.5"></i> Parking
-                </a>
+              <!-- Ticket Price Badge (si événement payant : transparence totale dès la Page 1) -->
+              <div class="invitation-ticket-price-wrapper mt-2.5" *ngIf="guest()?.isPaidEvent">
+                <span class="badge-ticket-price"
+                  [style.fontFamily]="getSecondaryFont()"
+                  [style.borderColor]="getPrimaryColor() + '40'"
+                  [style.color]="getSecondaryFontColor()"
+                  [style.backgroundColor]="getPrimaryColor() + '12'">
+                  <i class="fa fa-ticket-alt me-1.5" [style.color]="getPrimaryColor()"></i>
+                  Tarif d'entrée : <strong [style.color]="getSecondaryFontColor()">{{ guest()?.ticketPrice || 0 }} {{ guest()?.currency || 'MAD' }}</strong> / personne
+                </span>
               </div>
             </div>
           </div>
 
-          <!-- Clean Elegant Action Button: Découvrir le menu & RSVP ➔ -->
-          <div class="mt-5 pt-3 mb-3 text-center animate__animated animate__fadeIn">
-            <button type="button" class="btn btn-discover-rsvp rounded-pill px-4 py-2.5 fs-xs fw-bold shadow-lg"
-              (click)="openMenuAndRsvp()"
-              [style.backgroundColor]="getDiscoverButtonBgColor()"
-              [style.borderColor]="getDiscoverButtonBgColor()"
-              [style.color]="getDiscoverButtonTextColor()"
-              style="letter-spacing: 0.6px; font-weight: 700;">
-              <i class="fa fa-utensils me-2"></i> Découvrir le menu & RSVP <i class="fa fa-arrow-right ms-1.5"></i>
-            </button>
+          <!-- ACTIONS PAGE 1 : Décision immédiate (Accepter / Décliner) + Lien Explorer d'abord -->
+          <div class="page1-actions-container mt-4 pt-1 mb-2 text-center animate__animated animate__fadeIn">
+            <!-- Boutons de décision immédiate -->
+            <div class="page1-decision-buttons d-flex align-items-center justify-content-center gap-2 gap-sm-3 flex-wrap">
+              <!-- 1. Accepter (Bouton Principal teinté avec la couleur du modèle) -->
+              <button type="button" class="btn btn-decision-accept"
+                [style.background]="getPrimaryColor()"
+                [style.borderColor]="getPrimaryColor()"
+                [style.color]="isDarkBg(getPrimaryColor()) ? '#ffffff' : '#0c0c0c'"
+                (click)="startAcceptWorkflow()">
+                <i class="fa fa-check me-2"></i> Accepter
+              </button>
+
+              <!-- 2. Décliner (Bouton Contour Discret teinté avec la couleur secondaire) -->
+              <button type="button" class="btn btn-decision-decline"
+                [style.color]="getSecondaryFontColor()"
+                [style.borderColor]="getSecondaryFontColor() + '40'"
+                (click)="openDeclineModal()">
+                <i class="fa fa-times me-1.5"></i> Décliner
+              </button>
+            </div>
+
+            <!-- 3. Lien d'exploration préalable (Parcours B : Explorer d'abord) -->
+            <div class="mt-3">
+              <button type="button" class="btn btn-link link-explore-first"
+                [style.color]="getPrimaryColor()"
+                (click)="startExploreWorkflow()">
+                Découvrir le menu et l'ambiance d'abord <i class="fa fa-arrow-right ms-1"></i>
+              </button>
+            </div>
           </div>
 
         </div>
         <!-- END Centered Dynamic Text Overlay -->
 
-      </div>
-      <!-- END luxury-inner-border -->
-
-      <!-- Dedicated Menu & RSVP View (Smooth transition when triggered) -->
-      <div class="p-2 p-md-3 menu-rsvp-container animate__animated animate__fadeIn text-center mx-auto"
-        *ngIf="isMenuRsvpOpen()">
+        <!-- Dedicated Menu & RSVP View (Smooth transition when triggered) -->
+        <div class="p-2 p-md-3 menu-rsvp-container animate__animated animate__fadeIn text-center mx-auto"
+          *ngIf="isMenuRsvpOpen() && !isSuccess()">
 
         <!-- Full Menu Modal Overlay (Compact Luxury Card Modal) -->
         <div class="modal d-block bg-dark bg-opacity-75" tabindex="-1" *ngIf="isFullMenuModalOpen()"
@@ -1186,9 +1053,113 @@
           </div>
 
         </form>
+      </div>
+      <!-- END Dedicated Menu & RSVP View -->
 
-        <!-- SUCCESS STATE: Integrated Luxury Confirmation Screen (Identical Background Graphic, Fonts, Framing & Compact Grouping) -->
-        <div *ngIf="isSuccess()"
+      <!-- SUCCESS STATE - CAS 1 : L'INVITÉ A DÉCLINÉ (Option A - Chaleureux, empathique et adapté à tout type d'événement) -->
+      <div *ngIf="isSuccess() && (status() === 'DECLINED' || !attendanceStatus)"
+          class="success-recap-container decline-recap-container animate__animated animate__fadeIn my-auto w-100 py-4 px-2 text-center"
+          style="padding-top: 35px !important; padding-bottom: 30px !important;">
+
+          <!-- Icône bienveillante de courtoisie -->
+          <div class="decline-icon-wrapper mb-3 mx-auto shadow-xs"
+            [style.borderColor]="getPrimaryColor() + '40'"
+            [style.backgroundColor]="getPrimaryColor() + '14'"
+            style="width: 58px; height: 58px; border-radius: 50%; border-width: 1.5px; border-style: solid; display: flex; align-items: center; justify-content: center;">
+            <i class="far fa-envelope-open" [style.color]="getPrimaryColor()" style="font-size: 1.45rem;"></i>
+          </div>
+
+          <!-- En-tête -->
+          <div class="spotlight-title-wrapper mb-3 text-center">
+            <span class="luxury-subtitle d-block mb-1"
+              [style.fontFamily]="getPrimaryFont()"
+              [style.color]="getPrimaryColor()"
+              style="font-size: 1.5rem !important; line-height: 1.1 !important;">
+              Réponse enregistrée
+            </span>
+            <h2 class="page2-menu-title text-uppercase fw-bold m-0"
+              [style.fontFamily]="getSecondaryFont()"
+              [style.color]="getSecondaryFontColor()"
+              style="font-size: 1.15rem !important; line-height: 1.3 !important; letter-spacing: 1.5px !important;">
+              Nous regrettons votre absence
+            </h2>
+            <div class="spotlight-underline mx-auto mt-2 mb-2.5"
+              [style.backgroundColor]="getPrimaryColor()"
+              style="width: 50px; height: 1.5px; opacity: 0.65;"></div>
+
+            <p class="fs-xs mb-0 px-2 mx-auto"
+              [style.fontFamily]="getSecondaryFont()"
+              [style.color]="getSecondaryFontColor()"
+              style="line-height: 1.55; opacity: 0.92; max-width: 440px; font-size: 0.88rem;">
+              Cher(e) <strong [style.color]="getPrimaryColor()">{{ guest()?.guestName }}</strong>, votre indisponibilité pour cet événement a bien été notée. Votre présence manquera assurément parmi nous, mais nous vous remercions sincèrement d'avoir pris le temps de répondre.
+            </p>
+          </div>
+
+          <!-- Message personnel transmis (si rédigé dans la modale) -->
+          <div class="decline-message-card p-3 rounded-4 mb-3 text-start mx-auto shadow-xs"
+            *ngIf="getSavedDeclineMessage()"
+            [style.borderColor]="getPrimaryColor() + '35'"
+            [style.backgroundColor]="getPrimaryColor() + '08'"
+            style="max-width: 420px; border-width: 1px; border-style: solid;">
+            <div class="d-flex align-items-center gap-2 mb-1.5">
+              <i class="far fa-comment-dots" [style.color]="getPrimaryColor()"></i>
+              <span class="fw-bold text-uppercase" [style.color]="getPrimaryColor()" style="font-size: 0.72rem; letter-spacing: 0.8px;">
+                Votre mot transmis {{ getEventHostLabel() }} :
+              </span>
+            </div>
+            <p class="fst-italic mb-2 ps-2.5 border-start"
+              [style.borderColor]="getPrimaryColor() + '70'"
+              [style.color]="getSecondaryFontColor()"
+              style="font-size: 0.88rem; line-height: 1.5; border-width: 2.5px !important;">
+              « {{ getSavedDeclineMessage() }} »
+            </p>
+            <div class="d-flex align-items-center gap-1.5 text-success" style="font-size: 0.75rem;">
+              <i class="fa fa-check-circle"></i> Bien transmis {{ getEventHostLabel() }}
+            </div>
+          </div>
+
+          <!-- Récapitulatif sobre de l'événement -->
+          <div class="recap-content-wrapper mx-auto mb-3 text-start p-3 rounded-3 shadow-xs"
+            [style.borderColor]="getPrimaryColor() + '25'"
+            style="max-width: 420px; border: 1px solid; background: rgba(0,0,0,0.02);">
+            
+            <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom" [style.borderColor]="getPrimaryColor() + '20'">
+              <span class="text-uppercase fw-bold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="letter-spacing: 0.8px; font-size: 0.74rem; opacity: 0.85;">Événement</span>
+              <span class="fw-bold text-end font-serif" [style.fontFamily]="getSecondaryFont()" [style.color]="getPrimaryColor()" style="font-size: 0.95rem;">{{ getDisplayTitle() }}</span>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom" [style.borderColor]="getPrimaryColor() + '20'" *ngIf="eventDayName">
+              <span class="text-uppercase fw-bold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="letter-spacing: 0.8px; font-size: 0.74rem; opacity: 0.85;">Date</span>
+              <span class="fw-semibold text-end" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.88rem;">{{ eventDayName }} {{ eventDayNum }} {{ eventMonth }} {{ eventYear }}</span>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-baseline py-1.5">
+              <span class="text-uppercase fw-bold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="letter-spacing: 0.8px; font-size: 0.74rem; opacity: 0.85;">Statut</span>
+              <span class="badge rounded-pill px-3 py-1 fw-bold fs-xxs bg-secondary bg-opacity-75 text-white">
+                <i class="fa fa-times me-1"></i> Absent(e)
+              </span>
+            </div>
+
+          </div>
+
+          <!-- Filet de sécurité indispensable (Changement d'avis) -->
+          <div class="decline-recovery-action mt-3 pt-1">
+            <button type="button" class="btn btn-reopen-decline rounded-pill px-4 py-2.5 fw-bold shadow-sm"
+              [style.borderColor]="getPrimaryColor()"
+              [style.color]="getPrimaryColor()"
+              (click)="reopenRsvpToAccept()"
+              style="border-width: 1.5px; border-style: solid; background: transparent; font-size: 0.86rem; transition: all 0.25s ease;">
+              <i class="fa fa-undo me-2"></i> J'ai changé d'avis, je souhaite participer
+            </button>
+            <p class="text-muted mt-2 mb-0" style="font-size: 0.74rem; opacity: 0.85;">
+              Vous pouvez revenir sur votre décision à tout moment.
+            </p>
+          </div>
+
+        </div>
+
+        <!-- SUCCESS STATE - CAS 2 : L'INVITÉ A CONFIRMÉ SA PRÉSENCE -->
+        <div *ngIf="isSuccess() && (status() !== 'DECLINED' && attendanceStatus)"
           class="success-recap-container animate__animated animate__fadeIn my-auto w-100 pt-5 pb-2"
           style="padding-top: 55px !important;">
 
@@ -1220,19 +1191,17 @@
             
             <!-- Guest Name & Status Badge -->
             <div class="mb-3 text-start px-2">
-              <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom" [style.borderColor]="'rgba(212, 175, 55, 0.25)'">
+              <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom" [style.borderColor]="getPrimaryColor() + '25'">
                 <span class="text-uppercase fw-bold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="letter-spacing: 0.8px; font-size: 0.74rem; opacity: 0.85;">Invité</span>
                 <span class="fw-bold text-end font-serif" [style.fontFamily]="getSecondaryFont()" [style.color]="getPrimaryColor()" style="font-size: 0.95rem;">{{ guest()?.guestName }}</span>
               </div>
-              <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom" [style.borderColor]="'rgba(212, 175, 55, 0.25)'">
+              <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom" [style.borderColor]="getPrimaryColor() + '25'">
                 <span class="text-uppercase fw-bold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="letter-spacing: 0.8px; font-size: 0.74rem; opacity: 0.85;">Statut</span>
-                <span class="badge rounded-pill px-3 py-1 fw-bold fs-xxs"
-                  [ngClass]="status() === 'CONFIRMED' ? 'bg-success text-white' : 'bg-secondary text-white'">
-                  <i class="fa me-1" [ngClass]="status() === 'CONFIRMED' ? 'fa-check' : 'fa-times'"></i>
-                  {{ status() === 'CONFIRMED' ? 'Présent' : 'Absent' }}
+                <span class="badge rounded-pill px-3 py-1 fw-bold fs-xxs bg-success text-white">
+                  <i class="fa fa-check me-1"></i> Présent
                 </span>
               </div>
-              <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom" [style.borderColor]="'rgba(212, 175, 55, 0.25)'" *ngIf="guest()?.isPaidEvent && status() === 'CONFIRMED'">
+              <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom" [style.borderColor]="getPrimaryColor() + '25'" *ngIf="guest()?.isPaidEvent">
                 <span class="text-uppercase fw-bold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="letter-spacing: 0.8px; font-size: 0.74rem; opacity: 0.85;">Billet / Pass</span>
                 <span class="badge rounded-pill px-3 py-1 fw-bold fs-xxs"
                   [ngClass]="guest()?.paymentStatus === 'PAID' ? 'bg-success text-white' : 'bg-warning text-dark'">
@@ -1243,7 +1212,7 @@
             </div>
 
             <!-- Menu choices if CONFIRMED and Plated / Mix -->
-            <div class="mb-3 text-start px-2" *ngIf="status() === 'CONFIRMED' && isPlated()">
+            <div class="mb-3 text-start px-2" *ngIf="isPlated()">
               <div class="fw-bold text-uppercase mb-2 text-center"
                 [style.fontFamily]="getSecondaryFont()"
                 [style.color]="getSecondaryFontColor()"
@@ -1252,26 +1221,26 @@
               </div>
 
               <div class="d-flex flex-column gap-2">
-                <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom" [style.borderColor]="'rgba(212, 175, 55, 0.25)'" *ngIf="starterChoice">
+                <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom" [style.borderColor]="getPrimaryColor() + '25'" *ngIf="starterChoice">
                   <span class="text-uppercase fw-bold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="letter-spacing: 0.8px; font-size: 0.74rem; opacity: 0.85;">Entrée</span>
                   <span class="fw-semibold text-end font-serif" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.95rem;">{{ starterChoice }}</span>
                 </div>
-                <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom" [style.borderColor]="'rgba(212, 175, 55, 0.25)'" *ngIf="mealChoice">
+                <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom" [style.borderColor]="getPrimaryColor() + '25'" *ngIf="mealChoice">
                   <span class="text-uppercase fw-bold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="letter-spacing: 0.8px; font-size: 0.74rem; opacity: 0.9;">Plat Principal</span>
                   <span class="fw-bold text-end font-serif" [style.fontFamily]="getSecondaryFont()" [style.color]="getPrimaryColor()" style="font-size: 0.98rem;">{{ mealChoice }}</span>
                 </div>
-                <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom" [style.borderColor]="'rgba(212, 175, 55, 0.25)'" *ngIf="dessertChoice">
+                <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom" [style.borderColor]="getPrimaryColor() + '25'" *ngIf="dessertChoice">
                   <span class="text-uppercase fw-bold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="letter-spacing: 0.8px; font-size: 0.74rem; opacity: 0.85;">Dessert</span>
                   <span class="fw-semibold text-end font-serif" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.95rem;">{{ dessertChoice }}</span>
                 </div>
-                <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom" [style.borderColor]="'rgba(212, 175, 55, 0.25)'" *ngIf="beverageChoice">
+                <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom" [style.borderColor]="getPrimaryColor() + '25'" *ngIf="beverageChoice">
                   <span class="text-uppercase fw-bold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="letter-spacing: 0.8px; font-size: 0.74rem; opacity: 0.85;">Boisson</span>
                   <span class="fw-semibold text-end font-serif" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.95rem;">{{ beverageChoice }}</span>
                 </div>
               </div>
             </div>
 
-            <div class="mb-3 text-start px-2" *ngIf="status() === 'CONFIRMED' && isMix()">
+            <div class="mb-3 text-start px-2" *ngIf="isMix()">
               <div class="fw-bold text-uppercase mb-2 text-center"
                 [style.fontFamily]="getSecondaryFont()"
                 [style.color]="getSecondaryFontColor()"
@@ -1279,11 +1248,11 @@
                 — Choix du Menu —
               </div>
               <div class="d-flex flex-column gap-2">
-                <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom" [style.borderColor]="'rgba(212, 175, 55, 0.25)'" *ngIf="mealChoice">
+                <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom" [style.borderColor]="getPrimaryColor() + '25'" *ngIf="mealChoice">
                   <span class="text-uppercase fw-bold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="letter-spacing: 0.8px; font-size: 0.74rem; opacity: 0.9;">Plat assis</span>
                   <span class="fw-bold text-end font-serif" [style.fontFamily]="getSecondaryFont()" [style.color]="getPrimaryColor()" style="font-size: 0.98rem;">{{ mealChoice }}</span>
                 </div>
-                <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom" [style.borderColor]="'rgba(212, 175, 55, 0.25)'" *ngIf="dessertChoice">
+                <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom" [style.borderColor]="getPrimaryColor() + '25'" *ngIf="dessertChoice">
                   <span class="text-uppercase fw-bold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="letter-spacing: 0.8px; font-size: 0.74rem; opacity: 0.85;">Dessert</span>
                   <span class="fw-semibold text-end font-serif" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.95rem;">{{ dessertChoice }}</span>
                 </div>
@@ -1291,7 +1260,7 @@
             </div>
 
             <!-- Dietary pills if any -->
-            <div class="mb-2 text-center px-2" *ngIf="status() === 'CONFIRMED' && (getSelectedDietsArray().length > 0 || (otherAllergies.trim() && otherAllergies.trim().toLowerCase() !== 'aucun' && otherAllergies.trim().toLowerCase() !== 'none'))">
+            <div class="mb-2 text-center px-2" *ngIf="getSelectedDietsArray().length > 0 || (otherAllergies.trim() && otherAllergies.trim().toLowerCase() !== 'aucun' && otherAllergies.trim().toLowerCase() !== 'none')">
               <div class="fw-bold text-uppercase mb-2 text-center"
                 [style.fontFamily]="getSecondaryFont()"
                 [style.color]="getSecondaryFontColor()"
@@ -1300,8 +1269,8 @@
               </div>
               <div class="d-flex flex-wrap gap-1.5 justify-content-center mb-1">
                 <span class="badge bg-dark bg-opacity-85 text-white rounded-pill px-3 py-1.5 fw-semibold shadow-xs"
-                  *ngFor="let diet of getSelectedDietsArray()" [style.borderColor]="getPrimaryColor()" style="font-size: 0.78rem; border: 1px solid rgba(212, 175, 55, 0.4);">
-                  <i class="fa fa-check me-1" style="color: #fbbf24;"></i>{{ diet }}
+                  *ngFor="let diet of getSelectedDietsArray()" [style.borderColor]="getPrimaryColor()" style="font-size: 0.78rem; border: 1px solid rgba(255, 255, 255, 0.2);">
+                  <i class="fa fa-check me-1" [style.color]="getPrimaryColor()"></i>{{ diet }}
                 </span>
               </div>
               <div class="fst-italic mt-1" *ngIf="otherAllergies.trim() && otherAllergies.trim().toLowerCase() !== 'aucun' && otherAllergies.trim().toLowerCase() !== 'none'" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.8rem;">
@@ -1313,6 +1282,71 @@
 
         </div>
 
+      </div>
+      <!-- END luxury-inner-border -->
+    </div>
+    <!-- END luxury-card -->
+  </div>
+  <!-- END rsvp-luxury-wrapper -->
+
+  <!-- MODAL: FRICTIONLESS DECLINE MODAL (Message facultatif + Confirmation de refus) -->
+  <div class="modal d-block bg-dark bg-opacity-75 animate__animated animate__fadeIn" tabindex="-1" *ngIf="isDeclineModalOpen()"
+    style="backdrop-filter: blur(8px); z-index: 1070;">
+    <div class="modal-dialog modal-dialog-centered mx-auto px-3" style="max-width: 440px;">
+      <div class="modal-content border-0 p-4 shadow-2xl text-center position-relative rounded-4"
+        [style.borderColor]="getPrimaryColor() + '45'"
+        style="background: #faf7f2; border-width: 1.5px !important; border-style: solid !important;">
+        <!-- Bouton Fermer / Annuler -->
+        <button type="button" class="btn-close position-absolute top-0 end-0 m-3 shadow-none"
+          (click)="closeDeclineModal()" aria-label="Fermer"></button>
+
+        <div class="p-1">
+          <!-- Icône bienveillante -->
+          <div class="mb-3 text-center">
+            <div class="d-inline-flex align-items-center justify-content-center"
+              [style.borderColor]="getPrimaryColor() + '40'"
+              [style.backgroundColor]="getPrimaryColor() + '15'"
+              style="width: 48px; height: 48px; border-radius: 50%; border-width: 1.5px; border-style: solid;">
+              <i class="fa fa-envelope-open-text" [style.color]="getPrimaryColor()" style="font-size: 1.2rem;"></i>
+            </div>
+          </div>
+
+          <h3 class="fw-bold mb-1" [style.fontFamily]="getSecondaryFont()" style="color: #1e293b; font-size: 1.25rem;">
+            Décliner l'invitation
+          </h3>
+          <p class="text-muted fs-xs mb-3" style="line-height: 1.5;">
+            Nous regrettons sincèrement que vous ne puissiez pas vous joindre à nous pour ce moment précieux.
+          </p>
+
+          <!-- Boîte à message facultative -->
+          <div class="text-start mb-3">
+            <label class="form-label fs-xxs fw-bold text-dark text-uppercase tracking-wider mb-1.5">
+              Souhaitez-vous laisser un message {{ getEventHostLabel() }} ? (Facultatif)
+            </label>
+            <textarea class="form-control form-control-sm rounded-3 p-2.5" rows="3"
+              [(ngModel)]="declineMessage"
+              placeholder="Écrivez vos vœux ou un mot chaleureux..."
+              style="font-size: 0.85rem; border: 1px solid rgba(15, 23, 42, 0.25); background: #ffffff; resize: none;"></textarea>
+          </div>
+
+          <!-- Actions : Annuler pour revenir en arrière vs Confirmer le refus -->
+          <div class="d-flex gap-2 justify-content-center pt-2">
+            <button type="button" class="btn btn-sm btn-alt-secondary rounded-pill px-3 py-2 fs-xs fw-semibold flex-fill"
+              (click)="closeDeclineModal()">
+              <i class="fa fa-arrow-left me-1"></i> Annuler
+            </button>
+
+            <button type="button" class="btn btn-sm btn-outline-danger rounded-pill px-3 py-2 fs-xs fw-bold flex-fill"
+              (click)="confirmDecline()" [disabled]="isSubmitting()">
+              <span *ngIf="!isSubmitting()">
+                <i class="fa fa-times me-1"></i> Confirmer le refus
+              </span>
+              <span *ngIf="isSubmitting()">
+                <i class="fa fa-spinner fa-spin me-1"></i> Envoi...
+              </span>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
