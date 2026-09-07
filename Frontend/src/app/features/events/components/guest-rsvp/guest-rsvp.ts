@@ -131,13 +131,23 @@ export class GuestRsvp implements OnInit, OnDestroy {
   public startAcceptWorkflow(): void {
     this.attendanceStatus = true;
     this.selectedAttendanceChoice.set('CONFIRMED');
+    this.hasConfirmedMenuChoice.set(!!(this.starterChoice || this.mealChoice || this.dessertChoice || this.beverageChoice));
     this.currentRsvpStep.set(0);
     this.isMenuRsvpOpen.set(true);
   }
 
   public startExploreWorkflow(): void {
+    this.selectedAttendanceChoice.set(null);
+    this.attendanceStatus = false;
     this.currentRsvpStep.set(0);
     this.isMenuRsvpOpen.set(true);
+  }
+
+  public acceptFromDiscovery(): void {
+    this.attendanceStatus = true;
+    this.status.set('CONFIRMED');
+    this.selectedAttendanceChoice.set('CONFIRMED');
+    this.hasConfirmedMenuChoice.set(!!(this.starterChoice || this.mealChoice || this.dessertChoice || this.beverageChoice));
   }
 
   public reopenRsvpToAccept(): void {
@@ -303,6 +313,35 @@ export class GuestRsvp implements OnInit, OnDestroy {
     return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(destination.trim())}`;
   }
 
+  public getEventMapUrl(): string {
+    const directUrl = this.guest()?.locationMapUrl;
+    if (directUrl && directUrl.trim()) {
+      return directUrl.trim();
+    }
+    const loc = this.guest()?.invitationLocation || this.guest()?.eventLocation;
+    return this.getDirectionsUrl(loc);
+  }
+
+  public getParkingMapUrl(): string {
+    const parking = this.guest()?.parkingLocation?.trim();
+    const loc = this.guest()?.invitationLocation || this.guest()?.eventLocation || '';
+    if (parking) {
+      if (parking.startsWith('http://') || parking.startsWith('https://')) {
+        return parking;
+      }
+      return this.getDirectionsUrl(`${parking} ${loc}`);
+    }
+    return loc ? `https://www.google.com/maps/search/Parking+${encodeURIComponent(loc)}` : 'https://maps.google.com';
+  }
+
+  public getParkingLabel(): string {
+    const p = this.guest()?.parkingLocation?.trim();
+    if (!p) return 'Accès Parking';
+    if (p.startsWith('http://') || p.startsWith('https://')) return 'Accès Parking';
+    if (p.length > 20) return 'Accès Parking';
+    return p;
+  }
+
   public getDiscoverButtonBgColor(): string {
     return this.getPrimaryColor();
   }
@@ -381,6 +420,7 @@ export class GuestRsvp implements OnInit, OnDestroy {
   public mealChoice = '';
   public dessertChoice = '';
   public beverageChoice = '';
+  public hasConfirmedMenuChoice = signal<boolean>(false);
 
   // Dietary options (comprehensive list as regular properties)
   public hasVegetarien = false;
@@ -423,6 +463,7 @@ export class GuestRsvp implements OnInit, OnDestroy {
         this.activeCarouselIndex.set(foundIdx);
       }
     }
+    this.hasConfirmedMenuChoice.set(true);
     this.isFullMenuModalOpen.set(false);
   }
 
@@ -620,6 +661,10 @@ export class GuestRsvp implements OnInit, OnDestroy {
             if (beveragePrefix) {
               this.beverageChoice = beveragePrefix.replace('Boisson: ', '');
             }
+
+            if (this.starterChoice || this.mealChoice || this.dessertChoice || this.beverageChoice) {
+              this.hasConfirmedMenuChoice.set(true);
+            }
           }
 
           // Read other customized allergies
@@ -678,8 +723,7 @@ export class GuestRsvp implements OnInit, OnDestroy {
   }
 
   protected confirmRsvpSubmission(): void {
-    const choice = this.selectedAttendanceChoice();
-    if (!choice) return;
+    const choice = this.selectedAttendanceChoice() || 'CONFIRMED';
     this.status.set(choice);
     this.attendanceStatus = (choice === 'CONFIRMED');
 
@@ -808,12 +852,23 @@ export class GuestRsvp implements OnInit, OnDestroy {
   }
 
   protected processPayment(): void {
-    if (this.previewMode) {
-      alert("Paiement désactivé en mode aperçu.");
-      return;
-    }
     const currentGuest = this.guest();
     if (!currentGuest) return;
+
+    if (this.previewMode) {
+      this.isProcessingPayment.set(true);
+      setTimeout(() => {
+        this.guest.set({
+          ...currentGuest,
+          paymentStatus: 'PAID',
+          paidAmount: currentGuest.ticketPrice || 0
+        });
+        this.isProcessingPayment.set(false);
+        this.isPaymentModalOpen.set(false);
+        this.isSuccess.set(true);
+      }, 500);
+      return;
+    }
 
     this.isProcessingPayment.set(true);
     this.errorMessage.set('');

@@ -193,12 +193,10 @@
             {{ getDisplayTitle() }}
           </h1>
 
-          <!-- Personalized Dynamic Guest Salutation -->
-          <div class="invitation-guest-salutation mb-3">
-            <div class="salutation-guest-badge"
-              [style.borderColor]="getPrimaryColor() + '45'"
-              [style.backgroundColor]="getPrimaryColor() + '10'">
-              <span class="salutation-honorific"
+          <!-- Personalized Dynamic Guest Salutation (Affichage textuel sobre sans forme de bouton) -->
+          <div class="invitation-guest-salutation mb-3 text-center">
+            <div class="salutation-guest-text">
+              <span class="salutation-honorific me-1"
                 [style.fontFamily]="getSecondaryFont()"
                 [style.color]="getPrimaryColor()">Cher(e)</span>
               <span class="salutation-guest-name"
@@ -270,15 +268,14 @@
                 {{ guest()?.eventLocation || guest()?.invitationLocation }}
               </div>
 
-              <!-- Ticket Price Badge (si événement payant : transparence totale dès la Page 1) -->
-              <div class="invitation-ticket-price-wrapper mt-2.5" *ngIf="guest()?.isPaidEvent">
-                <span class="badge-ticket-price"
+              <!-- Ticket Price (si événement payant : affichage textuel sobre dès la Page 1) -->
+              <div class="invitation-ticket-price-wrapper mt-2" *ngIf="guest()?.isPaidEvent">
+                <span class="fs-xs fw-medium"
                   [style.fontFamily]="getSecondaryFont()"
-                  [style.borderColor]="getPrimaryColor() + '40'"
                   [style.color]="getSecondaryFontColor()"
-                  [style.backgroundColor]="getPrimaryColor() + '12'">
-                  <i class="fa fa-ticket-alt me-1.5" [style.color]="getPrimaryColor()"></i>
-                  Tarif d'entrée : <strong [style.color]="getSecondaryFontColor()">{{ guest()?.ticketPrice || 0 }} {{ guest()?.currency || 'MAD' }}</strong> / personne
+                  style="opacity: 0.9;">
+                  <i class="fa fa-ticket-alt me-1" [style.color]="getPrimaryColor()"></i>
+                  Tarif d'entrée : <strong [style.color]="getPrimaryColor()">{{ guest()?.ticketPrice || 0 }} {{ guest()?.currency || 'MAD' }}</strong> / personne
                 </span>
               </div>
             </div>
@@ -287,9 +284,9 @@
           <!-- ACTIONS PAGE 1 : Décision immédiate (Accepter / Décliner) + Lien Explorer d'abord -->
           <div class="page1-actions-container mt-4 pt-1 mb-2 text-center animate__animated animate__fadeIn">
             <!-- Boutons de décision immédiate -->
-            <div class="page1-decision-buttons d-flex align-items-center justify-content-center gap-2 gap-sm-3 flex-wrap">
+            <div class="page1-decision-buttons d-flex align-items-center justify-content-center gap-2 gap-sm-3 flex-nowrap">
               <!-- 1. Accepter (Bouton Principal teinté avec la couleur du modèle) -->
-              <button type="button" class="btn btn-decision-accept"
+              <button type="button" class="btn btn-decision-accept shadow-sm"
                 [style.background]="getPrimaryColor()"
                 [style.borderColor]="getPrimaryColor()"
                 [style.color]="isDarkBg(getPrimaryColor()) ? '#ffffff' : '#0c0c0c'"
@@ -297,10 +294,8 @@
                 <i class="fa fa-check me-2"></i> Accepter
               </button>
 
-              <!-- 2. Décliner (Bouton Contour Discret teinté avec la couleur secondaire) -->
-              <button type="button" class="btn btn-decision-decline"
-                [style.color]="getSecondaryFontColor()"
-                [style.borderColor]="getSecondaryFontColor() + '40'"
+              <!-- 2. Décliner (Bouton Contour Net et Lisible) -->
+              <button type="button" class="btn btn-decision-decline shadow-sm"
                 (click)="openDeclineModal()">
                 <i class="fa fa-times me-1.5"></i> Décliner
               </button>
@@ -388,9 +383,7 @@
                           <div class="d-flex flex-column">
                             <div>
                               <span class="fw-bold text-dark font-serif" style="font-size: 0.88rem; color: #0f172a;">{{ item.name }}</span>
-                              <span class="badge bg-light text-dark border ms-1.5 px-2 py-0.5" style="font-size: 0.64rem;" *ngIf="item.dietaryTag">
-                                {{ item.dietaryTag }}
-                              </span>
+                              <span class="ms-1.5 text-muted fst-italic fw-normal" style="font-size: 0.72rem;" *ngIf="item.dietaryTag">({{ item.dietaryTag }})</span>
                             </div>
                             <p class="text-muted mb-0 fst-italic mt-0.5" style="font-size: 0.74rem; line-height: 1.3;" *ngIf="item.description">{{ item.description }}</p>
                           </div>
@@ -411,13 +404,11 @@
                           <div class="d-flex flex-column">
                             <div>
                               <span class="fw-bold text-dark font-serif" style="font-size: 0.88rem; color: #0f172a;">{{ item.name }}</span>
-                              <span class="badge bg-light text-dark border ms-1.5 px-2 py-0.5" style="font-size: 0.64rem;" *ngIf="item.dietaryTag">
-                                {{ item.dietaryTag }}
-                              </span>
+                              <span class="ms-1.5 text-muted fst-italic fw-normal" style="font-size: 0.72rem;" *ngIf="item.dietaryTag">({{ item.dietaryTag }})</span>
                             </div>
                             <p class="text-muted mb-0 fst-italic mt-0.5" style="font-size: 0.74rem; line-height: 1.3;" *ngIf="item.description">{{ item.description }}</p>
                           </div>
-                          <span class="badge bg-light text-muted border px-2 py-1 fs-xxs text-nowrap">
+                          <span class="fs-xxs fst-italic text-muted text-nowrap">
                             Au buffet
                           </span>
                         </div>
@@ -442,9 +433,7 @@
                           <div class="d-flex flex-column">
                             <div>
                               <span class="fw-bold text-dark font-serif" style="font-size: 0.88rem; color: #0f172a;">{{ item.name }}</span>
-                              <span class="badge bg-light text-dark border ms-1.5 px-2 py-0.5" style="font-size: 0.64rem;" *ngIf="item.dietaryTag">
-                                {{ item.dietaryTag }}
-                              </span>
+                              <span class="ms-1.5 text-muted fst-italic fw-normal" style="font-size: 0.72rem;" *ngIf="item.dietaryTag">({{ item.dietaryTag }})</span>
                             </div>
                             <p class="text-muted mb-0 fst-italic mt-0.5" style="font-size: 0.74rem; line-height: 1.3;" *ngIf="item.description">{{ item.description }}</p>
                           </div>
@@ -465,13 +454,11 @@
                           <div class="d-flex flex-column">
                             <div>
                               <span class="fw-bold text-dark font-serif" style="font-size: 0.88rem; color: #0f172a;">{{ item.name }}</span>
-                              <span class="badge bg-light text-dark border ms-1.5 px-2 py-0.5" style="font-size: 0.64rem;" *ngIf="item.dietaryTag">
-                                {{ item.dietaryTag }}
-                              </span>
+                              <span class="ms-1.5 text-muted fst-italic fw-normal" style="font-size: 0.72rem;" *ngIf="item.dietaryTag">({{ item.dietaryTag }})</span>
                             </div>
                             <p class="text-muted mb-0 fst-italic mt-0.5" style="font-size: 0.74rem; line-height: 1.3;" *ngIf="item.description">{{ item.description }}</p>
                           </div>
-                          <span class="badge bg-light text-muted border px-2 py-1 fs-xxs text-nowrap">
+                          <span class="fs-xxs fst-italic text-muted text-nowrap">
                             Au buffet
                           </span>
                         </div>
@@ -496,9 +483,7 @@
                           <div class="d-flex flex-column">
                             <div>
                               <span class="fw-bold text-dark font-serif" style="font-size: 0.88rem; color: #0f172a;">{{ item.name }}</span>
-                              <span class="badge bg-light text-dark border ms-1.5 px-2 py-0.5" style="font-size: 0.64rem;" *ngIf="item.dietaryTag">
-                                {{ item.dietaryTag }}
-                              </span>
+                              <span class="ms-1.5 text-muted fst-italic fw-normal" style="font-size: 0.72rem;" *ngIf="item.dietaryTag">({{ item.dietaryTag }})</span>
                             </div>
                             <p class="text-muted mb-0 fst-italic mt-0.5" style="font-size: 0.74rem; line-height: 1.3;" *ngIf="item.description">{{ item.description }}</p>
                           </div>
@@ -519,13 +504,11 @@
                           <div class="d-flex flex-column">
                             <div>
                               <span class="fw-bold text-dark font-serif" style="font-size: 0.88rem; color: #0f172a;">{{ item.name }}</span>
-                              <span class="badge bg-light text-dark border ms-1.5 px-2 py-0.5" style="font-size: 0.64rem;" *ngIf="item.dietaryTag">
-                                {{ item.dietaryTag }}
-                              </span>
+                              <span class="ms-1.5 text-muted fst-italic fw-normal" style="font-size: 0.72rem;" *ngIf="item.dietaryTag">({{ item.dietaryTag }})</span>
                             </div>
                             <p class="text-muted mb-0 fst-italic mt-0.5" style="font-size: 0.74rem; line-height: 1.3;" *ngIf="item.description">{{ item.description }}</p>
                           </div>
-                          <span class="badge bg-light text-muted border px-2 py-1 fs-xxs text-nowrap">
+                          <span class="fs-xxs fst-italic text-muted text-nowrap">
                             Au buffet
                           </span>
                         </div>
@@ -550,9 +533,7 @@
                           <div class="d-flex flex-column">
                             <div>
                               <span class="fw-bold text-dark font-serif" style="font-size: 0.88rem; color: #0f172a;">{{ item.name }}</span>
-                              <span class="badge bg-light text-dark border ms-1.5 px-2 py-0.5" style="font-size: 0.64rem;" *ngIf="item.dietaryTag">
-                                {{ item.dietaryTag }}
-                              </span>
+                              <span class="ms-1.5 text-muted fst-italic fw-normal" style="font-size: 0.72rem;" *ngIf="item.dietaryTag">({{ item.dietaryTag }})</span>
                             </div>
                             <p class="text-muted mb-0 fst-italic mt-0.5" style="font-size: 0.74rem; line-height: 1.3;" *ngIf="item.description">{{ item.description }}</p>
                           </div>
@@ -573,13 +554,11 @@
                           <div class="d-flex flex-column">
                             <div>
                               <span class="fw-bold text-dark font-serif" style="font-size: 0.88rem; color: #0f172a;">{{ item.name }}</span>
-                              <span class="badge bg-light text-dark border ms-1.5 px-2 py-0.5" style="font-size: 0.64rem;" *ngIf="item.dietaryTag">
-                                {{ item.dietaryTag }}
-                              </span>
+                              <span class="ms-1.5 text-muted fst-italic fw-normal" style="font-size: 0.72rem;" *ngIf="item.dietaryTag">({{ item.dietaryTag }})</span>
                             </div>
                             <p class="text-muted mb-0 fst-italic mt-0.5" style="font-size: 0.74rem; line-height: 1.3;" *ngIf="item.description">{{ item.description }}</p>
                           </div>
-                          <span class="badge bg-light text-muted border px-2 py-1 fs-xxs text-nowrap">
+                          <span class="fs-xxs fst-italic text-muted text-nowrap">
                             Libre-service
                           </span>
                         </div>
@@ -592,7 +571,7 @@
                 <!-- Footer Action Button adapting to Formula -->
                 <button type="button" class="btn btn-sm btn-alt-secondary rounded-pill px-4 mt-3 py-2 fs-xs fw-bold text-uppercase shadow-sm"
                   *ngIf="isBuffet()"
-                  (click)="isFullMenuModalOpen.set(false)">
+                  (click)="confirmMenuModal()">
                   Fermer
                 </button>
 
@@ -618,27 +597,7 @@
 
         <!-- RSVP Multi-Step Form & Persistent Bottom RSVP Section -->
         <form #rsvpForm="ngForm" *ngIf="isMenuRsvpOpen() && !isSuccess()" class="w-100 mx-auto d-flex flex-column justify-content-between flex-grow-1"
-          style="max-width: 380px;">
-
-          <!-- TOP ARROW NAVIGATION BAR (Arrows only, without text) -->
-          <div class="top-step-nav-bar d-flex justify-content-between align-items-center w-100 px-1 pt-1 mb-1"
-            style="z-index: 10;">
-            <!-- Left Arrow (Previous / Back) -->
-            <button type="button" class="btn btn-top-nav-arrow shadow-sm d-flex align-items-center justify-content-center"
-              (click)="handleTopNavPrev()"
-              aria-label="Précédent">
-              <i class="fa fa-arrow-left"></i>
-            </button>
-
-            <!-- Right Arrow (Next) or Placeholder on Step 2 -->
-            <button type="button" class="btn btn-top-nav-arrow shadow-sm d-flex align-items-center justify-content-center"
-              (click)="goToNextStep()"
-              *ngIf="currentRsvpStep() < 2"
-              aria-label="Suivant">
-              <i class="fa fa-arrow-right"></i>
-            </button>
-            <div style="width: 36px; height: 36px;" *ngIf="currentRsvpStep() === 2"></div>
-          </div>
+          [style.maxWidth]="currentRsvpStep() === 2 ? '780px' : '380px'">
 
           <!-- STEP 0: Menu Discovery & Selection -->
           <div *ngIf="currentRsvpStep() === 0"
@@ -687,10 +646,11 @@
                     class="w-100 object-fit-cover rounded-2 shadow-sm" style="height: 155px;">
                 </div>
                 <div class="carousel-card-info text-center">
-                  <span
-                    class="badge bg-dark bg-opacity-75 text-white px-2.5 py-0.5 rounded-pill fs-xxs text-uppercase fw-semibold mb-1 d-inline-block"
-                    style="font-size: 0.62rem;">
-                    {{ carouselItems()[activeCarouselIndex()]?.categoryLabel }}
+                  <span class="text-uppercase fw-bold d-inline-block mb-1"
+                    [style.fontFamily]="getSecondaryFont()"
+                    [style.color]="getPrimaryColor()"
+                    style="font-size: 0.68rem; letter-spacing: 1.4px;">
+                    — {{ carouselItems()[activeCarouselIndex()]?.categoryLabel }} —
                   </span>
                   <h4 class="fs-xs fw-bold font-serif mb-0"
                     [style.fontFamily]="getSecondaryFont()"
@@ -708,52 +668,122 @@
               </button>
             </div>
 
-            <!-- Secondary Button to open Full Menu Modal & Selected Dishes Chip -->
-            <div class="mb-2 text-center">
-              <button type="button" class="btn btn-sm btn-alt-gold rounded-pill px-3.5 fs-xxs fw-semibold py-1.5 shadow-sm"
-                (click)="isFullMenuModalOpen.set(true)">
-                <i class="fa fa-utensils me-1"></i>
-                <span *ngIf="isBuffet()">Voir le menu du buffet</span>
-                <span *ngIf="!isBuffet()">Voir le menu complet & Choisir</span>
-              </button>
+            <!-- ÉTAT 1 : MODE DÉCOUVERTE (L'invité n'a pas encore accepté) -->
+            <div *ngIf="selectedAttendanceChoice() !== 'CONFIRMED'"
+              class="discovery-decision-actions text-center mt-3 pt-1 animate__animated animate__fadeIn">
+              
+              <div class="discovery-buttons-row d-flex align-items-center justify-content-center gap-2 gap-sm-3 flex-nowrap">
+                <!-- 1. Accepter (Bouton Principal teinté avec la couleur du modèle) -->
+                <button type="button" class="btn btn-decision-accept shadow-sm"
+                  [style.background]="getPrimaryColor()"
+                  [style.borderColor]="getPrimaryColor()"
+                  [style.color]="isDarkBg(getPrimaryColor()) ? '#ffffff' : '#0c0c0c'"
+                  (click)="acceptFromDiscovery()">
+                  <i class="fa fa-check me-2"></i> Accepter
+                </button>
 
-              <!-- Active Selected Dishes Chip (Clean & Floating) -->
-              <div *ngIf="(isPlated() && (starterChoice || mealChoice || dessertChoice || beverageChoice)) || (isMix() && mealChoice)" class="mt-2 text-center">
-                <div class="d-inline-flex flex-wrap justify-content-center gap-1">
-                  <span class="badge bg-white border text-dark rounded-pill px-2.5 py-1 fs-xxs shadow-sm"
-                    *ngIf="isPlated() && starterChoice" style="border-color: rgba(15,23,42,0.12) !important;">
-                    <i class="fa fa-check text-warning me-1"></i> Entrée: {{ starterChoice }}
-                  </span>
-                  <span class="badge bg-white border text-dark rounded-pill px-2.5 py-1 fs-xxs shadow-sm"
-                    *ngIf="mealChoice" style="border-color: rgba(15,23,42,0.12) !important;">
-                    <i class="fa fa-check text-warning me-1"></i> Plat: {{ mealChoice }}
-                  </span>
-                  <span class="badge bg-white border text-dark rounded-pill px-2.5 py-1 fs-xxs shadow-sm"
-                    *ngIf="isPlated() && dessertChoice" style="border-color: rgba(15,23,42,0.12) !important;">
-                    <i class="fa fa-check text-warning me-1"></i> Dessert: {{ dessertChoice }}
-                  </span>
-                  <span class="badge bg-white border text-dark rounded-pill px-2.5 py-1 fs-xxs shadow-sm"
-                    *ngIf="isPlated() && beverageChoice" style="border-color: rgba(15,23,42,0.12) !important;">
-                    <i class="fa fa-check text-warning me-1"></i> Boisson: {{ beverageChoice }}
-                  </span>
-                </div>
+                <!-- 2. Décliner (Bouton Contour Net et Lisible) -->
+                <button type="button" class="btn btn-decision-decline shadow-sm"
+                  (click)="openDeclineModal()">
+                  <i class="fa fa-times me-1.5"></i> Décliner
+                </button>
+              </div>
+
+              <!-- Lien discret de retour à la Page 1 -->
+              <div class="mt-2.5">
+                <button type="button" class="btn btn-link text-decoration-none p-0"
+                  [style.color]="getSecondaryFontColor()"
+                  (click)="closeMenuAndRsvp()"
+                  style="font-size: 0.76rem; opacity: 0.85;">
+                  <i class="fa fa-arrow-left me-1"></i> Revoir la carte d'invitation
+                </button>
               </div>
             </div>
 
-            <!-- Formule Buffet: Transparent floating elegant note without white border box -->
-            <div *ngIf="isBuffet()" class="text-center mt-2.5 mb-1 px-3">
-              <span class="luxury-subtitle d-block mb-0.5"
-                [style.fontFamily]="getPrimaryFont()"
-                [style.color]="getPrimaryColor()"
-                style="font-size: 1.18rem !important; line-height: 1.1;">
-                Buffet Libre-Service
-              </span>
-              <p class="fs-xxs mb-0 fst-italic"
-                [style.fontFamily]="getSecondaryFont()"
-                [style.color]="getSecondaryFontColor()"
-                style="font-size: 0.72rem; line-height: 1.3; opacity: 0.9;">
-                Un buffet varié d'exception sera à votre disposition
-              </p>
+            <!-- ÉTAT 2 : MODE CONFIRMÉ (L'invité a accepté, il peut désormais choisir ses plats) -->
+            <div *ngIf="selectedAttendanceChoice() === 'CONFIRMED'"
+              class="confirmed-step0-actions animate__animated animate__fadeIn">
+
+              <!-- Bouton Valorisé & Agrandir pour Choisir ses plats -->
+              <div class="mb-3 text-center mt-2.5">
+                <button type="button" class="btn btn-select-dishes-prominent rounded-pill px-4 py-2.5 fw-bold shadow-sm"
+                  [style.background]="getPrimaryColor() + '18'"
+                  [style.borderColor]="getPrimaryColor()"
+                  [style.color]="getPrimaryColor()"
+                  style="border-width: 1.5px; border-style: solid; font-size: 0.88rem;"
+                  (click)="isFullMenuModalOpen.set(true)">
+                  <i class="fa fa-utensils me-2" [style.color]="getPrimaryColor()"></i>
+                  <span *ngIf="isBuffet()">Consulter le menu du buffet</span>
+                  <span *ngIf="!isBuffet()">
+                    {{ (starterChoice || mealChoice || dessertChoice || beverageChoice) ? 'Modifier mes plats choisis' : 'Choisir mes plats (Menu complet)' }}
+                  </span>
+                </button>
+
+                <!-- Lien discret de retour à la Page 1 tant que les plats ne sont pas encore choisis -->
+                <div class="mt-2.5" *ngIf="!hasConfirmedMenuChoice() && !isBuffet()">
+                  <button type="button" class="btn btn-link text-decoration-none p-0"
+                    [style.color]="getSecondaryFontColor()"
+                    (click)="closeMenuAndRsvp()"
+                    style="font-size: 0.76rem; opacity: 0.85;">
+                    <i class="fa fa-arrow-left me-1"></i> Revoir la carte d'invitation
+                  </button>
+                </div>
+
+                <!-- Selected Dishes Summary (Affichage textuel épuré sans forme de bouton - visible dès que les plats sont choisis) -->
+                <div *ngIf="hasConfirmedMenuChoice() && ((isPlated() && (starterChoice || mealChoice || dessertChoice || beverageChoice)) || (isMix() && mealChoice))" class="mt-2.5 text-center animate__animated animate__fadeIn">
+                  <div class="d-inline-flex flex-wrap justify-content-center gap-2" style="font-size: 0.78rem;">
+                    <span class="fw-semibold" [style.color]="getSecondaryFontColor()" *ngIf="isPlated() && starterChoice">
+                      <i class="fa fa-check text-success me-1"></i>Entrée : <strong>{{ starterChoice }}</strong>
+                    </span>
+                    <span class="fw-semibold" [style.color]="getSecondaryFontColor()" *ngIf="mealChoice">
+                      <i class="fa fa-check text-success me-1"></i>Plat : <strong>{{ mealChoice }}</strong>
+                    </span>
+                    <span class="fw-semibold" [style.color]="getSecondaryFontColor()" *ngIf="isPlated() && dessertChoice">
+                      <i class="fa fa-check text-success me-1"></i>Dessert : <strong>{{ dessertChoice }}</strong>
+                    </span>
+                    <span class="fw-semibold" [style.color]="getSecondaryFontColor()" *ngIf="isPlated() && beverageChoice">
+                      <i class="fa fa-check text-success me-1"></i>Boisson : <strong>{{ beverageChoice }}</strong>
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Formule Buffet: Transparent floating elegant note -->
+              <div *ngIf="isBuffet()" class="text-center mt-2.5 mb-1 px-3">
+                <span class="luxury-subtitle d-block mb-0.5"
+                  [style.fontFamily]="getPrimaryFont()"
+                  [style.color]="getPrimaryColor()"
+                  style="font-size: 1.18rem !important; line-height: 1.1;">
+                  Buffet Libre-Service
+                </span>
+                <p class="fs-xxs mb-0 fst-italic"
+                  [style.fontFamily]="getSecondaryFont()"
+                  [style.color]="getSecondaryFontColor()"
+                  style="font-size: 0.72rem; line-height: 1.3; opacity: 0.9;">
+                  Un buffet varié d'exception sera à votre disposition
+                </p>
+              </div>
+
+              <!-- Actions Étape 0 : [Retour] & [Suivant] (Affichées UNIQUEMENT après confirmation des plats) -->
+              <div *ngIf="hasConfirmedMenuChoice() || isBuffet()" class="step-nav-buttons d-flex align-items-center justify-content-center gap-2 gap-sm-3 mt-3.5 pt-1 mb-2 animate__animated animate__fadeIn">
+                <!-- Bouton Retour (vers Page 1) -->
+                <button type="button" class="btn btn-step-nav-prev"
+                  [style.color]="getSecondaryFontColor()"
+                  [style.borderColor]="getSecondaryFontColor() + '40'"
+                  (click)="closeMenuAndRsvp()">
+                  <i class="fa fa-arrow-left me-1.5"></i> Retour
+                </button>
+
+                <!-- Bouton Suivant (vers Étape 1 : Préférences & Allergies) -->
+                <button type="button" class="btn btn-step-nav-next shadow-sm"
+                  [style.background]="getPrimaryColor()"
+                  [style.borderColor]="getPrimaryColor()"
+                  [style.color]="isDarkBg(getPrimaryColor()) ? '#ffffff' : '#0c0c0c'"
+                  (click)="goToNextStep()">
+                  Suivant <i class="fa fa-arrow-right ms-1.5"></i>
+                </button>
+              </div>
+
             </div>
 
           </div>
@@ -792,36 +822,60 @@
                 style="letter-spacing: 1.2px; font-size: 0.7rem;">
                 Régimes Alimentaires
               </label>
-              <div class="dietary-pills-container d-flex flex-wrap gap-1.5 justify-content-center mb-2">
-                <label class="dietary-pill py-1.5 px-3" [class.active-pill]="hasVegetarien" for="dietVeg" [style.color]="hasVegetarien ? '#0f172a' : getSecondaryFontColor()" [style.borderColor]="getPrimaryColor()" style="font-size: 0.74rem;">
+              <div class="dietary-pills-container d-flex flex-wrap gap-2 justify-content-center mb-2">
+                <label class="dietary-pill py-1.5 px-3" [class.active-pill]="hasVegetarien" for="dietVeg"
+                  [style.background]="hasVegetarien ? getPrimaryColor() : '#ffffff'"
+                  [style.borderColor]="hasVegetarien ? getPrimaryColor() : (getPrimaryColor() + '55')"
+                  [style.color]="hasVegetarien ? (isDarkBg(getPrimaryColor()) ? '#ffffff' : '#0c0c0c') : '#1e293b'">
                   <input type="checkbox" id="dietVeg" [(ngModel)]="hasVegetarien" name="hasVegetarien" class="dietary-checkbox">
                   <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasVegetarien"></i> Végétarien
                 </label>
-                <label class="dietary-pill py-1.5 px-3" [class.active-pill]="hasVegan" for="dietVegan" [style.color]="hasVegan ? '#0f172a' : getSecondaryFontColor()" [style.borderColor]="getPrimaryColor()" style="font-size: 0.74rem;">
+                <label class="dietary-pill py-1.5 px-3" [class.active-pill]="hasVegan" for="dietVegan"
+                  [style.background]="hasVegan ? getPrimaryColor() : '#ffffff'"
+                  [style.borderColor]="hasVegan ? getPrimaryColor() : (getPrimaryColor() + '55')"
+                  [style.color]="hasVegan ? (isDarkBg(getPrimaryColor()) ? '#ffffff' : '#0c0c0c') : '#1e293b'">
                   <input type="checkbox" id="dietVegan" [(ngModel)]="hasVegan" name="hasVegan" class="dietary-checkbox">
                   <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasVegan"></i> Vegan
                 </label>
-                <label class="dietary-pill py-1.5 px-3" [class.active-pill]="hasGlutenFree" for="dietGluten" [style.color]="hasGlutenFree ? '#0f172a' : getSecondaryFontColor()" [style.borderColor]="getPrimaryColor()" style="font-size: 0.74rem;">
+                <label class="dietary-pill py-1.5 px-3" [class.active-pill]="hasGlutenFree" for="dietGluten"
+                  [style.background]="hasGlutenFree ? getPrimaryColor() : '#ffffff'"
+                  [style.borderColor]="hasGlutenFree ? getPrimaryColor() : (getPrimaryColor() + '55')"
+                  [style.color]="hasGlutenFree ? (isDarkBg(getPrimaryColor()) ? '#ffffff' : '#0c0c0c') : '#1e293b'">
                   <input type="checkbox" id="dietGluten" [(ngModel)]="hasGlutenFree" name="hasGlutenFree" class="dietary-checkbox">
                   <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasGlutenFree"></i> Sans gluten
                 </label>
-                <label class="dietary-pill py-1.5 px-3" [class.active-pill]="hasLactoseFree" for="dietLactose" [style.color]="hasLactoseFree ? '#0f172a' : getSecondaryFontColor()" [style.borderColor]="getPrimaryColor()" style="font-size: 0.74rem;">
+                <label class="dietary-pill py-1.5 px-3" [class.active-pill]="hasLactoseFree" for="dietLactose"
+                  [style.background]="hasLactoseFree ? getPrimaryColor() : '#ffffff'"
+                  [style.borderColor]="hasLactoseFree ? getPrimaryColor() : (getPrimaryColor() + '55')"
+                  [style.color]="hasLactoseFree ? (isDarkBg(getPrimaryColor()) ? '#ffffff' : '#0c0c0c') : '#1e293b'">
                   <input type="checkbox" id="dietLactose" [(ngModel)]="hasLactoseFree" name="hasLactoseFree" class="dietary-checkbox">
                   <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasLactoseFree"></i> Sans lactose
                 </label>
-                <label class="dietary-pill py-1.5 px-3" [class.active-pill]="hasHalal" for="dietHalal" [style.color]="hasHalal ? '#0f172a' : getSecondaryFontColor()" [style.borderColor]="getPrimaryColor()" style="font-size: 0.74rem;">
+                <label class="dietary-pill py-1.5 px-3" [class.active-pill]="hasHalal" for="dietHalal"
+                  [style.background]="hasHalal ? getPrimaryColor() : '#ffffff'"
+                  [style.borderColor]="hasHalal ? getPrimaryColor() : (getPrimaryColor() + '55')"
+                  [style.color]="hasHalal ? (isDarkBg(getPrimaryColor()) ? '#ffffff' : '#0c0c0c') : '#1e293b'">
                   <input type="checkbox" id="dietHalal" [(ngModel)]="hasHalal" name="hasHalal" class="dietary-checkbox">
                   <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasHalal"></i> Halal
                 </label>
-                <label class="dietary-pill py-1.5 px-3" [class.active-pill]="hasFruitsDeMerFree" for="dietFruitsDeMer" [style.color]="hasFruitsDeMerFree ? '#0f172a' : getSecondaryFontColor()" [style.borderColor]="getPrimaryColor()" style="font-size: 0.74rem;">
+                <label class="dietary-pill py-1.5 px-3" [class.active-pill]="hasFruitsDeMerFree" for="dietFruitsDeMer"
+                  [style.background]="hasFruitsDeMerFree ? getPrimaryColor() : '#ffffff'"
+                  [style.borderColor]="hasFruitsDeMerFree ? getPrimaryColor() : (getPrimaryColor() + '55')"
+                  [style.color]="hasFruitsDeMerFree ? (isDarkBg(getPrimaryColor()) ? '#ffffff' : '#0c0c0c') : '#1e293b'">
                   <input type="checkbox" id="dietFruitsDeMer" [(ngModel)]="hasFruitsDeMerFree" name="hasFruitsDeMerFree" class="dietary-checkbox">
                   <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasFruitsDeMerFree"></i> Sans fruits de mer
                 </label>
-                <label class="dietary-pill py-1.5 px-3" [class.active-pill]="hasSucreFree" for="dietSucre" [style.color]="hasSucreFree ? '#0f172a' : getSecondaryFontColor()" [style.borderColor]="getPrimaryColor()" style="font-size: 0.74rem;">
+                <label class="dietary-pill py-1.5 px-3" [class.active-pill]="hasSucreFree" for="dietSucre"
+                  [style.background]="hasSucreFree ? getPrimaryColor() : '#ffffff'"
+                  [style.borderColor]="hasSucreFree ? getPrimaryColor() : (getPrimaryColor() + '55')"
+                  [style.color]="hasSucreFree ? (isDarkBg(getPrimaryColor()) ? '#ffffff' : '#0c0c0c') : '#1e293b'">
                   <input type="checkbox" id="dietSucre" [(ngModel)]="hasSucreFree" name="hasSucreFree" class="dietary-checkbox">
                   <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasSucreFree"></i> Sans sucre
                 </label>
-                <label class="dietary-pill py-1.5 px-3" [class.active-pill]="hasArachidesFree" for="dietArachides" [style.color]="hasArachidesFree ? '#0f172a' : getSecondaryFontColor()" [style.borderColor]="getPrimaryColor()" style="font-size: 0.74rem;">
+                <label class="dietary-pill py-1.5 px-3" [class.active-pill]="hasArachidesFree" for="dietArachides"
+                  [style.background]="hasArachidesFree ? getPrimaryColor() : '#ffffff'"
+                  [style.borderColor]="hasArachidesFree ? getPrimaryColor() : (getPrimaryColor() + '55')"
+                  [style.color]="hasArachidesFree ? (isDarkBg(getPrimaryColor()) ? '#ffffff' : '#0c0c0c') : '#1e293b'">
                   <input type="checkbox" id="dietArachides" [(ngModel)]="hasArachidesFree" name="hasArachidesFree" class="dietary-checkbox">
                   <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasArachidesFree"></i> Sans arachides
                 </label>
@@ -836,220 +890,252 @@
                 style="letter-spacing: 1.2px; font-size: 0.68rem;">
                 Autres allergies ou restrictions
               </label>
-              <textarea class="form-control luxury-form-control py-2 px-3 fs-xs mx-auto" rows="2"
-                style="max-width: 340px; font-size: 0.76rem; border-radius: 12px;"
+              <textarea class="form-control luxury-form-control py-2 px-3 fs-xs mx-auto shadow-2xs" rows="2"
+                style="max-width: 340px; font-size: 0.78rem; border-radius: 12px; background: #ffffff !important; color: #0f172a !important; border: 1.5px solid rgba(15, 23, 42, 0.22) !important;"
                 placeholder="Ex: allergie aux fraises, intolérance au céleri, etc..."
                 [(ngModel)]="otherAllergies" name="otherAllergies"></textarea>
             </div>
 
+            <!-- Actions Étape 1 : [Retour] & [Suivant] -->
+            <div class="step-nav-buttons d-flex align-items-center justify-content-center gap-2 gap-sm-3 mt-3 pt-2 mb-2 animate__animated animate__fadeIn">
+              <!-- Bouton Retour (vers Étape 0) -->
+              <button type="button" class="btn btn-step-nav-prev"
+                [style.color]="getSecondaryFontColor()"
+                [style.borderColor]="getSecondaryFontColor() + '40'"
+                (click)="goToPrevStep()">
+                <i class="fa fa-arrow-left me-1.5"></i> Retour
+              </button>
+
+              <!-- Bouton Suivant (vers Étape 2 : Récapitulatif) -->
+              <button type="button" class="btn btn-step-nav-next shadow-sm"
+                [style.background]="getPrimaryColor()"
+                [style.borderColor]="getPrimaryColor()"
+                [style.color]="isDarkBg(getPrimaryColor()) ? '#ffffff' : '#0c0c0c'"
+                (click)="goToNextStep()">
+                Suivant <i class="fa fa-arrow-right ms-1.5"></i>
+              </button>
+            </div>
 
           </div>
 
-          <!-- STEP 2: Confirmation & Récapitulatif (Enlarged Text & Shifted Downwards) -->
+          <!-- STEP 2: Confirmation & Récapitulatif (Layout 2 Cartes : Choix & Règlement) -->
           <div *ngIf="currentRsvpStep() === 2"
-            class="rsvp-summary-container animate__animated animate__fadeIn my-auto w-100 pt-5 pb-2"
-            style="padding-top: 55px !important;">
+            class="rsvp-summary-container animate__animated animate__fadeIn my-auto w-100 pt-3 pt-md-4 pb-2">
 
             <!-- Title Header -->
-            <div class="spotlight-title-wrapper mb-3.5 text-center">
+            <div class="spotlight-title-wrapper mb-3 text-center">
               <span class="luxury-subtitle d-block mb-1"
                 [style.fontFamily]="getPrimaryFont()"
                 [style.color]="getPrimaryColor()"
-                style="font-size: 1.5rem !important; line-height: 1.1 !important;">
+                style="font-size: 1.45rem !important; line-height: 1.1 !important;">
                 Confirmation
               </span>
               <h3 class="page2-menu-title text-uppercase fw-bold m-0"
                 [style.fontFamily]="getSecondaryFont()"
                 [style.color]="getSecondaryFontColor()"
-                style="font-size: 1.12rem !important; line-height: 1.3 !important; letter-spacing: 1.5px !important;">
-                Récapitulatif de vos choix
+                style="font-size: 1.1rem !important; line-height: 1.3 !important; letter-spacing: 1.5px !important;">
+                Récapitulatif de votre réservation
               </h3>
-              <div class="spotlight-underline mx-auto mt-1.5"
+              <div class="spotlight-underline mx-auto mt-1.5 mb-3"
                 [style.backgroundColor]="getPrimaryColor()"
                 style="width: 45px; height: 1.5px; opacity: 0.65;"></div>
             </div>
 
-            <!-- Borderless Pure Content Area (Enlarged Fonts) -->
-            <div class="recap-content-wrapper mx-auto text-center mb-3.5" style="max-width: 370px;">
-              
-              <!-- Menu Choices List (Pure typography with soft dividers) -->
-              <div class="mb-3.5 text-start px-2">
-                <div class="fw-bold text-uppercase mb-2.5 text-center"
-                  [style.fontFamily]="getSecondaryFont()"
-                  [style.color]="getSecondaryFontColor()"
-                  style="letter-spacing: 1.8px; opacity: 0.95; font-size: 0.78rem;">
-                  — Choix du Menu —
+            <!-- Grille 2 Cartes : Côte à côte sur PC/Tablette, empilées sur Mobile -->
+            <div class="summary-cards-grid d-flex flex-column flex-md-row gap-3 justify-content-center align-items-stretch mx-auto px-2"
+              style="max-width: 760px; width: 100%;">
+
+              <!-- CARTE 1 : Récapitulatif des Choix + Bouton Modifier mes choix -->
+              <div class="summary-subcard card-choices-box rounded-4 p-3 p-sm-3.5 d-flex flex-column justify-content-between flex-fill shadow-xs"
+                [style.borderColor]="getPrimaryColor() + '35'"
+                [style.backgroundColor]="getPrimaryColor() + '06'">
+
+                <div>
+                  <!-- En-tête Carte 1 -->
+                  <div class="d-flex align-items-center gap-2 mb-2.5 pb-2 border-bottom" [style.borderColor]="getPrimaryColor() + '25'">
+                    <i class="fa fa-utensils" [style.color]="getPrimaryColor()"></i>
+                    <span class="fw-bold text-uppercase" [style.fontFamily]="getSecondaryFont()" [style.color]="getPrimaryColor()" style="font-size: 0.78rem; letter-spacing: 1.2px;">
+                      Mes Choix de Restauration
+                    </span>
+                  </div>
+
+                  <!-- Choix du Menu -->
+                  <div class="mb-3 text-start">
+                    <div class="d-flex flex-column gap-1.5" *ngIf="isPlated()">
+                      <div class="d-flex justify-content-between align-items-baseline py-1 border-bottom" [style.borderColor]="getPrimaryColor() + '15'" *ngIf="starterChoice">
+                        <span class="text-uppercase fw-semibold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.72rem; opacity: 0.85;">Entrée</span>
+                        <span class="fw-semibold text-end font-serif" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.88rem;">{{ starterChoice }}</span>
+                      </div>
+                      <div class="d-flex justify-content-between align-items-baseline py-1 border-bottom" [style.borderColor]="getPrimaryColor() + '15'">
+                        <span class="text-uppercase fw-semibold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.72rem; opacity: 0.85;">Plat</span>
+                        <span class="fw-bold text-end font-serif" [style.fontFamily]="getSecondaryFont()" [style.color]="getPrimaryColor()" style="font-size: 0.92rem;">{{ mealChoice || 'Non spécifié' }}</span>
+                      </div>
+                      <div class="d-flex justify-content-between align-items-baseline py-1 border-bottom" [style.borderColor]="getPrimaryColor() + '15'" *ngIf="dessertChoice">
+                        <span class="text-uppercase fw-semibold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.72rem; opacity: 0.85;">Dessert</span>
+                        <span class="fw-semibold text-end font-serif" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.88rem;">{{ dessertChoice }}</span>
+                      </div>
+                      <div class="d-flex justify-content-between align-items-baseline py-1 border-bottom" [style.borderColor]="getPrimaryColor() + '15'" *ngIf="beverageChoice">
+                        <span class="text-uppercase fw-semibold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.72rem; opacity: 0.85;">Boisson</span>
+                        <span class="fw-semibold text-end font-serif" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.88rem;">{{ beverageChoice }}</span>
+                      </div>
+                    </div>
+
+                    <div class="d-flex flex-column gap-1.5" *ngIf="isMix()">
+                      <div class="d-flex justify-content-between align-items-baseline py-1 border-bottom" [style.borderColor]="getPrimaryColor() + '15'">
+                        <span class="text-uppercase fw-semibold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.72rem; opacity: 0.85;">Plat assis</span>
+                        <span class="fw-bold text-end font-serif" [style.fontFamily]="getSecondaryFont()" [style.color]="getPrimaryColor()" style="font-size: 0.92rem;">{{ mealChoice || 'Non spécifié' }}</span>
+                      </div>
+                      <div class="d-flex justify-content-between align-items-baseline py-1 border-bottom" [style.borderColor]="getPrimaryColor() + '15'" *ngIf="dessertChoice">
+                        <span class="text-uppercase fw-semibold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.72rem; opacity: 0.85;">Dessert</span>
+                        <span class="fw-semibold text-end font-serif" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.88rem;">{{ dessertChoice }}</span>
+                      </div>
+                      <div class="fs-xxs mt-1 text-center fst-italic" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="opacity: 0.85;">Entrées & Boissons au buffet libre-service</div>
+                    </div>
+
+                    <div *ngIf="isBuffet()" class="text-center py-1.5">
+                      <span class="fw-semibold font-serif" [style.color]="getPrimaryColor()" style="font-size: 0.88rem;">
+                        <i class="fa fa-utensils me-1.5"></i> Formule Buffet Libre-Service
+                      </span>
+                    </div>
+                  </div>
+
+                  <!-- Régimes & Allergies -->
+                  <div class="mb-3 text-start">
+                    <div class="d-flex align-items-center gap-2 mb-2 pb-1 border-bottom" [style.borderColor]="getPrimaryColor() + '20'">
+                      <i class="fa fa-heartbeat" [style.color]="getPrimaryColor()"></i>
+                      <span class="fw-bold text-uppercase" [style.fontFamily]="getSecondaryFont()" [style.color]="getPrimaryColor()" style="font-size: 0.74rem; letter-spacing: 1px;">
+                        Régimes & Allergies
+                      </span>
+                    </div>
+
+                    <div class="d-flex flex-wrap gap-2 mb-1" *ngIf="getSelectedDietsArray().length > 0">
+                      <span class="d-inline-flex align-items-center fs-xxs fw-semibold" [style.color]="getSecondaryFontColor()"
+                        *ngFor="let diet of getSelectedDietsArray()">
+                        <i class="fa fa-check text-success me-1"></i>{{ diet }}
+                      </span>
+                    </div>
+
+                    <div class="fst-italic mt-1"
+                      *ngIf="otherAllergies.trim() && otherAllergies.trim().toLowerCase() !== 'aucun' && otherAllergies.trim().toLowerCase() !== 'none'"
+                      [style.fontFamily]="getSecondaryFont()"
+                      [style.color]="getSecondaryFontColor()"
+                      style="font-size: 0.78rem;">
+                      <span class="fw-bold" [style.color]="getPrimaryColor()">Allergie :</span> {{ otherAllergies.trim() }}
+                    </div>
+
+                    <div class="fst-italic text-muted"
+                      *ngIf="getSelectedDietsArray().length === 0 && (!otherAllergies.trim() || otherAllergies.trim().toLowerCase() === 'aucun' || otherAllergies.trim().toLowerCase() === 'none')"
+                      [style.fontFamily]="getSecondaryFont()"
+                      style="font-size: 0.76rem;">
+                      Aucune restriction particulière
+                    </div>
+                  </div>
                 </div>
 
-                <div class="d-flex flex-column gap-2" *ngIf="isPlated()">
-                  <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom" [style.borderColor]="'rgba(212, 175, 55, 0.25)'" *ngIf="starterChoice">
-                    <span class="text-uppercase fw-bold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="letter-spacing: 0.8px; font-size: 0.74rem; opacity: 0.85;">Entrée</span>
-                    <span class="fw-semibold text-end font-serif" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.95rem;">{{ starterChoice }}</span>
-                  </div>
-
-                  <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom" [style.borderColor]="'rgba(212, 175, 55, 0.25)'">
-                    <span class="text-uppercase fw-bold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="letter-spacing: 0.8px; font-size: 0.74rem; opacity: 0.9;">Plat Principal</span>
-                    <span class="fw-bold text-end font-serif" [style.fontFamily]="getSecondaryFont()" [style.color]="getPrimaryColor()" style="font-size: 0.98rem;">{{ mealChoice || 'Non spécifié' }}</span>
-                  </div>
-
-                  <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom" [style.borderColor]="'rgba(212, 175, 55, 0.25)'" *ngIf="dessertChoice">
-                    <span class="text-uppercase fw-bold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="letter-spacing: 0.8px; font-size: 0.74rem; opacity: 0.85;">Dessert</span>
-                    <span class="fw-semibold text-end font-serif" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.95rem;">{{ dessertChoice }}</span>
-                  </div>
-
-                  <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom" [style.borderColor]="'rgba(212, 175, 55, 0.25)'" *ngIf="beverageChoice">
-                    <span class="text-uppercase fw-bold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="letter-spacing: 0.8px; font-size: 0.74rem; opacity: 0.85;">Boisson</span>
-                    <span class="fw-semibold text-end font-serif" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.95rem;">{{ beverageChoice }}</span>
-                  </div>
+                <!-- Bouton Modifier mes choix (intégré sous les choix) -->
+                <div class="pt-2.5 mt-auto border-top text-center" [style.borderColor]="getPrimaryColor() + '20'">
+                  <button type="button" class="btn btn-step-nav-prev rounded-pill px-3 py-1.5 fs-xs fw-semibold w-100"
+                    [style.color]="getSecondaryFontColor()"
+                    [style.borderColor]="getSecondaryFontColor() + '35'"
+                    (click)="goToPrevStep()">
+                    <i class="fa fa-arrow-left me-1.5"></i> Modifier mes choix
+                  </button>
                 </div>
 
-                <div class="d-flex flex-column gap-2" *ngIf="isMix()">
-                  <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom" [style.borderColor]="'rgba(212, 175, 55, 0.25)'">
-                    <span class="text-uppercase fw-bold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="letter-spacing: 0.8px; font-size: 0.74rem; opacity: 0.9;">Plat assis</span>
-                    <span class="fw-bold text-end font-serif" [style.fontFamily]="getSecondaryFont()" [style.color]="getPrimaryColor()" style="font-size: 0.98rem;">{{ mealChoice || 'Non spécifié' }}</span>
-                  </div>
-                  <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom" [style.borderColor]="'rgba(212, 175, 55, 0.25)'" *ngIf="dessertChoice">
-                    <span class="text-uppercase fw-bold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="letter-spacing: 0.8px; font-size: 0.74rem; opacity: 0.85;">Dessert</span>
-                    <span class="fw-semibold text-end font-serif" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.95rem;">{{ dessertChoice }}</span>
-                  </div>
-                  <div class="fs-xs mt-1 text-center fst-italic" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="opacity: 0.85;">Entrées & Boissons d'accueil au buffet libre-service</div>
-                </div>
-
-                <div *ngIf="isBuffet()" class="text-center py-2">
-                  <div class="fs-sm fw-bold font-serif" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()">Formule Buffet Libre-Service</div>
-                </div>
               </div>
 
-              <!-- Dietary & Allergies (Clean pills, no heavy container) -->
-              <div class="mb-3.5 text-center px-2">
-                <div class="fw-bold text-uppercase mb-2.5 text-center"
-                  [style.fontFamily]="getSecondaryFont()"
-                  [style.color]="getSecondaryFontColor()"
-                  style="letter-spacing: 1.8px; opacity: 0.95; font-size: 0.78rem;">
-                  — Régimes & Allergies —
+              <!-- CARTE 2 : Participation, Montant & Règlement -->
+              <div class="summary-subcard card-payment-box rounded-4 p-3 p-sm-3.5 d-flex flex-column justify-content-between flex-fill shadow-xs"
+                [style.borderColor]="getPrimaryColor() + '45'"
+                [style.backgroundColor]="getPrimaryColor() + '09'">
+
+                <div>
+                  <!-- En-tête Carte 2 -->
+                  <div class="d-flex align-items-center gap-2 mb-2.5 pb-2 border-bottom" [style.borderColor]="getPrimaryColor() + '25'">
+                    <i class="fa fa-ticket-alt" [style.color]="getPrimaryColor()"></i>
+                    <span class="fw-bold text-uppercase" [style.fontFamily]="getSecondaryFont()" [style.color]="getPrimaryColor()" style="font-size: 0.78rem; letter-spacing: 1.2px;">
+                      Participation & Règlement
+                    </span>
+                  </div>
+
+                  <!-- Détails Billet & Montant -->
+                  <div class="mb-3 text-start">
+                    <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom" [style.borderColor]="getPrimaryColor() + '15'">
+                      <span class="text-uppercase fw-semibold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.72rem; opacity: 0.85;">Invité</span>
+                      <span class="fw-bold text-end font-serif" [style.fontFamily]="getSecondaryFont()" [style.color]="getPrimaryColor()" style="font-size: 0.92rem;">{{ guest()?.guestName }}</span>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom" [style.borderColor]="getPrimaryColor() + '15'" *ngIf="guest()?.isPaidEvent">
+                      <span class="text-uppercase fw-semibold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.72rem; opacity: 0.85;">Type de billet</span>
+                      <span class="fw-semibold text-end" [style.fontFamily]="getSecondaryFont()" [style.color]="getPrimaryColor()" style="font-size: 0.85rem;">
+                        Billet nominatif
+                      </span>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom" [style.borderColor]="getPrimaryColor() + '15'" *ngIf="guest()?.isPaidEvent && guest()?.paymentStatus === 'PAID'">
+                      <span class="text-uppercase fw-semibold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.72rem; opacity: 0.85;">Montant réglé</span>
+                      <span class="fw-bold text-end font-serif" [style.fontFamily]="getSecondaryFont()" [style.color]="getPrimaryColor()" style="font-size: 0.95rem;">
+                        {{ guest()?.ticketPrice || 0 }} {{ guest()?.currency || 'MAD' }}
+                      </span>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom" [style.borderColor]="getPrimaryColor() + '15'" *ngIf="!guest()?.isPaidEvent">
+                      <span class="text-uppercase fw-semibold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.72rem; opacity: 0.85;">Accès</span>
+                      <span class="fw-semibold text-end text-success" style="font-size: 0.82rem;">
+                        <i class="fa fa-check me-1"></i> Gratuit (Invité d'honneur)
+                      </span>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center py-1.5" *ngIf="guest()?.isPaidEvent">
+                      <span class="text-uppercase fw-semibold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.72rem; opacity: 0.85;">Statut</span>
+                      <span class="d-inline-flex align-items-center gap-1.5 fw-semibold" style="font-size: 0.8rem;"
+                        [style.color]="guest()?.paymentStatus === 'PAID' ? '#16a34a' : '#d97706'">
+                        <i class="fa fa-circle" style="font-size: 0.45rem;"></i>
+                        <span>{{ guest()?.paymentStatus === 'PAID' ? 'Réglé' : 'À régler' }}</span>
+                      </span>
+                    </div>
+
+                    <!-- Total à régler (Ligne récapitulative épurée sans encadré bouton) -->
+                    <div class="d-flex justify-content-between align-items-baseline pt-2.5 mt-1 border-top"
+                      *ngIf="guest()?.isPaidEvent && guest()?.paymentStatus !== 'PAID'"
+                      [style.borderColor]="getPrimaryColor() + '25'">
+                      <span class="text-uppercase fw-bold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.76rem; letter-spacing: 0.8px;">
+                        Total à régler
+                      </span>
+                      <div class="fs-3 fw-bold font-serif" [style.color]="getPrimaryColor()">
+                        {{ guest()?.ticketPrice || 0 }} <span class="fs-6 fw-normal">{{ guest()?.currency || 'MAD' }}</span>
+                      </div>
+                    </div>
+                  </div>
+
                 </div>
 
-                <div class="d-flex flex-wrap gap-1.5 justify-content-center mb-1.5" *ngIf="getSelectedDietsArray().length > 0">
-                  <span class="badge bg-dark bg-opacity-85 text-white rounded-pill px-3 py-1.5 fw-semibold shadow-xs"
-                    *ngFor="let diet of getSelectedDietsArray()" [style.borderColor]="getPrimaryColor()" style="font-size: 0.78rem; border: 1px solid rgba(212, 175, 55, 0.4);">
-                    <i class="fa fa-check me-1" style="color: #fbbf24;"></i>{{ diet }}
-                  </span>
+                <!-- Bouton d'Action de Paiement / Confirmation -->
+                <div class="pt-2.5 mt-auto text-center">
+                  <button type="button" class="btn w-100 py-2.5 fs-xs text-uppercase fw-bold rounded-pill shadow-sm btn-luxury-submit"
+                    [style.background]="getPrimaryColor()"
+                    [style.borderColor]="getPrimaryColor()"
+                    [style.color]="isDarkBg(getPrimaryColor()) ? '#ffffff' : '#0c0c0c'"
+                    (click)="confirmRsvpSubmission()" [disabled]="isSubmitting()">
+                    <span *ngIf="!isSubmitting()">
+                      <i class="fa me-1.5" [ngClass]="guest()?.isPaidEvent && guest()?.paymentStatus !== 'PAID' ? 'fa-credit-card' : 'fa-check'"></i>
+                      <span *ngIf="guest()?.isPaidEvent && guest()?.paymentStatus !== 'PAID'">Procéder au règlement</span>
+                      <span *ngIf="!guest()?.isPaidEvent || guest()?.paymentStatus === 'PAID'">Confirmer ma présence</span>
+                    </span>
+                    <span *ngIf="isSubmitting()"><i class="fa fa-spinner fa-spin me-1.5"></i>Enregistrement...</span>
+                  </button>
+
+                  <div class="text-center mt-2" *ngIf="guest()?.isPaidEvent && guest()?.paymentStatus !== 'PAID'">
+                    <span class="fs-xxs text-muted" style="font-size: 0.72rem;">
+                      <i class="fa fa-shield-alt text-success me-1"></i> Paiement 100% sécurisé & validation instantanée
+                    </span>
+                  </div>
                 </div>
 
-                <!-- Custom allergy text if present and not 'aucun' -->
-                <div class="fst-italic mt-1.5"
-                  *ngIf="otherAllergies.trim() && otherAllergies.trim().toLowerCase() !== 'aucun' && otherAllergies.trim().toLowerCase() !== 'none'"
-                  [style.fontFamily]="getSecondaryFont()"
-                  [style.color]="getSecondaryFontColor()"
-                  style="font-size: 0.8rem;">
-                  <span class="fw-bold" [style.color]="getPrimaryColor()">Allergie :</span> {{ otherAllergies.trim() }}
-                </div>
-
-                <!-- No restriction message -->
-                <div class="fst-italic"
-                  *ngIf="getSelectedDietsArray().length === 0 && (!otherAllergies.trim() || otherAllergies.trim().toLowerCase() === 'aucun' || otherAllergies.trim().toLowerCase() === 'none')"
-                  [style.fontFamily]="getSecondaryFont()"
-                  [style.color]="getSecondaryFontColor()"
-                  style="font-size: 0.78rem; opacity: 0.85;">
-                  Aucune restriction particulière
-                </div>
-              </div>
-
-              <!-- Participation Financière (Si Événement Payant) -->
-              <div class="mb-3.5 text-start px-2" *ngIf="guest()?.isPaidEvent">
-                <div class="fw-bold text-uppercase mb-2 text-center"
-                  [style.fontFamily]="getSecondaryFont()"
-                  [style.color]="getSecondaryFontColor()"
-                  style="letter-spacing: 1.8px; opacity: 0.95; font-size: 0.78rem;">
-                  — Participation & Accès —
-                </div>
-
-                <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom" [style.borderColor]="'rgba(212, 175, 55, 0.25)'">
-                  <span class="text-uppercase fw-bold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="letter-spacing: 0.8px; font-size: 0.74rem; opacity: 0.85;">Tarif du Billet</span>
-                  <span class="fw-bold text-end font-serif" [style.fontFamily]="getSecondaryFont()" [style.color]="getPrimaryColor()" style="font-size: 1.05rem;">
-                    {{ guest()?.ticketPrice || 0 }} {{ guest()?.currency || 'MAD' }}
-                  </span>
-                </div>
-
-                <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom" [style.borderColor]="'rgba(212, 175, 55, 0.25)'">
-                  <span class="text-uppercase fw-bold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="letter-spacing: 0.8px; font-size: 0.74rem; opacity: 0.85;">Statut Paiement</span>
-                  <span class="badge rounded-pill px-2.5 py-1 fw-bold fs-xxs"
-                    [ngClass]="guest()?.paymentStatus === 'PAID' ? 'bg-success text-white' : 'bg-warning text-dark'">
-                    <i class="fa me-1" [ngClass]="guest()?.paymentStatus === 'PAID' ? 'fa-check' : 'fa-clock'"></i>
-                    {{ guest()?.paymentStatus === 'PAID' ? 'Réglé' : 'À régler pour valider' }}
-                  </span>
-                </div>
               </div>
 
             </div>
 
-
-          </div>
-
-          <!-- PERSISTENT RSVP ACTION SECTION (Visible across ALL steps in the exact same bottom place) -->
-          <div class="final-rsvp-actions text-center mt-auto mx-auto pt-2" style="max-width: 290px; width: 100%;">
-            <label class="form-label d-block text-center fw-bold text-uppercase tracking-widest mb-1.5"
-              [style.fontFamily]="getSecondaryFont()"
-              [style.color]="getSecondaryFontColor()"
-              style="letter-spacing: 1.5px; opacity: 0.95; font-size: 0.68rem;">
-              Votre Réponse
-            </label>
-
-            <!-- Side-by-side choices with 70/30 split -->
-            <div class="d-flex gap-2 justify-content-center mb-2">
-              <button type="button" class="btn py-2 px-2 fs-sm fw-bold rounded-pill"
-                style="flex: 7;"
-                [ngClass]="selectedAttendanceChoice() === 'CONFIRMED' ? 'btn-presence-yes shadow' : 'btn-presence-yes'"
-                (click)="selectAttendanceChoice('CONFIRMED')">
-                <i class="fa fa-check me-1"></i> Accepter
-              </button>
-              <button type="button" class="btn py-2 px-2 fs-sm fw-bold rounded-pill"
-                style="flex: 3;"
-                [ngClass]="selectedAttendanceChoice() === 'DECLINED' ? 'btn-presence-no shadow' : 'btn-presence-no'"
-                (click)="selectAttendanceChoice('DECLINED')">
-                <i class="fa fa-times me-1"></i> Décliner
-              </button>
-            </div>
-
-            <!-- Dietary Preferences (Shown only when Accepter is selected) -->
-            <div *ngIf="selectedAttendanceChoice() === 'CONFIRMED'" class="text-start mb-3 animate__animated animate__fadeIn">
-              <label class="form-label fs-xs fw-bold mb-2" [style.color]="getSecondaryFontColor()">Préférences & Allergies :</label>
-              <div class="d-flex flex-wrap gap-2 mb-2">
-                <div class="form-check form-check-inline m-0">
-                  <input class="form-check-input" type="checkbox" id="dietHalal" [(ngModel)]="hasHalal" name="dietHalal">
-                  <label class="form-check-label fs-xs text-light" for="dietHalal" [style.color]="getSecondaryFontColor()">Halal</label>
-                </div>
-                <div class="form-check form-check-inline m-0">
-                  <input class="form-check-input" type="checkbox" id="dietVeg" [(ngModel)]="hasVegetarien" name="dietVeg">
-                  <label class="form-check-label fs-xs text-light" for="dietVeg" [style.color]="getSecondaryFontColor()">Végétarien</label>
-                </div>
-                <div class="form-check form-check-inline m-0">
-                  <input class="form-check-input" type="checkbox" id="dietVegan" [(ngModel)]="hasVegan" name="dietVegan">
-                  <label class="form-check-label fs-xs text-light" for="dietVegan" [style.color]="getSecondaryFontColor()">Vegan</label>
-                </div>
-              </div>
-              <input type="text" class="form-control form-control-sm border-0 bg-white bg-opacity-75 rounded-pill px-3 fs-xs" 
-                [(ngModel)]="otherAllergies" name="otherAllergies" placeholder="Autres allergies (ex: arachides, gluten)...">
-            </div>
-
-            <!-- Single Confirmation Submission Button (Appears when choice is made) -->
-            <div *ngIf="selectedAttendanceChoice() !== null" class="animate__animated animate__fadeIn">
-              <button type="button" class="btn w-100 py-2 fs-xs text-uppercase fw-bold rounded-pill shadow-sm mb-1"
-                [ngClass]="selectedAttendanceChoice() === 'CONFIRMED' ? 'btn-luxury-submit' : 'btn-presence-no'"
-                (click)="confirmRsvpSubmission()" [disabled]="isSubmitting()">
-                <span *ngIf="!isSubmitting()">
-                  <i class="fa me-1.5" [ngClass]="selectedAttendanceChoice() === 'CONFIRMED' && guest()?.isPaidEvent && guest()?.paymentStatus !== 'PAID' ? 'fa-lock' : (selectedAttendanceChoice() === 'CONFIRMED' ? 'fa-paper-plane' : 'fa-times-circle')"></i>
-                  <ng-container *ngIf="selectedAttendanceChoice() === 'CONFIRMED'">
-                    <span *ngIf="guest()?.isPaidEvent && guest()?.paymentStatus !== 'PAID'">Régler ({{ guest()?.ticketPrice }} {{ guest()?.currency || 'MAD' }}) & Confirmer</span>
-                    <span *ngIf="!guest()?.isPaidEvent || guest()?.paymentStatus === 'PAID'">Confirmer ma présence</span>
-                  </ng-container>
-                  <ng-container *ngIf="selectedAttendanceChoice() === 'DECLINED'">
-                    Confirmer mon absence
-                  </ng-container>
-                </span>
-                <span *ngIf="isSubmitting()"><i class="fa fa-spinner fa-spin me-1.5"></i>Enregistrement...</span>
-              </button>
-            </div>
           </div>
 
         </form>
@@ -1135,8 +1221,8 @@
 
             <div class="d-flex justify-content-between align-items-baseline py-1.5">
               <span class="text-uppercase fw-bold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="letter-spacing: 0.8px; font-size: 0.74rem; opacity: 0.85;">Statut</span>
-              <span class="badge rounded-pill px-3 py-1 fw-bold fs-xxs bg-secondary bg-opacity-75 text-white">
-                <i class="fa fa-times me-1"></i> Absent(e)
+              <span class="fw-semibold text-secondary d-inline-flex align-items-center gap-1" style="font-size: 0.85rem;">
+                <i class="fa fa-times"></i> Absent(e)
               </span>
             </div>
 
@@ -1160,11 +1246,11 @@
 
         <!-- SUCCESS STATE - CAS 2 : L'INVITÉ A CONFIRMÉ SA PRÉSENCE -->
         <div *ngIf="isSuccess() && (status() !== 'DECLINED' && attendanceStatus)"
-          class="success-recap-container animate__animated animate__fadeIn my-auto w-100 pt-5 pb-2"
-          style="padding-top: 55px !important;">
+          class="success-recap-container animate__animated animate__fadeIn my-auto w-100 pt-4 pb-3"
+          style="padding-top: 35px !important; padding-bottom: 30px !important;">
 
           <!-- Top Success Header -->
-          <div class="spotlight-title-wrapper mb-3.5 text-center">
+          <div class="spotlight-title-wrapper mb-3 text-center">
             <span class="luxury-subtitle d-block mb-1"
               [style.fontFamily]="getPrimaryFont()"
               [style.color]="getPrimaryColor()"
@@ -1181,13 +1267,13 @@
               [style.backgroundColor]="getPrimaryColor()"
               style="width: 45px; height: 1.5px; opacity: 0.65;"></div>
 
-            <p class="fs-xs mb-0 px-2" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="line-height: 1.4; opacity: 0.9; max-width: 330px; margin-left: auto; margin-right: auto; font-size: 0.78rem;">
+            <p class="fs-xs mb-0 px-2" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="line-height: 1.4; opacity: 0.9; max-width: 330px; margin-left: auto; margin-right: auto; font-size: 0.8rem;">
               Votre participation a bien été enregistrée pour cet événement d'exception.
             </p>
           </div>
 
-          <!-- Pure Typography Recap Section (Identical styling and layout to Step 2) -->
-          <div class="recap-content-wrapper mx-auto text-center mb-3.5" style="max-width: 370px;">
+          <!-- Pure Typography Recap Section -->
+          <div class="recap-content-wrapper mx-auto text-center mb-3" style="max-width: 380px;">
             
             <!-- Guest Name & Status Badge -->
             <div class="mb-3 text-start px-2">
@@ -1197,15 +1283,15 @@
               </div>
               <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom" [style.borderColor]="getPrimaryColor() + '25'">
                 <span class="text-uppercase fw-bold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="letter-spacing: 0.8px; font-size: 0.74rem; opacity: 0.85;">Statut</span>
-                <span class="badge rounded-pill px-3 py-1 fw-bold fs-xxs bg-success text-white">
-                  <i class="fa fa-check me-1"></i> Présent
+                <span class="fw-semibold text-success d-inline-flex align-items-center gap-1" style="font-size: 0.85rem;">
+                  <i class="fa fa-check-circle"></i> Présent(e)
                 </span>
               </div>
               <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom" [style.borderColor]="getPrimaryColor() + '25'" *ngIf="guest()?.isPaidEvent">
                 <span class="text-uppercase fw-bold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="letter-spacing: 0.8px; font-size: 0.74rem; opacity: 0.85;">Billet / Pass</span>
-                <span class="badge rounded-pill px-3 py-1 fw-bold fs-xxs"
-                  [ngClass]="guest()?.paymentStatus === 'PAID' ? 'bg-success text-white' : 'bg-warning text-dark'">
-                  <i class="fa me-1" [ngClass]="guest()?.paymentStatus === 'PAID' ? 'fa-check-circle' : 'fa-clock'"></i>
+                <span class="fw-semibold d-inline-flex align-items-center gap-1"
+                  [style.color]="guest()?.paymentStatus === 'PAID' ? '#16a34a' : '#ea580c'" style="font-size: 0.85rem;">
+                  <i class="fa" [ngClass]="guest()?.paymentStatus === 'PAID' ? 'fa-check-circle' : 'fa-clock'"></i>
                   {{ guest()?.paymentStatus === 'PAID' ? 'Payé (' + (guest()?.paidAmount || guest()?.ticketPrice) + ' ' + (guest()?.currency || 'MAD') + ')' : 'En attente de règlement' }}
                 </span>
               </div>
@@ -1267,10 +1353,10 @@
                 style="letter-spacing: 1.8px; opacity: 0.95; font-size: 0.78rem;">
                 — Régimes & Allergies —
               </div>
-              <div class="d-flex flex-wrap gap-1.5 justify-content-center mb-1">
-                <span class="badge bg-dark bg-opacity-85 text-white rounded-pill px-3 py-1.5 fw-semibold shadow-xs"
-                  *ngFor="let diet of getSelectedDietsArray()" [style.borderColor]="getPrimaryColor()" style="font-size: 0.78rem; border: 1px solid rgba(255, 255, 255, 0.2);">
-                  <i class="fa fa-check me-1" [style.color]="getPrimaryColor()"></i>{{ diet }}
+              <div class="d-flex flex-wrap gap-2.5 justify-content-center mb-1">
+                <span class="d-inline-flex align-items-center gap-1 fs-xs fw-semibold" [style.color]="getSecondaryFontColor()"
+                  *ngFor="let diet of getSelectedDietsArray()">
+                  <i class="fa fa-check text-success"></i> {{ diet }}
                 </span>
               </div>
               <div class="fst-italic mt-1" *ngIf="otherAllergies.trim() && otherAllergies.trim().toLowerCase() !== 'aucun' && otherAllergies.trim().toLowerCase() !== 'none'" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.8rem;">
@@ -1278,6 +1364,70 @@
               </div>
             </div>
 
+          </div>
+
+          <!-- Message chaleureux & attention délicate ("msg zwin") -->
+          <div class="success-welcome-banner p-3 rounded-4 mb-3 text-center mx-auto shadow-2xs"
+            [style.borderColor]="getPrimaryColor() + '30'"
+            [style.backgroundColor]="getPrimaryColor() + '0c'"
+            style="border-width: 1px; border-style: solid; max-width: 380px;">
+            <div class="d-inline-flex align-items-center justify-content-center gap-1.5 mb-1.5" [style.color]="getPrimaryColor()">
+              <i class="fa fa-heart" style="font-size: 0.75rem;"></i>
+              <span class="text-uppercase fw-bold" [style.fontFamily]="getSecondaryFont()" style="font-size: 0.74rem; letter-spacing: 1.2px;">
+                Au plaisir de vous recevoir
+              </span>
+              <i class="fa fa-heart" style="font-size: 0.75rem;"></i>
+            </div>
+            <p class="mb-0" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="line-height: 1.5; opacity: 0.92; font-size: 0.82rem;">
+              <span *ngIf="guest()?.isPaidEvent && guest()?.paymentStatus === 'PAID'">
+                Votre place est garantie et votre règlement est validé avec succès. Préparez-vous à vivre un moment inoubliable en notre compagnie !
+              </span>
+              <span *ngIf="!guest()?.isPaidEvent || guest()?.paymentStatus !== 'PAID'">
+                Votre présence est bien enregistrée. Nous avons hâte de vous compter parmi nous et de célébrer ce moment précieux et festif à vos côtés !
+              </span>
+            </p>
+          </div>
+
+          <!-- Accès & Guidage : Boutons Itinéraire Map & Parking -->
+          <div class="access-actions-wrapper mx-auto mt-2 text-center" style="max-width: 380px;">
+            <!-- Indication du lieu si disponible -->
+            <div class="d-flex align-items-center justify-content-center gap-1.5 mb-2.5 px-2 text-center"
+              *ngIf="guest()?.eventLocation || guest()?.invitationLocation"
+              [style.color]="getSecondaryFontColor()" style="font-size: 0.78rem; opacity: 0.88;">
+              <i class="fa fa-map-marker-alt" [style.color]="getPrimaryColor()"></i>
+              <span class="fw-semibold text-truncate" style="max-width: 320px;">{{ guest()?.eventLocation || guest()?.invitationLocation }}</span>
+            </div>
+
+            <!-- Les boutons Map & Parking -->
+            <div class="d-flex gap-2 justify-content-center align-items-center flex-wrap">
+              <!-- 1. Bouton Map / Itinéraire -->
+              <a [href]="getEventMapUrl()" target="_blank" rel="noopener noreferrer"
+                class="btn btn-sm rounded-pill px-3.5 py-2 fw-bold d-inline-flex align-items-center gap-1.5 shadow-sm text-decoration-none"
+                [style.background]="getPrimaryColor()"
+                [style.borderColor]="getPrimaryColor()"
+                [style.color]="isDarkBg(getPrimaryColor()) ? '#ffffff' : '#0c0c0c'"
+                style="font-size: 0.82rem; letter-spacing: 0.4px; transition: all 0.25s ease;">
+                <i class="fa fa-map-marked-alt"></i>
+                <span>Itinéraire Map</span>
+              </a>
+
+              <!-- 2. Bouton Parking -->
+              <a [href]="getParkingMapUrl()" target="_blank" rel="noopener noreferrer"
+                class="btn btn-sm rounded-pill px-3.5 py-2 fw-bold d-inline-flex align-items-center gap-1.5 shadow-sm text-decoration-none"
+                [style.borderColor]="getPrimaryColor() + '60'"
+                [style.color]="getPrimaryColor()"
+                [style.backgroundColor]="getPrimaryColor() + '14'"
+                style="font-size: 0.82rem; letter-spacing: 0.4px; border-width: 1.5px; border-style: solid; transition: all 0.25s ease;">
+                <i class="fa fa-square-parking"></i>
+                <span>{{ getParkingLabel() }}</span>
+              </a>
+            </div>
+
+            <!-- Consigne Parking textuelle si définie par l'organisateur -->
+            <div class="mt-2 text-muted" *ngIf="guest()?.parkingLocation && !guest()?.parkingLocation?.startsWith('http')" style="font-size: 0.73rem;">
+              <i class="fa fa-info-circle me-1" [style.color]="getPrimaryColor()"></i>
+              <span>Zone parking : <strong>{{ guest()?.parkingLocation }}</strong></span>
+            </div>
           </div>
 
         </div>
@@ -1441,9 +1591,9 @@
                 <span class="text-muted">RIB :</span>
                 <span class="fw-semibold text-dark font-monospace">007 780 0001234567890123 45</span>
               </div>
-              <div class="d-flex justify-content-between">
+              <div class="d-flex justify-content-between align-items-center">
                 <span class="text-muted">Référence à mentionner :</span>
-                <span class="badge bg-warning-light text-dark font-monospace fw-bold">TICKET-{{ guest()?.guestId }}</span>
+                <span class="fw-bold text-dark font-monospace" style="font-size: 0.88rem; letter-spacing: 0.5px;">TICKET-{{ guest()?.guestId }}</span>
               </div>
             </div>
             <div class="fs-xxs text-muted fst-italic text-center">
