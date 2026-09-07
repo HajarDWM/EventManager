@@ -401,7 +401,7 @@ export class OrganiserInvitationSetup implements OnInit {
     const currentGuests = this.guests();
     const updatedGuests = currentGuests.map(guest => {
       if (guest.id && this.selectedGuestIds()[guest.id]) {
-        const tokenOrId = guest.invitationToken ? guest.invitationToken : guest.id;
+        const tokenOrId = (guest as any).invitationToken ? (guest as any).invitationToken : guest.id;
         const guestLink = `${window.location.origin}/rsvp/${tokenOrId}`;
         console.log(`Envoi à: ${guest.fullName} | Lien unique: ${guestLink} | Canaux: ${activeChannels.join(', ')}`);
         localStorage.setItem(`guest_${guest.id}_isSent`, 'true');

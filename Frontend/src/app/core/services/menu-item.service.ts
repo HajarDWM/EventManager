@@ -40,4 +40,13 @@ export class MenuItemService {
   public deleteMenuItem(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/menu-items/${id}`);
   }
+
+  public uploadMenuImage(file: File): Observable<{ url: string; filename: string }> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post<{ url: string; filename: string }>(
+      `${this.baseUrl}/menu-items/upload-image`,
+      formData
+    );
+  }
 }

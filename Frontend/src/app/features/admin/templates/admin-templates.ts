@@ -244,6 +244,7 @@ export class AdminTemplates implements OnInit {
 
   protected removeBackgroundImage(): void {
     this.backgroundImageUrlField = '';
+    this.cdr.markForCheck();
   }
 
   protected onAudioFileSelected(event: Event): void {
@@ -430,8 +431,8 @@ export class AdminTemplates implements OnInit {
       subCategory: this.subCategoryField,
       description: this.descriptionField?.trim() || '',
       imageUrl: this.imageUrlField?.trim() || undefined,
-      backgroundImageUrl: this.backgroundImageUrlField?.trim() || undefined,
-      musicUrl: this.musicUrlField?.trim() || undefined,
+      backgroundImageUrl: this.backgroundImageUrlField?.trim() ? this.backgroundImageUrlField.trim() : null,
+      musicUrl: this.musicUrlField?.trim() ? this.musicUrlField.trim() : null,
       templateKey: this.templateKeyField?.trim() || undefined,
       decorativeFrame: this.decorativeFrameField || 'floral-frame',
       accentColor: this.accentColorField?.trim() || '#d4af37',

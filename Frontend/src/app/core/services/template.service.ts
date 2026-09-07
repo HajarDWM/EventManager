@@ -13,13 +13,13 @@ export interface DigitalTemplate {
   decorativeFrame?: string; // floral-frame, gold-border, geometric-frame, minimal-edge
   accentColor?: string;
   backgroundColor?: string;
-  backgroundImageUrl?: string;
+  backgroundImageUrl?: string | null;
   primaryFont?: string; // Playfair Display, Cormorant Garamond, Montserrat, Great Vibes, Cinzel, Alex Brush
   primaryFontSize?: string;
   secondaryFont?: string;
   secondaryFontSize?: string;
   secondaryFontColor?: string;
-  musicUrl?: string;
+  musicUrl?: string | null;
   htmlContent?: string;
 }
 

@@ -76,9 +76,7 @@ public class AdminTemplateController {
             if (updated.getDescription() != null) {
                 existing.setDescription(updated.getDescription());
             }
-            if (updated.getImageUrl() != null) {
-                existing.setImageUrl(updated.getImageUrl());
-            }
+            existing.setImageUrl(updated.getImageUrl() != null && !updated.getImageUrl().isBlank() ? updated.getImageUrl().trim() : null);
             if (updated.getTemplateKey() != null && !updated.getTemplateKey().isBlank()) {
                 existing.setTemplateKey(updated.getTemplateKey());
             }
@@ -91,9 +89,12 @@ public class AdminTemplateController {
             if (updated.getBackgroundColor() != null) {
                 existing.setBackgroundColor(updated.getBackgroundColor());
             }
-            if (updated.getBackgroundImageUrl() != null) {
-                existing.setBackgroundImageUrl(updated.getBackgroundImageUrl());
-            }
+            // Allow clearing background image
+            existing.setBackgroundImageUrl(
+                (updated.getBackgroundImageUrl() != null && !updated.getBackgroundImageUrl().isBlank())
+                    ? updated.getBackgroundImageUrl().trim()
+                    : null
+            );
             if (updated.getPrimaryFont() != null) {
                 existing.setPrimaryFont(updated.getPrimaryFont());
             }
@@ -109,12 +110,13 @@ public class AdminTemplateController {
             if (updated.getSecondaryFontColor() != null) {
                 existing.setSecondaryFontColor(updated.getSecondaryFontColor());
             }
-            if (updated.getHtmlContent() != null) {
-                existing.setHtmlContent(updated.getHtmlContent());
-            }
-            if (updated.getMusicUrl() != null) {
-                existing.setMusicUrl(updated.getMusicUrl());
-            }
+            existing.setHtmlContent(updated.getHtmlContent() != null && !updated.getHtmlContent().isBlank() ? updated.getHtmlContent().trim() : null);
+            // Allow clearing music audio
+            existing.setMusicUrl(
+                (updated.getMusicUrl() != null && !updated.getMusicUrl().isBlank())
+                    ? updated.getMusicUrl().trim()
+                    : null
+            );
             return ResponseEntity.ok(repository.save(existing));
         }).orElse(ResponseEntity.notFound().build());
     }

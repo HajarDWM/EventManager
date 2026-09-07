@@ -849,10 +849,51 @@
               [ngModel]="description()" (ngModelChange)="description.set($event)" name="description"></textarea>
           </div>
           <div class="mb-3">
-            <label class="form-label fs-sm fw-semibold">Photo du plat (URL)</label>
-            <input type="text" class="form-control form-control-alt fs-sm"
-              placeholder="Ex: https://images.unsplash.com/... ou /assets/images/plat.png"
-              [ngModel]="imageUrl()" (ngModelChange)="imageUrl.set($event)" name="imageUrl">
+            <label class="form-label fs-sm fw-semibold">Photo du plat</label>
+
+            <!-- Upload zone -->
+            <div class="border rounded-3 p-3 text-center bg-body position-relative"
+                 style="min-height: 110px; cursor: pointer;"
+                 (click)="imageFileInput.click()">
+
+              <!-- Preview -->
+              <ng-container *ngIf="imagePreviewUrl() || imageUrl()">
+                <img [src]="imagePreviewUrl() || imageUrl()" alt="Aperçu"
+                     class="rounded-3 object-fit-cover mx-auto d-block mb-2"
+                     style="max-height: 120px; max-width: 100%;">
+                <span class="fs-xxs text-muted">Cliquer pour changer</span>
+              </ng-container>
+
+              <!-- Placeholder (no image yet) -->
+              <ng-container *ngIf="!imagePreviewUrl() && !imageUrl()">
+                <i class="fa fa-cloud-upload-alt fs-2 text-muted mb-2 d-block"></i>
+                <span class="fs-xs text-muted">Glisser une image ou <strong>cliquer</strong> pour choisir</span>
+                <div class="fs-xxs text-muted mt-1">JPG, PNG, WebP — max 2 MB</div>
+              </ng-container>
+
+              <!-- Loading spinner -->
+              <div *ngIf="isUploadingImage()" class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center rounded-3"
+                   style="background: rgba(255,255,255,0.8);">
+                <i class="fa fa-circle-notch fa-spin text-primary fs-3"></i>
+              </div>
+            </div>
+
+            <!-- Hidden file input -->
+            <input #imageFileInput type="file" accept="image/jpeg,image/png,image/webp"
+                   class="d-none" (change)="onImageFileSelected($event)">
+
+            <!-- Error message -->
+            <div *ngIf="imageUploadError()" class="text-danger fs-xxs mt-1">
+              <i class="fa fa-exclamation-circle me-1"></i>{{ imageUploadError() }}
+            </div>
+
+            <!-- Manual URL fallback (collapsible) -->
+            <div class="mt-2">
+              <small class="text-muted fs-xxs">Ou coller un lien image :</small>
+              <input type="text" class="form-control form-control-alt fs-xs mt-1"
+                placeholder="https://..."
+                [ngModel]="imageUrl()" (ngModelChange)="imageUrl.set($event); imagePreviewUrl.set($event)" name="imageUrl">
+            </div>
           </div>
         </div>
         <div class="modal-footer bg-body-light">

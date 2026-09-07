@@ -60,6 +60,10 @@ export class MenuList implements OnInit {
   protected readonly description = signal<string>('');
   protected readonly imageUrl = signal<string>('');
 
+  // Image Upload
+  protected readonly isUploadingImage = signal<boolean>(false);
+  protected readonly imageUploadError = signal<string>('');
+  protected readonly imagePreviewUrl = signal<string>('');
   protected readonly selectedDiets = signal<Record<string, boolean>>({});
   protected readonly customDietNotes = signal<string>('');
   protected readonly mixSectionChoice = signal<'BUFFET' | 'ASSIS'>('BUFFET');
@@ -408,6 +412,8 @@ export class MenuList implements OnInit {
     this.customDietNotes.set('');
     this.description.set('');
     this.imageUrl.set('');
+    this.imagePreviewUrl.set('');
+    this.imageUploadError.set('');
     this.isModalOpen.set(true);
   }
 
@@ -449,11 +455,55 @@ export class MenuList implements OnInit {
     this.customDietNotes.set(customNotesList.join(', '));
     this.description.set(item.description || '');
     this.imageUrl.set(item.imageUrl || '');
+    this.imagePreviewUrl.set(item.imageUrl || '');
+    this.imageUploadError.set('');
     this.isModalOpen.set(true);
   }
 
   protected closeModal(): void {
     this.isModalOpen.set(false);
+    this.imagePreviewUrl.set('');
+    this.imageUploadError.set('');
+  }
+
+  protected onImageFileSelected(event: any): void {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) return;
+
+    const file = input.files[0];
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    const maxSizeBytes = 2 * 1024 * 1024; // 2MB
+
+    this.imageUploadError.set('');
+
+    if (!allowedTypes.includes(file.type)) {
+      this.imageUploadError.set('Format non autorisé. Utilisez JPG, PNG ou WebP.');
+      return;
+    }
+    if (file.size > maxSizeBytes) {
+      this.imageUploadError.set('Image trop volumineuse. Maximum : 2 MB.');
+      return;
+    }
+
+    // Local preview while uploading
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      this.imagePreviewUrl.set(e.target?.result as string);
+    };
+    reader.readAsDataURL(file);
+
+    // Upload to backend
+    this.isUploadingImage.set(true);
+    this.menuItemService.uploadMenuImage(file).subscribe({
+      next: (res) => {
+        this.imageUrl.set('http://localhost:8080' + res.url);
+        this.isUploadingImage.set(false);
+      },
+      error: (err) => {
+        this.imageUploadError.set(err.error?.error || 'Erreur lors de l\'upload.');
+        this.isUploadingImage.set(false);
+      }
+    });
   }
 
   protected toggleDiet(value: string, checked: boolean): void {

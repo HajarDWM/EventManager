@@ -124,22 +124,22 @@
 
           <!-- Lien Google Maps / Adresse exacte -->
           <div class="mb-4">
-            <label class="form-label fs-sm fw-semibold" for="event-map-url">Adresse exacte / Lien Google Maps (facultatif)</label>
+            <label class="form-label fs-sm fw-semibold" for="event-map-url">Adresse exacte / Lien Google Maps</label>
             <input type="url" class="form-control form-control-alt fs-sm"
-                   id="event-map-url" name="event-map-url" placeholder="Ex: https://maps.app.goo.gl/... ou 123 Avenue Mohamed V, Casablanca"
+                   id="event-map-url" name="event-map-url" placeholder="Ex: https://maps.app.goo.gl/..."
                    [ngModel]="locationMapUrl()" (ngModelChange)="locationMapUrl.set($event)">
             <div class="form-text fs-xs text-muted">
               Ce lien sera utilisé pour le bouton d'itinéraire sur l'invitation digitale.
             </div>
           </div>
 
-          <!-- Zone de Parking -->
+          <!-- Lien Parking -->
           <div class="mb-4">
             <label class="form-label fs-sm fw-semibold" for="event-parking">
-              <i class="fa fa-parking text-primary me-1"></i> Zone de Parking (facultatif)
+              <i class="fa fa-parking text-primary me-1"></i> Lien Parking
             </label>
-            <input type="text" class="form-control form-control-alt fs-sm" id="event-parking" name="event-parking"
-              placeholder="Ex: Parking VIP & Visiteurs - Entrée Sud, Boulevard d'Anfa" [ngModel]="parkingLocation()"
+            <input type="url" class="form-control form-control-alt fs-sm" id="event-parking" name="event-parking"
+              placeholder="Ex: https://maps.app.goo.gl/parking..." [ngModel]="parkingLocation()"
               (ngModelChange)="parkingLocation.set($event)">
             <div class="form-text fs-xs text-muted">
               Permet aux invités d'obtenir un itinéraire GPS direct vers le parking sur leur invitation.
