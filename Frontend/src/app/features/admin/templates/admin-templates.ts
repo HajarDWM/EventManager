@@ -59,11 +59,13 @@ export class AdminTemplates implements OnInit {
     return list;
   });
 
-  // Modal & Form States
-  protected readonly isModalOpen = signal(false);
+  // Studio Page View & Form States
+  protected readonly isEditorOpen = signal(false);
+  protected readonly isModalOpen = computed(() => this.isEditorOpen());
   protected readonly isEditing = signal(false);
   protected readonly editingId = signal<number | null>(null);
   protected readonly isSubmitting = signal(false);
+  protected readonly previewDevice = signal<'mobile' | 'desktop'>('mobile');
 
   // Form Fields
   protected titleField = '';
@@ -311,6 +313,25 @@ export class AdminTemplates implements OnInit {
     this.isPreviewAudioPlaying.set(false);
   }
 
+  public setPreviewDevice(device: 'mobile' | 'desktop'): void {
+    this.previewDevice.set(device);
+  }
+
+  public isDarkBg(hexColor?: string): boolean {
+    if (!hexColor) return false;
+    let color = hexColor.trim();
+    if (color.startsWith('#')) color = color.substring(1);
+    if (color.length === 3) {
+      color = color.split('').map(c => c + c).join('');
+    }
+    if (color.length !== 6) return false;
+    const r = parseInt(color.substring(0, 2), 16);
+    const g = parseInt(color.substring(2, 4), 16);
+    const b = parseInt(color.substring(4, 6), 16);
+    const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+    return yiq < 140;
+  }
+
   protected openAddModal(): void {
     this.isEditing.set(false);
     this.editingId.set(null);
@@ -333,7 +354,9 @@ export class AdminTemplates implements OnInit {
     this.htmlContentField = '';
     this.errorMessage.set('');
     this.stopPreviewAudio();
-    this.isModalOpen.set(true);
+    loadGoogleFont(this.primaryFontField);
+    loadGoogleFont(this.secondaryFontField);
+    this.isEditorOpen.set(true);
   }
 
   protected openEditModal(template: DigitalTemplate): void {
@@ -362,12 +385,14 @@ export class AdminTemplates implements OnInit {
     this.htmlContentField = template.htmlContent || '';
     this.errorMessage.set('');
     this.stopPreviewAudio();
-    this.isModalOpen.set(true);
+    loadGoogleFont(this.primaryFontField);
+    loadGoogleFont(this.secondaryFontField);
+    this.isEditorOpen.set(true);
   }
 
   protected closeAddModal(): void {
     this.stopPreviewAudio();
-    this.isModalOpen.set(false);
+    this.isEditorOpen.set(false);
   }
 
   protected onCategoryChange(): void {

@@ -87,6 +87,7 @@ export class GuestRsvp implements OnInit, OnDestroy {
 
   protected closeMenuAndRsvp(): void {
     this.isMenuRsvpOpen.set(false);
+    this.isDiscoveryMode.set(false);
   }
 
   public openDeclineModal(): void {
@@ -128,35 +129,98 @@ export class GuestRsvp implements OnInit, OnDestroy {
     this.submitResponse(true);
   }
 
-  public startAcceptWorkflow(): void {
-    this.attendanceStatus = true;
-    this.selectedAttendanceChoice.set('CONFIRMED');
-    this.hasConfirmedMenuChoice.set(!!(this.starterChoice || this.mealChoice || this.dessertChoice || this.beverageChoice));
-    this.currentRsvpStep.set(0);
-    this.isMenuRsvpOpen.set(true);
-  }
+  public readonly isDiscoveryMode = signal<boolean>(false);
 
-  public startExploreWorkflow(): void {
+  public startDiscoveryWorkflow(): void {
+    this.isDiscoveryMode.set(true);
     this.selectedAttendanceChoice.set(null);
-    this.attendanceStatus = false;
+    this.attendanceStatus = null;
     this.currentRsvpStep.set(0);
     this.isMenuRsvpOpen.set(true);
   }
 
-  public acceptFromDiscovery(): void {
+  public pivotFromDiscoveryToAccept(): void {
+    this.isDiscoveryMode.set(false);
+    this.attendanceStatus = true;
+    this.status.set('CONFIRMED');
+    this.selectedAttendanceChoice.set('CONFIRMED');
+    this.currentRsvpStep.set(0);
+    this.isMenuRsvpOpen.set(true);
+  }
+
+  public startAcceptWorkflow(): void {
+    this.isDiscoveryMode.set(false);
     this.attendanceStatus = true;
     this.status.set('CONFIRMED');
     this.selectedAttendanceChoice.set('CONFIRMED');
     this.hasConfirmedMenuChoice.set(!!(this.starterChoice || this.mealChoice || this.dessertChoice || this.beverageChoice));
+    this.currentRsvpStep.set(0);
+    this.isMenuRsvpOpen.set(true);
   }
 
   public reopenRsvpToAccept(): void {
+    this.isDiscoveryMode.set(false);
     this.isSuccess.set(false);
     this.status.set('CONFIRMED');
     this.attendanceStatus = true;
     this.selectedAttendanceChoice.set('CONFIRMED');
-    this.startAcceptWorkflow();
+    this.currentRsvpStep.set(0);
+    this.isMenuRsvpOpen.set(true);
   }
+
+  // Course fallback defaults
+  protected readonly defaultStarters = [
+    { name: "Duo de Saint-Jacques dorées, émulsion d'agrumes", imageUrl: "/assets/images/menu_starter.png" },
+    { name: "Velouté de potimarron & éclats de châtaignes", imageUrl: "/assets/images/menu_starter.png" },
+    { name: "Carpaccio de bœuf mariné & copeaux de parmesan", imageUrl: "/assets/images/menu_starter.png" }
+  ];
+
+  protected readonly defaultMains = [
+    { name: "Filet de bœuf rôti, purée fine truffée", imageUrl: "/assets/images/menu_main.png" },
+    { name: "Pavé de saumon rôti & risotto aux asperges", imageUrl: "/assets/images/menu_main.png" },
+    { name: "Suprême de volaille fermière aux morilles", imageUrl: "/assets/images/menu_main.png" }
+  ];
+
+  protected readonly defaultDesserts = [
+    { name: "Dôme au chocolat intense & feuille d'or", imageUrl: "/assets/images/menu_dessert.png" },
+    { name: "Mille-feuille croustillant à la vanille bourbon", imageUrl: "/assets/images/menu_dessert.png" },
+    { name: "Tartelette sablée aux fruits rouges de saison", imageUrl: "/assets/images/menu_dessert.png" }
+  ];
+
+  protected readonly defaultBeverages = [
+    { name: "Sélection de Vins Fins & Champagne", imageUrl: "/assets/images/menu_starter.png" },
+    { name: "Cocktail Signature aux notes d'agrumes", imageUrl: "/assets/images/menu_starter.png" },
+    { name: "Mocktail Fraîcheur Citron & Menthe", imageUrl: "/assets/images/menu_starter.png" },
+    { name: "Eaux minérales plates et gazeuses", imageUrl: "/assets/images/menu_starter.png" }
+  ];
+
+  public readonly availableStarters = computed<any[]>(() => {
+    const list = this.starters();
+    return (list && list.length > 0)
+      ? list.map(item => ({ ...item, imageUrl: item.imageUrl || '/assets/images/menu_starter.png' }))
+      : this.defaultStarters;
+  });
+
+  public readonly availableMains = computed<any[]>(() => {
+    const list = this.mainDishes();
+    return (list && list.length > 0)
+      ? list.map(item => ({ ...item, imageUrl: item.imageUrl || '/assets/images/menu_main.png' }))
+      : this.defaultMains;
+  });
+
+  public readonly availableDesserts = computed<any[]>(() => {
+    const list = this.desserts();
+    return (list && list.length > 0)
+      ? list.map(item => ({ ...item, imageUrl: item.imageUrl || '/assets/images/menu_dessert.png' }))
+      : this.defaultDesserts;
+  });
+
+  public readonly availableBeverages = computed<any[]>(() => {
+    const list = this.beverages();
+    return (list && list.length > 0)
+      ? list.map(item => ({ ...item, imageUrl: item.imageUrl || '/assets/images/menu_starter.png' }))
+      : this.defaultBeverages;
+  });
 
   protected readonly carouselItems = computed<any[]>(() => {
     const data = this.guest();
@@ -435,6 +499,87 @@ export class GuestRsvp implements OnInit, OnDestroy {
   public otherAllergies = '';
   public hasDietsChoice: boolean | null = null;
 
+  // 300ms 1-Click visual feedback & auto-advance state
+  public readonly selectedItemTransition = signal<{ category: string; dishName: string } | null>(null);
+  public readonly isAdvancing = signal<boolean>(false);
+  private advanceTimeout: any = null;
+
+  public isDishSelected(category: string, dishName: string): boolean {
+    if (this.selectedItemTransition()?.category === category && this.selectedItemTransition()?.dishName === dishName) {
+      return true;
+    }
+    if (category === 'STARTER') return this.starterChoice === dishName;
+    if (category === 'MAIN') return this.mealChoice === dishName;
+    if (category === 'DESSERT') return this.dessertChoice === dishName;
+    if (category === 'BEVERAGE') return this.beverageChoice === dishName;
+    return false;
+  }
+
+  public selectCourseAndAdvance(category: 'STARTER' | 'MAIN' | 'DESSERT' | 'BEVERAGE', dishName: string): void {
+    if (this.isDiscoveryMode()) {
+      // In discovery/catalog preview mode: purely informative, no auto-advance or definitive choice registration
+      return;
+    }
+
+    if (this.isAdvancing()) return;
+
+    if (category === 'STARTER') {
+      this.starterChoice = dishName;
+    } else if (category === 'MAIN') {
+      this.mealChoice = dishName;
+    } else if (category === 'DESSERT') {
+      this.dessertChoice = dishName;
+    } else if (category === 'BEVERAGE') {
+      this.beverageChoice = dishName;
+    }
+
+    this.hasConfirmedMenuChoice.set(true);
+    this.selectedItemTransition.set({ category, dishName });
+    this.isAdvancing.set(true);
+
+    if (this.advanceTimeout) {
+      clearTimeout(this.advanceTimeout);
+    }
+
+    this.advanceTimeout = setTimeout(() => {
+      this.selectedItemTransition.set(null);
+      this.isAdvancing.set(false);
+      this.goToNextStep();
+    }, 300);
+  }
+
+  public setDiscoveryCategory(stepIndex: number): void {
+    if (stepIndex >= 0 && stepIndex <= 3) {
+      this.currentRsvpStep.set(stepIndex);
+    }
+  }
+
+  public skipCurrentCourse(): void {
+    if (this.isAdvancing() || this.isDiscoveryMode()) return;
+
+    const step = this.currentRsvpStep();
+    if (step === 0) {
+      this.starterChoice = '';
+    } else if (step === 1) {
+      this.mealChoice = '';
+    } else if (step === 2) {
+      this.dessertChoice = '';
+    } else if (step === 3) {
+      this.beverageChoice = '';
+    }
+
+    this.goToNextStep();
+  }
+
+  public goToStep(stepIndex: number): void {
+    if (this.advanceTimeout) {
+      clearTimeout(this.advanceTimeout);
+    }
+    this.selectedItemTransition.set(null);
+    this.isAdvancing.set(false);
+    this.currentRsvpStep.set(stepIndex);
+  }
+
   public selectDishFromModal(category: 'STARTER' | 'MAIN' | 'DESSERT' | 'BEVERAGE', dishName: string): void {
     if (category === 'STARTER') {
       this.starterChoice = this.starterChoice === dishName ? '' : dishName;
@@ -445,24 +590,9 @@ export class GuestRsvp implements OnInit, OnDestroy {
     } else if (category === 'BEVERAGE') {
       this.beverageChoice = this.beverageChoice === dishName ? '' : dishName;
     }
-
-    // Sync carousel view to this item if present
-    const items = this.carouselItems();
-    const foundIdx = items.findIndex(i => i.name.toLowerCase() === dishName.toLowerCase());
-    if (foundIdx !== -1) {
-      this.activeCarouselIndex.set(foundIdx);
-    }
   }
 
   public confirmMenuModal(): void {
-    const targetName = this.mealChoice || this.starterChoice || this.dessertChoice || this.beverageChoice;
-    if (targetName) {
-      const items = this.carouselItems();
-      const foundIdx = items.findIndex(i => i.name.toLowerCase() === targetName.toLowerCase());
-      if (foundIdx !== -1) {
-        this.activeCarouselIndex.set(foundIdx);
-      }
-    }
     this.hasConfirmedMenuChoice.set(true);
     this.isFullMenuModalOpen.set(false);
   }
@@ -692,34 +822,71 @@ export class GuestRsvp implements OnInit, OnDestroy {
     });
   }
 
-  protected readonly currentRsvpStep = signal<number>(0);
+  public readonly currentRsvpStep = signal<number>(0);
 
-  protected goToNextStep(): void {
+  public goToNextStep(): void {
     const step = this.currentRsvpStep();
-    if (step < 2) {
+    if (step < 5) {
       this.currentRsvpStep.set(step + 1);
     }
   }
 
-  protected goToPrevStep(): void {
+  public goToPrevStep(): void {
+    if (this.advanceTimeout) {
+      clearTimeout(this.advanceTimeout);
+    }
+    this.selectedItemTransition.set(null);
+    this.isAdvancing.set(false);
+
+    if (this.isDiscoveryMode()) {
+      // Mode Aperçu (Preview) : Le clic sur Retour redirige immédiatement vers la page de démarrage (Page 1)
+      this.closeMenuAndRsvp();
+      return;
+    }
+
     const step = this.currentRsvpStep();
-    if (step > 0) {
-      this.currentRsvpStep.set(step - 1);
+    if (step === 5) {
+      // Depuis le Récapitulatif (Étape 5) -> Retour vers la page Régimes (Étape 4)
+      this.currentRsvpStep.set(4);
+    } else if (step === 4) {
+      // Depuis la page Régimes (Étape 4) -> Retour vers le Menu (Boissons - Étape 3)
+      this.currentRsvpStep.set(3);
+    } else {
+      // Depuis n'importe quelle étape du Menu (0, 1, 2, 3) -> Retour vers l'invitation (Page 1)
+      // Car les 4 catégories sont déjà directement accessibles via les onglets du Stepper
+      this.closeMenuAndRsvp();
     }
   }
 
-  protected handleTopNavPrev(): void {
-    if (this.currentRsvpStep() === 0) {
-      this.closeMenuAndRsvp();
-    } else {
-      this.goToPrevStep();
-    }
+  public handleTopNavPrev(): void {
+    this.goToPrevStep();
   }
 
   protected readonly selectedAttendanceChoice = signal<'CONFIRMED' | 'DECLINED' | null>(null);
 
   protected selectAttendanceChoice(choice: 'CONFIRMED' | 'DECLINED'): void {
     this.selectedAttendanceChoice.set(choice);
+  }
+
+  public hasAnyDietOrAllergySelected(): boolean {
+    return !!(
+      this.hasVegetarien ||
+      this.hasVegan ||
+      this.hasGlutenFree ||
+      this.hasLactoseFree ||
+      this.hasArachidesFree ||
+      this.hasHalal ||
+      this.hasFruitsDeMerFree ||
+      this.hasSucreFree ||
+      (this.otherAllergies && this.otherAllergies.trim().length > 0)
+    );
+  }
+
+  public onDietaryKeyDown(event: KeyboardEvent): void {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      this.goToNextStep();
+    }
   }
 
   protected confirmRsvpSubmission(): void {
@@ -1068,6 +1235,9 @@ export class GuestRsvp implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    if (this.advanceTimeout) {
+      clearTimeout(this.advanceTimeout);
+    }
     this.stopAllAudio();
   }
 }

@@ -274,14 +274,14 @@
                   [style.fontFamily]="getSecondaryFont()"
                   [style.color]="getSecondaryFontColor()"
                   style="opacity: 0.9;">
-                  <i class="fa fa-ticket-alt me-1" [style.color]="getPrimaryColor()"></i>
+<i class="fa fa-ticket-alt me-1" [style.color]="getPrimaryColor()"></i>
                   Tarif d'entrée : <strong [style.color]="getPrimaryColor()">{{ guest()?.ticketPrice || 0 }} {{ guest()?.currency || 'MAD' }}</strong> / personne
                 </span>
               </div>
             </div>
           </div>
 
-          <!-- ACTIONS PAGE 1 : Décision immédiate (Accepter / Décliner) + Lien Explorer d'abord -->
+          <!-- ACTIONS PAGE 1 : Décision immédiate (Accepter / Décliner) + Découvrir le menu d'abord -->
           <div class="page1-actions-container mt-4 pt-1 mb-2 text-center animate__animated animate__fadeIn">
             <!-- Boutons de décision immédiate -->
             <div class="page1-decision-buttons d-flex align-items-center justify-content-center gap-2 gap-sm-3 flex-nowrap">
@@ -301,12 +301,14 @@
               </button>
             </div>
 
-            <!-- 3. Lien d'exploration préalable (Parcours B : Explorer d'abord) -->
+            <!-- 3. Bouton secondaire discret : Découvrir le menu d'abord -->
             <div class="mt-3">
-              <button type="button" class="btn btn-link link-explore-first"
-                [style.color]="getPrimaryColor()"
-                (click)="startExploreWorkflow()">
-                Découvrir le menu et l'ambiance d'abord <i class="fa fa-arrow-right ms-1"></i>
+              <button type="button" class="btn btn-link btn-discover-first text-decoration-none"
+                [style.color]="getSecondaryFontColor()"
+                (click)="startDiscoveryWorkflow()">
+                <i class="fa fa-utensils me-1.5" [style.color]="getPrimaryColor()"></i>
+                Découvrir le menu d'abord
+                <i class="fa fa-arrow-right ms-1" style="font-size: 0.72rem;"></i>
               </button>
             </div>
           </div>
@@ -316,831 +318,739 @@
 
         <!-- Dedicated Menu & RSVP View (Smooth transition when triggered) -->
         <div class="p-2 p-md-3 menu-rsvp-container animate__animated animate__fadeIn text-center mx-auto"
+          [class.has-discovery-footer]="isDiscoveryMode()"
           *ngIf="isMenuRsvpOpen() && !isSuccess()">
 
-        <!-- Full Menu Modal Overlay (Compact Luxury Card Modal) -->
-        <div class="modal d-block bg-dark bg-opacity-75" tabindex="-1" *ngIf="isFullMenuModalOpen()"
-          style="backdrop-filter: blur(6px); z-index: 1060;">
-          <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable mx-auto px-2" style="max-width: 410px;">
-            <div class="modal-content border-0 p-3 p-sm-4 shadow-2xl text-center position-relative rounded-4"
-              style="background: #faf7f2; border: 1px solid rgba(212, 175, 55, 0.35) !important;">
-              <!-- Close button -->
-              <button type="button" class="btn-close position-absolute top-0 end-0 m-3 shadow-none"
-                (click)="isFullMenuModalOpen.set(false)" aria-label="Fermer"></button>
+          <!-- Top Sequential Navigation & Interactive Stepper -->
+          <div class="menu-flow-top-header mb-3 w-100 mx-auto" style="max-width: 440px;">
+            <div class="d-flex align-items-center justify-content-between mb-2 px-1">
+              <!-- Flèche de retour en haut à gauche -->
+              <button type="button" class="btn btn-sm btn-nav-back-icon d-inline-flex align-items-center gap-1 p-0 border-0 bg-transparent"
+                [style.color]="getSecondaryFontColor()"
+                (click)="handleTopNavPrev()"
+                [title]="isDiscoveryMode() ? 'Retour à l\'invitation' : 'Retour'">
+                <i class="fa fa-arrow-left"></i>
+                <span class="fs-xxs fw-medium ms-1">{{ isDiscoveryMode() ? 'Invitation' : 'Retour' }}</span>
+              </button>
 
-              <div class="p-1">
-                <!-- Crest Icon -->
-                <div class="mb-2 text-center">
-                  <div class="d-inline-flex align-items-center justify-content-center"
-                    style="width: 36px; height: 36px; border-radius: 50%; border: 1px solid rgba(15, 23, 42, 0.2); background: rgba(255, 255, 255, 0.7);">
-                    <i class="fa fa-utensils text-dark" style="font-size: 0.85rem;"></i>
-                  </div>
-                </div>
+              <!-- Indicateur de Progression / Mode -->
+              <div class="step-progress-label text-end">
+                <span class="badge-step-count fw-bold text-uppercase"
+                  [style.fontFamily]="getSecondaryFont()"
+                  [style.color]="getPrimaryColor()"
+                  style="font-size: 0.72rem; letter-spacing: 1.2px;">
+                  <ng-container *ngIf="isDiscoveryMode()">Aperçu du Menu</ng-container>
+                  <ng-container *ngIf="!isDiscoveryMode()">
+                    <ng-container *ngIf="currentRsvpStep() <= 3">Étape {{ currentRsvpStep() + 1 }}/4</ng-container>
+                    <ng-container *ngIf="currentRsvpStep() === 4">Vos Préférences</ng-container>
+                    <ng-container *ngIf="currentRsvpStep() === 5">Récapitulatif</ng-container>
+                  </ng-container>
+                </span>
+              </div>
+            </div>
 
-                <!-- Title & Subtitle with Pure Readable Luxury Typography -->
+            <!-- Stepper Interactif Direct (4 Catégories de Restauration) -->
+            <div class="stepper-interactive-tabs d-flex justify-content-center gap-1.5 flex-wrap" *ngIf="currentRsvpStep() <= 3 || isDiscoveryMode()">
+              <!-- 1. Entrées -->
+              <button type="button" class="btn btn-sm stepper-tab-btn rounded-pill px-2.5 py-1 fs-xxs fw-bold shadow-2xs"
+                [class.active-tab]="currentRsvpStep() === 0"
+                [class.has-selection]="!isDiscoveryMode() && starterChoice"
+                [style.background]="currentRsvpStep() === 0 ? getPrimaryColor() : (!isDiscoveryMode() && starterChoice ? (getPrimaryColor() + '18') : 'rgba(255,255,255,0.85)')"
+                [style.color]="currentRsvpStep() === 0 ? (isDarkBg(getPrimaryColor()) ? '#ffffff' : '#0c0c0c') : getSecondaryFontColor()"
+                [style.borderColor]="getPrimaryColor() + (currentRsvpStep() === 0 ? 'ff' : (!isDiscoveryMode() && starterChoice ? '80' : '40'))"
+                (click)="goToStep(0)"
+                title="Aller directement aux Entrées">
+                <i class="fa fa-check text-success me-1 fs-3xs" *ngIf="!isDiscoveryMode() && starterChoice && currentRsvpStep() !== 0"></i>
+                Entrées
+              </button>
+
+              <!-- 2. Plats -->
+              <button type="button" class="btn btn-sm stepper-tab-btn rounded-pill px-2.5 py-1 fs-xxs fw-bold shadow-2xs"
+                [class.active-tab]="currentRsvpStep() === 1"
+                [class.has-selection]="!isDiscoveryMode() && mealChoice"
+                [style.background]="currentRsvpStep() === 1 ? getPrimaryColor() : (!isDiscoveryMode() && mealChoice ? (getPrimaryColor() + '18') : 'rgba(255,255,255,0.85)')"
+                [style.color]="currentRsvpStep() === 1 ? (isDarkBg(getPrimaryColor()) ? '#ffffff' : '#0c0c0c') : getSecondaryFontColor()"
+                [style.borderColor]="getPrimaryColor() + (currentRsvpStep() === 1 ? 'ff' : (!isDiscoveryMode() && mealChoice ? '80' : '40'))"
+                (click)="goToStep(1)"
+                title="Aller directement aux Plats">
+                <i class="fa fa-check text-success me-1 fs-3xs" *ngIf="!isDiscoveryMode() && mealChoice && currentRsvpStep() !== 1"></i>
+                Plats
+              </button>
+
+              <!-- 3. Desserts -->
+              <button type="button" class="btn btn-sm stepper-tab-btn rounded-pill px-2.5 py-1 fs-xxs fw-bold shadow-2xs"
+                [class.active-tab]="currentRsvpStep() === 2"
+                [class.has-selection]="!isDiscoveryMode() && dessertChoice"
+                [style.background]="currentRsvpStep() === 2 ? getPrimaryColor() : (!isDiscoveryMode() && dessertChoice ? (getPrimaryColor() + '18') : 'rgba(255,255,255,0.85)')"
+                [style.color]="currentRsvpStep() === 2 ? (isDarkBg(getPrimaryColor()) ? '#ffffff' : '#0c0c0c') : getSecondaryFontColor()"
+                [style.borderColor]="getPrimaryColor() + (currentRsvpStep() === 2 ? 'ff' : (!isDiscoveryMode() && dessertChoice ? '80' : '40'))"
+                (click)="goToStep(2)"
+                title="Aller directement aux Desserts">
+                <i class="fa fa-check text-success me-1 fs-3xs" *ngIf="!isDiscoveryMode() && dessertChoice && currentRsvpStep() !== 2"></i>
+                Desserts
+              </button>
+
+              <!-- 4. Boissons -->
+              <button type="button" class="btn btn-sm stepper-tab-btn rounded-pill px-2.5 py-1 fs-xxs fw-bold shadow-2xs"
+                [class.active-tab]="currentRsvpStep() === 3"
+                [class.has-selection]="!isDiscoveryMode() && beverageChoice"
+                [style.background]="currentRsvpStep() === 3 ? getPrimaryColor() : (!isDiscoveryMode() && beverageChoice ? (getPrimaryColor() + '18') : 'rgba(255,255,255,0.85)')"
+                [style.color]="currentRsvpStep() === 3 ? (isDarkBg(getPrimaryColor()) ? '#ffffff' : '#0c0c0c') : getSecondaryFontColor()"
+                [style.borderColor]="getPrimaryColor() + (currentRsvpStep() === 3 ? 'ff' : (!isDiscoveryMode() && beverageChoice ? '80' : '40'))"
+                (click)="goToStep(3)"
+                title="Aller directement aux Boissons">
+                <i class="fa fa-check text-success me-1 fs-3xs" *ngIf="!isDiscoveryMode() && beverageChoice && currentRsvpStep() !== 3"></i>
+                Boissons
+              </button>
+            </div>
+          </div>
+
+          <!-- Formulaire séquentiel sans bouton Suivant pour les plats -->
+          <form #rsvpForm="ngForm" class="w-100 mx-auto d-flex flex-column justify-content-between flex-grow-1"
+            [style.maxWidth]="currentRsvpStep() === 5 ? '780px' : '410px'">
+
+            <!-- ÉTAPE 0 : ENTRÉE (1/4) -->
+            <div *ngIf="currentRsvpStep() === 0" class="course-step-container animate__animated animate__fadeIn my-auto w-100 py-1">
+              <!-- En-tête de catégorie -->
+              <div class="spotlight-title-wrapper mb-3 text-center">
                 <span class="luxury-subtitle d-block mb-1"
                   [style.fontFamily]="getPrimaryFont()"
                   [style.color]="getPrimaryColor()"
-                  style="font-size: 1.45rem !important; line-height: 1.1 !important; text-shadow: none !important;">
-                  Menu de la Réception
+                  style="font-size: 1.35rem !important; line-height: 1.1 !important;">
+                  Entrée
                 </span>
-
-                <h3 class="m-0 text-center fw-bold"
+                <h3 class="page2-menu-title text-uppercase fw-bold m-0"
                   [style.fontFamily]="getSecondaryFont()"
                   [style.color]="getSecondaryFontColor()"
-                  style="font-size: 1.12rem !important; line-height: 1.35 !important; letter-spacing: 1.2px !important; text-transform: uppercase !important; text-shadow: none !important;">
-                  {{ guest()?.eventTitle || 'Mariage d\'Exception' }}
+                  style="font-size: 0.95rem !important; line-height: 1.3 !important; letter-spacing: 1.2px !important;">
+                  {{ isDiscoveryMode() ? 'Aperçu des Entrées' : 'Sélectionnez votre Entrée' }}
                 </h3>
+                <div class="spotlight-underline mx-auto mt-1"
+                  [style.backgroundColor]="getPrimaryColor()"
+                  style="width: 40px; height: 1.5px; opacity: 0.65;"></div>
+              </div>
 
-                <div class="mx-auto mt-1.5 mb-2.5"
-                  style="width: 40px; height: 1.5px; background: #0f172a; opacity: 0.35;"></div>
-
-                <!-- Subtitle adapting to Service Formula -->
-                <p class="fs-xxs mb-3 text-uppercase tracking-wider"
-                  style="color: #64748b !important; letter-spacing: 1px; font-size: 0.68rem;">
-                  <span *ngIf="isBuffet()">Menu en buffet libre-service (Consultation)</span>
-                  <span *ngIf="isMix()">Choisissez votre Plat Principal (Entrées & Desserts au buffet)</span>
-                  <span *ngIf="isPlated()">Cliquez sur un plat pour l'ajouter à votre sélection</span>
-                </p>
-
-                <!-- Categorized Full Menu Details -->
-                <div class="full-menu-scrollable text-start pe-1" style="max-height: 350px; overflow-y: auto;">
-
-                  <!-- Entrées -->
-                  <div class="menu-cat-group mb-3" *ngIf="starters().length > 0">
-                    <div class="fs-xxs text-uppercase fw-bold border-bottom border-dark border-opacity-10 pb-1 mb-1.5 text-center"
-                      style="letter-spacing: 1.5px; color: #0f172a !important; font-size: 0.74rem;">
-                      {{ isPlated() ? '— Entrées —' : '— Entrées en Buffet Libre-Service —' }}
-                    </div>
-
-                    <!-- Plated: Selectable item -->
-                    <ng-container *ngIf="isPlated()">
-                      <div class="menu-modal-item mb-1.5 p-2 rounded-3 border transition-all cursor-pointer"
-                        *ngFor="let item of starters()"
-                        [ngStyle]="{'background': starterChoice === item.name ? '#ffffff' : 'rgba(255, 255, 255, 0.55)', 'border-color': starterChoice === item.name ? '#0f172a' : 'rgba(0,0,0,0.06)'}"
-                        (click)="selectDishFromModal('STARTER', item.name)">
-                        <div class="d-flex justify-content-between align-items-center gap-2">
-                          <div class="d-flex flex-column">
-                            <div>
-                              <span class="fw-bold text-dark font-serif" style="font-size: 0.88rem; color: #0f172a;">{{ item.name }}</span>
-                              <span class="ms-1.5 text-muted fst-italic fw-normal" style="font-size: 0.72rem;" *ngIf="item.dietaryTag">({{ item.dietaryTag }})</span>
-                            </div>
-                            <p class="text-muted mb-0 fst-italic mt-0.5" style="font-size: 0.74rem; line-height: 1.3;" *ngIf="item.description">{{ item.description }}</p>
-                          </div>
-                          <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 transition-all"
-                            style="width: 30px; height: 30px;"
-                            [ngClass]="starterChoice === item.name ? 'bg-dark text-white shadow-sm' : 'bg-white border text-secondary'">
-                            <i class="fa" [ngClass]="starterChoice === item.name ? 'fa-check text-warning' : 'fa-hand-pointer'" style="font-size: 0.75rem;"></i>
-                          </div>
-                        </div>
-                      </div>
-                    </ng-container>
-
-                    <!-- Buffet / Mixte: View-only item -->
-                    <ng-container *ngIf="!isPlated()">
-                      <div class="menu-modal-item mb-1.5 p-2 rounded-3 border border-transparent bg-white bg-opacity-50"
-                        *ngFor="let item of starters()">
-                        <div class="d-flex justify-content-between align-items-center gap-2">
-                          <div class="d-flex flex-column">
-                            <div>
-                              <span class="fw-bold text-dark font-serif" style="font-size: 0.88rem; color: #0f172a;">{{ item.name }}</span>
-                              <span class="ms-1.5 text-muted fst-italic fw-normal" style="font-size: 0.72rem;" *ngIf="item.dietaryTag">({{ item.dietaryTag }})</span>
-                            </div>
-                            <p class="text-muted mb-0 fst-italic mt-0.5" style="font-size: 0.74rem; line-height: 1.3;" *ngIf="item.description">{{ item.description }}</p>
-                          </div>
-                          <span class="fs-xxs fst-italic text-muted text-nowrap">
-                            Au buffet
-                          </span>
-                        </div>
-                      </div>
-                    </ng-container>
+              <!-- Cartes Horizontales Épurées empilées verticalement -->
+              <div class="dish-horizontal-cards-stack d-flex flex-column gap-2 mb-3">
+                <div class="dish-horizontal-card d-flex align-items-center p-2 rounded-3 border position-relative text-start"
+                  *ngFor="let dish of availableStarters()"
+                  [class.is-selected]="!isDiscoveryMode() && isDishSelected('STARTER', dish.name)"
+                  [class.is-feedback-active]="!isDiscoveryMode() && selectedItemTransition()?.category === 'STARTER' && selectedItemTransition()?.dishName === dish.name"
+                  [class.cursor-pointer]="!isDiscoveryMode()"
+                  [style.borderColor]="(!isDiscoveryMode() && isDishSelected('STARTER', dish.name)) ? getPrimaryColor() : (getPrimaryColor() + '28')"
+                  [style.backgroundColor]="(!isDiscoveryMode() && isDishSelected('STARTER', dish.name)) ? (getPrimaryColor() + '14') : '#ffffff'"
+                  (click)="selectCourseAndAdvance('STARTER', dish.name)">
+                  
+                  <!-- Miniature carrée à gauche -->
+                  <div class="dish-card-thumb-wrapper flex-shrink-0 me-3">
+                    <img [src]="dish.imageUrl" [alt]="dish.name" class="dish-card-thumb rounded-2 object-fit-cover shadow-2xs"
+                      style="width: 58px; height: 58px;">
                   </div>
 
-                  <!-- Plats Principaux -->
-                  <div class="menu-cat-group mb-3" *ngIf="mainDishes().length > 0">
-                    <div class="fs-xxs text-uppercase fw-bold border-bottom border-dark border-opacity-10 pb-1 mb-1.5 text-center"
-                      style="letter-spacing: 1.5px; color: #0f172a !important; font-size: 0.74rem;">
-                      {{ isBuffet() ? '— Plats en Buffet Libre-Service —' : (isMix() ? '— Plat Principal (Service à table) —' : '— Plats Principaux —') }}
-                    </div>
-
-                    <!-- Plated & Mixte: Selectable item -->
-                    <ng-container *ngIf="!isBuffet()">
-                      <div class="menu-modal-item mb-1.5 p-2 rounded-3 border transition-all cursor-pointer"
-                        *ngFor="let item of mainDishes()"
-                        [ngStyle]="{'background': mealChoice === item.name ? '#ffffff' : 'rgba(255, 255, 255, 0.55)', 'border-color': mealChoice === item.name ? '#0f172a' : 'rgba(0,0,0,0.06)'}"
-                        (click)="selectDishFromModal('MAIN', item.name)">
-                        <div class="d-flex justify-content-between align-items-center gap-2">
-                          <div class="d-flex flex-column">
-                            <div>
-                              <span class="fw-bold text-dark font-serif" style="font-size: 0.88rem; color: #0f172a;">{{ item.name }}</span>
-                              <span class="ms-1.5 text-muted fst-italic fw-normal" style="font-size: 0.72rem;" *ngIf="item.dietaryTag">({{ item.dietaryTag }})</span>
-                            </div>
-                            <p class="text-muted mb-0 fst-italic mt-0.5" style="font-size: 0.74rem; line-height: 1.3;" *ngIf="item.description">{{ item.description }}</p>
-                          </div>
-                          <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 transition-all"
-                            style="width: 30px; height: 30px;"
-                            [ngClass]="mealChoice === item.name ? 'bg-dark text-white shadow-sm' : 'bg-white border text-secondary'">
-                            <i class="fa" [ngClass]="mealChoice === item.name ? 'fa-check text-warning' : 'fa-hand-pointer'" style="font-size: 0.75rem;"></i>
-                          </div>
-                        </div>
-                      </div>
-                    </ng-container>
-
-                    <!-- Buffet: View-only item -->
-                    <ng-container *ngIf="isBuffet()">
-                      <div class="menu-modal-item mb-1.5 p-2 rounded-3 border border-transparent bg-white bg-opacity-50"
-                        *ngFor="let item of mainDishes()">
-                        <div class="d-flex justify-content-between align-items-center gap-2">
-                          <div class="d-flex flex-column">
-                            <div>
-                              <span class="fw-bold text-dark font-serif" style="font-size: 0.88rem; color: #0f172a;">{{ item.name }}</span>
-                              <span class="ms-1.5 text-muted fst-italic fw-normal" style="font-size: 0.72rem;" *ngIf="item.dietaryTag">({{ item.dietaryTag }})</span>
-                            </div>
-                            <p class="text-muted mb-0 fst-italic mt-0.5" style="font-size: 0.74rem; line-height: 1.3;" *ngIf="item.description">{{ item.description }}</p>
-                          </div>
-                          <span class="fs-xxs fst-italic text-muted text-nowrap">
-                            Au buffet
-                          </span>
-                        </div>
-                      </div>
-                    </ng-container>
-                  </div>
-
-                  <!-- Desserts -->
-                  <div class="menu-cat-group mb-3" *ngIf="desserts().length > 0">
-                    <div class="fs-xxs text-uppercase fw-bold border-bottom border-dark border-opacity-10 pb-1 mb-1.5 text-center"
-                      style="letter-spacing: 1.5px; color: #0f172a !important; font-size: 0.74rem;">
-                      {{ isPlated() ? '— Desserts —' : '— Desserts en Buffet Libre-Service —' }}
-                    </div>
-
-                    <!-- Plated: Selectable item -->
-                    <ng-container *ngIf="isPlated()">
-                      <div class="menu-modal-item mb-1.5 p-2 rounded-3 border transition-all cursor-pointer"
-                        *ngFor="let item of desserts()"
-                        [ngStyle]="{'background': dessertChoice === item.name ? '#ffffff' : 'rgba(255, 255, 255, 0.55)', 'border-color': dessertChoice === item.name ? '#0f172a' : 'rgba(0,0,0,0.06)'}"
-                        (click)="selectDishFromModal('DESSERT', item.name)">
-                        <div class="d-flex justify-content-between align-items-center gap-2">
-                          <div class="d-flex flex-column">
-                            <div>
-                              <span class="fw-bold text-dark font-serif" style="font-size: 0.88rem; color: #0f172a;">{{ item.name }}</span>
-                              <span class="ms-1.5 text-muted fst-italic fw-normal" style="font-size: 0.72rem;" *ngIf="item.dietaryTag">({{ item.dietaryTag }})</span>
-                            </div>
-                            <p class="text-muted mb-0 fst-italic mt-0.5" style="font-size: 0.74rem; line-height: 1.3;" *ngIf="item.description">{{ item.description }}</p>
-                          </div>
-                          <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 transition-all"
-                            style="width: 30px; height: 30px;"
-                            [ngClass]="dessertChoice === item.name ? 'bg-dark text-white shadow-sm' : 'bg-white border text-secondary'">
-                            <i class="fa" [ngClass]="dessertChoice === item.name ? 'fa-check text-warning' : 'fa-hand-pointer'" style="font-size: 0.75rem;"></i>
-                          </div>
-                        </div>
-                      </div>
-                    </ng-container>
-
-                    <!-- Buffet / Mixte: View-only item -->
-                    <ng-container *ngIf="!isPlated()">
-                      <div class="menu-modal-item mb-1.5 p-2 rounded-3 border border-transparent bg-white bg-opacity-50"
-                        *ngFor="let item of desserts()">
-                        <div class="d-flex justify-content-between align-items-center gap-2">
-                          <div class="d-flex flex-column">
-                            <div>
-                              <span class="fw-bold text-dark font-serif" style="font-size: 0.88rem; color: #0f172a;">{{ item.name }}</span>
-                              <span class="ms-1.5 text-muted fst-italic fw-normal" style="font-size: 0.72rem;" *ngIf="item.dietaryTag">({{ item.dietaryTag }})</span>
-                            </div>
-                            <p class="text-muted mb-0 fst-italic mt-0.5" style="font-size: 0.74rem; line-height: 1.3;" *ngIf="item.description">{{ item.description }}</p>
-                          </div>
-                          <span class="fs-xxs fst-italic text-muted text-nowrap">
-                            Au buffet
-                          </span>
-                        </div>
-                      </div>
-                    </ng-container>
-                  </div>
-
-                  <!-- Boissons -->
-                  <div class="menu-cat-group mb-3" *ngIf="beverages().length > 0">
-                    <div class="fs-xxs text-uppercase fw-bold border-bottom border-dark border-opacity-10 pb-1 mb-1.5 text-center"
-                      style="letter-spacing: 1.5px; color: #0f172a !important; font-size: 0.74rem;">
-                      {{ isPlated() ? '— Boissons —' : '— Boissons en Libre-Service —' }}
-                    </div>
-
-                    <!-- Plated: Selectable item -->
-                    <ng-container *ngIf="isPlated()">
-                      <div class="menu-modal-item mb-1.5 p-2 rounded-3 border transition-all cursor-pointer"
-                        *ngFor="let item of beverages()"
-                        [ngStyle]="{'background': beverageChoice === item.name ? '#ffffff' : 'rgba(255, 255, 255, 0.55)', 'border-color': beverageChoice === item.name ? '#0f172a' : 'rgba(0,0,0,0.06)'}"
-                        (click)="selectDishFromModal('BEVERAGE', item.name)">
-                        <div class="d-flex justify-content-between align-items-center gap-2">
-                          <div class="d-flex flex-column">
-                            <div>
-                              <span class="fw-bold text-dark font-serif" style="font-size: 0.88rem; color: #0f172a;">{{ item.name }}</span>
-                              <span class="ms-1.5 text-muted fst-italic fw-normal" style="font-size: 0.72rem;" *ngIf="item.dietaryTag">({{ item.dietaryTag }})</span>
-                            </div>
-                            <p class="text-muted mb-0 fst-italic mt-0.5" style="font-size: 0.74rem; line-height: 1.3;" *ngIf="item.description">{{ item.description }}</p>
-                          </div>
-                          <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 transition-all"
-                            style="width: 30px; height: 30px;"
-                            [ngClass]="beverageChoice === item.name ? 'bg-dark text-white shadow-sm' : 'bg-white border text-secondary'">
-                            <i class="fa" [ngClass]="beverageChoice === item.name ? 'fa-check text-warning' : 'fa-hand-pointer'" style="font-size: 0.75rem;"></i>
-                          </div>
-                        </div>
-                      </div>
-                    </ng-container>
-
-                    <!-- Buffet / Mixte: View-only item -->
-                    <ng-container *ngIf="!isPlated()">
-                      <div class="menu-modal-item mb-1.5 p-2 rounded-3 border border-transparent bg-white bg-opacity-50"
-                        *ngFor="let item of beverages()">
-                        <div class="d-flex justify-content-between align-items-center gap-2">
-                          <div class="d-flex flex-column">
-                            <div>
-                              <span class="fw-bold text-dark font-serif" style="font-size: 0.88rem; color: #0f172a;">{{ item.name }}</span>
-                              <span class="ms-1.5 text-muted fst-italic fw-normal" style="font-size: 0.72rem;" *ngIf="item.dietaryTag">({{ item.dietaryTag }})</span>
-                            </div>
-                            <p class="text-muted mb-0 fst-italic mt-0.5" style="font-size: 0.74rem; line-height: 1.3;" *ngIf="item.description">{{ item.description }}</p>
-                          </div>
-                          <span class="fs-xxs fst-italic text-muted text-nowrap">
-                            Libre-service
-                          </span>
-                        </div>
-                      </div>
-                    </ng-container>
-                  </div>
-
-                </div>
-
-                <!-- Footer Action Button adapting to Formula -->
-                <button type="button" class="btn btn-sm btn-alt-secondary rounded-pill px-4 mt-3 py-2 fs-xs fw-bold text-uppercase shadow-sm"
-                  *ngIf="isBuffet()"
-                  (click)="confirmMenuModal()">
-                  Fermer
-                </button>
-
-                <button type="button" class="btn btn-sm btn-dark rounded-pill px-4 mt-3 py-2 fs-xs fw-bold text-uppercase shadow-sm"
-                  style="letter-spacing: 1.2px; background: #0f172a !important;"
-                  *ngIf="isMix()"
-                  (click)="confirmMenuModal()">
-                  <i class="fa fa-check me-1.5 text-warning"></i>
-                  Confirmer mon plat
-                </button>
-
-                <button type="button" class="btn btn-sm btn-dark rounded-pill px-4 mt-3 py-2 fs-xs fw-bold text-uppercase shadow-sm"
-                  style="letter-spacing: 1.2px; background: #0f172a !important;"
-                  *ngIf="isPlated()"
-                  (click)="confirmMenuModal()">
-                  <i class="fa fa-check me-1.5 text-warning"></i>
-                  Confirmer
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- RSVP Multi-Step Form & Persistent Bottom RSVP Section -->
-        <form #rsvpForm="ngForm" *ngIf="isMenuRsvpOpen() && !isSuccess()" class="w-100 mx-auto d-flex flex-column justify-content-between flex-grow-1"
-          [style.maxWidth]="currentRsvpStep() === 2 ? '780px' : '380px'">
-
-          <!-- STEP 0: Menu Discovery & Selection -->
-          <div *ngIf="currentRsvpStep() === 0"
-            class="menu-selection-container animate__animated animate__fadeIn my-auto w-100 pt-3 pt-md-4 pb-2">
-
-            <!-- Title Header -->
-            <div class="spotlight-title-wrapper mb-2 text-center">
-              <span class="luxury-subtitle d-block mb-1"
-                [style.fontFamily]="getPrimaryFont()"
-                [style.color]="getPrimaryColor()"
-                style="font-size: 1.3rem !important; line-height: 1.1 !important;">
-                Aperçu Gastronomique
-              </span>
-              <h3 class="page2-menu-title text-uppercase fw-bold m-0"
-                [style.fontFamily]="getSecondaryFont()"
-                [style.color]="getSecondaryFontColor()"
-                style="font-size: 0.95rem !important; line-height: 1.3 !important; letter-spacing: 1.2px !important;">
-                Les Saveurs de l'Événement
-              </h3>
-              <div class="spotlight-underline mx-auto mt-1"
-                [style.backgroundColor]="getPrimaryColor()"
-                style="width: 40px; height: 1.5px; opacity: 0.65;"></div>
-            </div>
-            <p class="fs-xxs font-serif mb-2 text-center" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="opacity: 0.9;">
-              Faites glisser pour découvrir le menu
-            </p>
-
-            <!-- Interactive Gourmet Dish Carousel with Arrows (Larger & More Visible) -->
-            <div class="carousel-spotlight-container position-relative mx-auto mb-2.5"
-              style="max-width: 360px; width: 100%;" (touchstart)="onTouchStart($event)"
-              (touchend)="onTouchEnd($event)">
-
-              <!-- Left Arrow -->
-              <button type="button" class="carousel-arrow arrow-left" (click)="prevCarouselItem()"
-                aria-label="Précédent" *ngIf="carouselItems().length > 1">
-                <i class="fa fa-chevron-left"></i>
-              </button>
-
-              <!-- Active Card -->
-              <div
-                class="carousel-card-wrapper border border-light rounded-3 bg-cream-light p-2.5 position-relative overflow-hidden shadow-sm w-100"
-                style="box-sizing: border-box;">
-                <div class="carousel-card-image-container mb-2 position-relative">
-                  <img [src]="carouselItems()[activeCarouselIndex()]?.image"
-                    [alt]="carouselItems()[activeCarouselIndex()]?.name"
-                    class="w-100 object-fit-cover rounded-2 shadow-sm" style="height: 155px;">
-                </div>
-                <div class="carousel-card-info text-center">
-                  <span class="text-uppercase fw-bold d-inline-block mb-1"
-                    [style.fontFamily]="getSecondaryFont()"
-                    [style.color]="getPrimaryColor()"
-                    style="font-size: 0.68rem; letter-spacing: 1.4px;">
-                    — {{ carouselItems()[activeCarouselIndex()]?.categoryLabel }} —
-                  </span>
-                  <h4 class="fs-xs fw-bold font-serif mb-0"
-                    [style.fontFamily]="getSecondaryFont()"
-                    [style.color]="getSecondaryFontColor()"
-                    style="min-height: 24px; display: flex; align-items: center; justify-content: center; font-size: 0.88rem; line-height: 1.25;">
-                    {{ carouselItems()[activeCarouselIndex()]?.name }}
-                  </h4>
-                </div>
-              </div>
-
-              <!-- Right Arrow -->
-              <button type="button" class="carousel-arrow arrow-right" (click)="nextCarouselItem()" aria-label="Suivant"
-                *ngIf="carouselItems().length > 1">
-                <i class="fa fa-chevron-right"></i>
-              </button>
-            </div>
-
-            <!-- ÉTAT 1 : MODE DÉCOUVERTE (L'invité n'a pas encore accepté) -->
-            <div *ngIf="selectedAttendanceChoice() !== 'CONFIRMED'"
-              class="discovery-decision-actions text-center mt-3 pt-1 animate__animated animate__fadeIn">
-              
-              <div class="discovery-buttons-row d-flex align-items-center justify-content-center gap-2 gap-sm-3 flex-nowrap">
-                <!-- 1. Accepter (Bouton Principal teinté avec la couleur du modèle) -->
-                <button type="button" class="btn btn-decision-accept shadow-sm"
-                  [style.background]="getPrimaryColor()"
-                  [style.borderColor]="getPrimaryColor()"
-                  [style.color]="isDarkBg(getPrimaryColor()) ? '#ffffff' : '#0c0c0c'"
-                  (click)="acceptFromDiscovery()">
-                  <i class="fa fa-check me-2"></i> Accepter
-                </button>
-
-                <!-- 2. Décliner (Bouton Contour Net et Lisible) -->
-                <button type="button" class="btn btn-decision-decline shadow-sm"
-                  (click)="openDeclineModal()">
-                  <i class="fa fa-times me-1.5"></i> Décliner
-                </button>
-              </div>
-
-              <!-- Lien discret de retour à la Page 1 -->
-              <div class="mt-2.5">
-                <button type="button" class="btn btn-link text-decoration-none p-0"
-                  [style.color]="getSecondaryFontColor()"
-                  (click)="closeMenuAndRsvp()"
-                  style="font-size: 0.76rem; opacity: 0.85;">
-                  <i class="fa fa-arrow-left me-1"></i> Revoir la carte d'invitation
-                </button>
-              </div>
-            </div>
-
-            <!-- ÉTAT 2 : MODE CONFIRMÉ (L'invité a accepté, il peut désormais choisir ses plats) -->
-            <div *ngIf="selectedAttendanceChoice() === 'CONFIRMED'"
-              class="confirmed-step0-actions animate__animated animate__fadeIn">
-
-              <!-- Bouton Valorisé & Agrandir pour Choisir ses plats -->
-              <div class="mb-3 text-center mt-2.5">
-                <button type="button" class="btn btn-select-dishes-prominent rounded-pill px-4 py-2.5 fw-bold shadow-sm"
-                  [style.background]="getPrimaryColor() + '18'"
-                  [style.borderColor]="getPrimaryColor()"
-                  [style.color]="getPrimaryColor()"
-                  style="border-width: 1.5px; border-style: solid; font-size: 0.88rem;"
-                  (click)="isFullMenuModalOpen.set(true)">
-                  <i class="fa fa-utensils me-2" [style.color]="getPrimaryColor()"></i>
-                  <span *ngIf="isBuffet()">Consulter le menu du buffet</span>
-                  <span *ngIf="!isBuffet()">
-                    {{ (starterChoice || mealChoice || dessertChoice || beverageChoice) ? 'Modifier mes plats choisis' : 'Choisir mes plats (Menu complet)' }}
-                  </span>
-                </button>
-
-                <!-- Lien discret de retour à la Page 1 tant que les plats ne sont pas encore choisis -->
-                <div class="mt-2.5" *ngIf="!hasConfirmedMenuChoice() && !isBuffet()">
-                  <button type="button" class="btn btn-link text-decoration-none p-0"
-                    [style.color]="getSecondaryFontColor()"
-                    (click)="closeMenuAndRsvp()"
-                    style="font-size: 0.76rem; opacity: 0.85;">
-                    <i class="fa fa-arrow-left me-1"></i> Revoir la carte d'invitation
-                  </button>
-                </div>
-
-                <!-- Selected Dishes Summary (Affichage textuel épuré sans forme de bouton - visible dès que les plats sont choisis) -->
-                <div *ngIf="hasConfirmedMenuChoice() && ((isPlated() && (starterChoice || mealChoice || dessertChoice || beverageChoice)) || (isMix() && mealChoice))" class="mt-2.5 text-center animate__animated animate__fadeIn">
-                  <div class="d-inline-flex flex-wrap justify-content-center gap-2" style="font-size: 0.78rem;">
-                    <span class="fw-semibold" [style.color]="getSecondaryFontColor()" *ngIf="isPlated() && starterChoice">
-                      <i class="fa fa-check text-success me-1"></i>Entrée : <strong>{{ starterChoice }}</strong>
-                    </span>
-                    <span class="fw-semibold" [style.color]="getSecondaryFontColor()" *ngIf="mealChoice">
-                      <i class="fa fa-check text-success me-1"></i>Plat : <strong>{{ mealChoice }}</strong>
-                    </span>
-                    <span class="fw-semibold" [style.color]="getSecondaryFontColor()" *ngIf="isPlated() && dessertChoice">
-                      <i class="fa fa-check text-success me-1"></i>Dessert : <strong>{{ dessertChoice }}</strong>
-                    </span>
-                    <span class="fw-semibold" [style.color]="getSecondaryFontColor()" *ngIf="isPlated() && beverageChoice">
-                      <i class="fa fa-check text-success me-1"></i>Boisson : <strong>{{ beverageChoice }}</strong>
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Formule Buffet: Transparent floating elegant note -->
-              <div *ngIf="isBuffet()" class="text-center mt-2.5 mb-1 px-3">
-                <span class="luxury-subtitle d-block mb-0.5"
-                  [style.fontFamily]="getPrimaryFont()"
-                  [style.color]="getPrimaryColor()"
-                  style="font-size: 1.18rem !important; line-height: 1.1;">
-                  Buffet Libre-Service
-                </span>
-                <p class="fs-xxs mb-0 fst-italic"
-                  [style.fontFamily]="getSecondaryFont()"
-                  [style.color]="getSecondaryFontColor()"
-                  style="font-size: 0.72rem; line-height: 1.3; opacity: 0.9;">
-                  Un buffet varié d'exception sera à votre disposition
-                </p>
-              </div>
-
-              <!-- Actions Étape 0 : [Retour] & [Suivant] (Affichées UNIQUEMENT après confirmation des plats) -->
-              <div *ngIf="hasConfirmedMenuChoice() || isBuffet()" class="step-nav-buttons d-flex align-items-center justify-content-center gap-2 gap-sm-3 mt-3.5 pt-1 mb-2 animate__animated animate__fadeIn">
-                <!-- Bouton Retour (vers Page 1) -->
-                <button type="button" class="btn btn-step-nav-prev"
-                  [style.color]="getSecondaryFontColor()"
-                  [style.borderColor]="getSecondaryFontColor() + '40'"
-                  (click)="closeMenuAndRsvp()">
-                  <i class="fa fa-arrow-left me-1.5"></i> Retour
-                </button>
-
-                <!-- Bouton Suivant (vers Étape 1 : Préférences & Allergies) -->
-                <button type="button" class="btn btn-step-nav-next shadow-sm"
-                  [style.background]="getPrimaryColor()"
-                  [style.borderColor]="getPrimaryColor()"
-                  [style.color]="isDarkBg(getPrimaryColor()) ? '#ffffff' : '#0c0c0c'"
-                  (click)="goToNextStep()">
-                  Suivant <i class="fa fa-arrow-right ms-1.5"></i>
-                </button>
-              </div>
-
-            </div>
-
-          </div>
-
-          <!-- STEP 1: Régimes & Allergies (Separate Dedicated Page - Shifted Downwards) -->
-          <div *ngIf="currentRsvpStep() === 1"
-            class="extra-rsvp-sections animate__animated animate__fadeIn my-auto w-100 pt-4 pt-md-5 pb-2">
-
-            <!-- Title Header -->
-            <div class="spotlight-title-wrapper mb-3 text-center">
-              <span class="luxury-subtitle d-block mb-1"
-                [style.fontFamily]="getPrimaryFont()"
-                [style.color]="getPrimaryColor()"
-                style="font-size: 1.35rem !important; line-height: 1.1 !important;">
-                Vos Préférences
-              </span>
-              <h3 class="page2-menu-title text-uppercase fw-bold m-0"
-                [style.fontFamily]="getSecondaryFont()"
-                [style.color]="getSecondaryFontColor()"
-                style="font-size: 1rem !important; line-height: 1.3 !important; letter-spacing: 1.2px !important;">
-                Régimes & Allergies
-              </h3>
-              <div class="spotlight-underline mx-auto mt-1.5"
-                [style.backgroundColor]="getPrimaryColor()"
-                style="width: 40px; height: 1.5px; opacity: 0.65;"></div>
-            </div>
-            <p class="fs-xxs font-serif mb-3.5 text-center" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="opacity: 0.9;">
-              Indiquez vos régimes particuliers ou allergies pour une expérience sur-mesure
-            </p>
-
-            <!-- Dietary Pills Container -->
-            <div class="mb-3.5 text-center">
-              <label class="form-label d-block text-center fw-bold text-uppercase fs-xxs tracking-widest mb-2.5"
-                [style.fontFamily]="getSecondaryFont()"
-                [style.color]="getSecondaryFontColor()"
-                style="letter-spacing: 1.2px; font-size: 0.7rem;">
-                Régimes Alimentaires
-              </label>
-              <div class="dietary-pills-container d-flex flex-wrap gap-2 justify-content-center mb-2">
-                <label class="dietary-pill py-1.5 px-3" [class.active-pill]="hasVegetarien" for="dietVeg"
-                  [style.background]="hasVegetarien ? getPrimaryColor() : '#ffffff'"
-                  [style.borderColor]="hasVegetarien ? getPrimaryColor() : (getPrimaryColor() + '55')"
-                  [style.color]="hasVegetarien ? (isDarkBg(getPrimaryColor()) ? '#ffffff' : '#0c0c0c') : '#1e293b'">
-                  <input type="checkbox" id="dietVeg" [(ngModel)]="hasVegetarien" name="hasVegetarien" class="dietary-checkbox">
-                  <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasVegetarien"></i> Végétarien
-                </label>
-                <label class="dietary-pill py-1.5 px-3" [class.active-pill]="hasVegan" for="dietVegan"
-                  [style.background]="hasVegan ? getPrimaryColor() : '#ffffff'"
-                  [style.borderColor]="hasVegan ? getPrimaryColor() : (getPrimaryColor() + '55')"
-                  [style.color]="hasVegan ? (isDarkBg(getPrimaryColor()) ? '#ffffff' : '#0c0c0c') : '#1e293b'">
-                  <input type="checkbox" id="dietVegan" [(ngModel)]="hasVegan" name="hasVegan" class="dietary-checkbox">
-                  <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasVegan"></i> Vegan
-                </label>
-                <label class="dietary-pill py-1.5 px-3" [class.active-pill]="hasGlutenFree" for="dietGluten"
-                  [style.background]="hasGlutenFree ? getPrimaryColor() : '#ffffff'"
-                  [style.borderColor]="hasGlutenFree ? getPrimaryColor() : (getPrimaryColor() + '55')"
-                  [style.color]="hasGlutenFree ? (isDarkBg(getPrimaryColor()) ? '#ffffff' : '#0c0c0c') : '#1e293b'">
-                  <input type="checkbox" id="dietGluten" [(ngModel)]="hasGlutenFree" name="hasGlutenFree" class="dietary-checkbox">
-                  <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasGlutenFree"></i> Sans gluten
-                </label>
-                <label class="dietary-pill py-1.5 px-3" [class.active-pill]="hasLactoseFree" for="dietLactose"
-                  [style.background]="hasLactoseFree ? getPrimaryColor() : '#ffffff'"
-                  [style.borderColor]="hasLactoseFree ? getPrimaryColor() : (getPrimaryColor() + '55')"
-                  [style.color]="hasLactoseFree ? (isDarkBg(getPrimaryColor()) ? '#ffffff' : '#0c0c0c') : '#1e293b'">
-                  <input type="checkbox" id="dietLactose" [(ngModel)]="hasLactoseFree" name="hasLactoseFree" class="dietary-checkbox">
-                  <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasLactoseFree"></i> Sans lactose
-                </label>
-                <label class="dietary-pill py-1.5 px-3" [class.active-pill]="hasHalal" for="dietHalal"
-                  [style.background]="hasHalal ? getPrimaryColor() : '#ffffff'"
-                  [style.borderColor]="hasHalal ? getPrimaryColor() : (getPrimaryColor() + '55')"
-                  [style.color]="hasHalal ? (isDarkBg(getPrimaryColor()) ? '#ffffff' : '#0c0c0c') : '#1e293b'">
-                  <input type="checkbox" id="dietHalal" [(ngModel)]="hasHalal" name="hasHalal" class="dietary-checkbox">
-                  <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasHalal"></i> Halal
-                </label>
-                <label class="dietary-pill py-1.5 px-3" [class.active-pill]="hasFruitsDeMerFree" for="dietFruitsDeMer"
-                  [style.background]="hasFruitsDeMerFree ? getPrimaryColor() : '#ffffff'"
-                  [style.borderColor]="hasFruitsDeMerFree ? getPrimaryColor() : (getPrimaryColor() + '55')"
-                  [style.color]="hasFruitsDeMerFree ? (isDarkBg(getPrimaryColor()) ? '#ffffff' : '#0c0c0c') : '#1e293b'">
-                  <input type="checkbox" id="dietFruitsDeMer" [(ngModel)]="hasFruitsDeMerFree" name="hasFruitsDeMerFree" class="dietary-checkbox">
-                  <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasFruitsDeMerFree"></i> Sans fruits de mer
-                </label>
-                <label class="dietary-pill py-1.5 px-3" [class.active-pill]="hasSucreFree" for="dietSucre"
-                  [style.background]="hasSucreFree ? getPrimaryColor() : '#ffffff'"
-                  [style.borderColor]="hasSucreFree ? getPrimaryColor() : (getPrimaryColor() + '55')"
-                  [style.color]="hasSucreFree ? (isDarkBg(getPrimaryColor()) ? '#ffffff' : '#0c0c0c') : '#1e293b'">
-                  <input type="checkbox" id="dietSucre" [(ngModel)]="hasSucreFree" name="hasSucreFree" class="dietary-checkbox">
-                  <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasSucreFree"></i> Sans sucre
-                </label>
-                <label class="dietary-pill py-1.5 px-3" [class.active-pill]="hasArachidesFree" for="dietArachides"
-                  [style.background]="hasArachidesFree ? getPrimaryColor() : '#ffffff'"
-                  [style.borderColor]="hasArachidesFree ? getPrimaryColor() : (getPrimaryColor() + '55')"
-                  [style.color]="hasArachidesFree ? (isDarkBg(getPrimaryColor()) ? '#ffffff' : '#0c0c0c') : '#1e293b'">
-                  <input type="checkbox" id="dietArachides" [(ngModel)]="hasArachidesFree" name="hasArachidesFree" class="dietary-checkbox">
-                  <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasArachidesFree"></i> Sans arachides
-                </label>
-              </div>
-            </div>
-
-            <!-- Custom Allergies / Notes -->
-            <div class="mb-3.5 text-start">
-              <label class="form-label d-block text-center fw-bold text-uppercase fs-xxs tracking-widest mb-1.5"
-                [style.fontFamily]="getSecondaryFont()"
-                [style.color]="getSecondaryFontColor()"
-                style="letter-spacing: 1.2px; font-size: 0.68rem;">
-                Autres allergies ou restrictions
-              </label>
-              <textarea class="form-control luxury-form-control py-2 px-3 fs-xs mx-auto shadow-2xs" rows="2"
-                style="max-width: 340px; font-size: 0.78rem; border-radius: 12px; background: #ffffff !important; color: #0f172a !important; border: 1.5px solid rgba(15, 23, 42, 0.22) !important;"
-                placeholder="Ex: allergie aux fraises, intolérance au céleri, etc..."
-                [(ngModel)]="otherAllergies" name="otherAllergies"></textarea>
-            </div>
-
-            <!-- Actions Étape 1 : [Retour] & [Suivant] -->
-            <div class="step-nav-buttons d-flex align-items-center justify-content-center gap-2 gap-sm-3 mt-3 pt-2 mb-2 animate__animated animate__fadeIn">
-              <!-- Bouton Retour (vers Étape 0) -->
-              <button type="button" class="btn btn-step-nav-prev"
-                [style.color]="getSecondaryFontColor()"
-                [style.borderColor]="getSecondaryFontColor() + '40'"
-                (click)="goToPrevStep()">
-                <i class="fa fa-arrow-left me-1.5"></i> Retour
-              </button>
-
-              <!-- Bouton Suivant (vers Étape 2 : Récapitulatif) -->
-              <button type="button" class="btn btn-step-nav-next shadow-sm"
-                [style.background]="getPrimaryColor()"
-                [style.borderColor]="getPrimaryColor()"
-                [style.color]="isDarkBg(getPrimaryColor()) ? '#ffffff' : '#0c0c0c'"
-                (click)="goToNextStep()">
-                Suivant <i class="fa fa-arrow-right ms-1.5"></i>
-              </button>
-            </div>
-
-          </div>
-
-          <!-- STEP 2: Confirmation & Récapitulatif (Layout 2 Cartes : Choix & Règlement) -->
-          <div *ngIf="currentRsvpStep() === 2"
-            class="rsvp-summary-container animate__animated animate__fadeIn my-auto w-100 pt-3 pt-md-4 pb-2">
-
-            <!-- Title Header -->
-            <div class="spotlight-title-wrapper mb-3 text-center">
-              <span class="luxury-subtitle d-block mb-1"
-                [style.fontFamily]="getPrimaryFont()"
-                [style.color]="getPrimaryColor()"
-                style="font-size: 1.45rem !important; line-height: 1.1 !important;">
-                Confirmation
-              </span>
-              <h3 class="page2-menu-title text-uppercase fw-bold m-0"
-                [style.fontFamily]="getSecondaryFont()"
-                [style.color]="getSecondaryFontColor()"
-                style="font-size: 1.1rem !important; line-height: 1.3 !important; letter-spacing: 1.5px !important;">
-                Récapitulatif de votre réservation
-              </h3>
-              <div class="spotlight-underline mx-auto mt-1.5 mb-3"
-                [style.backgroundColor]="getPrimaryColor()"
-                style="width: 45px; height: 1.5px; opacity: 0.65;"></div>
-            </div>
-
-            <!-- Grille 2 Cartes : Côte à côte sur PC/Tablette, empilées sur Mobile -->
-            <div class="summary-cards-grid d-flex flex-column flex-md-row gap-3 justify-content-center align-items-stretch mx-auto px-2"
-              style="max-width: 760px; width: 100%;">
-
-              <!-- CARTE 1 : Récapitulatif des Choix + Bouton Modifier mes choix -->
-              <div class="summary-subcard card-choices-box rounded-4 p-3 p-sm-3.5 d-flex flex-column justify-content-between flex-fill shadow-xs"
-                [style.borderColor]="getPrimaryColor() + '35'"
-                [style.backgroundColor]="getPrimaryColor() + '06'">
-
-                <div>
-                  <!-- En-tête Carte 1 -->
-                  <div class="d-flex align-items-center gap-2 mb-2.5 pb-2 border-bottom" [style.borderColor]="getPrimaryColor() + '25'">
-                    <i class="fa fa-utensils" [style.color]="getPrimaryColor()"></i>
-                    <span class="fw-bold text-uppercase" [style.fontFamily]="getSecondaryFont()" [style.color]="getPrimaryColor()" style="font-size: 0.78rem; letter-spacing: 1.2px;">
-                      Mes Choix de Restauration
-                    </span>
-                  </div>
-
-                  <!-- Choix du Menu -->
-                  <div class="mb-3 text-start">
-                    <div class="d-flex flex-column gap-1.5" *ngIf="isPlated()">
-                      <div class="d-flex justify-content-between align-items-baseline py-1 border-bottom" [style.borderColor]="getPrimaryColor() + '15'" *ngIf="starterChoice">
-                        <span class="text-uppercase fw-semibold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.72rem; opacity: 0.85;">Entrée</span>
-                        <span class="fw-semibold text-end font-serif" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.88rem;">{{ starterChoice }}</span>
-                      </div>
-                      <div class="d-flex justify-content-between align-items-baseline py-1 border-bottom" [style.borderColor]="getPrimaryColor() + '15'">
-                        <span class="text-uppercase fw-semibold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.72rem; opacity: 0.85;">Plat</span>
-                        <span class="fw-bold text-end font-serif" [style.fontFamily]="getSecondaryFont()" [style.color]="getPrimaryColor()" style="font-size: 0.92rem;">{{ mealChoice || 'Non spécifié' }}</span>
-                      </div>
-                      <div class="d-flex justify-content-between align-items-baseline py-1 border-bottom" [style.borderColor]="getPrimaryColor() + '15'" *ngIf="dessertChoice">
-                        <span class="text-uppercase fw-semibold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.72rem; opacity: 0.85;">Dessert</span>
-                        <span class="fw-semibold text-end font-serif" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.88rem;">{{ dessertChoice }}</span>
-                      </div>
-                      <div class="d-flex justify-content-between align-items-baseline py-1 border-bottom" [style.borderColor]="getPrimaryColor() + '15'" *ngIf="beverageChoice">
-                        <span class="text-uppercase fw-semibold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.72rem; opacity: 0.85;">Boisson</span>
-                        <span class="fw-semibold text-end font-serif" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.88rem;">{{ beverageChoice }}</span>
-                      </div>
-                    </div>
-
-                    <div class="d-flex flex-column gap-1.5" *ngIf="isMix()">
-                      <div class="d-flex justify-content-between align-items-baseline py-1 border-bottom" [style.borderColor]="getPrimaryColor() + '15'">
-                        <span class="text-uppercase fw-semibold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.72rem; opacity: 0.85;">Plat assis</span>
-                        <span class="fw-bold text-end font-serif" [style.fontFamily]="getSecondaryFont()" [style.color]="getPrimaryColor()" style="font-size: 0.92rem;">{{ mealChoice || 'Non spécifié' }}</span>
-                      </div>
-                      <div class="d-flex justify-content-between align-items-baseline py-1 border-bottom" [style.borderColor]="getPrimaryColor() + '15'" *ngIf="dessertChoice">
-                        <span class="text-uppercase fw-semibold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.72rem; opacity: 0.85;">Dessert</span>
-                        <span class="fw-semibold text-end font-serif" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.88rem;">{{ dessertChoice }}</span>
-                      </div>
-                      <div class="fs-xxs mt-1 text-center fst-italic" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="opacity: 0.85;">Entrées & Boissons au buffet libre-service</div>
-                    </div>
-
-                    <div *ngIf="isBuffet()" class="text-center py-1.5">
-                      <span class="fw-semibold font-serif" [style.color]="getPrimaryColor()" style="font-size: 0.88rem;">
-                        <i class="fa fa-utensils me-1.5"></i> Formule Buffet Libre-Service
-                      </span>
-                    </div>
-                  </div>
-
-                  <!-- Régimes & Allergies -->
-                  <div class="mb-3 text-start">
-                    <div class="d-flex align-items-center gap-2 mb-2 pb-1 border-bottom" [style.borderColor]="getPrimaryColor() + '20'">
-                      <i class="fa fa-heartbeat" [style.color]="getPrimaryColor()"></i>
-                      <span class="fw-bold text-uppercase" [style.fontFamily]="getSecondaryFont()" [style.color]="getPrimaryColor()" style="font-size: 0.74rem; letter-spacing: 1px;">
-                        Régimes & Allergies
-                      </span>
-                    </div>
-
-                    <div class="d-flex flex-wrap gap-2 mb-1" *ngIf="getSelectedDietsArray().length > 0">
-                      <span class="d-inline-flex align-items-center fs-xxs fw-semibold" [style.color]="getSecondaryFontColor()"
-                        *ngFor="let diet of getSelectedDietsArray()">
-                        <i class="fa fa-check text-success me-1"></i>{{ diet }}
-                      </span>
-                    </div>
-
-                    <div class="fst-italic mt-1"
-                      *ngIf="otherAllergies.trim() && otherAllergies.trim().toLowerCase() !== 'aucun' && otherAllergies.trim().toLowerCase() !== 'none'"
+                  <!-- Nom du plat à droite -->
+                  <div class="dish-card-body flex-grow-1 pe-2">
+                    <h4 class="dish-card-title m-0 fw-bold font-serif"
                       [style.fontFamily]="getSecondaryFont()"
                       [style.color]="getSecondaryFontColor()"
-                      style="font-size: 0.78rem;">
-                      <span class="fw-bold" [style.color]="getPrimaryColor()">Allergie :</span> {{ otherAllergies.trim() }}
-                    </div>
-
-                    <div class="fst-italic text-muted"
-                      *ngIf="getSelectedDietsArray().length === 0 && (!otherAllergies.trim() || otherAllergies.trim().toLowerCase() === 'aucun' || otherAllergies.trim().toLowerCase() === 'none')"
-                      [style.fontFamily]="getSecondaryFont()"
-                      style="font-size: 0.76rem;">
-                      Aucune restriction particulière
-                    </div>
+                      style="font-size: 0.86rem; line-height: 1.3;">
+                      {{ dish.name }}
+                    </h4>
                   </div>
-                </div>
 
-                <!-- Bouton Modifier mes choix (intégré sous les choix) -->
-                <div class="pt-2.5 mt-auto border-top text-center" [style.borderColor]="getPrimaryColor() + '20'">
-                  <button type="button" class="btn btn-step-nav-prev rounded-pill px-3 py-1.5 fs-xs fw-semibold w-100"
-                    [style.color]="getSecondaryFontColor()"
-                    [style.borderColor]="getSecondaryFontColor() + '35'"
-                    (click)="goToPrevStep()">
-                    <i class="fa fa-arrow-left me-1.5"></i> Modifier mes choix
-                  </button>
-                </div>
-
-              </div>
-
-              <!-- CARTE 2 : Participation, Montant & Règlement -->
-              <div class="summary-subcard card-payment-box rounded-4 p-3 p-sm-3.5 d-flex flex-column justify-content-between flex-fill shadow-xs"
-                [style.borderColor]="getPrimaryColor() + '45'"
-                [style.backgroundColor]="getPrimaryColor() + '09'">
-
-                <div>
-                  <!-- En-tête Carte 2 -->
-                  <div class="d-flex align-items-center gap-2 mb-2.5 pb-2 border-bottom" [style.borderColor]="getPrimaryColor() + '25'">
-                    <i class="fa fa-ticket-alt" [style.color]="getPrimaryColor()"></i>
-                    <span class="fw-bold text-uppercase" [style.fontFamily]="getSecondaryFont()" [style.color]="getPrimaryColor()" style="font-size: 0.78rem; letter-spacing: 1.2px;">
-                      Participation & Règlement
+                  <!-- Retour visuel immédiat (✓) (Uniquement en mode décisionnel) -->
+                  <div class="dish-card-check flex-shrink-0 ms-auto" *ngIf="!isDiscoveryMode() && isDishSelected('STARTER', dish.name)">
+                    <span class="badge-check-icon d-inline-flex align-items-center justify-content-center rounded-circle shadow-xs"
+                      [style.background]="getPrimaryColor()"
+                      [style.color]="isDarkBg(getPrimaryColor()) ? '#ffffff' : '#0c0c0c'"
+                      style="width: 24px; height: 24px; font-size: 0.72rem;">
+                      <i class="fa fa-check"></i>
                     </span>
                   </div>
+                </div>
+              </div>
 
-                  <!-- Détails Billet & Montant -->
-                  <div class="mb-3 text-start">
-                    <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom" [style.borderColor]="getPrimaryColor() + '15'">
-                      <span class="text-uppercase fw-semibold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.72rem; opacity: 0.85;">Invité</span>
-                      <span class="fw-bold text-end font-serif" [style.fontFamily]="getSecondaryFont()" [style.color]="getPrimaryColor()" style="font-size: 0.92rem;">{{ guest()?.guestName }}</span>
-                    </div>
+              <!-- Action de Contournement (Opt-out) épinglée en bas (seulement en mode décisionnel) -->
+              <div class="step-optout-wrapper text-center mt-3 pt-1" *ngIf="!isDiscoveryMode()">
+                <button type="button" class="btn btn-sm btn-opt-out rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
+                  [style.color]="getSecondaryFontColor()"
+                  [style.borderColor]="getSecondaryFontColor() + '35'"
+                  (click)="skipCurrentCourse()">
+                  Passer / Aucune entrée <i class="fa fa-arrow-right ms-1"></i>
+                </button>
+              </div>
+            </div>
 
-                    <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom" [style.borderColor]="getPrimaryColor() + '15'" *ngIf="guest()?.isPaidEvent">
-                      <span class="text-uppercase fw-semibold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.72rem; opacity: 0.85;">Type de billet</span>
-                      <span class="fw-semibold text-end" [style.fontFamily]="getSecondaryFont()" [style.color]="getPrimaryColor()" style="font-size: 0.85rem;">
-                        Billet nominatif
+            <!-- ÉTAPE 1 : PLAT PRINCIPAL (2/4) -->
+            <div *ngIf="currentRsvpStep() === 1" class="course-step-container animate__animated animate__fadeIn my-auto w-100 py-1">
+              <!-- En-tête de catégorie -->
+              <div class="spotlight-title-wrapper mb-3 text-center">
+                <span class="luxury-subtitle d-block mb-1"
+                  [style.fontFamily]="getPrimaryFont()"
+                  [style.color]="getPrimaryColor()"
+                  style="font-size: 1.35rem !important; line-height: 1.1 !important;">
+                  Plat Principal
+                </span>
+                <h3 class="page2-menu-title text-uppercase fw-bold m-0"
+                  [style.fontFamily]="getSecondaryFont()"
+                  [style.color]="getSecondaryFontColor()"
+                  style="font-size: 0.95rem !important; line-height: 1.3 !important; letter-spacing: 1.2px !important;">
+                  {{ isDiscoveryMode() ? 'Aperçu des Plats' : 'Sélectionnez votre Plat' }}
+                </h3>
+                <div class="spotlight-underline mx-auto mt-1"
+                  [style.backgroundColor]="getPrimaryColor()"
+                  style="width: 40px; height: 1.5px; opacity: 0.65;"></div>
+              </div>
+
+              <!-- Cartes Horizontales Épurées empilées verticalement -->
+              <div class="dish-horizontal-cards-stack d-flex flex-column gap-2 mb-3">
+                <div class="dish-horizontal-card d-flex align-items-center p-2 rounded-3 border position-relative text-start"
+                  *ngFor="let dish of availableMains()"
+                  [class.is-selected]="!isDiscoveryMode() && isDishSelected('MAIN', dish.name)"
+                  [class.is-feedback-active]="!isDiscoveryMode() && selectedItemTransition()?.category === 'MAIN' && selectedItemTransition()?.dishName === dish.name"
+                  [class.cursor-pointer]="!isDiscoveryMode()"
+                  [style.borderColor]="(!isDiscoveryMode() && isDishSelected('MAIN', dish.name)) ? getPrimaryColor() : (getPrimaryColor() + '28')"
+                  [style.backgroundColor]="(!isDiscoveryMode() && isDishSelected('MAIN', dish.name)) ? (getPrimaryColor() + '14') : '#ffffff'"
+                  (click)="selectCourseAndAdvance('MAIN', dish.name)">
+                  
+                  <!-- Miniature carrée à gauche -->
+                  <div class="dish-card-thumb-wrapper flex-shrink-0 me-3">
+                    <img [src]="dish.imageUrl" [alt]="dish.name" class="dish-card-thumb rounded-2 object-fit-cover shadow-2xs"
+                      style="width: 58px; height: 58px;">
+                  </div>
+
+                  <!-- Nom du plat à droite -->
+                  <div class="dish-card-body flex-grow-1 pe-2">
+                    <h4 class="dish-card-title m-0 fw-bold font-serif"
+                      [style.fontFamily]="getSecondaryFont()"
+                      [style.color]="getSecondaryFontColor()"
+                      style="font-size: 0.86rem; line-height: 1.3;">
+                      {{ dish.name }}
+                    </h4>
+                  </div>
+
+                  <!-- Retour visuel immédiat (✓) -->
+                  <div class="dish-card-check flex-shrink-0 ms-auto" *ngIf="!isDiscoveryMode() && isDishSelected('MAIN', dish.name)">
+                    <span class="badge-check-icon d-inline-flex align-items-center justify-content-center rounded-circle shadow-xs"
+                      [style.background]="getPrimaryColor()"
+                      [style.color]="isDarkBg(getPrimaryColor()) ? '#ffffff' : '#0c0c0c'"
+                      style="width: 24px; height: 24px; font-size: 0.72rem;">
+                      <i class="fa fa-check"></i>
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Action de Contournement (Opt-out) épinglée en bas -->
+              <div class="step-optout-wrapper text-center mt-3 pt-1" *ngIf="!isDiscoveryMode()">
+                <button type="button" class="btn btn-sm btn-opt-out rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
+                  [style.color]="getSecondaryFontColor()"
+                  [style.borderColor]="getSecondaryFontColor() + '35'"
+                  (click)="skipCurrentCourse()">
+                  Passer / Aucun plat <i class="fa fa-arrow-right ms-1"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- ÉTAPE 2 : DESSERT (3/4) -->
+            <div *ngIf="currentRsvpStep() === 2" class="course-step-container animate__animated animate__fadeIn my-auto w-100 py-1">
+              <!-- En-tête de catégorie -->
+              <div class="spotlight-title-wrapper mb-3 text-center">
+                <span class="luxury-subtitle d-block mb-1"
+                  [style.fontFamily]="getPrimaryFont()"
+                  [style.color]="getPrimaryColor()"
+                  style="font-size: 1.35rem !important; line-height: 1.1 !important;">
+                  Dessert
+                </span>
+                <h3 class="page2-menu-title text-uppercase fw-bold m-0"
+                  [style.fontFamily]="getSecondaryFont()"
+                  [style.color]="getSecondaryFontColor()"
+                  style="font-size: 0.95rem !important; line-height: 1.3 !important; letter-spacing: 1.2px !important;">
+                  {{ isDiscoveryMode() ? 'Aperçu des Desserts' : 'Sélectionnez votre Dessert' }}
+                </h3>
+                <div class="spotlight-underline mx-auto mt-1"
+                  [style.backgroundColor]="getPrimaryColor()"
+                  style="width: 40px; height: 1.5px; opacity: 0.65;"></div>
+              </div>
+
+              <!-- Cartes Horizontales Épurées empilées verticalement -->
+              <div class="dish-horizontal-cards-stack d-flex flex-column gap-2 mb-3">
+                <div class="dish-horizontal-card d-flex align-items-center p-2 rounded-3 border position-relative text-start"
+                  *ngFor="let dish of availableDesserts()"
+                  [class.is-selected]="!isDiscoveryMode() && isDishSelected('DESSERT', dish.name)"
+                  [class.is-feedback-active]="!isDiscoveryMode() && selectedItemTransition()?.category === 'DESSERT' && selectedItemTransition()?.dishName === dish.name"
+                  [class.cursor-pointer]="!isDiscoveryMode()"
+                  [style.borderColor]="(!isDiscoveryMode() && isDishSelected('DESSERT', dish.name)) ? getPrimaryColor() : (getPrimaryColor() + '28')"
+                  [style.backgroundColor]="(!isDiscoveryMode() && isDishSelected('DESSERT', dish.name)) ? (getPrimaryColor() + '14') : '#ffffff'"
+                  (click)="selectCourseAndAdvance('DESSERT', dish.name)">
+                  
+                  <!-- Miniature carrée à gauche -->
+                  <div class="dish-card-thumb-wrapper flex-shrink-0 me-3">
+                    <img [src]="dish.imageUrl" [alt]="dish.name" class="dish-card-thumb rounded-2 object-fit-cover shadow-2xs"
+                      style="width: 58px; height: 58px;">
+                  </div>
+
+                  <!-- Nom du plat à droite -->
+                  <div class="dish-card-body flex-grow-1 pe-2">
+                    <h4 class="dish-card-title m-0 fw-bold font-serif"
+                      [style.fontFamily]="getSecondaryFont()"
+                      [style.color]="getSecondaryFontColor()"
+                      style="font-size: 0.86rem; line-height: 1.3;">
+                      {{ dish.name }}
+                    </h4>
+                  </div>
+
+                  <!-- Retour visuel immédiat (✓) -->
+                  <div class="dish-card-check flex-shrink-0 ms-auto" *ngIf="!isDiscoveryMode() && isDishSelected('DESSERT', dish.name)">
+                    <span class="badge-check-icon d-inline-flex align-items-center justify-content-center rounded-circle shadow-xs"
+                      [style.background]="getPrimaryColor()"
+                      [style.color]="isDarkBg(getPrimaryColor()) ? '#ffffff' : '#0c0c0c'"
+                      style="width: 24px; height: 24px; font-size: 0.72rem;">
+                      <i class="fa fa-check"></i>
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Action de Contournement (Opt-out) épinglée en bas -->
+              <div class="step-optout-wrapper text-center mt-3 pt-1" *ngIf="!isDiscoveryMode()">
+                <button type="button" class="btn btn-sm btn-opt-out rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
+                  [style.color]="getSecondaryFontColor()"
+                  [style.borderColor]="getSecondaryFontColor() + '35'"
+                  (click)="skipCurrentCourse()">
+                  Passer / Aucun dessert <i class="fa fa-arrow-right ms-1"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- ÉTAPE 3 : BOISSON (4/4) -->
+            <div *ngIf="currentRsvpStep() === 3" class="course-step-container animate__animated animate__fadeIn my-auto w-100 py-1">
+              <!-- En-tête de catégorie -->
+              <div class="spotlight-title-wrapper mb-3 text-center">
+                <span class="luxury-subtitle d-block mb-1"
+                  [style.fontFamily]="getPrimaryFont()"
+                  [style.color]="getPrimaryColor()"
+                  style="font-size: 1.35rem !important; line-height: 1.1 !important;">
+                  Boisson
+                </span>
+                <h3 class="page2-menu-title text-uppercase fw-bold m-0"
+                  [style.fontFamily]="getSecondaryFont()"
+                  [style.color]="getSecondaryFontColor()"
+                  style="font-size: 0.95rem !important; line-height: 1.3 !important; letter-spacing: 1.2px !important;">
+                  {{ isDiscoveryMode() ? 'Aperçu des Boissons' : 'Sélectionnez votre Boisson' }}
+                </h3>
+                <div class="spotlight-underline mx-auto mt-1"
+                  [style.backgroundColor]="getPrimaryColor()"
+                  style="width: 40px; height: 1.5px; opacity: 0.65;"></div>
+              </div>
+
+              <!-- Cartes Horizontales Épurées empilées verticalement -->
+              <div class="dish-horizontal-cards-stack d-flex flex-column gap-2 mb-3">
+                <div class="dish-horizontal-card d-flex align-items-center p-2 rounded-3 border position-relative text-start"
+                  *ngFor="let dish of availableBeverages()"
+                  [class.is-selected]="!isDiscoveryMode() && isDishSelected('BEVERAGE', dish.name)"
+                  [class.is-feedback-active]="!isDiscoveryMode() && selectedItemTransition()?.category === 'BEVERAGE' && selectedItemTransition()?.dishName === dish.name"
+                  [class.cursor-pointer]="!isDiscoveryMode()"
+                  [style.borderColor]="(!isDiscoveryMode() && isDishSelected('BEVERAGE', dish.name)) ? getPrimaryColor() : (getPrimaryColor() + '28')"
+                  [style.backgroundColor]="(!isDiscoveryMode() && isDishSelected('BEVERAGE', dish.name)) ? (getPrimaryColor() + '14') : '#ffffff'"
+                  (click)="selectCourseAndAdvance('BEVERAGE', dish.name)">
+                  
+                  <!-- Miniature carrée à gauche -->
+                  <div class="dish-card-thumb-wrapper flex-shrink-0 me-3">
+                    <img [src]="dish.imageUrl" [alt]="dish.name" class="dish-card-thumb rounded-2 object-fit-cover shadow-2xs"
+                      style="width: 58px; height: 58px;">
+                  </div>
+
+                  <!-- Nom du plat à droite -->
+                  <div class="dish-card-body flex-grow-1 pe-2">
+                    <h4 class="dish-card-title m-0 fw-bold font-serif"
+                      [style.fontFamily]="getSecondaryFont()"
+                      [style.color]="getSecondaryFontColor()"
+                      style="font-size: 0.86rem; line-height: 1.3;">
+                      {{ dish.name }}
+                    </h4>
+                  </div>
+
+                  <!-- Retour visuel immédiat (✓) -->
+                  <div class="dish-card-check flex-shrink-0 ms-auto" *ngIf="!isDiscoveryMode() && isDishSelected('BEVERAGE', dish.name)">
+                    <span class="badge-check-icon d-inline-flex align-items-center justify-content-center rounded-circle shadow-xs"
+                      [style.background]="getPrimaryColor()"
+                      [style.color]="isDarkBg(getPrimaryColor()) ? '#ffffff' : '#0c0c0c'"
+                      style="width: 24px; height: 24px; font-size: 0.72rem;">
+                      <i class="fa fa-check"></i>
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Action de Contournement (Opt-out) épinglée en bas -->
+              <div class="step-optout-wrapper text-center mt-3 pt-1" *ngIf="!isDiscoveryMode()">
+                <button type="button" class="btn btn-sm btn-opt-out rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
+                  [style.color]="getSecondaryFontColor()"
+                  [style.borderColor]="getSecondaryFontColor() + '35'"
+                  (click)="skipCurrentCourse()">
+                  Passer / Aucune boisson <i class="fa fa-arrow-right ms-1"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- ÉTAPE 4 : RÉGIMES & ALLERGIES (Transition directe après la boisson) -->
+            <div *ngIf="currentRsvpStep() === 4"
+              class="extra-rsvp-sections animate__animated animate__fadeIn my-auto w-100 pt-3 pb-2">
+
+              <!-- Title Header -->
+              <div class="spotlight-title-wrapper mb-3 text-center">
+                <span class="luxury-subtitle d-block mb-1"
+                  [style.fontFamily]="getPrimaryFont()"
+                  [style.color]="getPrimaryColor()"
+                  style="font-size: 1.35rem !important; line-height: 1.1 !important;">
+                  Vos Préférences
+                </span>
+                <h3 class="page2-menu-title text-uppercase fw-bold m-0"
+                  [style.fontFamily]="getSecondaryFont()"
+                  [style.color]="getSecondaryFontColor()"
+                  style="font-size: 1rem !important; line-height: 1.3 !important; letter-spacing: 1.2px !important;">
+                  Régimes & Allergies
+                </h3>
+                <div class="spotlight-underline mx-auto mt-1.5"
+                  [style.backgroundColor]="getPrimaryColor()"
+                  style="width: 40px; height: 1.5px; opacity: 0.65;"></div>
+              </div>
+              <p class="fs-xxs font-serif mb-3 text-center" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="opacity: 0.9;">
+                Indiquez vos régimes particuliers ou allergies pour une expérience sur-mesure
+              </p>
+
+              <!-- Dietary Pills Container -->
+              <div class="mb-3 text-center">
+                <label class="form-label d-block text-center fw-bold text-uppercase fs-xxs tracking-widest mb-2"
+                  [style.fontFamily]="getSecondaryFont()"
+                  [style.color]="getSecondaryFontColor()"
+                  style="letter-spacing: 1.2px; font-size: 0.7rem;">
+                  Régimes Alimentaires
+                </label>
+                <div class="dietary-pills-container d-flex flex-wrap gap-2 justify-content-center mb-2">
+                  <label class="dietary-pill py-1.5 px-3" [class.active-pill]="hasVegetarien" for="dietVeg"
+                    [style.background]="hasVegetarien ? getPrimaryColor() : '#ffffff'"
+                    [style.borderColor]="hasVegetarien ? getPrimaryColor() : (getPrimaryColor() + '55')"
+                    [style.color]="hasVegetarien ? (isDarkBg(getPrimaryColor()) ? '#ffffff' : '#0c0c0c') : '#1e293b'">
+                    <input type="checkbox" id="dietVeg" [(ngModel)]="hasVegetarien" name="hasVegetarien" class="dietary-checkbox">
+                    <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasVegetarien"></i> Végétarien
+                  </label>
+                  <label class="dietary-pill py-1.5 px-3" [class.active-pill]="hasVegan" for="dietVegan"
+                    [style.background]="hasVegan ? getPrimaryColor() : '#ffffff'"
+                    [style.borderColor]="hasVegan ? getPrimaryColor() : (getPrimaryColor() + '55')"
+                    [style.color]="hasVegan ? (isDarkBg(getPrimaryColor()) ? '#ffffff' : '#0c0c0c') : '#1e293b'">
+                    <input type="checkbox" id="dietVegan" [(ngModel)]="hasVegan" name="hasVegan" class="dietary-checkbox">
+                    <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasVegan"></i> Vegan
+                  </label>
+                  <label class="dietary-pill py-1.5 px-3" [class.active-pill]="hasGlutenFree" for="dietGluten"
+                    [style.background]="hasGlutenFree ? getPrimaryColor() : '#ffffff'"
+                    [style.borderColor]="hasGlutenFree ? getPrimaryColor() : (getPrimaryColor() + '55')"
+                    [style.color]="hasGlutenFree ? (isDarkBg(getPrimaryColor()) ? '#ffffff' : '#0c0c0c') : '#1e293b'">
+                    <input type="checkbox" id="dietGluten" [(ngModel)]="hasGlutenFree" name="hasGlutenFree" class="dietary-checkbox">
+                    <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasGlutenFree"></i> Sans gluten
+                  </label>
+                  <label class="dietary-pill py-1.5 px-3" [class.active-pill]="hasLactoseFree" for="dietLactose"
+                    [style.background]="hasLactoseFree ? getPrimaryColor() : '#ffffff'"
+                    [style.borderColor]="hasLactoseFree ? getPrimaryColor() : (getPrimaryColor() + '55')"
+                    [style.color]="hasLactoseFree ? (isDarkBg(getPrimaryColor()) ? '#ffffff' : '#0c0c0c') : '#1e293b'">
+                    <input type="checkbox" id="dietLactose" [(ngModel)]="hasLactoseFree" name="hasLactoseFree" class="dietary-checkbox">
+                    <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasLactoseFree"></i> Sans lactose
+                  </label>
+                  <label class="dietary-pill py-1.5 px-3" [class.active-pill]="hasHalal" for="dietHalal"
+                    [style.background]="hasHalal ? getPrimaryColor() : '#ffffff'"
+                    [style.borderColor]="hasHalal ? getPrimaryColor() : (getPrimaryColor() + '55')"
+                    [style.color]="hasHalal ? (isDarkBg(getPrimaryColor()) ? '#ffffff' : '#0c0c0c') : '#1e293b'">
+                    <input type="checkbox" id="dietHalal" [(ngModel)]="hasHalal" name="hasHalal" class="dietary-checkbox">
+                    <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasHalal"></i> Halal
+                  </label>
+                  <label class="dietary-pill py-1.5 px-3" [class.active-pill]="hasFruitsDeMerFree" for="dietFruitsDeMer"
+                    [style.background]="hasFruitsDeMerFree ? getPrimaryColor() : '#ffffff'"
+                    [style.borderColor]="hasFruitsDeMerFree ? getPrimaryColor() : (getPrimaryColor() + '55')"
+                    [style.color]="hasFruitsDeMerFree ? (isDarkBg(getPrimaryColor()) ? '#ffffff' : '#0c0c0c') : '#1e293b'">
+                    <input type="checkbox" id="dietFruitsDeMer" [(ngModel)]="hasFruitsDeMerFree" name="hasFruitsDeMerFree" class="dietary-checkbox">
+                    <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasFruitsDeMerFree"></i> Sans fruits de mer
+                  </label>
+                  <label class="dietary-pill py-1.5 px-3" [class.active-pill]="hasSucreFree" for="dietSucre"
+                    [style.background]="hasSucreFree ? getPrimaryColor() : '#ffffff'"
+                    [style.borderColor]="hasSucreFree ? getPrimaryColor() : (getPrimaryColor() + '55')"
+                    [style.color]="hasSucreFree ? (isDarkBg(getPrimaryColor()) ? '#ffffff' : '#0c0c0c') : '#1e293b'">
+                    <input type="checkbox" id="dietSucre" [(ngModel)]="hasSucreFree" name="hasSucreFree" class="dietary-checkbox">
+                    <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasSucreFree"></i> Sans sucre
+                  </label>
+                  <label class="dietary-pill py-1.5 px-3" [class.active-pill]="hasArachidesFree" for="dietArachides"
+                    [style.background]="hasArachidesFree ? getPrimaryColor() : '#ffffff'"
+                    [style.borderColor]="hasArachidesFree ? getPrimaryColor() : (getPrimaryColor() + '55')"
+                    [style.color]="hasArachidesFree ? (isDarkBg(getPrimaryColor()) ? '#ffffff' : '#0c0c0c') : '#1e293b'">
+                    <input type="checkbox" id="dietArachides" [(ngModel)]="hasArachidesFree" name="hasArachidesFree" class="dietary-checkbox">
+                    <i class="fa fa-check me-1 pill-check-icon" *ngIf="hasArachidesFree"></i> Sans arachides
+                  </label>
+                </div>
+              </div>
+
+              <!-- Custom Allergies / Notes -->
+              <div class="mb-3 text-start">
+                <label class="form-label d-block text-center fw-bold text-uppercase fs-xxs tracking-widest mb-1.5"
+                  [style.fontFamily]="getSecondaryFont()"
+                  [style.color]="getSecondaryFontColor()"
+                  style="letter-spacing: 1.2px; font-size: 0.68rem;">
+                  Autres allergies ou restrictions
+                </label>
+                <textarea class="form-control luxury-form-control py-2 px-3 fs-xs mx-auto shadow-2xs" rows="2"
+                  style="max-width: 340px; font-size: 0.78rem; border-radius: 12px; background: #ffffff !important; color: #0f172a !important; border: 1.5px solid rgba(15, 23, 42, 0.22) !important;"
+                  placeholder="Ex: allergie aux fraises, intolérance au céleri, etc..."
+                  [(ngModel)]="otherAllergies" name="otherAllergies"
+                  (keydown)="onDietaryKeyDown($event)"></textarea>
+              </div>
+
+              <!-- Action Unique Intelligente Étape 4 (Passer -> ou Valider ->) -->
+              <div class="dietary-smart-action-wrapper text-center mt-3 pt-1 mb-2 animate__animated animate__fadeIn">
+                <button type="button" class="btn btn-sm btn-dietary-smart-action rounded-pill px-4 py-2 fs-xs fw-bold shadow-sm transition-all"
+                  [style.background]="hasAnyDietOrAllergySelected() ? getPrimaryColor() : '#ffffff'"
+                  [style.borderColor]="hasAnyDietOrAllergySelected() ? getPrimaryColor() : (getPrimaryColor() + '55')"
+                  [style.color]="hasAnyDietOrAllergySelected() ? (isDarkBg(getPrimaryColor()) ? '#ffffff' : '#0c0c0c') : getSecondaryFontColor()"
+                  (click)="goToNextStep()">
+                  <ng-container *ngIf="hasAnyDietOrAllergySelected()">
+                    <i class="fa fa-check me-1.5"></i> Valider <i class="fa fa-arrow-right ms-1"></i>
+                  </ng-container>
+                  <ng-container *ngIf="!hasAnyDietOrAllergySelected()">
+                    Passer <i class="fa fa-arrow-right ms-1"></i>
+                  </ng-container>
+                </button>
+              </div>
+
+            </div>
+
+            <!-- ÉTAPE 5 : CONFIRMATION & RÉCAPITULATIF (Layout 2 Cartes : Choix & Règlement) -->
+            <div *ngIf="currentRsvpStep() === 5"
+              class="rsvp-summary-container animate__animated animate__fadeIn my-auto w-100 pt-3 pt-md-4 pb-2">
+
+              <!-- Title Header -->
+              <div class="spotlight-title-wrapper mb-3 text-center">
+                <span class="luxury-subtitle d-block mb-1"
+                  [style.fontFamily]="getPrimaryFont()"
+                  [style.color]="getPrimaryColor()"
+                  style="font-size: 1.45rem !important; line-height: 1.1 !important;">
+                  Confirmation
+                </span>
+                <h3 class="page2-menu-title text-uppercase fw-bold m-0"
+                  [style.fontFamily]="getSecondaryFont()"
+                  [style.color]="getSecondaryFontColor()"
+                  style="font-size: 1.1rem !important; line-height: 1.3 !important; letter-spacing: 1.5px !important;">
+                  Récapitulatif de votre réservation
+                </h3>
+                <div class="spotlight-underline mx-auto mt-1.5 mb-3"
+                  [style.backgroundColor]="getPrimaryColor()"
+                  style="width: 45px; height: 1.5px; opacity: 0.65;"></div>
+              </div>
+
+              <!-- Grille 2 Cartes : Côte à côte sur PC/Tablette, empilées sur Mobile -->
+              <div class="summary-cards-grid d-flex flex-column flex-md-row gap-3 justify-content-center align-items-stretch mx-auto px-2"
+                style="max-width: 760px; width: 100%;">
+
+                <!-- CARTE 1 : Récapitulatif des Choix + Bouton Modifier mes choix -->
+                <div class="summary-subcard card-choices-box rounded-4 p-3 p-sm-3.5 d-flex flex-column justify-content-between flex-fill shadow-xs"
+                  [style.borderColor]="getPrimaryColor() + '35'"
+                  [style.backgroundColor]="getPrimaryColor() + '06'">
+
+                  <div>
+                    <!-- En-tête Carte 1 -->
+                    <div class="d-flex align-items-center gap-2 mb-2.5 pb-2 border-bottom" [style.borderColor]="getPrimaryColor() + '25'">
+                      <i class="fa fa-utensils" [style.color]="getPrimaryColor()"></i>
+                      <span class="fw-bold text-uppercase" [style.fontFamily]="getSecondaryFont()" [style.color]="getPrimaryColor()" style="font-size: 0.78rem; letter-spacing: 1.2px;">
+                        Mes Choix de Restauration
                       </span>
                     </div>
 
-                    <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom" [style.borderColor]="getPrimaryColor() + '15'" *ngIf="guest()?.isPaidEvent && guest()?.paymentStatus === 'PAID'">
-                      <span class="text-uppercase fw-semibold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.72rem; opacity: 0.85;">Montant réglé</span>
-                      <span class="fw-bold text-end font-serif" [style.fontFamily]="getSecondaryFont()" [style.color]="getPrimaryColor()" style="font-size: 0.95rem;">
-                        {{ guest()?.ticketPrice || 0 }} {{ guest()?.currency || 'MAD' }}
-                      </span>
+                    <!-- Choix du Menu -->
+                    <div class="mb-3 text-start">
+                      <div class="d-flex flex-column gap-1.5">
+                        <div class="d-flex justify-content-between align-items-baseline py-1 border-bottom" [style.borderColor]="getPrimaryColor() + '15'">
+                          <span class="text-uppercase fw-semibold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.72rem; opacity: 0.85;">1. Entrée</span>
+                          <span class="fw-semibold text-end font-serif" [style.fontFamily]="getSecondaryFont()" [style.color]="starterChoice ? getSecondaryFontColor() : getPrimaryColor()" style="font-size: 0.86rem;">
+                            {{ starterChoice || 'Aucune entrée' }}
+                          </span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-baseline py-1 border-bottom" [style.borderColor]="getPrimaryColor() + '15'">
+                          <span class="text-uppercase fw-semibold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.72rem; opacity: 0.85;">2. Plat</span>
+                          <span class="fw-bold text-end font-serif" [style.fontFamily]="getSecondaryFont()" [style.color]="mealChoice ? getSecondaryFontColor() : getPrimaryColor()" style="font-size: 0.88rem;">
+                            {{ mealChoice || 'Aucun plat' }}
+                          </span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-baseline py-1 border-bottom" [style.borderColor]="getPrimaryColor() + '15'">
+                          <span class="text-uppercase fw-semibold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.72rem; opacity: 0.85;">3. Dessert</span>
+                          <span class="fw-semibold text-end font-serif" [style.fontFamily]="getSecondaryFont()" [style.color]="dessertChoice ? getSecondaryFontColor() : getPrimaryColor()" style="font-size: 0.86rem;">
+                            {{ dessertChoice || 'Aucun dessert' }}
+                          </span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-baseline py-1 border-bottom" [style.borderColor]="getPrimaryColor() + '15'">
+                          <span class="text-uppercase fw-semibold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.72rem; opacity: 0.85;">4. Boisson</span>
+                          <span class="fw-semibold text-end font-serif" [style.fontFamily]="getSecondaryFont()" [style.color]="beverageChoice ? getSecondaryFontColor() : getPrimaryColor()" style="font-size: 0.86rem;">
+                            {{ beverageChoice || 'Aucune boisson' }}
+                          </span>
+                        </div>
+                      </div>
                     </div>
 
-                    <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom" [style.borderColor]="getPrimaryColor() + '15'" *ngIf="!guest()?.isPaidEvent">
-                      <span class="text-uppercase fw-semibold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.72rem; opacity: 0.85;">Accès</span>
-                      <span class="fw-semibold text-end text-success" style="font-size: 0.82rem;">
-                        <i class="fa fa-check me-1"></i> Gratuit (Invité d'honneur)
-                      </span>
-                    </div>
+                    <!-- Régimes & Allergies -->
+                    <div class="mb-3 text-start">
+                      <div class="d-flex align-items-center gap-2 mb-2 pb-1 border-bottom" [style.borderColor]="getPrimaryColor() + '20'">
+                        <i class="fa fa-heartbeat" [style.color]="getPrimaryColor()"></i>
+                        <span class="fw-bold text-uppercase" [style.fontFamily]="getSecondaryFont()" [style.color]="getPrimaryColor()" style="font-size: 0.74rem; letter-spacing: 1px;">
+                          Régimes & Allergies
+                        </span>
+                      </div>
 
-                    <div class="d-flex justify-content-between align-items-center py-1.5" *ngIf="guest()?.isPaidEvent">
-                      <span class="text-uppercase fw-semibold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.72rem; opacity: 0.85;">Statut</span>
-                      <span class="d-inline-flex align-items-center gap-1.5 fw-semibold" style="font-size: 0.8rem;"
-                        [style.color]="guest()?.paymentStatus === 'PAID' ? '#16a34a' : '#d97706'">
-                        <i class="fa fa-circle" style="font-size: 0.45rem;"></i>
-                        <span>{{ guest()?.paymentStatus === 'PAID' ? 'Réglé' : 'À régler' }}</span>
-                      </span>
-                    </div>
+                      <div class="d-flex flex-wrap gap-2 mb-1" *ngIf="getSelectedDietsArray().length > 0">
+                        <span class="d-inline-flex align-items-center fs-xxs fw-semibold" [style.color]="getSecondaryFontColor()"
+                          *ngFor="let diet of getSelectedDietsArray()">
+                          <i class="fa fa-check text-success me-1"></i>{{ diet }}
+                        </span>
+                      </div>
 
-                    <!-- Total à régler (Ligne récapitulative épurée sans encadré bouton) -->
-                    <div class="d-flex justify-content-between align-items-baseline pt-2.5 mt-1 border-top"
-                      *ngIf="guest()?.isPaidEvent && guest()?.paymentStatus !== 'PAID'"
-                      [style.borderColor]="getPrimaryColor() + '25'">
-                      <span class="text-uppercase fw-bold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.76rem; letter-spacing: 0.8px;">
-                        Total à régler
-                      </span>
-                      <div class="fs-3 fw-bold font-serif" [style.color]="getPrimaryColor()">
-                        {{ guest()?.ticketPrice || 0 }} <span class="fs-6 fw-normal">{{ guest()?.currency || 'MAD' }}</span>
+                      <div class="fst-italic mt-1"
+                        *ngIf="otherAllergies.trim() && otherAllergies.trim().toLowerCase() !== 'aucun' && otherAllergies.trim().toLowerCase() !== 'none'"
+                        [style.fontFamily]="getSecondaryFont()"
+                        [style.color]="getSecondaryFontColor()"
+                        style="font-size: 0.78rem;">
+                        <span class="fw-bold" [style.color]="getPrimaryColor()">Allergie :</span> {{ otherAllergies.trim() }}
+                      </div>
+
+                      <div class="fst-italic text-muted"
+                        *ngIf="getSelectedDietsArray().length === 0 && (!otherAllergies.trim() || otherAllergies.trim().toLowerCase() === 'aucun' || otherAllergies.trim().toLowerCase() === 'none')"
+                        [style.fontFamily]="getSecondaryFont()"
+                        style="font-size: 0.76rem;">
+                        Aucune restriction particulière
                       </div>
                     </div>
                   </div>
 
+                  <!-- Bouton Modifier mes choix (intégré sous les choix) -->
+                  <div class="pt-2.5 mt-auto border-top text-center" [style.borderColor]="getPrimaryColor() + '20'">
+                    <button type="button" class="btn btn-step-nav-prev rounded-pill px-3 py-1.5 fs-xs fw-semibold w-100"
+                      [style.color]="getSecondaryFontColor()"
+                      [style.borderColor]="getSecondaryFontColor() + '35'"
+                      (click)="goToStep(0)">
+                      <i class="fa fa-pencil-alt me-1.5"></i> Modifier mes choix
+                    </button>
+                  </div>
+
                 </div>
 
-                <!-- Bouton d'Action de Paiement / Confirmation -->
-                <div class="pt-2.5 mt-auto text-center">
-                  <button type="button" class="btn w-100 py-2.5 fs-xs text-uppercase fw-bold rounded-pill shadow-sm btn-luxury-submit"
-                    [style.background]="getPrimaryColor()"
-                    [style.borderColor]="getPrimaryColor()"
-                    [style.color]="isDarkBg(getPrimaryColor()) ? '#ffffff' : '#0c0c0c'"
-                    (click)="confirmRsvpSubmission()" [disabled]="isSubmitting()">
-                    <span *ngIf="!isSubmitting()">
-                      <i class="fa me-1.5" [ngClass]="guest()?.isPaidEvent && guest()?.paymentStatus !== 'PAID' ? 'fa-credit-card' : 'fa-check'"></i>
-                      <span *ngIf="guest()?.isPaidEvent && guest()?.paymentStatus !== 'PAID'">Procéder au règlement</span>
-                      <span *ngIf="!guest()?.isPaidEvent || guest()?.paymentStatus === 'PAID'">Confirmer ma présence</span>
-                    </span>
-                    <span *ngIf="isSubmitting()"><i class="fa fa-spinner fa-spin me-1.5"></i>Enregistrement...</span>
-                  </button>
+                <!-- CARTE 2 : Participation, Montant & Règlement -->
+                <div class="summary-subcard card-payment-box rounded-4 p-3 p-sm-3.5 d-flex flex-column justify-content-between flex-fill shadow-xs"
+                  [style.borderColor]="getPrimaryColor() + '45'"
+                  [style.backgroundColor]="getPrimaryColor() + '09'">
 
-                  <div class="text-center mt-2" *ngIf="guest()?.isPaidEvent && guest()?.paymentStatus !== 'PAID'">
-                    <span class="fs-xxs text-muted" style="font-size: 0.72rem;">
-                      <i class="fa fa-shield-alt text-success me-1"></i> Paiement 100% sécurisé & validation instantanée
-                    </span>
+                  <div>
+                    <!-- En-tête Carte 2 -->
+                    <div class="d-flex align-items-center gap-2 mb-2.5 pb-2 border-bottom" [style.borderColor]="getPrimaryColor() + '25'">
+                      <i class="fa fa-ticket-alt" [style.color]="getPrimaryColor()"></i>
+                      <span class="fw-bold text-uppercase" [style.fontFamily]="getSecondaryFont()" [style.color]="getPrimaryColor()" style="font-size: 0.78rem; letter-spacing: 1.2px;">
+                        Participation & Règlement
+                      </span>
+                    </div>
+
+                    <!-- Détails Billet & Montant -->
+                    <div class="mb-3 text-start">
+                      <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom" [style.borderColor]="getPrimaryColor() + '15'">
+                        <span class="text-uppercase fw-semibold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.72rem; opacity: 0.85;">Invité</span>
+                        <span class="fw-bold text-end font-serif" [style.fontFamily]="getSecondaryFont()" [style.color]="getPrimaryColor()" style="font-size: 0.92rem;">{{ guest()?.guestName }}</span>
+                      </div>
+
+                      <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom" [style.borderColor]="getPrimaryColor() + '15'" *ngIf="guest()?.isPaidEvent">
+                        <span class="text-uppercase fw-semibold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.72rem; opacity: 0.85;">Type de billet</span>
+                        <span class="fw-semibold text-end" [style.fontFamily]="getSecondaryFont()" [style.color]="getPrimaryColor()" style="font-size: 0.85rem;">
+                          Billet nominatif
+                        </span>
+                      </div>
+
+                      <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom" [style.borderColor]="getPrimaryColor() + '15'" *ngIf="guest()?.isPaidEvent && guest()?.paymentStatus === 'PAID'">
+                        <span class="text-uppercase fw-semibold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.72rem; opacity: 0.85;">Montant réglé</span>
+                        <span class="fw-bold text-end font-serif" [style.fontFamily]="getSecondaryFont()" [style.color]="getPrimaryColor()" style="font-size: 0.95rem;">
+                          {{ guest()?.ticketPrice || 0 }} {{ guest()?.currency || 'MAD' }}
+                        </span>
+                      </div>
+
+                      <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom" [style.borderColor]="getPrimaryColor() + '15'" *ngIf="!guest()?.isPaidEvent">
+                        <span class="text-uppercase fw-semibold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.72rem; opacity: 0.85;">Accès</span>
+                        <span class="fw-semibold text-end text-success" style="font-size: 0.82rem;">
+                          <i class="fa fa-check me-1"></i> Gratuit (Invité d'honneur)
+                        </span>
+                      </div>
+
+                      <div class="d-flex justify-content-between align-items-center py-1.5" *ngIf="guest()?.isPaidEvent">
+                        <span class="text-uppercase fw-semibold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.72rem; opacity: 0.85;">Statut</span>
+                        <span class="d-inline-flex align-items-center gap-1.5 fw-semibold" style="font-size: 0.8rem;"
+                          [style.color]="guest()?.paymentStatus === 'PAID' ? '#16a34a' : '#d97706'">
+                          <i class="fa fa-circle" style="font-size: 0.45rem;"></i>
+                          <span>{{ guest()?.paymentStatus === 'PAID' ? 'Réglé' : 'À régler' }}</span>
+                        </span>
+                      </div>
+
+                      <!-- Total à régler -->
+                      <div class="d-flex justify-content-between align-items-baseline pt-2.5 mt-1 border-top"
+                        *ngIf="guest()?.isPaidEvent && guest()?.paymentStatus !== 'PAID'"
+                        [style.borderColor]="getPrimaryColor() + '25'">
+                        <span class="text-uppercase fw-bold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.76rem; letter-spacing: 0.8px;">
+                          Total à régler
+                        </span>
+                        <div class="fs-3 fw-bold font-serif" [style.color]="getPrimaryColor()">
+                          {{ guest()?.ticketPrice || 0 }} <span class="fs-6 fw-normal">{{ guest()?.currency || 'MAD' }}</span>
+                        </div>
+                      </div>
+                    </div>
+
                   </div>
+
+                  <!-- Bouton d'Action de Paiement / Confirmation -->
+                  <div class="pt-2.5 mt-auto text-center">
+                    <button type="button" class="btn w-100 py-2.5 fs-xs text-uppercase fw-bold rounded-pill shadow-sm btn-luxury-submit"
+                      [style.background]="getPrimaryColor()"
+                      [style.borderColor]="getPrimaryColor()"
+                      [style.color]="isDarkBg(getPrimaryColor()) ? '#ffffff' : '#0c0c0c'"
+                      (click)="confirmRsvpSubmission()" [disabled]="isSubmitting()">
+                      <span *ngIf="!isSubmitting()">
+                        <i class="fa me-1.5" [ngClass]="guest()?.isPaidEvent && guest()?.paymentStatus !== 'PAID' ? 'fa-credit-card' : 'fa-check'"></i>
+                        <span *ngIf="guest()?.isPaidEvent && guest()?.paymentStatus !== 'PAID'">Procéder au règlement</span>
+                        <span *ngIf="!guest()?.isPaidEvent || guest()?.paymentStatus === 'PAID'">Confirmer ma présence</span>
+                      </span>
+                      <span *ngIf="isSubmitting()"><i class="fa fa-spinner fa-spin me-1.5"></i>Enregistrement...</span>
+                    </button>
+
+                    <div class="text-center mt-2" *ngIf="guest()?.isPaidEvent && guest()?.paymentStatus !== 'PAID'">
+                      <span class="fs-xxs text-muted" style="font-size: 0.72rem;">
+                        <i class="fa fa-shield-alt text-success me-1"></i> Paiement 100% sécurisé & validation instantanée
+                      </span>
+                    </div>
+                  </div>
+
                 </div>
 
               </div>
 
             </div>
 
-          </div>
+          </form>
 
-        </form>
-      </div>
-      <!-- END Dedicated Menu & RSVP View -->
+          <!-- Actions Décisionnelles en Mode Découverte (Direct sans carte enveloppante ni lien redondant) -->
+          <div class="discovery-decision-actions-wrapper d-flex align-items-center justify-content-center gap-2 gap-sm-3 mt-3 pt-1 mb-2 animate__animated animate__fadeIn" *ngIf="isDiscoveryMode()">
+            <!-- 1. Accepter (Bouton Principal teinté avec la couleur du modèle) -->
+            <button type="button" class="btn btn-decision-accept shadow-sm"
+              [style.background]="getPrimaryColor()"
+              [style.borderColor]="getPrimaryColor()"
+              [style.color]="isDarkBg(getPrimaryColor()) ? '#ffffff' : '#0c0c0c'"
+              (click)="pivotFromDiscoveryToAccept()">
+              <i class="fa fa-check me-2"></i> Accepter
+            </button>
+
+            <!-- 2. Décliner (Bouton Contour Net et Lisible) -->
+            <button type="button" class="btn btn-decision-decline shadow-sm"
+              (click)="openDeclineModal()">
+              <i class="fa fa-times me-1.5"></i> Décliner
+            </button>
+          </div>
+        </div>
+        <!-- END Dedicated Menu & RSVP View -->
 
       <!-- SUCCESS STATE - CAS 1 : L'INVITÉ A DÉCLINÉ (Option A - Chaleureux, empathique et adapté à tout type d'événement) -->
       <div *ngIf="isSuccess() && (status() === 'DECLINED' || !attendanceStatus)"

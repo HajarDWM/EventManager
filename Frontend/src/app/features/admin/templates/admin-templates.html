@@ -1,589 +1,810 @@
-<!-- Hero -->
-<div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-2 text-center text-md-start">
-  <div class="flex-grow-1 mb-1 mb-md-0">
-    <h1 class="h3 fw-bold mb-2">
-      Modèles & Thèmes d'Invitations Digitales
-    </h1>
-    <h2 class="h6 fw-medium text-muted mb-0">
-      Configurez les thèmes visuels, calques décoratifs et styles d'invitations interactives pour les événements.
-    </h2>
-  </div>
-  <div class="mt-2 mt-md-0">
-    <button type="button" class="btn btn-primary" (click)="openAddModal()">
-      <i class="fa fa-plus me-1"></i> Nouveau Modèle
-    </button>
-  </div>
-</div>
-<!-- END Hero -->
-
-<!-- Notifications -->
-<div *ngIf="successMessage()" class="alert alert-success d-flex align-items-center mt-3 shadow-sm" role="alert">
-  <i class="fa fa-check-circle me-2"></i>
-  <div>{{ successMessage() }}</div>
-  <button type="button" class="btn-close ms-auto" (click)="successMessage.set('')"></button>
-</div>
-
-<div *ngIf="errorMessage()" class="alert alert-danger d-flex align-items-center mt-3 shadow-sm" role="alert">
-  <i class="fa fa-exclamation-triangle me-2"></i>
-  <div>{{ errorMessage() }}</div>
-  <button type="button" class="btn-close ms-auto" (click)="errorMessage.set('')"></button>
-</div>
-
-<!-- Luxury Category & SubCategory Filter Header -->
-<div class="taxonomy-filter-wrapper">
-  <!-- Level 1: Main Category Segmented Tabs -->
-  <div class="category-tab-group">
-    <button type="button" class="category-tab-btn"
-            [class.active]="activeCategoryFilter() === 'ALL'"
-            (click)="setCategoryFilter('ALL')">
-      <i class="fa fa-layer-group tab-icon"></i>
-      <span>Tous les modèles</span>
-      <span class="tab-count">{{ templates().length }}</span>
-    </button>
-
-    <button type="button" class="category-tab-btn"
-            *ngFor="let cat of taxonomy"
-            [class.active]="activeCategoryFilter() === cat.id"
-            [class.active-traditional]="activeCategoryFilter() === cat.id && cat.id === 'TRADITIONAL'"
-            [class.active-family]="activeCategoryFilter() === cat.id && cat.id === 'FAMILY'"
-            [class.active-corporate]="activeCategoryFilter() === cat.id && cat.id === 'CORPORATE'"
-            [class.active-seasonal]="activeCategoryFilter() === cat.id && cat.id === 'SEASONAL_SOCIAL'"
-            (click)="setCategoryFilter(cat.id)">
-      <i class="fa {{ cat.icon }} tab-icon"></i>
-      <span>{{ cat.shortName }}</span>
-      <span class="tab-count">{{ getTemplateCountForCategory(cat.id) }}</span>
-    </button>
+<!-- ==========================================================================
+     VUE CATALOGUE : LISTE DES MODÈLES D'INVITATIONS (Quand l'éditeur est fermé)
+     ========================================================================== -->
+<div class="admin-templates-catalog-view" *ngIf="!isEditorOpen()">
+  <!-- Hero Header -->
+  <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-2 text-center text-md-start">
+    <div class="flex-grow-1 mb-1 mb-md-0">
+      <h1 class="h3 fw-bold mb-2">
+        Modèles & Thèmes d'Invitations Digitales
+      </h1>
+      <h2 class="h6 fw-medium text-muted mb-0">
+        Configurez les thèmes visuels, calques décoratifs et styles d'invitations interactives pour les événements.
+      </h2>
+    </div>
+    <div class="mt-2 mt-md-0">
+      <button type="button" class="btn btn-primary d-inline-flex align-items-center gap-1.5 shadow-sm rounded-pill px-3.5 py-2" (click)="openAddModal()">
+        <i class="fa fa-plus"></i>
+        <span>Nouveau Modèle</span>
+      </button>
+    </div>
   </div>
 
-  <!-- Level 2: SubCategory Filter Strip (Appears when a category is selected) -->
-  <div class="subcategory-strip animate__animated animate__fadeIn"
-       *ngIf="activeCategoryFilter() !== 'ALL' && availableSubCategoriesForFilter().length > 0">
-    <span class="strip-label">
-      <i class="fa fa-sparkles text-warning"></i> Célébrations :
-    </span>
-    
-    <button type="button" class="subcategory-chip"
-            [class.active]="activeSubCategoryFilter() === 'ALL'"
-            (click)="setSubCategoryFilter('ALL')">
-      <i class="fa fa-asterisk"></i>
-      <span>Toutes</span>
-    </button>
-
-    <button type="button" class="subcategory-chip"
-            *ngFor="let sub of availableSubCategoriesForFilter()"
-            [class.active]="activeSubCategoryFilter() === sub.name"
-            (click)="setSubCategoryFilter(sub.name)">
-      <i class="fa {{ sub.icon }}"></i>
-      <span>{{ sub.name }}</span>
-    </button>
+  <!-- Notifications -->
+  <div *ngIf="successMessage()" class="alert alert-success d-flex align-items-center mt-3 shadow-sm rounded-3" role="alert">
+    <i class="fa fa-check-circle me-2 fs-5"></i>
+    <div>{{ successMessage() }}</div>
+    <button type="button" class="btn-close ms-auto" (click)="successMessage.set('')"></button>
   </div>
-</div>
 
-<!-- Grid Templates -->
-<div class="row mt-4" *ngIf="!isLoading()">
-  <div class="col-md-6 col-xxl-4 mb-4" *ngFor="let template of filteredTemplates()">
-    <div class="block block-rounded bg-white shadow-sm border border-light h-100 d-flex flex-column overflow-hidden">
+  <div *ngIf="errorMessage()" class="alert alert-danger d-flex align-items-center mt-3 shadow-sm rounded-3" role="alert">
+    <i class="fa fa-exclamation-triangle me-2 fs-5"></i>
+    <div>{{ errorMessage() }}</div>
+    <button type="button" class="btn-close ms-auto" (click)="errorMessage.set('')"></button>
+  </div>
+
+  <!-- Luxury Category & SubCategory Filter Header -->
+  <div class="taxonomy-filter-wrapper">
+    <!-- Level 1: Main Category Segmented Tabs -->
+    <div class="category-tab-group">
+      <button type="button" class="category-tab-btn"
+              [class.active]="activeCategoryFilter() === 'ALL'"
+              (click)="setCategoryFilter('ALL')">
+        <i class="fa fa-layer-group tab-icon"></i>
+        <span>Tous les modèles</span>
+        <span class="tab-count">{{ templates().length }}</span>
+      </button>
+
+      <button type="button" class="category-tab-btn"
+              *ngFor="let cat of taxonomy"
+              [class.active]="activeCategoryFilter() === cat.id"
+              [class.active-traditional]="activeCategoryFilter() === cat.id && cat.id === 'TRADITIONAL'"
+              [class.active-family]="activeCategoryFilter() === cat.id && cat.id === 'FAMILY'"
+              [class.active-corporate]="activeCategoryFilter() === cat.id && cat.id === 'CORPORATE'"
+              [class.active-seasonal]="activeCategoryFilter() === cat.id && cat.id === 'SEASONAL_SOCIAL'"
+              (click)="setCategoryFilter(cat.id)">
+        <i class="fa {{ cat.icon }} tab-icon"></i>
+        <span>{{ cat.shortName }}</span>
+        <span class="tab-count">{{ getTemplateCountForCategory(cat.id) }}</span>
+      </button>
+    </div>
+
+    <!-- Level 2: SubCategory Filter Strip -->
+    <div class="subcategory-strip animate__animated animate__fadeIn"
+         *ngIf="activeCategoryFilter() !== 'ALL' && availableSubCategoriesForFilter().length > 0">
+      <span class="strip-label">
+        <i class="fa fa-sparkles text-warning"></i> Célébrations :
+      </span>
       
-      <!-- Template Image Preview -->
-      <div class="position-relative bg-light" style="height: 190px; overflow: hidden;">
-        <img [src]="template.imageUrl || 'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=500'" 
-             class="w-100 h-100 object-fit-cover" 
-             [alt]="template.title">
+      <button type="button" class="subcategory-chip"
+              [class.active]="activeSubCategoryFilter() === 'ALL'"
+              (click)="setSubCategoryFilter('ALL')">
+        <i class="fa fa-asterisk"></i>
+        <span>Toutes</span>
+      </button>
+
+      <button type="button" class="subcategory-chip"
+              *ngFor="let sub of availableSubCategoriesForFilter()"
+              [class.active]="activeSubCategoryFilter() === sub.name"
+              (click)="setSubCategoryFilter(sub.name)">
+        <i class="fa {{ sub.icon }}"></i>
+        <span>{{ sub.name }}</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div class="text-center py-5" *ngIf="isLoading()">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Chargement...</span>
+    </div>
+  </div>
+
+  <!-- Grid Templates -->
+  <div class="row mt-4" *ngIf="!isLoading()">
+    <div class="col-md-6 col-xxl-4 mb-4" *ngFor="let template of filteredTemplates()">
+      <div class="block block-rounded bg-white shadow-sm border border-light h-100 d-flex flex-column overflow-hidden">
         
-        <!-- Category & Subcategory Badges overlay -->
-        <div class="position-absolute top-0 start-0 m-2 d-flex flex-column gap-1 align-items-start" style="z-index: 2;">
-          <span class="badge px-2.5 py-1 fs-xxs rounded-pill shadow-sm {{ getMainCategoryBadgeClass(template.category) }}">
-            <i class="fa {{ getMainCategoryIcon(template.category) }} me-1"></i> {{ template.category }}
-          </span>
-          <span class="badge bg-dark bg-opacity-85 text-white px-2.5 py-0.5 fs-xxs rounded-pill shadow-xs" *ngIf="template.subCategory" style="backdrop-filter: blur(4px);">
-            <i class="fa {{ getSubCategoryIcon(template.category, template.subCategory) }} me-1"></i> {{ template.subCategory }}
+        <!-- Template Image Preview -->
+        <div class="position-relative bg-light" style="height: 190px; overflow: hidden;">
+          <img [src]="template.imageUrl || 'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=500'" 
+               class="w-100 h-100 object-fit-cover" 
+               [alt]="template.title">
+          
+          <!-- Category & Subcategory Badges overlay -->
+          <div class="position-absolute top-0 start-0 m-2 d-flex flex-column gap-1 align-items-start" style="z-index: 2;">
+            <span class="badge px-2.5 py-1 fs-xxs rounded-pill shadow-sm {{ getMainCategoryBadgeClass(template.category) }}">
+              <i class="fa {{ getMainCategoryIcon(template.category) }} me-1"></i> {{ template.category }}
+            </span>
+            <span class="badge bg-dark bg-opacity-85 text-white px-2.5 py-0.5 fs-xxs rounded-pill shadow-xs" *ngIf="template.subCategory" style="backdrop-filter: blur(4px);">
+              <i class="fa {{ getSubCategoryIcon(template.category, template.subCategory) }} me-1"></i> {{ template.subCategory }}
+            </span>
+          </div>
+
+          <!-- Decorative Layer Frame Badge -->
+          <span class="position-absolute top-0 end-0 m-2.5 badge bg-dark bg-opacity-75 text-white px-2.5 py-1.5 fs-xs rounded-pill shadow-sm" style="backdrop-filter: blur(4px);">
+            <span *ngIf="template.decorativeFrame === 'floral-frame'">🌸 Cadre Floral</span>
+            <span *ngIf="template.decorativeFrame === 'gold-border'">⚜️ Dorures & Velours</span>
+            <span *ngIf="template.decorativeFrame === 'geometric-frame'">📐 Cadre Géométrique</span>
+            <span *ngIf="template.decorativeFrame === 'minimal-edge'">✨ Minimaliste</span>
+            <span *ngIf="!template.decorativeFrame || template.decorativeFrame === 'none'">Calque Classique</span>
           </span>
         </div>
 
-        <!-- Decorative Layer Frame Badge -->
-        <span class="position-absolute top-0 end-0 m-2.5 badge bg-dark bg-opacity-75 text-white px-2.5 py-1.5 fs-xs rounded-pill shadow-sm" style="backdrop-filter: blur(4px);">
-          <span *ngIf="template.decorativeFrame === 'floral-frame'">🌸 Cadre Floral</span>
-          <span *ngIf="template.decorativeFrame === 'gold-border'">⚜️ Dorures & Velours</span>
-          <span *ngIf="template.decorativeFrame === 'geometric-frame'">📐 Cadre Géométrique</span>
-          <span *ngIf="template.decorativeFrame === 'minimal-edge'">✨ Minimaliste</span>
-          <span *ngIf="!template.decorativeFrame || template.decorativeFrame === 'none'">Calque Classique</span>
-        </span>
-      </div>
+        <div class="block-content p-3 flex-grow-1">
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <h3 class="h5 fw-bold text-dark mb-0">{{ template.title }}</h3>
+            <!-- Color indicator circles -->
+            <div class="d-flex align-items-center gap-1 mt-1" *ngIf="template.accentColor || template.backgroundColor || template.secondaryFontColor">
+              <span class="d-inline-block rounded-circle border border-white shadow-sm" 
+                    [style.backgroundColor]="template.accentColor || '#d4af37'" 
+                    style="width: 14px; height: 14px;" 
+                    title="Couleur Principale / Accent"></span>
+              <span class="d-inline-block rounded-circle border border-white shadow-sm" 
+                    [style.backgroundColor]="template.secondaryFontColor || '#0f172a'" 
+                    style="width: 14px; height: 14px;" 
+                    title="Couleur Secondaire / Textes"></span>
+              <span class="d-inline-block rounded-circle border border-secondary shadow-sm" 
+                    [style.backgroundColor]="template.backgroundColor || '#ffffff'" 
+                    style="width: 14px; height: 14px;" 
+                    title="Couleur de fond"></span>
+            </div>
+          </div>
 
-      <div class="block-content p-3 flex-grow-1">
-        <div class="d-flex justify-content-between align-items-start mb-2">
-          <h3 class="h5 fw-bold text-dark mb-0">{{ template.title }}</h3>
-          <!-- Color indicator circles -->
-          <div class="d-flex align-items-center gap-1 mt-1" *ngIf="template.accentColor || template.backgroundColor || template.secondaryFontColor">
-            <span class="d-inline-block rounded-circle border border-white shadow-sm" 
-                  [style.backgroundColor]="template.accentColor || '#d4af37'" 
-                  style="width: 14px; height: 14px;" 
-                  title="Couleur Principale / Accent"></span>
-            <span class="d-inline-block rounded-circle border border-white shadow-sm" 
-                  [style.backgroundColor]="template.secondaryFontColor || '#0f172a'" 
-                  style="width: 14px; height: 14px;" 
-                  title="Couleur Secondaire / Textes"></span>
-            <span class="d-inline-block rounded-circle border border-secondary shadow-sm" 
-                  [style.backgroundColor]="template.backgroundColor || '#ffffff'" 
-                  style="width: 14px; height: 14px;" 
-                  title="Couleur de fond"></span>
+          <p class="text-muted fs-sm mb-2.5">{{ template.description || 'Aucune description disponible.' }}</p>
+          
+          <div class="d-flex flex-wrap align-items-center gap-1.5 mt-auto">
+            <span class="badge bg-light text-muted border px-2 py-1 fs-xxs">
+              🔤 {{ template.primaryFont || 'Alex Brush' }}
+            </span>
+            <span class="badge bg-light text-muted border px-2 py-1 fs-xxs">
+              ✒️ {{ template.secondaryFont || 'Cinzel' }}
+            </span>
+            <span class="badge bg-light text-muted border px-2 py-1 fs-xxs">
+              Clé : {{ template.templateKey || 'automatique' }}
+            </span>
+            <span class="badge bg-success-light text-success border border-success-light px-2 py-1 fs-xxs" *ngIf="template.backgroundImageUrl">
+              🖼️ Fond Graphique
+            </span>
           </div>
         </div>
 
-        <p class="text-muted fs-sm mb-2.5">{{ template.description || 'Aucune description disponible.' }}</p>
-        
-        <div class="d-flex flex-wrap align-items-center gap-1.5 mt-auto">
-          <span class="badge bg-light text-muted border px-2 py-1 fs-xxs">
-            🔤 {{ template.primaryFont || 'Alex Brush' }}
-          </span>
-          <span class="badge bg-light text-muted border px-2 py-1 fs-xxs">
-            ✒️ {{ template.secondaryFont || 'Cinzel' }}
-          </span>
-          <span class="badge bg-light text-muted border px-2 py-1 fs-xxs">
-            Clé : {{ template.templateKey || 'automatique' }}
-          </span>
-          <span class="badge bg-success-light text-success border border-success-light px-2 py-1 fs-xxs" *ngIf="template.backgroundImageUrl">
-            🖼️ Fond Graphique
-          </span>
+        <div class="bg-body-light rounded-bottom border-top border-light p-2 d-flex justify-content-end gap-2">
+          <button type="button" class="btn btn-sm btn-alt-primary" (click)="openEditModal(template)">
+            <i class="fa fa-pencil-alt me-1"></i> Modifier
+          </button>
+          <button type="button" class="btn btn-sm btn-alt-danger" (click)="deleteTemplate(template.id!)">
+            <i class="fa fa-trash-alt me-1"></i> Supprimer
+          </button>
         </div>
-      </div>
-
-      <div class="bg-body-light rounded-bottom border-top border-light p-2 d-flex justify-content-end gap-2">
-        <button type="button" class="btn btn-sm btn-alt-primary" (click)="openEditModal(template)">
-          <i class="fa fa-pencil-alt me-1"></i> Modifier
-        </button>
-        <button type="button" class="btn btn-sm btn-alt-danger" (click)="deleteTemplate(template.id!)">
-          <i class="fa fa-trash-alt me-1"></i> Supprimer
-        </button>
       </div>
     </div>
   </div>
 </div>
 
-<div class="text-center py-5" *ngIf="isLoading()">
-  <div class="spinner-border text-primary" role="status">
-    <span class="visually-hidden">Chargement...</span>
-  </div>
-</div>
+<!-- ==========================================================================
+     VUE PAGE STUDIO RACINE : CRÉATION & MODIFICATION DE MODÈLE D'INVITATION
+     Disposition Responsive à Deux Colonnes (Formulaire à Gauche / Live Preview à Droite)
+     ========================================================================== -->
+<div class="admin-template-editor-page animate__animated animate__fadeIn" *ngIf="isEditorOpen()">
+  
+  <!-- BARRE SUPÉRIEURE DE NAVIGATION DU STUDIO -->
+  <div class="editor-top-bar d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 p-3 bg-white rounded-4 shadow-sm border mb-4">
+    <!-- Navigation gauche : Bouton retour & Titre -->
+    <div class="d-flex align-items-center gap-3">
+      <button type="button" class="btn btn-outline-secondary rounded-pill px-3 py-2 fw-semibold d-inline-flex align-items-center gap-2 btn-back-catalog shadow-2xs" 
+              (click)="closeAddModal()" title="Retourner au catalogue des modèles">
+        <i class="fa fa-arrow-left"></i>
+        <span>Modèles</span>
+      </button>
 
-<div class="modal fade show animate__animated animate__fadeIn" tabindex="-1" style="display: block; background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(8px);" *ngIf="isModalOpen()">
-  <div class="modal-dialog modal-lg modal-dialog-centered">
-    <div class="modal-content luxury-modal-content">
-      
-      <!-- Luxury Modal Header -->
-      <div class="luxury-modal-header d-flex align-items-center justify-content-between">
-        <div class="d-flex align-items-center gap-2.5">
-          <div class="rounded-circle bg-primary-subtle text-primary p-2 d-flex align-items-center justify-content-center flex-shrink-0" style="width: 38px; height: 38px;">
-            <i class="fa fa-palette"></i>
-          </div>
-          <div>
+      <div class="vr opacity-25 d-none d-sm-block" style="height: 32px;"></div>
+
+      <div>
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+          <h2 class="h5 fw-bold text-dark mb-0">
+            {{ isEditing() ? 'Modifier le Modèle d\'Invitation' : 'Créer un Modèle d\'Invitation' }}
+          </h2>
+          <span class="badge bg-primary text-white rounded-pill px-2.5 py-0.5 fs-xxs" *ngIf="subCategoryField">
+            <i class="fa fa-sparkles me-1"></i> {{ subCategoryField }}
+          </span>
+          <span class="badge bg-light text-muted border rounded-pill px-2 py-0.5 fs-xxs" *ngIf="templateKeyField">
+            clé : {{ templateKeyField }}
+          </span>
+        </div>
+        <p class="text-muted fs-xs mb-0 mt-0.5">
+          {{ titleField ? titleField : 'Nouveau modèle' }} • Personnalisation esthétique & visuelle en direct
+        </p>
+      </div>
+    </div>
+
+    <!-- Actions droites : Annuler & Sauvegarder -->
+    <div class="d-flex align-items-center gap-2 ms-auto ms-md-0">
+      <button type="button" class="btn btn-light rounded-pill px-3 py-2 text-muted fw-semibold" (click)="closeAddModal()">
+        Annuler
+      </button>
+      <button type="button" class="btn btn-primary rounded-pill px-4 py-2 fw-bold d-inline-flex align-items-center gap-2 shadow-sm"
+              (click)="saveTemplate()" [disabled]="isSubmitting()">
+        <span *ngIf="!isSubmitting()"><i class="fa fa-check-circle"></i> {{ isEditing() ? 'Enregistrer les Modifications' : 'Créer le Modèle' }}</span>
+        <span *ngIf="isSubmitting()"><i class="fa fa-spinner fa-spin"></i> Enregistrement...</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Messages d'erreur ou d'alerte studio -->
+  <div *ngIf="errorMessage()" class="alert alert-danger d-flex align-items-center mb-4 shadow-sm rounded-3" role="alert">
+    <i class="fa fa-exclamation-triangle me-2 fs-5"></i>
+    <div>{{ errorMessage() }}</div>
+    <button type="button" class="btn-close ms-auto" (click)="errorMessage.set('')"></button>
+  </div>
+
+  <!-- CONTENEUR GRILLE RESPONSIVE 2 COLONNES -->
+  <div class="row g-4 align-items-start">
+    
+    <!-- ======================================================================
+         COLONNE GAUCHE (45% à 50%) : CONTRÔLES DU FORMULAIRE & PARAMÈTRES
+         ====================================================================== -->
+    <div class="col-lg-6 col-xl-5 editor-controls-column">
+      <form (ngSubmit)="saveTemplate()">
+
+        <!-- CARTE 1 : INFORMATIONS GÉNÉRALES & TAXONOMIE -->
+        <div class="card editor-card border-0 shadow-sm rounded-4 mb-3.5 overflow-hidden">
+          <div class="card-header bg-white py-3 px-3.5 border-bottom d-flex align-items-center justify-content-between">
             <div class="d-flex align-items-center gap-2">
-              <h4 class="modal-title fw-bold text-dark mb-0">
-                {{ isEditing() ? 'Modifier le Modèle d\'Invitation' : 'Créer un Modèle d\'Invitation' }}
-              </h4>
-              <span class="badge bg-warning text-dark fw-bold px-2.5 py-1 fs-xs rounded-pill" *ngIf="subCategoryField">
-                <i class="fa fa-sparkles me-1"></i> {{ subCategoryField }}
-              </span>
+              <div class="editor-section-icon bg-primary-subtle text-primary rounded-circle d-flex align-items-center justify-content-center">
+                <i class="fa fa-info-circle"></i>
+              </div>
+              <h3 class="h6 fw-bold text-dark mb-0">1. Identité & Classification</h3>
+            </div>
+            <span class="badge bg-light text-muted border fs-xxs">Général</span>
+          </div>
+
+          <div class="card-body p-3.5">
+            <!-- Nom du modèle -->
+            <div class="mb-3">
+              <label class="form-label fw-semibold text-dark fs-xs mb-1">
+                Nom du modèle d'invitation <span class="text-danger">*</span>
+              </label>
+              <input type="text" class="form-control rounded-3 border-light bg-body-light shadow-none" 
+                     placeholder="Ex: Fleurs de Coton, Or Royal, Gala Saphir..." 
+                     [(ngModel)]="titleField" name="title" required>
+            </div>
+
+            <div class="row g-2.5 mb-3">
+              <!-- Catégorie Principale -->
+              <div class="col-sm-6">
+                <label class="form-label fw-semibold text-dark fs-xs mb-1">Catégorie Principale</label>
+                <select class="form-select rounded-3 border-light bg-body-light shadow-none fs-sm" 
+                        [(ngModel)]="categoryField" name="category" (change)="onCategoryChange()">
+                  <option *ngFor="let cat of taxonomy" [value]="cat.name">
+                    {{ cat.name }}
+                  </option>
+                </select>
+              </div>
+
+              <!-- Sous-Catégorie -->
+              <div class="col-sm-6">
+                <label class="form-label fw-semibold text-dark fs-xs mb-1">Sous-Catégorie</label>
+                <select class="form-select rounded-3 border-light bg-body-light shadow-none fs-sm" 
+                        [(ngModel)]="subCategoryField" name="subCategory">
+                  <option *ngFor="let sub of availableSubCategoriesForForm()" [value]="sub.name">
+                    {{ sub.name }}
+                  </option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Clé de thème technique -->
+            <div class="mb-3">
+              <label class="form-label fw-semibold text-dark fs-xs mb-1">
+                Identifiant / Clé de Thème (Liaison CSS RSVP)
+              </label>
+              <input type="text" class="form-control rounded-3 border-light bg-body-light shadow-none fs-sm font-monospace" 
+                     placeholder="Ex: fleurs-de-coton, or-et-velours" [(ngModel)]="templateKeyField" name="templateKey">
+              <div class="form-text fs-xxs text-muted">Laissez vide pour auto-générer à partir du nom.</div>
+            </div>
+
+            <!-- Description esthétique -->
+            <div>
+              <label class="form-label fw-semibold text-dark fs-xs mb-1">Description esthétique</label>
+              <textarea class="form-control rounded-3 border-light bg-body-light shadow-none fs-sm" rows="2" 
+                        placeholder="Décrivez l'ambiance et le style visuel de cette invitation..." 
+                        [(ngModel)]="descriptionField" name="description"></textarea>
             </div>
           </div>
         </div>
-        <button type="button" class="btn-close" (click)="closeAddModal()"></button>
-      </div>
-      
-      <form (ngSubmit)="saveTemplate()">
-        <div class="modal-body p-4 bg-light">
-          <div class="row">
-            <!-- Nom du modèle -->
-            <div class="col-md-6 mb-3">
-              <label class="form-label fw-semibold text-muted">Nom du modèle <span class="text-danger">*</span></label>
-              <input type="text" class="form-control border-light shadow-sm bg-body-light" 
-                     placeholder="Ex: Fleurs de Coton" [(ngModel)]="titleField" name="title" required>
-            </div>
 
-            <!-- Catégorie Principale -->
-            <div class="col-md-3 mb-3">
-              <label class="form-label fw-semibold text-muted">Catégorie Principale</label>
-              <select class="form-select border-light shadow-sm bg-body-light" [(ngModel)]="categoryField" name="category" (change)="onCategoryChange()">
-                <option *ngFor="let cat of taxonomy" [value]="cat.name">
-                  {{ cat.name }}
-                </option>
-              </select>
+        <!-- CARTE 2 : CADRE DÉCORATIF & PALETTE DE COULEURS -->
+        <div class="card editor-card border-0 shadow-sm rounded-4 mb-3.5 overflow-hidden">
+          <div class="card-header bg-white py-3 px-3.5 border-bottom d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-2">
+              <div class="editor-section-icon bg-warning-subtle text-warning rounded-circle d-flex align-items-center justify-content-center">
+                <i class="fa fa-palette"></i>
+              </div>
+              <h3 class="h6 fw-bold text-dark mb-0">2. Cadre Décoratif & Couleurs</h3>
             </div>
-
-            <!-- Sous-Catégorie -->
-            <div class="col-md-3 mb-3">
-              <label class="form-label fw-semibold text-muted">Sous-Catégorie</label>
-              <select class="form-select border-light shadow-sm bg-body-light" [(ngModel)]="subCategoryField" name="subCategory">
-                <option *ngFor="let sub of availableSubCategoriesForForm()" [value]="sub.name">
-                  {{ sub.name }}
-                </option>
-              </select>
-            </div>
+            <span class="badge bg-warning-subtle text-dark fs-xxs">Visuel</span>
           </div>
 
-          <div class="row">
-            <!-- Clé de thème technique -->
-            <div class="col-md-6 mb-3">
-              <label class="form-label fw-semibold text-muted">Identifiant / Clé de Thème</label>
-              <input type="text" class="form-control border-light shadow-sm bg-body-light" 
-                     placeholder="Ex: fleurs-de-coton, or-et-velours" [(ngModel)]="templateKeyField" name="templateKey">
-              <div class="form-text fs-xxs text-muted">Permet la liaison CSS avec la page RSVP (laisser vide pour auto-génération).</div>
-            </div>
-
+          <div class="card-body p-3.5">
             <!-- Calque / Cadre Décoratif -->
-            <div class="col-md-6 mb-3">
-              <label class="form-label fw-semibold text-muted">Calque Décoratif / Cadre graphique</label>
-              <select class="form-select border-light shadow-sm bg-body-light" [(ngModel)]="decorativeFrameField" name="decorativeFrame">
+            <div class="mb-3.5">
+              <label class="form-label fw-semibold text-dark fs-xs mb-1">
+                Calque Décoratif / Cadre Graphique
+              </label>
+              <select class="form-select rounded-3 border-light bg-body-light shadow-none fs-sm" 
+                      [(ngModel)]="decorativeFrameField" name="decorativeFrame">
                 <option value="floral-frame">🌸 Cadre Floral (Botanique & Champêtre)</option>
                 <option value="gold-border">⚜️ Bordure Dorée & Ornement Géométrique</option>
                 <option value="geometric-frame">📐 Cadre Géométrique (Corporate & Moderne)</option>
-                <option value="minimal-edge">✨ Minimaliste (Lignes Épurées)</option>
-                <option value="none">Aucun calque particulier</option>
+                <option value="minimal-edge">✨ Minimaliste (Lignes Épurées & Coins Délicats)</option>
+                <option value="none">Aucun calque particulier (Épuré sans cadre)</option>
               </select>
             </div>
+
+            <!-- Harmonisation des 3 Couleurs Clés -->
+            <div class="row g-2.5">
+              <!-- Couleur de Fond de la Carte -->
+              <div class="col-sm-4">
+                <div class="p-2.5 bg-body-light rounded-3 border border-light h-100">
+                  <label class="form-label fw-bold text-dark fs-xxs mb-1 d-block text-truncate" title="Fond de Carte">
+                    <i class="fa fa-fill-drip text-primary me-1"></i> Fond de Carte
+                  </label>
+                  <div class="d-flex align-items-center gap-1.5">
+                    <input type="color" class="form-control form-control-color border-0 p-0 rounded-circle flex-shrink-0" 
+                           [(ngModel)]="backgroundColorField" [ngModelOptions]="{standalone: true}" style="width: 32px; height: 32px; cursor: pointer;">
+                    <input type="text" class="form-control border-light bg-white fs-xs font-monospace p-1 text-center shadow-none rounded-2" 
+                           placeholder="#faf6ee" [(ngModel)]="backgroundColorField" name="backgroundColor">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Couleur Principale / Accent -->
+              <div class="col-sm-4">
+                <div class="p-2.5 bg-body-light rounded-3 border border-light h-100">
+                  <label class="form-label fw-bold text-dark fs-xxs mb-1 d-block text-truncate" title="Couleur Principale / Accent">
+                    <i class="fa fa-tint text-warning me-1"></i> Accent / Titres
+                  </label>
+                  <div class="d-flex align-items-center gap-1.5">
+                    <input type="color" class="form-control form-control-color border-0 p-0 rounded-circle flex-shrink-0" 
+                           [(ngModel)]="accentColorField" [ngModelOptions]="{standalone: true}" style="width: 32px; height: 32px; cursor: pointer;">
+                    <input type="text" class="form-control border-light bg-white fs-xs font-monospace p-1 text-center shadow-none rounded-2" 
+                           placeholder="#d4af37" [(ngModel)]="accentColorField" name="accentColor">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Couleur Secondaire / Textes -->
+              <div class="col-sm-4">
+                <div class="p-2.5 bg-body-light rounded-3 border border-light h-100">
+                  <label class="form-label fw-bold text-dark fs-xxs mb-1 d-block text-truncate" title="Couleur Secondaire / Textes">
+                    <i class="fa fa-font text-secondary me-1"></i> Textes & Menus
+                  </label>
+                  <div class="d-flex align-items-center gap-1.5">
+                    <input type="color" class="form-control form-control-color border-0 p-0 rounded-circle flex-shrink-0" 
+                           [(ngModel)]="secondaryFontColorField" [ngModelOptions]="{standalone: true}" style="width: 32px; height: 32px; cursor: pointer;">
+                    <input type="text" class="form-control border-light bg-white fs-xs font-monospace p-1 text-center shadow-none rounded-2" 
+                           placeholder="#0f172a" [(ngModel)]="secondaryFontColorField" name="secondaryFontColor">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CARTE 3 : TYPOGRAPHIES DE PRESTIGE (Google Fonts) -->
+        <div class="card editor-card border-0 shadow-sm rounded-4 mb-3.5 overflow-hidden">
+          <div class="card-header bg-white py-3 px-3.5 border-bottom d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-2">
+              <div class="editor-section-icon bg-success-subtle text-success rounded-circle d-flex align-items-center justify-content-center">
+                <i class="fa fa-font"></i>
+              </div>
+              <h3 class="h6 fw-bold text-dark mb-0">3. Typographies de Personnalisation</h3>
+            </div>
+            <span class="badge bg-success-subtle text-success fs-xxs">Google Fonts</span>
           </div>
 
-          <!-- SECTION: Typographies & Couleurs Harmonisées (Paired Font & Color Controls) -->
-          <div class="p-3 mb-3 bg-body-light rounded-3 border border-light">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-              <label class="form-label fw-bold text-dark mb-0">
-                <i class="fa fa-paint-brush text-primary me-1"></i> Typographies & Couleurs de Personnalisation
-              </label>
-              <span class="badge bg-primary-subtle text-primary fs-xxs">Contrôle Manuel Direct</span>
-            </div>
-
-            <div class="row g-3">
-              <!-- Colonne 1 : POLICE PRINCIPALE & SA COULEUR -->
-              <div class="col-md-6">
-                <div class="p-3 bg-white rounded-3 border shadow-sm h-100">
-                  <div class="d-flex align-items-center gap-2 mb-2 pb-1 border-bottom">
-                    <span class="badge bg-primary text-white rounded-circle p-1" style="width: 20px; height: 20px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px;">1</span>
-                    <h6 class="fw-bold text-dark mb-0 fs-sm">Police Principale & Titres</h6>
-                  </div>
-
-                  <!-- Saisie libre & Suggestions de Police Principale -->
-                  <div class="mb-2.5">
-                    <div class="d-flex justify-content-between align-items-center mb-1">
-                      <label class="form-label fw-semibold text-muted fs-xs mb-0">Police (Titres & Calligraphie)</label>
-                      <span class="badge bg-light text-primary border fs-xxs">Saisie libre</span>
-                    </div>
-                    <div class="input-group shadow-sm">
-                      <span class="input-group-text border-light bg-body-light text-muted"><i class="fa fa-font"></i></span>
-                      <input type="text" class="form-control border-light bg-body-light fw-medium fs-sm" 
-                             list="primaryFontsDatalist"
-                             [(ngModel)]="primaryFontField" 
-                             name="primaryFont"
-                             (ngModelChange)="onPrimaryFontChange($event)"
-                             [style.fontFamily]="primaryFontField"
-                             placeholder="Ex: Great Vibes, Dancing Script, Alex Brush...">
-                      <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split border-light bg-body-light"
-                              data-bs-toggle="dropdown" aria-expanded="false" title="Suggestions de polices">
-                      </button>
-                      <ul class="dropdown-menu dropdown-menu-end shadow-sm" style="max-height: 220px; overflow-y: auto; z-index: 1060;">
-                        <li *ngFor="let font of availableFonts">
-                          <button type="button" class="dropdown-item d-flex justify-content-between align-items-center py-1.5"
-                                  (click)="selectPrimaryFont(font.name)">
-                            <span [style.fontFamily]="font.name">{{ font.name }}</span>
-                            <span class="badge bg-light text-muted ms-2 fs-xxs">{{ font.fontGroup }}</span>
-                          </button>
-                        </li>
-                      </ul>
-                    </div>
-                    <datalist id="primaryFontsDatalist">
-                      <option *ngFor="let font of availableFonts" [value]="font.name">{{ font.fontGroup }}</option>
-                    </datalist>
-                  </div>
-
-                  <!-- Taille & Couleur de la Police Principale -->
-                  <div class="row g-2">
-                    <div class="col-sm-6">
-                      <label class="form-label fw-semibold text-muted fs-xs mb-1">Taille Police Principale</label>
-                      <div class="input-group shadow-sm">
-                        <input type="text" class="form-control border-light bg-body-light fs-sm"
-                               list="primaryFontSizesList"
-                               [(ngModel)]="primaryFontSizeField" 
-                               name="primaryFontSize"
-                               placeholder="36px">
-                        <datalist id="primaryFontSizesList">
-                          <option value="28px">28px (Compact)</option>
-                          <option value="32px">32px (Moyen)</option>
-                          <option value="36px">36px (Standard)</option>
-                          <option value="42px">42px (Grand)</option>
-                          <option value="48px">48px (Très Grand)</option>
-                          <option value="56px">56px (Impérial)</option>
-                        </datalist>
-                      </div>
-                    </div>
-                    <div class="col-sm-6">
-                      <label class="form-label fw-semibold text-muted fs-xs mb-1">Couleur Principale / Accent</label>
-                      <div class="input-group">
-                        <input type="color" class="form-control form-control-color border-light bg-body-light" 
-                               [(ngModel)]="accentColorField" [ngModelOptions]="{standalone: true}" style="max-width: 44px; height: 38px;">
-                        <input type="text" class="form-control border-light shadow-sm bg-body-light fs-sm" 
-                               placeholder="#d4af37" [(ngModel)]="accentColorField" name="accentColor">
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Colonne 2 : POLICE SECONDAIRE & SA COULEUR -->
-              <div class="col-md-6">
-                <div class="p-3 bg-white rounded-3 border shadow-sm h-100">
-                  <div class="d-flex align-items-center gap-2 mb-2 pb-1 border-bottom">
-                    <span class="badge bg-secondary text-white rounded-circle p-1" style="width: 20px; height: 20px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px;">2</span>
-                    <h6 class="fw-bold text-dark mb-0 fs-sm">Police Secondaire & Textes</h6>
-                  </div>
-
-                  <!-- Saisie libre & Suggestions de Police Secondaire -->
-                  <div class="mb-2.5">
-                    <div class="d-flex justify-content-between align-items-center mb-1">
-                      <label class="form-label fw-semibold text-muted fs-xs mb-0">Police (Sous-titres & Menus)</label>
-                      <span class="badge bg-light text-secondary border fs-xxs">Saisie libre</span>
-                    </div>
-                    <div class="input-group shadow-sm">
-                      <span class="input-group-text border-light bg-body-light text-muted"><i class="fa fa-font"></i></span>
-                      <input type="text" class="form-control border-light bg-body-light fw-medium fs-sm" 
-                             list="secondaryFontsDatalist"
-                             [(ngModel)]="secondaryFontField" 
-                             name="secondaryFont"
-                             (ngModelChange)="onSecondaryFontChange($event)"
-                             [style.fontFamily]="secondaryFontField"
-                             placeholder="Ex: Cormorant Garamond, Montserrat, Cinzel...">
-                      <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split border-light bg-body-light"
-                              data-bs-toggle="dropdown" aria-expanded="false" title="Suggestions de polices">
-                      </button>
-                      <ul class="dropdown-menu dropdown-menu-end shadow-sm" style="max-height: 220px; overflow-y: auto; z-index: 1060;">
-                        <li *ngFor="let font of availableFonts">
-                          <button type="button" class="dropdown-item d-flex justify-content-between align-items-center py-1.5"
-                                  (click)="selectSecondaryFont(font.name)">
-                            <span [style.fontFamily]="font.name">{{ font.name }}</span>
-                            <span class="badge bg-light text-muted ms-2 fs-xxs">{{ font.fontGroup }}</span>
-                          </button>
-                        </li>
-                      </ul>
-                    </div>
-                    <datalist id="secondaryFontsDatalist">
-                      <option *ngFor="let font of availableFonts" [value]="font.name">{{ font.fontGroup }}</option>
-                    </datalist>
-                  </div>
-
-                  <!-- Taille & Couleur de la Police Secondaire -->
-                  <div class="row g-2">
-                    <div class="col-sm-6">
-                      <label class="form-label fw-semibold text-muted fs-xs mb-1">Taille Police Secondaire</label>
-                      <div class="input-group shadow-sm">
-                        <input type="text" class="form-control border-light bg-body-light fs-sm"
-                               list="secondaryFontSizesList"
-                               [(ngModel)]="secondaryFontSizeField" 
-                               name="secondaryFontSize"
-                               placeholder="16px">
-                        <datalist id="secondaryFontSizesList">
-                          <option value="12px">12px (Fin)</option>
-                          <option value="14px">14px (Discret)</option>
-                          <option value="16px">16px (Standard)</option>
-                          <option value="18px">18px (Moyen)</option>
-                          <option value="20px">20px (Grand)</option>
-                          <option value="24px">24px (En-tête)</option>
-                        </datalist>
-                      </div>
-                    </div>
-                    <div class="col-sm-6">
-                      <label class="form-label fw-semibold text-muted fs-xs mb-1">Couleur Secondaire / Textes</label>
-                      <div class="input-group">
-                        <input type="color" class="form-control form-control-color border-light bg-body-light" 
-                               [(ngModel)]="secondaryFontColorField" [ngModelOptions]="{standalone: true}" style="max-width: 44px; height: 38px;">
-                        <input type="text" class="form-control border-light shadow-sm bg-body-light fs-sm" 
-                               placeholder="#0f172a" [(ngModel)]="secondaryFontColorField" name="secondaryFontColor">
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Couleur d'arrière-plan du modèle -->
-            <div class="mt-3 p-2.5 bg-white rounded-3 border shadow-sm d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2">
-              <div>
-                <label class="form-label fw-semibold text-dark fs-xs mb-0">
-                  <i class="fa fa-fill-drip text-muted me-1"></i> Couleur de Fond de la Carte (Arrière-plan général)
+          <div class="card-body p-3.5">
+            <!-- 1. Police Principale (Titres) -->
+            <div class="p-3 bg-body-light rounded-3 border border-light mb-3">
+              <div class="d-flex justify-content-between align-items-center mb-1.5">
+                <label class="form-label fw-bold text-dark fs-xs mb-0">
+                  Police Principale (Titres & Noms)
                 </label>
-                <div class="fs-xxs text-muted">Couleur de base du conteneur de l'invitation</div>
+                <span class="badge bg-white text-primary border fs-xxs">Saisie libre ou liste</span>
               </div>
-              <div class="input-group" style="max-width: 220px;">
-                <input type="color" class="form-control form-control-color border-light bg-body-light" 
-                       [(ngModel)]="backgroundColorField" [ngModelOptions]="{standalone: true}" style="max-width: 44px; height: 36px;">
-                <input type="text" class="form-control border-light shadow-sm bg-body-light fs-xs" 
-                       placeholder="#faf6ee" [(ngModel)]="backgroundColorField" name="backgroundColor">
+              
+              <div class="input-group mb-2 shadow-2xs">
+                <span class="input-group-text border-light bg-white text-muted"><i class="fa fa-heading"></i></span>
+                <input type="text" class="form-control border-light bg-white fs-sm fw-semibold" 
+                       list="editorPrimaryFontsList"
+                       [(ngModel)]="primaryFontField" 
+                       name="primaryFont"
+                       (ngModelChange)="onPrimaryFontChange($event)"
+                       [style.fontFamily]="primaryFontField"
+                       placeholder="Ex: Alex Brush, Great Vibes...">
+                <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split border-light bg-white"
+                        data-bs-toggle="dropdown" aria-expanded="false" title="Suggestions de polices"></button>
+                <ul class="dropdown-menu dropdown-menu-end shadow-sm" style="max-height: 220px; overflow-y: auto; z-index: 1060;">
+                  <li *ngFor="let font of availableFonts">
+                    <button type="button" class="dropdown-item d-flex justify-content-between align-items-center py-1.5"
+                            (click)="selectPrimaryFont(font.name)">
+                      <span [style.fontFamily]="font.name">{{ font.name }}</span>
+                      <span class="badge bg-light text-muted ms-2 fs-xxs">{{ font.fontGroup }}</span>
+                    </button>
+                  </li>
+                </ul>
+              </div>
+              <datalist id="editorPrimaryFontsList">
+                <option *ngFor="let font of availableFonts" [value]="font.name">{{ font.fontGroup }}</option>
+              </datalist>
+
+              <div class="d-flex align-items-center justify-content-between gap-2">
+                <span class="fs-xxs text-muted">Taille du titre :</span>
+                <div class="input-group input-group-sm" style="max-width: 140px;">
+                  <input type="text" class="form-control border-light bg-white fs-xs text-center"
+                         list="editorPrimarySizesList" [(ngModel)]="primaryFontSizeField" name="primaryFontSize" placeholder="36px">
+                  <datalist id="editorPrimarySizesList">
+                    <option *ngFor="let s of primaryFontSizeOptions" [value]="s"></option>
+                  </datalist>
+                </div>
               </div>
             </div>
 
-            <!-- Live Typography & Colors Preview Card -->
-            <div class="mt-3 p-3 rounded-3 border text-center shadow-sm position-relative overflow-hidden"
-              [style.backgroundColor]="backgroundColorField || '#faf6ee'"
-              style="transition: all 0.3s ease;">
-              <span class="position-absolute top-0 start-0 m-2 badge bg-dark bg-opacity-75 text-white fs-xxs">
-                Aperçu Typographique & Couleurs en Direct
-              </span>
+            <!-- 2. Police Secondaire (Textes & Menus) -->
+            <div class="p-3 bg-body-light rounded-3 border border-light">
+              <div class="d-flex justify-content-between align-items-center mb-1.5">
+                <label class="form-label fw-bold text-dark fs-xs mb-0">
+                  Police Secondaire (Sous-titres & Détails)
+                </label>
+                <span class="badge bg-white text-secondary border fs-xxs">Saisie libre ou liste</span>
+              </div>
+              
+              <div class="input-group mb-2 shadow-2xs">
+                <span class="input-group-text border-light bg-white text-muted"><i class="fa fa-align-left"></i></span>
+                <input type="text" class="form-control border-light bg-white fs-sm fw-semibold" 
+                       list="editorSecondaryFontsList"
+                       [(ngModel)]="secondaryFontField" 
+                       name="secondaryFont"
+                       (ngModelChange)="onSecondaryFontChange($event)"
+                       [style.fontFamily]="secondaryFontField"
+                       placeholder="Ex: Cinzel, Cormorant Garamond...">
+                <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split border-light bg-white"
+                        data-bs-toggle="dropdown" aria-expanded="false" title="Suggestions de polices"></button>
+                <ul class="dropdown-menu dropdown-menu-end shadow-sm" style="max-height: 220px; overflow-y: auto; z-index: 1060;">
+                  <li *ngFor="let font of availableFonts">
+                    <button type="button" class="dropdown-item d-flex justify-content-between align-items-center py-1.5"
+                            (click)="selectSecondaryFont(font.name)">
+                      <span [style.fontFamily]="font.name">{{ font.name }}</span>
+                      <span class="badge bg-light text-muted ms-2 fs-xxs">{{ font.fontGroup }}</span>
+                    </button>
+                  </li>
+                </ul>
+              </div>
+              <datalist id="editorSecondaryFontsList">
+                <option *ngFor="let font of availableFonts" [value]="font.name">{{ font.fontGroup }}</option>
+              </datalist>
 
-              <div class="pt-3 pb-1">
-                <!-- Titre Principal stylé avec primaryFont & primaryFontSize & accentColor -->
-                <span class="d-block mb-1"
-                  [style.fontFamily]="primaryFontField"
-                  [style.fontSize]="primaryFontSizeField || '36px'"
-                  [style.color]="accentColorField || '#d4af37'"
-                  style="line-height: 1.2;">
-                  {{ titleField || 'Mariage de Yassine & Zineb' }}
-                </span>
-
-                <!-- Sous-titre stylé avec secondaryFont & secondaryFontSize & secondaryFontColor -->
-                <h4 class="fw-bold text-uppercase m-0"
-                  [style.fontFamily]="secondaryFontField"
-                  [style.fontSize]="secondaryFontSizeField || '16px'"
-                  [style.color]="secondaryFontColorField || '#0f172a'"
-                  style="letter-spacing: 1.5px;">
-                  RÉCEPTION & DÎNER DE GALA
-                </h4>
-
-                <!-- Ligne de séparation accentuée -->
-                <div class="mx-auto my-2"
-                  [style.backgroundColor]="accentColorField || '#d4af37'"
-                  style="width: 45px; height: 1.5px; opacity: 0.65;"></div>
-
-                <!-- Date & Lieu stylé avec secondaryFont & secondaryFontColor (avec légère transparence) -->
-                <p class="fs-xs mb-0"
-                  [style.fontFamily]="secondaryFontField"
-                  [style.color]="secondaryFontColorField || '#0f172a'"
-                  style="opacity: 0.85;">
-                  Samedi 15 Août 2026 • Palais des Roses • Casablanca
-                </p>
+              <div class="d-flex align-items-center justify-content-between gap-2">
+                <span class="fs-xxs text-muted">Taille des textes :</span>
+                <div class="input-group input-group-sm" style="max-width: 140px;">
+                  <input type="text" class="form-control border-light bg-white fs-xs text-center"
+                         list="editorSecondarySizesList" [(ngModel)]="secondaryFontSizeField" name="secondaryFontSize" placeholder="16px">
+                  <datalist id="editorSecondarySizesList">
+                    <option *ngFor="let s of secondaryFontSizeOptions" [value]="s"></option>
+                  </datalist>
+                </div>
               </div>
             </div>
           </div>
+        </div>
 
-          <!-- Description -->
-          <div class="mb-3">
-            <label class="form-label fw-semibold text-muted">Description esthétique</label>
-            <textarea class="form-control border-light shadow-sm bg-body-light" rows="2" 
-                      placeholder="Décrivez brièvement l'ambiance et le style visuel de ce modèle..." 
-                      [(ngModel)]="descriptionField" name="description"></textarea>
+        <!-- CARTE 4 : ILLUSTRATION & ASSET DE FOND COMPLET -->
+        <div class="card editor-card border-0 shadow-sm rounded-4 mb-3.5 overflow-hidden">
+          <div class="card-header bg-white py-3 px-3.5 border-bottom d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-2">
+              <div class="editor-section-icon bg-info-subtle text-info rounded-circle d-flex align-items-center justify-content-center">
+                <i class="fa fa-image"></i>
+              </div>
+              <h3 class="h6 fw-bold text-dark mb-0">4. Illustration de Fond Décorative</h3>
+            </div>
+            <span class="badge bg-info-subtle text-info fs-xxs">Carte Graphique</span>
           </div>
 
-          <!-- Dedicated Background Template Image / Asset Field (Full Card Graphic) -->
-          <div class="mb-3 p-3 bg-light rounded-3 border border-dashed border-2 border-primary-light">
-            <div class="d-flex justify-content-between align-items-center mb-1.5">
-              <label class="form-label fw-bold text-dark mb-0">
-                <i class="fa fa-image text-primary me-1"></i> Image / Asset de fond complet (Carte Graphique Pré-designée)
-              </label>
-              <span class="badge bg-primary-light text-primary fs-xxs">Option Avancée</span>
-            </div>
-            <p class="fs-xs text-muted mb-2">
-              Importez une illustration de carte complète (avec bordures florales, cadres dorés ou décors intégrés). La page RSVP appliquera ce visuel en fond de conteneur avec les données dynamiques parfaitement superposées.
+          <div class="card-body p-3.5">
+            <p class="fs-xs text-muted mb-2.5">
+              Importez un arrière-plan complet (motifs floraux, cadres dorés, aquarelles). L'aperçu à droite l'appliquera immédiatement en fond de carte.
             </p>
 
-            <div class="alert alert-info py-2 px-3 fs-xs rounded-2 mb-2.5 d-flex align-items-center gap-2 border-0 bg-info-light text-info">
-              <i class="fa fa-lightbulb fs-base flex-shrink-0"></i>
-              <div>
-                <strong>Conseil de design :</strong> Utilisez des visuels de fond <em>purement décoratifs</em> (avec bordures florales, cadres ou dorures sur les contours et un centre dégagé sans noms ni dates pré-imprimés). L'invitation affiche automatiquement les informations dynamiques de chaque événement dans un élégant encart central.
-              </div>
-            </div>
-            
-            <div class="input-group mb-2">
-              <span class="input-group-text bg-white border-light text-muted"><i class="fa fa-link"></i></span>
-              <input type="url" class="form-control border-light bg-white" 
+            <div class="input-group mb-2 shadow-2xs">
+              <span class="input-group-text bg-body-light border-light text-muted"><i class="fa fa-link"></i></span>
+              <input type="url" class="form-control border-light bg-body-light fs-xs" 
                      placeholder="URL directe de l'image de fond (https://...)" 
                      [(ngModel)]="backgroundImageUrlField" name="backgroundImageUrl">
             </div>
 
-            <div class="d-flex align-items-center gap-2">
-              <label class="btn btn-sm btn-alt-primary mb-0 cursor-pointer">
-                <i class="fa fa-upload me-1.5"></i> Importer un fichier image (PNG, JPG, WebP)
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+              <label class="btn btn-sm btn-outline-primary rounded-pill px-3 py-1.5 mb-0 cursor-pointer d-inline-flex align-items-center gap-1.5">
+                <i class="fa fa-upload"></i>
+                <span>Importer un fichier image</span>
                 <input type="file" accept="image/*" class="d-none" (change)="onBackgroundFileSelected($event)">
               </label>
-              <button type="button" class="btn btn-sm btn-alt-danger" *ngIf="backgroundImageUrlField" (click)="removeBackgroundImage()">
+              <button type="button" class="btn btn-sm btn-outline-danger rounded-pill px-3 py-1.5" 
+                      *ngIf="backgroundImageUrlField" (click)="removeBackgroundImage()">
                 <i class="fa fa-times me-1"></i> Retirer le fond
               </button>
             </div>
+          </div>
+        </div>
 
-            <!-- Live Background Preview -->
-            <div class="mt-3 p-2 bg-white rounded border text-center position-relative overflow-hidden" *ngIf="backgroundImageUrlField" style="max-height: 200px;">
-              <span class="position-absolute top-0 start-0 m-2 badge bg-dark bg-opacity-75 text-white fs-xxs">Aperçu du Fond Graphique</span>
-              <img [src]="backgroundImageUrlField" alt="Aperçu Fond Carte" class="img-fluid rounded shadow-sm" style="max-height: 180px; object-fit: contain;">
+        <!-- CARTE 5 : AMBIANCE SONORE & MUSIQUE -->
+        <div class="card editor-card border-0 shadow-sm rounded-4 mb-3.5 overflow-hidden">
+          <div class="card-header bg-white py-3 px-3.5 border-bottom d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-2">
+              <div class="editor-section-icon bg-warning-subtle text-dark rounded-circle d-flex align-items-center justify-content-center">
+                <i class="fa fa-music"></i>
+              </div>
+              <h3 class="h6 fw-bold text-dark mb-0">5. Musique d'Ambiance</h3>
             </div>
+            <span class="badge bg-warning-subtle text-dark fs-xxs">Audio MP3</span>
           </div>
 
-          <!-- Dedicated Audio & Music Section (Clean Standard Styling, No Border/Box) -->
-          <div class="mb-3">
-            <div class="d-flex justify-content-between align-items-center mb-1">
-              <label class="form-label fw-semibold text-muted mb-0">
-                <i class="fa fa-music text-warning me-1"></i> Musique d'ambiance du modèle (Audio de fond)
-              </label>
-              <span class="badge bg-warning-subtle text-dark fs-xxs">Optionnel</span>
-            </div>
-
-            <!-- Input & Upload Row -->
-            <div class="input-group mb-2 shadow-sm">
+          <div class="card-body p-3.5">
+            <div class="input-group mb-2 shadow-2xs">
               <span class="input-group-text border-light bg-body-light text-muted"><i class="fa fa-link"></i></span>
-              <input type="url" class="form-control border-light bg-body-light" 
-                     placeholder="URL directe de l'audio MP3 ou importez un fichier..." 
+              <input type="url" class="form-control border-light bg-body-light fs-xs" 
+                     placeholder="URL directe de l'audio MP3..." 
                      [(ngModel)]="musicUrlField" name="musicUrl"
                      (input)="stopPreviewAudio()">
-              <label class="btn btn-alt-secondary border-light mb-0 cursor-pointer d-flex align-items-center" title="Importer un fichier audio">
-                <i class="fa fa-upload me-1.5"></i> Importer fichier
+              <label class="btn btn-outline-secondary border-light mb-0 cursor-pointer d-flex align-items-center fs-xs" title="Importer un fichier audio">
+                <i class="fa fa-upload me-1.5"></i> Importer
                 <input type="file" accept="audio/*" class="d-none" (change)="onAudioFileSelected($event)">
               </label>
             </div>
 
-            <!-- Active Audio Controls (Play Preview & Clear) -->
-            <div class="d-flex align-items-center gap-2 mb-2" *ngIf="musicUrlField">
-              <button type="button" class="btn btn-xs btn-alt-success rounded-pill px-2.5 py-1" (click)="togglePreviewAudio()">
-                <i class="fa" [ngClass]="isPreviewAudioPlaying() ? 'fa-pause me-1' : 'fa-play me-1'"></i>
-                {{ isPreviewAudioPlaying() ? 'Pause' : 'Écouter l\'extrait' }}
+            <!-- Contrôles Audio Actifs -->
+            <div class="d-flex align-items-center gap-2 mb-2.5" *ngIf="musicUrlField">
+              <button type="button" class="btn btn-xs btn-success rounded-pill px-3 py-1 d-inline-flex align-items-center gap-1.5 shadow-sm" (click)="togglePreviewAudio()">
+                <i class="fa" [ngClass]="isPreviewAudioPlaying() ? 'fa-pause' : 'fa-play'"></i>
+                <span>{{ isPreviewAudioPlaying() ? 'Mettre en pause' : 'Écouter l\'extrait' }}</span>
               </button>
-              <button type="button" class="btn btn-xs btn-alt-danger rounded-pill px-2.5 py-1" (click)="removeMusic()">
-                <i class="fa fa-times me-1"></i> Retirer l'audio
+              <button type="button" class="btn btn-xs btn-outline-danger rounded-pill px-2.5 py-1" (click)="removeMusic()">
+                <i class="fa fa-times me-1"></i> Retirer
               </button>
             </div>
 
-            <!-- Quick Presets (Clean Pills, No Border Box) -->
-            <div class="d-flex flex-wrap align-items-center gap-1.5 pt-0.5">
+            <!-- Préréglages rapides -->
+            <div class="d-flex flex-wrap align-items-center gap-1.5">
               <span class="fs-xxs text-muted fw-semibold me-1">Préréglages :</span>
               <button type="button" class="btn btn-xs rounded-pill" 
-                *ngFor="let preset of musicPresets"
-                [ngClass]="musicUrlField === preset.url ? 'btn-warning text-dark fw-bold' : 'btn-alt-secondary'"
-                (click)="selectMusicPreset(preset.url)">
+                      *ngFor="let preset of musicPresets"
+                      [ngClass]="musicUrlField === preset.url ? 'btn-warning text-dark fw-bold' : 'btn-light text-dark border'"
+                      (click)="selectMusicPreset(preset.url)">
                 <i class="fa fa-music me-1"></i> {{ preset.label }}
               </button>
             </div>
           </div>
+        </div>
 
-          <!-- Image Preview URL (Thumbnail / Catalog) -->
-          <div class="mb-3">
-            <label class="form-label fw-semibold text-muted">URL de la vignette d'illustration (Catalogue Admin)</label>
-            <input type="url" class="form-control border-light shadow-sm bg-body-light" 
-                   placeholder="Ex: https://images.unsplash.com/..." [(ngModel)]="imageUrlField" name="imageUrl">
+        <!-- CARTE 6 : PARAMÈTRES AVANCÉS & VIGNETTE CATALOGUE -->
+        <div class="card editor-card border-0 shadow-sm rounded-4 mb-4 overflow-hidden">
+          <div class="card-header bg-white py-3 px-3.5 border-bottom d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-2">
+              <div class="editor-section-icon bg-secondary-subtle text-secondary rounded-circle d-flex align-items-center justify-content-center">
+                <i class="fa fa-cog"></i>
+              </div>
+              <h3 class="h6 fw-bold text-dark mb-0">6. Vignette Catalogue & Titre Personnalisé</h3>
+            </div>
+            <span class="badge bg-light text-muted border fs-xxs">Optionnel</span>
           </div>
 
-          <!-- HTML / Custom Content -->
-          <div class="mb-2">
-            <label class="form-label fw-semibold text-muted">Contenu / Titre personnalisé par défaut</label>
-            <textarea class="form-control border-light shadow-sm bg-body-light" rows="2" 
-                      placeholder="Ex: <h1>Fleurs de Coton</h1><p>...</p>" 
-                      [(ngModel)]="htmlContentField" name="htmlContent"></textarea>
+          <div class="card-body p-3.5">
+            <div class="mb-3">
+              <label class="form-label fw-semibold text-dark fs-xs mb-1">URL Vignette d'Illustration (Catalogue Admin)</label>
+              <input type="url" class="form-control rounded-3 border-light bg-body-light shadow-none fs-sm" 
+                     placeholder="Ex: https://images.unsplash.com/..." [(ngModel)]="imageUrlField" name="imageUrl">
+            </div>
+
+            <div>
+              <label class="form-label fw-semibold text-dark fs-xs mb-1">Structure / Contenu personnalisé par défaut</label>
+              <textarea class="form-control rounded-3 border-light bg-body-light shadow-none fs-sm" rows="2" 
+                        placeholder="Ex: <h1>Fleurs de Coton</h1><p>...</p>" 
+                        [(ngModel)]="htmlContentField" name="htmlContent"></textarea>
+            </div>
           </div>
         </div>
-        
-        <!-- Luxury Modal Footer -->
-        <div class="luxury-modal-footer">
-          <button type="button" class="btn btn-cancel" (click)="closeAddModal()">
+
+        <!-- Boutons d'Action Inférieurs -->
+        <div class="d-flex align-items-center justify-content-end gap-2.5 pb-4">
+          <button type="button" class="btn btn-light rounded-pill px-3.5 py-2 text-muted fw-semibold" (click)="closeAddModal()">
             Annuler
           </button>
-          <button type="submit" class="btn btn-submit-luxury" [disabled]="isSubmitting()">
-            <span *ngIf="!isSubmitting()"><i class="fa fa-check-circle me-1.5"></i> {{ isEditing() ? 'Enregistrer les Modifications' : 'Créer le Modèle' }}</span>
-            <span *ngIf="isSubmitting()"><i class="fa fa-spinner fa-spin me-1.5"></i> Enregistrement en cours...</span>
+          <button type="submit" class="btn btn-primary rounded-pill px-4 py-2 fw-bold d-inline-flex align-items-center gap-2 shadow-sm" [disabled]="isSubmitting()">
+            <span *ngIf="!isSubmitting()"><i class="fa fa-check-circle"></i> {{ isEditing() ? 'Enregistrer les Modifications' : 'Créer le Modèle' }}</span>
+            <span *ngIf="isSubmitting()"><i class="fa fa-spinner fa-spin"></i> Enregistrement...</span>
           </button>
         </div>
+
       </form>
     </div>
+
+    <!-- ======================================================================
+         COLONNE DROITE (50% à 55%) : APERÇU INTERACTIF EN TEMPS RÉEL (Sticky)
+         ====================================================================== -->
+    <div class="col-lg-6 col-xl-7 editor-preview-column">
+      <div class="preview-sticky-panel">
+        
+        <!-- En-tête du Panneau d'Aperçu -->
+        <div class="preview-panel-header d-flex align-items-center justify-content-between p-3 bg-white rounded-4 shadow-sm border mb-3">
+          <div class="d-flex align-items-center gap-2">
+            <span class="preview-pulse-dot"></span>
+            <div>
+              <span class="fw-bold text-dark fs-sm d-block">Aperçu Réel en Direct</span>
+              <span class="fs-xxs text-muted">Mis à jour instantanément à chaque réglage</span>
+            </div>
+          </div>
+
+          <!-- Switcher d'Appareil (Mobile vs Tablette) -->
+          <div class="device-switcher-pill-group bg-light p-1 rounded-pill d-flex align-items-center gap-1 border">
+            <button type="button" class="btn btn-xs rounded-pill px-2.5 py-1 d-inline-flex align-items-center gap-1.5 transition-all"
+                    [class.btn-primary]="previewDevice() === 'mobile'"
+                    [class.btn-light]="previewDevice() !== 'mobile'"
+                    (click)="setPreviewDevice('mobile')" title="Vue Smartphone (375px)">
+              <i class="fa fa-mobile-alt"></i>
+              <span class="d-none d-sm-inline">Mobile (375px)</span>
+            </button>
+            <button type="button" class="btn btn-xs rounded-pill px-2.5 py-1 d-inline-flex align-items-center gap-1.5 transition-all"
+                    [class.btn-primary]="previewDevice() === 'desktop'"
+                    [class.btn-light]="previewDevice() !== 'desktop'"
+                    (click)="setPreviewDevice('desktop')" title="Vue Tablette / Large (480px)">
+              <i class="fa fa-tablet-alt"></i>
+              <span class="d-none d-sm-inline">Étendu (480px)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- ZONE CENTRALE DE RENDU DE LA CARTE D'INVITATION -->
+        <div class="preview-stage-container d-flex justify-content-center align-items-start p-3 p-md-4 rounded-4 shadow-xs border position-relative"
+             style="background: radial-gradient(circle at center, #f8fafc 0%, #e2e8f0 100%); min-height: 580px;">
+
+          <!-- Carte d'Invitation Réelle (Largeur adaptative selon device) -->
+          <div class="live-invitation-card position-relative rounded-4 shadow-xl overflow-hidden animate__animated animate__fadeIn"
+               [style.maxWidth]="previewDevice() === 'mobile' ? '375px' : '480px'"
+               [style.width]="'100%'"
+               [style.backgroundColor]="backgroundColorField || '#faf6ee'"
+               [style.backgroundImage]="backgroundImageUrlField ? 'url(' + backgroundImageUrlField + ')' : 'none'"
+               [style.borderColor]="accentColorField ? (accentColorField + '40') : 'rgba(212, 175, 55, 0.35)'">
+
+            <!-- FILIGRANE / OVERLAY DÉCORATIF DE CADRE -->
+            <div class="decorative-frame-layer pointer-events-none" [ngClass]="decorativeFrameField">
+              
+              <!-- Coin floral pour floral-frame -->
+              <div class="frame-floral-corner top-left" *ngIf="decorativeFrameField === 'floral-frame'" [style.color]="accentColorField">
+                <svg viewBox="0 0 100 100" class="frame-svg"><path d="M0,0 Q50,10 50,50 Q10,50 0,0 M15,15 Q70,25 70,70 Q25,70 15,15" fill="none" stroke="currentColor" stroke-width="1.8" opacity="0.65"/></svg>
+              </div>
+              <div class="frame-floral-corner top-right" *ngIf="decorativeFrameField === 'floral-frame'" [style.color]="accentColorField">
+                <svg viewBox="0 0 100 100" class="frame-svg"><path d="M100,0 Q50,10 50,50 Q90,50 100,0 M85,15 Q30,25 30,70 Q75,70 85,15" fill="none" stroke="currentColor" stroke-width="1.8" opacity="0.65"/></svg>
+              </div>
+              <div class="frame-floral-corner bottom-left" *ngIf="decorativeFrameField === 'floral-frame'" [style.color]="accentColorField">
+                <svg viewBox="0 0 100 100" class="frame-svg"><path d="M0,100 Q50,90 50,50 Q10,50 0,100 M15,85 Q70,75 70,30 Q25,30 15,85" fill="none" stroke="currentColor" stroke-width="1.8" opacity="0.65"/></svg>
+              </div>
+              <div class="frame-floral-corner bottom-right" *ngIf="decorativeFrameField === 'floral-frame'" [style.color]="accentColorField">
+                <svg viewBox="0 0 100 100" class="frame-svg"><path d="M100,100 Q50,90 50,50 Q90,50 100,100 M85,85 Q30,75 30,30 Q75,30 85,85" fill="none" stroke="currentColor" stroke-width="1.8" opacity="0.65"/></svg>
+              </div>
+
+              <!-- Bordures géométriques / dorures -->
+              <div class="frame-gold-inner" *ngIf="decorativeFrameField === 'gold-border'" [style.borderColor]="accentColorField ? (accentColorField + '80') : '#d4af37'"></div>
+              <div class="frame-geometric-lines" *ngIf="decorativeFrameField === 'geometric-frame'" [style.borderColor]="accentColorField ? (accentColorField + '70') : '#4f46e5'"></div>
+              <div class="frame-minimal-corners" *ngIf="decorativeFrameField === 'minimal-edge'" [style.borderColor]="accentColorField ? (accentColorField + '60') : '#0f172a'"></div>
+            </div>
+
+            <!-- BOUTON MUSIQUE FLOTTANT (Si musique configurée) -->
+            <div class="position-absolute top-0 end-0 m-3 z-3" *ngIf="musicUrlField">
+              <button type="button" class="btn btn-sm rounded-pill shadow-sm d-inline-flex align-items-center gap-1.5 px-2.5 py-1 border live-music-badge"
+                      (click)="togglePreviewAudio()"
+                      [style.backgroundColor]="accentColorField ? (accentColorField + '18') : '#fef3c7'"
+                      [style.borderColor]="accentColorField || '#d4af37'"
+                      [style.color]="secondaryFontColorField || '#0f172a'">
+                <i class="fa fa-music" [class.fa-spin]="isPreviewAudioPlaying()"></i>
+                <span class="fs-xxs fw-bold">{{ isPreviewAudioPlaying() ? 'Pause' : 'Musique' }}</span>
+              </button>
+            </div>
+
+            <!-- CONTENU DE LA CARTE D'INVITATION (Rendu Typographique & Couleurs Réel) -->
+            <div class="invitation-card-content p-4 p-md-5 text-center position-relative z-2">
+              
+              <!-- Monogramme / Emblème Élégant -->
+              <div class="invitation-emblem mx-auto mb-3 d-flex align-items-center justify-content-center rounded-circle border"
+                   [style.borderColor]="accentColorField ? (accentColorField + '40') : 'rgba(212, 175, 55, 0.3)'"
+                   [style.color]="accentColorField || '#d4af37'"
+                   style="width: 52px; height: 52px; background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(4px);">
+                <i class="fa fa-envelope-open-text fs-5"></i>
+              </div>
+
+              <!-- Salutation / Introduction -->
+              <div class="text-uppercase tracking-widest fs-xxs fw-bold mb-1.5"
+                   [style.fontFamily]="secondaryFontField || 'Cinzel'"
+                   [style.color]="secondaryFontColorField || '#0f172a'"
+                   style="letter-spacing: 2px; opacity: 0.85;">
+                {{ categoryField ? categoryField : 'INVITATION OFFICIELLE' }}
+              </div>
+
+              <!-- TITRE PRINCIPAL DU MODÈLE (Stylé avec primaryFont, primaryFontSize & accentColor) -->
+              <h1 class="invitation-live-title my-2"
+                  [style.fontFamily]="primaryFontField || 'Alex Brush'"
+                  [style.fontSize]="primaryFontSizeField || '36px'"
+                  [style.color]="accentColorField || '#d4af37'"
+                  style="line-height: 1.25; word-break: break-word;">
+                {{ titleField ? titleField : 'Mariage de Yassine & Zineb' }}
+              </h1>
+
+              <!-- SOUS-TITRE / TYPE D'ÉVÉNEMENT (Stylé avec secondaryFont, secondaryFontSize & secondaryFontColor) -->
+              <h2 class="invitation-live-subtitle text-uppercase fw-bold m-0"
+                  [style.fontFamily]="secondaryFontField || 'Cinzel'"
+                  [style.fontSize]="secondaryFontSizeField || '15px'"
+                  [style.color]="secondaryFontColorField || '#0f172a'"
+                  style="letter-spacing: 1.5px; opacity: 0.95;">
+                {{ subCategoryField ? (subCategoryField | uppercase) + ' & CÉLÉBRATION' : 'RÉCEPTION & DÎNER DE GALA' }}
+              </h2>
+
+              <!-- Ligne de séparation accentuée -->
+              <div class="invitation-accent-divider mx-auto my-3"
+                   [style.backgroundColor]="accentColorField || '#d4af37'"></div>
+
+              <!-- Date & Heure stylisées -->
+              <div class="mb-2" [style.fontFamily]="secondaryFontField || 'Cinzel'" [style.color]="secondaryFontColorField || '#0f172a'">
+                <div class="fw-bold fs-sm">SAMEDI 15 AOÛT 2026</div>
+                <div class="fs-xs opacity-75">À PARTIR DE 19:30</div>
+              </div>
+
+              <!-- Lieu & Ville stylisés -->
+              <div class="fs-xs mb-3.5" [style.fontFamily]="secondaryFontField || 'Cinzel'" [style.color]="secondaryFontColorField || '#0f172a'" style="opacity: 0.85;">
+                <i class="fa fa-map-marker-alt me-1" [style.color]="accentColorField || '#d4af37'"></i>
+                Palais des Roses • Casablanca
+              </div>
+
+              <!-- BOUTONS D'ACTION RSVP (Mockup Interactif Fidèle) -->
+              <div class="preview-rsvp-actions d-flex align-items-center justify-content-center gap-2 pt-1">
+                <!-- Bouton Accepter stylisé avec accentColor -->
+                <button type="button" class="btn btn-sm rounded-pill px-3.5 py-2 fw-bold d-inline-flex align-items-center gap-1.5 shadow-sm border-0 pointer-events-none"
+                        [style.backgroundColor]="accentColorField || '#d4af37'"
+                        [style.color]="isDarkBg(accentColorField) ? '#ffffff' : '#0c0c0c'"
+                        style="font-size: 0.8rem; letter-spacing: 0.5px;">
+                  <i class="fa fa-check"></i>
+                  <span>Accepter</span>
+                </button>
+
+                <!-- Bouton Décliner neutre lisible -->
+                <button type="button" class="btn btn-sm rounded-pill px-3 py-2 fw-semibold d-inline-flex align-items-center gap-1.5 bg-white border pointer-events-none shadow-2xs"
+                        [style.borderColor]="secondaryFontColorField ? (secondaryFontColorField + '35') : '#cbd5e1'"
+                        [style.color]="secondaryFontColorField || '#1e293b'"
+                        style="font-size: 0.8rem;">
+                  <i class="fa fa-times text-danger"></i>
+                  <span>Décliner</span>
+                </button>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- BANDEAU INSPECTEUR DE STYLE (Live Tokens Bar) -->
+        <div class="preview-tokens-bar mt-3 p-3 bg-white rounded-4 shadow-sm border d-flex flex-wrap align-items-center justify-content-between gap-2 fs-xxs">
+          <div class="d-flex align-items-center gap-2 flex-wrap">
+            <span class="badge bg-light text-dark border px-2 py-1 rounded-pill">
+              🔤 Titre : <strong>{{ primaryFontField }} ({{ primaryFontSizeField }})</strong>
+            </span>
+            <span class="badge bg-light text-dark border px-2 py-1 rounded-pill">
+              ✒️ Texte : <strong>{{ secondaryFontField }} ({{ secondaryFontSizeField }})</strong>
+            </span>
+            <span class="badge bg-light text-dark border px-2 py-1 rounded-pill d-inline-flex align-items-center gap-1">
+              🎨 Accent : <span class="rounded-circle d-inline-block border" [style.backgroundColor]="accentColorField" style="width: 10px; height: 10px;"></span> <strong>{{ accentColorField }}</strong>
+            </span>
+            <span class="badge bg-light text-dark border px-2 py-1 rounded-pill d-inline-flex align-items-center gap-1">
+              🖼️ Fond : <span class="rounded-circle d-inline-block border" [style.backgroundColor]="backgroundColorField" style="width: 10px; height: 10px;"></span> <strong>{{ backgroundColorField }}</strong>
+            </span>
+          </div>
+
+          <span class="text-muted fw-semibold">
+            Cadre : <strong>{{ decorativeFrameField }}</strong>
+          </span>
+        </div>
+
+      </div>
+    </div>
+
   </div>
+
 </div>

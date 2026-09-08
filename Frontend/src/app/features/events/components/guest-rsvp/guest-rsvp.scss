@@ -4189,5 +4189,279 @@ textarea.luxury-form-control::placeholder {
   }
 }
 
+/* ==========================================================================
+   Sequential Linear Menu Tunnel: Top Progress, Horizontal Cards & 1-Click FX
+   ========================================================================== */
+
+.menu-flow-top-header {
+  position: relative;
+  z-index: 10;
+
+  .btn-nav-back-icon {
+    font-size: 0.8rem;
+    transition: all 0.2s ease;
+    opacity: 0.85;
+
+    &:hover {
+      opacity: 1;
+      transform: translateX(-2px);
+    }
+  }
+
+  .progress-linear-track {
+    background: rgba(15, 23, 42, 0.08);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04);
+  }
+
+  .progress-linear-fill {
+    box-shadow: 0 0 8px rgba(212, 175, 55, 0.4);
+  }
+}
+
+/* Vertical stack of horizontal cards */
+.dish-horizontal-cards-stack {
+  width: 100%;
+  max-width: 380px;
+  margin: 0 auto;
+}
+
+.dish-horizontal-card {
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  user-select: none;
+  -webkit-user-select: none;
+  background: rgba(255, 255, 255, 0.92) !important;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+    border-color: rgba(15, 23, 42, 0.3) !important;
+  }
+
+  &:active {
+    transform: scale(0.985);
+  }
+
+  &.is-selected {
+    box-shadow: 0 4px 16px rgba(212, 175, 55, 0.18);
+  }
+
+  /* 300ms 1-Click Immediate Feedback Animation */
+  &.is-feedback-active {
+    animation: dishSelectFeedback 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.35), 0 8px 24px rgba(0, 0, 0, 0.12) !important;
+  }
+
+  .dish-card-thumb-wrapper {
+    width: 58px;
+    height: 58px;
+    border-radius: 10px;
+    overflow: hidden;
+    background: rgba(0, 0, 0, 0.04);
+
+    .dish-card-thumb {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+  }
+
+  &:hover .dish-card-thumb {
+    transform: scale(1.05);
+  }
+
+  .dish-card-title {
+    font-size: 0.88rem;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+  }
+
+  .badge-check-icon {
+    animation: popCheck 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+}
+
+@keyframes dishSelectFeedback {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.025);
+  }
+  100% {
+    transform: scale(1.01);
+  }
+}
+
+@keyframes popCheck {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Opt-out / Skip Course Button */
+.step-optout-wrapper {
+  .btn-opt-out {
+    background: rgba(255, 255, 255, 0.6) !important;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border-width: 1.2px;
+    border-style: solid;
+    transition: all 0.2s ease;
+    opacity: 0.85;
+
+    &:hover {
+      opacity: 1;
+      background: rgba(255, 255, 255, 0.95) !important;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+}
+
+/* ==========================================================================
+   HYBRID ROUTING ARCHITECTURE : DISCOVERY & STICKY FOOTER
+   ========================================================================== */
+
+/* 1. Page 1 Secondary Discrete Button "Découvrir le menu d'abord" */
+.btn-discover-first {
+  font-size: 0.84rem;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  opacity: 0.85;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 6px 14px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.35);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+
+  &:hover {
+    opacity: 1;
+    transform: translateY(-1px);
+    background: rgba(255, 255, 255, 0.65);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+/* 2. Interactive Stepper Navigation Tabs */
+.stepper-interactive-tabs {
+  .stepper-tab-btn {
+    font-size: 0.72rem;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    border-width: 1.2px;
+    border-style: solid;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    cursor: pointer;
+
+    &:hover:not(.active-tab) {
+      background: rgba(255, 255, 255, 0.95) !important;
+      transform: translateY(-1px);
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+    }
+
+    &.active-tab {
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+      transform: scale(1.04);
+    }
+
+    &.has-selection:not(.active-tab) {
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+    }
+  }
+}
+
+/* 3. Bottom Step Actions : Retour + Passer at the same level */
+.step-bottom-actions-wrapper {
+  .btn-step-back {
+    background: rgba(255, 255, 255, 0.75) !important;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border-width: 1.2px;
+    border-style: solid;
+    transition: all 0.2s ease;
+    opacity: 0.9;
+
+    &:hover {
+      opacity: 1;
+      background: #ffffff !important;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  .btn-opt-out {
+    background: rgba(255, 255, 255, 0.6) !important;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border-width: 1.2px;
+    border-style: solid;
+    transition: all 0.2s ease;
+    opacity: 0.85;
+
+    &:hover {
+      opacity: 1;
+      background: rgba(255, 255, 255, 0.95) !important;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+}
+
+/* 4. Discovery Decision Actions (Direct without card) */
+.discovery-decision-actions-wrapper {
+  margin-top: 18px;
+}
+
+/* 5. Dietary Smart Action Button */
+.dietary-smart-action-wrapper {
+  .btn-dietary-smart-action {
+    border-width: 1.2px;
+    border-style: solid;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    letter-spacing: 0.3px;
+
+    &:hover {
+      transform: translateY(-1.5px);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1) !important;
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+}
+
+
+
 
 
