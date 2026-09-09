@@ -47,6 +47,7 @@ public class PublicRsvpController {
         String accentColor = null;
         String backgroundColor = null;
         String templateBackgroundImageUrl = null;
+        String templateBackgroundImageDesktopUrl = null;
         String primaryFont = null;
         String primaryFontSize = null;
         String secondaryFont = null;
@@ -74,6 +75,7 @@ public class PublicRsvpController {
             accentColor = tpl.getAccentColor();
             backgroundColor = tpl.getBackgroundColor();
             templateBackgroundImageUrl = tpl.getBackgroundImageUrl();
+            templateBackgroundImageDesktopUrl = tpl.getBackgroundImageDesktopUrl();
             primaryFont = tpl.getPrimaryFont();
             primaryFontSize = tpl.getPrimaryFontSize();
             secondaryFont = tpl.getSecondaryFont();
@@ -113,6 +115,7 @@ public class PublicRsvpController {
                 .accentColor(accentColor)
                 .backgroundColor(backgroundColor)
                 .templateBackgroundImageUrl(templateBackgroundImageUrl)
+                .templateBackgroundImageDesktopUrl(templateBackgroundImageDesktopUrl)
                 .primaryFont(primaryFont)
                 .primaryFontSize(primaryFontSize)
                 .secondaryFont(secondaryFont)
@@ -184,6 +187,7 @@ public class PublicRsvpController {
         String accentColor = null;
         String backgroundColor = null;
         String templateBackgroundImageUrl = null;
+        String templateBackgroundImageDesktopUrl = null;
         String primaryFont = null;
         String primaryFontSize = null;
         String secondaryFont = null;
@@ -203,6 +207,7 @@ public class PublicRsvpController {
                 accentColor = tpl.getAccentColor();
                 backgroundColor = tpl.getBackgroundColor();
                 templateBackgroundImageUrl = tpl.getBackgroundImageUrl();
+                templateBackgroundImageDesktopUrl = tpl.getBackgroundImageDesktopUrl();
                 primaryFont = tpl.getPrimaryFont();
                 primaryFontSize = tpl.getPrimaryFontSize();
                 secondaryFont = tpl.getSecondaryFont();
@@ -243,6 +248,7 @@ public class PublicRsvpController {
                 .accentColor(accentColor)
                 .backgroundColor(backgroundColor)
                 .templateBackgroundImageUrl(templateBackgroundImageUrl)
+                .templateBackgroundImageDesktopUrl(templateBackgroundImageDesktopUrl)
                 .primaryFont(primaryFont)
                 .primaryFontSize(primaryFontSize)
                 .secondaryFont(secondaryFont)

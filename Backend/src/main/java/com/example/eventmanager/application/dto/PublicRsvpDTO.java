@@ -40,6 +40,7 @@ public class PublicRsvpDTO {
     private String accentColor;
     private String backgroundColor;
     private String templateBackgroundImageUrl;
+    private String templateBackgroundImageDesktopUrl;
     private String primaryFont;
     private String primaryFontSize;
     private String secondaryFont;

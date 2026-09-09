@@ -95,6 +95,11 @@ public class AdminTemplateController {
                     ? updated.getBackgroundImageUrl().trim()
                     : null
             );
+            existing.setBackgroundImageDesktopUrl(
+                (updated.getBackgroundImageDesktopUrl() != null && !updated.getBackgroundImageDesktopUrl().isBlank())
+                    ? updated.getBackgroundImageDesktopUrl().trim()
+                    : null
+            );
             if (updated.getPrimaryFont() != null) {
                 existing.setPrimaryFont(updated.getPrimaryFont());
             }

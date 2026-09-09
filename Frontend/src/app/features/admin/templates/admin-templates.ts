@@ -65,7 +65,7 @@ export class AdminTemplates implements OnInit {
   protected readonly isEditing = signal(false);
   protected readonly editingId = signal<number | null>(null);
   protected readonly isSubmitting = signal(false);
-  protected readonly previewDevice = signal<'mobile' | 'desktop'>('mobile');
+  protected readonly previewDevice = signal<'mobile' | 'tablet' | 'desktop'>('mobile');
 
   // Form Fields
   protected titleField = '';
@@ -74,6 +74,7 @@ export class AdminTemplates implements OnInit {
   protected descriptionField = '';
   protected imageUrlField = '';
   protected backgroundImageUrlField = '';
+  protected backgroundImageDesktopUrlField = '';
   protected musicUrlField = '';
   protected templateKeyField = '';
   protected decorativeFrameField = 'none';
@@ -249,6 +250,61 @@ export class AdminTemplates implements OnInit {
     this.cdr.markForCheck();
   }
 
+  protected onBackgroundDesktopFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const rawResult = e.target?.result as string;
+        if (!rawResult) return;
+
+        const img = new Image();
+        img.onload = () => {
+          const maxDim = 1920;
+          let width = img.width;
+          let height = img.height;
+
+          if (width > maxDim || height > maxDim) {
+            if (width > height) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            } else {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+          }
+
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          if (ctx) {
+            ctx.drawImage(img, 0, 0, width, height);
+            this.backgroundImageDesktopUrlField = canvas.toDataURL('image/jpeg', 0.88);
+          } else {
+            this.backgroundImageDesktopUrlField = rawResult;
+          }
+          this.cdr.markForCheck();
+        };
+        img.src = rawResult;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  protected removeBackgroundDesktopImage(): void {
+    this.backgroundImageDesktopUrlField = '';
+    this.cdr.markForCheck();
+  }
+
+  public getLivePreviewBackgroundImage(): string {
+    if (this.previewDevice() === 'desktop' || this.previewDevice() === 'tablet') {
+      return this.backgroundImageDesktopUrlField || this.backgroundImageUrlField || '';
+    }
+    return this.backgroundImageUrlField || '';
+  }
+
   protected onAudioFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files[0]) {
@@ -313,7 +369,7 @@ export class AdminTemplates implements OnInit {
     this.isPreviewAudioPlaying.set(false);
   }
 
-  public setPreviewDevice(device: 'mobile' | 'desktop'): void {
+  public setPreviewDevice(device: 'mobile' | 'tablet' | 'desktop'): void {
     this.previewDevice.set(device);
   }
 
@@ -341,6 +397,7 @@ export class AdminTemplates implements OnInit {
     this.descriptionField = '';
     this.imageUrlField = '';
     this.backgroundImageUrlField = '';
+    this.backgroundImageDesktopUrlField = '';
     this.musicUrlField = '';
     this.templateKeyField = '';
     this.decorativeFrameField = 'none';
@@ -372,6 +429,7 @@ export class AdminTemplates implements OnInit {
     this.descriptionField = template.description || '';
     this.imageUrlField = template.imageUrl || '';
     this.backgroundImageUrlField = template.backgroundImageUrl || '';
+    this.backgroundImageDesktopUrlField = template.backgroundImageDesktopUrl || '';
     this.musicUrlField = template.musicUrl || '';
     this.templateKeyField = template.templateKey || '';
     this.decorativeFrameField = template.decorativeFrame || 'none';
@@ -457,9 +515,10 @@ export class AdminTemplates implements OnInit {
       description: this.descriptionField?.trim() || '',
       imageUrl: this.imageUrlField?.trim() || undefined,
       backgroundImageUrl: this.backgroundImageUrlField?.trim() ? this.backgroundImageUrlField.trim() : null,
+      backgroundImageDesktopUrl: this.backgroundImageDesktopUrlField?.trim() ? this.backgroundImageDesktopUrlField.trim() : null,
       musicUrl: this.musicUrlField?.trim() ? this.musicUrlField.trim() : null,
       templateKey: this.templateKeyField?.trim() || undefined,
-      decorativeFrame: this.decorativeFrameField || 'floral-frame',
+      decorativeFrame: this.decorativeFrameField || 'none',
       accentColor: this.accentColorField?.trim() || '#d4af37',
       backgroundColor: this.backgroundColorField?.trim() || '#faf6ee',
       primaryFont: this.primaryFontField?.trim() || 'Alex Brush',

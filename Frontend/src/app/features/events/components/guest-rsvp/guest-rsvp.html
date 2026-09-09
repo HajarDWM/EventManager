@@ -93,10 +93,9 @@
       [style.--secondary-font-size]="getSecondaryFontSize()"
       [style.--primary-color]="getPrimaryColor()"
       [style.--secondary-color]="getSecondaryFontColor()"
+      [style.--card-bg-mobile]="resolvedBackgroundImage ? 'url(' + resolvedBackgroundImage + ')' : 'none'"
+      [style.--card-bg-desktop]="resolvedBackgroundImageDesktop ? 'url(' + resolvedBackgroundImageDesktop + ')' : (resolvedBackgroundImage ? 'url(' + resolvedBackgroundImage + ')' : 'none')"
       [style.backgroundColor]="guest()?.backgroundColor || null"
-      [style.backgroundImage]="resolvedBackgroundImage ? 'url(' + resolvedBackgroundImage + ')' : null"
-      [style.backgroundSize]="'cover'"
-      [style.backgroundPosition]="'center'"
       [style.borderColor]="getPrimaryColor() ? (getPrimaryColor() + '40') : 'rgba(212, 175, 55, 0.35)'"
       *ngIf="!isLoading() && guest()">
 

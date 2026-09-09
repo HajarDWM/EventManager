@@ -3201,19 +3201,19 @@ textarea.luxury-form-control::placeholder {
 
   /* Tablette (>= 768px) */
   @media (min-width: 768px) {
-    max-width: 580px;
+    max-width: 680px;
     padding: 0 16px;
   }
 
   /* Desktop / PC (>= 992px) */
   @media (min-width: 992px) {
-    max-width: 660px;
+    max-width: 860px;
     padding: 0 24px;
   }
 
-  /* Grand écran PC (>= 1200px) */
+  /* Grand écran PC (>= 1200px) - Format Majestueux 950px */
   @media (min-width: 1200px) {
-    max-width: 720px;
+    max-width: 950px;
     padding: 0 28px;
   }
 }
@@ -3227,9 +3227,10 @@ textarea.luxury-form-control::placeholder {
 .rsvp-luxury-wrapper .luxury-card.card-clean-foundation,
 .luxury-card,
 .card-clean-foundation {
-  background: rgba(255, 255, 255, 0.04) !important;
-  background-color: rgba(255, 255, 255, 0.04) !important;
-  background-image: none !important;
+  background-image: var(--card-bg-mobile, none) !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
   backdrop-filter: blur(15px) !important;
   -webkit-backdrop-filter: blur(15px) !important;
   border: 1px solid rgba(255, 255, 255, 0.2) !important;
@@ -3249,6 +3250,7 @@ textarea.luxury-form-control::placeholder {
 
   /* Desktop / PC */
   @media (min-width: 992px) {
+    background-image: var(--card-bg-desktop, var(--card-bg-mobile, none)) !important;
     border-radius: 32px !important;
   }
 
@@ -3278,11 +3280,18 @@ textarea.luxury-form-control::placeholder {
       border-radius: 22px !important;
     }
 
-    /* Desktop / PC */
+    /* Desktop / PC (>= 992px) */
     @media (min-width: 992px) {
-      margin: 20px !important;
-      padding: 44px 40px 36px !important;
-      border-radius: 24px !important;
+      margin: 24px !important;
+      padding: 48px 44px 38px !important;
+      border-radius: 26px !important;
+    }
+
+    /* Grand écran PC (>= 1200px) - Format Majestueux 950px */
+    @media (min-width: 1200px) {
+      margin: 28px !important;
+      padding: 56px 52px 44px !important;
+      border-radius: 30px !important;
     }
   }
 }
@@ -3508,7 +3517,14 @@ textarea.luxury-form-control::placeholder {
 
     @media (min-width: 992px) {
       gap: 24px !important;
-      max-width: 800px !important;
+      max-width: 820px !important;
+      margin: 24px auto 28px !important;
+    }
+
+    @media (min-width: 1200px) {
+      gap: 28px !important;
+      max-width: 880px !important;
+      margin: 28px auto 34px !important;
     }
   }
 
@@ -3533,6 +3549,18 @@ textarea.luxury-form-control::placeholder {
     @media (min-width: 768px) {
       padding: 22px 18px !important;
       border-radius: 20px !important;
+    }
+
+    @media (min-width: 992px) {
+      padding: 26px 22px !important;
+      min-height: 160px !important;
+      border-radius: 22px !important;
+    }
+
+    @media (min-width: 1200px) {
+      padding: 30px 26px !important;
+      min-height: 175px !important;
+      border-radius: 24px !important;
     }
 
     .detail-card-icon-circle {

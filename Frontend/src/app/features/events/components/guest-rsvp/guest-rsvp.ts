@@ -32,6 +32,7 @@ export interface PublicRsvpDetail {
   accentColor?: string;
   backgroundColor?: string;
   templateBackgroundImageUrl?: string;
+  templateBackgroundImageDesktopUrl?: string;
   primaryFont?: string;
   primaryFontSize?: string;
   secondaryFont?: string;
@@ -694,6 +695,10 @@ export class GuestRsvp implements OnInit, OnDestroy {
 
   public get resolvedBackgroundImage(): string | null {
     return this.guest()?.templateBackgroundImageUrl || null;
+  }
+
+  public get resolvedBackgroundImageDesktop(): string | null {
+    return this.guest()?.templateBackgroundImageDesktopUrl || this.resolvedBackgroundImage;
   }
 
   public ngOnInit(): void {
