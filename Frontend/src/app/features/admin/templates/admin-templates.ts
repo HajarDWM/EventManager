@@ -76,7 +76,7 @@ export class AdminTemplates implements OnInit {
   protected backgroundImageUrlField = '';
   protected musicUrlField = '';
   protected templateKeyField = '';
-  protected decorativeFrameField = 'floral-frame';
+  protected decorativeFrameField = 'none';
   protected accentColorField = '#d4af37';
   protected backgroundColorField = '#faf6ee';
   protected primaryFontField = 'Alex Brush';
@@ -343,7 +343,7 @@ export class AdminTemplates implements OnInit {
     this.backgroundImageUrlField = '';
     this.musicUrlField = '';
     this.templateKeyField = '';
-    this.decorativeFrameField = 'floral-frame';
+    this.decorativeFrameField = 'none';
     this.accentColorField = '#d4af37';
     this.backgroundColorField = '#faf6ee';
     this.primaryFontField = 'Alex Brush';
@@ -374,7 +374,7 @@ export class AdminTemplates implements OnInit {
     this.backgroundImageUrlField = template.backgroundImageUrl || '';
     this.musicUrlField = template.musicUrl || '';
     this.templateKeyField = template.templateKey || '';
-    this.decorativeFrameField = template.decorativeFrame || ('floral-frame');
+    this.decorativeFrameField = template.decorativeFrame || 'none';
     this.accentColorField = template.accentColor || '#d4af37';
     this.backgroundColorField = template.backgroundColor || '#faf6ee';
     this.primaryFontField = template.primaryFont || 'Alex Brush';
@@ -403,7 +403,7 @@ export class AdminTemplates implements OnInit {
 
     const tax = getCategoryTaxonomy(this.categoryField);
     if (tax?.id === 'TRADITIONAL') {
-      this.decorativeFrameField = 'floral-frame';
+      this.decorativeFrameField = 'none';
       this.backgroundColorField = '#faf6ee';
       this.accentColorField = '#d4af37';
       this.primaryFontField = 'Alex Brush';
@@ -412,7 +412,7 @@ export class AdminTemplates implements OnInit {
       this.secondaryFontSizeField = '16px';
       this.secondaryFontColorField = '#0f172a';
     } else if (tax?.id === 'FAMILY') {
-      this.decorativeFrameField = 'floral-frame';
+      this.decorativeFrameField = 'none';
       this.backgroundColorField = '#fff9f5';
       this.accentColorField = '#c27ba0';
       this.primaryFontField = 'Great Vibes';
@@ -421,7 +421,7 @@ export class AdminTemplates implements OnInit {
       this.secondaryFontSizeField = '16px';
       this.secondaryFontColorField = '#2c1810';
     } else if (tax?.id === 'CORPORATE') {
-      this.decorativeFrameField = 'geometric-frame';
+      this.decorativeFrameField = 'none';
       this.backgroundColorField = '#f8f9fa';
       this.accentColorField = '#2b4c7e';
       this.primaryFontField = 'Montserrat';
@@ -430,7 +430,7 @@ export class AdminTemplates implements OnInit {
       this.secondaryFontSizeField = '15px';
       this.secondaryFontColorField = '#1e293b';
     } else if (tax?.id === 'SEASONAL_SOCIAL') {
-      this.decorativeFrameField = 'gold-border';
+      this.decorativeFrameField = 'none';
       this.backgroundColorField = '#0b0b0b';
       this.accentColorField = '#fbbf24';
       this.primaryFontField = 'Playfair Display';

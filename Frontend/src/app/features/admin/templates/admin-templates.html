@@ -655,7 +655,7 @@
 
         <!-- ZONE CENTRALE DE RENDU DE LA CARTE D'INVITATION -->
         <div class="preview-stage-container d-flex justify-content-center align-items-start p-3 p-md-4 rounded-4 shadow-xs border position-relative"
-             style="background: radial-gradient(circle at center, #f8fafc 0%, #e2e8f0 100%); min-height: 580px;">
+             style="background-color: #f8fafc; min-height: 600px;">
 
           <!-- Carte d'Invitation Réelle (Largeur adaptative selon device) -->
           <div class="live-invitation-card position-relative rounded-4 shadow-xl overflow-hidden animate__animated animate__fadeIn"
@@ -665,28 +665,7 @@
                [style.backgroundImage]="backgroundImageUrlField ? 'url(' + backgroundImageUrlField + ')' : 'none'"
                [style.borderColor]="accentColorField ? (accentColorField + '40') : 'rgba(212, 175, 55, 0.35)'">
 
-            <!-- FILIGRANE / OVERLAY DÉCORATIF DE CADRE -->
-            <div class="decorative-frame-layer pointer-events-none" [ngClass]="decorativeFrameField">
-              
-              <!-- Coin floral pour floral-frame -->
-              <div class="frame-floral-corner top-left" *ngIf="decorativeFrameField === 'floral-frame'" [style.color]="accentColorField">
-                <svg viewBox="0 0 100 100" class="frame-svg"><path d="M0,0 Q50,10 50,50 Q10,50 0,0 M15,15 Q70,25 70,70 Q25,70 15,15" fill="none" stroke="currentColor" stroke-width="1.8" opacity="0.65"/></svg>
-              </div>
-              <div class="frame-floral-corner top-right" *ngIf="decorativeFrameField === 'floral-frame'" [style.color]="accentColorField">
-                <svg viewBox="0 0 100 100" class="frame-svg"><path d="M100,0 Q50,10 50,50 Q90,50 100,0 M85,15 Q30,25 30,70 Q75,70 85,15" fill="none" stroke="currentColor" stroke-width="1.8" opacity="0.65"/></svg>
-              </div>
-              <div class="frame-floral-corner bottom-left" *ngIf="decorativeFrameField === 'floral-frame'" [style.color]="accentColorField">
-                <svg viewBox="0 0 100 100" class="frame-svg"><path d="M0,100 Q50,90 50,50 Q10,50 0,100 M15,85 Q70,75 70,30 Q25,30 15,85" fill="none" stroke="currentColor" stroke-width="1.8" opacity="0.65"/></svg>
-              </div>
-              <div class="frame-floral-corner bottom-right" *ngIf="decorativeFrameField === 'floral-frame'" [style.color]="accentColorField">
-                <svg viewBox="0 0 100 100" class="frame-svg"><path d="M100,100 Q50,90 50,50 Q90,50 100,100 M85,85 Q30,75 30,30 Q75,30 85,85" fill="none" stroke="currentColor" stroke-width="1.8" opacity="0.65"/></svg>
-              </div>
 
-              <!-- Bordures géométriques / dorures -->
-              <div class="frame-gold-inner" *ngIf="decorativeFrameField === 'gold-border'" [style.borderColor]="accentColorField ? (accentColorField + '80') : '#d4af37'"></div>
-              <div class="frame-geometric-lines" *ngIf="decorativeFrameField === 'geometric-frame'" [style.borderColor]="accentColorField ? (accentColorField + '70') : '#4f46e5'"></div>
-              <div class="frame-minimal-corners" *ngIf="decorativeFrameField === 'minimal-edge'" [style.borderColor]="accentColorField ? (accentColorField + '60') : '#0f172a'"></div>
-            </div>
 
             <!-- BOUTON MUSIQUE FLOTTANT (Si musique configurée) -->
             <div class="position-absolute top-0 end-0 m-3 z-3" *ngIf="musicUrlField">
@@ -700,78 +679,177 @@
               </button>
             </div>
 
-            <!-- CONTENU DE LA CARTE D'INVITATION (Rendu Typographique & Couleurs Réel) -->
-            <div class="invitation-card-content p-4 p-md-5 text-center position-relative z-2">
-              
-              <!-- Monogramme / Emblème Élégant -->
-              <div class="invitation-emblem mx-auto mb-3 d-flex align-items-center justify-content-center rounded-circle border"
-                   [style.borderColor]="accentColorField ? (accentColorField + '40') : 'rgba(212, 175, 55, 0.3)'"
-                   [style.color]="accentColorField || '#d4af37'"
-                   style="width: 52px; height: 52px; background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(4px);">
-                <i class="fa fa-envelope-open-text fs-5"></i>
+            <!-- BORDURE INTÉRIEURE ÉLÉGANTE (luxury-inner-border) -->
+            <div class="luxury-inner-border position-relative z-2 m-2 m-sm-3 p-3 p-sm-4 rounded-3 text-center"
+                 [style.borderColor]="accentColorField ? (accentColorField + '30') : 'rgba(212, 175, 55, 0.25)'"
+                 style="border: 1px solid;">
+
+              <!-- 1. En-tête / Sous-titre officiel -->
+              <div class="invitation-header-tag mb-1">
+                <span class="luxury-subtitle text-uppercase fw-bold"
+                      [style.fontFamily]="secondaryFontField || 'Cinzel'"
+                      [style.fontSize]="secondaryFontSizeField || '14px'"
+                      [style.color]="secondaryFontColorField || '#0f172a'"
+                      style="letter-spacing: 2px; opacity: 0.88;">
+                  {{ subCategoryField ? (subCategoryField | uppercase) + ' & CÉLÉBRATION' : (categoryField || 'INVITATION OFFICIELLE') }}
+                </span>
               </div>
 
-              <!-- Salutation / Introduction -->
-              <div class="text-uppercase tracking-widest fs-xxs fw-bold mb-1.5"
-                   [style.fontFamily]="secondaryFontField || 'Cinzel'"
-                   [style.color]="secondaryFontColorField || '#0f172a'"
-                   style="letter-spacing: 2px; opacity: 0.85;">
-                {{ categoryField ? categoryField : 'INVITATION OFFICIELLE' }}
-              </div>
-
-              <!-- TITRE PRINCIPAL DU MODÈLE (Stylé avec primaryFont, primaryFontSize & accentColor) -->
+              <!-- 2. TITRE PRINCIPAL DU MODÈLE (Ex: Yassine & Zineb ou Titre du modèle) -->
               <h1 class="invitation-live-title my-2"
                   [style.fontFamily]="primaryFontField || 'Alex Brush'"
                   [style.fontSize]="primaryFontSizeField || '36px'"
                   [style.color]="accentColorField || '#d4af37'"
                   style="line-height: 1.25; word-break: break-word;">
-                {{ titleField ? titleField : 'Mariage de Yassine & Zineb' }}
+                {{ titleField ? titleField : 'Yassine & Zineb' }}
               </h1>
 
-              <!-- SOUS-TITRE / TYPE D'ÉVÉNEMENT (Stylé avec secondaryFont, secondaryFontSize & secondaryFontColor) -->
-              <h2 class="invitation-live-subtitle text-uppercase fw-bold m-0"
-                  [style.fontFamily]="secondaryFontField || 'Cinzel'"
-                  [style.fontSize]="secondaryFontSizeField || '15px'"
-                  [style.color]="secondaryFontColorField || '#0f172a'"
-                  style="letter-spacing: 1.5px; opacity: 0.95;">
-                {{ subCategoryField ? (subCategoryField | uppercase) + ' & CÉLÉBRATION' : 'RÉCEPTION & DÎNER DE GALA' }}
-              </h2>
-
-              <!-- Ligne de séparation accentuée -->
-              <div class="invitation-accent-divider mx-auto my-3"
-                   [style.backgroundColor]="accentColorField || '#d4af37'"></div>
-
-              <!-- Date & Heure stylisées -->
-              <div class="mb-2" [style.fontFamily]="secondaryFontField || 'Cinzel'" [style.color]="secondaryFontColorField || '#0f172a'">
-                <div class="fw-bold fs-sm">SAMEDI 15 AOÛT 2026</div>
-                <div class="fs-xs opacity-75">À PARTIR DE 19:30</div>
+              <!-- 3. Salutation & Message d'invitation personnalisé Guest -->
+              <div class="invitation-guest-salutation my-2.5 text-center">
+                <div class="salutation-guest-text">
+                  <span class="salutation-honorific me-1"
+                        [style.fontFamily]="secondaryFontField || 'Cinzel'"
+                        [style.color]="accentColorField || '#d4af37'"
+                        style="font-size: 0.95rem; font-weight: 600;">Cher(e)</span>
+                  <span class="salutation-guest-name fw-bold"
+                        [style.fontFamily]="secondaryFontField || 'Cinzel'"
+                        [style.color]="secondaryFontColorField || '#0f172a'"
+                        style="font-size: 0.95rem;">M. & Mme Bennani</span>
+                </div>
+                <p class="salutation-invitation-message mt-1.5 mb-0"
+                   [style.fontFamily]="secondaryFontField || 'Cinzel'"
+                   [style.color]="secondaryFontColorField || '#0f172a'"
+                   style="font-size: 0.78rem; line-height: 1.5; opacity: 0.85;">
+                  Nous serions infiniment honorés de vous compter parmi nos invités d'honneur pour partager ce moment précieux.
+                </p>
               </div>
 
-              <!-- Lieu & Ville stylisés -->
-              <div class="fs-xs mb-3.5" [style.fontFamily]="secondaryFontField || 'Cinzel'" [style.color]="secondaryFontColorField || '#0f172a'" style="opacity: 0.85;">
-                <i class="fa fa-map-marker-alt me-1" [style.color]="accentColorField || '#d4af37'"></i>
-                Palais des Roses • Casablanca
+              <!-- 4. CARTES JUMELLES SYMÉTRIQUES (Date & Heure / Lieu de Réception) -->
+              <div class="artistic-invitation-details my-3">
+                
+                <!-- Carte 1 : Date & Heure -->
+                <div class="artistic-detail-card artistic-date-block text-center d-flex flex-column justify-content-between align-items-center p-2.5 rounded-3"
+                     [style.borderColor]="accentColorField ? (accentColorField + '35') : 'rgba(212, 175, 55, 0.3)'"
+                     [style.backgroundColor]="accentColorField ? (accentColorField + '0a') : 'rgba(255, 255, 255, 0.35)'">
+                  <div class="w-100 d-flex flex-column align-items-center">
+                    <!-- Icone Calendrier avec badge teinté -->
+                    <div class="detail-card-icon-circle mb-1 mx-auto d-flex align-items-center justify-content-center rounded-circle border"
+                         [style.color]="accentColorField || '#d4af37'"
+                         [style.borderColor]="accentColorField || '#d4af37'"
+                         [style.backgroundColor]="accentColorField ? (accentColorField + '18') : 'rgba(212, 175, 55, 0.1)'"
+                         style="width: 32px; height: 32px; font-size: 0.85rem;">
+                      <i class="far fa-calendar-alt"></i>
+                    </div>
+
+                    <!-- Jour -->
+                    <div class="event-card-day-label text-uppercase fw-bold"
+                         [style.fontFamily]="secondaryFontField || 'Cinzel'"
+                         [style.color]="secondaryFontColorField || '#0f172a'"
+                         style="font-size: 0.7rem; letter-spacing: 1.2px; opacity: 0.9;">
+                      SAMEDI
+                    </div>
+
+                    <!-- Grand Chiffre Hero Date -->
+                    <div class="hero-event-day-number fw-black my-0.5"
+                         [style.color]="accentColorField || '#d4af37'"
+                         [style.fontFamily]="primaryFontField || 'Alex Brush'"
+                         style="font-size: 2.2rem; line-height: 1;">
+                      15
+                    </div>
+
+                    <!-- Mois & Année -->
+                    <div class="event-card-month-label text-uppercase fw-bold"
+                         [style.fontFamily]="secondaryFontField || 'Cinzel'"
+                         [style.color]="secondaryFontColorField || '#0f172a'"
+                         style="font-size: 0.7rem; letter-spacing: 1.2px; opacity: 0.9;">
+                      AOÛT 2026
+                    </div>
+                  </div>
+
+                  <!-- Heure au bas de la carte -->
+                  <div class="detail-card-bottom-info mt-1.5 fw-semibold"
+                       [style.fontFamily]="secondaryFontField || 'Cinzel'"
+                       [style.color]="accentColorField || '#d4af37'"
+                       style="font-size: 0.75rem;">
+                    <i class="far fa-clock me-1"></i> À 19:30
+                  </div>
+                </div>
+
+                <!-- Carte 2 : Lieu & Adresse de Réception -->
+                <div class="artistic-detail-card artistic-location-block text-center d-flex flex-column justify-content-between align-items-center p-2.5 rounded-3"
+                     [style.borderColor]="accentColorField ? (accentColorField + '35') : 'rgba(212, 175, 55, 0.3)'"
+                     [style.backgroundColor]="accentColorField ? (accentColorField + '0a') : 'rgba(255, 255, 255, 0.35)'">
+                  <div class="w-100 d-flex flex-column align-items-center">
+                    <!-- Icone Map Marker avec badge teinté -->
+                    <div class="detail-card-icon-circle mb-1 mx-auto d-flex align-items-center justify-content-center rounded-circle border"
+                         [style.color]="accentColorField || '#d4af37'"
+                         [style.borderColor]="accentColorField || '#d4af37'"
+                         [style.backgroundColor]="accentColorField ? (accentColorField + '18') : 'rgba(212, 175, 55, 0.1)'"
+                         style="width: 32px; height: 32px; font-size: 0.85rem;">
+                      <i class="fa fa-map-marker-alt"></i>
+                    </div>
+
+                    <!-- Sous-titre -->
+                    <div class="detail-card-subtitle text-uppercase fw-bold"
+                         [style.fontFamily]="secondaryFontField || 'Cinzel'"
+                         [style.color]="accentColorField || '#d4af37'"
+                         style="font-size: 0.65rem; letter-spacing: 1px;">
+                      Lieu de la réception
+                    </div>
+
+                    <!-- Nom du Lieu -->
+                    <div class="detail-card-main-title fw-bold my-1"
+                         [style.fontFamily]="secondaryFontField || 'Cinzel'"
+                         [style.color]="secondaryFontColorField || '#0f172a'"
+                         style="font-size: 0.85rem; line-height: 1.3;">
+                      Palais des Roses
+                    </div>
+                  </div>
+
+                  <!-- Ville / Adresse au bas de la carte -->
+                  <div class="detail-card-bottom-info mt-1.5"
+                       [style.fontFamily]="secondaryFontField || 'Cinzel'"
+                       [style.color]="secondaryFontColorField || '#0f172a'"
+                       style="font-size: 0.72rem; opacity: 0.85;">
+                    <i class="fa fa-location-arrow me-1" [style.color]="accentColorField || '#d4af37'"></i> Casablanca
+                  </div>
+                </div>
+
               </div>
 
-              <!-- BOUTONS D'ACTION RSVP (Mockup Interactif Fidèle) -->
-              <div class="preview-rsvp-actions d-flex align-items-center justify-content-center gap-2 pt-1">
-                <!-- Bouton Accepter stylisé avec accentColor -->
-                <button type="button" class="btn btn-sm rounded-pill px-3.5 py-2 fw-bold d-inline-flex align-items-center gap-1.5 shadow-sm border-0 pointer-events-none"
-                        [style.backgroundColor]="accentColorField || '#d4af37'"
-                        [style.color]="isDarkBg(accentColorField) ? '#ffffff' : '#0c0c0c'"
-                        style="font-size: 0.8rem; letter-spacing: 0.5px;">
-                  <i class="fa fa-check"></i>
-                  <span>Accepter</span>
-                </button>
+              <!-- 5. BOUTONS D'ACTION RSVP (Mockup Fidèle & Réactif) -->
+              <div class="page1-actions-container mt-3 pt-1 mb-1 text-center">
+                <!-- Boutons de décision Accepter / Décliner -->
+                <div class="page1-decision-buttons d-flex align-items-center justify-content-center gap-2 flex-nowrap">
+                  <!-- Accepter stylisé avec accentColor -->
+                  <button type="button" class="btn btn-sm rounded-pill px-3.5 py-1.5 fw-bold d-inline-flex align-items-center gap-1.5 shadow-sm border-0 pointer-events-none"
+                          [style.backgroundColor]="accentColorField || '#d4af37'"
+                          [style.color]="isDarkBg(accentColorField) ? '#ffffff' : '#0c0c0c'"
+                          style="font-size: 0.82rem; letter-spacing: 0.5px; text-transform: uppercase;">
+                    <i class="fa fa-check"></i>
+                    <span>Accepter</span>
+                  </button>
 
-                <!-- Bouton Décliner neutre lisible -->
-                <button type="button" class="btn btn-sm rounded-pill px-3 py-2 fw-semibold d-inline-flex align-items-center gap-1.5 bg-white border pointer-events-none shadow-2xs"
-                        [style.borderColor]="secondaryFontColorField ? (secondaryFontColorField + '35') : '#cbd5e1'"
-                        [style.color]="secondaryFontColorField || '#1e293b'"
-                        style="font-size: 0.8rem;">
-                  <i class="fa fa-times text-danger"></i>
-                  <span>Décliner</span>
-                </button>
+                  <!-- Décliner neutre lisible -->
+                  <button type="button" class="btn btn-sm rounded-pill px-3 py-1.5 fw-semibold d-inline-flex align-items-center gap-1.5 bg-white border pointer-events-none shadow-2xs"
+                          [style.borderColor]="secondaryFontColorField ? (secondaryFontColorField + '35') : '#cbd5e1'"
+                          [style.color]="secondaryFontColorField || '#1e293b'"
+                          style="font-size: 0.82rem; text-transform: uppercase;">
+                    <i class="fa fa-times text-danger"></i>
+                    <span>Décliner</span>
+                  </button>
+                </div>
+
+                <!-- Découvrir le menu d'abord -->
+                <div class="mt-2.5">
+                  <span class="btn btn-link btn-discover-first text-decoration-none p-0 d-inline-flex align-items-center gap-1.5 pointer-events-none"
+                        [style.color]="secondaryFontColorField || '#0f172a'"
+                        style="font-size: 0.75rem; font-weight: 600; opacity: 0.9;">
+                    <i class="fa fa-utensils" [style.color]="accentColorField || '#d4af37'"></i>
+                    <span>Découvrir le menu d'abord</span>
+                    <i class="fa fa-arrow-right" style="font-size: 0.65rem;"></i>
+                  </span>
+                </div>
               </div>
 
             </div>

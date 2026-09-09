@@ -85,93 +85,29 @@
       </div>
     </div>
 
-    <!-- Invitation Form Card - Step 1: Clean Foundation (Background Removed to Control Base Elements) -->
+    <!-- Invitation Form Card - Step 1: Clean Foundation (Neutral Glassmorphism Foundation) -->
     <div class="luxury-card card-clean-foundation position-relative overflow-hidden"
-      [style.backgroundColor]="customBgColor"
-      [style.borderColor]="getPrimaryColor() + '35'"
       [style.--primary-font]="getPrimaryFont()"
       [style.--primary-font-size]="getPrimaryFontSize()"
       [style.--secondary-font]="getSecondaryFont()"
       [style.--secondary-font-size]="getSecondaryFontSize()"
       [style.--primary-color]="getPrimaryColor()"
       [style.--secondary-color]="getSecondaryFontColor()"
+      [style.backgroundColor]="guest()?.backgroundColor || null"
+      [style.backgroundImage]="resolvedBackgroundImage ? 'url(' + resolvedBackgroundImage + ')' : null"
+      [style.backgroundSize]="'cover'"
+      [style.backgroundPosition]="'center'"
+      [style.borderColor]="getPrimaryColor() ? (getPrimaryColor() + '40') : 'rgba(212, 175, 55, 0.35)'"
       *ngIf="!isLoading() && guest()">
 
+
+
       <!-- Card Core Content (All Base Elements Protected & High Contrast) -->
-      <div class="luxury-inner-border position-relative" [style.borderColor]="getPrimaryColor() + '40'">
+      <div class="luxury-inner-border position-relative z-2"
+           [style.borderColor]="getPrimaryColor() ? (getPrimaryColor() + '30') : 'rgba(212, 175, 55, 0.25)'">
 
         <!-- LAYER: Centered Dynamic Text (Clean Invitation View) -->
         <div class="invitation-dynamic-text-overlay text-center mx-auto" *ngIf="!isMenuRsvpOpen() && !isSuccess()">
-
-          <!-- Dynamic Emblem / Couple Silhouette Vector / Monogram (Only on built-in vector themes) -->
-          <div class="invitation-emblem-container mb-3" *ngIf="!resolvedBackgroundImage">
-
-            <!-- Romantic Bride & Groom Silhouette / Intertwined Wreath for Weddings -->
-            <div class="couple-vector-badge"
-              *ngIf="guest()?.templateCategory === 'Mariage' || resolvedTemplateId === 'fleurs-de-coton' || resolvedTemplateId === 'boheme-chic' || resolvedTemplateId === 'or-et-velours'">
-              <svg viewBox="0 0 120 70" class="couple-silhouette-svg" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                  <linearGradient id="emblemGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" [attr.stop-color]="getPrimaryColor()" />
-                    <stop offset="50%" [attr.stop-color]="getPrimaryColor()" />
-                    <stop offset="100%" [attr.stop-color]="getPrimaryColor()" />
-                  </linearGradient>
-                </defs>
-                <!-- Laurel Wreath Laurel Leaves -->
-                <path d="M25,50 C18,38 20,22 32,14 C36,12 42,12 45,15" stroke="url(#emblemGoldGrad)" stroke-width="1.5"
-                  fill="none" />
-                <path d="M95,50 C102,38 100,22 88,14 C84,12 78,12 75,15" stroke="url(#emblemGoldGrad)"
-                  stroke-width="1.5" fill="none" />
-                <!-- Wreath Leaves Left -->
-                <ellipse cx="22" cy="42" rx="4" ry="2" transform="rotate(-30 22 42)" fill="url(#emblemGoldGrad)"
-                  opacity="0.85" />
-                <ellipse cx="20" cy="30" rx="4.5" ry="2.2" transform="rotate(-50 20 30)" fill="url(#emblemGoldGrad)"
-                  opacity="0.85" />
-                <ellipse cx="24" cy="20" rx="4" ry="2" transform="rotate(-70 24 20)" fill="url(#emblemGoldGrad)"
-                  opacity="0.85" />
-                <ellipse cx="32" cy="14" rx="3.8" ry="1.8" transform="rotate(-90 32 14)" fill="url(#emblemGoldGrad)"
-                  opacity="0.85" />
-                <!-- Wreath Leaves Right -->
-                <ellipse cx="98" cy="42" rx="4" ry="2" transform="rotate(30 98 42)" fill="url(#emblemGoldGrad)"
-                  opacity="0.85" />
-                <ellipse cx="100" cy="30" rx="4.5" ry="2.2" transform="rotate(50 100 30)" fill="url(#emblemGoldGrad)"
-                  opacity="0.85" />
-                <ellipse cx="96" cy="20" rx="4" ry="2" transform="rotate(70 96 20)" fill="url(#emblemGoldGrad)"
-                  opacity="0.85" />
-                <ellipse cx="88" cy="14" rx="3.8" ry="1.8" transform="rotate(90 88 14)" fill="url(#emblemGoldGrad)"
-                  opacity="0.85" />
-                <!-- Artistic Silhouette Figures / Intertwined Rings -->
-                <!-- Groom Head & Tuxedo Line -->
-                <circle cx="53" cy="24" r="5" [attr.fill]="getPrimaryColor()" />
-                <path d="M47,38 Q53,30 59,38 Z" [attr.fill]="getPrimaryColor()" opacity="0.9" />
-                <!-- Bride Head & Veil/Dress Line -->
-                <circle cx="67" cy="26" r="4.5" [attr.fill]="getPrimaryColor()" />
-                <path d="M62,39 Q67,31 73,42 Q68,44 62,39 Z" [attr.fill]="getPrimaryColor()" opacity="0.85" />
-                <!-- Small Heart between -->
-                <path
-                  d="M60,18 C60,15 57,14 55,16 C53,14 50,15 50,18 C50,21 55,25 60,28 C65,25 70,21 70,18 C70,15 67,14 65,16 C63,14 60,15 60,18 Z"
-                  transform="scale(0.35) translate(80, 20)" [attr.fill]="getPrimaryColor()" />
-              </svg>
-            </div>
-
-            <!-- Monogram Initial Circle for Corporate & Gala Events -->
-            <div class="corporate-emblem-badge"
-              *ngIf="guest()?.templateCategory !== 'Mariage' && resolvedTemplateId !== 'fleurs-de-coton' && resolvedTemplateId !== 'boheme-chic' && resolvedTemplateId !== 'or-et-velours'">
-              <div class="crest-circle"
-                [style.borderColor]="getPrimaryColor()"
-                [style.backgroundColor]="getPrimaryColor() + '15'">
-                <span class="crest-letters"
-                  [style.fontFamily]="getPrimaryFont()"
-                  [style.color]="getPrimaryColor()">{{ guest()?.invitationTitle ? guest()?.invitationTitle!.substring(0, 1) :
-                  'E' }}</span>
-              </div>
-            </div>
-
-            <!-- Subtle Filigree Divider Line -->
-            <div class="emblem-divider-line" [style.borderColor]="getPrimaryColor() + '40'">
-              <span class="divider-diamond" [style.color]="getPrimaryColor()">◆</span>
-            </div>
-          </div>
 
           <!-- Dynamic Subtitle / Intro Header -->
           <div class="invitation-header-tag mb-1">
@@ -211,74 +147,89 @@
             </p>
           </div>
 
-          <!-- Artistic Dynamic Date & Time Section -->
+          <!-- Artistic Dynamic Date, Time & Venue Details (Symmetrical Twin Cards) -->
           <div class="artistic-invitation-details mb-3">
-            <div class="artistic-date-block"
-              [style.borderColor]="getPrimaryColor() + '30'">
-              <div class="date-header-line" [style.backgroundColor]="getPrimaryColor() + '35'"></div>
-              <div class="artistic-date-flex">
-                <div class="date-side-part text-end">
-                  <span class="day-name"
-                    [style.fontFamily]="getSecondaryFont()"
-                    [style.color]="getSecondaryFontColor()"
-                    style="text-shadow: none !important;">{{ eventDayName }}</span>
-                </div>
-                <div class="date-center-num"
-                  [style.fontFamily]="getSecondaryFont()"
+            
+            <!-- 1. CARD DATE & HEURE -->
+            <div class="artistic-detail-card artistic-date-block text-center d-flex flex-column justify-content-between align-items-center">
+              <div class="w-100 d-flex flex-column align-items-center">
+                <!-- Circular Icon Badge (Calendar) -->
+                <div class="detail-card-icon-circle mb-1.5 mx-auto"
                   [style.color]="getPrimaryColor()"
                   [style.borderColor]="getPrimaryColor()"
-                  [style.backgroundColor]="getPrimaryColor() + '12'"
-                  style="text-shadow: none !important;">
+                  [style.backgroundColor]="getPrimaryColor() + '15'">
+                  <i class="far fa-calendar-alt" [style.color]="getPrimaryColor()"></i>
+                </div>
+
+                <!-- Day Name (JEUDI) -->
+                <div class="event-card-day-label text-uppercase fw-bold"
+                  [style.fontFamily]="getSecondaryFont()"
+                  [style.color]="getSecondaryFontColor()">
+                  {{ eventDayName }}
+                </div>
+
+                <!-- Big Prominent Date Number (17) -->
+                <div class="hero-event-day-number fw-black my-0.5"
+                  [style.color]="getPrimaryColor()"
+                  [style.fontFamily]="getPrimaryFont()">
                   {{ eventDayNum }}
                 </div>
-                <div class="date-side-part text-start">
-                  <span class="month-year"
-                    [style.fontFamily]="getSecondaryFont()"
-                    [style.color]="getSecondaryFontColor()"
-                    style="text-shadow: none !important;">{{ eventMonth }} &bull; {{ eventYear }}</span>
+
+                <!-- Month Name (SEPTEMBRE) -->
+                <div class="event-card-month-label text-uppercase fw-bold"
+                  [style.fontFamily]="getSecondaryFont()"
+                  [style.color]="getSecondaryFontColor()">
+                  {{ eventMonth }}
                 </div>
               </div>
-              <div class="artistic-time"
+
+              <!-- Bottom Extra Info: Heure -->
+              <div class="detail-card-bottom-info mt-1.5"
                 [style.fontFamily]="getSecondaryFont()"
-                [style.color]="getPrimaryColor()"
-                style="text-shadow: none !important;">
-                <i class="far fa-clock me-1" [style.color]="getPrimaryColor()"></i> À {{ eventTime }}
+                [style.color]="getPrimaryColor()">
+                <i class="far fa-clock me-1" [style.color]="getPrimaryColor()"></i>
+                À {{ eventTime }}
               </div>
-              <div class="date-footer-line" [style.backgroundColor]="getPrimaryColor() + '35'"></div>
             </div>
 
-            <!-- Unified Venue Location & Access Block -->
-            <div class="artistic-location-block mt-3 text-center"
-              [style.borderColor]="getPrimaryColor() + '30'">
-              <div class="location-icon-wrapper mb-2 mx-auto"
-                [style.color]="getPrimaryColor()"
-                [style.borderColor]="getPrimaryColor()"
-                [style.backgroundColor]="getPrimaryColor() + '15'">
-                <i class="fa fa-map-marker-alt" [style.color]="getPrimaryColor()"></i>
-              </div>
-              <div class="location-title"
-                [style.fontFamily]="getSecondaryFont()"
-                [style.color]="getPrimaryColor()"
-                style="text-shadow: none !important;">LIEU DE LA RÉCEPTION</div>
-              <div class="location-value"
-                [style.fontFamily]="getSecondaryFont()"
-                [style.color]="getSecondaryFontColor()"
-                style="text-shadow: none !important;"
-                *ngIf="guest()?.eventLocation || guest()?.invitationLocation">
-                {{ guest()?.eventLocation || guest()?.invitationLocation }}
-              </div>
+            <!-- 2. CARD LIEU DE LA RÉCEPTION -->
+            <div class="artistic-detail-card artistic-location-block text-center d-flex flex-column justify-content-between align-items-center">
+              <div class="w-100 d-flex flex-column align-items-center">
+                <!-- Circular Icon Badge (Map Marker) -->
+                <div class="detail-card-icon-circle mb-2 mx-auto"
+                  [style.color]="getPrimaryColor()"
+                  [style.borderColor]="getPrimaryColor()"
+                  [style.backgroundColor]="getPrimaryColor() + '15'">
+                  <i class="fa fa-map-marker-alt" [style.color]="getPrimaryColor()"></i>
+                </div>
 
-              <!-- Ticket Price (si événement payant : affichage textuel sobre dès la Page 1) -->
-              <div class="invitation-ticket-price-wrapper mt-2" *ngIf="guest()?.isPaidEvent">
-                <span class="fs-xs fw-medium"
+                <!-- Subtitle / Tag -->
+                <div class="detail-card-subtitle text-uppercase fw-bold mb-1"
+                  [style.fontFamily]="getSecondaryFont()"
+                  [style.color]="getPrimaryColor()">
+                  Lieu de la réception
+                </div>
+
+                <!-- Main Location Value -->
+                <div class="detail-card-main-title fw-bold"
                   [style.fontFamily]="getSecondaryFont()"
                   [style.color]="getSecondaryFontColor()"
-                  style="opacity: 0.9;">
-<i class="fa fa-ticket-alt me-1" [style.color]="getPrimaryColor()"></i>
-                  Tarif d'entrée : <strong [style.color]="getPrimaryColor()">{{ guest()?.ticketPrice || 0 }} {{ guest()?.currency || 'MAD' }}</strong> / personne
+                  *ngIf="guest()?.eventLocation || guest()?.invitationLocation">
+                  {{ guest()?.eventLocation || guest()?.invitationLocation }}
+                </div>
+              </div>
+
+              <!-- Bottom Extra Info: Ticket Price if paid event, or subtle decorative dot/indicator -->
+              <div class="detail-card-bottom-info mt-2" *ngIf="guest()?.isPaidEvent">
+                <span class="fs-xxs fw-medium"
+                  [style.fontFamily]="getSecondaryFont()"
+                  [style.color]="getSecondaryFontColor()">
+                  <i class="fa fa-ticket-alt me-1" [style.color]="getPrimaryColor()"></i>
+                  Tarif : <strong [style.color]="getPrimaryColor()">{{ guest()?.ticketPrice || 0 }} {{ guest()?.currency || 'MAD' }}</strong>
                 </span>
               </div>
             </div>
+
           </div>
 
           <!-- ACTIONS PAGE 1 : Décision immédiate (Accepter / Décliner) + Découvrir le menu d'abord -->

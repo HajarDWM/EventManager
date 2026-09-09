@@ -287,7 +287,7 @@
 
     // Carte d'invitation réelle en direct
     .live-invitation-card {
-      min-height: 480px;
+      min-height: 520px;
       border: 1.5px solid rgba(212, 175, 55, 0.35);
       background-size: cover;
       background-position: center;
@@ -298,29 +298,73 @@
                   box-shadow 0.25s ease;
       box-shadow: 0 20px 45px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06);
 
-      .invitation-card-content {
-        background: radial-gradient(circle at center, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0.15) 100%);
-        backdrop-filter: blur(1.5px);
-        min-height: 480px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
+      .luxury-inner-border {
+        background: transparent;
+        transition: all 0.25s ease;
+      }
+
+      .invitation-header-tag {
+        .luxury-subtitle {
+          line-height: 1.3;
+          transition: font-size 0.2s ease, color 0.2s ease;
+        }
       }
 
       .invitation-live-title {
         transition: font-size 0.2s ease, color 0.2s ease;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
       }
 
-      .invitation-live-subtitle {
-        transition: font-size 0.2s ease, color 0.2s ease;
+      .invitation-guest-salutation {
+        .salutation-guest-text {
+          letter-spacing: 0.3px;
+        }
+
+        .salutation-invitation-message {
+          max-width: 90%;
+          margin-left: auto;
+          margin-right: auto;
+        }
       }
 
-      .invitation-accent-divider {
-        width: 44px;
-        height: 2px;
-        border-radius: 9999px;
-        opacity: 0.8;
-        transition: background-color 0.2s ease;
+      // Grille Cartes Jumelles Date & Lieu (Symétrique)
+      .artistic-invitation-details {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        align-items: stretch;
+
+        .artistic-detail-card {
+          border: 1px solid rgba(212, 175, 55, 0.3);
+          backdrop-filter: blur(6px);
+          -webkit-backdrop-filter: blur(6px);
+          transition: all 0.25s ease;
+          min-height: 135px;
+
+          .detail-card-icon-circle {
+            transition: all 0.2s ease;
+          }
+
+          .hero-event-day-number {
+            line-height: 0.95;
+            transition: color 0.2s ease;
+          }
+        }
+      }
+
+      .page1-actions-container {
+        .page1-decision-buttons {
+          button {
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+          }
+        }
+
+        .btn-discover-first {
+          transition: all 0.2s ease;
+          &:hover {
+            opacity: 1 !important;
+          }
+        }
       }
 
       .live-music-badge {
