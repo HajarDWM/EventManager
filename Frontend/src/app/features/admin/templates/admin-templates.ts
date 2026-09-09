@@ -330,6 +330,10 @@ export class AdminTemplates implements OnInit {
     return this.backgroundImageUrlField || '';
   }
 
+  protected isBase64(val: string): boolean {
+    return !!val && val.startsWith('data:');
+  }
+
   protected onAudioFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files[0]) {

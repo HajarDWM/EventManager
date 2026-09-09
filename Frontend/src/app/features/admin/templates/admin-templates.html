@@ -373,23 +373,22 @@
         <!-- ========================================================== -->
         <div class="tab-pane-content" [class.d-none]="activeEditorTab() !== 'design'">
           
-          <!-- 1. CARTE PALETTE DE COULEURS & CADRE -->
-          <div class="card editor-card border-0 shadow-sm rounded-4 mb-3.5 overflow-hidden">
-            <div class="card-header bg-white py-3 px-3.5 border-bottom d-flex align-items-center justify-content-between">
+          <!-- CARTE PALETTE DE COULEURS & CADRE -->
+          <div class="card editor-card border-0 shadow-sm rounded-4 mb-3.5">
+            <div class="card-header bg-white py-3 px-3.5 border-bottom d-flex align-items-center">
               <div class="d-flex align-items-center gap-2">
                 <div class="editor-section-icon bg-warning-subtle text-warning rounded-circle d-flex align-items-center justify-content-center">
                   <i class="fa fa-palette"></i>
                 </div>
-                <h3 class="h6 fw-bold text-dark mb-0">1. Cadre Décoratif & Palette de Couleurs</h3>
+                <h3 class="h6 fw-bold text-dark mb-0">Cadre Décoratif & Couleurs des Textes</h3>
               </div>
-              <span class="badge bg-warning-subtle text-dark fs-xxs">Harmonie Visuelle</span>
             </div>
 
             <div class="card-body p-3.5">
-              <!-- Calque / Cadre Décoratif -->
+              <!-- Cadre Décoratif -->
               <div class="mb-3.5">
                 <label class="form-label fw-bold text-dark fs-xs mb-1">
-                  Calque Décoratif / Cadre Graphique
+                  Cadre Décoratif
                 </label>
                 <select class="form-select rounded-3 border-light bg-body-light shadow-none fs-sm" 
                         [(ngModel)]="decorativeFrameField" name="decorativeFrame">
@@ -397,55 +396,39 @@
                   <option value="gold-border">⚜️ Bordure Dorée & Ornement Géométrique</option>
                   <option value="geometric-frame">📐 Cadre Géométrique (Corporate & Moderne)</option>
                   <option value="minimal-edge">✨ Minimaliste (Lignes Épurées & Coins Délicats)</option>
-                  <option value="none">Aucun calque particulier (Épuré sans cadre)</option>
+                  <option value="none">Aucun cadre (Épuré & Minimal)</option>
                 </select>
               </div>
 
-              <!-- Harmonisation des 3 Couleurs Clés avec libellés clairs -->
-              <div class="row g-2.5">
-                <!-- 1. Couleur de Fond de la Carte -->
-                <div class="col-sm-4">
-                  <div class="p-2.5 bg-body-light rounded-3 border border-light h-100">
-                    <label class="form-label fw-bold text-dark fs-xxs mb-1 d-block text-truncate" title="Fond de Carte">
-                      <i class="fa fa-fill-drip text-primary me-1"></i> Fond de Carte
+              <!-- Harmonisation des Couleurs Essentielles (2 Colonnes 50% / 50%) -->
+              <div class="row g-3">
+                <!-- 1. Couleur Principale / Dorure & Titres -->
+                <div class="col-sm-6">
+                  <div class="p-3 bg-body-light rounded-3 border border-light h-100">
+                    <label class="form-label fw-bold text-dark fs-xs mb-1 d-block text-truncate" title="Dorure & Titres Principaux">
+                      <i class="fa fa-tint text-warning me-1.5"></i> Dorure & Titres Principaux
                     </label>
-                    <span class="d-block text-muted fs-xxs mb-1.5">Arrière-plan</span>
-                    <div class="d-flex align-items-center gap-1.5">
-                      <input type="color" class="form-control form-control-color border-0 p-0 rounded-circle flex-shrink-0" 
-                             [(ngModel)]="backgroundColorField" [ngModelOptions]="{standalone: true}" style="width: 32px; height: 32px; cursor: pointer;">
-                      <input type="text" class="form-control border-light bg-white fs-xs font-monospace p-1 text-center shadow-none rounded-2" 
-                             placeholder="#faf6ee" [(ngModel)]="backgroundColorField" name="backgroundColor">
-                    </div>
-                  </div>
-                </div>
-
-                <!-- 2. Couleur Principale / Titres & Dorure -->
-                <div class="col-sm-4">
-                  <div class="p-2.5 bg-body-light rounded-3 border border-light h-100">
-                    <label class="form-label fw-bold text-dark fs-xxs mb-1 d-block text-truncate" title="Titres & Dorure">
-                      <i class="fa fa-tint text-warning me-1"></i> Titres & Dorure
-                    </label>
-                    <span class="d-block text-muted fs-xxs mb-1.5">Noms & Accents</span>
-                    <div class="d-flex align-items-center gap-1.5">
-                      <input type="color" class="form-control form-control-color border-0 p-0 rounded-circle flex-shrink-0" 
-                             [(ngModel)]="accentColorField" [ngModelOptions]="{standalone: true}" style="width: 32px; height: 32px; cursor: pointer;">
-                      <input type="text" class="form-control border-light bg-white fs-xs font-monospace p-1 text-center shadow-none rounded-2" 
+                    <span class="d-block text-muted fs-xxs mb-2">Noms des hôtes, accents & boutons</span>
+                    <div class="d-flex align-items-center gap-2">
+                      <input type="color" class="form-control form-control-color border-0 p-0 rounded-circle flex-shrink-0 shadow-2xs" 
+                             [(ngModel)]="accentColorField" [ngModelOptions]="{standalone: true}" style="width: 36px; height: 36px; cursor: pointer;">
+                      <input type="text" class="form-control border-light bg-white fs-xs font-monospace p-2 text-center shadow-none rounded-2 fw-semibold" 
                              placeholder="#d4af37" [(ngModel)]="accentColorField" name="accentColor">
                     </div>
                   </div>
                 </div>
 
-                <!-- 3. Couleur des Textes & Détails -->
-                <div class="col-sm-4">
-                  <div class="p-2.5 bg-body-light rounded-3 border border-light h-100">
-                    <label class="form-label fw-bold text-dark fs-xxs mb-1 d-block text-truncate" title="Textes & Détails">
-                      <i class="fa fa-font text-secondary me-1"></i> Textes & Détails
+                <!-- 2. Couleur des Textes & Détails -->
+                <div class="col-sm-6">
+                  <div class="p-3 bg-body-light rounded-3 border border-light h-100">
+                    <label class="form-label fw-bold text-dark fs-xs mb-1 d-block text-truncate" title="Textes & Paragraphes">
+                      <i class="fa fa-font text-secondary me-1.5"></i> Couleur des Textes & Détails
                     </label>
-                    <span class="d-block text-muted fs-xxs mb-1.5">Date, Lieu & Message</span>
-                    <div class="d-flex align-items-center gap-1.5">
-                      <input type="color" class="form-control form-control-color border-0 p-0 rounded-circle flex-shrink-0" 
-                             [(ngModel)]="secondaryFontColorField" [ngModelOptions]="{standalone: true}" style="width: 32px; height: 32px; cursor: pointer;">
-                      <input type="text" class="form-control border-light bg-white fs-xs font-monospace p-1 text-center shadow-none rounded-2" 
+                    <span class="d-block text-muted fs-xxs mb-2">Date, lieu, salutation & messages</span>
+                    <div class="d-flex align-items-center gap-2">
+                      <input type="color" class="form-control form-control-color border-0 p-0 rounded-circle flex-shrink-0 shadow-2xs" 
+                             [(ngModel)]="secondaryFontColorField" [ngModelOptions]="{standalone: true}" style="width: 36px; height: 36px; cursor: pointer;">
+                      <input type="text" class="form-control border-light bg-white fs-xs font-monospace p-2 text-center shadow-none rounded-2 fw-semibold" 
                              placeholder="#0f172a" [(ngModel)]="secondaryFontColorField" name="secondaryFontColor">
                     </div>
                   </div>
@@ -454,27 +437,23 @@
             </div>
           </div>
 
-          <!-- 2. CARTE POLICE DES TITRES & NOMS -->
-          <div class="card editor-card border-0 shadow-sm rounded-4 mb-3.5 overflow-hidden">
-            <div class="card-header bg-white py-3 px-3.5 border-bottom d-flex align-items-center justify-content-between">
+          <!-- CARTE POLICE DES TITRES & NOMS -->
+          <div class="card editor-card border-0 shadow-sm rounded-4 mb-3.5">
+            <div class="card-header bg-white py-3 px-3.5 border-bottom d-flex align-items-center">
               <div class="d-flex align-items-center gap-2">
                 <div class="editor-section-icon bg-primary-subtle text-primary rounded-circle d-flex align-items-center justify-content-center">
                   <i class="fa fa-heading"></i>
                 </div>
-                <h3 class="h6 fw-bold text-dark mb-0">2. Police des Titres & Noms des Hôtes</h3>
+                <h3 class="h6 fw-bold text-dark mb-0">Police Principale (Titres & Célébration)</h3>
               </div>
-              <span class="badge bg-primary-subtle text-primary fs-xxs">Calligraphie & Titre</span>
             </div>
 
-            <div class="card-body p-3.5">
+            <div class="card-body p-3.5 position-relative">
               <!-- Choix de la police -->
-              <div class="mb-3">
-                <div class="d-flex justify-content-between align-items-center mb-1.5">
-                  <label class="form-label fw-bold text-dark fs-xs mb-0">
-                    Famille de Police (Google Fonts)
-                  </label>
-                  <span class="badge bg-body-light text-muted border fs-xxs">Saisie libre ou liste</span>
-                </div>
+              <div class="mb-3 position-relative">
+                <label class="form-label fw-bold text-dark fs-xs mb-1.5">
+                  Famille de Police
+                </label>
                 
                 <div class="input-group shadow-2xs">
                   <span class="input-group-text border-light bg-white text-muted"><i class="fa fa-font"></i></span>
@@ -486,13 +465,13 @@
                          [style.fontFamily]="primaryFontField"
                          placeholder="Ex: Alex Brush, Great Vibes, Playfair Display...">
                   <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split border-light bg-white"
-                          data-bs-toggle="dropdown" aria-expanded="false" title="Suggestions de polices"></button>
-                  <ul class="dropdown-menu dropdown-menu-end shadow-sm" style="max-height: 220px; overflow-y: auto; z-index: 1060;">
+                          data-bs-toggle="dropdown" aria-expanded="false" title="Afficher la liste des polices"></button>
+                  <ul class="dropdown-menu dropdown-menu-end shadow-lg w-100 p-2 border-0 rounded-3" style="max-height: 320px; overflow-y: auto; z-index: 1070;">
                     <li *ngFor="let font of availableFonts">
-                      <button type="button" class="dropdown-item d-flex justify-content-between align-items-center py-1.5"
+                      <button type="button" class="dropdown-item d-flex justify-content-between align-items-center py-2 px-2.5 rounded-2"
                               (click)="selectPrimaryFont(font.name)">
-                        <span [style.fontFamily]="font.name">{{ font.name }}</span>
-                        <span class="badge bg-light text-muted ms-2 fs-xxs">{{ font.fontGroup }}</span>
+                        <span class="fs-sm" [style.fontFamily]="font.name">{{ font.name }}</span>
+                        <span class="badge bg-light text-muted border ms-2 fs-xxs">{{ font.fontGroup }}</span>
                       </button>
                     </li>
                   </ul>
@@ -535,27 +514,23 @@
             </div>
           </div>
 
-          <!-- 3. CARTE POLICE DES TEXTES & DÉTAILS -->
-          <div class="card editor-card border-0 shadow-sm rounded-4 mb-3.5 overflow-hidden">
-            <div class="card-header bg-white py-3 px-3.5 border-bottom d-flex align-items-center justify-content-between">
+          <!-- CARTE POLICE DES TEXTES & DÉTAILS -->
+          <div class="card editor-card border-0 shadow-sm rounded-4 mb-3.5">
+            <div class="card-header bg-white py-3 px-3.5 border-bottom d-flex align-items-center">
               <div class="d-flex align-items-center gap-2">
                 <div class="editor-section-icon bg-success-subtle text-success rounded-circle d-flex align-items-center justify-content-center">
                   <i class="fa fa-align-left"></i>
                 </div>
-                <h3 class="h6 fw-bold text-dark mb-0">3. Police des Textes, Date & Lieux</h3>
+                <h3 class="h6 fw-bold text-dark mb-0">Police Secondaire (Date, Lieux & Textes)</h3>
               </div>
-              <span class="badge bg-success-subtle text-success fs-xxs">Paragraphes & Détails</span>
             </div>
 
-            <div class="card-body p-3.5">
+            <div class="card-body p-3.5 position-relative">
               <!-- Choix de la police -->
-              <div class="mb-3">
-                <div class="d-flex justify-content-between align-items-center mb-1.5">
-                  <label class="form-label fw-bold text-dark fs-xs mb-0">
-                    Famille de Police (Google Fonts)
-                  </label>
-                  <span class="badge bg-body-light text-muted border fs-xxs">Saisie libre ou liste</span>
-                </div>
+              <div class="mb-3 position-relative">
+                <label class="form-label fw-bold text-dark fs-xs mb-1.5">
+                  Famille de Police
+                </label>
                 
                 <div class="input-group shadow-2xs">
                   <span class="input-group-text border-light bg-white text-muted"><i class="fa fa-font"></i></span>
@@ -567,13 +542,13 @@
                          [style.fontFamily]="secondaryFontField"
                          placeholder="Ex: Cinzel, Cormorant Garamond, Montserrat...">
                   <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split border-light bg-white"
-                          data-bs-toggle="dropdown" aria-expanded="false" title="Suggestions de polices"></button>
-                  <ul class="dropdown-menu dropdown-menu-end shadow-sm" style="max-height: 220px; overflow-y: auto; z-index: 1060;">
+                          data-bs-toggle="dropdown" aria-expanded="false" title="Afficher la liste des polices"></button>
+                  <ul class="dropdown-menu dropdown-menu-end shadow-lg w-100 p-2 border-0 rounded-3" style="max-height: 320px; overflow-y: auto; z-index: 1070;">
                     <li *ngFor="let font of availableFonts">
-                      <button type="button" class="dropdown-item d-flex justify-content-between align-items-center py-1.5"
+                      <button type="button" class="dropdown-item d-flex justify-content-between align-items-center py-2 px-2.5 rounded-2"
                               (click)="selectSecondaryFont(font.name)">
-                        <span [style.fontFamily]="font.name">{{ font.name }}</span>
-                        <span class="badge bg-light text-muted ms-2 fs-xxs">{{ font.fontGroup }}</span>
+                        <span class="fs-sm" [style.fontFamily]="font.name">{{ font.name }}</span>
+                        <span class="badge bg-light text-muted border ms-2 fs-xxs">{{ font.fontGroup }}</span>
                       </button>
                     </li>
                   </ul>
@@ -623,7 +598,7 @@
         <!-- ========================================================== -->
         <div class="tab-pane-content" [class.d-none]="activeEditorTab() !== 'media'">
           <!-- CARTE ILLUSTRATION & ASSET DE FOND (MOBILE & PC) -->
-          <div class="card editor-card border-0 shadow-sm rounded-4 mb-3.5 overflow-hidden">
+          <div class="card editor-card border-0 shadow-sm rounded-4 mb-3.5">
             <div class="card-header bg-white py-3 px-3.5 border-bottom d-flex align-items-center justify-content-between">
               <div class="d-flex align-items-center gap-2">
                 <div class="editor-section-icon bg-info-subtle text-info rounded-circle d-flex align-items-center justify-content-center">
@@ -648,21 +623,40 @@
                   </label>
                   <span class="badge bg-white text-primary border fs-xxs">Smartphones</span>
                 </div>
-                <div class="input-group mb-2 shadow-2xs">
+
+                <!-- Aperçu si fichier importé (Base64) -->
+                <div class="d-flex align-items-center justify-content-between p-2 bg-white rounded-3 border border-light mb-2 shadow-2xs" *ngIf="isBase64(backgroundImageUrlField)">
+                  <div class="d-flex align-items-center gap-2">
+                    <div class="rounded border overflow-hidden flex-shrink-0 bg-light" style="width: 44px; height: 44px;">
+                      <img [src]="backgroundImageUrlField" class="w-100 h-100 object-fit-cover" alt="Fond mobile">
+                    </div>
+                    <div>
+                      <span class="fs-xs fw-bold text-dark d-block">Image mobile importée</span>
+                      <span class="badge bg-success-subtle text-success fs-xxs">Fichier local actif</span>
+                    </div>
+                  </div>
+                  <button type="button" class="btn btn-xs btn-outline-danger rounded-pill" (click)="removeBackgroundImage()">
+                    <i class="fa fa-times me-1"></i> Retirer
+                  </button>
+                </div>
+
+                <!-- Champ URL classique si pas en Base64 -->
+                <div class="input-group mb-2 shadow-2xs" *ngIf="!isBase64(backgroundImageUrlField)">
                   <span class="input-group-text bg-white border-light text-muted"><i class="fa fa-link"></i></span>
                   <input type="url" class="form-control border-light bg-white fs-xs" 
                          placeholder="URL directe de l'image de fond mobile..." 
                          [(ngModel)]="backgroundImageUrlField" name="backgroundImageUrl">
                 </div>
+
                 <div class="d-flex align-items-center gap-2 flex-wrap">
                   <label class="btn btn-xs btn-outline-primary rounded-pill px-3 py-1.5 mb-0 cursor-pointer d-inline-flex align-items-center gap-1.5">
                     <i class="fa fa-upload"></i>
-                    <span>Importer image mobile</span>
+                    <span>{{ isBase64(backgroundImageUrlField) ? 'Changer l\'image mobile' : 'Importer image mobile' }}</span>
                     <input type="file" accept="image/*" class="d-none" (change)="onBackgroundFileSelected($event)">
                   </label>
                   <button type="button" class="btn btn-xs btn-outline-danger rounded-pill px-2.5 py-1.5" 
-                          *ngIf="backgroundImageUrlField" (click)="removeBackgroundImage()">
-                        <i class="fa fa-times me-1"></i> Retirer
+                          *ngIf="backgroundImageUrlField && !isBase64(backgroundImageUrlField)" (click)="removeBackgroundImage()">
+                    <i class="fa fa-times me-1"></i> Retirer
                   </button>
                 </div>
               </div>
@@ -676,20 +670,39 @@
                   </label>
                   <span class="badge bg-white text-success border fs-xxs">Ordinateurs</span>
                 </div>
-                <div class="input-group mb-2 shadow-2xs">
+
+                <!-- Aperçu si fichier importé (Base64) -->
+                <div class="d-flex align-items-center justify-content-between p-2 bg-white rounded-3 border border-light mb-2 shadow-2xs" *ngIf="isBase64(backgroundImageDesktopUrlField)">
+                  <div class="d-flex align-items-center gap-2">
+                    <div class="rounded border overflow-hidden flex-shrink-0 bg-light" style="width: 58px; height: 38px;">
+                      <img [src]="backgroundImageDesktopUrlField" class="w-100 h-100 object-fit-cover" alt="Fond PC">
+                    </div>
+                    <div>
+                      <span class="fs-xs fw-bold text-dark d-block">Image Grand Écran PC importée</span>
+                      <span class="badge bg-success-subtle text-success fs-xxs">Fichier local actif</span>
+                    </div>
+                  </div>
+                  <button type="button" class="btn btn-xs btn-outline-danger rounded-pill" (click)="removeBackgroundDesktopImage()">
+                    <i class="fa fa-times me-1"></i> Retirer
+                  </button>
+                </div>
+
+                <!-- Champ URL classique si pas en Base64 -->
+                <div class="input-group mb-2 shadow-2xs" *ngIf="!isBase64(backgroundImageDesktopUrlField)">
                   <span class="input-group-text bg-white border-light text-muted"><i class="fa fa-link"></i></span>
                   <input type="url" class="form-control border-light bg-white fs-xs" 
                          placeholder="URL directe du fond grand écran PC..." 
                          [(ngModel)]="backgroundImageDesktopUrlField" name="backgroundImageDesktopUrl">
                 </div>
+
                 <div class="d-flex align-items-center gap-2 flex-wrap">
                   <label class="btn btn-xs btn-outline-success rounded-pill px-3 py-1.5 mb-0 cursor-pointer d-inline-flex align-items-center gap-1.5">
                     <i class="fa fa-upload"></i>
-                    <span>Importer image PC</span>
+                    <span>{{ isBase64(backgroundImageDesktopUrlField) ? 'Changer l\'image PC' : 'Importer image PC' }}</span>
                     <input type="file" accept="image/*" class="d-none" (change)="onBackgroundDesktopFileSelected($event)">
                   </label>
                   <button type="button" class="btn btn-xs btn-outline-danger rounded-pill px-2.5 py-1.5" 
-                          *ngIf="backgroundImageDesktopUrlField" (click)="removeBackgroundDesktopImage()">
+                          *ngIf="backgroundImageDesktopUrlField && !isBase64(backgroundImageDesktopUrlField)" (click)="removeBackgroundDesktopImage()">
                     <i class="fa fa-times me-1"></i> Retirer
                   </button>
                 </div>
@@ -699,7 +712,7 @@
           </div>
 
           <!-- CARTE AMBIANCE SONORE & MUSIQUE -->
-          <div class="card editor-card border-0 shadow-sm rounded-4 mb-3.5 overflow-hidden">
+          <div class="card editor-card border-0 shadow-sm rounded-4 mb-3.5">
             <div class="card-header bg-white py-3 px-3.5 border-bottom d-flex align-items-center justify-content-between">
               <div class="d-flex align-items-center gap-2">
                 <div class="editor-section-icon bg-warning-subtle text-dark rounded-circle d-flex align-items-center justify-content-center">
@@ -711,7 +724,31 @@
             </div>
 
             <div class="card-body p-3.5">
-              <div class="input-group mb-2 shadow-2xs">
+              <!-- Aperçu si fichier importé (Base64) -->
+              <div class="d-flex align-items-center justify-content-between p-2.5 bg-body-light rounded-3 border border-light mb-2.5 shadow-2xs" *ngIf="isBase64(musicUrlField)">
+                <div class="d-flex align-items-center gap-2">
+                  <div class="rounded-circle bg-warning-subtle text-dark d-flex align-items-center justify-content-center flex-shrink-0" style="width: 36px; height: 36px;">
+                    <i class="fa fa-music"></i>
+                  </div>
+                  <div>
+                    <span class="fs-xs fw-bold text-dark d-block">Fichier Audio MP3 importé</span>
+                    <span class="badge bg-success-subtle text-success fs-xxs">Audio personnalisé actif</span>
+                  </div>
+                </div>
+                <div class="d-flex align-items-center gap-1.5">
+                  <label class="btn btn-xs btn-outline-secondary rounded-pill px-2.5 py-1 mb-0 cursor-pointer d-inline-flex align-items-center gap-1">
+                    <i class="fa fa-upload"></i>
+                    <span>Changer</span>
+                    <input type="file" accept="audio/*" class="d-none" (change)="onAudioFileSelected($event)">
+                  </label>
+                  <button type="button" class="btn btn-xs btn-outline-danger rounded-pill px-2.5 py-1" (click)="removeMusic()">
+                    <i class="fa fa-times me-1"></i> Retirer
+                  </button>
+                </div>
+              </div>
+
+              <!-- Champ URL classique si pas en Base64 -->
+              <div class="input-group mb-2 shadow-2xs" *ngIf="!isBase64(musicUrlField)">
                 <span class="input-group-text border-light bg-body-light text-muted"><i class="fa fa-link"></i></span>
                 <input type="url" class="form-control border-light bg-body-light fs-xs" 
                        placeholder="URL directe de l'audio MP3..." 
@@ -729,7 +766,8 @@
                   <i class="fa" [ngClass]="isPreviewAudioPlaying() ? 'fa-pause' : 'fa-play'"></i>
                   <span>{{ isPreviewAudioPlaying() ? 'Mettre en pause' : 'Écouter l\'extrait' }}</span>
                 </button>
-                <button type="button" class="btn btn-xs btn-outline-danger rounded-pill px-2.5 py-1" (click)="removeMusic()">
+                <button type="button" class="btn btn-xs btn-outline-danger rounded-pill px-2.5 py-1" 
+                        *ngIf="!isBase64(musicUrlField)" (click)="removeMusic()">
                   <i class="fa fa-times me-1"></i> Retirer
                 </button>
               </div>
