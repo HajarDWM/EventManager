@@ -50,8 +50,12 @@ public class PublicRsvpController {
         String templateBackgroundImageDesktopUrl = null;
         String primaryFont = null;
         String primaryFontSize = null;
+        String primaryFontWeight = null;
+        String primaryLetterSpacing = null;
         String secondaryFont = null;
         String secondaryFontSize = null;
+        String secondaryFontWeight = null;
+        String secondaryLetterSpacing = null;
         String secondaryFontColor = null;
         String templateMusicUrl = null;
         String resolvedTemplateKey = event.getTemplateId();
@@ -78,8 +82,12 @@ public class PublicRsvpController {
             templateBackgroundImageDesktopUrl = tpl.getBackgroundImageDesktopUrl();
             primaryFont = tpl.getPrimaryFont();
             primaryFontSize = tpl.getPrimaryFontSize();
+            primaryFontWeight = tpl.getPrimaryFontWeight();
+            primaryLetterSpacing = tpl.getPrimaryLetterSpacing();
             secondaryFont = tpl.getSecondaryFont();
             secondaryFontSize = tpl.getSecondaryFontSize();
+            secondaryFontWeight = tpl.getSecondaryFontWeight();
+            secondaryLetterSpacing = tpl.getSecondaryLetterSpacing();
             secondaryFontColor = tpl.getSecondaryFontColor();
             templateMusicUrl = tpl.getMusicUrl();
             if (resolvedTemplateKey == null || resolvedTemplateKey.isBlank()) {
@@ -118,8 +126,12 @@ public class PublicRsvpController {
                 .templateBackgroundImageDesktopUrl(templateBackgroundImageDesktopUrl)
                 .primaryFont(primaryFont)
                 .primaryFontSize(primaryFontSize)
+                .primaryFontWeight(primaryFontWeight)
+                .primaryLetterSpacing(primaryLetterSpacing)
                 .secondaryFont(secondaryFont)
                 .secondaryFontSize(secondaryFontSize)
+                .secondaryFontWeight(secondaryFontWeight)
+                .secondaryLetterSpacing(secondaryLetterSpacing)
                 .secondaryFontColor(secondaryFontColor)
                 .templateMusicUrl(templateMusicUrl)
                 .menuItems(menuItems)
@@ -190,8 +202,12 @@ public class PublicRsvpController {
         String templateBackgroundImageDesktopUrl = null;
         String primaryFont = null;
         String primaryFontSize = null;
+        String primaryFontWeight = null;
+        String primaryLetterSpacing = null;
         String secondaryFont = null;
         String secondaryFontSize = null;
+        String secondaryFontWeight = null;
+        String secondaryLetterSpacing = null;
         String secondaryFontColor = null;
         String templateMusicUrl = null;
         String resolvedTemplateKey = event.getTemplateId();
@@ -210,8 +226,12 @@ public class PublicRsvpController {
                 templateBackgroundImageDesktopUrl = tpl.getBackgroundImageDesktopUrl();
                 primaryFont = tpl.getPrimaryFont();
                 primaryFontSize = tpl.getPrimaryFontSize();
+                primaryFontWeight = tpl.getPrimaryFontWeight();
+                primaryLetterSpacing = tpl.getPrimaryLetterSpacing();
                 secondaryFont = tpl.getSecondaryFont();
                 secondaryFontSize = tpl.getSecondaryFontSize();
+                secondaryFontWeight = tpl.getSecondaryFontWeight();
+                secondaryLetterSpacing = tpl.getSecondaryLetterSpacing();
                 secondaryFontColor = tpl.getSecondaryFontColor();
                 templateMusicUrl = tpl.getMusicUrl();
                 if (resolvedTemplateKey == null || resolvedTemplateKey.isBlank()) {
@@ -251,8 +271,12 @@ public class PublicRsvpController {
                 .templateBackgroundImageDesktopUrl(templateBackgroundImageDesktopUrl)
                 .primaryFont(primaryFont)
                 .primaryFontSize(primaryFontSize)
+                .primaryFontWeight(primaryFontWeight)
+                .primaryLetterSpacing(primaryLetterSpacing)
                 .secondaryFont(secondaryFont)
                 .secondaryFontSize(secondaryFontSize)
+                .secondaryFontWeight(secondaryFontWeight)
+                .secondaryLetterSpacing(secondaryLetterSpacing)
                 .secondaryFontColor(secondaryFontColor)
                 .templateMusicUrl(templateMusicUrl)
                 .menuItems(menuItems)

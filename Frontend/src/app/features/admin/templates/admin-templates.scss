@@ -220,6 +220,63 @@
 
   // Colonne Gauche : Formulaire & Cartes de réglages
   .editor-controls-column {
+    // Studio Tabs Navigation Bar
+    .studio-tab-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      padding: 6px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03);
+
+      @media (max-width: 576px) {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .studio-tab-btn {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        padding: 10px 8px;
+        border-radius: 12px;
+        border: 1px solid transparent;
+        background: transparent;
+        color: #64748b;
+        font-size: 0.78rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+        text-align: center;
+
+        .tab-icon {
+          font-size: 1.05rem;
+          transition: transform 0.2s ease;
+        }
+
+        &:hover {
+          color: #0f172a;
+          background-color: #f8fafc;
+          transform: translateY(-1px);
+
+          .tab-icon {
+            transform: scale(1.15);
+          }
+        }
+
+        &.active {
+          color: #ffffff;
+          background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+          box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);
+          border-color: #0f172a;
+        }
+      }
+    }
+
     .editor-card {
       border-color: #e2e8f0;
       background: #ffffff;

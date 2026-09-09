@@ -35,8 +35,12 @@ export interface PublicRsvpDetail {
   templateBackgroundImageDesktopUrl?: string;
   primaryFont?: string;
   primaryFontSize?: string;
+  primaryFontWeight?: string;
+  primaryLetterSpacing?: string;
   secondaryFont?: string;
   secondaryFontSize?: string;
+  secondaryFontWeight?: string;
+  secondaryLetterSpacing?: string;
   secondaryFontColor?: string;
   templateMusicUrl?: string;
   menuItems?: any[];
@@ -343,6 +347,18 @@ export class GuestRsvp implements OnInit, OnDestroy {
     return '36px';
   }
 
+  public getPrimaryFontWeight(): string {
+    const w = this.guest()?.primaryFontWeight;
+    if (w && w.trim()) return w.trim();
+    return '700';
+  }
+
+  public getPrimaryLetterSpacing(): string {
+    const ls = this.guest()?.primaryLetterSpacing;
+    if (ls && ls.trim()) return ls.trim();
+    return 'normal';
+  }
+
   public getSecondaryFont(): string {
     const f = this.guest()?.secondaryFont;
     if (f && f.trim()) {
@@ -359,6 +375,18 @@ export class GuestRsvp implements OnInit, OnDestroy {
     const s = this.guest()?.secondaryFontSize;
     if (s && s.trim()) return s.trim();
     return '16px';
+  }
+
+  public getSecondaryFontWeight(): string {
+    const w = this.guest()?.secondaryFontWeight;
+    if (w && w.trim()) return w.trim();
+    return '400';
+  }
+
+  public getSecondaryLetterSpacing(): string {
+    const ls = this.guest()?.secondaryLetterSpacing;
+    if (ls && ls.trim()) return ls.trim();
+    return 'normal';
   }
 
   public getPrimaryColor(): string {

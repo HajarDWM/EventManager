@@ -43,8 +43,12 @@ public class PublicRsvpDTO {
     private String templateBackgroundImageDesktopUrl;
     private String primaryFont;
     private String primaryFontSize;
+    private String primaryFontWeight;
+    private String primaryLetterSpacing;
     private String secondaryFont;
     private String secondaryFontSize;
+    private String secondaryFontWeight;
+    private String secondaryLetterSpacing;
     private String secondaryFontColor;
     private String templateMusicUrl;
     private java.util.List<MenuItemDTO> menuItems;

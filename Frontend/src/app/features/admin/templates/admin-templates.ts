@@ -66,6 +66,11 @@ export class AdminTemplates implements OnInit {
   protected readonly editingId = signal<number | null>(null);
   protected readonly isSubmitting = signal(false);
   protected readonly previewDevice = signal<'mobile' | 'tablet' | 'desktop'>('mobile');
+  protected readonly activeEditorTab = signal<'identity' | 'design' | 'media' | 'effects'>('identity');
+
+  protected setEditorTab(tab: 'identity' | 'design' | 'media' | 'effects'): void {
+    this.activeEditorTab.set(tab);
+  }
 
   // Form Fields
   protected titleField = '';
@@ -82,8 +87,12 @@ export class AdminTemplates implements OnInit {
   protected backgroundColorField = '#faf6ee';
   protected primaryFontField = 'Alex Brush';
   protected primaryFontSizeField = '36px';
+  protected primaryFontWeightField = '700';
+  protected primaryLetterSpacingField = 'normal';
   protected secondaryFontField = 'Cinzel';
   protected secondaryFontSizeField = '16px';
+  protected secondaryFontWeightField = '400';
+  protected secondaryLetterSpacingField = 'normal';
   protected secondaryFontColorField = '#0f172a';
   protected htmlContentField = '';
 
@@ -91,9 +100,25 @@ export class AdminTemplates implements OnInit {
     return getAllSubcategoriesForCategory(this.categoryField);
   });
 
-  // Preset Font Sizes
+  // Preset Font Sizes & Styles
   protected readonly primaryFontSizeOptions = ['28px', '32px', '36px', '40px', '48px', '56px'];
   protected readonly secondaryFontSizeOptions = ['13px', '14px', '16px', '18px', '20px', '22px'];
+  
+  protected readonly fontWeightOptions = [
+    { label: 'Fin (300)', value: '300' },
+    { label: 'Normal (400)', value: '400' },
+    { label: 'Demi-Gras (600)', value: '600' },
+    { label: 'Gras (700)', value: '700' },
+    { label: 'Extra-Gras (800)', value: '800' }
+  ];
+
+  protected readonly letterSpacingOptions = [
+    { label: 'Normal', value: 'normal' },
+    { label: 'Discret (1px)', value: '1px' },
+    { label: 'Aéré Prestige (2px)', value: '2px' },
+    { label: 'Grand Format (3px)', value: '3px' },
+    { label: 'Majestueux (4px)', value: '4px' }
+  ];
 
   // Available Luxury Google Fonts with direct live style binding & suggestions
   protected readonly availableFonts = [
@@ -405,11 +430,16 @@ export class AdminTemplates implements OnInit {
     this.backgroundColorField = '#faf6ee';
     this.primaryFontField = 'Alex Brush';
     this.primaryFontSizeField = '36px';
+    this.primaryFontWeightField = '700';
+    this.primaryLetterSpacingField = 'normal';
     this.secondaryFontField = 'Cinzel';
     this.secondaryFontSizeField = '16px';
+    this.secondaryFontWeightField = '400';
+    this.secondaryLetterSpacingField = 'normal';
     this.secondaryFontColorField = '#0f172a';
     this.htmlContentField = '';
     this.errorMessage.set('');
+    this.activeEditorTab.set('identity');
     this.stopPreviewAudio();
     loadGoogleFont(this.primaryFontField);
     loadGoogleFont(this.secondaryFontField);
@@ -419,6 +449,7 @@ export class AdminTemplates implements OnInit {
   protected openEditModal(template: DigitalTemplate): void {
     this.isEditing.set(true);
     this.editingId.set(template.id || null);
+    this.activeEditorTab.set('identity');
     this.titleField = template.title || '';
     
     // Normalize category to full taxonomy title if needed
@@ -437,8 +468,12 @@ export class AdminTemplates implements OnInit {
     this.backgroundColorField = template.backgroundColor || '#faf6ee';
     this.primaryFontField = template.primaryFont || 'Alex Brush';
     this.primaryFontSizeField = template.primaryFontSize || '36px';
+    this.primaryFontWeightField = template.primaryFontWeight || '700';
+    this.primaryLetterSpacingField = template.primaryLetterSpacing || 'normal';
     this.secondaryFontField = template.secondaryFont || 'Cinzel';
     this.secondaryFontSizeField = template.secondaryFontSize || '16px';
+    this.secondaryFontWeightField = template.secondaryFontWeight || '400';
+    this.secondaryLetterSpacingField = template.secondaryLetterSpacing || 'normal';
     this.secondaryFontColorField = template.secondaryFontColor || '#0f172a';
     this.htmlContentField = template.htmlContent || '';
     this.errorMessage.set('');
@@ -466,8 +501,12 @@ export class AdminTemplates implements OnInit {
       this.accentColorField = '#d4af37';
       this.primaryFontField = 'Alex Brush';
       this.primaryFontSizeField = '36px';
+      this.primaryFontWeightField = '700';
+      this.primaryLetterSpacingField = 'normal';
       this.secondaryFontField = 'Cinzel';
       this.secondaryFontSizeField = '16px';
+      this.secondaryFontWeightField = '400';
+      this.secondaryLetterSpacingField = 'normal';
       this.secondaryFontColorField = '#0f172a';
     } else if (tax?.id === 'FAMILY') {
       this.decorativeFrameField = 'none';
@@ -475,8 +514,12 @@ export class AdminTemplates implements OnInit {
       this.accentColorField = '#c27ba0';
       this.primaryFontField = 'Great Vibes';
       this.primaryFontSizeField = '38px';
+      this.primaryFontWeightField = '700';
+      this.primaryLetterSpacingField = 'normal';
       this.secondaryFontField = 'Cormorant Garamond';
       this.secondaryFontSizeField = '16px';
+      this.secondaryFontWeightField = '400';
+      this.secondaryLetterSpacingField = 'normal';
       this.secondaryFontColorField = '#2c1810';
     } else if (tax?.id === 'CORPORATE') {
       this.decorativeFrameField = 'none';
@@ -484,8 +527,12 @@ export class AdminTemplates implements OnInit {
       this.accentColorField = '#2b4c7e';
       this.primaryFontField = 'Montserrat';
       this.primaryFontSizeField = '32px';
+      this.primaryFontWeightField = '600';
+      this.primaryLetterSpacingField = '1px';
       this.secondaryFontField = 'Playfair Display';
       this.secondaryFontSizeField = '15px';
+      this.secondaryFontWeightField = '400';
+      this.secondaryLetterSpacingField = 'normal';
       this.secondaryFontColorField = '#1e293b';
     } else if (tax?.id === 'SEASONAL_SOCIAL') {
       this.decorativeFrameField = 'none';
@@ -493,8 +540,12 @@ export class AdminTemplates implements OnInit {
       this.accentColorField = '#fbbf24';
       this.primaryFontField = 'Playfair Display';
       this.primaryFontSizeField = '36px';
+      this.primaryFontWeightField = '700';
+      this.primaryLetterSpacingField = '2px';
       this.secondaryFontField = 'Cinzel';
       this.secondaryFontSizeField = '16px';
+      this.secondaryFontWeightField = '400';
+      this.secondaryLetterSpacingField = '1px';
       this.secondaryFontColorField = '#f0dd9e';
     }
   }
@@ -523,8 +574,12 @@ export class AdminTemplates implements OnInit {
       backgroundColor: this.backgroundColorField?.trim() || '#faf6ee',
       primaryFont: this.primaryFontField?.trim() || 'Alex Brush',
       primaryFontSize: this.primaryFontSizeField?.trim() || '36px',
+      primaryFontWeight: this.primaryFontWeightField || '700',
+      primaryLetterSpacing: this.primaryLetterSpacingField || 'normal',
       secondaryFont: this.secondaryFontField?.trim() || 'Cinzel',
       secondaryFontSize: this.secondaryFontSizeField?.trim() || '16px',
+      secondaryFontWeight: this.secondaryFontWeightField || '400',
+      secondaryLetterSpacing: this.secondaryLetterSpacingField || 'normal',
       secondaryFontColor: this.secondaryFontColorField?.trim() || '#0f172a',
       htmlContent: this.htmlContentField?.trim() || undefined
     };

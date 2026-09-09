@@ -45,11 +45,23 @@ public class AdminTemplateController {
         if (template.getPrimaryFontSize() == null || template.getPrimaryFontSize().isBlank()) {
             template.setPrimaryFontSize("36px");
         }
+        if (template.getPrimaryFontWeight() == null || template.getPrimaryFontWeight().isBlank()) {
+            template.setPrimaryFontWeight("700");
+        }
+        if (template.getPrimaryLetterSpacing() == null || template.getPrimaryLetterSpacing().isBlank()) {
+            template.setPrimaryLetterSpacing("normal");
+        }
         if (template.getSecondaryFont() == null || template.getSecondaryFont().isBlank()) {
             template.setSecondaryFont("Mariage".equalsIgnoreCase(template.getCategory()) ? "Cinzel" : "Montserrat");
         }
         if (template.getSecondaryFontSize() == null || template.getSecondaryFontSize().isBlank()) {
             template.setSecondaryFontSize("16px");
+        }
+        if (template.getSecondaryFontWeight() == null || template.getSecondaryFontWeight().isBlank()) {
+            template.setSecondaryFontWeight("400");
+        }
+        if (template.getSecondaryLetterSpacing() == null || template.getSecondaryLetterSpacing().isBlank()) {
+            template.setSecondaryLetterSpacing("normal");
         }
         if (template.getSecondaryFontColor() == null || template.getSecondaryFontColor().isBlank()) {
             template.setSecondaryFontColor("Mariage".equalsIgnoreCase(template.getCategory()) ? "#0f172a" : "#1e293b");
@@ -106,11 +118,23 @@ public class AdminTemplateController {
             if (updated.getPrimaryFontSize() != null) {
                 existing.setPrimaryFontSize(updated.getPrimaryFontSize());
             }
+            if (updated.getPrimaryFontWeight() != null) {
+                existing.setPrimaryFontWeight(updated.getPrimaryFontWeight());
+            }
+            if (updated.getPrimaryLetterSpacing() != null) {
+                existing.setPrimaryLetterSpacing(updated.getPrimaryLetterSpacing());
+            }
             if (updated.getSecondaryFont() != null) {
                 existing.setSecondaryFont(updated.getSecondaryFont());
             }
             if (updated.getSecondaryFontSize() != null) {
                 existing.setSecondaryFontSize(updated.getSecondaryFontSize());
+            }
+            if (updated.getSecondaryFontWeight() != null) {
+                existing.setSecondaryFontWeight(updated.getSecondaryFontWeight());
+            }
+            if (updated.getSecondaryLetterSpacing() != null) {
+                existing.setSecondaryLetterSpacing(updated.getSecondaryLetterSpacing());
             }
             if (updated.getSecondaryFontColor() != null) {
                 existing.setSecondaryFontColor(updated.getSecondaryFontColor());

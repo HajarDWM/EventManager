@@ -17,8 +17,12 @@ export interface DigitalTemplate {
   backgroundImageDesktopUrl?: string | null;
   primaryFont?: string; // Playfair Display, Cormorant Garamond, Montserrat, Great Vibes, Cinzel, Alex Brush
   primaryFontSize?: string;
+  primaryFontWeight?: string | null;
+  primaryLetterSpacing?: string | null;
   secondaryFont?: string;
   secondaryFontSize?: string;
+  secondaryFontWeight?: string | null;
+  secondaryLetterSpacing?: string | null;
   secondaryFontColor?: string;
   musicUrl?: string | null;
   htmlContent?: string;
