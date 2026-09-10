@@ -3243,9 +3243,9 @@ textarea.luxury-form-control::placeholder {
 }
 
 /* ==========================================================================
-   ESTHÉTIQUE GLASSMORPHISM NEUTRE
-   Filtre blur(15px), bordure subtile (rgba(255, 255, 255, 0.2)), 0 fond opaque
-   Absorbe et reflète 100% des teintes de l'arrière-plan sans modifier le code
+   ESTHÉTIQUE GLASSMORPHISM NEUTRE & RATIO FIXE (16:9 PC / 9:16 Mobile)
+   Filtre blur(15px), bordure subtile, dimensions stables et immuables
+   L'arrière-plan reste 100% visible et identique quel que soit le nombre de plats
    ========================================================================== */
 .rsvp-luxury-wrapper .luxury-card,
 .rsvp-luxury-wrapper .luxury-card.card-clean-foundation,
@@ -3263,19 +3263,36 @@ textarea.luxury-form-control::placeholder {
   width: 100% !important;
   max-width: 100% !important;
   margin: auto !important;
-  min-height: auto !important;
   box-sizing: border-box !important;
   transition: all 0.35s ease;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
 
-  /* Tablette */
-  @media (min-width: 768px) {
-    border-radius: 28px !important;
+  /* Mobile: Hauteur et ratio portrait 9:16 stables (ne rétrécit pas avec 1 plat, n'explose pas avec 6 plats) */
+  min-height: 540px !important;
+
+  @media (max-width: 767.98px) {
+    aspect-ratio: 9 / 16;
+    max-height: calc(100dvh - 55px) !important;
+    min-height: 500px !important;
   }
 
-  /* Desktop / PC */
+  /* Tablette (768px - 991px) */
+  @media (min-width: 768px) {
+    border-radius: 28px !important;
+    min-height: 540px !important;
+    max-height: calc(100vh - 60px) !important;
+  }
+
+  /* Desktop / PC (>= 992px) - Format Panoramique 16:9 Immuable */
   @media (min-width: 992px) {
     background-image: var(--card-bg-desktop, var(--card-bg-mobile, none)) !important;
     border-radius: 32px !important;
+    aspect-ratio: 16 / 9 !important;
+    min-height: 560px !important;
+    max-height: calc(100vh - 70px) !important;
   }
 
   .luxury-inner-border {
@@ -3286,42 +3303,231 @@ textarea.luxury-form-control::placeholder {
     box-shadow: none !important;
     box-sizing: border-box !important;
     transition: padding 0.35s ease, margin 0.35s ease;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+    width: calc(100% - 16px) !important;
+    height: calc(100% - 16px) !important;
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
 
     /* Mobile */
     margin: 8px !important;
-    padding: 22px 14px 18px !important;
+    padding: 16px 12px 14px !important;
 
     @media (min-width: 576px) {
       margin: 12px !important;
-      padding: 28px 20px 22px !important;
+      padding: 22px 18px 20px !important;
       border-radius: 20px !important;
+      width: calc(100% - 24px) !important;
+      height: calc(100% - 24px) !important;
     }
 
     /* Tablette */
     @media (min-width: 768px) {
       margin: 16px !important;
-      padding: 36px 30px 28px !important;
+      padding: 26px 24px 22px !important;
       border-radius: 22px !important;
+      width: calc(100% - 32px) !important;
+      height: calc(100% - 32px) !important;
     }
 
     /* Desktop / PC (>= 992px) - Optimisation Format Panoramique 16:9 */
     @media (min-width: 992px) {
       margin: 18px !important;
-      padding: 34px 44px 26px !important;
+      padding: 26px 36px 22px !important;
       border-radius: 24px !important;
+      width: calc(100% - 36px) !important;
+      height: calc(100% - 36px) !important;
     }
 
     /* Grand écran PC (>= 1200px) - Format Panoramique 16:9 */
     @media (min-width: 1200px) {
       margin: 22px !important;
-      padding: 38px 52px 28px !important;
+      padding: 30px 44px 24px !important;
       border-radius: 28px !important;
+      width: calc(100% - 44px) !important;
+      height: calc(100% - 44px) !important;
+    }
+  }
+}
+
+/* Conteneur séquentiel du menu RSVP */
+.menu-rsvp-container {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  min-height: 0 !important;
+  padding: 4px 8px !important;
+  box-sizing: border-box !important;
+
+  @media (min-width: 768px) {
+    padding: 8px 16px !important;
+  }
+
+  form {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    width: 100% !important;
+    transition: max-width 0.3s ease;
+
+    &.has-wide-menu {
+      @media (min-width: 768px) {
+        max-width: 740px !important;
+      }
+    }
+  }
+}
+
+.course-step-container {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  width: 100% !important;
+  min-height: 0 !important;
+  flex: 1 1 auto !important;
+}
+
+/* Grille & Défilement des Plats */
+.dish-horizontal-cards-stack {
+  width: 100%;
+  max-width: 440px;
+  margin: 0 auto;
+  max-height: 235px; /* Calculé pour que le 4ème plat dépasse (effet peek) */
+  overflow-y: scroll; /* Force l'apparition de la zone scrollable */
+  -webkit-overflow-scrolling: touch;
+  overflow-x: hidden;
+  padding: 4px 8px 4px 4px;
+  box-sizing: border-box;
+  transition: max-width 0.3s ease;
+
+  /* Scrollbar visible et luxueuse */
+  scrollbar-width: thin !important;
+  scrollbar-color: var(--primary-color, #d4af37) rgba(0, 0, 0, 0.08) !important;
+
+  &::-webkit-scrollbar {
+    width: 6px !important;
+    display: block !important;
+    -webkit-appearance: none !important;
+  }
+  &::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.06) !important;
+    border-radius: 10px !important;
+    margin: 3px 0 !important;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: var(--primary-color, #d4af37) !important;
+    border-radius: 10px !important;
+    border: 1px solid rgba(255, 255, 255, 0.6) !important;
+    min-height: 35px !important;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-color, #92753a) !important;
+  }
+
+  &.has-many-dishes {
+    @media (max-width: 767.98px) {
+      /* Dégradé de fondu au bas de la liste pour montrer qu'elle continue */
+      mask-image: linear-gradient(to bottom, black calc(100% - 24px), transparent 100%);
+      -webkit-mask-image: linear-gradient(to bottom, black calc(100% - 24px), transparent 100%);
+    }
+  }
+
+  @media (min-width: 768px) {
+    max-height: 300px;
+    padding-right: 6px;
+
+    &.has-many-dishes {
+      max-width: 720px !important;
+      display: grid !important;
+      grid-template-columns: repeat(2, 1fr) !important;
+      gap: 10px 14px !important;
+      align-items: stretch;
+      overflow-y: auto;
+      mask-image: none !important;
+      -webkit-mask-image: none !important;
+
+      .dish-horizontal-card {
+        margin-bottom: 0 !important;
+      }
+    }
+  }
+
+  @media (min-width: 1200px) {
+    max-height: 330px;
+
+    &.has-many-dishes {
+      max-width: 760px !important;
+      gap: 12px 18px !important;
+    }
+  }
+}
+
+/* Badge Indicateur de Défilement (Scroll Cue) */
+.scroll-more-hint {
+  width: 100%;
+
+  .badge {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: all 0.25s ease;
+  }
+}
+
+@keyframes bounceSubtle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(3px);
+  }
+}
+
+.animate-bounce-subtle {
+  animation: bounceSubtle 1.3s ease-in-out infinite;
+  display: inline-block;
+}
+
+.dish-horizontal-card {
+  background: #ffffff;
+  border-radius: 12px !important;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  box-sizing: border-box;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 16px rgba(0, 0, 0, 0.08);
+  }
+
+  .dish-card-thumb-wrapper {
+    width: 50px;
+    height: 50px;
+
+    @media (min-width: 768px) {
+      width: 56px;
+      height: 56px;
+    }
+
+    img {
+      width: 100%;
+      height: 100%;
     }
   }
 }
 
 /* Transparence absolue pour TOUS les conteneurs des 5 pages */
-.menu-rsvp-container,
 .menu-selection-container,
 .extra-rsvp-sections,
 .rsvp-summary-container,
@@ -4074,28 +4280,44 @@ textarea.luxury-form-control::placeholder {
 }
 
 /* ==========================================================================
-   ÉTAPE 2 : RÉCAPITULATIF 2 CARTES (Choix & Règlement)
+   ÉTAPE 5 : RÉCAPITULATIF & CONFIRMATION ULTRA-COMPACTE (Ajusté au fond mobile)
    ========================================================================== */
+.rsvp-summary-container {
+  width: 100%;
+  box-sizing: border-box;
+
+  @media (max-width: 767.98px) {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+  .spotlight-title-wrapper {
+    .luxury-subtitle {
+      letter-spacing: 0.5px;
+    }
+  }
+}
+
 .summary-cards-grid {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 8px;
   width: 100%;
   box-sizing: border-box;
 
   @media (min-width: 768px) {
     flex-direction: row;
-    gap: 20px;
+    gap: 16px;
     align-items: stretch;
   }
 
   .summary-subcard {
     flex: 1 1 0;
     min-width: 0;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-radius: 20px;
-    padding: 20px 18px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 14px;
+    padding: 10px 12px;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
@@ -4103,12 +4325,13 @@ textarea.luxury-form-control::placeholder {
     transition: transform 0.25s ease, box-shadow 0.25s ease;
 
     @media (min-width: 768px) {
-      padding: 24px 22px;
+      padding: 20px 18px;
+      border-radius: 20px;
     }
 
     &:hover {
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-      transform: translateY(-2px);
+      transform: translateY(-1px);
     }
   }
 
@@ -4120,6 +4343,112 @@ textarea.luxury-form-control::placeholder {
   .card-payment-box {
     border-width: 1.5px !important;
     border-style: solid !important;
+  }
+
+  /* Bouton Modifier dans l'en-tête */
+  .btn-modify-compact {
+    font-size: 0.72rem;
+    opacity: 0.85;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    cursor: pointer;
+
+    &:hover {
+      opacity: 1;
+      transform: scale(1.04);
+      text-decoration: underline !important;
+    }
+  }
+
+  /* Grille des plats : 2 colonnes sur Mobile pour limiter la hauteur, 1 colonne sur Tablette/PC */
+  .summary-dishes-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px 8px;
+
+    @media (min-width: 768px) {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .summary-dish-item {
+      display: flex;
+      flex-direction: column;
+      padding: 2px 0;
+      border-bottom: 1px dashed rgba(212, 175, 55, 0.15);
+      min-width: 0;
+
+      @media (min-width: 768px) {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: baseline;
+        padding: 4px 0;
+      }
+
+      .dish-course-num {
+        font-size: 0.65rem;
+        opacity: 0.75;
+        letter-spacing: 0.4px;
+        margin-bottom: 1px;
+
+        @media (min-width: 768px) {
+          font-size: 0.72rem;
+          margin-bottom: 0;
+        }
+      }
+
+      .dish-course-val {
+        font-size: 0.76rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+
+        @media (min-width: 768px) {
+          font-size: 0.82rem;
+          max-width: 60%;
+        }
+      }
+    }
+  }
+
+  /* Ligne compacte régimes alimentaires */
+  .summary-diet-compact {
+    padding-top: 3px;
+    line-height: 1.2;
+
+    .fs-3xs {
+      font-size: 0.7rem;
+    }
+  }
+
+  /* Détails du paiement */
+  .summary-payment-details {
+    > div {
+      padding: 2px 0 !important;
+
+      @media (min-width: 768px) {
+        padding: 4px 0 !important;
+      }
+    }
+  }
+
+  /* Bouton d'action soumission */
+  .btn-luxury-submit {
+    font-size: 0.75rem !important;
+    letter-spacing: 0.6px;
+    padding: 7px 14px !important;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+
+    &:hover:not(:disabled) {
+      transform: translateY(-1px);
+      filter: brightness(1.06);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(0);
+    }
   }
 }
 
