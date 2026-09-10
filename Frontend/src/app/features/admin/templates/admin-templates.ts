@@ -65,7 +65,7 @@ export class AdminTemplates implements OnInit {
   protected readonly isEditing = signal(false);
   protected readonly editingId = signal<number | null>(null);
   protected readonly isSubmitting = signal(false);
-  protected readonly previewDevice = signal<'mobile' | 'tablet' | 'desktop'>('mobile');
+  protected readonly previewDevice = signal<'mobile' | 'desktop'>('mobile');
   protected readonly activeEditorTab = signal<'identity' | 'design' | 'media' | 'effects'>('identity');
 
   protected setEditorTab(tab: 'identity' | 'design' | 'media' | 'effects'): void {
@@ -81,6 +81,13 @@ export class AdminTemplates implements OnInit {
   protected backgroundImageUrlField = '';
   protected backgroundImageDesktopUrlField = '';
   protected musicUrlField = '';
+  protected showMobileUrlInput = false;
+  protected showDesktopUrlInput = false;
+  protected showMusicUrlInput = false;
+
+  protected getActiveMusicPreset(): { label: string; url: string } | undefined {
+    return this.musicPresets.find(p => p.url === this.musicUrlField);
+  }
   protected templateKeyField = '';
   protected decorativeFrameField = 'none';
   protected accentColorField = '#d4af37';
@@ -238,7 +245,7 @@ export class AdminTemplates implements OnInit {
 
         const img = new Image();
         img.onload = () => {
-          const maxDim = 1600;
+          const maxDim = 1080;
           let width = img.width;
           let height = img.height;
 
@@ -258,7 +265,7 @@ export class AdminTemplates implements OnInit {
           const ctx = canvas.getContext('2d');
           if (ctx) {
             ctx.drawImage(img, 0, 0, width, height);
-            this.backgroundImageUrlField = canvas.toDataURL('image/jpeg', 0.88);
+            this.backgroundImageUrlField = canvas.toDataURL('image/jpeg', 0.80);
           } else {
             this.backgroundImageUrlField = rawResult;
           }
@@ -286,7 +293,7 @@ export class AdminTemplates implements OnInit {
 
         const img = new Image();
         img.onload = () => {
-          const maxDim = 1920;
+          const maxDim = 1440;
           let width = img.width;
           let height = img.height;
 
@@ -306,7 +313,7 @@ export class AdminTemplates implements OnInit {
           const ctx = canvas.getContext('2d');
           if (ctx) {
             ctx.drawImage(img, 0, 0, width, height);
-            this.backgroundImageDesktopUrlField = canvas.toDataURL('image/jpeg', 0.88);
+            this.backgroundImageDesktopUrlField = canvas.toDataURL('image/jpeg', 0.80);
           } else {
             this.backgroundImageDesktopUrlField = rawResult;
           }
@@ -324,7 +331,7 @@ export class AdminTemplates implements OnInit {
   }
 
   public getLivePreviewBackgroundImage(): string {
-    if (this.previewDevice() === 'desktop' || this.previewDevice() === 'tablet') {
+    if (this.previewDevice() === 'desktop') {
       return this.backgroundImageDesktopUrlField || this.backgroundImageUrlField || '';
     }
     return this.backgroundImageUrlField || '';
@@ -358,8 +365,13 @@ export class AdminTemplates implements OnInit {
   }
 
   protected selectMusicPreset(url: string): void {
-    this.musicUrlField = url;
-    this.stopPreviewAudio();
+    if (this.musicUrlField === url) {
+      this.togglePreviewAudio();
+    } else {
+      this.musicUrlField = url;
+      this.stopPreviewAudio();
+      this.togglePreviewAudio();
+    }
   }
 
   protected togglePreviewAudio(): void {
@@ -398,7 +410,7 @@ export class AdminTemplates implements OnInit {
     this.isPreviewAudioPlaying.set(false);
   }
 
-  public setPreviewDevice(device: 'mobile' | 'tablet' | 'desktop'): void {
+  public setPreviewDevice(device: 'mobile' | 'desktop'): void {
     this.previewDevice.set(device);
   }
 
@@ -443,6 +455,9 @@ export class AdminTemplates implements OnInit {
     this.secondaryFontColorField = '#0f172a';
     this.htmlContentField = '';
     this.errorMessage.set('');
+    this.showMobileUrlInput = false;
+    this.showDesktopUrlInput = false;
+    this.showMusicUrlInput = false;
     this.activeEditorTab.set('identity');
     this.stopPreviewAudio();
     loadGoogleFont(this.primaryFontField);
@@ -481,6 +496,9 @@ export class AdminTemplates implements OnInit {
     this.secondaryFontColorField = template.secondaryFontColor || '#0f172a';
     this.htmlContentField = template.htmlContent || '';
     this.errorMessage.set('');
+    this.showMobileUrlInput = false;
+    this.showDesktopUrlInput = false;
+    this.showMusicUrlInput = false;
     this.stopPreviewAudio();
     loadGoogleFont(this.primaryFontField);
     loadGoogleFont(this.secondaryFontField);
@@ -554,7 +572,41 @@ export class AdminTemplates implements OnInit {
     }
   }
 
-  protected saveTemplate(): void {
+  private async compressBase64Image(dataUrl: string, maxDim: number = 850, quality: number = 0.75): Promise<string> {
+    if (!dataUrl || !dataUrl.startsWith('data:image') || dataUrl.length < 100000) {
+      return dataUrl;
+    }
+    return new Promise<string>((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        let width = img.width;
+        let height = img.height;
+        if (width > maxDim || height > maxDim) {
+          if (width > height) {
+            height = Math.round((height * maxDim) / width);
+            width = maxDim;
+          } else {
+            width = Math.round((width * maxDim) / height);
+            height = maxDim;
+          }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.drawImage(img, 0, 0, width, height);
+          resolve(canvas.toDataURL('image/jpeg', quality));
+        } else {
+          resolve(dataUrl);
+        }
+      };
+      img.onerror = () => resolve(dataUrl);
+      img.src = dataUrl;
+    });
+  }
+
+  protected async saveTemplate(): Promise<void> {
     if (!this.titleField.trim()) {
       this.errorMessage.set('Le nom du modèle est obligatoire.');
       return;
@@ -563,14 +615,25 @@ export class AdminTemplates implements OnInit {
     this.isSubmitting.set(true);
     this.errorMessage.set('');
 
+    // Automatically optimize & compress any heavy base64 images before network transmission
+    let compressedMobile = this.backgroundImageUrlField?.trim() || null;
+    let compressedDesktop = this.backgroundImageDesktopUrlField?.trim() || null;
+
+    if (compressedMobile && compressedMobile.startsWith('data:image')) {
+      compressedMobile = await this.compressBase64Image(compressedMobile, 850, 0.75);
+    }
+    if (compressedDesktop && compressedDesktop.startsWith('data:image')) {
+      compressedDesktop = await this.compressBase64Image(compressedDesktop, 1200, 0.75);
+    }
+
     const templatePayload: DigitalTemplate = {
       title: this.titleField.trim(),
       category: this.categoryField,
       subCategory: this.subCategoryField,
       description: this.descriptionField?.trim() || '',
       imageUrl: this.imageUrlField?.trim() || undefined,
-      backgroundImageUrl: this.backgroundImageUrlField?.trim() ? this.backgroundImageUrlField.trim() : null,
-      backgroundImageDesktopUrl: this.backgroundImageDesktopUrlField?.trim() ? this.backgroundImageDesktopUrlField.trim() : null,
+      backgroundImageUrl: compressedMobile,
+      backgroundImageDesktopUrl: compressedDesktop,
       musicUrl: this.musicUrlField?.trim() ? this.musicUrlField.trim() : null,
       templateKey: this.templateKeyField?.trim() || undefined,
       decorativeFrame: this.decorativeFrameField || 'none',

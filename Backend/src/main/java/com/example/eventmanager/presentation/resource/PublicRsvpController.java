@@ -65,9 +65,7 @@ public class PublicRsvpController {
             tplOpt = templateRepository.findById(event.getDigitalTemplateId());
         }
         if (tplOpt.isEmpty() && event.getTemplateId() != null && !event.getTemplateId().isBlank()) {
-            tplOpt = templateRepository.findAll().stream()
-                    .filter(t -> event.getTemplateId().equalsIgnoreCase(t.getTemplateKey()))
-                    .findFirst();
+            tplOpt = templateRepository.findByTemplateKeyIgnoreCase(event.getTemplateId());
         }
 
         if (tplOpt.isPresent()) {

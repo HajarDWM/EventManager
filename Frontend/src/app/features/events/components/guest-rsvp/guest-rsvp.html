@@ -8,8 +8,7 @@
   [class.gold-border-layer]="resolvedDecorativeFrame === 'gold-border'"
   [class.geometric-frame-layer]="resolvedDecorativeFrame === 'geometric-frame'"
   [class.minimal-edge-layer]="resolvedDecorativeFrame === 'minimal-edge'"
-  [style.backgroundImage]="resolvedBackgroundImage ? 'url(' + resolvedBackgroundImage + ')' : null"
-  [style.backgroundColor]="guest()?.backgroundColor || null"
+  [style.backgroundColor]="getWrapperBgColor()"
   [style.--primary-color]="getPrimaryColor()"
   [style.--secondary-color]="getSecondaryFontColor()"
   [style.--primary-font]="getPrimaryFont()"
@@ -66,12 +65,40 @@
       </div>
     </div>
 
-    <!-- Loading State -->
-    <div class="text-center py-5" *ngIf="isLoading()">
-      <div class="spinner-border" [style.color]="getPrimaryColor()" role="status">
-        <span class="visually-hidden">Chargement...</span>
+    <!-- Luxury Card Skeleton Preloader (Zero Layout Shift & Instant Visual Feedback) -->
+    <div class="luxury-card card-clean-foundation position-relative overflow-hidden luxury-skeleton-card animate__animated animate__fadeIn"
+         [style.backgroundColor]="customBgColor || '#fbf9f4'"
+         *ngIf="isLoading()">
+      <div class="luxury-inner-border position-relative z-2 p-4 p-md-5 text-center d-flex flex-column align-items-center justify-content-center"
+           style="min-height: 440px; border: 1.5px solid rgba(212, 175, 55, 0.35); border-radius: 14px;">
+        
+        <!-- Shimmering Subtitle -->
+        <div class="skeleton-shimmer-bar mb-3" style="width: 140px; height: 14px; border-radius: 6px;"></div>
+
+        <!-- Shimmering Main Title -->
+        <div class="skeleton-shimmer-bar mb-4" style="width: 250px; height: 34px; border-radius: 8px;"></div>
+
+        <!-- Shimmering Guest Salutation -->
+        <div class="skeleton-shimmer-bar mb-4" style="width: 180px; height: 18px; border-radius: 6px;"></div>
+
+        <!-- Shimmering Date & Details Twin Blocks -->
+        <div class="d-flex gap-3 w-100 justify-content-center mb-4" style="max-width: 400px;">
+          <div class="skeleton-shimmer-bar flex-grow-1" style="height: 85px; border-radius: 12px;"></div>
+          <div class="skeleton-shimmer-bar flex-grow-1" style="height: 85px; border-radius: 12px;"></div>
+        </div>
+
+        <!-- Shimmering Action Buttons -->
+        <div class="d-flex gap-2 justify-content-center" style="max-width: 300px; width: 100%;">
+          <div class="skeleton-shimmer-bar flex-grow-1" style="height: 40px; border-radius: 20px;"></div>
+          <div class="skeleton-shimmer-bar flex-grow-1" style="height: 40px; border-radius: 20px;"></div>
+        </div>
+
+        <!-- Subtle Elegant Loading Tag -->
+        <div class="d-inline-flex align-items-center gap-2 mt-4 px-3 py-1.5 rounded-pill" style="background: rgba(212, 175, 55, 0.1); border: 1px solid rgba(212, 175, 55, 0.25);">
+          <span class="spinner-border spinner-border-sm" style="color: #d4af37;" role="status"></span>
+          <span class="fs-xs fw-semibold" style="color: #92753a;">Ouverture de votre invitation...</span>
+        </div>
       </div>
-      <p class="mt-3" [style.color]="getPrimaryColor()">Préparation de votre invitation...</p>
     </div>
 
     <!-- Error State -->
@@ -99,7 +126,7 @@
       [style.--secondary-color]="getSecondaryFontColor()"
       [style.--card-bg-mobile]="resolvedBackgroundImage ? 'url(' + resolvedBackgroundImage + ')' : 'none'"
       [style.--card-bg-desktop]="resolvedBackgroundImageDesktop ? 'url(' + resolvedBackgroundImageDesktop + ')' : (resolvedBackgroundImage ? 'url(' + resolvedBackgroundImage + ')' : 'none')"
-      [style.backgroundColor]="guest()?.backgroundColor || null"
+      [style.backgroundColor]="customBgColor"
       [style.borderColor]="getPrimaryColor() ? (getPrimaryColor() + '40') : 'rgba(212, 175, 55, 0.35)'"
       *ngIf="!isLoading() && guest()">
 
@@ -281,30 +308,19 @@
 
           <!-- Top Sequential Navigation & Interactive Stepper -->
           <div class="menu-flow-top-header mb-3 w-100 mx-auto" style="max-width: 440px;">
-            <div class="d-flex align-items-center justify-content-between mb-2 px-1">
-              <!-- Flèche de retour en haut à gauche -->
-              <button type="button" class="btn btn-sm btn-nav-back-icon d-inline-flex align-items-center gap-1 p-0 border-0 bg-transparent"
-                [style.color]="getSecondaryFontColor()"
-                (click)="handleTopNavPrev()"
-                [title]="isDiscoveryMode() ? 'Retour à l\'invitation' : 'Retour'">
-                <i class="fa fa-arrow-left"></i>
-                <span class="fs-xxs fw-medium ms-1">{{ isDiscoveryMode() ? 'Invitation' : 'Retour' }}</span>
-              </button>
-
-              <!-- Indicateur de Progression / Mode -->
-              <div class="step-progress-label text-end">
-                <span class="badge-step-count fw-bold text-uppercase"
-                  [style.fontFamily]="getSecondaryFont()"
-                  [style.color]="getPrimaryColor()"
-                  style="font-size: 0.72rem; letter-spacing: 1.2px;">
-                  <ng-container *ngIf="isDiscoveryMode()">Aperçu du Menu</ng-container>
-                  <ng-container *ngIf="!isDiscoveryMode()">
-                    <ng-container *ngIf="currentRsvpStep() <= 3">Étape {{ currentRsvpStep() + 1 }}/4</ng-container>
-                    <ng-container *ngIf="currentRsvpStep() === 4">Vos Préférences</ng-container>
-                    <ng-container *ngIf="currentRsvpStep() === 5">Récapitulatif</ng-container>
-                  </ng-container>
-                </span>
-              </div>
+            <!-- Indicateur de Progression / Mode Centré -->
+            <div class="step-progress-label text-center mb-2 px-1">
+              <span class="badge-step-count fw-bold text-uppercase"
+                [style.fontFamily]="getSecondaryFont()"
+                [style.color]="getPrimaryColor()"
+                style="font-size: 0.74rem; letter-spacing: 1.5px;">
+                <ng-container *ngIf="isDiscoveryMode()">Aperçu du Menu</ng-container>
+                <ng-container *ngIf="!isDiscoveryMode()">
+                  <ng-container *ngIf="currentRsvpStep() <= 3">Étape {{ currentRsvpStep() + 1 }}/4</ng-container>
+                  <ng-container *ngIf="currentRsvpStep() === 4">Vos Préférences</ng-container>
+                  <ng-container *ngIf="currentRsvpStep() === 5">Récapitulatif</ng-container>
+                </ng-container>
+              </span>
             </div>
 
             <!-- Stepper Interactif Direct (4 Catégories de Restauration) -->
@@ -427,13 +443,15 @@
                 </div>
               </div>
 
-              <!-- Action de Contournement (Opt-out) épinglée en bas (seulement en mode décisionnel) -->
-              <div class="step-optout-wrapper text-center mt-3 pt-1" *ngIf="!isDiscoveryMode()">
+              <!-- Actions de Navigation en Bas : Retour + Passer (Sur la même ligne) -->
+              <div class="step-bottom-actions-wrapper d-flex align-items-center justify-content-center flex-nowrap gap-2 mt-3 pt-1" *ngIf="!isDiscoveryMode()">
+                <button type="button" class="btn btn-sm btn-step-back rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
+                  (click)="handleTopNavPrev()">
+                  <i class="fa fa-arrow-left me-1"></i> Retour
+                </button>
                 <button type="button" class="btn btn-sm btn-opt-out rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
-                  [style.color]="getSecondaryFontColor()"
-                  [style.borderColor]="getSecondaryFontColor() + '35'"
                   (click)="skipCurrentCourse()">
-                  Passer / Aucune entrée <i class="fa fa-arrow-right ms-1"></i>
+                  Passer <i class="fa fa-arrow-right ms-1"></i>
                 </button>
               </div>
             </div>
@@ -498,13 +516,15 @@
                 </div>
               </div>
 
-              <!-- Action de Contournement (Opt-out) épinglée en bas -->
-              <div class="step-optout-wrapper text-center mt-3 pt-1" *ngIf="!isDiscoveryMode()">
+              <!-- Actions de Navigation en Bas : Retour + Passer (Sur la même ligne) -->
+              <div class="step-bottom-actions-wrapper d-flex align-items-center justify-content-center flex-nowrap gap-2 mt-3 pt-1" *ngIf="!isDiscoveryMode()">
+                <button type="button" class="btn btn-sm btn-step-back rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
+                  (click)="handleTopNavPrev()">
+                  <i class="fa fa-arrow-left me-1"></i> Retour
+                </button>
                 <button type="button" class="btn btn-sm btn-opt-out rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
-                  [style.color]="getSecondaryFontColor()"
-                  [style.borderColor]="getSecondaryFontColor() + '35'"
                   (click)="skipCurrentCourse()">
-                  Passer / Aucun plat <i class="fa fa-arrow-right ms-1"></i>
+                  Passer <i class="fa fa-arrow-right ms-1"></i>
                 </button>
               </div>
             </div>
@@ -569,13 +589,15 @@
                 </div>
               </div>
 
-              <!-- Action de Contournement (Opt-out) épinglée en bas -->
-              <div class="step-optout-wrapper text-center mt-3 pt-1" *ngIf="!isDiscoveryMode()">
+              <!-- Actions de Navigation en Bas : Retour + Passer (Sur la même ligne) -->
+              <div class="step-bottom-actions-wrapper d-flex align-items-center justify-content-center flex-nowrap gap-2 mt-3 pt-1" *ngIf="!isDiscoveryMode()">
+                <button type="button" class="btn btn-sm btn-step-back rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
+                  (click)="handleTopNavPrev()">
+                  <i class="fa fa-arrow-left me-1"></i> Retour
+                </button>
                 <button type="button" class="btn btn-sm btn-opt-out rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
-                  [style.color]="getSecondaryFontColor()"
-                  [style.borderColor]="getSecondaryFontColor() + '35'"
                   (click)="skipCurrentCourse()">
-                  Passer / Aucun dessert <i class="fa fa-arrow-right ms-1"></i>
+                  Passer <i class="fa fa-arrow-right ms-1"></i>
                 </button>
               </div>
             </div>
@@ -640,13 +662,15 @@
                 </div>
               </div>
 
-              <!-- Action de Contournement (Opt-out) épinglée en bas -->
-              <div class="step-optout-wrapper text-center mt-3 pt-1" *ngIf="!isDiscoveryMode()">
+              <!-- Actions de Navigation en Bas : Retour + Passer (Sur la même ligne) -->
+              <div class="step-bottom-actions-wrapper d-flex align-items-center justify-content-center flex-nowrap gap-2 mt-3 pt-1" *ngIf="!isDiscoveryMode()">
+                <button type="button" class="btn btn-sm btn-step-back rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
+                  (click)="handleTopNavPrev()">
+                  <i class="fa fa-arrow-left me-1"></i> Retour
+                </button>
                 <button type="button" class="btn btn-sm btn-opt-out rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
-                  [style.color]="getSecondaryFontColor()"
-                  [style.borderColor]="getSecondaryFontColor() + '35'"
                   (click)="skipCurrentCourse()">
-                  Passer / Aucune boisson <i class="fa fa-arrow-right ms-1"></i>
+                  Passer <i class="fa fa-arrow-right ms-1"></i>
                 </button>
               </div>
             </div>
@@ -760,12 +784,16 @@
                   (keydown)="onDietaryKeyDown($event)"></textarea>
               </div>
 
-              <!-- Action Unique Intelligente Étape 4 (Passer -> ou Valider ->) -->
-              <div class="dietary-smart-action-wrapper text-center mt-3 pt-1 mb-2 animate__animated animate__fadeIn">
+              <!-- Action Intelligente Étape 4 (Retour + Passer -> ou Valider -> sur la même ligne) -->
+              <div class="dietary-smart-action-wrapper d-flex align-items-center justify-content-center flex-nowrap gap-2 mt-3 pt-1 mb-2 animate__animated animate__fadeIn">
+                <button type="button" class="btn btn-sm btn-step-back rounded-pill px-3.5 py-2 fs-xs fw-semibold shadow-2xs"
+                  (click)="handleTopNavPrev()">
+                  <i class="fa fa-arrow-left me-1"></i> Retour
+                </button>
                 <button type="button" class="btn btn-sm btn-dietary-smart-action rounded-pill px-4 py-2 fs-xs fw-bold shadow-sm transition-all"
                   [style.background]="hasAnyDietOrAllergySelected() ? getPrimaryColor() : '#ffffff'"
-                  [style.borderColor]="hasAnyDietOrAllergySelected() ? getPrimaryColor() : (getPrimaryColor() + '55')"
-                  [style.color]="hasAnyDietOrAllergySelected() ? (isDarkBg(getPrimaryColor()) ? '#ffffff' : '#0c0c0c') : getSecondaryFontColor()"
+                  [style.borderColor]="hasAnyDietOrAllergySelected() ? getPrimaryColor() : 'rgba(15, 23, 42, 0.22)'"
+                  [style.color]="hasAnyDietOrAllergySelected() ? (isDarkBg(getPrimaryColor()) ? '#ffffff' : '#0c0c0c') : '#1e293b'"
                   (click)="goToNextStep()">
                   <ng-container *ngIf="hasAnyDietOrAllergySelected()">
                     <i class="fa fa-check me-1.5"></i> Valider <i class="fa fa-arrow-right ms-1"></i>
@@ -992,6 +1020,12 @@
 
           <!-- Actions Décisionnelles en Mode Découverte (Direct sans carte enveloppante ni lien redondant) -->
           <div class="discovery-decision-actions-wrapper d-flex align-items-center justify-content-center gap-2 gap-sm-3 mt-3 pt-1 mb-2 animate__animated animate__fadeIn" *ngIf="isDiscoveryMode()">
+            <!-- 0. Retour à l'invitation (Bouton Pilule Lisible) -->
+            <button type="button" class="btn btn-sm btn-step-back rounded-pill px-3.5 py-2 fs-xs fw-semibold shadow-2xs"
+              (click)="handleTopNavPrev()">
+              <i class="fa fa-arrow-left me-1"></i> Invitation
+            </button>
+
             <!-- 1. Accepter (Bouton Principal teinté avec la couleur du modèle) -->
             <button type="button" class="btn btn-decision-accept shadow-sm"
               [style.background]="getPrimaryColor()"

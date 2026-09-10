@@ -26,6 +26,7 @@ export interface PublicRsvpDetail {
   parkingLocation?: string;
   mealType?: string; // BUFFET or PLATS_FIXES
   templateCategory?: string; // Mariage, Corporate, etc.
+  templateSubCategory?: string;
   templateId?: string;
   templateTitle?: string;
   decorativeFrame?: string; // floral-frame, gold-border, geometric-frame, minimal-edge
@@ -298,11 +299,15 @@ export class GuestRsvp implements OnInit, OnDestroy {
     if (subtitle && subtitle.trim()) {
       return subtitle.trim();
     }
-    const cat = this.guest()?.templateCategory;
-    if (cat === 'Mariage') {
+    const cat = (this.guest()?.templateCategory || '').toLowerCase();
+    const subCat = (this.guest()?.templateSubCategory || '').toLowerCase();
+    if (subCat.includes('mariage') || cat.includes('mariage')) {
       return 'Le Mariage de';
     }
-    if (cat === 'Corporate') {
+    if (subCat.includes('fiançailles') || subCat.includes('fiancailles')) {
+      return 'Les Fiançailles de';
+    }
+    if (cat.includes('corporate') || subCat.includes('séminaire') || subCat.includes('conférence')) {
       return 'Événement d\'Entreprise';
     }
     return 'Invitation d\'Exception';
@@ -674,23 +679,51 @@ export class GuestRsvp implements OnInit, OnDestroy {
   }
 
   public get resolvedTemplateId(): string {
-    const tId = this.guest()?.templateId;
-    if (tId === 'fleurs-de-coton' || tId === 'wedding-botanical') {
+    const tId = (this.guest()?.templateId || '').toLowerCase().trim();
+    if (tId === 'fleurs-de-coton' || tId === 'wedding-botanical' || tId === 'tahara-emeraude') {
       return 'fleurs-de-coton';
     }
-    if (tId === 'or-et-velours' || tId === 'corporate-gold') {
+    if (
+      tId === 'or-et-velours' ||
+      tId === 'corporate-gold' ||
+      tId === 'royal-black-gold' ||
+      tId === 'fiancailles-royales' ||
+      tId.includes('royal') ||
+      tId.includes('velours') ||
+      tId.includes('mariage')
+    ) {
       return 'or-et-velours';
-    }
-    if (tId === 'seminaire-imperial' || tId === 'corporate-professional' || tId === 'launch-party') {
-      return 'corporate-professional';
     }
     if (tId === 'luxury-minimal') {
       return 'luxury-minimal';
     }
-    if (tId === 'boheme-chic') {
+    if (tId === 'boheme-chic' || tId === 'douceur-pastel') {
       return 'boheme-chic';
     }
-    return this.guest()?.templateCategory === 'Mariage' ? 'or-et-velours' : 'corporate-professional';
+    if (
+      tId === 'seminaire-imperial' ||
+      tId === 'corporate-professional' ||
+      tId === 'launch-party' ||
+      tId === 'prestige-diplome' ||
+      tId === 'lancement-innovation' ||
+      tId === 'gala-reveillon' ||
+      tId === 'gala-bienfaisance'
+    ) {
+      return 'corporate-professional';
+    }
+
+    const cat = (this.guest()?.templateCategory || '').toLowerCase();
+    const subCat = (this.guest()?.templateSubCategory || '').toLowerCase();
+    const isTraditionalOrWedding =
+      subCat.includes('mariage') ||
+      subCat.includes('fiançailles') ||
+      subCat.includes('fiancailles') ||
+      cat.includes('mariage') ||
+      cat.includes('tradition') ||
+      cat.includes('célébration') ||
+      cat.includes('celebration');
+
+    return isTraditionalOrWedding ? 'or-et-velours' : 'corporate-professional';
   }
 
   public get resolvedDecorativeFrame(): string {
@@ -718,7 +751,15 @@ export class GuestRsvp implements OnInit, OnDestroy {
   }
 
   public get customBgColor(): string {
-    return this.guest()?.backgroundColor || '#fff9f5';
+    return this.guest()?.backgroundColor || '#faf6ee';
+  }
+
+  public getWrapperBgColor(): string {
+    const bg = this.customBgColor;
+    if (this.isDarkBg(bg)) {
+      return '#080808';
+    }
+    return '#f4efe6';
   }
 
   public get resolvedBackgroundImage(): string | null {
@@ -884,9 +925,11 @@ export class GuestRsvp implements OnInit, OnDestroy {
     } else if (step === 4) {
       // Depuis la page Régimes (Étape 4) -> Retour vers le Menu (Boissons - Étape 3)
       this.currentRsvpStep.set(3);
+    } else if (step > 0) {
+      // Depuis les étapes du Menu (Plats, Desserts, Boissons) -> Étape précédente
+      this.currentRsvpStep.set(step - 1);
     } else {
-      // Depuis n'importe quelle étape du Menu (0, 1, 2, 3) -> Retour vers l'invitation (Page 1)
-      // Car les 4 catégories sont déjà directement accessibles via les onglets du Stepper
+      // Depuis l'Étape 0 (Entrées) -> Retour vers l'invitation (Page 1)
       this.closeMenuAndRsvp();
     }
   }
