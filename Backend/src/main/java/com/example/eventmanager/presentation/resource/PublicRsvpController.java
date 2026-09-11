@@ -58,6 +58,11 @@ public class PublicRsvpController {
         String secondaryLetterSpacing = null;
         String secondaryFontColor = null;
         String templateMusicUrl = null;
+        String openingAnimation = null;
+        String visualParticles = null;
+        Boolean showCountdown = null;
+        Boolean showCalendarButton = null;
+        Boolean showMapRoute = null;
         String resolvedTemplateKey = event.getTemplateId();
 
         java.util.Optional<com.example.eventmanager.infrastructure.persistence.entity.DigitalInvitationTemplateEntity> tplOpt = java.util.Optional.empty();
@@ -88,6 +93,11 @@ public class PublicRsvpController {
             secondaryLetterSpacing = tpl.getSecondaryLetterSpacing();
             secondaryFontColor = tpl.getSecondaryFontColor();
             templateMusicUrl = tpl.getMusicUrl();
+            openingAnimation = tpl.getOpeningAnimation();
+            visualParticles = tpl.getVisualParticles();
+            showCountdown = tpl.getShowCountdown();
+            showCalendarButton = tpl.getShowCalendarButton();
+            showMapRoute = tpl.getShowMapRoute();
             if (resolvedTemplateKey == null || resolvedTemplateKey.isBlank()) {
                 resolvedTemplateKey = tpl.getTemplateKey();
             }
@@ -132,6 +142,11 @@ public class PublicRsvpController {
                 .secondaryLetterSpacing(secondaryLetterSpacing)
                 .secondaryFontColor(secondaryFontColor)
                 .templateMusicUrl(templateMusicUrl)
+                .openingAnimation(openingAnimation)
+                .visualParticles(visualParticles)
+                .showCountdown(showCountdown)
+                .showCalendarButton(showCalendarButton)
+                .showMapRoute(showMapRoute)
                 .menuItems(menuItems)
                 .isPaidEvent(event.isPaidEvent())
                 .ticketPrice(event.getTicketPrice())

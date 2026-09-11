@@ -81,4 +81,19 @@ public class DigitalInvitationTemplateEntity {
 
     @Column(name = "music_url", columnDefinition = "LONGTEXT")
     private String musicUrl;
+
+    @Column(name = "opening_animation", length = 50)
+    private String openingAnimation;
+
+    @Column(name = "visual_particles", length = 50)
+    private String visualParticles;
+
+    @Column(name = "show_countdown")
+    private Boolean showCountdown;
+
+    @Column(name = "show_calendar_button")
+    private Boolean showCalendarButton;
+
+    @Column(name = "show_map_route")
+    private Boolean showMapRoute;
 }

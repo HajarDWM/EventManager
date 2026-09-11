@@ -69,6 +69,21 @@ public class AdminTemplateController {
         if (template.getHtmlContent() == null || template.getHtmlContent().isBlank()) {
             template.setHtmlContent("<h1>" + template.getTitle() + "</h1><p>" + template.getDescription() + "</p>");
         }
+        if (template.getOpeningAnimation() == null || template.getOpeningAnimation().isBlank()) {
+            template.setOpeningAnimation("envelope-wax");
+        }
+        if (template.getVisualParticles() == null || template.getVisualParticles().isBlank()) {
+            template.setVisualParticles("gold-dust");
+        }
+        if (template.getShowCountdown() == null) {
+            template.setShowCountdown(true);
+        }
+        if (template.getShowCalendarButton() == null) {
+            template.setShowCalendarButton(true);
+        }
+        if (template.getShowMapRoute() == null) {
+            template.setShowMapRoute(true);
+        }
         DigitalInvitationTemplateEntity saved = repository.save(template);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
@@ -146,6 +161,21 @@ public class AdminTemplateController {
                     ? updated.getMusicUrl().trim()
                     : null
             );
+            if (updated.getOpeningAnimation() != null) {
+                existing.setOpeningAnimation(updated.getOpeningAnimation());
+            }
+            if (updated.getVisualParticles() != null) {
+                existing.setVisualParticles(updated.getVisualParticles());
+            }
+            if (updated.getShowCountdown() != null) {
+                existing.setShowCountdown(updated.getShowCountdown());
+            }
+            if (updated.getShowCalendarButton() != null) {
+                existing.setShowCalendarButton(updated.getShowCalendarButton());
+            }
+            if (updated.getShowMapRoute() != null) {
+                existing.setShowMapRoute(updated.getShowMapRoute());
+            }
             return ResponseEntity.ok(repository.save(existing));
         }).orElse(ResponseEntity.notFound().build());
     }

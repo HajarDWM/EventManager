@@ -102,6 +102,11 @@ export class AdminTemplates implements OnInit {
   protected secondaryLetterSpacingField = 'normal';
   protected secondaryFontColorField = '#0f172a';
   protected htmlContentField = '';
+  protected openingAnimationField = 'envelope-wax';
+  protected visualParticlesField = 'gold-dust';
+  protected showCountdownField = true;
+  protected showCalendarButtonField = true;
+  protected showMapRouteField = true;
 
   protected readonly availableSubCategoriesForForm = computed(() => {
     return getAllSubcategoriesForCategory(this.categoryField);
@@ -454,6 +459,11 @@ export class AdminTemplates implements OnInit {
     this.secondaryLetterSpacingField = 'normal';
     this.secondaryFontColorField = '#0f172a';
     this.htmlContentField = '';
+    this.openingAnimationField = 'envelope-wax';
+    this.visualParticlesField = 'gold-dust';
+    this.showCountdownField = true;
+    this.showCalendarButtonField = true;
+    this.showMapRouteField = true;
     this.errorMessage.set('');
     this.showMobileUrlInput = false;
     this.showDesktopUrlInput = false;
@@ -495,6 +505,11 @@ export class AdminTemplates implements OnInit {
     this.secondaryLetterSpacingField = template.secondaryLetterSpacing || 'normal';
     this.secondaryFontColorField = template.secondaryFontColor || '#0f172a';
     this.htmlContentField = template.htmlContent || '';
+    this.openingAnimationField = template.openingAnimation || 'envelope-wax';
+    this.visualParticlesField = template.visualParticles || 'gold-dust';
+    this.showCountdownField = template.showCountdown !== false;
+    this.showCalendarButtonField = template.showCalendarButton !== false;
+    this.showMapRouteField = template.showMapRoute !== false;
     this.errorMessage.set('');
     this.showMobileUrlInput = false;
     this.showDesktopUrlInput = false;
@@ -530,6 +545,8 @@ export class AdminTemplates implements OnInit {
       this.secondaryFontWeightField = '400';
       this.secondaryLetterSpacingField = 'normal';
       this.secondaryFontColorField = '#0f172a';
+      this.openingAnimationField = 'envelope-wax';
+      this.visualParticlesField = 'gold-dust';
     } else if (tax?.id === 'FAMILY') {
       this.decorativeFrameField = 'none';
       this.backgroundColorField = '#fff9f5';
@@ -543,6 +560,8 @@ export class AdminTemplates implements OnInit {
       this.secondaryFontWeightField = '400';
       this.secondaryLetterSpacingField = 'normal';
       this.secondaryFontColorField = '#2c1810';
+      this.openingAnimationField = 'envelope-wax';
+      this.visualParticlesField = 'rose-petals';
     } else if (tax?.id === 'CORPORATE') {
       this.decorativeFrameField = 'none';
       this.backgroundColorField = '#f8f9fa';
@@ -556,6 +575,8 @@ export class AdminTemplates implements OnInit {
       this.secondaryFontWeightField = '400';
       this.secondaryLetterSpacingField = 'normal';
       this.secondaryFontColorField = '#1e293b';
+      this.openingAnimationField = 'vip-badge';
+      this.visualParticlesField = 'tech-network';
     } else if (tax?.id === 'SEASONAL_SOCIAL') {
       this.decorativeFrameField = 'none';
       this.backgroundColorField = '#0b0b0b';
@@ -569,6 +590,8 @@ export class AdminTemplates implements OnInit {
       this.secondaryFontWeightField = '400';
       this.secondaryLetterSpacingField = '1px';
       this.secondaryFontColorField = '#f0dd9e';
+      this.openingAnimationField = 'ribbon-cut';
+      this.visualParticlesField = 'sparkles-stars';
     }
   }
 
@@ -648,7 +671,12 @@ export class AdminTemplates implements OnInit {
       secondaryFontWeight: this.secondaryFontWeightField || '400',
       secondaryLetterSpacing: this.secondaryLetterSpacingField || 'normal',
       secondaryFontColor: this.secondaryFontColorField?.trim() || '#0f172a',
-      htmlContent: this.htmlContentField?.trim() || undefined
+      htmlContent: this.htmlContentField?.trim() || undefined,
+      openingAnimation: this.openingAnimationField || 'envelope-wax',
+      visualParticles: this.visualParticlesField || 'none',
+      showCountdown: this.showCountdownField,
+      showCalendarButton: this.showCalendarButtonField,
+      showMapRoute: this.showMapRouteField
     };
 
     if (this.isEditing() && this.editingId()) {

@@ -26,6 +26,11 @@ export interface DigitalTemplate {
   secondaryFontColor?: string;
   musicUrl?: string | null;
   htmlContent?: string;
+  openingAnimation?: string | null;
+  visualParticles?: string | null;
+  showCountdown?: boolean | null;
+  showCalendarButton?: boolean | null;
+  showMapRoute?: boolean | null;
 }
 
 @Injectable({

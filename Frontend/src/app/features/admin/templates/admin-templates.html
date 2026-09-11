@@ -847,12 +847,29 @@
                   <i class="fa fa-envelope-open-text text-warning"></i>
                   <span>Animation d'Ouverture de l'Invitation</span>
                 </label>
-                <select class="form-select rounded-3 border-light bg-white shadow-none fs-sm">
-                  <option value="fade-in">✨ Apparition Royale en Douceur (Fade-in Élégant)</option>
-                  <option value="envelope-wax">💌 Ouverture de l'Enveloppe avec Sceau de Cire</option>
-                  <option value="zoom-royal">🔍 Zoom Majestueux & Déploiement</option>
-                  <option value="instant">⚡ Affichage Direct</option>
+                <select class="form-select rounded-3 border-light bg-white shadow-none fs-sm"
+                        name="openingAnimation"
+                        [(ngModel)]="openingAnimationField">
+                  <optgroup label="Célébrations & Traditionnel">
+                    <option value="envelope-wax">💌 Enveloppe Prestige avec Sceau de Cire Royal (Mariages & Fêtes)</option>
+                    <option value="fade-in">✨ Apparition Royale en Douceur (Fade-in Élégant)</option>
+                    <option value="zoom-royal">🔍 Zoom Majestueux & Déploiement Card</option>
+                  </optgroup>
+                  <optgroup label="Inaugurations & Commerces">
+                    <option value="ribbon-cut">✂️🎀 Coupure de Ruban Inaugural (Ouverture Magasin / Showroom)</option>
+                  </optgroup>
+                  <optgroup label="Entreprises, Conférences & Tech">
+                    <option value="vip-badge">🏷️💳 Pass VIP 3D & Badge Corporate (Conférence / B2B)</option>
+                    <option value="curtain-unveil">🎭 Lever de Rideau Prestigieux (Gala / Lancement de Produit)</option>
+                    <option value="sliding-doors">🏢 Portes Coulissantes Modernes (Tech & Architecture)</option>
+                  </optgroup>
+                  <optgroup label="Standard / Minimaliste">
+                    <option value="instant">⚡ Affichage Direct (Sans animation)</option>
+                  </optgroup>
                 </select>
+                <div class="form-text fs-xxs text-muted mt-1">
+                  Définit la cinématique d'introduction vue par l'invité à l'ouverture de son lien.
+                </div>
               </div>
 
               <!-- Effets Visuels Spéciaux (Particules) -->
@@ -861,12 +878,25 @@
                   <i class="fa fa-star text-warning"></i>
                   <span>Particules Décoratives & Effets Visuels</span>
                 </label>
-                <select class="form-select rounded-3 border-light bg-white shadow-none fs-sm">
-                  <option value="none">Aucun effet particulier</option>
-                  <option value="gold-dust">✨ Poussière Dorée Scintillante (Gold Dust)</option>
-                  <option value="rose-petals">🌹 Chute Délicate de Pétales de Roses</option>
-                  <option value="confetti">🎉 Confettis Festifs de Célébration</option>
+                <select class="form-select rounded-3 border-light bg-white shadow-none fs-sm"
+                        name="visualParticles"
+                        [(ngModel)]="visualParticlesField">
+                  <option value="none">Aucun effet de particules</option>
+                  <optgroup label="Élégance & Célébrations">
+                    <option value="gold-dust">✨ Poussière Dorée Scintillante (Gold Dust)</option>
+                    <option value="rose-petals">🌹 Chute Délicate de Pétales de Roses</option>
+                    <option value="confetti">🎉 Confettis Festifs de Célébration</option>
+                    <option value="sparkles-stars">🌟 Étoiles Scintillantes & Éclats de Lumière</option>
+                  </optgroup>
+                  <optgroup label="Tech, Business & Événements Modernes">
+                    <option value="tech-network">🌐 Constellation Tech & Réseau Lumineux (IT & Business)</option>
+                    <option value="spotlight-glow">💡 Faisceau / Balayage Lumineux (Lancement & Gala)</option>
+                    <option value="ambient-bokeh">🔮 Bokeh Lumineux Minimaliste & Moderne</option>
+                  </optgroup>
                 </select>
+                <div class="form-text fs-xxs text-muted mt-1">
+                  Ambiance animée flottant subtilement en arrière-plan pendant la consultation de l'invitation.
+                </div>
               </div>
 
               <!-- Widgets Intégrés -->
@@ -876,19 +906,31 @@
                 </label>
                 <div class="d-flex flex-column gap-2">
                   <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="widgetCountdown" checked>
+                    <input class="form-check-input"
+                           type="checkbox"
+                           id="widgetCountdown"
+                           name="showCountdown"
+                           [(ngModel)]="showCountdownField">
                     <label class="form-check-label fs-xs fw-medium text-dark" for="widgetCountdown">
                       Compte à Rebours en Direct (Jours, Heures, Min)
                     </label>
                   </div>
                   <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="widgetCalendar" checked>
+                    <input class="form-check-input"
+                           type="checkbox"
+                           id="widgetCalendar"
+                           name="showCalendarButton"
+                           [(ngModel)]="showCalendarButtonField">
                     <label class="form-check-label fs-xs fw-medium text-dark" for="widgetCalendar">
                       Bouton « Ajouter à Google Calendar »
                     </label>
                   </div>
                   <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="widgetMap" checked>
+                    <input class="form-check-input"
+                           type="checkbox"
+                           id="widgetMap"
+                           name="showMapRoute"
+                           [(ngModel)]="showMapRouteField">
                     <label class="form-check-label fs-xs fw-medium text-dark" for="widgetMap">
                       Itinéraire Waze & Google Maps
                     </label>

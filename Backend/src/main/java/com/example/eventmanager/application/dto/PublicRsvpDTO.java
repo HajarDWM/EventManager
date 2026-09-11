@@ -51,6 +51,11 @@ public class PublicRsvpDTO {
     private String secondaryLetterSpacing;
     private String secondaryFontColor;
     private String templateMusicUrl;
+    private String openingAnimation;
+    private String visualParticles;
+    private Boolean showCountdown;
+    private Boolean showCalendarButton;
+    private Boolean showMapRoute;
     private java.util.List<MenuItemDTO> menuItems;
 
     private Boolean isPaidEvent;
