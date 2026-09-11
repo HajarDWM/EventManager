@@ -496,15 +496,13 @@
                   </span>
                 </div>
 
-                <!-- Actions Buffet : Retour vers l'invitation + Suivant vers Régimes -->
-                <div class="step-bottom-actions-wrapper d-flex align-items-center justify-content-center flex-nowrap gap-2 mt-3 pt-1" *ngIf="!isDiscoveryMode()">
+                <!-- Actions Buffet : Retour vers l'invitation + Passer (sans couleur or) -->
+                <div class="step-bottom-actions-wrapper step-optout-wrapper d-flex align-items-center justify-content-center flex-nowrap gap-2 mt-3 pt-1" *ngIf="!isDiscoveryMode()">
                   <button type="button" class="btn btn-sm btn-step-back rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
-                    (click)="handleTopNavPrev()">
-                    <i class="fa fa-arrow-left me-1"></i> Invitation
+                    (click)="closeMenuAndRsvp()">
+                    <i class="fa fa-arrow-left me-1"></i> Retour
                   </button>
-                  <button type="button" class="btn btn-sm btn-action-next rounded-pill px-3.5 py-1.5 fs-xs fw-bold shadow-2xs"
-                    [style.background]="getPrimaryColor()"
-                    [style.color]="isDarkBg(getPrimaryColor()) ? '#ffffff' : '#0c0c0c'"
+                  <button type="button" class="btn btn-sm btn-opt-out rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
                     (click)="goToNextStep()">
                     Passer <i class="fa fa-arrow-right ms-1"></i>
                   </button>
@@ -565,16 +563,15 @@
                   </span>
                 </div>
 
-                <div class="step-bottom-actions-wrapper d-flex align-items-center justify-content-center flex-nowrap gap-2 mt-3 pt-1" *ngIf="!isDiscoveryMode()">
+                <!-- Actions MIX Étape 0 : Retour vers l'invitation + Passer (Image 1) -->
+                <div class="step-bottom-actions-wrapper step-optout-wrapper d-flex align-items-center justify-content-center flex-nowrap gap-2 mt-3 pt-1" *ngIf="!isDiscoveryMode()">
                   <button type="button" class="btn btn-sm btn-step-back rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
-                    (click)="handleTopNavPrev()">
-                    <i class="fa fa-arrow-left me-1"></i> Invitation
+                    (click)="closeMenuAndRsvp()">
+                    <i class="fa fa-arrow-left me-1"></i> Retour
                   </button>
-                  <button type="button" class="btn btn-sm btn-action-next rounded-pill px-3.5 py-1.5 fs-xs fw-bold shadow-2xs"
-                    [style.background]="getPrimaryColor()"
-                    [style.color]="isDarkBg(getPrimaryColor()) ? '#ffffff' : '#0c0c0c'"
+                  <button type="button" class="btn btn-sm btn-opt-out rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
                     (click)="goToNextStep()">
-                    Choisir mon Plat Chaud <i class="fa fa-arrow-right ms-1"></i>
+                    Passer <i class="fa fa-arrow-right ms-1"></i>
                   </button>
                 </div>
               </ng-container>
@@ -654,10 +651,10 @@
                   </span>
                 </div>
 
-                <!-- Actions de Navigation en Bas : Retour + Passer (Sur la même ligne) -->
-                <div class="step-bottom-actions-wrapper d-flex align-items-center justify-content-center flex-nowrap gap-2 mt-3 pt-1" *ngIf="!isDiscoveryMode()">
+                <!-- Actions de Navigation en Bas : Retour (page invitation 1) + Passer -->
+                <div class="step-bottom-actions-wrapper step-optout-wrapper d-flex align-items-center justify-content-center flex-nowrap gap-2 mt-3 pt-1" *ngIf="!isDiscoveryMode()">
                   <button type="button" class="btn btn-sm btn-step-back rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
-                    (click)="handleTopNavPrev()">
+                    (click)="closeMenuAndRsvp()">
                     <i class="fa fa-arrow-left me-1"></i> Retour
                   </button>
                   <button type="button" class="btn btn-sm btn-opt-out rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
@@ -747,11 +744,11 @@
                 </span>
               </div>
 
-              <!-- Actions de Navigation en Bas : Retour + Passer (Sur la même ligne) -->
-              <div class="step-bottom-actions-wrapper d-flex align-items-center justify-content-center flex-nowrap gap-2 mt-3 pt-1" *ngIf="!isDiscoveryMode()">
+              <!-- Actions de Navigation en Bas : Retour (page invitation 1) + Passer -->
+              <div class="step-bottom-actions-wrapper step-optout-wrapper d-flex align-items-center justify-content-center flex-nowrap gap-2 mt-3 pt-1" *ngIf="!isDiscoveryMode()">
                 <button type="button" class="btn btn-sm btn-step-back rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
-                  (click)="handleTopNavPrev()">
-                  <i class="fa fa-arrow-left me-1"></i> {{ isMixMode() ? 'Buffet d\'Accueil' : 'Retour' }}
+                  (click)="closeMenuAndRsvp()">
+                  <i class="fa fa-arrow-left me-1"></i> Retour
                 </button>
                 <button type="button" class="btn btn-sm btn-opt-out rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
                   (click)="skipCurrentCourse()">
@@ -852,15 +849,13 @@
                   </span>
                 </div>
 
-                <!-- Actions de navigation MIX : Retour (Plat Chaud) + Suivant (Mes Préférences) -->
-                <div class="step-bottom-actions-wrapper d-flex align-items-center justify-content-center flex-nowrap gap-2 mt-3 pt-1" *ngIf="!isDiscoveryMode()">
+                <!-- Actions de navigation MIX : Retour (page invitation 1) + Passer (sans couleur or) -->
+                <div class="step-bottom-actions-wrapper step-optout-wrapper d-flex align-items-center justify-content-center flex-nowrap gap-2 mt-3 pt-1" *ngIf="!isDiscoveryMode()">
                   <button type="button" class="btn btn-sm btn-step-back rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
-                    (click)="handleTopNavPrev()">
-                    <i class="fa fa-arrow-left me-1"></i> Plat Chaud
+                    (click)="closeMenuAndRsvp()">
+                    <i class="fa fa-arrow-left me-1"></i> Retour
                   </button>
-                  <button type="button" class="btn btn-sm btn-action-next rounded-pill px-3.5 py-1.5 fs-xs fw-bold shadow-2xs"
-                    [style.background]="getPrimaryColor()"
-                    [style.color]="isDarkBg(getPrimaryColor()) ? '#ffffff' : '#0c0c0c'"
+                  <button type="button" class="btn btn-sm btn-opt-out rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
                     (click)="goToNextStep()">
                     Passer <i class="fa fa-arrow-right ms-1"></i>
                   </button>
@@ -942,10 +937,10 @@
                   </span>
                 </div>
 
-                <!-- Actions de Navigation en Bas : Retour + Passer (Sur la même ligne) -->
-                <div class="step-bottom-actions-wrapper d-flex align-items-center justify-content-center flex-nowrap gap-2 mt-3 pt-1" *ngIf="!isDiscoveryMode()">
+                <!-- Actions de Navigation en Bas : Retour (page invitation 1) + Passer -->
+                <div class="step-bottom-actions-wrapper step-optout-wrapper d-flex align-items-center justify-content-center flex-nowrap gap-2 mt-3 pt-1" *ngIf="!isDiscoveryMode()">
                   <button type="button" class="btn btn-sm btn-step-back rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
-                    (click)="handleTopNavPrev()">
+                    (click)="closeMenuAndRsvp()">
                     <i class="fa fa-arrow-left me-1"></i> Retour
                   </button>
                   <button type="button" class="btn btn-sm btn-opt-out rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
@@ -1032,10 +1027,10 @@
                 </span>
               </div>
 
-              <!-- Actions de Navigation en Bas : Retour + Passer (Sur la même ligne) -->
-              <div class="step-bottom-actions-wrapper d-flex align-items-center justify-content-center flex-nowrap gap-2 mt-3 pt-1" *ngIf="!isDiscoveryMode()">
+              <!-- Actions de Navigation en Bas : Retour (page invitation 1) + Passer -->
+              <div class="step-bottom-actions-wrapper step-optout-wrapper d-flex align-items-center justify-content-center flex-nowrap gap-2 mt-3 pt-1" *ngIf="!isDiscoveryMode()">
                 <button type="button" class="btn btn-sm btn-step-back rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
-                  (click)="handleTopNavPrev()">
+                  (click)="closeMenuAndRsvp()">
                   <i class="fa fa-arrow-left me-1"></i> Retour
                 </button>
                 <button type="button" class="btn btn-sm btn-opt-out rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
