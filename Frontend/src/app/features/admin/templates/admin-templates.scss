@@ -1,7 +1,7 @@
 // Admin Templates Luxury Styles
 .block {
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  
+
   &:hover {
     transform: translateY(-3px);
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08) !important;
@@ -220,6 +220,7 @@
 
   // Colonne Gauche : Formulaire & Cartes de réglages
   .editor-controls-column {
+
     // Studio Tabs Navigation Bar
     .studio-tab-bar {
       display: grid;
@@ -304,6 +305,7 @@
       }
 
       .typography-group {
+
         .form-control-sm,
         .form-select-sm {
           font-size: 0.74rem;
@@ -350,6 +352,7 @@
         img {
           transform: scale(1.04);
         }
+
         .media-preview-overlay {
           opacity: 1;
         }
@@ -405,6 +408,7 @@
 
       .sound-wave-bars {
         height: 14px;
+
         span {
           display: inline-block;
           width: 3px;
@@ -412,17 +416,37 @@
           border-radius: 3px;
           animation: sound-bounce 1s ease-in-out infinite alternate;
 
-          &:nth-child(1) { height: 6px; animation-delay: 0.1s; }
-          &:nth-child(2) { height: 14px; animation-delay: 0.3s; }
-          &:nth-child(3) { height: 10px; animation-delay: 0.2s; }
-          &:nth-child(4) { height: 8px; animation-delay: 0.4s; }
+          &:nth-child(1) {
+            height: 6px;
+            animation-delay: 0.1s;
+          }
+
+          &:nth-child(2) {
+            height: 14px;
+            animation-delay: 0.3s;
+          }
+
+          &:nth-child(3) {
+            height: 10px;
+            animation-delay: 0.2s;
+          }
+
+          &:nth-child(4) {
+            height: 8px;
+            animation-delay: 0.4s;
+          }
         }
       }
     }
 
     @keyframes sound-bounce {
-      0% { height: 4px; }
-      100% { height: 14px; }
+      0% {
+        height: 4px;
+      }
+
+      100% {
+        height: 14px;
+      }
     }
 
     // Music Preset Pills
@@ -525,9 +549,9 @@
       background-position: center;
       background-repeat: no-repeat;
       transition: max-width 0.35s cubic-bezier(0.16, 1, 0.3, 1),
-                  background-color 0.25s ease,
-                  border-color 0.25s ease,
-                  box-shadow 0.25s ease;
+        background-color 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
       box-shadow: 0 20px 45px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06);
 
       .luxury-inner-border {
@@ -593,6 +617,7 @@
 
         .btn-discover-first {
           transition: all 0.2s ease;
+
           &:hover {
             opacity: 1 !important;
           }
@@ -621,10 +646,25 @@
         width: 68px;
         height: 68px;
 
-        &.top-left { top: 8px; left: 8px; }
-        &.top-right { top: 8px; right: 8px; }
-        &.bottom-left { bottom: 8px; left: 8px; }
-        &.bottom-right { bottom: 8px; right: 8px; }
+        &.top-left {
+          top: 8px;
+          left: 8px;
+        }
+
+        &.top-right {
+          top: 8px;
+          right: 8px;
+        }
+
+        &.bottom-left {
+          bottom: 8px;
+          left: 8px;
+        }
+
+        &.bottom-right {
+          bottom: 8px;
+          right: 8px;
+        }
 
         .frame-svg {
           width: 100%;
@@ -686,13 +726,1193 @@
     transform: scale(0.95);
     box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
   }
+
   70% {
     transform: scale(1);
     box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
   }
+
   100% {
     transform: scale(0.95);
     box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
   }
 }
 
+// ============================================================================
+// LIVE ANIMATION PREVIEW OVERLAYS & PARTICLES SYSTEM
+// ============================================================================
+
+.preview-stage-container {
+  overflow: hidden;
+  position: relative;
+}
+
+// ----------------------------------------------------------------------------
+// 1. Interactive Opening Overlays
+// ----------------------------------------------------------------------------
+.opening-experience-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 25;
+  background: transparent;
+  pointer-events: auto;
+
+  &.opening-in-progress {
+    pointer-events: none;
+  }
+}
+
+// ============================================================================
+// A. ENVELOPPE PRESTIGE (الظرف الملكي الناعم)
+// ============================================================================
+
+.prestige-envelope-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 25;
+  background: transparent;
+  padding: 1rem;
+
+  @media (min-width: 768px) {
+    padding: 1.5rem;
+  }
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 1;
+  pointer-events: auto;
+  transition: background 1.4s cubic-bezier(0.22, 1, 0.36, 1),
+  backdrop-filter 1.4s cubic-bezier(0.22, 1, 0.36, 1),
+  -webkit-backdrop-filter 1.4s cubic-bezier(0.22, 1, 0.36, 1);
+
+  .prestige-envelope-box {
+    width: 100%;
+    min-height: 520px;
+    border-width: 2px;
+    border-style: solid;
+    border-color: #d4af37;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.45), 0 0 30px rgba(212, 175, 55, 0.15);
+    position: relative;
+    user-select: none;
+    transform: translateY(0);
+    opacity: 1;
+    will-change: transform, opacity;
+    transition: transform 1.4s cubic-bezier(0.22, 1, 0.36, 1), opacity 1.4s cubic-bezier(0.22, 1, 0.36, 1);
+
+    &:hover .prestige-wax-seal-medallion {
+      transform: scale(1.08);
+      box-shadow: 0 14px 38px rgba(0, 0, 0, 0.6), 0 0 35px rgba(255, 215, 0, 0.95);
+    }
+  }
+
+  .prestige-paper-texture {
+    background-image: repeating-linear-gradient(45deg, rgba(212, 175, 55, 0.05), rgba(212, 175, 55, 0.05) 8px, transparent 8px, transparent 16px);
+    pointer-events: none;
+  }
+
+  .prestige-gold-inner-frame {
+    border: 1px solid rgba(212, 175, 55, 0.35);
+    pointer-events: none;
+  }
+
+  // Lignes de pliage classiques d'un vrai pli d'enveloppe
+  .envelope-fold-seam {
+    position: absolute;
+    pointer-events: none;
+
+    &.seam-top {
+      height: 50%;
+      top: 0;
+      left: 0;
+      right: 0;
+      clip-path: polygon(0 0, 100% 0, 50% 100%);
+      background: linear-gradient(180deg, rgba(237, 228, 211, 0.7) 0%, rgba(253, 251, 247, 0.3) 100%);
+      border-bottom: 1.5px solid rgba(212, 175, 55, 0.4);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+    }
+
+    &.seam-bottom {
+      height: 50%;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      clip-path: polygon(0 100%, 50% 0, 100% 100%);
+      background: linear-gradient(0deg, rgba(237, 228, 211, 0.6) 0%, rgba(253, 251, 247, 0.2) 100%);
+      border-top: 1.5px solid rgba(212, 175, 55, 0.3);
+    }
+
+    &.seam-left {
+      width: 50%;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      clip-path: polygon(0 0, 100% 50%, 0 100%);
+      background: linear-gradient(90deg, rgba(237, 228, 211, 0.5) 0%, transparent 100%);
+      border-right: 1.5px solid rgba(212, 175, 55, 0.25);
+    }
+
+    &.seam-right {
+      width: 50%;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      clip-path: polygon(100% 0, 0 50%, 100% 100%);
+      background: linear-gradient(-90deg, rgba(237, 228, 211, 0.5) 0%, transparent 100%);
+      border-left: 1.5px solid rgba(212, 175, 55, 0.25);
+    }
+  }
+
+  .prestige-wax-seal-center {
+    width: 80px;
+    height: 80px;
+    cursor: pointer;
+  }
+
+  .prestige-wax-seal-medallion {
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #fffbe8 0%, #ffd700 28%, #d4af37 60%, #926010 100%);
+    border: 3px solid #fef08a;
+    box-shadow: 0 8px 25px rgba(212, 175, 55, 0.65), inset 0 2px 5px rgba(255, 255, 255, 0.8), inset 0 -2px 5px rgba(0, 0, 0, 0.35);
+    cursor: pointer;
+    animation: prestige-seal-pulse 2.2s infinite ease-in-out;
+    transform-origin: center center;
+    transition: transform 0.35s ease, box-shadow 0.35s ease;
+
+    .fa-crown {
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+    }
+  }
+
+  // Phase d'ouverture au clic : Évanouissement doux du sceau et envol de l'enveloppe translateY(-40px) en 1.4s
+  &.envelope-opening-phase {
+    pointer-events: none;
+    background: rgba(15, 23, 42, 0);
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+
+    .prestige-envelope-box {
+      transform: translateY(-40px);
+      opacity: 0;
+      transition: transform 1.4s cubic-bezier(0.22, 1, 0.36, 1), opacity 1.4s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .prestige-wax-seal-medallion {
+      animation: seal-fadeout-soft 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    .gold-dust-burst {
+      .sparkle-grain {
+        animation: gold-dust-expand 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      }
+    }
+  }
+}
+
+.gold-dust-burst {
+  width: 100px;
+  height: 100px;
+
+  .sparkle-grain {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #fff 10%, #ffd700 70%, #d4af37 100%);
+    box-shadow: 0 0 10px #ffd700;
+    opacity: 0;
+  }
+
+  @for $i from 1 through 12 {
+    .sparkle-grain:nth-child(#{$i}) {
+      --angle: #{$i * 30}deg;
+      --dist: #{35 + ($i % 4) * 20}px;
+    }
+  }
+}
+
+@keyframes prestige-seal-pulse {
+
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(212, 175, 55, 0.5);
+  }
+
+  50% {
+    transform: scale(1.08);
+    box-shadow: 0 14px 38px rgba(0, 0, 0, 0.6), 0 0 35px rgba(255, 215, 0, 0.9), 0 0 50px rgba(212, 175, 55, 0.6);
+  }
+}
+
+// Évanouissement doux et royal du sceau de cire (le sceau s'estompe délicatement)
+@keyframes seal-fadeout-soft {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+    filter: drop-shadow(0 8px 25px rgba(212, 175, 55, 0.65));
+  }
+
+  40% {
+    transform: scale(1.04);
+    opacity: 0.65;
+    filter: drop-shadow(0 4px 15px rgba(212, 175, 55, 0.35));
+  }
+
+  100% {
+    transform: scale(1.08);
+    opacity: 0;
+    filter: drop-shadow(0 0 0 rgba(212, 175, 55, 0));
+  }
+}
+
+@keyframes gold-dust-expand {
+  0% {
+    transform: translate(-50%, -50%) rotate(var(--angle)) translateY(0) scale(0.6);
+    opacity: 0.7;
+  }
+
+  100% {
+    transform: translate(-50%, -50%) rotate(var(--angle)) translateY(var(--dist)) scale(0);
+    opacity: 0;
+  }
+}
+
+// ============================================================================
+// B. COUPURE DE RUBAN (القطع السحري المضيء - بدون مقص)
+// ============================================================================
+
+.interactive-ribbon-cinematic {
+  width: 100%;
+  height: 100%;
+  perspective: 1000px;
+  background: rgba(15, 23, 42, 0.15);
+  transition: background 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+
+  // Track diagonal élégant traversant l'écran
+  .ribbon-diagonal-track {
+    transform: rotate(-13deg) scale(1.22);
+    height: 64px;
+    transition: transform 0.6s ease;
+  }
+
+  // Moitiés du ruban en satin rouge profond avec bordures dorées fines
+  .ribbon-cut-half {
+    flex: 1;
+    height: 56px;
+    background: linear-gradient(180deg, #620a13 0%, #991b1b 22%, #dc2626 50%, #991b1b 78%, #4a060d 100%);
+    border-top: 2px solid #ffd700;
+    border-bottom: 2px solid #ffd700;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.35), inset 0 -1px 2px rgba(0, 0, 0, 0.4);
+    position: relative;
+    overflow: hidden;
+    will-change: transform, opacity;
+    transition: transform 1.2s cubic-bezier(0.22, 1, 0.36, 1), opacity 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .ribbon-cut-left {
+    transform-origin: left center;
+  }
+
+  .ribbon-cut-right {
+    transform-origin: right center;
+  }
+
+  .ribbon-satin-sheen {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.38) 50%, transparent 100%);
+    animation: ribbon-sheen-sweep 3s infinite ease-in-out;
+  }
+
+  .ribbon-cut-center {
+    width: 70px;
+    height: 70px;
+    z-index: 10;
+    margin: 0 -2px;
+  }
+
+  // Faisceau / Rayon Lumineux Doré lors de la coupe
+  .ribbon-laser-beam {
+    width: 2.5px;
+    height: 0;
+    opacity: 0;
+    background: linear-gradient(180deg, transparent 0%, #ffffff 20%, #ffd700 50%, #ffffff 80%, transparent 100%);
+    box-shadow: 0 0 15px 5px rgba(255, 215, 0, 0.95), 0 0 30px 10px rgba(255, 255, 255, 0.85);
+    border-radius: 2px;
+    pointer-events: none;
+    z-index: 20;
+  }
+
+  // Point Lumineux Central d'Appel au Clic (Magique, Sans Aucun Ciseau)
+  .ribbon-glowing-core {
+    width: 60px;
+    height: 60px;
+    cursor: pointer;
+    z-index: 15;
+
+    .core-diamond-sparkle {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #ffffff 0%, #fef08a 35%, #eab308 70%, #ca8a04 100%);
+      box-shadow: 0 0 20px 8px rgba(250, 204, 21, 0.95), 0 0 40px 16px rgba(234, 179, 8, 0.6);
+      animation: core-sparkle-breathing 1.8s infinite ease-in-out;
+      position: relative;
+
+      &::after {
+        content: '';
+        position: absolute;
+        inset: -6px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, transparent 70%);
+      }
+    }
+
+    .core-ping-ring {
+      position: absolute;
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 225, 120, 0.9);
+      background: radial-gradient(circle, rgba(255, 215, 0, 0.35) 0%, transparent 70%);
+      animation: core-ping-expand 2s infinite cubic-bezier(0, 0.2, 0.8, 1);
+      pointer-events: none;
+
+      &.delayed {
+        animation-delay: 1s;
+      }
+    }
+  }
+
+  .ribbon-spark-burst {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 18;
+  }
+}
+
+@keyframes ribbon-sheen-sweep {
+  0% {
+    left: -100%;
+  }
+
+  50%,
+  100% {
+    left: 160%;
+  }
+}
+
+@keyframes core-sparkle-breathing {
+
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 20px 8px rgba(250, 204, 21, 0.95), 0 0 35px 14px rgba(234, 179, 8, 0.5);
+  }
+
+  50% {
+    transform: scale(1.18);
+    box-shadow: 0 0 28px 12px rgba(255, 255, 255, 1), 0 0 50px 22px rgba(250, 204, 21, 0.9);
+  }
+}
+
+@keyframes core-ping-expand {
+  0% {
+    transform: scale(0.3);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+
+// CINÉMATIQUE AU CLIC : Séparation Propre du Ruban + Glissement & Enroulement des 2 Moitiés en 1.2s
+.opening-in-progress .interactive-ribbon-cinematic {
+  background: rgba(15, 23, 42, 0);
+  pointer-events: none;
+
+  // Léger éclat lumineux instantané lors de la séparation
+  .ribbon-laser-beam {
+    animation: ribbon-clean-slice 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  // Le point lumineux se dissout en douceur
+  .ribbon-glowing-core {
+    transform: scale(1.25);
+    opacity: 0;
+    transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  // Étincelles douces au centre
+  .ribbon-spark-burst {
+    animation: gold-spark-burst 0.4s forwards ease-out;
+  }
+
+  // Moitié Gauche : Glisse, s'enroule et s'écarte vers l'extrême gauche avec fluidité sur 1.2s
+  .ribbon-cut-left {
+    transform: translateX(-140%) rotate(-16deg) rotateY(-36deg) scaleX(0.65);
+    opacity: 0;
+    transition: transform 1.2s cubic-bezier(0.22, 1, 0.36, 1), opacity 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  // Moitié Droite : Glisse, s'enroule et s'écarte vers l'extrême droite avec fluidité sur 1.2s
+  .ribbon-cut-right {
+    transform: translateX(140%) rotate(16deg) rotateY(36deg) scaleX(0.65);
+    opacity: 0;
+    transition: transform 1.2s cubic-bezier(0.22, 1, 0.36, 1), opacity 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+}
+
+@keyframes ribbon-clean-slice {
+  0% {
+    height: 0;
+    opacity: 0;
+    transform: translate(-50%, -50%) scaleY(0);
+    box-shadow: 0 0 8px 2px rgba(255, 255, 255, 0.9);
+  }
+
+  30% {
+    height: 65px;
+    opacity: 1;
+    transform: translate(-50%, -50%) scaleY(1);
+    box-shadow: 0 0 16px 5px rgba(255, 255, 255, 1), 0 0 28px 10px rgba(255, 215, 0, 0.9);
+  }
+
+  100% {
+    height: 80px;
+    opacity: 0;
+    transform: translate(-50%, -50%) scaleY(1.2);
+  }
+}
+
+@keyframes gold-spark-burst {
+  0% {
+    transform: scale(0);
+    box-shadow: 0 0 0 rgba(255, 215, 0, 1);
+    opacity: 1;
+  }
+
+  40% {
+    box-shadow: 0 0 30px 15px rgba(255, 215, 0, 0.8), 0 0 50px 25px rgba(255, 255, 255, 0.6);
+    opacity: 0.9;
+  }
+
+  100% {
+    transform: scale(2);
+    box-shadow: 0 0 60px 30px rgba(255, 215, 0, 0);
+    opacity: 0;
+  }
+}
+
+// ============================================================================
+// CARTE RÉELLE SOUS L'ANIMATION CINÉMATIQUE (Révélation Synchronisée)
+// ============================================================================
+
+.live-invitation-card.cinematic-under-card {
+  will-change: transform, filter, opacity;
+
+  // Mode Enveloppe Prestige : zoom-in doux de scale(0.95) -> scale(1) et blur(6px) -> blur(0px) en 1.4s synchronisé
+  // L'enveloppe recouvre entièrement la carte sur PC et Mobile, puis la carte émerge en s'agrandissant avec netteté
+  &.envelope-style {
+    transform: scale(0.95);
+    filter: blur(6px);
+    opacity: 0.8;
+    transition: transform 1.4s cubic-bezier(0.22, 1, 0.36, 1),
+      filter 1.4s cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 1.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  // Mode Coupure de Ruban : Révélation progressive parfaitement synchronisée sur 1.2s sans coupure brusque
+  &.ribbon-style {
+    transform: scale(0.92);
+    filter: blur(6px);
+    opacity: 0.65;
+    transition: transform 1.2s cubic-bezier(0.22, 1, 0.36, 1),
+      filter 1.2s cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  // Mode Lever de Rideau : Zoom-in doux de scale(0.92) -> scale(1) et netteté blur(6px) -> blur(0px) en 1.6s synchronisé
+  &.curtain-style {
+    transform: scale(0.92);
+    filter: blur(6px);
+    opacity: 0.35;
+    transition: transform 1.6s cubic-bezier(0.22, 1, 0.36, 1),
+      filter 1.6s cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 1.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  // Mode Portes Coulissantes : Zoom-in depuis la profondeur scale(0.92) -> scale(1) et disparition du flou blur(6px) -> blur(0px) en 1.5s synchronisé
+  &.doors-style {
+    transform: scale(0.92);
+    filter: blur(6px);
+    opacity: 0.35;
+    transition: transform 1.5s cubic-bezier(0.22, 1, 0.36, 1),
+      filter 1.5s cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 1.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  // Déclenchement synchronisé au clic
+  &.cinematic-card-revealing {
+    transform: scale(1) !important;
+    filter: blur(0px) !important;
+    opacity: 1 !important;
+  }
+}
+
+// ============================================================================
+// D. CINEMATIC THEATRE VELVET CURTAINS (الستار المخملي السينمائي الراقي)
+// ============================================================================
+
+.interactive-theatre-box {
+  width: 100%;
+  height: 100%;
+  background: rgba(15, 23, 42, 0.5);
+  perspective: 1000px;
+  transition: background 1.6s cubic-bezier(0.22, 1, 0.36, 1),
+    backdrop-filter 1.6s cubic-bezier(0.22, 1, 0.36, 1),
+    -webkit-backdrop-filter 1.6s cubic-bezier(0.22, 1, 0.36, 1);
+
+  // Cantonnière supérieure du théâtre avec draperie dorée
+  .theatre-valance-top {
+    height: 52px;
+    background: linear-gradient(180deg, #1f0305 0%, #4a080d 50%, #700c14 100%);
+    border-bottom: 3.5px solid #ffd700;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.75), 0 2px 6px rgba(255, 215, 0, 0.5);
+    transition: transform 1.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .valance-swag {
+    flex: 1;
+    height: 100%;
+    border-radius: 0 0 50% 50%;
+    border-bottom: 2.5px solid rgba(255, 215, 0, 0.85);
+    background: radial-gradient(ellipse at center bottom, rgba(255, 215, 0, 0.25) 0%, rgba(120, 15, 22, 0.4) 60%, transparent 80%);
+    box-shadow: inset 0 -4px 10px rgba(0, 0, 0, 0.5);
+  }
+
+  // Rideau en velours avec plis 3D réalistes & ombres profondes
+  .theatre-curtain-panel {
+    width: 50.5%;
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+    box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.85);
+    will-change: transform, opacity;
+    // 1.6s d'ouverture fluide en accordéon
+    transition: transform 1.6s cubic-bezier(0.22, 1, 0.36, 1), opacity 1.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .curtain-theatre-left {
+    transform-origin: top left;
+
+    .curtain-velvet-folds {
+      width: 100%;
+      height: 100%;
+      background: repeating-linear-gradient(90deg,
+          #1c0204 0px,
+          #3b060a 12px,
+          #630a12 24px,
+          #820d18 36px,
+          #630a12 48px,
+          #3b060a 60px,
+          #150103 72px);
+      box-shadow: inset -12px 0 30px rgba(0, 0, 0, 0.75), inset 4px 0 15px rgba(255, 215, 0, 0.15);
+    }
+  }
+
+  .curtain-theatre-right {
+    transform-origin: top right;
+
+    .curtain-velvet-folds {
+      width: 100%;
+      height: 100%;
+      background: repeating-linear-gradient(-90deg,
+          #1c0204 0px,
+          #3b060a 12px,
+          #630a12 24px,
+          #820d18 36px,
+          #630a12 48px,
+          #3b060a 60px,
+          #150103 72px);
+      box-shadow: inset 12px 0 30px rgba(0, 0, 0, 0.75), inset -4px 0 15px rgba(255, 215, 0, 0.15);
+    }
+  }
+
+  // Bouton Central Théâtral Doré d'Ouverture
+  .curtain-center-action {
+    z-index: 15;
+    cursor: pointer;
+  }
+
+  .curtain-central-btn {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #fffbe8 0%, #ffd700 28%, #d4af37 60%, #926010 100%);
+    border: 3px solid #fef08a;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.65), 0 0 25px rgba(212, 175, 55, 0.7), inset 0 2px 5px rgba(255, 255, 255, 0.75);
+    cursor: pointer;
+    animation: prestige-seal-pulse 2.2s infinite ease-in-out;
+    transform-origin: center center;
+    transition: transform 0.35s ease, box-shadow 0.35s ease;
+
+    &:hover {
+      transform: scale(1.08);
+      box-shadow: 0 14px 38px rgba(0, 0, 0, 0.75), 0 0 35px rgba(255, 215, 0, 0.95);
+    }
+
+    i {
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.45));
+    }
+  }
+
+  // Embrasses dorées
+  .curtain-rope-tie {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #fff1a8 0%, #ffd700 40%, #b45309 85%, #78350f 100%);
+    border: 2px solid #ffffff;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6), 0 0 14px rgba(255, 215, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.6s ease, opacity 0.4s ease;
+  }
+
+  // Faisceau de projecteur doux (Spotlight) sur la scène
+  .theatre-spotlight-beam {
+    background: radial-gradient(ellipse at center, rgba(255, 235, 180, 0.32) 0%, rgba(255, 215, 0, 0.12) 40%, transparent 70%);
+    opacity: 0;
+    transition: opacity 1.3s ease 0.2s;
+  }
+}
+
+// CINÉMATIQUE AU CLIC : Ouverture en accordéon fluide 1.6s
+.opening-in-progress .interactive-theatre-box {
+  background: rgba(15, 23, 42, 0);
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
+  pointer-events: none;
+
+  .theatre-valance-top {
+    transform: translateY(-110%);
+    transition: transform 1.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  // Les deux pans du rideau rouge velours s'ouvrent progressivement vers les côtés en formant des plis naturels (accordéon fluide 1.6s)
+  .curtain-theatre-left {
+    transform: scaleX(0.05) translateY(-6px) translateX(-8%);
+    opacity: 0;
+    transition: transform 1.6s cubic-bezier(0.22, 1, 0.36, 1), opacity 1.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .curtain-theatre-right {
+    transform: scaleX(0.05) translateY(-6px) translateX(8%);
+    opacity: 0;
+    transition: transform 1.6s cubic-bezier(0.22, 1, 0.36, 1), opacity 1.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .curtain-rope-tie {
+    transform: scale(0);
+    opacity: 0;
+    transition: transform 0.6s ease, opacity 0.5s ease;
+  }
+
+  .curtain-center-action {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.25);
+    transition: opacity 0.35s cubic-bezier(0.22, 1, 0.36, 1), transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .theatre-spotlight-beam {
+    opacity: 1;
+    transition: opacity 1.4s ease-in-out;
+  }
+}
+
+// ============================================================================
+// E. CINEMATIC LUXURY WOODEN SLIDING DOORS (الأبواب الخشبية الملكية بـ 3D)
+// ============================================================================
+
+.interactive-wood-doors-box {
+  width: 100%;
+  height: 100%;
+  perspective: 1200px;
+  background: rgba(15, 23, 42, 0.4);
+  transition: background 1.5s cubic-bezier(0.22, 1, 0.36, 1);
+
+  .wood-door-leaf {
+    width: 50.4%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    // Teinte noyer profond et riche
+    background: linear-gradient(90deg, #180d08 0%, #29170e 25%, #3d2316 50%, #25140c 75%, #130a06 100%);
+    border: 2px solid #5a3520;
+    box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.85);
+    will-change: transform, opacity;
+    // 1.5s de glissement fluide vers les extrêmes
+    transition: transform 1.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 1.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .door-leaf-left {
+    border-right: 2px solid #7d492c;
+    box-shadow: 6px 0 20px rgba(0, 0, 0, 0.6), inset 0 0 40px rgba(0, 0, 0, 0.85);
+    transform-origin: left center;
+  }
+
+  .door-leaf-right {
+    border-left: 2px solid #7d492c;
+    box-shadow: -6px 0 20px rgba(0, 0, 0, 0.6), inset 0 0 40px rgba(0, 0, 0, 0.85);
+    transform-origin: right center;
+  }
+
+  .wood-grain-overlay {
+    position: absolute;
+    inset: 0;
+    opacity: 0.22;
+    background: repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.06) 0px, rgba(0, 0, 0, 0.15) 3px, transparent 6px, transparent 14px);
+    pointer-events: none;
+  }
+
+  .wood-door-slats {
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(90deg, transparent 0px, transparent 34px, rgba(0, 0, 0, 0.45) 35px, rgba(255, 255, 255, 0.06) 36px);
+    pointer-events: none;
+  }
+
+  // Cadres et moulures dorées luxueuses
+  .door-gold-moulding {
+    border: 1.5px solid rgba(212, 175, 55, 0.65);
+    box-shadow: inset 0 0 12px rgba(212, 175, 55, 0.2), 0 0 8px rgba(0, 0, 0, 0.4);
+    pointer-events: none;
+  }
+
+  // Poignées verticales dorées de prestige au centre
+  .wood-door-handle {
+    width: 24px;
+    height: 130px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+    cursor: pointer;
+    transition: filter 0.35s ease;
+
+    &:hover .handle-bar-gold {
+      transform: scale(1.06);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 215, 0, 0.9);
+    }
+  }
+
+  .handle-bar-gold {
+    width: 9px;
+    height: 120px;
+    border-radius: 8px;
+    background: linear-gradient(180deg, #d4af37 0%, #fffde6 35%, #ffd700 65%, #996515 100%);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.7), 0 0 12px rgba(255, 215, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+    .handle-gold-shine {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 0%, rgba(255, 255, 255, 0.8) 50%, transparent 100%);
+      opacity: 0;
+    }
+  }
+}
+
+// CINÉMATIQUE AU CLIC : Lueur dorée sur poignées puis glissement des 2 battants vers les extrêmes (1.5s)
+.opening-in-progress .interactive-wood-doors-box {
+  background: rgba(15, 23, 42, 0);
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
+  pointer-events: none;
+
+  .handle-gold-shine {
+    animation: handle-shine-flash 0.5s ease-out forwards;
+  }
+
+  .wood-door-handle {
+    filter: drop-shadow(0 0 20px rgba(255, 215, 0, 1));
+  }
+
+  // Battant Gauche glisse vers l'extrême gauche en 1.5s
+  .door-leaf-left {
+    transform: translateX(-112%) rotateY(6deg) scale(0.96);
+    opacity: 0;
+    transition: transform 1.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 1.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  // Battant Droit glisse vers l'extrême droite en 1.5s
+  .door-leaf-right {
+    transform: translateX(112%) rotateY(-6deg) scale(0.96);
+    opacity: 0;
+    transition: transform 1.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 1.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .door-center-action {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.3);
+    transition: opacity 0.25s cubic-bezier(0.22, 1, 0.36, 1), transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+}
+
+@keyframes handle-shine-flash {
+  0% {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+}
+
+// ----------------------------------------------------------------------------
+// 2. Visual Particles System
+// ----------------------------------------------------------------------------
+.preview-particles-stage {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+// Gold Dust
+.particle-gold-dust {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffd700 0%, #d4af37 60%, rgba(212, 175, 55, 0) 100%);
+  box-shadow: 0 0 6px #ffd700;
+  animation: float-dust 4s infinite ease-in-out;
+}
+
+@keyframes float-dust {
+  0% {
+    transform: translateY(0) scale(0.6);
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 0.9;
+    transform: translateY(-30px) scale(1.2);
+  }
+
+  100% {
+    transform: translateY(-70px) scale(0.4);
+    opacity: 0;
+  }
+}
+
+// Rose Petals
+.particle-rose-petal {
+  position: absolute;
+  top: -20px;
+  background: radial-gradient(circle at 30% 30%, #f43f5e, #be123c);
+  border-radius: 50% 0 50% 50%;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+  animation: fall-petals 6s infinite linear;
+}
+
+@keyframes fall-petals {
+  0% {
+    transform: translateY(-20px) rotate(0deg);
+    opacity: 0;
+  }
+
+  15% {
+    opacity: 0.85;
+  }
+
+  85% {
+    opacity: 0.85;
+  }
+
+  100% {
+    transform: translateY(620px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+// Confetti
+.particle-confetti-item {
+  position: absolute;
+  top: -20px;
+  border-radius: 2px;
+  animation: flutter-confetti 4.5s infinite linear;
+}
+
+@keyframes flutter-confetti {
+  0% {
+    transform: translateY(-20px) rotateX(0deg) rotateY(0deg);
+    opacity: 0;
+  }
+
+  15% {
+    opacity: 1;
+  }
+
+  85% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(620px) rotateX(720deg) rotateY(360deg);
+    opacity: 0;
+  }
+}
+
+// Sparkles Stars
+.particle-sparkle-star {
+  position: absolute;
+  color: #ffd700;
+  text-shadow: 0 0 8px #ffd700;
+  animation: pulse-sparkle 2.5s infinite ease-in-out;
+}
+
+@keyframes pulse-sparkle {
+  0% {
+    transform: scale(0.4) rotate(0deg);
+    opacity: 0;
+  }
+
+  50% {
+    transform: scale(1.2) rotate(45deg);
+    opacity: 0.95;
+  }
+
+  100% {
+    transform: scale(0.4) rotate(90deg);
+    opacity: 0;
+  }
+}
+
+// Tech Network
+.particle-tech-network {
+  position: absolute;
+  inset: 0;
+
+  .tech-network-svg {
+    position: absolute;
+    inset: 0;
+  }
+
+  .tech-line {
+    animation: pulse-tech-line 3s infinite ease-in-out;
+  }
+
+  .tech-node {
+    animation: pulse-tech-node 2s infinite ease-in-out;
+  }
+}
+
+@keyframes pulse-tech-line {
+
+  0%,
+  100% {
+    stroke-opacity: 0.2;
+  }
+
+  50% {
+    stroke-opacity: 0.6;
+  }
+}
+
+@keyframes pulse-tech-node {
+
+  0%,
+  100% {
+    transform: scale(0.9);
+    opacity: 0.6;
+  }
+
+  50% {
+    transform: scale(1.3);
+    opacity: 1;
+    filter: drop-shadow(0 0 6px #38bdf8);
+  }
+}
+
+// Spotlight Glow
+.particle-spotlight-beam {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 140px;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.22) 50%, transparent 100%);
+  transform: skewX(-20deg);
+  animation: sweep-spotlight 5s infinite ease-in-out;
+}
+
+@keyframes sweep-spotlight {
+  0% {
+    left: -180px;
+  }
+
+  50% {
+    left: calc(100% + 80px);
+  }
+
+  100% {
+    left: -180px;
+  }
+}
+
+// Ambient Bokeh
+.particle-bokeh-orb {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(212, 175, 55, 0.25) 0%, rgba(212, 175, 55, 0) 70%);
+  filter: blur(8px);
+  animation: float-bokeh 8s infinite ease-in-out;
+}
+
+@keyframes float-bokeh {
+
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.4;
+  }
+
+  50% {
+    transform: translate(25px, -35px) scale(1.25);
+    opacity: 0.8;
+  }
+}
+
+@keyframes bounce-subtle {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes pulse-badge {
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.04);
+  }
+}
+
+@keyframes rainbow-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+// ============================================================================
+
+// ============================================================================
+// UNIVERSAL INTERACTIVE TAP INDICATOR (Animated Hand / Ripple - No Text)
+// ============================================================================
+
+.interactive-tap-indicator {
+  position: relative;
+  pointer-events: none;
+  z-index: 25;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  transition: opacity 0.3s ease;
+
+  .tap-ripple-effect {
+    position: absolute;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 2.5px solid rgba(255, 215, 0, 0.95);
+    background: radial-gradient(circle, rgba(255, 215, 0, 0.4) 0%, rgba(255, 215, 0, 0) 72%);
+    animation: tap-ripple-ping 1.6s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+  }
+
+  .tap-ripple-effect.delayed {
+    animation-delay: 0.8s;
+  }
+
+  .tap-hand {
+    position: relative;
+    font-size: 2.1rem;
+    color: #ffd700;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.55)) drop-shadow(0 0 14px rgba(255, 215, 0, 0.85));
+    animation: tap-finger-gesture 1.6s ease-in-out infinite;
+    transform-origin: 30% 25%;
+  }
+}
+
+@keyframes tap-finger-gesture {
+
+  0%,
+  100% {
+    transform: scale(1) rotate(0deg) translate(0, 0);
+  }
+
+  25% {
+    transform: scale(0.82) rotate(-10deg) translate(-2px, -2px);
+  }
+
+  45% {
+    transform: scale(1.08) rotate(5deg) translate(2px, 2px);
+  }
+}
+
+@keyframes tap-ripple-ping {
+  0% {
+    transform: scale(0.25);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(1.9);
+    opacity: 0;
+  }
+}
+
+.opening-in-progress {
+  .interactive-tap-indicator {
+    opacity: 0 !important;
+    pointer-events: none;
+  }
+}

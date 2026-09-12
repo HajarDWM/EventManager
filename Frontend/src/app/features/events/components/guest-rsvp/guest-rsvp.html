@@ -16,14 +16,98 @@
   [style.backgroundSize]="'cover'"
   [style.backgroundPosition]="'center'">
 
-  <!-- Ambient Luxury Gold Sparkles / Particles in Background -->
-  <div class="luxury-ambient-particles" aria-hidden="true">
-    <div class="ambient-particle particle-1"></div>
-    <div class="ambient-particle particle-2"></div>
-    <div class="ambient-particle particle-3"></div>
-    <div class="ambient-particle particle-4"></div>
-    <div class="ambient-particle particle-5"></div>
-    <div class="ambient-particle particle-6"></div>
+  <!-- DYNAMIC VISUAL PARTICLES & SPECIAL EFFECTS (Configured in Admin Template) -->
+  <div class="guest-particles-stage position-fixed inset-0 pointer-events-none"
+       *ngIf="getVisualParticles() !== 'none'"
+       aria-hidden="true">
+
+    <!-- 1. Gold Dust (Poussière d'Or Scintillante) -->
+    <ng-container *ngIf="getVisualParticles() === 'gold-dust'">
+      <div *ngFor="let p of goldDustParticles"
+           class="particle-gold-dust"
+           [style.left]="p.left"
+           [style.top]="p.top"
+           [style.width]="p.size"
+           [style.height]="p.size"
+           [style.animationDelay]="p.delay"
+           [style.animationDuration]="p.duration"></div>
+    </ng-container>
+
+    <!-- 2. Rose Petals (Pluie de Pétales de Roses) -->
+    <ng-container *ngIf="getVisualParticles() === 'rose-petals'">
+      <div *ngFor="let p of rosePetals"
+           class="particle-rose-petal"
+           [style.left]="p.left"
+           [style.width]="p.size"
+           [style.height]="p.size"
+           [style.animationDelay]="p.delay"
+           [style.animationDuration]="p.duration"
+           [style.transform]="'rotate(' + p.rotation + ')'"></div>
+    </ng-container>
+
+    <!-- 3. Confetti (Confettis Festifs Élégants) -->
+    <ng-container *ngIf="getVisualParticles() === 'confetti'">
+      <div *ngFor="let p of confettiPieces"
+           class="particle-confetti-item"
+           [style.left]="p.left"
+           [style.width]="p.width"
+           [style.height]="p.height"
+           [style.backgroundColor]="p.color"
+           [style.animationDelay]="p.delay"
+           [style.animationDuration]="p.duration"></div>
+    </ng-container>
+
+    <!-- 4. Sparkles Stars (Étoiles & Scintillements) -->
+    <ng-container *ngIf="getVisualParticles() === 'sparkles-stars'">
+      <div *ngFor="let p of sparklesStars"
+           class="particle-sparkle-star"
+           [style.left]="p.left"
+           [style.top]="p.top"
+           [style.fontSize]="p.size"
+           [style.animationDelay]="p.delay"
+           [style.animationDuration]="p.duration">
+        ✦
+      </div>
+    </ng-container>
+
+    <!-- 5. Tech Network (Constellation & Réseau Tech) -->
+    <div *ngIf="getVisualParticles() === 'tech-network'" class="particle-tech-network">
+      <svg class="tech-network-svg" width="100%" height="100%">
+        <defs>
+          <linearGradient id="guestTechLineGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.45"/>
+            <stop offset="100%" stop-color="#818cf8" stop-opacity="0.2"/>
+          </linearGradient>
+        </defs>
+        <line x1="10%" y1="18%" x2="48%" y2="30%" stroke="url(#guestTechLineGrad)" stroke-width="1.2" class="tech-line"/>
+        <line x1="48%" y1="30%" x2="88%" y2="22%" stroke="url(#guestTechLineGrad)" stroke-width="1.2" class="tech-line"/>
+        <line x1="48%" y1="30%" x2="52%" y2="68%" stroke="url(#guestTechLineGrad)" stroke-width="1.2" class="tech-line"/>
+        <line x1="52%" y1="68%" x2="18%" y2="82%" stroke="url(#guestTechLineGrad)" stroke-width="1.2" class="tech-line"/>
+        <line x1="52%" y1="68%" x2="84%" y2="85%" stroke="url(#guestTechLineGrad)" stroke-width="1.2" class="tech-line"/>
+        <circle cx="10%" cy="18%" r="3.5" class="tech-node" fill="#38bdf8"/>
+        <circle cx="48%" cy="30%" r="4.5" class="tech-node" fill="#818cf8"/>
+        <circle cx="88%" cy="22%" r="3.5" class="tech-node" fill="#38bdf8"/>
+        <circle cx="52%" cy="68%" r="4.5" class="tech-node" fill="#6366f1"/>
+        <circle cx="18%" cy="82%" r="3" class="tech-node" fill="#38bdf8"/>
+        <circle cx="84%" cy="85%" r="3.5" class="tech-node" fill="#818cf8"/>
+      </svg>
+    </div>
+
+    <!-- 6. Spotlight Glow (Faisceau Lumineux VIP) -->
+    <div *ngIf="getVisualParticles() === 'spotlight-glow'" class="particle-spotlight-beam"></div>
+
+    <!-- 7. Ambient Bokeh (Bokeh Ambiant Flou) -->
+    <ng-container *ngIf="getVisualParticles() === 'ambient-bokeh'">
+      <div *ngFor="let p of bokehBubbles"
+           class="particle-bokeh-orb"
+           [style.left]="p.left"
+           [style.top]="p.top"
+           [style.width]="p.size"
+           [style.height]="p.size"
+           [style.animationDelay]="p.delay"
+           [style.animationDuration]="p.duration"></div>
+    </ng-container>
+
   </div>
 
   <div class="invitation-outer-container w-100 position-relative">
@@ -64,6 +148,16 @@
         </span>
       </div>
     </div>
+
+    <!-- Bouton Revoir l'ouverture pour l'invité -->
+    <button type="button" class="btn btn-sm rounded-pill shadow-sm d-inline-flex align-items-center gap-1.5 px-3 py-1.5 border position-absolute top-0 end-0 mt-2 me-2 z-3"
+            *ngIf="isInvitationOpened() && isInteractiveAnimation()"
+            (click)="replayInvitationExperience()"
+            style="background: rgba(255,255,255,0.88); backdrop-filter: blur(8px); border-color: rgba(212, 175, 55, 0.4); font-size: 0.75rem; color: #1e293b; transition: all 0.25s ease;"
+            title="Rejouer l'animation d'ouverture">
+      <i class="fa fa-rotate-left" [style.color]="getPrimaryColor()"></i>
+      <span class="fw-semibold">Revoir l'ouverture</span>
+    </button>
 
     <!-- Luxury Card Skeleton Preloader (Zero Layout Shift & Instant Visual Feedback) -->
     <div class="luxury-card card-clean-foundation position-relative overflow-hidden luxury-skeleton-card animate__animated animate__fadeIn"
@@ -112,23 +206,267 @@
       </div>
     </div>
 
-    <!-- Invitation Form Card - Step 1: Clean Foundation (Neutral Glassmorphism Foundation) -->
-    <div class="luxury-card card-clean-foundation position-relative overflow-hidden"
-      [style.--primary-font]="getPrimaryFont()"
-      [style.--primary-font-size]="getPrimaryFontSize()"
-      [style.--primary-font-weight]="getPrimaryFontWeight()"
-      [style.--primary-letter-spacing]="getPrimaryLetterSpacing()"
-      [style.--secondary-font]="getSecondaryFont()"
-      [style.--secondary-font-size]="getSecondaryFontSize()"
-      [style.--secondary-font-weight]="getSecondaryFontWeight()"
-      [style.--secondary-letter-spacing]="getSecondaryLetterSpacing()"
-      [style.--primary-color]="getPrimaryColor()"
-      [style.--secondary-color]="getSecondaryFontColor()"
-      [style.--card-bg-mobile]="resolvedBackgroundImage ? 'url(' + resolvedBackgroundImage + ')' : 'none'"
-      [style.--card-bg-desktop]="resolvedBackgroundImageDesktop ? 'url(' + resolvedBackgroundImageDesktop + ')' : (resolvedBackgroundImage ? 'url(' + resolvedBackgroundImage + ')' : 'none')"
-      [style.backgroundColor]="customBgColor"
-      [style.borderColor]="getPrimaryColor() ? (getPrimaryColor() + '40') : 'rgba(212, 175, 55, 0.35)'"
-      *ngIf="!isLoading() && guest()">
+    <!-- Invitation Stage Wrapper (Opening Experience Overlays + Luxury Card) -->
+    <div class="invitation-stage-wrapper position-relative w-100 d-flex justify-content-center align-items-center"
+         *ngIf="!isLoading() && guest()">
+
+      <!-- 1. EXPÉRIENCE D'OUVERTURE PRESTIGE : ENVELOPPE ROYALE AVEC SCEAU DE CIRE -->
+      <div class="prestige-envelope-overlay position-absolute z-4 d-flex align-items-center justify-content-center"
+           *ngIf="!isInvitationOpened() && guest()?.openingAnimation === 'envelope-wax'"
+           [class.opening-in-progress]="isOpeningTransitioning()"
+           (click)="openInvitationExperience()">
+
+        <div class="prestige-envelope-box position-relative rounded-4 shadow-2xl overflow-hidden"
+             style="width: 100%; min-height: 520px; height: 100%;"
+             [style.backgroundColor]="customBgColor || '#fbf9f4'"
+             [style.borderColor]="getPrimaryColor() ? (getPrimaryColor() + '60') : '#d4af37'">
+
+          <!-- Texture papier de luxe & cadre doré filigrane -->
+          <div class="prestige-paper-texture position-absolute inset-0"></div>
+          <div class="prestige-gold-inner-frame position-absolute inset-0 m-3 rounded-3"
+               [style.borderColor]="getPrimaryColor() ? (getPrimaryColor() + '40') : 'rgba(212, 175, 55, 0.45)'"></div>
+
+          <!-- Lignes de pliage classiques d'un vrai pli d'enveloppe -->
+          <div class="envelope-fold-seam seam-top position-absolute top-0 start-0 end-0"></div>
+          <div class="envelope-fold-seam seam-left position-absolute top-0 bottom-0 start-0"></div>
+          <div class="envelope-fold-seam seam-right position-absolute top-0 bottom-0 end-0"></div>
+          <div class="envelope-fold-seam seam-bottom position-absolute bottom-0 start-0 end-0"></div>
+
+          <!-- En-tête sur le rabat de l'enveloppe -->
+          <div class="envelope-brand-crest position-absolute top-0 start-0 end-0 pt-4 text-center z-2">
+            <span class="d-block text-uppercase fw-bold"
+                  [style.fontFamily]="getSecondaryFont() || 'Cinzel'"
+                  [style.color]="getPrimaryColor() || '#d4af37'"
+                  style="font-size: 0.72rem; letter-spacing: 2.5px; opacity: 0.85;">
+              {{ guest()?.templateSubCategory ? (guest()?.templateSubCategory | uppercase) : 'INVITATION OFFICIELLE' }}
+            </span>
+          </div>
+
+          <!-- Destinataire de prestige en bas avec le nom réel du guest -->
+          <div class="envelope-honor-guest position-absolute bottom-0 start-0 end-0 pb-4 text-center z-2">
+            <span class="d-block text-uppercase fw-semibold text-muted"
+                  [style.fontFamily]="getSecondaryFont() || 'Cinzel'"
+                  style="font-size: 0.62rem; letter-spacing: 2px;">
+              Invitation d'Honneur
+            </span>
+            <span class="d-block fw-bold mt-1"
+                  [style.fontFamily]="getPrimaryFont() || 'Alex Brush'"
+                  [style.color]="getSecondaryFontColor() || '#0f172a'"
+                  style="font-size: 1.65rem; line-height: 1;">
+              {{ guest()?.guestName || 'Cher Invité' }}
+            </span>
+          </div>
+
+          <!-- Sceau de Cire Doré Brillant au Centre avec Pulse Délicat -->
+          <div class="prestige-wax-seal-center position-absolute top-50 start-50 translate-middle text-center z-5"
+               (click)="openInvitationExperience(); $event.stopPropagation()">
+            <!-- Particules Gold Dust Fade-out -->
+            <div class="gold-dust-burst position-absolute top-50 start-50 translate-middle pointer-events-none">
+              <span class="sparkle-grain" *ngFor="let g of [1,2,3,4,5,6,7,8,9,10,11,12]"></span>
+            </div>
+
+            <div class="prestige-wax-seal-medallion d-flex align-items-center justify-content-center shadow-2xl"
+                 role="button"
+                 tabindex="0"
+                 title="Cliquer pour briser le sceau et ouvrir l'invitation"
+                 (keydown.enter)="openInvitationExperience()"
+                 (keydown.space)="openInvitationExperience()">
+              <i class="fa fa-crown text-white fs-3"></i>
+            </div>
+            <div class="interactive-tap-indicator mt-2">
+              <span class="tap-ripple-effect"></span>
+              <span class="tap-ripple-effect delayed"></span>
+              <div class="tap-hand">
+                <i class="fa fa-hand-pointer"></i>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- 2. COUCHE D'EXPÉRIENCE D'OUVERTURE POUR LES AUTRES ANIMATIONS CINÉMATIQUES -->
+      <div class="opening-experience-overlay position-absolute z-4 d-flex flex-column align-items-center justify-content-center"
+           *ngIf="!isInvitationOpened() && (guest()?.openingAnimation === 'ribbon-cut' || guest()?.openingAnimation === 'vip-badge' || guest()?.openingAnimation === 'curtain-unveil' || guest()?.openingAnimation === 'sliding-doors')"
+           [class.opening-in-progress]="isOpeningTransitioning()">
+
+        <!-- D. LEVER DE RIDEAU PRESTIGIEUX (Vrai Velours Théâtral à Plis & Drapés) -->
+        <div *ngIf="guest()?.openingAnimation === 'curtain-unveil'"
+             class="interactive-theatre-box w-100 h-100 position-absolute inset-0 d-flex justify-content-between cursor-pointer overflow-hidden"
+             (click)="openInvitationExperience()">
+          
+          <!-- Cantonnière supérieure du théâtre avec draperie dorée -->
+          <div class="theatre-valance-top position-absolute top-0 start-0 end-0 d-flex justify-content-around z-3">
+            <div class="valance-swag"></div>
+            <div class="valance-swag"></div>
+            <div class="valance-swag"></div>
+          </div>
+
+          <!-- Rideau Gauche en Velours Plissé 3D -->
+          <div class="theatre-curtain-panel curtain-theatre-left position-relative h-100">
+            <div class="curtain-velvet-folds"></div>
+            <div class="curtain-rope-tie gold-tie-left position-absolute bottom-30 start-50">
+              <i class="fa fa-gem text-warning fs-xs"></i>
+            </div>
+          </div>
+
+          <!-- Bouton Central Théâtral Doré d'Ouverture -->
+          <div class="curtain-center-action position-absolute top-50 start-50 translate-middle z-4 text-center"
+               role="button"
+               tabindex="0"
+               title="Cliquer sur le bouton pour ouvrir le rideau"
+               (click)="openInvitationExperience(); $event.stopPropagation()"
+               (keydown.enter)="openInvitationExperience()"
+               (keydown.space)="openInvitationExperience()">
+            <div class="curtain-central-btn shadow-2xl rounded-circle d-flex align-items-center justify-content-center mx-auto">
+              <i class="fa fa-masks-theater text-white fs-4"></i>
+            </div>
+            <div class="interactive-tap-indicator mt-2">
+              <span class="tap-ripple-effect"></span>
+              <span class="tap-ripple-effect delayed"></span>
+              <div class="tap-hand">
+                <i class="fa fa-hand-pointer"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- Rideau Droit en Velours Plissé 3D -->
+          <div class="theatre-curtain-panel curtain-theatre-right position-relative h-100">
+            <div class="curtain-velvet-folds"></div>
+            <div class="curtain-rope-tie gold-tie-right position-absolute bottom-30 start-50">
+              <i class="fa fa-gem text-warning fs-xs"></i>
+            </div>
+          </div>
+
+          <!-- Faisceau de projecteur doux sur la scène -->
+          <div class="theatre-spotlight-beam position-absolute inset-0 pointer-events-none"></div>
+
+        </div>
+
+        <!-- B. COUPURE DE RUBAN (القطع السحري المضيء - بدون مقص) -->
+        <div *ngIf="guest()?.openingAnimation === 'ribbon-cut'"
+             class="interactive-ribbon-cinematic w-100 h-100 position-absolute inset-0 d-flex align-items-center justify-content-center cursor-pointer overflow-hidden"
+             (click)="openInvitationExperience()">
+          
+          <div class="ribbon-diagonal-track position-relative w-100 d-flex align-items-center justify-content-center">
+            <div class="ribbon-cut-half ribbon-cut-left">
+              <div class="ribbon-satin-sheen"></div>
+            </div>
+            
+            <div class="ribbon-cut-center position-relative d-flex align-items-center justify-content-center">
+              <div class="ribbon-laser-beam position-absolute top-50 start-50 translate-middle"></div>
+              <div class="ribbon-glowing-core position-absolute top-50 start-50 translate-middle d-flex align-items-center justify-content-center"
+                   role="button"
+                   tabindex="0"
+                   title="Cliquer pour couper le ruban inaugural"
+                   (click)="openInvitationExperience(); $event.stopPropagation()"
+                   (keydown.enter)="openInvitationExperience()"
+                   (keydown.space)="openInvitationExperience()">
+                <i class="fa fa-sparkles text-white fs-5"></i>
+              </div>
+            </div>
+
+            <div class="ribbon-cut-half ribbon-cut-right">
+              <div class="ribbon-satin-sheen"></div>
+            </div>
+          </div>
+
+          <div class="interactive-tap-indicator position-absolute top-65 start-50 translate-middle text-center mt-3 pointer-events-none">
+            <span class="tap-ripple-effect"></span>
+            <span class="tap-ripple-effect delayed"></span>
+            <div class="tap-hand">
+              <i class="fa fa-hand-pointer"></i>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- E. PORTES COULISSANTES EN BOIS MASSIF NOBLE -->
+        <div *ngIf="guest()?.openingAnimation === 'sliding-doors'"
+             class="interactive-wood-doors-box w-100 h-100 position-absolute inset-0 d-flex justify-content-between cursor-pointer overflow-hidden"
+             (click)="openInvitationExperience()">
+          
+          <div class="wood-door-leaf door-leaf-left position-relative h-100">
+            <div class="wood-grain-overlay"></div>
+            <div class="wood-door-slats"></div>
+            <div class="wood-gold-molding molding-left"></div>
+            <div class="door-brass-handle handle-left position-absolute top-50 end-0 translate-middle-y d-flex align-items-center justify-content-center">
+              <div class="handle-bar"></div>
+            </div>
+          </div>
+
+          <div class="wood-doors-center-action position-absolute top-50 start-50 translate-middle z-4 text-center pointer-events-none">
+            <div class="interactive-tap-indicator">
+              <span class="tap-ripple-effect"></span>
+              <span class="tap-ripple-effect delayed"></span>
+              <div class="tap-hand">
+                <i class="fa fa-hand-pointer"></i>
+              </div>
+            </div>
+          </div>
+
+          <div class="wood-door-leaf door-leaf-right position-relative h-100">
+            <div class="wood-grain-overlay"></div>
+            <div class="wood-door-slats"></div>
+            <div class="wood-gold-molding molding-right"></div>
+            <div class="door-brass-handle handle-right position-absolute top-50 start-0 translate-middle-y d-flex align-items-center justify-content-center">
+              <div class="handle-bar"></div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- F. BADGE VIP -->
+        <div *ngIf="guest()?.openingAnimation === 'vip-badge'"
+             class="interactive-vip-badge-box w-100 h-100 position-absolute inset-0 d-flex flex-column align-items-center justify-content-center cursor-pointer"
+             (click)="openInvitationExperience()">
+          
+          <div class="vip-lanyard-strap"></div>
+          <div class="vip-badge-pass text-center position-relative shadow-2xl">
+            <div class="vip-badge-clip"></div>
+            <div class="vip-badge-header">
+              <span class="vip-badge-logo">VIP PASS</span>
+            </div>
+            <div class="vip-badge-photo">
+              <i class="fa fa-id-card-clip fs-1 text-warning"></i>
+            </div>
+            <div class="vip-badge-name">{{ guest()?.guestName || 'INVITÉ D\'HONNEUR' }}</div>
+            <div class="interactive-tap-indicator mt-3">
+              <span class="tap-ripple-effect"></span>
+              <span class="tap-ripple-effect delayed"></span>
+              <div class="tap-hand">
+                <i class="fa fa-hand-pointer"></i>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- CARTE D'INVITATION LUXE -->
+      <div class="luxury-card card-clean-foundation position-relative overflow-hidden w-100"
+        [class.cinematic-under-card]="!isInvitationOpened() && isInteractiveAnimation()"
+        [class.envelope-style]="guest()?.openingAnimation === 'envelope-wax'"
+        [class.ribbon-style]="guest()?.openingAnimation === 'ribbon-cut'"
+        [class.curtain-style]="guest()?.openingAnimation === 'curtain-unveil'"
+        [class.doors-style]="guest()?.openingAnimation === 'sliding-doors'"
+        [class.cinematic-card-revealing]="isOpeningTransitioning()"
+        [style.--primary-font]="getPrimaryFont()"
+        [style.--primary-font-size]="getPrimaryFontSize()"
+        [style.--primary-font-weight]="getPrimaryFontWeight()"
+        [style.--primary-letter-spacing]="getPrimaryLetterSpacing()"
+        [style.--secondary-font]="getSecondaryFont()"
+        [style.--secondary-font-size]="getSecondaryFontSize()"
+        [style.--secondary-font-weight]="getSecondaryFontWeight()"
+        [style.--secondary-letter-spacing]="getSecondaryLetterSpacing()"
+        [style.--primary-color]="getPrimaryColor()"
+        [style.--secondary-color]="getSecondaryFontColor()"
+        [style.--card-bg-mobile]="resolvedBackgroundImage ? 'url(' + resolvedBackgroundImage + ')' : 'none'"
+        [style.--card-bg-desktop]="resolvedBackgroundImageDesktop ? 'url(' + resolvedBackgroundImageDesktop + ')' : (resolvedBackgroundImage ? 'url(' + resolvedBackgroundImage + ')' : 'none')"
+        [style.backgroundColor]="customBgColor"
+        [style.borderColor]="getPrimaryColor() ? (getPrimaryColor() + '40') : 'rgba(212, 175, 55, 0.35)'">
 
 
 
@@ -1661,6 +1999,42 @@
             </p>
           </div>
 
+          <!-- Compte à Rebours en Direct (Si activé par l'organisateur) -->
+          <div *ngIf="guest()?.showCountdown !== false && getCountdownDays() > 0"
+               class="confirmation-countdown-box p-3 rounded-4 mb-3 text-center mx-auto shadow-2xs animate__animated animate__fadeIn"
+               [style.borderColor]="getPrimaryColor() + '30'"
+               [style.backgroundColor]="getPrimaryColor() + '08'"
+               style="border-width: 1px; border-style: solid; max-width: 380px;">
+            <div class="d-flex align-items-center justify-content-center gap-1.5 mb-2" [style.color]="getPrimaryColor()">
+              <i class="far fa-hourglass" style="font-size: 0.8rem;"></i>
+              <span class="text-uppercase fw-bold" [style.fontFamily]="getSecondaryFont()" style="font-size: 0.72rem; letter-spacing: 1.2px;">
+                Temps restant avant l'événement
+              </span>
+            </div>
+            <div class="d-flex justify-content-center align-items-center gap-2">
+              <div class="countdown-unit-box px-2.5 py-1 rounded-3 border text-center"
+                   [style.borderColor]="getPrimaryColor() + '30'"
+                   style="min-width: 52px; background: rgba(255,255,255,0.85);">
+                <span class="d-block fw-bold fs-sm" [style.color]="getSecondaryFontColor()">{{ getCountdownDays() }}</span>
+                <span class="text-uppercase text-muted" style="font-size: 0.55rem; letter-spacing: 0.5px;">Jours</span>
+              </div>
+              <span class="fw-bold" [style.color]="getPrimaryColor()">:</span>
+              <div class="countdown-unit-box px-2.5 py-1 rounded-3 border text-center"
+                   [style.borderColor]="getPrimaryColor() + '30'"
+                   style="min-width: 52px; background: rgba(255,255,255,0.85);">
+                <span class="d-block fw-bold fs-sm" [style.color]="getSecondaryFontColor()">{{ getCountdownHours() }}</span>
+                <span class="text-uppercase text-muted" style="font-size: 0.55rem; letter-spacing: 0.5px;">Heures</span>
+              </div>
+              <span class="fw-bold" [style.color]="getPrimaryColor()">:</span>
+              <div class="countdown-unit-box px-2.5 py-1 rounded-3 border text-center"
+                   [style.borderColor]="getPrimaryColor() + '30'"
+                   style="min-width: 52px; background: rgba(255,255,255,0.85);">
+                <span class="d-block fw-bold fs-sm" [style.color]="getSecondaryFontColor()">{{ getCountdownMinutes() }}</span>
+                <span class="text-uppercase text-muted" style="font-size: 0.55rem; letter-spacing: 0.5px;">Min</span>
+              </div>
+            </div>
+          </div>
+
           <!-- Accès & Guidage : Boutons Itinéraire Map & Parking -->
           <div class="access-actions-wrapper mx-auto mt-2 text-center" style="max-width: 380px;">
             <!-- Indication du lieu si disponible -->
@@ -1671,10 +2045,11 @@
               <span class="fw-semibold text-truncate" style="max-width: 320px;">{{ guest()?.eventLocation || guest()?.invitationLocation }}</span>
             </div>
 
-            <!-- Les boutons Map & Parking -->
+            <!-- Les boutons Map, Parking & Google Calendar -->
             <div class="d-flex gap-2 justify-content-center align-items-center flex-wrap">
               <!-- 1. Bouton Map / Itinéraire -->
-              <a [href]="getEventMapUrl()" target="_blank" rel="noopener noreferrer"
+              <a *ngIf="guest()?.showMapRoute !== false"
+                [href]="getEventMapUrl()" target="_blank" rel="noopener noreferrer"
                 class="btn btn-sm rounded-pill px-3.5 py-2 fw-bold d-inline-flex align-items-center gap-1.5 shadow-sm text-decoration-none"
                 [style.background]="getPrimaryColor()"
                 [style.borderColor]="getPrimaryColor()"
@@ -1694,6 +2069,19 @@
                 <i class="fa fa-square-parking"></i>
                 <span>{{ getParkingLabel() }}</span>
               </a>
+
+              <!-- 3. Bouton Google Calendar (Si activé) -->
+              <a *ngIf="guest()?.showCalendarButton !== false"
+                [href]="getGoogleCalendarUrl()" target="_blank" rel="noopener noreferrer"
+                class="btn btn-sm rounded-pill px-3.5 py-2 fw-bold d-inline-flex align-items-center gap-1.5 shadow-sm text-decoration-none"
+                [style.borderColor]="getPrimaryColor() + '60'"
+                [style.color]="getPrimaryColor()"
+                [style.backgroundColor]="getPrimaryColor() + '14'"
+                style="font-size: 0.82rem; letter-spacing: 0.4px; border-width: 1.5px; border-style: solid; transition: all 0.25s ease;"
+                title="Ajouter l'événement à Google Calendar">
+                <i class="far fa-calendar-plus"></i>
+                <span>Google Agenda</span>
+              </a>
             </div>
 
             <!-- Consigne Parking textuelle si définie par l'organisateur -->
@@ -1709,6 +2097,8 @@
       <!-- END luxury-inner-border -->
     </div>
     <!-- END luxury-card -->
+    </div>
+    <!-- END invitation-stage-wrapper -->
   </div>
   <!-- END rsvp-luxury-wrapper -->
 

@@ -108,6 +108,107 @@ export class AdminTemplates implements OnInit {
   protected showCalendarButtonField = true;
   protected showMapRouteField = true;
 
+  // Live Animation & Experience Preview States
+  protected isPreviewOpened = signal<boolean>(false);
+  protected isOpeningTransitioning = signal<boolean>(false);
+  protected isAnimationReplaying = signal<boolean>(false);
+  protected cardAnimationClass = signal<string>('animate__fadeIn');
+
+  // Particle sets for live preview
+  protected readonly goldDustParticles = Array.from({ length: 22 }, (_, i) => ({
+    id: i,
+    left: ((i * 17) % 94) + 3 + '%',
+    top: ((i * 23) % 88) + 6 + '%',
+    size: ((i % 3) + 2.5) + 'px',
+    delay: ((i * 0.35) % 3.5) + 's',
+    duration: ((i % 3) + 3.2) + 's'
+  }));
+
+  protected readonly rosePetals = Array.from({ length: 16 }, (_, i) => ({
+    id: i,
+    left: ((i * 19) % 92) + 4 + '%',
+    delay: ((i * 0.4) % 4.5) + 's',
+    duration: ((i % 3) + 4.5) + 's',
+    size: ((i % 4) + 16) + 'px',
+    rotation: ((i * 47) % 360) + 'deg'
+  }));
+
+  protected readonly confettiPieces = Array.from({ length: 26 }, (_, i) => ({
+    id: i,
+    left: ((i * 15) % 94) + 3 + '%',
+    delay: ((i * 0.25) % 3.5) + 's',
+    duration: ((i % 3) + 3) + 's',
+    color: ['#ffd700', '#f43f5e', '#3b82f6', '#10b981', '#a855f7', '#fbbf24'][i % 6],
+    width: ((i % 2) === 0 ? 8 : 12) + 'px',
+    height: ((i % 2) === 0 ? 12 : 8) + 'px'
+  }));
+
+  protected readonly sparklesStars = Array.from({ length: 16 }, (_, i) => ({
+    id: i,
+    left: ((i * 21) % 90) + 5 + '%',
+    top: ((i * 19) % 85) + 8 + '%',
+    delay: ((i * 0.3) % 3) + 's',
+    duration: ((i % 2) + 2.2) + 's',
+    size: ((i % 3) + 12) + 'px'
+  }));
+
+  protected readonly bokehBubbles = Array.from({ length: 8 }, (_, i) => ({
+    id: i,
+    left: ((i * 27) % 80) + 10 + '%',
+    top: ((i * 31) % 75) + 10 + '%',
+    size: (50 + (i % 4) * 20) + 'px',
+    delay: (i * 0.6) + 's',
+    duration: (6 + (i % 3) * 2) + 's'
+  }));
+
+  protected openPreviewExperience(): void {
+    if (this.isOpeningTransitioning() || this.isPreviewOpened()) return;
+    this.isOpeningTransitioning.set(true);
+    let duration = 800;
+    if (this.openingAnimationField === 'envelope-wax') {
+      duration = 1440;
+    } else if (this.openingAnimationField === 'ribbon-cut') {
+      duration = 1240;
+    } else if (this.openingAnimationField === 'curtain-unveil') {
+      duration = 1640;
+    } else if (this.openingAnimationField === 'sliding-doors') {
+      duration = 1540;
+    } else if (this.openingAnimationField === 'vip-badge') {
+      duration = 940;
+    }
+    setTimeout(() => {
+      this.isPreviewOpened.set(true);
+      this.isOpeningTransitioning.set(false);
+    }, duration);
+  }
+
+  protected replayPreviewAnimation(): void {
+    this.isAnimationReplaying.set(true);
+    this.isOpeningTransitioning.set(false);
+    this.isPreviewOpened.set(false);
+
+    if (this.openingAnimationField === 'fade-in') {
+      this.cardAnimationClass.set('animate__fadeIn');
+      setTimeout(() => this.isPreviewOpened.set(true), 120);
+    } else if (this.openingAnimationField === 'zoom-royal') {
+      this.cardAnimationClass.set('animate__zoomIn');
+      setTimeout(() => this.isPreviewOpened.set(true), 120);
+    } else if (this.openingAnimationField === 'instant') {
+      this.cardAnimationClass.set('');
+      this.isPreviewOpened.set(true);
+    } else {
+      this.cardAnimationClass.set('animate__fadeIn');
+    }
+
+    setTimeout(() => {
+      this.isAnimationReplaying.set(false);
+    }, 450);
+  }
+
+  protected onOpeningAnimationChange(): void {
+    this.replayPreviewAnimation();
+  }
+
   protected readonly availableSubCategoriesForForm = computed(() => {
     return getAllSubcategoriesForCategory(this.categoryField);
   });
@@ -473,6 +574,7 @@ export class AdminTemplates implements OnInit {
     loadGoogleFont(this.primaryFontField);
     loadGoogleFont(this.secondaryFontField);
     this.isEditorOpen.set(true);
+    this.replayPreviewAnimation();
   }
 
   protected openEditModal(template: DigitalTemplate): void {
@@ -518,6 +620,7 @@ export class AdminTemplates implements OnInit {
     loadGoogleFont(this.primaryFontField);
     loadGoogleFont(this.secondaryFontField);
     this.isEditorOpen.set(true);
+    this.replayPreviewAnimation();
   }
 
   protected closeAddModal(): void {
@@ -593,6 +696,7 @@ export class AdminTemplates implements OnInit {
       this.openingAnimationField = 'ribbon-cut';
       this.visualParticlesField = 'sparkles-stars';
     }
+    this.replayPreviewAnimation();
   }
 
   private async compressBase64Image(dataUrl: string, maxDim: number = 850, quality: number = 0.75): Promise<string> {

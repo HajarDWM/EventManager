@@ -44,6 +44,11 @@ export interface PublicRsvpDetail {
   secondaryLetterSpacing?: string;
   secondaryFontColor?: string;
   templateMusicUrl?: string;
+  openingAnimation?: string | null;
+  visualParticles?: string | null;
+  showCountdown?: boolean | null;
+  showCalendarButton?: boolean | null;
+  showMapRoute?: boolean | null;
   menuItems?: any[];
   isPaidEvent?: boolean;
   ticketPrice?: number;
@@ -86,6 +91,106 @@ export class GuestRsvp implements OnInit, OnDestroy {
   protected readonly cardHolder = signal('');
   protected readonly activeCarouselIndex = signal<number>(0);
   private touchStartX = 0;
+
+  // Invitation Opening Cinematic State (Envelope, Curtains, Ribbon, Doors, etc.)
+  public readonly isInvitationOpened = signal<boolean>(false);
+  public readonly isOpeningTransitioning = signal<boolean>(false);
+
+  public isInteractiveAnimation(): boolean {
+    const anim = this.guest()?.openingAnimation;
+    return !!anim && ['envelope-wax', 'ribbon-cut', 'curtain-unveil', 'sliding-doors', 'vip-badge'].includes(anim);
+  }
+
+  public openInvitationExperience(): void {
+    if (this.isOpeningTransitioning() || this.isInvitationOpened()) return;
+    this.isOpeningTransitioning.set(true);
+
+    // If music is configured on the template and not yet playing, start it on guest's first interactive gesture!
+    if (!this.isMusicPlaying() && this.guest()?.templateMusicUrl) {
+      this.toggleMusic();
+    }
+
+    const anim = this.guest()?.openingAnimation;
+    let duration = 800;
+    if (anim === 'envelope-wax') {
+      duration = 1440;
+    } else if (anim === 'ribbon-cut') {
+      duration = 1240;
+    } else if (anim === 'curtain-unveil') {
+      duration = 1640;
+    } else if (anim === 'sliding-doors') {
+      duration = 1540;
+    } else if (anim === 'vip-badge') {
+      duration = 940;
+    }
+
+    setTimeout(() => {
+      this.isInvitationOpened.set(true);
+      this.isOpeningTransitioning.set(false);
+    }, duration);
+  }
+
+  public replayInvitationExperience(): void {
+    this.isOpeningTransitioning.set(false);
+    this.isInvitationOpened.set(false);
+  }
+
+  // =========================================================================
+  // DYNAMIC VISUAL PARTICLES & SPECIAL EFFECTS (Configured in Admin Template)
+  // =========================================================================
+  public readonly goldDustParticles = Array.from({ length: 48 }, (_, i) => ({
+    id: i,
+    left: ((i * 19 + 7) % 96) + 2 + '%',
+    top: ((i * 23 + 11) % 94) + 3 + '%',
+    size: ((i % 4) + 2.5) + 'px',
+    delay: ((i * 0.28) % 4) + 's',
+    duration: ((i % 3) + 3.2) + 's'
+  }));
+
+  public readonly rosePetals = Array.from({ length: 28 }, (_, i) => ({
+    id: i,
+    left: ((i * 17 + 5) % 94) + 3 + '%',
+    delay: ((i * 0.35) % 5) + 's',
+    duration: ((i % 3) + 5) + 's',
+    size: ((i % 4) + 16) + 'px',
+    rotation: ((i * 47) % 360) + 'deg'
+  }));
+
+  public readonly confettiPieces = Array.from({ length: 40 }, (_, i) => ({
+    id: i,
+    left: ((i * 13 + 3) % 96) + 2 + '%',
+    delay: ((i * 0.22) % 4) + 's',
+    duration: ((i % 3) + 3.2) + 's',
+    color: ['#ffd700', '#f43f5e', '#3b82f6', '#10b981', '#a855f7', '#fbbf24', '#ec4899'][i % 7],
+    width: ((i % 2) === 0 ? 8 : 12) + 'px',
+    height: ((i % 2) === 0 ? 12 : 8) + 'px'
+  }));
+
+  public readonly sparklesStars = Array.from({ length: 32 }, (_, i) => ({
+    id: i,
+    left: ((i * 23 + 9) % 92) + 4 + '%',
+    top: ((i * 17 + 13) % 90) + 5 + '%',
+    delay: ((i * 0.25) % 3.5) + 's',
+    duration: ((i % 2) + 2.4) + 's',
+    size: ((i % 3) + 13) + 'px'
+  }));
+
+  public readonly bokehBubbles = Array.from({ length: 14 }, (_, i) => ({
+    id: i,
+    left: ((i * 29 + 11) % 86) + 7 + '%',
+    top: ((i * 31 + 7) % 84) + 8 + '%',
+    size: (55 + (i % 5) * 22) + 'px',
+    delay: (i * 0.5) + 's',
+    duration: (6 + (i % 3) * 2.5) + 's'
+  }));
+
+  public getVisualParticles(): string {
+    const vp = this.guest()?.visualParticles;
+    if (vp && vp.trim() !== '') {
+      return vp.trim();
+    }
+    return 'gold-dust';
+  }
 
   protected openMenuAndRsvp(): void {
     this.isMenuRsvpOpen.set(true);
@@ -822,6 +927,11 @@ export class GuestRsvp implements OnInit, OnDestroy {
       this.guest.set(this.previewData);
       this.status.set(this.previewData.guestStatus || 'PENDING');
       this.attendanceStatus = this.previewData.guestStatus !== 'DECLINED';
+      
+      const anim = this.previewData.openingAnimation;
+      const isInteractive = !!anim && ['envelope-wax', 'ribbon-cut', 'curtain-unveil', 'sliding-doors', 'vip-badge'].includes(anim);
+      this.isInvitationOpened.set(!isInteractive);
+
       if (this.previewData.guestStatus === 'DECLINED') {
         this.selectedAttendanceChoice.set('DECLINED');
         this.isSuccess.set(true);
@@ -853,6 +963,10 @@ export class GuestRsvp implements OnInit, OnDestroy {
         console.log('Public RSVP data loaded:', data);
         this.guest.set(data);
         this.status.set(data.guestStatus || 'PENDING');
+
+        const anim = data.openingAnimation;
+        const isInteractive = !!anim && ['envelope-wax', 'ribbon-cut', 'curtain-unveil', 'sliding-doors', 'vip-badge'].includes(anim);
+        this.isInvitationOpened.set(!isInteractive);
 
         // Restore previous response state if guest already answered
         if (data.guestStatus === 'DECLINED') {
@@ -1276,6 +1390,7 @@ export class GuestRsvp implements OnInit, OnDestroy {
 
   // Calm Moroccan & Arab-Andalusian Oud Wedding Background Track
   private readonly defaultMusicUrl = 'https://cdn.pixabay.com/download/audio/2022/11/06/audio_c3c3933c06.mp3';
+  private readonly musicVolume = 0.20; // Volume doux et discret pour une ambiance feutrée et élégante (20%)
 
   private initAudio(): void {
     const customMusic = this.guest()?.templateMusicUrl;
@@ -1284,7 +1399,7 @@ export class GuestRsvp implements OnInit, OnDestroy {
     if (!this.audioElement && typeof Audio !== 'undefined') {
       this.audioElement = new Audio();
       this.audioElement.loop = true;
-      this.audioElement.volume = 0.45;
+      this.audioElement.volume = this.musicVolume;
 
       this.audioElement.addEventListener('ended', () => {
         if (this.isMusicPlaying()) {
@@ -1300,9 +1415,12 @@ export class GuestRsvp implements OnInit, OnDestroy {
       });
     }
 
-    if (this.audioElement && this.audioElement.src !== targetUrl) {
-      this.audioElement.src = targetUrl;
-      this.audioElement.load();
+    if (this.audioElement) {
+      this.audioElement.volume = this.musicVolume;
+      if (this.audioElement.src !== targetUrl) {
+        this.audioElement.src = targetUrl;
+        this.audioElement.load();
+      }
     }
   }
 
@@ -1314,6 +1432,7 @@ export class GuestRsvp implements OnInit, OnDestroy {
       this.isMusicPlaying.set(false);
     } else {
       if (this.audioElement) {
+        this.audioElement.volume = this.musicVolume;
         this.audioElement.play()
           .then(() => {
             this.isMusicPlaying.set(true);
@@ -1376,9 +1495,9 @@ export class GuestRsvp implements OnInit, OnDestroy {
           osc.type = 'triangle';
           osc.frequency.setValueAtTime(freq, now);
 
-          gain.gain.setValueAtTime(0.001, now);
-          gain.gain.linearRampToValueAtTime(0.03, now + 0.8);
-          gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+          gain.gain.setValueAtTime(0.0005, now);
+          gain.gain.linearRampToValueAtTime(0.012, now + 0.8);
+          gain.gain.exponentialRampToValueAtTime(0.00005, now + duration);
 
           osc.connect(gain);
           gain.connect(this.webAudioCtx.destination);
@@ -1415,5 +1534,44 @@ export class GuestRsvp implements OnInit, OnDestroy {
       clearTimeout(this.advanceTimeout);
     }
     this.stopAllAudio();
+  }
+
+  public getGoogleCalendarUrl(): string {
+    const title = encodeURIComponent(this.guest()?.invitationTitle || this.guest()?.eventTitle || 'Invitation Événement');
+    const location = encodeURIComponent(this.guest()?.eventLocation || this.guest()?.invitationLocation || '');
+    const details = encodeURIComponent(this.guest()?.invitationSubtitle || 'Confirmation de présence');
+    let datesParam = '';
+    const dateStr = this.guest()?.invitationDate || this.guest()?.eventDate;
+    if (dateStr) {
+      try {
+        const d = new Date(dateStr);
+        const start = d.toISOString().replace(/-|:|\.\d\d\d/g, '');
+        const endD = new Date(d.getTime() + 4 * 3600 * 1000);
+        const end = endD.toISOString().replace(/-|:|\.\d\d\d/g, '');
+        datesParam = `&dates=${start}/${end}`;
+      } catch (e) {}
+    }
+    return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&details=${details}&location=${location}${datesParam}`;
+  }
+
+  public getCountdownDays(): number {
+    const dateStr = this.guest()?.invitationDate || this.guest()?.eventDate;
+    if (!dateStr) return 0;
+    const diff = new Date(dateStr).getTime() - Date.now();
+    return Math.max(0, Math.floor(diff / (1000 * 60 * 60 * 24)));
+  }
+
+  public getCountdownHours(): number {
+    const dateStr = this.guest()?.invitationDate || this.guest()?.eventDate;
+    if (!dateStr) return 0;
+    const diff = new Date(dateStr).getTime() - Date.now();
+    return Math.max(0, Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)));
+  }
+
+  public getCountdownMinutes(): number {
+    const dateStr = this.guest()?.invitationDate || this.guest()?.eventDate;
+    if (!dateStr) return 0;
+    const diff = new Date(dateStr).getTime() - Date.now();
+    return Math.max(0, Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)));
   }
 }
