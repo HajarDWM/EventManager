@@ -1962,13 +1962,19 @@
     0 25px 65px -15px rgba(15, 23, 42, 0.5),
     0 10px 25px -5px rgba(15, 23, 42, 0.3);
   position: relative;
-  overflow: hidden;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
   background-color: #020617;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
   box-sizing: border-box;
+  padding-bottom: 14px;
 
   // Modern Dynamic Island / Notch
   .phone-dynamic-island {
@@ -2005,7 +2011,7 @@
 
   // Floating Music Widget (En haut au centre, sous le notch, au-dessus de la carte - Image 1)
   .mobile-floating-music-wrapper {
-    top: 20px !important;
+    top: 14px !important;
     z-index: 40;
     transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 
@@ -2090,7 +2096,7 @@
     min-height: unset !important;
     height: auto !important;
     max-height: none !important;
-    margin: 80px auto 14px !important;
+    margin: 50px auto 14px !important;
     background-image: none !important;
     background: radial-gradient(ellipse at 50% 45%, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.06) 55%, transparent 95%) !important;
     backdrop-filter: blur(1.5px) !important;
@@ -2106,14 +2112,14 @@
       background: transparent !important;
       border: none !important;
       margin: 0 !important;
-      padding: 24px 14px 16px !important;
+      padding: 16px 14px 14px !important;
       min-height: unset !important;
       height: auto !important;
     }
 
     .invitation-header-tag {
       margin-top: 2px !important;
-      margin-bottom: 6px !important;
+      margin-bottom: 4px !important;
       overflow: visible !important;
 
       .luxury-subtitle {
@@ -2127,8 +2133,8 @@
     }
 
     .invitation-live-title {
-      margin: 4px 0 8px !important;
-      line-height: 1.2 !important;
+      margin: 2px 0 6px !important;
+      line-height: 1.18 !important;
       text-shadow: 0 1px 3px rgba(0, 0, 0, 0.55), 0 0 12px rgba(255, 255, 255, 0.95), 0 0 22px rgba(255, 255, 255, 0.75) !important;
     }
 
@@ -2144,8 +2150,8 @@
       backdrop-filter: blur(2px) !important;
       -webkit-backdrop-filter: blur(2px) !important;
       box-shadow: none !important;
-      margin: 10px auto 12px !important;
-      padding: 12px 14px !important;
+      margin: 6px auto 8px !important;
+      padding: 8px 12px !important;
 
       .salutation-honorific {
         font-size: 1.05rem !important;
@@ -2168,25 +2174,25 @@
       display: grid !important;
       grid-template-columns: 1fr 1fr !important;
       gap: 10px !important;
-      margin: 12px 0 14px !important;
+      margin: 8px 0 8px !important;
     }
 
     .artistic-detail-card {
-      min-height: 135px !important;
+      min-height: 120px !important;
       background: rgba(255, 255, 255, 0.18) !important;
       border: 1px solid rgba(212, 175, 55, 0.24) !important;
       border: 1px solid color-mix(in srgb, var(--admin-accent-color, #d4af37) 24%, transparent) !important;
       border-radius: 16px !important;
-      padding: 12px 8px !important;
+      padding: 8px 6px !important;
       backdrop-filter: blur(2px) !important;
       -webkit-backdrop-filter: blur(2px) !important;
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
 
       .detail-card-icon-circle {
-        width: 32px !important;
-        height: 32px !important;
-        font-size: 0.88rem !important;
-        margin-bottom: 4px !important;
+        width: 30px !important;
+        height: 30px !important;
+        font-size: 0.84rem !important;
+        margin-bottom: 3px !important;
       }
 
       .event-card-day-label,
@@ -2197,7 +2203,7 @@
       }
 
       .hero-event-day-number {
-        font-size: 2.2rem !important;
+        font-size: 2.1rem !important;
         line-height: 1 !important;
         margin: 2px 0 !important;
         text-shadow: 0 1px 3px rgba(0, 0, 0, 0.45), 0 0 12px rgba(255, 255, 255, 0.9) !important;
@@ -2210,20 +2216,20 @@
       }
 
       .detail-card-main-title {
-        font-size: 0.86rem !important;
-        line-height: 1.3 !important;
-        margin: 3px 0 !important;
+        font-size: 0.84rem !important;
+        line-height: 1.25 !important;
+        margin: 2px 0 !important;
         text-shadow: 0 1px 2px rgba(255, 255, 255, 0.95), 0 0 8px rgba(255, 255, 255, 0.9) !important;
       }
 
       .detail-card-bottom-info {
-        font-size: 0.72rem !important;
-        margin-top: 5px !important;
+        font-size: 0.70rem !important;
+        margin-top: 4px !important;
       }
     }
 
     .page1-actions-container {
-      margin-top: 14px !important;
+      margin-top: 8px !important;
       padding-top: 0 !important;
       margin-bottom: 2px !important;
 
@@ -2231,7 +2237,7 @@
         gap: 10px !important;
 
         .btn {
-          padding: 9px 20px !important;
+          padding: 8px 18px !important;
           font-size: 0.82rem !important;
           font-weight: 700 !important;
           letter-spacing: 0.6px !important;
@@ -2240,15 +2246,15 @@
       }
 
       .btn-discover-first-pill {
-        margin-top: 10px !important;
+        margin-top: 14px !important;
         background: rgba(255, 255, 255, 0.5) !important;
         border: 1px solid rgba(255, 255, 255, 0.65) !important;
         border-radius: 20px !important;
-        padding: 7px 18px !important;
+        padding: 5px 14px !important;
         backdrop-filter: blur(4px) !important;
         -webkit-backdrop-filter: blur(4px) !important;
         color: #1e293b !important;
-        font-size: 0.78rem !important;
+        font-size: 0.74rem !important;
         font-weight: 600 !important;
         display: inline-flex !important;
         align-items: center !important;
