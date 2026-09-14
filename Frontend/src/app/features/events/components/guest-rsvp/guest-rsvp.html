@@ -650,37 +650,7 @@
           [class.has-discovery-footer]="isDiscoveryMode()"
           *ngIf="isMenuRsvpOpen() && !isSuccess()">
 
-          <!-- Top Sequential Navigation (Breadcrumb compact) -->
-          <div class="menu-flow-top-header mb-1.5 w-100 mx-auto" style="max-width: 440px;" *ngIf="currentRsvpStep() !== 5">
-            <!-- Indicateur de Progression / Mode Centré -->
-            <div class="step-progress-label text-center mb-1 px-1">
-              <span class="badge-step-count fw-bold text-uppercase"
-                [style.fontFamily]="getSecondaryFont()"
-                [style.color]="getPrimaryColor()"
-                style="font-size: 0.74rem; letter-spacing: 1.5px;">
-                <ng-container *ngIf="isDiscoveryMode()">Aperçu du Menu</ng-container>
-                <ng-container *ngIf="!isDiscoveryMode()">
-                  <!-- BUFFET -->
-                  <ng-container *ngIf="isBuffetMode()">
-                    <ng-container *ngIf="currentRsvpStep() === 0">Formule Grand Buffet Libre-Service</ng-container>
-                    <ng-container *ngIf="currentRsvpStep() === 4">Vos Préférences</ng-container>
-                  </ng-container>
-                  <!-- MIX -->
-                  <ng-container *ngIf="isMixMode()">
-                    <ng-container *ngIf="currentRsvpStep() === 0">1/3 : Buffet d'Entrées</ng-container>
-                    <ng-container *ngIf="currentRsvpStep() === 1">2/3 : Plat Chaud à Table</ng-container>
-                    <ng-container *ngIf="currentRsvpStep() === 2">3/3 : Buffet Desserts & Bar</ng-container>
-                    <ng-container *ngIf="currentRsvpStep() === 4">Vos Préférences</ng-container>
-                  </ng-container>
-                  <!-- PLATS_FIXES -->
-                  <ng-container *ngIf="isPlatedMode()">
-                    <ng-container *ngIf="currentRsvpStep() <= 3">Étape {{ currentRsvpStep() + 1 }}/4</ng-container>
-                    <ng-container *ngIf="currentRsvpStep() === 4">Vos Préférences</ng-container>
-                  </ng-container>
-                </ng-container>
-              </span>
-            </div>
-          </div>
+
 
           <!-- Template des Boutons/Onglets de Catégories (Affichés DIRECTEMENT au-dessus des plats) -->
           <ng-template #stepperTabsTpl>
