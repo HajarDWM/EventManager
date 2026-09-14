@@ -233,8 +233,8 @@ export class AdminTemplates implements OnInit {
     { label: 'Majestueux (4px)', value: '4px' }
   ];
 
-  // Available Luxury Google Fonts with direct live style binding & suggestions
-  protected readonly availableFonts = [
+  // Available Luxury Google Fonts with dynamic registration & priority sorting
+  protected availableFonts: Array<{ name: string; label: string; fontGroup: string; sample: string }> = [
     { name: 'Alex Brush', label: 'Alex Brush (Script Délicat & Cérémonial)', fontGroup: 'Cursive', sample: 'Invitation Spéciale' },
     { name: 'Great Vibes', label: 'Great Vibes (Calligraphie Fluide & Romantique)', fontGroup: 'Cursive', sample: 'Yassine & Zineb' },
     { name: 'Dancing Script', label: 'Dancing Script (Moderne & Enjoué)', fontGroup: 'Cursive', sample: 'Soirée de Gala' },
@@ -251,9 +251,7 @@ export class AdminTemplates implements OnInit {
     { name: 'Plus Jakarta Sans', label: 'Plus Jakarta Sans (Contemporain & Lisible)', fontGroup: 'Sans-Serif', sample: 'Événement Corporate' }
   ];
 
-  // Quick Preset Font Pills for One-Click Selection
-  protected readonly popularPrimaryFonts = ['Alex Brush', 'Great Vibes', 'Dancing Script', 'Allura', 'Playfair Display', 'Cinzel'];
-  protected readonly popularSecondaryFonts = ['Cormorant Garamond', 'Cinzel', 'Montserrat', 'Playfair Display', 'Plus Jakarta Sans', 'Prata'];
+  private fontDebounceTimeout: any = null;
 
   // Audio Preview & Presets
   protected readonly isPreviewAudioPlaying = signal(false);
@@ -265,27 +263,104 @@ export class AdminTemplates implements OnInit {
     { label: 'Lounge & Jazz Élégant', url: 'https://cdn.pixabay.com/download/audio/2022/03/24/audio_33bd95d2c6.mp3' }
   ];
 
+  /**
+   * Enregistre une police saisie par l'utilisateur, la place tout en haut de la liste (1ère position)
+   * et la sauvegarde dans le stockage local.
+   */
+  public registerAndPrioritizeFont(fontName?: string): void {
+    if (!fontName) return;
+    const clean = fontName.trim().replace(/['"]/g, '');
+    if (clean.length < 2) return;
+
+    loadGoogleFont(clean);
+
+    const existingIndex = this.availableFonts.findIndex(
+      f => f.name.toLowerCase() === clean.toLowerCase()
+    );
+
+    if (existingIndex > -1) {
+      // Si déjà présente, la déplacer tout en haut
+      const [item] = this.availableFonts.splice(existingIndex, 1);
+      this.availableFonts.unshift(item);
+    } else {
+      // Nouvelle police : l'insérer au début de la liste
+      this.availableFonts.unshift({
+        name: clean,
+        label: `${clean} (Personnalisée)`,
+        fontGroup: 'Personnalisée',
+        sample: clean
+      });
+    }
+
+    this.saveCustomFontsToStorage();
+  }
+
+  private saveCustomFontsToStorage(): void {
+    if (typeof localStorage === 'undefined') return;
+    try {
+      const customList = this.availableFonts
+        .filter(f => f.fontGroup === 'Personnalisée')
+        .map(f => f.name);
+      localStorage.setItem('event_admin_custom_fonts', JSON.stringify(customList));
+    } catch {
+      // Ignore storage errors
+    }
+  }
+
+  private loadCustomFontsFromStorage(): void {
+    if (typeof localStorage === 'undefined') return;
+    try {
+      const stored = localStorage.getItem('event_admin_custom_fonts');
+      if (stored) {
+        const customNames: string[] = JSON.parse(stored);
+        for (let i = customNames.length - 1; i >= 0; i--) {
+          const name = customNames[i]?.trim();
+          if (name && !this.availableFonts.some(f => f.name.toLowerCase() === name.toLowerCase())) {
+            this.availableFonts.unshift({
+              name,
+              label: `${name} (Personnalisée)`,
+              fontGroup: 'Personnalisée',
+              sample: name
+            });
+            loadGoogleFont(name);
+          }
+        }
+      }
+    } catch {
+      // Ignore storage errors
+    }
+  }
+
   public onPrimaryFontChange(val: string): void {
     this.primaryFontField = val;
     loadGoogleFont(val);
+    if (this.fontDebounceTimeout) clearTimeout(this.fontDebounceTimeout);
+    this.fontDebounceTimeout = setTimeout(() => {
+      this.registerAndPrioritizeFont(val);
+    }, 600);
   }
 
   public selectPrimaryFont(fontName: string): void {
     this.primaryFontField = fontName;
-    loadGoogleFont(fontName);
+    this.registerAndPrioritizeFont(fontName);
   }
 
   public onSecondaryFontChange(val: string): void {
     this.secondaryFontField = val;
     loadGoogleFont(val);
+    if (this.fontDebounceTimeout) clearTimeout(this.fontDebounceTimeout);
+    this.fontDebounceTimeout = setTimeout(() => {
+      this.registerAndPrioritizeFont(val);
+    }, 600);
   }
 
   public selectSecondaryFont(fontName: string): void {
     this.secondaryFontField = fontName;
-    loadGoogleFont(fontName);
+    this.registerAndPrioritizeFont(fontName);
   }
 
   public ngOnInit(): void {
+    this.loadCustomFontsFromStorage();
     this.loadTemplates();
   }
 
@@ -441,6 +516,13 @@ export class AdminTemplates implements OnInit {
       return this.backgroundImageDesktopUrlField || this.backgroundImageUrlField || '';
     }
     return this.backgroundImageUrlField || '';
+  }
+
+  public getCardMobileBgColor(): string {
+    if (this.isDarkBg(this.backgroundColorField)) {
+      return 'rgba(10, 10, 15, 0.15)';
+    }
+    return 'rgba(255, 255, 255, 0.08)';
   }
 
   protected isBase64(val: string): boolean {
@@ -617,8 +699,12 @@ export class AdminTemplates implements OnInit {
     this.showDesktopUrlInput = false;
     this.showMusicUrlInput = false;
     this.stopPreviewAudio();
-    loadGoogleFont(this.primaryFontField);
-    loadGoogleFont(this.secondaryFontField);
+    if (this.primaryFontField) {
+      this.registerAndPrioritizeFont(this.primaryFontField);
+    }
+    if (this.secondaryFontField) {
+      this.registerAndPrioritizeFont(this.secondaryFontField);
+    }
     this.isEditorOpen.set(true);
     this.replayPreviewAnimation();
   }
@@ -830,5 +916,59 @@ export class AdminTemplates implements OnInit {
         }
       });
     }
+  }
+
+  protected isDarkTheme(): boolean {
+    if (this.secondaryFontColorField && !this.isDarkBg(this.secondaryFontColorField)) {
+      return true;
+    }
+    if (this.backgroundColorField && this.isDarkBg(this.backgroundColorField)) {
+      return true;
+    }
+    if (this.backgroundImageUrlField) {
+      return true;
+    }
+    return false;
+  }
+
+  protected getMusicWidgetBtnBg(): string {
+    if (this.isDarkTheme()) {
+      return this.isPreviewAudioPlaying()
+        ? (this.accentColorField ? (this.accentColorField + '38') : 'rgba(212, 175, 55, 0.35)')
+        : 'rgba(255, 255, 255, 0.12)';
+    }
+    return this.isPreviewAudioPlaying()
+      ? 'rgba(255, 255, 255, 0.98)'
+      : '#ffffff';
+  }
+
+  protected getMusicWidgetBtnColor(): string {
+    return this.accentColorField || '#d4af37';
+  }
+
+  protected getMusicWidgetBtnBorder(): string {
+    return this.accentColorField
+      ? (this.accentColorField + '90')
+      : 'rgba(212, 175, 55, 0.6)';
+  }
+
+  protected getMusicWidgetLabelBg(): string {
+    if (this.isDarkTheme()) {
+      return 'rgba(255, 255, 255, 0.12)';
+    }
+    return '#ffffff';
+  }
+
+  protected getMusicWidgetLabelTextColor(): string {
+    if (this.isDarkTheme()) {
+      return this.secondaryFontColorField || '#ffffff';
+    }
+    return '#1e293b';
+  }
+
+  protected getMusicWidgetLabelBorder(): string {
+    return this.accentColorField
+      ? (this.accentColorField + '75')
+      : 'rgba(212, 175, 55, 0.45)';
   }
 }

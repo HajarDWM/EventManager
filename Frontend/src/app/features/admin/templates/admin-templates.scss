@@ -543,7 +543,7 @@
 
     // Carte d'invitation réelle en direct
     .live-invitation-card {
-      min-height: 520px;
+      min-height: unset;
       border: 1.5px solid rgba(212, 175, 55, 0.35);
       background-size: cover;
       background-position: center;
@@ -1914,5 +1914,545 @@
   .interactive-tap-indicator {
     opacity: 0 !important;
     pointer-events: none;
+  }
+}
+
+// ============================================================================
+// APERÇU RÉEL EN DIRECT : SMARTPHONE CHASSIS & RENDU MOBILE IMMERSIF (IMAGE 3)
+// ============================================================================
+
+.preview-stage-container {
+  background-color: #f1f5f9 !important;
+  background-image: radial-gradient(#cbd5e1 1.2px, transparent 1.2px) !important;
+  background-size: 24px 24px !important;
+  min-height: 760px !important;
+  transition: all 0.35s ease;
+
+  &.preview-device-is-mobile {
+    padding: 1.5rem 1rem !important;
+  }
+
+  &.preview-device-is-desktop {
+    background-color: #f4efe6 !important;
+    background-image: none !important;
+    min-height: 520px !important;
+    padding: 2rem 1.5rem !important;
+  }
+}
+
+.preview-device-viewport {
+  position: relative;
+  transition: max-width 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    min-height 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+// ----------------------------------------------------------------------------
+// SMARTPHONE SIMULATOR (ÉCRAN MOBILE RÉEL 9:16 - IMAGE 3)
+// ----------------------------------------------------------------------------
+.preview-phone-chassis {
+  width: 100%;
+  max-width: 380px !important;
+  min-height: 740px !important;
+  aspect-ratio: 9 / 18.5;
+  margin: 0 auto;
+  border-radius: 44px;
+  border: 11px solid #0f172a;
+  box-shadow:
+    0 0 0 2px #334155,
+    0 25px 65px -15px rgba(15, 23, 42, 0.5),
+    0 10px 25px -5px rgba(15, 23, 42, 0.3);
+  position: relative;
+  overflow: hidden;
+  background-color: #020617;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  box-sizing: border-box;
+
+  // Modern Dynamic Island / Notch
+  .phone-dynamic-island {
+    top: 10px;
+    z-index: 50;
+
+    .island-pill {
+      width: 96px;
+      height: 22px;
+      background: #000000;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 14px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+
+      .island-camera {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: radial-gradient(circle at 35% 35%, #1e293b, #020617);
+        border: 1px solid #334155;
+      }
+
+      .island-sensor {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #0f172a;
+      }
+    }
+  }
+
+  // Floating Music Widget (En haut au centre, sous le notch, au-dessus de la carte - Image 1)
+  .mobile-floating-music-wrapper {
+    top: 20px !important;
+    z-index: 40;
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+    &:hover {
+      transform: translate(-50%, -1px) scale(1.03);
+    }
+
+    &:active {
+      transform: translate(-50%, 0) scale(0.98);
+    }
+
+    .music-badge-circle {
+      width: 36px;
+      height: 36px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1.5px solid var(--admin-accent-color, #d4af37);
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1), 0 0 10px rgba(212, 175, 55, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .music-pill-label {
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(212, 175, 55, 0.35);
+      border: 1px solid color-mix(in srgb, var(--admin-accent-color, #d4af37) 35%, transparent);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      padding: 4px 14px;
+      border-radius: 9999px;
+
+      span {
+        font-size: 0.76rem;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+      }
+    }
+  }
+
+  // Mobile Wallpaper Canvas (Proportions 9:16 Portrait Naturelle - Pas de déformation)
+  .preview-mobile-bg-wallpaper {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: 0;
+    pointer-events: none;
+    transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+
+    .preview-mobile-bg-overlay {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at center, rgba(0, 0, 0, 0.02) 0%, rgba(0, 0, 0, 0.16) 100%);
+      pointer-events: none;
+    }
+  }
+
+  // Prestige Envelope inside Phone Frame
+  .prestige-envelope-overlay {
+    padding: 0.75rem;
+
+    .prestige-envelope-box {
+      width: 100% !important;
+      max-width: 345px !important;
+      min-height: 500px !important;
+      border-radius: 20px !important;
+      margin: auto;
+    }
+  }
+
+  // Other Opening Experiences on Phone Frame
+  .opening-experience-overlay {
+    inset: 0;
+  }
+
+  // LIVE INVITATION CARD (FUSION TOTALE & TRANSPARENCE ROYALE - EXACT IMAGE 2)
+  .live-invitation-card {
+    width: calc(100% - 12px) !important;
+    max-width: 356px !important;
+    min-height: unset !important;
+    height: auto !important;
+    max-height: none !important;
+    margin: 80px auto 14px !important;
+    background-image: none !important;
+    background: radial-gradient(ellipse at 50% 45%, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.06) 55%, transparent 95%) !important;
+    backdrop-filter: blur(1.5px) !important;
+    -webkit-backdrop-filter: blur(1.5px) !important;
+    border: 1px solid rgba(212, 175, 55, 0.22) !important;
+    border: 1px solid color-mix(in srgb, var(--admin-accent-color, #d4af37) 25%, transparent) !important;
+    border-radius: 20px !important;
+    box-shadow: none !important;
+    z-index: 2;
+    padding: 0 !important;
+
+    .luxury-inner-border {
+      background: transparent !important;
+      border: none !important;
+      margin: 0 !important;
+      padding: 24px 14px 16px !important;
+      min-height: unset !important;
+      height: auto !important;
+    }
+
+    .invitation-header-tag {
+      margin-top: 2px !important;
+      margin-bottom: 6px !important;
+      overflow: visible !important;
+
+      .luxury-subtitle {
+        letter-spacing: 2.5px !important;
+        line-height: 1.4 !important;
+        display: inline-block !important;
+        font-weight: 700 !important;
+        text-shadow: 0 1px 2px rgba(255, 255, 255, 0.85) !important;
+        opacity: 1 !important;
+      }
+    }
+
+    .invitation-live-title {
+      margin: 4px 0 8px !important;
+      line-height: 1.2 !important;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.55), 0 0 12px rgba(255, 255, 255, 0.95), 0 0 22px rgba(255, 255, 255, 0.75) !important;
+    }
+
+    .invitation-guest-salutation {
+      background: rgba(255, 255, 255, 0.12) !important;
+      border-top: 1px solid rgba(212, 175, 55, 0.22) !important;
+      border-top: 1px solid color-mix(in srgb, var(--admin-accent-color, #d4af37) 22%, transparent) !important;
+      border-bottom: 1px solid rgba(212, 175, 55, 0.22) !important;
+      border-bottom: 1px solid color-mix(in srgb, var(--admin-accent-color, #d4af37) 22%, transparent) !important;
+      border-left: none !important;
+      border-right: none !important;
+      border-radius: 0 !important;
+      backdrop-filter: blur(2px) !important;
+      -webkit-backdrop-filter: blur(2px) !important;
+      box-shadow: none !important;
+      margin: 10px auto 12px !important;
+      padding: 12px 14px !important;
+
+      .salutation-honorific {
+        font-size: 1.05rem !important;
+      }
+
+      .salutation-guest-name {
+        font-size: 1.05rem !important;
+        text-shadow: 0 1px 2px rgba(255, 255, 255, 0.95), 0 0 8px rgba(255, 255, 255, 0.9) !important;
+      }
+
+      .salutation-invitation-message {
+        font-size: 0.86rem !important;
+        line-height: 1.55 !important;
+        margin-top: 6px !important;
+        text-shadow: 0 1px 2px rgba(255, 255, 255, 0.95), 0 0 8px rgba(255, 255, 255, 0.9) !important;
+      }
+    }
+
+    .artistic-invitation-details {
+      display: grid !important;
+      grid-template-columns: 1fr 1fr !important;
+      gap: 10px !important;
+      margin: 12px 0 14px !important;
+    }
+
+    .artistic-detail-card {
+      min-height: 135px !important;
+      background: rgba(255, 255, 255, 0.18) !important;
+      border: 1px solid rgba(212, 175, 55, 0.24) !important;
+      border: 1px solid color-mix(in srgb, var(--admin-accent-color, #d4af37) 24%, transparent) !important;
+      border-radius: 16px !important;
+      padding: 12px 8px !important;
+      backdrop-filter: blur(2px) !important;
+      -webkit-backdrop-filter: blur(2px) !important;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
+
+      .detail-card-icon-circle {
+        width: 32px !important;
+        height: 32px !important;
+        font-size: 0.88rem !important;
+        margin-bottom: 4px !important;
+      }
+
+      .event-card-day-label,
+      .detail-card-subtitle {
+        font-size: 0.68rem !important;
+        letter-spacing: 1.2px !important;
+        text-shadow: 0 1px 2px rgba(255, 255, 255, 0.95), 0 0 8px rgba(255, 255, 255, 0.9) !important;
+      }
+
+      .hero-event-day-number {
+        font-size: 2.2rem !important;
+        line-height: 1 !important;
+        margin: 2px 0 !important;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.45), 0 0 12px rgba(255, 255, 255, 0.9) !important;
+      }
+
+      .event-card-month-label {
+        font-size: 0.68rem !important;
+        letter-spacing: 1.2px !important;
+        text-shadow: 0 1px 2px rgba(255, 255, 255, 0.95), 0 0 8px rgba(255, 255, 255, 0.9) !important;
+      }
+
+      .detail-card-main-title {
+        font-size: 0.86rem !important;
+        line-height: 1.3 !important;
+        margin: 3px 0 !important;
+        text-shadow: 0 1px 2px rgba(255, 255, 255, 0.95), 0 0 8px rgba(255, 255, 255, 0.9) !important;
+      }
+
+      .detail-card-bottom-info {
+        font-size: 0.72rem !important;
+        margin-top: 5px !important;
+      }
+    }
+
+    .page1-actions-container {
+      margin-top: 14px !important;
+      padding-top: 0 !important;
+      margin-bottom: 2px !important;
+
+      .page1-decision-buttons {
+        gap: 10px !important;
+
+        .btn {
+          padding: 9px 20px !important;
+          font-size: 0.82rem !important;
+          font-weight: 700 !important;
+          letter-spacing: 0.6px !important;
+          border-radius: 9999px !important;
+        }
+      }
+
+      .btn-discover-first-pill {
+        margin-top: 10px !important;
+        background: rgba(255, 255, 255, 0.5) !important;
+        border: 1px solid rgba(255, 255, 255, 0.65) !important;
+        border-radius: 20px !important;
+        padding: 7px 18px !important;
+        backdrop-filter: blur(4px) !important;
+        -webkit-backdrop-filter: blur(4px) !important;
+        color: #1e293b !important;
+        font-size: 0.78rem !important;
+        font-weight: 600 !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
+      }
+    }
+  }
+}
+
+// ----------------------------------------------------------------------------
+// CANEVAS ORDINATEUR (DESKTOP 16:9 PANORAMIQUE - EXACT GUEST VIEW / IMAGE 1)
+// ----------------------------------------------------------------------------
+.preview-desktop-canvas {
+  width: 100% !important;
+  max-width: 960px !important;
+  min-height: unset !important;
+  height: auto !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+  margin: 0 auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+
+  .desktop-floating-music-wrapper {
+    .floating-music-pill {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      transition: all 0.25s ease;
+      &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      }
+    }
+  }
+
+  .prestige-envelope-box {
+    width: 100% !important;
+    max-width: 960px !important;
+    aspect-ratio: 16 / 9 !important;
+    min-height: unset !important;
+    border-radius: 32px !important;
+  }
+
+  .live-invitation-card {
+    width: 100% !important;
+    max-width: 960px !important;
+    aspect-ratio: 16 / 9 !important;
+    min-height: unset !important;
+    max-height: none !important;
+    height: auto !important;
+    border-radius: 32px !important;
+    background-size: cover !important;
+    background-position: center center !important;
+    background-repeat: no-repeat !important;
+    box-shadow: 0 16px 45px rgba(0, 0, 0, 0.12) !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+    padding: 0 !important;
+
+    .luxury-inner-border {
+      background: transparent !important;
+      border: 1px solid rgba(212, 175, 55, 0.25) !important;
+      border-radius: 22px !important;
+      box-sizing: border-box !important;
+      width: calc(100% - 24px) !important;
+      height: calc(100% - 24px) !important;
+      margin: 12px !important;
+      padding: 14px 20px 12px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: space-evenly !important;
+      align-items: center !important;
+    }
+
+    .luxury-subtitle {
+      font-size: clamp(0.68rem, 1.1vw, 0.82rem) !important;
+      letter-spacing: 2px !important;
+      font-weight: 700 !important;
+      opacity: 0.9 !important;
+      margin-bottom: 2px !important;
+    }
+
+    .invitation-live-title {
+      font-size: clamp(1.45rem, 2.7vw, 2.3rem) !important;
+      line-height: 1.15 !important;
+      margin: 2px 0 6px !important;
+    }
+
+    .invitation-guest-salutation {
+      border: 1px solid var(--admin-accent-color, rgba(212, 175, 55, 0.35)) !important;
+      border-radius: 14px !important;
+      background: rgba(255, 255, 255, 0.15) !important;
+      backdrop-filter: blur(2px) !important;
+      -webkit-backdrop-filter: blur(2px) !important;
+      padding: 8px 18px !important;
+      max-width: 620px !important;
+      width: 100% !important;
+      margin: 0 auto 8px !important;
+      text-align: center !important;
+
+      .salutation-honorific {
+        font-size: clamp(0.75rem, 1.2vw, 0.9rem) !important;
+      }
+
+      .salutation-guest-name {
+        font-size: clamp(0.75rem, 1.2vw, 0.9rem) !important;
+      }
+
+      .salutation-invitation-message {
+        font-size: clamp(0.68rem, 1vw, 0.8rem) !important;
+        line-height: 1.4 !important;
+        margin-top: 4px !important;
+        opacity: 0.88 !important;
+      }
+    }
+
+    .artistic-invitation-details {
+      display: grid !important;
+      grid-template-columns: repeat(2, 1fr) !important;
+      gap: 16px !important;
+      max-width: 620px !important;
+      width: 100% !important;
+      margin: 0 auto 8px !important;
+
+      .artistic-detail-card {
+        background: rgba(255, 255, 255, 0.35) !important;
+        border: 1px solid var(--admin-accent-color, rgba(212, 175, 55, 0.3)) !important;
+        border-radius: 14px !important;
+        padding: 8px 14px !important;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04) !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        min-height: unset !important;
+
+        .detail-card-icon-circle {
+          width: 28px !important;
+          height: 28px !important;
+          font-size: 0.75rem !important;
+          margin-bottom: 2px !important;
+        }
+
+        .event-card-day-label,
+        .event-card-month-label {
+          font-size: clamp(0.62rem, 0.9vw, 0.7rem) !important;
+          letter-spacing: 1.2px !important;
+        }
+
+        .hero-event-day-number {
+          font-size: clamp(1.4rem, 2.2vw, 1.85rem) !important;
+          line-height: 1 !important;
+          margin: 1px 0 !important;
+        }
+
+        .detail-card-subtitle {
+          font-size: clamp(0.58rem, 0.85vw, 0.65rem) !important;
+          letter-spacing: 1px !important;
+        }
+
+        .detail-card-main-title {
+          font-size: clamp(0.75rem, 1.1vw, 0.85rem) !important;
+          line-height: 1.25 !important;
+          margin: 2px 0 !important;
+        }
+
+        .detail-card-bottom-info {
+          font-size: clamp(0.65rem, 0.95vw, 0.72rem) !important;
+          margin-top: 4px !important;
+        }
+      }
+    }
+
+    .page1-actions-container {
+      margin-top: 2px !important;
+      padding-top: 0 !important;
+      margin-bottom: 0 !important;
+
+      .page1-decision-buttons {
+        gap: 12px !important;
+
+        .btn {
+          padding: 7px 22px !important;
+          border-radius: 50px !important;
+          font-size: clamp(0.72rem, 1.05vw, 0.82rem) !important;
+          font-weight: 700 !important;
+          letter-spacing: 0.5px !important;
+        }
+      }
+
+      .desktop-discover-link {
+        font-size: clamp(0.7rem, 1vw, 0.78rem) !important;
+        opacity: 0.9 !important;
+        transition: opacity 0.2s ease;
+        &:hover {
+          opacity: 1 !important;
+        }
+      }
+    }
   }
 }

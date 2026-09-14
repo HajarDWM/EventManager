@@ -467,30 +467,43 @@
                   <span class="badge bg-light text-muted border fs-xxs">Titres & Célébration</span>
                 </div>
 
+                <!-- Champ de saisie libre & recherche directe -->
                 <div class="input-group input-group-sm mb-2 shadow-2xs">
-                  <span class="input-group-text border-light bg-white text-muted"><i class="fa fa-font"></i></span>
-                  <input type="text" class="form-control border-light bg-white fs-xs fw-semibold" 
-                         list="editorPrimaryFontsList"
+                  <span class="input-group-text border-light bg-light text-primary" title="Saisie libre de police">
+                    <i class="fa fa-pen"></i>
+                  </span>
+                  <input type="text" 
+                         class="form-control border-light bg-white fs-xs fw-semibold" 
                          [(ngModel)]="primaryFontField" 
                          name="primaryFont"
                          (ngModelChange)="onPrimaryFontChange($event)"
+                         (change)="registerAndPrioritizeFont(primaryFontField)"
+                         (blur)="registerAndPrioritizeFont(primaryFontField)"
+                         (keydown.enter)="registerAndPrioritizeFont(primaryFontField)"
                          [style.fontFamily]="primaryFontField"
-                         placeholder="Ex: Alex Brush, Great Vibes, Playfair Display...">
-                  <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split border-light bg-white"
-                          data-bs-toggle="dropdown" aria-expanded="false" title="Afficher la liste des polices"></button>
-                  <ul class="dropdown-menu dropdown-menu-end shadow-lg w-100 p-2 border-0 rounded-3" style="max-height: 280px; overflow-y: auto; z-index: 1070;">
+                         placeholder="Tapez une police Google Font (ex: Alex Brush, Amiri, Great Vibes...)">
+                  <button type="button" class="btn btn-outline-secondary dropdown-toggle border-light bg-white fs-xxs fw-semibold px-2.5"
+                          data-bs-toggle="dropdown" aria-expanded="false" title="Afficher les polices suggérées">
+                    <i class="fa fa-list me-1"></i> Polices
+                  </button>
+                  <ul class="dropdown-menu dropdown-menu-end shadow-lg p-2 border-0 rounded-3" style="max-height: 280px; width: 280px; overflow-y: auto; z-index: 1070;">
+                    <li class="dropdown-header text-uppercase fs-4xs fw-bold text-muted px-2 py-1">Polices Suggérées</li>
                     <li *ngFor="let font of availableFonts">
                       <button type="button" class="dropdown-item d-flex justify-content-between align-items-center py-1.5 px-2 rounded-2"
                               (click)="selectPrimaryFont(font.name)">
                         <span class="fs-xs" [style.fontFamily]="font.name">{{ font.name }}</span>
-                        <span class="badge bg-light text-muted border ms-2 fs-xxs">{{ font.fontGroup }}</span>
+                        <span class="badge ms-2 fs-xxs" 
+                              [class.bg-primary]="font.fontGroup === 'Personnalisée'"
+                              [class.text-white]="font.fontGroup === 'Personnalisée'"
+                              [class.bg-light]="font.fontGroup !== 'Personnalisée'"
+                              [class.text-muted]="font.fontGroup !== 'Personnalisée'"
+                              [class.border]="font.fontGroup !== 'Personnalisée'">
+                          {{ font.fontGroup === 'Personnalisée' ? '⭐ Personnalisée' : font.fontGroup }}
+                        </span>
                       </button>
                     </li>
                   </ul>
                 </div>
-                <datalist id="editorPrimaryFontsList">
-                  <option *ngFor="let font of availableFonts" [value]="font.name">{{ font.fontGroup }}</option>
-                </datalist>
 
                 <!-- 3 Options de style compactes : Taille + Épaisseur + Espacement -->
                 <div class="row g-2">
@@ -529,30 +542,43 @@
                   <span class="badge bg-light text-muted border fs-xxs">Date, Lieux & Infos</span>
                 </div>
 
+                <!-- Champ de saisie libre & recherche directe -->
                 <div class="input-group input-group-sm mb-2 shadow-2xs">
-                  <span class="input-group-text border-light bg-white text-muted"><i class="fa fa-font"></i></span>
-                  <input type="text" class="form-control border-light bg-white fs-xs fw-semibold" 
-                         list="editorSecondaryFontsList"
+                  <span class="input-group-text border-light bg-light text-success" title="Saisie libre de police">
+                    <i class="fa fa-pen"></i>
+                  </span>
+                  <input type="text" 
+                         class="form-control border-light bg-white fs-xs fw-semibold" 
                          [(ngModel)]="secondaryFontField" 
                          name="secondaryFont"
                          (ngModelChange)="onSecondaryFontChange($event)"
+                         (change)="registerAndPrioritizeFont(secondaryFontField)"
+                         (blur)="registerAndPrioritizeFont(secondaryFontField)"
+                         (keydown.enter)="registerAndPrioritizeFont(secondaryFontField)"
                          [style.fontFamily]="secondaryFontField"
-                         placeholder="Ex: Cinzel, Cormorant Garamond, Montserrat...">
-                  <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split border-light bg-white"
-                          data-bs-toggle="dropdown" aria-expanded="false" title="Afficher la liste des polices"></button>
-                  <ul class="dropdown-menu dropdown-menu-end shadow-lg w-100 p-2 border-0 rounded-3" style="max-height: 280px; overflow-y: auto; z-index: 1070;">
+                         placeholder="Tapez une police Google Font (ex: Cinzel, Cormorant Garamond, Cairo...)">
+                  <button type="button" class="btn btn-outline-secondary dropdown-toggle border-light bg-white fs-xxs fw-semibold px-2.5"
+                          data-bs-toggle="dropdown" aria-expanded="false" title="Afficher les polices suggérées">
+                    <i class="fa fa-list me-1"></i> Polices
+                  </button>
+                  <ul class="dropdown-menu dropdown-menu-end shadow-lg p-2 border-0 rounded-3" style="max-height: 280px; width: 280px; overflow-y: auto; z-index: 1070;">
+                    <li class="dropdown-header text-uppercase fs-4xs fw-bold text-muted px-2 py-1">Polices Suggérées</li>
                     <li *ngFor="let font of availableFonts">
                       <button type="button" class="dropdown-item d-flex justify-content-between align-items-center py-1.5 px-2 rounded-2"
                               (click)="selectSecondaryFont(font.name)">
                         <span class="fs-xs" [style.fontFamily]="font.name">{{ font.name }}</span>
-                        <span class="badge bg-light text-muted border ms-2 fs-xxs">{{ font.fontGroup }}</span>
+                        <span class="badge ms-2 fs-xxs" 
+                              [class.bg-success]="font.fontGroup === 'Personnalisée'"
+                              [class.text-white]="font.fontGroup === 'Personnalisée'"
+                              [class.bg-light]="font.fontGroup !== 'Personnalisée'"
+                              [class.text-muted]="font.fontGroup !== 'Personnalisée'"
+                              [class.border]="font.fontGroup !== 'Personnalisée'">
+                          {{ font.fontGroup === 'Personnalisée' ? '⭐ Personnalisée' : font.fontGroup }}
+                        </span>
                       </button>
                     </li>
                   </ul>
                 </div>
-                <datalist id="editorSecondaryFontsList">
-                  <option *ngFor="let font of availableFonts" [value]="font.name">{{ font.fontGroup }}</option>
-                </datalist>
 
                 <!-- 3 Options de style compactes : Taille + Épaisseur + Espacement -->
                 <div class="row g-2">
@@ -996,8 +1022,34 @@
         </div>
 
         <!-- ZONE CENTRALE DE RENDU DE LA CARTE D'INVITATION -->
-        <div class="preview-stage-container d-flex justify-content-center align-items-start p-3 p-md-4 rounded-4 shadow-xs border position-relative"
-             style="background-color: #f8fafc; min-height: 600px; overflow-x: auto;">
+        <div class="preview-stage-container d-flex justify-content-center align-items-center p-2 p-md-4 rounded-4 shadow-xs border position-relative"
+             [class.preview-device-is-mobile]="previewDevice() === 'mobile'"
+             [class.preview-device-is-desktop]="previewDevice() === 'desktop'"
+             [style.--admin-accent-color]="accentColorField || '#d4af37'"
+             [style.backgroundColor]="previewDevice() === 'desktop' ? (backgroundColorField || '#f4efe6') : null">
+
+          <!-- VIEWPORT D'APPAREIL : SMARTPHONE MOCKUP (MOBILE) OU CANEVAS PANORAMIQUE (DESKTOP) -->
+          <div class="preview-device-viewport position-relative"
+               [class.preview-phone-chassis]="previewDevice() === 'mobile'"
+               [class.preview-desktop-canvas]="previewDevice() === 'desktop'"
+               [style.maxWidth]="previewDevice() === 'mobile' ? '380px' : '960px'"
+               style="width: 100%;">
+
+            <!-- Dynamic Island / Smartphone Notch (Mobile uniquement) -->
+            <div class="phone-dynamic-island position-absolute top-0 start-50 translate-middle-x z-5 pointer-events-none"
+                 *ngIf="previewDevice() === 'mobile'">
+              <div class="island-pill">
+                <span class="island-camera"></span>
+                <span class="island-sensor"></span>
+              </div>
+            </div>
+
+            <!-- FOND D'ÉCRAN MOBILE IMMERSIF (Proportion 9:16 Portrait Naturelle - Image 3) -->
+            <div class="preview-mobile-bg-wallpaper position-absolute inset-0 pointer-events-none"
+                 *ngIf="previewDevice() === 'mobile' && getLivePreviewBackgroundImage()"
+                 [style.backgroundImage]="'url(' + getLivePreviewBackgroundImage() + ')'">
+              <div class="preview-mobile-bg-overlay"></div>
+            </div>
 
           <!-- 1. COUCHE PARTICULES VISUELLES (Arrière-plan dynamique) -->
           <div class="preview-particles-stage position-absolute inset-0 pointer-events-none z-1"
@@ -1353,6 +1405,47 @@
 
           </div>
 
+          <!-- BOUTON MUSIQUE FLOTTANT DESKTOP (Au-dessus de la carte, exactement comme Image 1) -->
+          <div class="desktop-floating-music-wrapper mb-2.5 d-flex justify-content-center w-100 position-relative z-4"
+               *ngIf="previewDevice() === 'desktop' && musicUrlField">
+            <div class="floating-music-pill d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill shadow-xs border cursor-pointer"
+                 [style.background]="getMusicWidgetLabelBg()"
+                 [style.borderColor]="getMusicWidgetLabelBorder()"
+                 (click)="togglePreviewAudio()">
+              <div class="rounded-circle d-flex align-items-center justify-content-center"
+                   style="width: 22px; height: 22px;"
+                   [style.background]="accentColorField ? (accentColorField + '25') : 'rgba(212, 175, 55, 0.2)'"
+                   [style.color]="accentColorField || '#d4af37'">
+                <i class="fa" [ngClass]="isPreviewAudioPlaying() ? 'fa-compact-disc fa-spin' : 'fa-music'" style="font-size: 0.72rem;"></i>
+              </div>
+              <span class="fw-bold" style="font-size: 0.74rem;" [style.color]="getMusicWidgetLabelTextColor()">
+                {{ isPreviewAudioPlaying() ? 'Pause' : 'Musique' }}
+              </span>
+            </div>
+          </div>
+
+          <!-- BOUTON MUSIQUE FLOTTANT MOBILE (En haut au centre sous le notch, au-dessus de la carte - Exact Image 1) -->
+          <div class="mobile-floating-music-wrapper position-absolute start-50 translate-middle-x z-4 cursor-pointer"
+               *ngIf="previewDevice() === 'mobile' && musicUrlField"
+               (click)="togglePreviewAudio()"
+               [title]="isPreviewAudioPlaying() ? 'Mettre en pause la musique' : 'Lancer la musique'">
+            <div class="d-flex align-items-center gap-2">
+              <div class="music-badge-circle rounded-circle d-flex align-items-center justify-content-center shadow-sm"
+                   [style.background]="getMusicWidgetBtnBg()"
+                   [style.borderColor]="getMusicWidgetBtnBorder()"
+                   [style.color]="getMusicWidgetBtnColor()">
+                <i class="fa" [ngClass]="isPreviewAudioPlaying() ? 'fa-compact-disc fa-spin' : 'fa-music'" style="font-size: 0.95rem;"></i>
+              </div>
+              <div class="music-pill-label px-3 py-1 rounded-pill shadow-sm border"
+                   [style.background]="getMusicWidgetLabelBg()"
+                   [style.borderColor]="getMusicWidgetLabelBorder()">
+                <span class="fw-bold" style="font-size: 0.76rem;" [style.color]="getMusicWidgetLabelTextColor()">
+                  {{ isPreviewAudioPlaying() ? 'Pause' : 'Musique' }}
+                </span>
+              </div>
+            </div>
+          </div>
+
           <!-- Carte d'Invitation Réelle (Toujours présente pour permettre la révélation progressive synchronisée) -->
           <div class="live-invitation-card position-relative rounded-4 shadow-xl overflow-hidden animate__animated"
                [class.cinematic-under-card]="!isPreviewOpened() && (openingAnimationField === 'envelope-wax' || openingAnimationField === 'ribbon-cut' || openingAnimationField === 'curtain-unveil' || openingAnimationField === 'sliding-doors')"
@@ -1361,30 +1454,21 @@
                [class.curtain-style]="openingAnimationField === 'curtain-unveil'"
                [class.doors-style]="openingAnimationField === 'sliding-doors'"
                [class.cinematic-card-revealing]="isOpeningTransitioning()"
-               [style.maxWidth]="previewDevice() === 'mobile' ? '375px' : '1180px'"
+               [style.maxWidth]="previewDevice() === 'mobile' ? '355px' : '960px'"
                [style.width]="'100%'"
-               [style.backgroundColor]="backgroundColorField || '#faf6ee'"
-               [style.backgroundImage]="getLivePreviewBackgroundImage() ? 'url(' + getLivePreviewBackgroundImage() + ')' : 'none'"
-               [style.borderColor]="accentColorField ? (accentColorField + '40') : 'rgba(212, 175, 55, 0.35)'">
-
-
-
-            <!-- BOUTON MUSIQUE FLOTTANT (Si musique configurée) -->
-            <div class="position-absolute top-0 end-0 m-3 z-3" *ngIf="musicUrlField">
-              <button type="button" class="btn btn-sm rounded-pill shadow-sm d-inline-flex align-items-center gap-1.5 px-2.5 py-1 border live-music-badge"
-                      (click)="togglePreviewAudio()"
-                      [style.backgroundColor]="accentColorField ? (accentColorField + '18') : '#fef3c7'"
-                      [style.borderColor]="accentColorField || '#d4af37'"
-                      [style.color]="secondaryFontColorField || '#0f172a'">
-                <i class="fa fa-music" [class.fa-spin]="isPreviewAudioPlaying()"></i>
-                <span class="fs-xxs fw-bold">{{ isPreviewAudioPlaying() ? 'Pause' : 'Musique' }}</span>
-              </button>
-            </div>
+               [style.backgroundColor]="previewDevice() === 'mobile' ? 'transparent' : (backgroundColorField || '#faf6ee')"
+               [style.backgroundImage]="previewDevice() === 'desktop' && getLivePreviewBackgroundImage() ? 'url(' + getLivePreviewBackgroundImage() + ')' : (previewDevice() === 'mobile' ? 'radial-gradient(ellipse at 50% 45%, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.06) 55%, transparent 95%)' : 'none')"
+               [style.backgroundSize]="previewDevice() === 'desktop' ? 'cover' : 'auto'"
+               [style.backgroundPosition]="previewDevice() === 'desktop' ? 'center center' : 'initial'"
+               [style.backgroundRepeat]="'no-repeat'"
+               [style.backdropFilter]="previewDevice() === 'mobile' ? 'blur(1.5px)' : 'none'"
+               [style.border]="previewDevice() === 'mobile' ? (accentColorField ? ('1px solid ' + accentColorField + '35') : '1px solid rgba(212, 175, 55, 0.22)') : (accentColorField ? ('1.5px solid ' + accentColorField + '40') : '1.5px solid rgba(212, 175, 55, 0.35)')"
+               [style.borderRadius]="previewDevice() === 'mobile' ? '22px' : '32px'"
+               [style.boxShadow]="previewDevice() === 'mobile' ? 'none' : '0 20px 45px rgba(0, 0, 0, 0.12)'">
 
             <!-- BORDURE INTÉRIEURE ÉLÉGANTE (luxury-inner-border) -->
-            <div class="luxury-inner-border position-relative z-2 m-2 m-sm-3 p-3 p-sm-4 rounded-3 text-center"
-                 [style.borderColor]="accentColorField ? (accentColorField + '30') : 'rgba(212, 175, 55, 0.25)'"
-                 style="border: 1px solid;">
+            <div class="luxury-inner-border position-relative z-2 m-1 m-sm-2 p-2.5 p-sm-4 rounded-3 text-center"
+                 [style.border]="previewDevice() === 'mobile' ? 'none' : (accentColorField ? ('1px solid ' + accentColorField + '30') : '1px solid rgba(212, 175, 55, 0.25)')">
 
               <!-- 1. En-tête / Sous-titre officiel -->
               <div class="invitation-header-tag mb-1">
@@ -1394,7 +1478,7 @@
                       [style.fontWeight]="secondaryFontWeightField || '700'"
                       [style.letterSpacing]="secondaryLetterSpacingField || '2px'"
                       [style.color]="secondaryFontColorField || '#0f172a'"
-                      style="opacity: 0.88;">
+                      style="opacity: 1;">
                   {{ subCategoryField ? (subCategoryField | uppercase) + ' & CÉLÉBRATION' : (categoryField || 'INVITATION OFFICIELLE') }}
                 </span>
               </div>
@@ -1527,43 +1611,45 @@
 
               </div>
 
-              <!-- 5. BOUTONS D'ACTION RSVP (Mockup Fidèle & Réactif) -->
+              <!-- 5. BOUTONS D'ACTION RSVP (Mockup Fidèle & Réactif - Image 3) -->
               <div class="page1-actions-container mt-3 pt-1 mb-1 text-center">
                 <!-- Boutons de décision Accepter / Décliner -->
                 <div class="page1-decision-buttons d-flex align-items-center justify-content-center gap-2 flex-nowrap">
-                  <!-- Accepter stylisé avec accentColor -->
+                  <!-- Accepter stylisé avec accentColor dégradé -->
                   <button type="button" class="btn btn-sm rounded-pill px-3.5 py-1.5 fw-bold d-inline-flex align-items-center gap-1.5 shadow-sm border-0 pointer-events-none"
-                          [style.backgroundColor]="accentColorField || '#d4af37'"
-                          [style.color]="isDarkBg(accentColorField) ? '#ffffff' : '#0c0c0c'"
-                          style="font-size: 0.82rem; letter-spacing: 0.5px; text-transform: uppercase;">
+                          [style.background]="'linear-gradient(135deg, ' + (accentColorField || '#d4af37') + ' 0%, #aa820a 100%)'"
+                          style="color: #ffffff; font-size: 0.8rem; letter-spacing: 0.5px; text-transform: uppercase;">
                     <i class="fa fa-check"></i>
                     <span>Accepter</span>
                   </button>
 
                   <!-- Décliner neutre lisible -->
-                  <button type="button" class="btn btn-sm rounded-pill px-3 py-1.5 fw-semibold d-inline-flex align-items-center gap-1.5 bg-white border pointer-events-none shadow-2xs"
-                          [style.borderColor]="secondaryFontColorField ? (secondaryFontColorField + '35') : '#cbd5e1'"
-                          [style.color]="secondaryFontColorField || '#1e293b'"
-                          style="font-size: 0.82rem; text-transform: uppercase;">
+                  <button type="button" class="btn btn-sm rounded-pill px-3.5 py-1.5 fw-bold d-inline-flex align-items-center gap-1.5 bg-white border pointer-events-none shadow-2xs text-dark"
+                          style="border-color: rgba(0, 0, 0, 0.18) !important; font-size: 0.8rem; text-transform: uppercase;">
                     <i class="fa fa-times text-danger"></i>
                     <span>Décliner</span>
                   </button>
                 </div>
 
                 <!-- Note informative : Widgets situés sur la page de confirmation (Tab 4) -->
-                <div class="mt-2 text-muted" style="font-size: 0.7rem; opacity: 0.85;">
+                <div class="mt-2 text-muted" *ngIf="activeEditorTab() === 'effects'" style="font-size: 0.68rem; opacity: 0.85;">
                   <i class="fa fa-info-circle me-1" [style.color]="accentColorField || '#d4af37'"></i>
                   <span>Widgets (Compte à rebours, Agenda, GPS) situés sur la page de confirmation (Étape / Tab 4)</span>
                 </div>
 
                 <!-- Découvrir le menu d'abord -->
-                <div class="mt-2.5">
-                  <span class="btn btn-link btn-discover-first text-decoration-none p-0 d-inline-flex align-items-center gap-1.5 pointer-events-none"
-                        [style.color]="secondaryFontColorField || '#0f172a'"
-                        style="font-size: 0.75rem; font-weight: 600; opacity: 0.9;">
-                    <i class="fa fa-utensils" [style.color]="accentColorField || '#d4af37'"></i>
-                    <span>Découvrir le menu d'abord</span>
-                    <i class="fa fa-arrow-right" style="font-size: 0.65rem;"></i>
+                <div class="mt-2 text-center">
+                  <span class="btn-discover-first-pill pointer-events-none"
+                        *ngIf="previewDevice() === 'mobile'">
+                    <span>🍽️</span>
+                    <span>Découvrir le menu d'abord &rarr;</span>
+                  </span>
+                  <span class="desktop-discover-link d-inline-flex align-items-center gap-1.5 pointer-events-none"
+                        *ngIf="previewDevice() === 'desktop'"
+                        [style.color]="secondaryFontColorField || '#0f172a'">
+                    <span style="font-size: 0.78rem;">🍽</span>
+                    <span class="fw-semibold" style="font-size: 0.76rem;">Découvrir le menu d'abord</span>
+                    <span style="font-size: 0.72rem;">&rarr;</span>
                   </span>
                 </div>
               </div>
@@ -1571,6 +1657,8 @@
             </div>
 
           </div>
+
+          </div> <!-- Fin preview-device-viewport -->
 
         </div>
 

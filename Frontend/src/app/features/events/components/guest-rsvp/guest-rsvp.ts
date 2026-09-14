@@ -101,6 +101,10 @@ export class GuestRsvp implements OnInit, OnDestroy {
     return !!anim && ['envelope-wax', 'ribbon-cut', 'curtain-unveil', 'sliding-doors', 'vip-badge'].includes(anim);
   }
 
+  public shouldHideWallpaperBeforeOpening(): boolean {
+    return this.isInteractiveAnimation() && !this.isInvitationOpened() && !this.isOpeningTransitioning();
+  }
+
   public openInvitationExperience(): void {
     if (this.isOpeningTransitioning() || this.isInvitationOpened()) return;
     this.isOpeningTransitioning.set(true);
@@ -621,6 +625,163 @@ export class GuestRsvp implements OnInit, OnDestroy {
     return false;
   }
 
+  public isDarkTheme(): boolean {
+    const secColor = this.getSecondaryFontColor();
+    if (!this.isDarkBg(secColor)) {
+      return true;
+    }
+    if (this.customBgColor && this.isDarkBg(this.customBgColor)) {
+      return true;
+    }
+    return false;
+  }
+
+  public getDishCardBg(isSelected: boolean = false): string {
+    if (this.isDarkTheme()) {
+      return isSelected 
+        ? (this.getPrimaryColor() ? (this.getPrimaryColor() + '2e') : 'rgba(212, 175, 55, 0.25)') 
+        : 'rgba(255, 255, 255, 0.10)';
+    }
+    return isSelected 
+      ? (this.getPrimaryColor() ? (this.getPrimaryColor() + '18') : 'rgba(212, 175, 55, 0.12)') 
+      : '#ffffff';
+  }
+
+  public getDishCardBorder(isSelected: boolean = false): string {
+    if (isSelected) {
+      return this.getPrimaryColor() || '#d4af37';
+    }
+    if (this.isDarkTheme()) {
+      return this.getPrimaryColor() ? (this.getPrimaryColor() + '45') : 'rgba(212, 175, 55, 0.35)';
+    }
+    return this.getPrimaryColor() ? (this.getPrimaryColor() + '28') : 'rgba(0, 0, 0, 0.12)';
+  }
+
+  public getDishTitleColor(isSelected: boolean = false): string {
+    if (isSelected) {
+      return this.isDarkTheme() ? '#ffffff' : (this.getPrimaryColor() || '#d4af37');
+    }
+    if (this.isDarkTheme()) {
+      return this.getSecondaryFontColor() || '#f8fafc';
+    }
+    return '#1e293b';
+  }
+
+  public getStepperTabBg(isActive: boolean, hasSelection: boolean = false): string {
+    if (isActive) {
+      return this.getPrimaryColor() || '#d4af37';
+    }
+    if (this.isDarkTheme()) {
+      return hasSelection
+        ? (this.getPrimaryColor() ? (this.getPrimaryColor() + '28') : 'rgba(212, 175, 55, 0.22)')
+        : 'rgba(255, 255, 255, 0.12)';
+    }
+    return hasSelection
+      ? (this.getPrimaryColor() ? (this.getPrimaryColor() + '18') : 'rgba(212, 175, 55, 0.12)')
+      : 'rgba(255, 255, 255, 0.92)';
+  }
+
+  public getStepperTabTextColor(isActive: boolean): string {
+    if (isActive) {
+      return this.isDarkBg(this.getPrimaryColor()) ? '#ffffff' : '#0c0c0c';
+    }
+    if (this.isDarkTheme()) {
+      return this.getSecondaryFontColor() || '#f8fafc';
+    }
+    return '#1e293b';
+  }
+
+  public getStepperTabBorder(isActive: boolean, hasSelection: boolean = false): string {
+    if (isActive) {
+      return (this.getPrimaryColor() || '#d4af37') + 'ff';
+    }
+    if (this.isDarkTheme()) {
+      return hasSelection
+        ? (this.getPrimaryColor() || '#d4af37') + '99'
+        : (this.getPrimaryColor() ? (this.getPrimaryColor() + '55') : 'rgba(212, 175, 55, 0.35)');
+    }
+    return hasSelection
+      ? (this.getPrimaryColor() || '#d4af37') + '80'
+      : (this.getPrimaryColor() ? (this.getPrimaryColor() + '45') : 'rgba(0, 0, 0, 0.15)');
+  }
+
+  public getMenuMutedTextColor(): string {
+    return this.isDarkTheme() ? 'rgba(255, 255, 255, 0.78)' : '#64748b';
+  }
+
+  public getMusicWidgetBtnBg(): string {
+    if (this.isDarkTheme()) {
+      return this.isMusicPlaying()
+        ? (this.getPrimaryColor() ? (this.getPrimaryColor() + '38') : 'rgba(212, 175, 55, 0.35)')
+        : 'rgba(255, 255, 255, 0.12)';
+    }
+    return this.isMusicPlaying()
+      ? 'linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.92) 100%)'
+      : 'rgba(255, 255, 255, 0.95)';
+  }
+
+  public getMusicWidgetBtnColor(): string {
+    if (this.isDarkTheme()) {
+      return this.getPrimaryColor() || '#d4af37';
+    }
+    return this.isMusicPlaying()
+      ? (this.getPrimaryColor() || '#78350f')
+      : '#92400e';
+  }
+
+  public getMusicWidgetBtnBorder(): string {
+    return this.getPrimaryColor()
+      ? (this.getPrimaryColor() + '90')
+      : 'rgba(212, 175, 55, 0.6)';
+  }
+
+  public getMusicWidgetLabelBg(): string {
+    if (this.isDarkTheme()) {
+      return 'rgba(255, 255, 255, 0.12)';
+    }
+    return 'rgba(255, 255, 255, 0.95)';
+  }
+
+  public getMusicWidgetLabelTextColor(): string {
+    if (this.isDarkTheme()) {
+      return this.getSecondaryFontColor() || '#ffffff';
+    }
+    return '#1e293b';
+  }
+
+  public getMusicWidgetLabelBorder(): string {
+    return this.getPrimaryColor()
+      ? (this.getPrimaryColor() + '75')
+      : 'rgba(212, 175, 55, 0.45)';
+  }
+
+  public getCountdownBoxBg(): string {
+    if (this.isDarkTheme()) {
+      return 'rgba(255, 255, 255, 0.12)';
+    }
+    return 'rgba(255, 255, 255, 0.94)';
+  }
+
+  public getCountdownNumColor(): string {
+    if (this.isDarkTheme()) {
+      return this.getSecondaryFontColor() || '#ffffff';
+    }
+    return '#1e293b';
+  }
+
+  public getCountdownLblColor(): string {
+    if (this.isDarkTheme()) {
+      return 'rgba(255, 255, 255, 0.72)';
+    }
+    return '#64748b';
+  }
+
+  public getCountdownBoxBorder(): string {
+    return this.getPrimaryColor()
+      ? (this.getPrimaryColor() + '40')
+      : 'rgba(212, 175, 55, 0.35)';
+  }
+
   protected getStep1PreviewImage(): string {
     const items = this.carouselItems();
     if (items.length > 1) return items[1]?.image || items[0]?.image;
@@ -913,6 +1074,14 @@ export class GuestRsvp implements OnInit, OnDestroy {
     return '#f4efe6';
   }
 
+  public getCardMobileBgColor(): string {
+    const bg = this.customBgColor;
+    if (this.isDarkBg(bg)) {
+      return 'rgba(10, 10, 15, 0.15)';
+    }
+    return 'rgba(255, 255, 255, 0.08)';
+  }
+
   public get resolvedBackgroundImage(): string | null {
     return this.guest()?.templateBackgroundImageUrl || null;
   }
@@ -1176,6 +1345,66 @@ export class GuestRsvp implements OnInit, OnDestroy {
     if (event.key === 'Enter') {
       event.preventDefault();
       this.goToNextStep();
+    }
+  }
+
+  protected onDishesScroll(event: Event): void {
+    const target = event.target as HTMLElement;
+    if (!target) return;
+    const parent = target.parentElement;
+    if (!parent) return;
+    const thumb = parent.querySelector('.luxury-gold-scrollbar-thumb') as HTMLElement;
+    if (!thumb) return;
+    const maxScroll = target.scrollHeight - target.clientHeight;
+    if (maxScroll <= 0) return;
+    const progress = Math.min(1, Math.max(0, target.scrollTop / maxScroll));
+    const track = thumb.parentElement as HTMLElement;
+    const availableTravel = track.clientHeight - thumb.clientHeight;
+    thumb.style.transform = `translateY(${progress * availableTravel}px)`;
+  }
+
+  protected onRailPointerDown(event: PointerEvent, container: HTMLElement): void {
+    const rail = event.currentTarget as HTMLElement;
+    try {
+      rail.setPointerCapture(event.pointerId);
+    } catch (_) {}
+    this.handleRailPointer(event, rail, container);
+  }
+
+  protected onRailPointerMove(event: PointerEvent, container: HTMLElement): void {
+    const rail = event.currentTarget as HTMLElement;
+    if (rail.hasPointerCapture && rail.hasPointerCapture(event.pointerId)) {
+      this.handleRailPointer(event, rail, container);
+    }
+  }
+
+  protected onRailPointerUp(event: PointerEvent): void {
+    const rail = event.currentTarget as HTMLElement;
+    try {
+      if (rail.hasPointerCapture && rail.hasPointerCapture(event.pointerId)) {
+        rail.releasePointerCapture(event.pointerId);
+      }
+    } catch (_) {}
+  }
+
+  private handleRailPointer(event: PointerEvent, rail: HTMLElement, container: HTMLElement): void {
+    const rect = rail.getBoundingClientRect();
+    const clickY = event.clientY - rect.top;
+    const ratio = Math.min(1, Math.max(0, clickY / rect.height));
+    const maxScroll = container.scrollHeight - container.clientHeight;
+    if (maxScroll > 0) {
+      container.scrollTop = ratio * maxScroll;
+    }
+  }
+
+  protected onRailClick(event: MouseEvent, container: HTMLElement): void {
+    const rail = event.currentTarget as HTMLElement;
+    const rect = rail.getBoundingClientRect();
+    const clickY = event.clientY - rect.top;
+    const ratio = Math.min(1, Math.max(0, clickY / rect.height));
+    const maxScroll = container.scrollHeight - container.clientHeight;
+    if (maxScroll > 0) {
+      container.scrollTo({ top: ratio * maxScroll, behavior: 'smooth' });
     }
   }
 

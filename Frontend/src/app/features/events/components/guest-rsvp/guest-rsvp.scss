@@ -2016,11 +2016,9 @@ textarea.luxury-form-control::placeholder {
     width: 42px;
     height: 42px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border: 1.5px solid rgba(212, 175, 55, 0.6);
-    color: #92400e;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -2038,16 +2036,12 @@ textarea.luxury-form-control::placeholder {
     }
 
     &.playing-btn {
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.92) 100%);
-      border-color: var(--primary-color, #d4af37);
-      color: var(--primary-color, #78350f);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1), 0 0 16px var(--primary-color, rgba(212, 175, 55, 0.3));
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15), 0 0 16px var(--primary-color, rgba(212, 175, 55, 0.3));
     }
 
     &:hover {
-      transform: scale(1.08);
-      border-color: var(--primary-color, #d4af37);
-      color: var(--primary-color, #d4af37);
+      transform: scale(1.06);
+      filter: brightness(1.15);
     }
   }
 
@@ -2132,17 +2126,15 @@ textarea.luxury-form-control::placeholder {
 
   /* Tooltip pill label (Always Clear) */
   .music-widget-label {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border: 1px solid var(--primary-color, rgba(212, 175, 55, 0.45));
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1.5px solid rgba(212, 175, 55, 0.45);
     border-radius: 20px;
-    padding: 4px 12px;
-    font-size: 0.72rem;
+    padding: 4px 14px;
+    font-size: 0.74rem;
     font-weight: 700;
-    color: var(--secondary-color, #78350f);
     letter-spacing: 0.5px;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
     opacity: 0.95;
     transition: opacity 0.2s ease, transform 0.2s ease;
   }
@@ -2211,6 +2203,34 @@ textarea.luxury-form-control::placeholder {
   100% {
     transform: translateY(-38px) scale(1.1) rotate(20deg);
     opacity: 0;
+  }
+}
+
+/* ==========================================================================
+   MOBILE FULLSCREEN WALLPAPER CANVAS (Affichage immersif du visuel sur téléphone)
+   ========================================================================== */
+.mobile-luxury-bg-wallpaper {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+
+  &.wallpaper-hidden-before-open {
+    opacity: 0 !important;
+  }
+
+  .mobile-luxury-bg-overlay {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, rgba(0, 0, 0, 0.02) 0%, rgba(0, 0, 0, 0.16) 100%);
+    pointer-events: none;
   }
 }
 
@@ -3393,15 +3413,10 @@ textarea.luxury-form-control::placeholder {
 .rsvp-luxury-wrapper .luxury-card.card-clean-foundation,
 .luxury-card,
 .card-clean-foundation {
-  background-image: var(--card-bg-mobile, none) !important;
   background-size: cover !important;
   background-position: center !important;
   background-repeat: no-repeat !important;
-  backdrop-filter: blur(15px) !important;
-  -webkit-backdrop-filter: blur(15px) !important;
-  border: 1px solid var(--primary-color, rgba(212, 175, 55, 0.35));
   border-radius: 24px !important;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08) !important;
   width: 100% !important;
   max-width: 100% !important;
   margin: auto !important;
@@ -3412,7 +3427,86 @@ textarea.luxury-form-control::placeholder {
   justify-content: center !important;
   align-items: center !important;
 
-  /* Mobile: Hauteur et ratio portrait 9:16 stables (ne rétrécit pas avec 1 plat, n'explose pas avec 6 plats) */
+  /* Mobile (< 992px) : Fusion Totale & Organique (Damj Kamel sans lignes coupantes) */
+  @media (max-width: 991.98px) {
+    background-image: none !important;
+    background: radial-gradient(ellipse at 50% 45%, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.06) 55%, transparent 95%) !important;
+    backdrop-filter: blur(1.5px) !important;
+    -webkit-backdrop-filter: blur(1.5px) !important;
+    border: none !important;
+    box-shadow: none !important;
+
+    .invitation-inner-wrapper,
+    .luxury-inner-border {
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+      margin: 0 !important;
+      padding: 24px 10px 6px !important;
+      width: 100% !important;
+    }
+
+    .invitation-header-tag {
+      margin-top: 4px !important;
+      margin-bottom: 6px !important;
+      overflow: visible !important;
+
+      .luxury-subtitle {
+        font-weight: 700 !important;
+        letter-spacing: 2.5px !important;
+        line-height: 1.4 !important;
+        display: inline-block !important;
+        opacity: 1 !important;
+        text-shadow: 0 1px 2px rgba(255, 255, 255, 0.9) !important;
+      }
+    }
+
+    .invitation-guest-salutation {
+      background: rgba(255, 255, 255, 0.10) !important;
+      border-top: 1px solid var(--primary-color, rgba(212, 175, 55, 0.35)) !important;
+      border-bottom: 1px solid var(--primary-color, rgba(212, 175, 55, 0.35)) !important;
+      border-left: none !important;
+      border-right: none !important;
+      border-radius: 0 !important;
+      backdrop-filter: blur(2px) !important;
+      -webkit-backdrop-filter: blur(2px) !important;
+      box-shadow: none !important;
+      margin: 0 auto 16px !important;
+      padding: 12px 14px !important;
+    }
+
+    .artistic-detail-card {
+      background: rgba(255, 255, 255, 0.16) !important;
+      border: 1px solid var(--primary-color, rgba(212, 175, 55, 0.3)) !important;
+      border-radius: 16px !important;
+      backdrop-filter: blur(2px) !important;
+      -webkit-backdrop-filter: blur(2px) !important;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
+    }
+
+    .invitation-main-title {
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.55), 0 0 12px rgba(255, 255, 255, 0.95), 0 0 22px rgba(255, 255, 255, 0.75) !important;
+    }
+
+    .luxury-subtitle,
+    .page2-menu-title {
+      text-shadow: 0 1px 2px rgba(255, 255, 255, 0.9) !important;
+    }
+
+    .salutation-invitation-message,
+    .salutation-guest-name,
+    .detail-card-main-title,
+    .event-card-day-label,
+    .event-card-month-label {
+      text-shadow: 0 1px 2px rgba(255, 255, 255, 0.95), 0 0 8px rgba(255, 255, 255, 0.9) !important;
+    }
+
+    .hero-event-day-number {
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.45), 0 0 12px rgba(255, 255, 255, 0.9) !important;
+    }
+  }
+
+  /* Mobile: Hauteur et ratio portrait 9:16 stables */
   min-height: 540px !important;
 
   @media (max-width: 767.98px) {
@@ -3428,13 +3522,17 @@ textarea.luxury-form-control::placeholder {
     max-height: calc(100vh - 60px) !important;
   }
 
-  /* Desktop / PC (>= 992px) - Format Panoramique 16:9 Immuable */
+  /* Desktop / PC (>= 992px) - Format Panoramique 16:9 Immuable avec image à l'intérieur */
   @media (min-width: 992px) {
     background-image: var(--card-bg-desktop, var(--card-bg-mobile, none)) !important;
+    border: 1px solid var(--primary-color, rgba(212, 175, 55, 0.35));
     border-radius: 32px !important;
     aspect-ratio: 16 / 9 !important;
     min-height: 560px !important;
     max-height: calc(100vh - 70px) !important;
+    backdrop-filter: blur(15px) !important;
+    -webkit-backdrop-filter: blur(15px) !important;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08) !important;
   }
 
   .luxury-inner-border {
@@ -3541,54 +3639,99 @@ textarea.luxury-form-control::placeholder {
   flex: 1 1 auto !important;
 }
 
+/* Wrapper & Rail de Défilement Doré Luxueux (TOUJOURS visible en permanence) */
+.dishes-scroll-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  margin: 0 auto;
+
+  @media (min-width: 768px) {
+    max-width: 740px !important;
+  }
+  @media (min-width: 1200px) {
+    max-width: 780px !important;
+  }
+
+  /* Rail doré fin et élégant, positionné à droite */
+  .luxury-gold-scrollbar-rail {
+    position: absolute;
+    top: 4px;
+    bottom: 8px;
+    right: 2px;
+    width: 4px;
+    background: rgba(212, 175, 55, 0.22);
+    border-radius: 999px;
+    cursor: pointer;
+    z-index: 10;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    transition: background 0.2s ease, width 0.2s ease;
+
+    &:hover {
+      background: rgba(212, 175, 55, 0.4);
+      width: 5px;
+    }
+
+    /* Curseur doré éclatant - Toujours présent au repos pour inciter l'invité à scroller */
+    .luxury-gold-scrollbar-thumb {
+      position: absolute;
+      top: 0;
+      left: -1.5px;
+      width: 7px;
+      height: 38px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, #ffe58f 0%, #d4af37 45%, #b8860b 80%, #8c6210 100%);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      box-shadow: 0 0 8px rgba(212, 175, 55, 0.85), 0 2px 4px rgba(0, 0, 0, 0.3);
+      pointer-events: none;
+      will-change: transform;
+      transition: transform 0.04s ease-out;
+      animation: goldThumbGlow 3s infinite ease-in-out;
+    }
+  }
+}
+
+@keyframes goldThumbGlow {
+  0%, 100% {
+    box-shadow: 0 0 7px rgba(212, 175, 55, 0.8), 0 1px 3px rgba(0, 0, 0, 0.25);
+  }
+  50% {
+    box-shadow: 0 0 14px rgba(255, 229, 143, 0.95), 0 0 22px rgba(212, 175, 55, 0.65), 0 2px 5px rgba(0, 0, 0, 0.35);
+  }
+}
+
 /* Grille & Défilement des Plats */
 .dish-horizontal-cards-stack {
   width: 100%;
   max-width: 440px;
   margin: 0 auto;
   max-height: 235px; /* Calculé pour que le 4ème plat dépasse (effet peek) */
-  overflow-y: scroll; /* Force l'apparition de la zone scrollable */
+  overflow-y: scroll; /* Défilement natif fluide et matériel */
   -webkit-overflow-scrolling: touch;
   overflow-x: hidden;
-  padding: 4px 8px 4px 4px;
+  padding: 4px 14px 4px 4px !important; /* Marge à droite pour laisser respirer le rail doré */
   box-sizing: border-box;
   transition: max-width 0.3s ease;
 
-  /* Scrollbar visible et luxueuse */
-  scrollbar-width: thin !important;
-  scrollbar-color: var(--primary-color, #d4af37) rgba(0, 0, 0, 0.08) !important;
+  /* On masque la scrollbar brute du navigateur afin de n'afficher QUE la barre dorée permanente */
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
 
   &::-webkit-scrollbar {
-    width: 6px !important;
-    display: block !important;
-    -webkit-appearance: none !important;
-  }
-  &::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.06) !important;
-    border-radius: 10px !important;
-    margin: 3px 0 !important;
-  }
-  &::-webkit-scrollbar-thumb {
-    background: var(--primary-color, #d4af37) !important;
-    border-radius: 10px !important;
-    border: 1px solid rgba(255, 255, 255, 0.6) !important;
-    min-height: 35px !important;
-  }
-  &::-webkit-scrollbar-thumb:hover {
-    background: var(--primary-color, #92753a) !important;
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
   }
 
   &.has-many-dishes {
-    @media (max-width: 767.98px) {
-      /* Dégradé de fondu au bas de la liste pour montrer qu'elle continue */
-      mask-image: linear-gradient(to bottom, black calc(100% - 24px), transparent 100%);
-      -webkit-mask-image: linear-gradient(to bottom, black calc(100% - 24px), transparent 100%);
-    }
+    /* Liste avec défilement doré */
   }
 
   @media (min-width: 768px) {
     max-height: 300px;
-    padding-right: 6px;
+    padding-right: 14px !important;
 
     &.has-many-dishes {
       max-width: 720px !important;
@@ -3613,6 +3756,29 @@ textarea.luxury-form-control::placeholder {
       max-width: 760px !important;
       gap: 12px 18px !important;
     }
+  }
+}
+
+/* En-têtes Spotlight : Espacement aéré et élégant pour éviter tout chevauchement de texte */
+.spotlight-title-wrapper {
+  margin-bottom: 8px !important;
+
+  .luxury-subtitle {
+    display: block !important;
+    line-height: 1.4 !important;
+    margin-bottom: 8px !important;
+    padding-bottom: 2px !important;
+  }
+
+  .page2-menu-title {
+    display: block !important;
+    margin-top: 4px !important;
+    line-height: 1.35 !important;
+    letter-spacing: 1.2px !important;
+  }
+
+  .spotlight-underline {
+    margin-top: 8px !important;
   }
 }
 
@@ -3642,7 +3808,6 @@ textarea.luxury-form-control::placeholder {
 }
 
 .dish-horizontal-card {
-  background: #ffffff;
   border-radius: 12px !important;
   transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
@@ -4487,17 +4652,42 @@ textarea.luxury-form-control::placeholder {
     border-style: solid !important;
   }
 
-  /* Bouton Modifier dans l'en-tête */
+  /* Bouton Modifier dans l'en-tête (Style identique aux boutons Passer / Retour) */
   .btn-modify-compact {
-    font-size: 0.72rem;
-    opacity: 0.85;
-    transition: opacity 0.2s ease, transform 0.2s ease;
-    cursor: pointer;
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+    border: 1.5px solid rgba(15, 23, 42, 0.22) !important;
+    color: #1e293b !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    font-size: 0.74rem !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.3px !important;
+    padding: 3px 12px !important;
+    border-radius: 50px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05) !important;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    cursor: pointer !important;
+    text-decoration: none !important;
+
+    i {
+      color: var(--primary-color, #d4af37) !important;
+      font-size: 0.68rem !important;
+    }
 
     &:hover {
-      opacity: 1;
-      transform: scale(1.04);
-      text-decoration: underline !important;
+      background: #ffffff !important;
+      border-color: var(--primary-color, #d4af37) !important;
+      color: #0f172a !important;
+      transform: translateY(-1px) !important;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+    }
+
+    &:active {
+      transform: translateY(0) !important;
     }
   }
 
@@ -4575,21 +4765,43 @@ textarea.luxury-form-control::placeholder {
     }
   }
 
-  /* Bouton d'action soumission */
+  /* Bouton d'action soumission (Style Passer / Retour épuré, compact et élégant) */
   .btn-luxury-submit {
-    font-size: 0.75rem !important;
-    letter-spacing: 0.6px;
-    padding: 7px 14px !important;
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+    border: 1.5px solid rgba(15, 23, 42, 0.22) !important;
+    color: #1e293b !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    font-size: 0.76rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.4px !important;
+    padding: 6px 18px !important;
+    border-radius: 50px !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
     transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    cursor: pointer !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: auto !important;
+    max-width: 250px !important;
+    margin: 0 auto !important;
+
+    i {
+      color: var(--primary-color, #d4af37) !important;
+    }
 
     &:hover:not(:disabled) {
-      transform: translateY(-1px);
-      filter: brightness(1.06);
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+      background: #ffffff !important;
+      border-color: var(--primary-color, #d4af37) !important;
+      color: #0f172a !important;
+      transform: translateY(-1px) !important;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1) !important;
     }
 
     &:active:not(:disabled) {
-      transform: translateY(0);
+      transform: translateY(0) !important;
     }
   }
 }
@@ -4606,7 +4818,140 @@ textarea.luxury-form-control::placeholder {
   }
 }
 
+/* Carte compte à rebours compacte et optimisée (Card temps - gain d'espace majeur) */
+.confirmation-countdown-box {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+
+  .countdown-title-row {
+    i {
+      font-size: 0.68rem !important;
+    }
+
+    span {
+      font-size: 0.62rem !important;
+      letter-spacing: 1px !important;
+      text-transform: uppercase !important;
+      font-weight: 700 !important;
+    }
+  }
+
+  .countdown-units-row {
+    .countdown-unit-box {
+      min-width: 44px !important;
+      padding: 2px 6px !important;
+      border-radius: 8px !important;
+      backdrop-filter: blur(8px) !important;
+      -webkit-backdrop-filter: blur(8px) !important;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08) !important;
+      transition: transform 0.2s ease;
+
+      .countdown-num {
+        display: block !important;
+        font-weight: 800 !important;
+        font-size: 0.85rem !important;
+        line-height: 1.1 !important;
+      }
+
+      .countdown-lbl {
+        display: block !important;
+        font-size: 0.48rem !important;
+        letter-spacing: 0.4px !important;
+        text-transform: uppercase !important;
+        font-weight: 600 !important;
+      }
+    }
+
+    .countdown-sep {
+      font-weight: 800 !important;
+      font-size: 0.75rem !important;
+      line-height: 1 !important;
+    }
+  }
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+  }
+}
+
+/* Boutons d'accès & confirmation : sur UNE seule ligne, style Passer / Retour épuré et lisible */
 .access-actions-wrapper {
+  width: 100% !important;
+
+  .access-buttons-row {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    flex-wrap: nowrap !important;
+    width: 100% !important;
+
+    .btn-confirmation-action {
+      flex: 1 1 0 !important;
+      max-width: 120px !important;
+      min-width: 0 !important;
+      background: rgba(255, 255, 255, 0.95) !important;
+      backdrop-filter: blur(8px) !important;
+      -webkit-backdrop-filter: blur(8px) !important;
+      border: 1.5px solid rgba(15, 23, 42, 0.22) !important;
+      color: #1e293b !important;
+      font-family: 'Plus Jakarta Sans', sans-serif !important;
+      font-size: 0.74rem !important;
+      font-weight: 700 !important;
+      letter-spacing: 0.2px !important;
+      padding: 7px 6px !important;
+      border-radius: 50px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 5px !important;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
+      transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
+      cursor: pointer !important;
+      white-space: nowrap !important;
+      text-decoration: none !important;
+
+      i {
+        font-size: 0.74rem !important;
+        flex-shrink: 0 !important;
+      }
+
+      span {
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+      }
+
+      &:hover {
+        background: #ffffff !important;
+        border-color: var(--primary-color, #d4af37) !important;
+        color: #0f172a !important;
+        transform: translateY(-1.5px) !important;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1) !important;
+      }
+
+      &:active {
+        transform: translateY(0) !important;
+      }
+    }
+
+    @media (min-width: 768px) {
+      gap: 12px !important;
+
+      .btn-confirmation-action {
+        max-width: 175px !important;
+        padding: 8px 16px !important;
+        font-size: 0.8rem !important;
+      }
+    }
+  }
+
+  @media (min-width: 768px) {
+    max-width: 540px !important;
+  }
+
   .btn {
     transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
 
@@ -4710,12 +5055,13 @@ textarea.luxury-form-control::placeholder {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   user-select: none;
   -webkit-user-select: none;
-  background: rgba(255, 255, 255, 0.92) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
-    border-color: rgba(15, 23, 42, 0.3) !important;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+    border-color: var(--primary-color, #d4af37) !important;
   }
 
   &:active {
@@ -4842,33 +5188,56 @@ textarea.luxury-form-control::placeholder {
   }
 }
 
-/* 2. Interactive Stepper Navigation Tabs */
+/* 2. Interactive Stepper Navigation Tabs (Directement au-dessus des cartes de plats) */
 .stepper-interactive-tabs {
+  margin-bottom: 10px !important;
+  z-index: 5;
+  position: relative;
+
   .stepper-tab-btn {
-    font-size: 0.72rem;
+    font-size: 0.74rem !important;
+    font-weight: 600 !important;
     letter-spacing: 0.4px;
-    text-transform: uppercase;
-    border-width: 1.2px;
-    border-style: solid;
+    padding: 4.5px 12px !important;
+    border-width: 1.5px !important;
+    border-style: solid !important;
+    border-radius: 999px !important;
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
-    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
     cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+
+    i {
+      font-size: 0.68rem;
+    }
 
     &:hover:not(.active-tab) {
-      background: rgba(255, 255, 255, 0.95) !important;
-      transform: translateY(-1px);
-      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+      filter: brightness(1.15);
+      transform: translateY(-1.5px);
+      box-shadow: 0 4px 12px rgba(212, 175, 55, 0.22);
     }
 
     &.active-tab {
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
-      transform: scale(1.04);
+      box-shadow: 0 4px 14px rgba(212, 175, 55, 0.4), 0 1px 3px rgba(0, 0, 0, 0.15) !important;
+      transform: scale(1.05);
+      border-color: #ffffff !important;
     }
 
     &.has-selection:not(.active-tab) {
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
     }
+  }
+}
+
+/* Badge Buffet direct au-dessus des plats */
+.buffet-count-badge {
+  margin-bottom: 10px !important;
+
+  .badge {
+    letter-spacing: 0.5px;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
   }
 }
 
@@ -4937,7 +5306,23 @@ textarea.luxury-form-control::placeholder {
 
 /* 4. Discovery Decision Actions (Direct without card) */
 .discovery-decision-actions-wrapper {
-  margin-top: 18px;
+  margin-top: 14px;
+  width: 100%;
+  max-width: 100%;
+  padding: 0 4px;
+  gap: 6px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-wrap: nowrap !important;
+
+  .btn-step-back,
+  .btn-decision-accept,
+  .btn-decision-decline {
+    white-space: nowrap !important;
+    flex-shrink: 1 !important;
+    min-width: 0 !important;
+  }
 
   .btn-step-back {
     background: rgba(255, 255, 255, 0.95) !important;
@@ -4946,10 +5331,10 @@ textarea.luxury-form-control::placeholder {
     border: 1.5px solid rgba(15, 23, 42, 0.22) !important;
     color: #1e293b !important;
     font-family: 'Plus Jakarta Sans', sans-serif !important;
-    font-size: 0.84rem !important;
+    font-size: clamp(0.72rem, 2.3vw, 0.82rem) !important;
     font-weight: 600 !important;
-    letter-spacing: 0.3px !important;
-    padding: 10px 22px !important;
+    letter-spacing: 0.2px !important;
+    padding: 7px 11px !important;
     border-radius: 50px !important;
     display: inline-flex !important;
     align-items: center !important;
@@ -4979,6 +5364,20 @@ textarea.luxury-form-control::placeholder {
     &:active {
       transform: translateY(0) scale(0.98) !important;
     }
+  }
+
+  .btn-decision-accept {
+    padding: 7px 13px !important;
+    font-size: clamp(0.74rem, 2.4vw, 0.84rem) !important;
+    letter-spacing: 0.4px !important;
+    border-radius: 50px !important;
+  }
+
+  .btn-decision-decline {
+    padding: 7px 11px !important;
+    font-size: clamp(0.72rem, 2.3vw, 0.82rem) !important;
+    letter-spacing: 0.2px !important;
+    border-radius: 50px !important;
   }
 }
 
