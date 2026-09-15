@@ -494,7 +494,7 @@
             <i class="fa fa-layer-group me-1.5 text-primary"></i> Écrans & Étapes consultés par l'invité
           </h5>
           <span class="fs-3xs text-muted fw-semibold">
-            Écran Actuel : <strong class="text-primary">Écran {{ journey.currentActiveStepIndex }} / 4</strong>
+            Écran Actuel : <strong class="text-primary">Écran {{ journey.currentActiveStepIndex }} / {{ journey.steps.length }}</strong>
           </span>
         </div>
 
@@ -700,54 +700,11 @@
         </div>
       </div>
 
-      <!-- Modal Footer: Quick Relance & Interactive Actions -->
-      <div class="modal-footer bg-body-light border-top p-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
-        <div class="d-flex align-items-center gap-2 flex-wrap">
-          <!-- WhatsApp Relance -->
-          <a [href]="getJourneyGuestWhatsAppUrl(selectedJourneyGuest()!)" target="_blank" 
-             class="btn btn-xs btn-success d-inline-flex align-items-center gap-1.5 px-2.5 py-1.5" 
-             *ngIf="selectedJourneyGuest()?.phone" 
-             title="Envoyer un rappel sur WhatsApp">
-            <i class="fab fa-whatsapp"></i> WhatsApp
-          </a>
-
-          <!-- Email Relance -->
-          <a [href]="getJourneyGuestEmailUrl(selectedJourneyGuest()!)" 
-             class="btn btn-xs btn-primary d-inline-flex align-items-center gap-1.5 px-2.5 py-1.5" 
-             *ngIf="selectedJourneyGuest()?.email" 
-             title="Envoyer un rappel par e-mail">
-            <i class="fa fa-envelope"></i> E-mail
-          </a>
-
-          <!-- SMS Relance -->
-          <a [href]="getJourneyGuestSmsUrl(selectedJourneyGuest()!)" 
-             class="btn btn-xs btn-warning d-inline-flex align-items-center gap-1.5 px-2.5 py-1.5" 
-             *ngIf="selectedJourneyGuest()?.phone" 
-             title="Envoyer un SMS direct">
-            <i class="fa fa-comment-sms"></i> SMS
-          </a>
-
-          <!-- Copy link -->
-          <button type="button" class="btn btn-xs btn-alt-secondary d-inline-flex align-items-center gap-1 px-2.5 py-1.5" 
-                  (click)="copyJourneyGuestLink(selectedJourneyGuest()!)" 
-                  title="Copier le lien d'invitation de l'invité">
-            <i class="fa" [ngClass]="copiedJourneyLinkId() === selectedJourneyGuest()?.id ? 'fa-check text-success' : 'fa-copy'"></i>
-            <span>{{ copiedJourneyLinkId() === selectedJourneyGuest()?.id ? 'Copié !' : 'Copier lien' }}</span>
-          </button>
-        </div>
-
-        <div class="d-flex gap-2">
-          <!-- Test RSVP -->
-          <a [routerLink]="['/rsvp', selectedJourneyGuest()?.invitationToken || selectedJourneyGuest()?.id]" target="_blank" 
-             class="btn btn-xs btn-alt-warning d-inline-flex align-items-center gap-1.5 px-2.5 py-1.5" 
-             title="Visualiser l'invitation telle que vue par l'invité">
-            <i class="fa fa-external-link-alt"></i> Tester le rendu
-          </a>
-          <button type="button" class="btn btn-xs btn-dark px-3 py-1.5" (click)="closeGuestJourney()">
-            Fermer
-          </button>
-        </div>
-
+      <!-- Modal Footer -->
+      <div class="modal-footer bg-body-light border-top py-2.5 px-3 d-flex justify-content-end align-items-center">
+        <button type="button" class="btn btn-sm btn-dark px-4 py-1.5 rounded-pill fw-medium shadow-sm d-inline-flex align-items-center gap-1.5" (click)="closeGuestJourney()">
+          <i class="fa fa-xmark"></i> Fermer
+        </button>
       </div>
 
     </div>
