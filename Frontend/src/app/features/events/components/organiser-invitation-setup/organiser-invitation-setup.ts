@@ -31,7 +31,7 @@ export interface JourneyStep {
   shortTitle: string;
   subtitle: string;
   icon: string;
-  screenType: 'SMS_MESSAGE' | 'ENVELOPE_SEAL' | 'INVITATION_CARD' | 'MENU_CHOICE' | 'RSVP_DECISION';
+  screenType: 'SMS_MESSAGE' | 'ENVELOPE_SEAL' | 'INVITATION_CARD' | 'MENU_CHOICE' | 'DIETARY_CHOICE' | 'RSVP_DECISION';
   isCompleted: boolean;
   isCurrent: boolean;
   timestamp?: string;
@@ -351,9 +351,14 @@ export class OrganiserInvitationSetup implements OnInit {
 
     const activeChannels = this.getGuestChannels(guest);
 
-    // Compute active step index (1-based)
+    const rawStep = localStorage.getItem('guest_rsvp_current_step') || localStorage.getItem(`guest_${gid}_rsvp_step`);
+    const lastRsvpStep = rawStep ? parseInt(rawStep, 10) : 0;
+    const isDietViewed = isConfirmed || (dietaryList.length > 0) || (isMenuViewed && lastRsvpStep >= 4);
+
+    // Compute active step index (1-based, 1 to 5)
     let currentStepNum = 1;
-    if (hasResponded) currentStepNum = 4;
+    if (hasResponded) currentStepNum = 5;
+    else if (isDietViewed) currentStepNum = 4;
     else if (isMenuViewed) currentStepNum = 3;
     else if (isOpened) currentStepNum = 2;
     else if (isSent) currentStepNum = 2;
@@ -405,20 +410,33 @@ export class OrganiserInvitationSetup implements OnInit {
         dishCategoryKey: detectedCat,
         dishImage: dishImg,
         cateringFormula: cateringFormulaName,
-        cateringTabs: cateringTabs,
+        cateringTabs: cateringTabs
+      },
+      {
+        stepNumber: 4,
+        title: "Écran 4 : Régimes & Allergies",
+        shortTitle: "4. Régimes & Allergies",
+        subtitle: dietaryTags.length > 0 ? `${dietaryTags.length} restriction(s) déclarée(s)` : (isDietViewed ? "Sans restriction particulière" : "En attente"),
+        icon: "fa-leaf",
+        screenType: 'DIETARY_CHOICE' as const,
+        isCompleted: isDietViewed || isConfirmed,
+        isCurrent: isMenuViewed && !isDietViewed && !hasResponded,
+        badgeLabel: dietaryTags.length > 0 ? `${dietaryTags.length} régimes` : (isDietViewed ? (isConfirmed ? "Standard" : "Consulté") : "En attente"),
+        badgeClass: isDietViewed ? "bg-success text-white" : (isMenuViewed && !hasResponded ? "bg-warning text-dark fw-bold" : "bg-body-dark text-muted"),
+        details: dietaryTags.length > 0 ? dietaryList.join(', ') : (isDietViewed ? 'Menu classique sans restriction' : 'En attente des préférences de l\'invité'),
         dietaryTags: dietaryTags,
         hasDietaryRestrictions: dietaryTags.length > 0,
         dietarySummary: dietaryList.join(', ') || 'Aucune restriction particulière'
       },
       {
-        stepNumber: 4,
-        title: "Écran 4 : Décision Finale (RSVP)",
-        shortTitle: "4. Décision RSVP",
+        stepNumber: 5,
+        title: "Écran 5 : Décision Finale (RSVP)",
+        shortTitle: "5. Décision RSVP",
         subtitle: isConfirmed ? "Présence confirmée" : (isDeclined ? "Invitation déclinée" : "En attente"),
         icon: isConfirmed ? "fa-circle-check" : (isDeclined ? "fa-circle-xmark" : "fa-clock"),
         screenType: 'RSVP_DECISION' as const,
         isCompleted: hasResponded,
-        isCurrent: isMenuViewed && !hasResponded,
+        isCurrent: isDietViewed && !hasResponded,
         badgeLabel: isConfirmed ? "Confirmé" : (isDeclined ? "Décliné" : "En attente"),
         badgeClass: isConfirmed ? "bg-success text-white" : (isDeclined ? "bg-danger text-white" : "bg-warning-light text-black border border-warning-light"),
         details: isConfirmed ? `Place réservée` : (isDeclined ? `Absence notifiée` : `En attente de la confirmation`)
@@ -427,9 +445,10 @@ export class OrganiserInvitationSetup implements OnInit {
 
     let pct = 0;
     if (isConfirmed || isDeclined) pct = 100;
-    else if (isMenuViewed) pct = 75;
-    else if (isOpened) pct = 50;
-    else if (isSent) pct = 25;
+    else if (isDietViewed) pct = 80;
+    else if (isMenuViewed) pct = 60;
+    else if (isOpened) pct = 40;
+    else if (isSent) pct = 20;
 
     let statusLabel = 'En attente d\'envoi';
     let statusBadge = 'bg-body-dark text-black border';
@@ -439,6 +458,9 @@ export class OrganiserInvitationSetup implements OnInit {
     } else if (isDeclined) {
       statusLabel = 'Invitation Déclinée';
       statusBadge = 'bg-danger text-white shadow-sm';
+    } else if (isDietViewed) {
+      statusLabel = 'Régimes & Allergies consultés';
+      statusBadge = 'bg-warning text-dark shadow-sm';
     } else if (isMenuViewed) {
       statusLabel = 'En cours de sélection du Menu';
       statusBadge = 'bg-warning text-dark shadow-sm';

@@ -603,50 +603,77 @@
                     </span>
                   </div>
                 </div>
-
-                <!-- Dietary & Allergies Badge Section -->
-                <div class="dietary-preview-box mt-1 pt-1 border-top" style="border-color: #f1f5f9 !important;">
-                  <div class="d-flex flex-wrap gap-1" *ngIf="journey.steps[2].dietaryTags && journey.steps[2].dietaryTags.length > 0">
-                    <span *ngFor="let dt of journey.steps[2].dietaryTags" 
-                          class="badge rounded-pill fw-semibold d-inline-flex align-items-center gap-0.5" 
-                          [ngClass]="dt.badgeClass"
-                          style="font-size: 0.48rem; padding: 1.5px 5px;">
-                      <i class="fa" [ngClass]="dt.icon" style="font-size: 0.45rem;"></i> {{ dt.label }}
-                    </span>
-                  </div>
-                  <div *ngIf="!journey.steps[2].dietaryTags || journey.steps[2].dietaryTags.length === 0" style="font-size: 0.48rem;" class="text-muted fst-italic">
-                    <i class="fa fa-circle-check text-success me-0.5"></i> Sans restriction alimentaire
-                  </div>
-                </div>
               </div>
             </div>
             <div class="screen-card-footer">
               <div class="fw-semibold fs-3xs text-dark text-truncate" [title]="journey.steps[2].dishChoice || 'En cours'">
                 {{ journey.steps[2].dishChoice ? journey.steps[2].dishChoice : (journey.steps[2].isCompleted ? 'Menu validé' : 'En attente de choix') }}
               </div>
-              <div class="d-flex align-items-center justify-content-between gap-1 mt-0.5">
-                <span class="fs-3xs text-muted text-truncate" [title]="journey.steps[2].cateringFormula">
+              <div class="mt-0.5">
+                <span class="fs-3xs text-muted text-truncate d-block" [title]="journey.steps[2].cateringFormula">
                   <i class="fa fa-bowl-food me-0.5 text-primary"></i> {{ journey.steps[2].cateringFormula }}
-                </span>
-                <span *ngIf="journey.steps[2].dietaryTags && journey.steps[2].dietaryTags.length > 0" 
-                      class="badge bg-warning-subtle text-amber-900 border border-warning fs-4xs px-1.5 py-0.5 rounded-pill flex-shrink-0"
-                      [title]="journey.steps[2].dietarySummary">
-                  <i class="fa fa-triangle-exclamation me-0.5"></i> {{ journey.steps[2].dietaryTags.length }} régimes
                 </span>
               </div>
             </div>
           </div>
 
-          <!-- CARD 4: ÉCRAN DÉCISION FINALE RSVP -->
+          <!-- CARD 4: ÉCRAN RÉGIMES & ALLERGIES -->
           <div class="screen-card-item" [ngClass]="{
             'status-completed': journey.steps[3].isCompleted,
             'status-current': journey.steps[3].isCurrent,
             'status-pending': !journey.steps[3].isCompleted && !journey.steps[3].isCurrent
           }">
             <div class="screen-card-header">
-              <span class="fw-bold fs-xs text-dark"><i class="fa fa-circle-check text-primary me-1"></i> 4. Décision RSVP</span>
+              <span class="fw-bold fs-xs text-dark"><i class="fa fa-leaf text-success me-1"></i> 4. Régimes & Allergies</span>
               <span class="badge rounded-pill px-2 py-0.5 fs-3xs" [ngClass]="journey.steps[3].badgeClass">
                 {{ journey.steps[3].badgeLabel }}
+              </span>
+            </div>
+            <!-- Mockup -->
+            <div class="screen-mockup-frame">
+              <div class="mockup-dietary-card">
+                <div *ngIf="journey.steps[3].dietaryTags && journey.steps[3].dietaryTags.length > 0" class="d-flex flex-wrap gap-1 align-items-center justify-content-center">
+                  <span *ngFor="let dt of journey.steps[3].dietaryTags" 
+                        class="badge rounded-pill fw-semibold d-inline-flex align-items-center gap-1 shadow-2xs" 
+                        [ngClass]="dt.badgeClass"
+                        style="font-size: 0.52rem; padding: 2px 6px;">
+                    <i class="fa" [ngClass]="dt.icon" style="font-size: 0.5rem;"></i> {{ dt.label }}
+                  </span>
+                </div>
+                <div *ngIf="!journey.steps[3].dietaryTags || journey.steps[3].dietaryTags.length === 0" class="text-center p-1">
+                  <div class="d-inline-flex align-items-center gap-1 px-2 py-0.5 rounded-pill bg-success-subtle text-success border border-success-subtle fs-3xs fw-medium">
+                    <i class="fa fa-circle-check"></i> Sans restriction
+                  </div>
+                  <div class="text-muted fs-4xs mt-0.5">Menu standard</div>
+                </div>
+              </div>
+            </div>
+            <div class="screen-card-footer">
+              <div class="fw-semibold fs-3xs text-dark text-truncate" [title]="journey.steps[3].dietarySummary">
+                {{ journey.steps[3].dietarySummary || 'Aucune restriction' }}
+              </div>
+              <div class="d-flex align-items-center justify-content-between gap-1 mt-0.5">
+                <span class="fs-3xs text-muted">
+                  <i class="fa fa-shield-halved me-0.5 text-warning"></i> 
+                  {{ (journey.steps[3].dietaryTags && journey.steps[3].dietaryTags.length > 0) ? (journey.steps[3].dietaryTags.length + ' restriction(s)') : 'Standard' }}
+                </span>
+                <span class="badge bg-body-light text-muted border fs-4xs px-1.5 py-0.5 rounded-pill">
+                  Sécurité traiteur
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- CARD 5: ÉCRAN DÉCISION FINALE RSVP -->
+          <div class="screen-card-item" [ngClass]="{
+            'status-completed': journey.steps[4].isCompleted,
+            'status-current': journey.steps[4].isCurrent,
+            'status-pending': !journey.steps[4].isCompleted && !journey.steps[4].isCurrent
+          }">
+            <div class="screen-card-header">
+              <span class="fw-bold fs-xs text-dark"><i class="fa fa-circle-check text-primary me-1"></i> 5. Décision RSVP</span>
+              <span class="badge rounded-pill px-2 py-0.5 fs-3xs" [ngClass]="journey.steps[4].badgeClass">
+                {{ journey.steps[4].badgeLabel }}
               </span>
             </div>
             <!-- Mockup -->
@@ -665,8 +692,8 @@
               <div class="fw-semibold fs-3xs" [ngClass]="selectedJourneyGuest()?.status === 'CONFIRMED' ? 'text-success' : (selectedJourneyGuest()?.status === 'DECLINED' ? 'text-danger' : 'text-dark')">
                 {{ selectedJourneyGuest()?.status === 'CONFIRMED' ? 'Confirmé à l\'événement' : (selectedJourneyGuest()?.status === 'DECLINED' ? 'Absence confirmée' : 'En attente') }}
               </div>
-              <span class="fs-3xs text-muted" *ngIf="journey.steps[3].timestamp">
-                <i class="fa fa-clock me-0.5"></i> {{ journey.steps[3].timestamp }}
+              <span class="fs-3xs text-muted" *ngIf="journey.steps[4].timestamp">
+                <i class="fa fa-clock me-0.5"></i> {{ journey.steps[4].timestamp }}
               </span>
             </div>
           </div>
