@@ -116,6 +116,15 @@ public class ClientGuestController {
             return ResponseEntity.status(403).body("Access denied to this event");
         }
 
+        if (guestDTO.getFullName() == null || guestDTO.getFullName().trim().isEmpty()) {
+            return ResponseEntity.badRequest().body("Le nom complet est obligatoire.");
+        }
+        boolean hasPhone = guestDTO.getPhone() != null && !guestDTO.getPhone().trim().isEmpty();
+        boolean hasEmail = guestDTO.getEmail() != null && !guestDTO.getEmail().trim().isEmpty();
+        if (!hasPhone && !hasEmail) {
+            return ResponseEntity.badRequest().body("Veuillez renseigner au moins un moyen de contact (Numéro de téléphone ou E-mail).");
+        }
+
         GuestEntity entity = toEntity(guestDTO);
         entity.setEventId(eventId);
         GuestEntity saved = guestRepository.save(entity);
@@ -131,6 +140,15 @@ public class ClientGuestController {
 
         if (!isClientAuthorizedForEvent(clientDetails.getClientId(), eventId)) {
             return ResponseEntity.status(403).body("Access denied to this event");
+        }
+
+        if (guestDTO.getFullName() == null || guestDTO.getFullName().trim().isEmpty()) {
+            return ResponseEntity.badRequest().body("Le nom complet est obligatoire.");
+        }
+        boolean hasPhone = guestDTO.getPhone() != null && !guestDTO.getPhone().trim().isEmpty();
+        boolean hasEmail = guestDTO.getEmail() != null && !guestDTO.getEmail().trim().isEmpty();
+        if (!hasPhone && !hasEmail) {
+            return ResponseEntity.badRequest().body("Veuillez renseigner au moins un moyen de contact (Numéro de téléphone ou E-mail).");
         }
 
         return guestRepository.findById(guestId)

@@ -252,6 +252,12 @@ export class EventDetails implements OnInit {
     return this.menuItems().reduce((sum, item) => sum + ((item.pricePerPerson || 0) * (item.selectedCount || 0)), 0);
   });
 
+  // Invitation Filter & Pagination
+  protected readonly invitationFilter = signal<'ALL' | 'SENT' | 'DELIVERED' | 'PENDING' | 'INTERACTED'>('ALL');
+  protected readonly invitationCurrentPage = signal<number>(1);
+  protected readonly invitationPageSize = 5;
+  protected readonly copiedGuestId = signal<number | null>(null);
+
   protected readonly totalSentCount = computed(() => 
     this.guests().filter(g => g.invitationStatus === 'SENT' || g.isSent === true).length
   );
@@ -264,19 +270,111 @@ export class EventDetails implements OnInit {
     this.guests().filter(g => !g.invitationStatus || (g.invitationStatus !== 'SENT' && g.isSent !== true)).length
   );
 
+  protected readonly interactedCount = computed(() => 
+    this.guests().filter(g => g.status === 'CONFIRMED' || g.status === 'DECLINED').length
+  );
+
+  protected readonly interactedPercentage = computed(() => {
+    const total = this.guests().length;
+    if (total === 0) return 0;
+    return Math.round((this.interactedCount() / total) * 100);
+  });
+
   protected readonly whatsappCount = computed(() => 
-    this.guests().filter(g => (g.invitationStatus === 'SENT' || g.isSent === true) && g.phone && g.phone.trim().length > 0).length
+    this.guests().filter(g => g.phone && g.phone.trim().length > 0).length
   );
 
   protected readonly emailCount = computed(() => 
-    this.guests().filter(g => (g.invitationStatus === 'SENT' || g.isSent === true) && g.email && g.email.trim().length > 0).length
+    this.guests().filter(g => g.email && g.email.trim().length > 0).length
   );
 
-  protected readonly invitationPreviewGuests = computed(() => 
-    this.guests()
-      .filter(g => g.isSent === true || g.invitationStatus === 'SENT')
-      .slice(0, 5)
+  protected readonly smsCount = computed(() => 
+    this.guests().filter(g => g.phone && g.phone.trim().length > 0).length
   );
+
+  // Canal le plus performant & Réactivité des réponses
+  protected readonly whatsappRespondedCount = computed(() => 
+    this.guests().filter(g => (g.status === 'CONFIRMED' || g.status === 'DECLINED') && g.phone && g.phone.trim().length > 0).length
+  );
+
+  protected readonly emailRespondedCount = computed(() => 
+    this.guests().filter(g => (g.status === 'CONFIRMED' || g.status === 'DECLINED') && g.email && g.email.trim().length > 0).length
+  );
+
+  protected readonly bestChannel = computed(() => {
+    const wa = this.whatsappRespondedCount();
+    const mail = this.emailRespondedCount();
+    const total = this.interactedCount();
+    if (total === 0) {
+      return { name: 'En attente de réponses', icon: 'fa-clock', colorClass: 'text-muted', percent: 0, count: 0 };
+    }
+    if (wa >= mail) {
+      const pct = Math.round((wa / total) * 100);
+      return { name: 'WhatsApp', icon: 'fab fa-whatsapp', colorClass: 'text-success', percent: pct, count: wa };
+    } else {
+      const pct = Math.round((mail / total) * 100);
+      return { name: 'E-mail', icon: 'fa fa-envelope', colorClass: 'text-primary', percent: pct, count: mail };
+    }
+  });
+
+  protected readonly invitationFilteredGuests = computed(() => {
+    const f = this.invitationFilter();
+    const list = this.guests();
+    switch (f) {
+      case 'SENT':
+        return list.filter(g => g.isSent === true || g.invitationStatus === 'SENT');
+      case 'INTERACTED':
+        return list.filter(g => g.status === 'CONFIRMED' || g.status === 'DECLINED');
+      case 'PENDING':
+        return list.filter(g => !g.invitationStatus || (g.invitationStatus !== 'SENT' && g.isSent !== true));
+      case 'ALL':
+      default:
+        return list;
+    }
+  });
+
+  protected readonly invitationTotalPages = computed(() =>
+    Math.max(1, Math.ceil(this.invitationFilteredGuests().length / this.invitationPageSize))
+  );
+
+  protected readonly invitationPagedGuests = computed(() => {
+    const start = (this.invitationCurrentPage() - 1) * this.invitationPageSize;
+    return this.invitationFilteredGuests().slice(start, start + this.invitationPageSize);
+  });
+
+  protected setInvitationFilter(filter: 'ALL' | 'SENT' | 'DELIVERED' | 'PENDING' | 'INTERACTED'): void {
+    this.invitationFilter.set(filter);
+    this.invitationCurrentPage.set(1);
+  }
+
+  protected invitationPrevPage(): void {
+    if (this.invitationCurrentPage() > 1) this.invitationCurrentPage.update(p => p - 1);
+  }
+
+  protected invitationNextPage(): void {
+    if (this.invitationCurrentPage() < this.invitationTotalPages()) this.invitationCurrentPage.update(p => p + 1);
+  }
+
+  protected getGuestInvitationLink(g: Guest): string {
+    const tokenOrId = g.invitationToken || g.id;
+    return `${window.location.origin}/rsvp/${tokenOrId}`;
+  }
+
+  protected copyGuestLink(g: Guest): void {
+    if (!g.id) return;
+    const url = this.getGuestInvitationLink(g);
+    navigator.clipboard.writeText(url).then(() => {
+      this.copiedGuestId.set(g.id!);
+      setTimeout(() => this.copiedGuestId.set(null), 2500);
+    });
+  }
+
+  protected getGuestWhatsAppUrl(g: Guest): string {
+    const cleanPhone = (g.phone || '').replace(/[^0-9+]/g, '');
+    const link = this.getGuestInvitationLink(g);
+    const msg = encodeURIComponent(`Bonjour ${g.fullName},\nVous êtes convié(e) à l'événement "${this.event()?.title || ''}". Découvrez votre invitation officielle et confirmez votre présence ici : ${link}`);
+    return cleanPhone ? `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${msg}` : `https://api.whatsapp.com/send?text=${msg}`;
+  }
 
   public ngOnInit(): void {
     const idParam = this.route.snapshot.paramMap.get('id');
@@ -308,16 +406,55 @@ export class EventDetails implements OnInit {
     });
   }
 
+  protected getGuestChannels(g: Guest): { type: string; icon: string; colorClass: string; title: string }[] {
+    const channels: { type: string; icon: string; colorClass: string; title: string }[] = [];
+    
+    // If guest has recorded sent channels, display ONLY those sent channels
+    if (g.sentChannels && g.sentChannels.length > 0) {
+      if (g.sentChannels.includes('WhatsApp')) {
+        channels.push({ type: 'WhatsApp', icon: 'fab fa-whatsapp', colorClass: 'text-success', title: `Envoyé via WhatsApp: ${g.phone || ''}` });
+      }
+      if (g.sentChannels.includes('SMS')) {
+        channels.push({ type: 'SMS', icon: 'fa fa-comment-sms', colorClass: 'text-warning', title: `Envoyé via SMS: ${g.phone || ''}` });
+      }
+      if (g.sentChannels.includes('E-mail')) {
+        channels.push({ type: 'E-mail', icon: 'fa fa-envelope', colorClass: 'text-primary', title: `Envoyé via E-mail: ${g.email || ''}` });
+      }
+      if (g.sentChannels.includes('Papier')) {
+        channels.push({ type: 'Papier', icon: 'fa fa-envelope-open-text', colorClass: 'text-secondary', title: 'Format Papier / En main propre' });
+      }
+      return channels;
+    }
+
+    // Otherwise (pending / not sent yet), show available channels based on provided contact details
+    if (g.phone && g.phone.trim().length > 0) {
+      channels.push({ type: 'WhatsApp', icon: 'fab fa-whatsapp', colorClass: 'text-success', title: `WhatsApp: ${g.phone}` });
+      channels.push({ type: 'SMS', icon: 'fa fa-comment-sms', colorClass: 'text-warning', title: `SMS: ${g.phone}` });
+    }
+    if (g.email && g.email.trim().length > 0) {
+      channels.push({ type: 'E-mail', icon: 'fa fa-envelope', colorClass: 'text-primary', title: `E-mail: ${g.email}` });
+    }
+
+    return channels;
+  }
+
   private loadGuests(eventId: number): void {
     this.guestService.getGuestsByEvent(eventId).subscribe({
       next: (data) => {
         const updatedList = (data || []).map(g => {
           if (!g.id) return g;
           const localSent = localStorage.getItem(`guest_${g.id}_isSent`);
-          if (localSent === 'true') {
-            return { ...g, isSent: true, invitationStatus: 'SENT' };
+          const rawChannels = localStorage.getItem(`guest_${g.id}_sentChannels`);
+          let sentChannels: string[] | undefined = undefined;
+          if (rawChannels) {
+            try {
+              sentChannels = JSON.parse(rawChannels);
+            } catch (e) {}
           }
-          return g;
+          if (localSent === 'true') {
+            return { ...g, isSent: true, invitationStatus: 'SENT', sentChannels: sentChannels || g.sentChannels };
+          }
+          return { ...g, sentChannels: sentChannels || g.sentChannels };
         });
         this.guests.set(updatedList);
       },

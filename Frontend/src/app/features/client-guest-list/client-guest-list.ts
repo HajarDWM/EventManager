@@ -153,6 +153,11 @@ export class ClientGuestList implements OnInit {
       return;
     }
 
+    if (!this.phone().trim() && !this.email().trim()) {
+      this.errorMessage.set('Veuillez renseigner au moins un moyen de contact (Numéro de téléphone ou E-mail).');
+      return;
+    }
+
     const currentEventId = this.eventId();
     if (!currentEventId) return;
 

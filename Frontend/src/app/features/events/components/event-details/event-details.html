@@ -370,70 +370,166 @@
             </div>
             <div class="block-content p-3 d-flex flex-column justify-content-between h-100" style="min-height: 290px;">
               <div>
-                <!-- Quick delivery status metrics -->
+                <!-- 1. Interactive Delivery & Response Status Filter Cards -->
                 <div class="row g-2 mb-3 text-center">
-                  <div class="col-4 border-end">
-                    <span class="fs-xxs fw-semibold text-uppercase text-muted d-block">Envoyées</span>
-                    <span class="fs-sm fw-bold text-dark">{{ totalSentCount() }}</span>
+                  <!-- TOUTES -->
+                  <div class="col-3 border-end px-1">
+                    <div class="rounded-2 py-2 px-1 cursor-pointer transition-all"
+                      (click)="setInvitationFilter('ALL')"
+                      [style.cursor]="'pointer'"
+                      [class.bg-primary]="invitationFilter() === 'ALL'"
+                      [class.text-white]="invitationFilter() === 'ALL'"
+                      [class.bg-body-light]="invitationFilter() !== 'ALL'"
+                      title="Afficher toutes les invitations">
+                      <div class="fs-xxs fw-semibold text-uppercase mb-1"
+                        [class.text-white]="invitationFilter() === 'ALL'"
+                        [class.text-primary]="invitationFilter() !== 'ALL'">Toutes</div>
+                      <div class="fs-sm fw-bold"
+                        [class.text-white]="invitationFilter() === 'ALL'"
+                        [class.text-primary]="invitationFilter() !== 'ALL'">{{ guests().length }}</div>
+                    </div>
                   </div>
-                  <div class="col-4 border-end">
-                    <span class="fs-xxs fw-semibold text-uppercase text-muted d-block text-success">Distribuées</span>
-                    <span class="fs-sm fw-bold text-success">{{ deliveredCount() }}</span>
+                  <!-- ENVOYÉES -->
+                  <div class="col-3 border-end px-1">
+                    <div class="rounded-2 py-2 px-1 cursor-pointer transition-all"
+                      (click)="setInvitationFilter('SENT')"
+                      [style.cursor]="'pointer'"
+                      [class.bg-info]="invitationFilter() === 'SENT'"
+                      [class.text-white]="invitationFilter() === 'SENT'"
+                      [class.bg-body-light]="invitationFilter() !== 'SENT'"
+                      title="Filtrer les invitations envoyées">
+                      <div class="fs-xxs fw-semibold text-uppercase mb-1"
+                        [class.text-white]="invitationFilter() === 'SENT'"
+                        [class.text-info]="invitationFilter() !== 'SENT'">Envoyées</div>
+                      <div class="fs-sm fw-bold"
+                        [class.text-white]="invitationFilter() === 'SENT'"
+                        [class.text-info]="invitationFilter() !== 'SENT'">{{ totalSentCount() }}</div>
+                    </div>
                   </div>
-                  <div class="col-4">
-                    <span class="fs-xxs fw-semibold text-uppercase text-muted d-block text-warning-dark">En
-                      attente</span>
-                    <span class="fs-sm fw-bold text-warning-dark">{{ pendingDeliveryCount() }}</span>
+                  <!-- RÉPONSES (Confirmés + Déclinés) -->
+                  <div class="col-3 border-end px-1">
+                    <div class="rounded-2 py-2 px-1 cursor-pointer transition-all"
+                      (click)="setInvitationFilter('INTERACTED')"
+                      [style.cursor]="'pointer'"
+                      [class.bg-success]="invitationFilter() === 'INTERACTED'"
+                      [class.text-white]="invitationFilter() === 'INTERACTED'"
+                      [class.bg-body-light]="invitationFilter() !== 'INTERACTED'"
+                      title="Filtrer les invités ayant répondu (Confirmé ou Décliné)">
+                      <div class="fs-xxs fw-semibold text-uppercase mb-1"
+                        [class.text-white]="invitationFilter() === 'INTERACTED'"
+                        [class.text-success]="invitationFilter() !== 'INTERACTED'">Réponses</div>
+                      <div class="fs-sm fw-bold"
+                        [class.text-white]="invitationFilter() === 'INTERACTED'"
+                        [class.text-success]="invitationFilter() !== 'INTERACTED'">{{ interactedCount() }}</div>
+                    </div>
+                  </div>
+                  <!-- EN ATTENTE -->
+                  <div class="col-3 px-1">
+                    <div class="rounded-2 py-2 px-1 cursor-pointer transition-all"
+                      (click)="setInvitationFilter('PENDING')"
+                      [style.cursor]="'pointer'"
+                      [class.bg-warning]="invitationFilter() === 'PENDING'"
+                      [class.text-white]="invitationFilter() === 'PENDING'"
+                      [class.bg-body-light]="invitationFilter() !== 'PENDING'"
+                      title="Filtrer les invitations en attente d'envoi ou de réponse">
+                      <div class="fs-xxs fw-semibold text-uppercase mb-1"
+                        [class.text-white]="invitationFilter() === 'PENDING'"
+                        [class.text-warning-dark]="invitationFilter() !== 'PENDING'">En attente</div>
+                      <div class="fs-sm fw-bold"
+                        [class.text-white]="invitationFilter() === 'PENDING'"
+                        [class.text-warning-dark]="invitationFilter() !== 'PENDING'">{{ pendingDeliveryCount() }}</div>
+                    </div>
                   </div>
                 </div>
 
-                <!-- Primary channel usage summary -->
-                <div
-                  class="d-flex align-items-center justify-content-around bg-body-light border rounded py-2 px-3 mb-3 fs-xs">
-                  <span class="text-dark"><i class="fab fa-whatsapp text-success me-1"></i> WhatsApp: <strong>{{
-                      whatsappCount() }}</strong></span>
-                  <span class="text-muted border-end" style="height: 15px;"></span>
-                  <span class="text-dark"><i class="fa fa-envelope text-primary me-1"></i> E-mail: <strong>{{
-                      emailCount() }}</strong></span>
+                <!-- 2. Performance des Canaux & Taux de Réponse -->
+                <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 bg-body-light border rounded py-1.5 px-3 mb-2.5 fs-xs">
+                  <div class="d-flex align-items-center gap-2">
+                    <span class="fw-semibold text-muted fs-2xs text-uppercase"><i class="fa fa-trophy text-warning me-1"></i> Canal N°1 :</span>
+                    <span class="badge bg-white text-dark border shadow-2xs py-1 px-2">
+                      <i [class]="bestChannel().icon" [ngClass]="bestChannel().colorClass" class="me-1"></i>
+                      <strong>{{ bestChannel().name }}</strong>
+                      <span class="text-success ms-1 fw-bold" *ngIf="bestChannel().percent > 0">({{ bestChannel().percent }}%)</span>
+                    </span>
+                  </div>
+                  <!-- Interactive Pill: Total response rate -->
+                  <div class="cursor-pointer badge rounded-pill px-2.5 py-1 fs-xxs transition-all"
+                       [ngClass]="invitationFilter() === 'INTERACTED' ? 'bg-success text-white shadow-sm' : 'bg-white text-dark border'"
+                       (click)="setInvitationFilter('INTERACTED')"
+                       [style.cursor]="'pointer'"
+                       title="Cliquer pour voir tous les invités ayant répondu">
+                    <i class="fa fa-chart-pie me-1" [class.text-success]="invitationFilter() !== 'INTERACTED'"></i>
+                    Taux de Réponse : <strong>{{ interactedPercentage() }}%</strong> ({{ interactedCount() }}/{{ guests().length }})
+                  </div>
                 </div>
 
-                <!-- Compact preview table (Top 5) -->
-                <h5 class="fw-bold fs-xs text-uppercase text-muted border-bottom pb-1 mb-2">Destinataires Récents</h5>
-                <div class="text-center py-2 text-muted fs-xs" *ngIf="invitationPreviewGuests().length === 0">
-                  Aucun destinataire enregistré.
+                <!-- Empty state if 0 guests -->
+                <div class="text-center py-3 text-muted fs-xs" *ngIf="guests().length === 0">
+                  <i class="fa fa-envelope-open text-muted fs-3 mb-2"></i>
+                  <p class="mb-0">Aucun destinataire enregistré pour le moment.</p>
                 </div>
-                <div class="table-responsive" *ngIf="invitationPreviewGuests().length > 0">
+
+                <!-- Empty state for current filter -->
+                <div class="text-center py-3 text-muted fs-xs" *ngIf="guests().length > 0 && invitationFilteredGuests().length === 0">
+                  <p class="mb-0">Aucun invité pour ce filtre.</p>
+                </div>
+
+                <!-- 3. Compact Paginated Invitations Table -->
+                <div class="table-responsive" *ngIf="invitationPagedGuests().length > 0">
                   <table class="table table-sm table-striped table-vcenter fs-xs mb-0">
                     <thead>
                       <tr>
-                        <th>Nom</th>
-                        <th>Canal Principal</th>
-                        <th class="text-center" style="width: 80px;">Statut</th>
+                        <th class="py-1">Destinataire</th>
+                        <th class="py-1">Canaux</th>
+                        <th class="text-center py-1" style="width: 85px;">Envoi</th>
+                        <th class="text-center py-1" style="width: 90px;">Réponse</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr *ngFor="let g of invitationPreviewGuests()">
-                        <td class="fw-semibold text-dark">{{ g.fullName }}</td>
-                        <td class="text-muted">
-                          <span *ngIf="g.phone"><i class="fab fa-whatsapp text-success me-1"></i> WhatsApp</span>
-                          <span *ngIf="!g.phone && g.email"><i class="fa fa-envelope text-primary me-1"></i>
-                            E-mail</span>
-                          <span *ngIf="!g.phone && !g.email">-</span>
+                      <tr *ngFor="let g of invitationPagedGuests()">
+                        <td class="py-1 fw-semibold text-dark">{{ g.fullName }}</td>
+                        <td class="py-1">
+                          <div class="d-inline-flex align-items-center gap-2" *ngIf="getGuestChannels(g).length > 0; else noChannel">
+                            <i *ngFor="let c of getGuestChannels(g)" [class]="c.icon" [ngClass]="c.colorClass" style="font-size: 0.95rem;" [title]="c.title"></i>
+                          </div>
+                          <ng-template #noChannel>
+                            <span class="text-muted fs-3xs fst-italic" title="Aucun contact renseigné">Lien manuel</span>
+                          </ng-template>
                         </td>
-                        <td class="text-center">
-                          <span class="badge rounded-pill px-2 py-1 fs-xxs" [ngClass]="{
+                        <td class="text-center py-1">
+                          <span class="badge rounded-pill px-2 py-0.5 fs-3xs"
+                            [ngClass]="(g.isSent === true || g.invitationStatus === 'SENT') ? 'bg-success-light text-black border border-success-light' : 'bg-warning-light text-black border border-warning-light'">
+                            <i class="fa" [ngClass]="(g.isSent === true || g.invitationStatus === 'SENT') ? 'fa-check me-0.5' : 'fa-clock me-0.5'"></i>
+                            {{ (g.isSent === true || g.invitationStatus === 'SENT') ? 'Envoyé' : 'Attente' }}
+                          </span>
+                        </td>
+                        <td class="text-center py-1">
+                          <span class="badge rounded-pill px-2 py-0.5 fs-3xs" [ngClass]="{
                                   'bg-success-light text-black border border-success-light': g.status === 'CONFIRMED',
                                   'bg-danger-light text-black border border-danger-light': g.status === 'DECLINED',
                                   'bg-warning-light text-black border border-warning-light': g.status === 'PENDING'
                                 }">
-                            {{ g.status === 'CONFIRMED' ? 'Confirmé' : g.status === 'DECLINED' ? 'Décliné' : 'Attente'
-                            }}
+                            {{ g.status === 'CONFIRMED' ? 'Confirmé' : g.status === 'DECLINED' ? 'Décliné' : 'Attente' }}
                           </span>
                         </td>
                       </tr>
                     </tbody>
                   </table>
                 </div>
+
+                <!-- 5. Mini Pagination -->
+                <div class="d-flex justify-content-between align-items-center mt-2" *ngIf="invitationFilteredGuests().length > invitationPageSize">
+                  <span class="fs-xxs text-muted">Page {{ invitationCurrentPage() }} / {{ invitationTotalPages() }}</span>
+                  <div class="d-flex gap-1">
+                    <button class="btn btn-xs btn-alt-secondary rounded-pill px-2" (click)="invitationPrevPage()" [disabled]="invitationCurrentPage() === 1">
+                      <i class="fa fa-angle-left"></i>
+                    </button>
+                    <button class="btn btn-xs btn-alt-secondary rounded-pill px-2" (click)="invitationNextPage()" [disabled]="invitationCurrentPage() === invitationTotalPages()">
+                      <i class="fa fa-angle-right"></i>
+                    </button>
+                  </div>
+                </div>
+
               </div>
             </div>
           </div>

@@ -258,9 +258,12 @@
                 <label class="form-label fw-bold text-dark fs-sm mb-1.5">Téléphone</label>
                 <div class="input-group luxury-input-group">
                   <span class="input-group-text input-icon-box"><i class="fa fa-phone"></i></span>
-                  <input type="text" class="form-control"
-                         placeholder="0612345678" [ngModel]="phone()" (ngModelChange)="phone.set($event)" name="phone">
+                  <input type="tel" class="form-control"
+                         placeholder="+212 600 000 000" [ngModel]="phone()" (ngModelChange)="phone.set($event)" name="phone">
                 </div>
+              </div>
+              <div class="col-12 mt-1">
+                <span class="fs-3xs text-muted fst-italic"><i class="fa fa-info-circle text-primary me-1"></i>Au moins un moyen de contact (Téléphone ou E-mail) est requis pour l'invitation.</span>
               </div>
             </div>
           </div>

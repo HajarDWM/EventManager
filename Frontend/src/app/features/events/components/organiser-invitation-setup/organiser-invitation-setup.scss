@@ -346,3 +346,259 @@
     }
   }
 }
+
+// =========================================================================
+// GUEST JOURNEY MODAL & STEPPER STYLES
+// =========================================================================
+.guest-journey-modal {
+  .modal-dialog {
+    max-width: 860px;
+  }
+
+  .journey-header {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    color: #ffffff;
+    border-radius: 16px 16px 0 0;
+    padding: 18px 24px;
+  }
+
+  .guest-avatar-circle {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 1.05rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
+  }
+
+  // Visual Screen Cards Grid
+  .journey-screens-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+  }
+
+  .screen-card-item {
+    position: relative;
+    background: #ffffff;
+    border: 2px solid #e2e8f0;
+    border-radius: 14px;
+    overflow: hidden;
+    transition: all 0.25s ease;
+    display: flex;
+    flex-direction: column;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+    }
+
+    &.status-completed {
+      border-color: #10b981;
+      .screen-card-header {
+        background: #f0fdf4;
+      }
+    }
+
+    &.status-current {
+      border-color: #f59e0b;
+      box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2), 0 8px 24px rgba(245, 158, 11, 0.12);
+      .screen-card-header {
+        background: #fffbeb;
+      }
+    }
+
+    &.status-pending {
+      opacity: 0.7;
+      border-color: #e2e8f0;
+    }
+  }
+
+  .screen-card-header {
+    padding: 10px 14px;
+    border-bottom: 1px solid #e2e8f0;
+    background: #f8fafc;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .screen-mockup-frame {
+    position: relative;
+    min-height: 145px;
+    height: auto;
+    background: #f1f5f9;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    user-select: none;
+  }
+
+  // Mini Mockup Variants
+  .mockup-sms {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    padding: 8px 10px;
+    width: 100%;
+    max-width: 210px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    font-size: 0.72rem;
+  }
+
+  .mockup-envelope {
+    width: 160px;
+    height: 95px;
+    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+    border: 1.5px solid #d97706;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    box-shadow: 0 4px 12px rgba(217, 119, 6, 0.15);
+
+    .wax-seal {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      box-shadow: 0 2px 6px rgba(180, 83, 9, 0.4);
+    }
+  }
+
+  .mockup-invitation-card {
+    width: 175px;
+    height: 105px;
+    background: #ffffff;
+    border: 2px solid #881337;
+    border-radius: 8px;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+
+    .card-border-pattern {
+      border: 1px dashed #be123c;
+      width: 100%;
+      height: 100%;
+      border-radius: 6px;
+      padding: 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  .mockup-menu-card {
+    width: 100%;
+    max-width: 210px;
+    min-height: 106px;
+    background: #ffffff;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 6px 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+
+    .menu-mini-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 3px;
+      margin-bottom: 6px;
+
+      .mini-tab {
+        font-size: 0.52rem;
+        padding: 2px 5px;
+        border-radius: 4px;
+        background: #f1f5f9;
+        color: #475569;
+        white-space: nowrap;
+        display: inline-flex;
+        align-items: center;
+        transition: all 0.15s ease;
+
+        &.active {
+          background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+          color: #ffffff;
+          font-weight: 700;
+          box-shadow: 0 2px 4px rgba(217, 119, 6, 0.25);
+        }
+      }
+    }
+
+    .dish-preview-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 4px 6px;
+
+      img {
+        width: 30px;
+        height: 30px;
+        border-radius: 5px;
+        object-fit: cover;
+        border: 1px solid #cbd5e1;
+        flex-shrink: 0;
+      }
+    }
+  }
+
+  .mockup-rsvp-verdict {
+    width: 170px;
+    height: 95px;
+    background: #ffffff;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+
+    .verdict-badge-box {
+      border-radius: 20px;
+      padding: 4px 10px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+  }
+
+  .screen-card-footer {
+    padding: 10px 12px;
+    background: #ffffff;
+    border-top: 1px solid #f1f5f9;
+    font-size: 0.75rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+}

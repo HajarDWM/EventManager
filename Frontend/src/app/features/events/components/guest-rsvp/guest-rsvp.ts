@@ -131,6 +131,12 @@ export class GuestRsvp implements OnInit, OnDestroy {
     setTimeout(() => {
       this.isInvitationOpened.set(true);
       this.isOpeningTransitioning.set(false);
+      const gid = this.guest()?.guestId;
+      if (gid) {
+        const now = new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+        localStorage.setItem(`guest_${gid}_opened_at`, now);
+        localStorage.setItem(`guest_${gid}_envelope_unsealed`, 'true');
+      }
     }, duration);
   }
 
@@ -154,9 +160,10 @@ export class GuestRsvp implements OnInit, OnDestroy {
   public readonly rosePetals = Array.from({ length: 28 }, (_, i) => ({
     id: i,
     left: ((i * 17 + 5) % 94) + 3 + '%',
+    top: ((i * 29 + 13) % 92) + 4 + '%',
+    size: ((i % 3) * 4 + 14) + 'px',
     delay: ((i * 0.35) % 5) + 's',
-    duration: ((i % 3) + 5) + 's',
-    size: ((i % 4) + 16) + 'px',
+    duration: ((i % 3) + 4.5) + 's',
     rotation: ((i * 47) % 360) + 'deg'
   }));
 
@@ -196,11 +203,29 @@ export class GuestRsvp implements OnInit, OnDestroy {
     return 'gold-dust';
   }
 
+  public saveCurrentRsvpProgress(): void {
+    const gid = this.guest()?.guestId;
+    if (!gid) return;
+    localStorage.setItem(`guest_${gid}_is_rsvp_open`, 'true');
+    localStorage.setItem(`guest_${gid}_envelope_unsealed`, 'true');
+    localStorage.setItem(`guest_${gid}_last_rsvp_step`, String(this.currentRsvpStep()));
+    if (this.starterChoice) localStorage.setItem(`guest_${gid}_starterChoice`, this.starterChoice);
+    if (this.mealChoice) localStorage.setItem(`guest_${gid}_mealChoice`, this.mealChoice);
+    if (this.dessertChoice) localStorage.setItem(`guest_${gid}_dessertChoice`, this.dessertChoice);
+    if (this.beverageChoice) localStorage.setItem(`guest_${gid}_beverageChoice`, this.beverageChoice);
+    this.syncDietaryToStorage();
+  }
+
   protected openMenuAndRsvp(): void {
     this.isMenuRsvpOpen.set(true);
+    this.saveCurrentRsvpProgress();
   }
 
   protected closeMenuAndRsvp(): void {
+    const gid = this.guest()?.guestId;
+    if (gid) {
+      localStorage.setItem(`guest_${gid}_is_rsvp_open`, 'false');
+    }
     this.isMenuRsvpOpen.set(false);
     this.isDiscoveryMode.set(false);
   }
@@ -246,12 +271,33 @@ export class GuestRsvp implements OnInit, OnDestroy {
 
   public readonly isDiscoveryMode = signal<boolean>(false);
 
+  private recordMenuStep(categoryOrDetail?: string, dishName?: string, imageUrl?: string): void {
+    const gid = this.guest()?.guestId;
+    if (!gid) return;
+    const now = new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+    localStorage.setItem(`guest_${gid}_menu_viewed`, 'true');
+    localStorage.setItem(`guest_${gid}_menu_viewed_at`, now);
+    if (dishName) {
+      localStorage.setItem(`guest_${gid}_last_selected_dish`, dishName);
+    } else if (categoryOrDetail && !['STARTER', 'MAIN', 'DESSERT', 'BEVERAGE'].includes(categoryOrDetail)) {
+      localStorage.setItem(`guest_${gid}_last_selected_dish`, categoryOrDetail);
+    }
+    if (categoryOrDetail && ['STARTER', 'MAIN', 'DESSERT', 'BEVERAGE'].includes(categoryOrDetail)) {
+      localStorage.setItem(`guest_${gid}_last_selected_cat`, categoryOrDetail);
+    }
+    if (imageUrl) {
+      localStorage.setItem(`guest_${gid}_last_selected_image`, imageUrl);
+    }
+  }
+
   public startDiscoveryWorkflow(): void {
     this.isDiscoveryMode.set(true);
     this.selectedAttendanceChoice.set(null);
     this.attendanceStatus = null;
     this.currentRsvpStep.set(0);
     this.isMenuRsvpOpen.set(true);
+    this.recordMenuStep('Navigation vers le menu gastronomique');
+    this.saveCurrentRsvpProgress();
   }
 
   public pivotFromDiscoveryToAccept(): void {
@@ -261,6 +307,8 @@ export class GuestRsvp implements OnInit, OnDestroy {
     this.selectedAttendanceChoice.set('CONFIRMED');
     this.currentRsvpStep.set(0);
     this.isMenuRsvpOpen.set(true);
+    this.recordMenuStep('Validation présence & menu');
+    this.saveCurrentRsvpProgress();
   }
 
   public startAcceptWorkflow(): void {
@@ -271,6 +319,8 @@ export class GuestRsvp implements OnInit, OnDestroy {
     this.hasConfirmedMenuChoice.set(!!(this.starterChoice || this.mealChoice || this.dessertChoice || this.beverageChoice));
     this.currentRsvpStep.set(0);
     this.isMenuRsvpOpen.set(true);
+    this.recordMenuStep('Sélection des plats du menu');
+    this.saveCurrentRsvpProgress();
   }
 
   public reopenRsvpToAccept(): void {
@@ -281,6 +331,7 @@ export class GuestRsvp implements OnInit, OnDestroy {
     this.selectedAttendanceChoice.set('CONFIRMED');
     this.currentRsvpStep.set(0);
     this.isMenuRsvpOpen.set(true);
+    this.saveCurrentRsvpProgress();
   }
 
   // Course fallback defaults
@@ -879,9 +930,12 @@ export class GuestRsvp implements OnInit, OnDestroy {
       this.beverageChoice = dishName;
     }
 
+    // Clean dish name without prefix
+    this.recordMenuStep(category, dishName);
     this.hasConfirmedMenuChoice.set(true);
     this.selectedItemTransition.set({ category, dishName });
     this.isAdvancing.set(true);
+    this.saveCurrentRsvpProgress();
 
     if (this.advanceTimeout) {
       clearTimeout(this.advanceTimeout);
@@ -897,6 +951,7 @@ export class GuestRsvp implements OnInit, OnDestroy {
   public setDiscoveryCategory(stepIndex: number): void {
     if (stepIndex >= 0 && stepIndex <= 3) {
       this.currentRsvpStep.set(stepIndex);
+      this.saveCurrentRsvpProgress();
     }
   }
 
@@ -914,6 +969,7 @@ export class GuestRsvp implements OnInit, OnDestroy {
       this.beverageChoice = '';
     }
 
+    this.saveCurrentRsvpProgress();
     this.goToNextStep();
   }
 
@@ -924,6 +980,11 @@ export class GuestRsvp implements OnInit, OnDestroy {
     this.selectedItemTransition.set(null);
     this.isAdvancing.set(false);
     this.currentRsvpStep.set(stepIndex);
+    const catMap: ('STARTER' | 'MAIN' | 'DESSERT' | 'BEVERAGE')[] = ['STARTER', 'MAIN', 'DESSERT', 'BEVERAGE'];
+    if (catMap[stepIndex]) {
+      this.recordMenuStep(catMap[stepIndex]);
+    }
+    this.saveCurrentRsvpProgress();
   }
 
   public selectDishFromModal(category: 'STARTER' | 'MAIN' | 'DESSERT' | 'BEVERAGE', dishName: string): void {
@@ -1137,6 +1198,19 @@ export class GuestRsvp implements OnInit, OnDestroy {
         const isInteractive = !!anim && ['envelope-wax', 'ribbon-cut', 'curtain-unveil', 'sliding-doors', 'vip-badge'].includes(anim);
         this.isInvitationOpened.set(!isInteractive);
 
+        // Track live progression for organizer
+        if (data.guestId) {
+          const now = new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+          localStorage.setItem(`guest_${data.guestId}_link_clicked_at`, now);
+
+          // Only mark as opened if there is NO interactive animation (direct view), or if already answered previously
+          if (!isInteractive || data.guestStatus === 'CONFIRMED' || data.guestStatus === 'DECLINED') {
+            localStorage.setItem(`guest_${data.guestId}_opened_at`, now);
+          }
+          localStorage.setItem(`guest_${data.guestId}_viewed_details_at`, now);
+        }
+
+
         // Restore previous response state if guest already answered
         if (data.guestStatus === 'DECLINED') {
           this.attendanceStatus = false;
@@ -1214,6 +1288,68 @@ export class GuestRsvp implements OnInit, OnDestroy {
           }
         }
 
+        // Smart Resume Logic:
+        // If the guest already opened the envelope or was browsing the menu,
+        // bypass seal animation and resume directly into the menu / step where they left off!
+        if (data.guestId && data.guestStatus !== 'CONFIRMED' && data.guestStatus !== 'DECLINED') {
+          const gid = data.guestId;
+          const hasUnsealed = localStorage.getItem(`guest_${gid}_envelope_unsealed`) === 'true' || !!localStorage.getItem(`guest_${gid}_opened_at`);
+          const wasRsvpOpen = localStorage.getItem(`guest_${gid}_is_rsvp_open`) === 'true' || localStorage.getItem(`guest_${gid}_menu_viewed`) === 'true';
+
+          if (hasUnsealed) {
+            this.isInvitationOpened.set(true);
+          }
+
+          // Restore saved course selections from localStorage
+          const savedStarter = localStorage.getItem(`guest_${gid}_starterChoice`);
+          const savedMeal = localStorage.getItem(`guest_${gid}_mealChoice`);
+          const savedDessert = localStorage.getItem(`guest_${gid}_dessertChoice`);
+          const savedBeverage = localStorage.getItem(`guest_${gid}_beverageChoice`);
+          if (savedStarter && !this.starterChoice) this.starterChoice = savedStarter;
+          if (savedMeal && !this.mealChoice) this.mealChoice = savedMeal;
+          if (savedDessert && !this.dessertChoice) this.dessertChoice = savedDessert;
+          if (savedBeverage && !this.beverageChoice) this.beverageChoice = savedBeverage;
+
+          if (this.starterChoice || this.mealChoice || this.dessertChoice || this.beverageChoice) {
+            this.hasConfirmedMenuChoice.set(true);
+          }
+
+          // Restore saved allergies from localStorage if available
+          const rawLocalAllergies = localStorage.getItem(`guest_${gid}_allergies`);
+          if (rawLocalAllergies) {
+            try {
+              const localAllergiesList: string[] = JSON.parse(rawLocalAllergies);
+              localAllergiesList.forEach(item => {
+                const lower = item.toLowerCase();
+                if (lower.includes('végétarien') || lower.includes('vegetarien')) this.hasVegetarien = true;
+                if (lower.includes('végétalien') || lower.includes('vegan') || lower.includes('végétalienne')) this.hasVegan = true;
+                if (lower.includes('gluten')) this.hasGlutenFree = true;
+                if (lower.includes('lactose')) this.hasLactoseFree = true;
+                if (lower.includes('arachide')) this.hasArachidesFree = true;
+                if (lower.includes('halal')) this.hasHalal = true;
+                if (lower.includes('fruits de mer') || lower.includes('mer')) this.hasFruitsDeMerFree = true;
+                if (lower.includes('sucre')) this.hasSucreFree = true;
+              });
+            } catch (e) {}
+          }
+
+          // Directly resume into the RSVP workflow if they were in the middle of it
+          if (wasRsvpOpen) {
+            this.attendanceStatus = true;
+            this.status.set('CONFIRMED');
+            this.selectedAttendanceChoice.set('CONFIRMED');
+            this.isMenuRsvpOpen.set(true);
+
+            const savedStepStr = localStorage.getItem(`guest_${gid}_last_rsvp_step`);
+            if (savedStepStr !== null) {
+              const savedStep = parseInt(savedStepStr, 10);
+              if (!isNaN(savedStep) && savedStep >= 0 && savedStep <= 5) {
+                this.currentRsvpStep.set(savedStep);
+              }
+            }
+          }
+        }
+
         this.isLoading.set(false);
       },
       error: (err) => {
@@ -1231,12 +1367,17 @@ export class GuestRsvp implements OnInit, OnDestroy {
     const mode = this.cateringMode();
     const step = this.currentRsvpStep();
 
+    if (step === 4 || this.hasAnyDietOrAllergySelected()) {
+      this.syncDietaryToStorage();
+    }
+
     if (mode === 'BUFFET') {
       if (step === 0) {
         this.currentRsvpStep.set(4);
       } else if (step === 4) {
         this.currentRsvpStep.set(5);
       }
+      this.saveCurrentRsvpProgress();
       return;
     }
 
@@ -1250,6 +1391,7 @@ export class GuestRsvp implements OnInit, OnDestroy {
       } else if (step === 4) {
         this.currentRsvpStep.set(5);
       }
+      this.saveCurrentRsvpProgress();
       return;
     }
 
@@ -1257,6 +1399,7 @@ export class GuestRsvp implements OnInit, OnDestroy {
     if (step < 5) {
       this.currentRsvpStep.set(step + 1);
     }
+    this.saveCurrentRsvpProgress();
   }
 
   public goToPrevStep(): void {
@@ -1283,6 +1426,7 @@ export class GuestRsvp implements OnInit, OnDestroy {
       } else {
         this.closeMenuAndRsvp();
       }
+      this.saveCurrentRsvpProgress();
       return;
     }
 
@@ -1298,23 +1442,21 @@ export class GuestRsvp implements OnInit, OnDestroy {
       } else {
         this.closeMenuAndRsvp();
       }
+      this.saveCurrentRsvpProgress();
       return;
     }
 
     // Standard PLATS_FIXES
     if (step === 5) {
-      // Depuis le Récapitulatif (Étape 5) -> Retour vers la page Régimes (Étape 4)
       this.currentRsvpStep.set(4);
     } else if (step === 4) {
-      // Depuis la page Régimes (Étape 4) -> Retour vers le Menu (Boissons - Étape 3)
       this.currentRsvpStep.set(3);
     } else if (step > 0) {
-      // Depuis les étapes du Menu (Plats, Desserts, Boissons) -> Étape précédente
       this.currentRsvpStep.set(step - 1);
     } else {
-      // Depuis l'Étape 0 (Entrées) -> Retour vers l'invitation (Page 1)
       this.closeMenuAndRsvp();
     }
+    this.saveCurrentRsvpProgress();
   }
 
   public handleTopNavPrev(): void {
@@ -1325,6 +1467,30 @@ export class GuestRsvp implements OnInit, OnDestroy {
 
   protected selectAttendanceChoice(choice: 'CONFIRMED' | 'DECLINED'): void {
     this.selectedAttendanceChoice.set(choice);
+  }
+
+  public syncDietaryToStorage(): void {
+    const gid = this.guest()?.guestId;
+    if (!gid) return;
+    const list = this.getSelectedDietaryList();
+    localStorage.setItem(`guest_${gid}_allergies`, JSON.stringify(list));
+    localStorage.setItem(`guest_${gid}_menu_viewed`, 'true');
+  }
+
+  public getSelectedDietaryList(): string[] {
+    const list: string[] = [];
+    if (this.hasVegetarien) list.push('Végétarien');
+    if (this.hasVegan) list.push('Vegan');
+    if (this.hasGlutenFree) list.push('Sans gluten');
+    if (this.hasLactoseFree) list.push('Sans lactose');
+    if (this.hasHalal) list.push('Halal');
+    if (this.hasFruitsDeMerFree) list.push('Sans fruits de mer');
+    if (this.hasSucreFree) list.push('Sans sucre');
+    if (this.hasArachidesFree) list.push('Sans arachides');
+    if (this.otherAllergies && this.otherAllergies.trim().length > 0) {
+      list.push(this.otherAllergies.trim());
+    }
+    return list;
   }
 
   public hasAnyDietOrAllergySelected(): boolean {
@@ -1344,6 +1510,7 @@ export class GuestRsvp implements OnInit, OnDestroy {
   public onDietaryKeyDown(event: KeyboardEvent): void {
     if (event.key === 'Enter') {
       event.preventDefault();
+      this.syncDietaryToStorage();
       this.goToNextStep();
     }
   }
@@ -1516,6 +1683,8 @@ export class GuestRsvp implements OnInit, OnDestroy {
         if (updated.guestStatus) {
           this.status.set(updated.guestStatus);
         }
+        const now = new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+        localStorage.setItem(`guest_${currentGuest.guestId}_responded_at`, now);
         this.isSubmitting.set(false);
         if (markSuccess) {
           this.isSuccess.set(true);

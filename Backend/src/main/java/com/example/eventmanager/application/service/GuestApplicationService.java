@@ -78,11 +78,23 @@ public class GuestApplicationService implements CreateGuestUseCase, GetGuestsByE
         }
     }
 
+    private void validateGuestContact(GuestDTO guestDTO) {
+        if (guestDTO.getFullName() == null || guestDTO.getFullName().trim().isEmpty()) {
+            throw new IllegalArgumentException("Le nom complet est obligatoire.");
+        }
+        boolean hasPhone = guestDTO.getPhone() != null && !guestDTO.getPhone().trim().isEmpty();
+        boolean hasEmail = guestDTO.getEmail() != null && !guestDTO.getEmail().trim().isEmpty();
+        if (!hasPhone && !hasEmail) {
+            throw new IllegalArgumentException("Veuillez renseigner au moins un moyen de contact (Numéro de téléphone ou E-mail).");
+        }
+    }
+
     @Override
     @Transactional
     public GuestDTO createGuest(Long eventId, GuestDTO guestDTO) {
         verifyEventOwnership(eventId);
         verifyActiveSubscription();
+        validateGuestContact(guestDTO);
         guestDTO.setEventId(eventId);
         if (guestDTO.getInvitationToken() == null) {
             guestDTO.setInvitationToken(java.util.UUID.randomUUID().toString());
@@ -120,6 +132,7 @@ public class GuestApplicationService implements CreateGuestUseCase, GetGuestsByE
                 .orElseThrow(() -> new RuntimeException("Invité introuvable avec l'id: " + guestId));
         verifyEventOwnership(existing.getEventId());
         verifyActiveSubscription();
+        validateGuestContact(guestDTO);
 
         existing.updateDetails(
                 guestDTO.getFullName(),

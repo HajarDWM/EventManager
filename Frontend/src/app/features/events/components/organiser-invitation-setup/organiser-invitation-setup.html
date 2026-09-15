@@ -251,15 +251,19 @@
               </thead>
               <tbody>
                 <tr *ngFor="let guest of guests()" 
-                    (click)="toggleGuest(guest.id!)" 
-                    style="cursor: pointer;">
+                    (click)="openGuestJourney(guest)" 
+                    style="cursor: pointer;"
+                    title="Cliquer pour voir le parcours détaillé de l'invité">
                   <td class="text-center" (click)="$event.stopPropagation()">
                     <input class="form-check-input" type="checkbox" 
                            [checked]="selectedGuestIds()[guest.id!]" 
                            (change)="toggleGuest(guest.id!)">
                   </td>
                   <td class="fw-semibold text-dark">
-                    {{ guest.fullName }}
+                    <div class="d-flex align-items-center gap-1.5">
+                      <span>{{ guest.fullName }}</span>
+                      <i class="fa fa-chart-line text-primary fs-3xs opacity-50" title="Suivi en temps réel"></i>
+                    </div>
                   </td>
                   <td>
                     <div class="fs-xs text-muted" *ngIf="guest.email"><i class="far fa-envelope me-1"></i> {{ guest.email }}</div>
@@ -273,12 +277,12 @@
                     </span>
                   </td>
                   <td class="text-center" (click)="$event.stopPropagation()">
-                    <span class="badge bg-success-light text-black border border-success-light me-1" *ngIf="guest.phone" title="WhatsApp disponible">
-                      <i class="fab fa-whatsapp text-success"></i>
-                    </span>
-                    <span class="badge bg-info-light text-black border border-info-light" *ngIf="guest.email" title="E-mail disponible">
-                      <i class="far fa-envelope text-info"></i>
-                    </span>
+                    <div class="d-inline-flex align-items-center justify-content-center gap-1.5" *ngIf="getGuestChannels(guest).length > 0; else noSetupChannel">
+                      <i *ngFor="let c of getGuestChannels(guest)" [class]="c.icon" [ngClass]="c.colorClass" style="font-size: 1rem;" [title]="c.title"></i>
+                    </div>
+                    <ng-template #noSetupChannel>
+                      <span class="text-muted fs-3xs fst-italic">Manuel</span>
+                    </ng-template>
                   </td>
                   <td class="text-center" (click)="$event.stopPropagation()">
                     <a [routerLink]="['/rsvp', guest.invitationToken || guest.id]" target="_blank" class="btn btn-xs btn-alt-warning d-inline-flex align-items-center gap-1 py-1 px-2" title="Tester RSVP">
@@ -318,134 +322,76 @@
     <div class="modal-content luxury-modal-content">
       
       <!-- Luxury Modal Header (Clean White / Slate) -->
-      <div class="luxury-modal-header d-flex align-items-center justify-content-between">
-        <div class="d-flex align-items-center gap-2.5">
-          <div class="rounded-circle bg-primary-subtle text-primary p-2 d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
-            <i class="fa fa-wand-magic-sparkles"></i>
+      <div class="luxury-modal-header">
+        <div class="d-flex align-items-center gap-3">
+          <div class="modal-icon-badge">
+            <i class="fa fa-sliders"></i>
           </div>
           <div>
-            <div class="d-flex align-items-center gap-2">
-              <h4 class="modal-title fw-bold text-dark mb-0">
-                Personnaliser l'Invitation
-              </h4>
-              <span class="badge bg-warning text-dark fw-bold px-2.5 py-1 fs-xs rounded-pill" *ngIf="selectedTemplate()?.subCategory">
-                <i class="fa {{ getSubCategoryIcon(selectedTemplate()?.category || '', selectedTemplate()?.subCategory) }} me-1"></i> {{ selectedTemplate()?.subCategory }}
-              </span>
-            </div>
+            <h4 class="modal-title-luxury mb-0">Personnalisation du Modèle</h4>
+            <p class="modal-subtitle-luxury mb-0">{{ selectedTemplate()?.title }} &bull; {{ selectedTemplate()?.category }}</p>
           </div>
         </div>
-        <button type="button" class="btn-close" (click)="closeModal()"></button>
+        <button type="button" class="btn-close-luxury" (click)="closeModal()" aria-label="Close">
+          <i class="fa fa-times"></i>
+        </button>
       </div>
 
       <form (ngSubmit)="saveSetup()">
-        <div class="modal-body p-4 bg-light">
-
-          <!-- Mini Template Visual Banner -->
-          <div class="modal-template-preview-bar">
-            <div class="d-flex align-items-center gap-3">
-              <img [src]="selectedTemplate()?.imageUrl || 'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=500'" 
-                   class="preview-thumb" 
-                   [alt]="selectedTemplate()?.title">
-              <div>
-                <div class="fw-bold text-dark fs-sm">{{ selectedTemplate()?.title }}</div>
-                <div class="text-muted fs-xs">
-                  <span class="me-2">🔤 {{ selectedTemplate()?.primaryFont || 'Alex Brush' }}</span>
-                  <span>✒️ {{ selectedTemplate()?.secondaryFont || 'Cinzel' }}</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Color Palette Dots -->
-            <div class="d-flex align-items-center gap-1.5" *ngIf="selectedTemplate()?.accentColor || selectedTemplate()?.backgroundColor">
-              <span class="d-inline-block rounded-circle border border-2 border-white shadow-sm" 
-                    [style.backgroundColor]="selectedTemplate()?.accentColor || '#d4af37'" 
-                    style="width: 20px; height: 20px;" 
-                    title="Couleur Principale"></span>
-              <span class="d-inline-block rounded-circle border border-2 border-white shadow-sm" 
-                    [style.backgroundColor]="selectedTemplate()?.secondaryFontColor || '#0f172a'" 
-                    style="width: 20px; height: 20px;" 
-                    title="Couleur des Textes"></span>
-              <span class="d-inline-block rounded-circle border border-2 border-secondary shadow-sm" 
-                    [style.backgroundColor]="selectedTemplate()?.backgroundColor || '#ffffff'" 
-                    style="width: 20px; height: 20px;" 
-                    title="Couleur de Fond"></span>
-            </div>
-          </div>
-
-          <!-- Section 1: Identité & Titres -->
-          <div class="modal-section-card">
-            <div class="section-badge-header">
-              <i class="fa fa-pen-nib text-primary"></i> 1. Identité & Textes de l'Invitation
-            </div>
-
-            <!-- Nom de l'invitation -->
-            <div class="mb-3.5">
-              <label class="form-label fw-bold text-dark fs-sm mb-1.5">
-                Nom ou Titre Principal <span class="text-danger">*</span>
-              </label>
+        <div class="modal-body p-4">
+          <!-- Step Form Sections -->
+          <div class="form-section-card mb-4">
+            <h5 class="section-card-title">
+              <i class="fa fa-pen-nib text-primary me-2"></i>1. Textes & Titres Officiels
+            </h5>
+            
+            <div class="mb-3">
+              <label class="form-label fw-bold text-dark fs-sm mb-1.5">Grand Titre de l'Invitation <span class="text-danger">*</span></label>
               <div class="input-group luxury-input-group">
-                <span class="input-group-text input-icon-box"><i class="fa fa-signature"></i></span>
+                <span class="input-group-text input-icon-box"><i class="fa fa-heading"></i></span>
                 <input type="text" class="form-control" 
-                       placeholder="Ex: Yassine & Zineb ou BrainToys SARL" 
+                       placeholder="Ex: Sarah & Youssef" 
                        [(ngModel)]="invitationTitle" name="invTitle" required>
               </div>
-              <div class="form-text fs-xs text-muted mt-1">
-                Le nom principal affiché en grand sur la première page de la carte.
-              </div>
             </div>
 
-            <!-- Nature / Sous-titre -->
             <div class="mb-2">
-              <label class="form-label fw-bold text-dark fs-sm mb-1.5">
-                Type / Sous-titre de l'événement
-              </label>
-              <div class="input-group luxury-input-group">
-                <span class="input-group-text input-icon-box"><i class="fa fa-tag text-primary"></i></span>
+              <label class="form-label fw-bold text-dark fs-sm mb-1.5">Sous-titre / Type d'Événement</label>
+              <div class="input-group luxury-input-group mb-2">
+                <span class="input-group-text input-icon-box"><i class="fa fa-quote-left"></i></span>
                 <input type="text" class="form-control" 
-                       list="modal-subtitle-suggestions"
-                       placeholder="Ex: Le Mariage de, Les Fiançailles de, Dîner d'Affaires..." 
+                       placeholder="Ex: Le Mariage de, Soirée de Gala, Anniversaire" 
                        [(ngModel)]="invitationSubtitle" name="invSubtitle">
               </div>
-
-              <datalist id="modal-subtitle-suggestions">
-                <option value="Le Mariage de">
-                <option value="Les Fiançailles de">
-                <option value="La Célébration de Circoncision de">
-                <option value="Soirée Henné de">
-                <option value="Baby Shower de">
-                <option value="La Célébration de Naissance de">
-                <option value="L'Anniversaire de">
-                <option value="Célébration de Diplôme de">
-                <option value="Réunion de Famille de">
-                <option value="Dîner d'Affaires">
-                <option value="Lancement Officiel de">
-                <option value="Conférence & Réception">
-                <option value="Soirée de Gala">
-                <option value="Événement d'Entreprise">
-                <option value="Soirée de Réveillon du Nouvel An">
-                <option value="Gala de Bienfaisance & Solidarité">
-                <option value="Cocktail & Réception d'Exception">
-                <option value="Invitation d'Exception">
-              </datalist>
+              
+              <!-- Quick Subtitle Tags -->
+              <div class="d-flex align-items-center gap-1.5 flex-wrap">
+                <span class="fs-xs text-muted me-1">Suggestions :</span>
+                <button type="button" class="badge-quick-tag" 
+                        *ngFor="let sub of currentMainCategoryInfo()?.subCategories"
+                        [class.active-tag]="invitationSubtitle === sub.defaultSubtitle"
+                        (click)="setQuickSubtitle(sub.defaultSubtitle)">
+                  {{ sub.defaultSubtitle }}
+                </button>
+              </div>
             </div>
           </div>
 
-          <!-- Section 2: Date, Horaires & Lieux -->
-          <div class="modal-section-card">
-            <div class="section-badge-header">
-              <i class="fa fa-calendar-check text-primary"></i> 2. Date, Horaires & Accès GPS
-            </div>
+          <div class="form-section-card">
+            <h5 class="section-card-title">
+              <i class="fa fa-calendar-days text-primary me-2"></i>2. Date, Horaires & Emplacement
+            </h5>
 
             <div class="row g-3 mb-3">
               <div class="col-sm-6">
-                <label class="form-label fw-bold text-dark fs-sm mb-1.5">Date de la célébration <span class="text-danger">*</span></label>
+                <label class="form-label fw-bold text-dark fs-sm mb-1.5">Date de la Cérémonie <span class="text-danger">*</span></label>
                 <div class="input-group luxury-input-group">
-                  <span class="input-group-text input-icon-box"><i class="fa fa-calendar-day"></i></span>
+                  <span class="input-group-text input-icon-box"><i class="fa fa-calendar"></i></span>
                   <input type="date" class="form-control" [(ngModel)]="invitationDateStr" name="invDate" required>
                 </div>
               </div>
               <div class="col-sm-6">
-                <label class="form-label fw-bold text-dark fs-sm mb-1.5">Heure de début <span class="text-danger">*</span></label>
+                <label class="form-label fw-bold text-dark fs-sm mb-1.5">Heure d'Accueil <span class="text-danger">*</span></label>
                 <div class="input-group luxury-input-group">
                   <span class="input-group-text input-icon-box"><i class="fa fa-clock"></i></span>
                   <input type="time" class="form-control" [(ngModel)]="invitationTimeStr" name="invTime" required>
@@ -488,6 +434,295 @@
           </button>
         </div>
       </form>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- MODAL: PARCOURS & ÉCRANS DE L'INVITÉ (GUEST JOURNEY / TIMELINE) -->
+<!-- ========================================================================= -->
+<div class="modal fade show animate__animated animate__fadeIn guest-journey-modal" 
+     tabindex="-1" 
+     style="display: block; background: rgba(15, 23, 42, 0.72); backdrop-filter: blur(6px); z-index: 1060;" 
+     *ngIf="isJourneyModalOpen() && selectedJourneyGuest()">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden" *ngIf="getJourneyData(selectedJourneyGuest()!) as journey">
+      
+      <!-- Modal Header with Guest Identity & Global Progress -->
+      <div class="journey-header">
+        <div class="d-flex justify-content-between align-items-start mb-3">
+          <div class="d-flex align-items-center gap-3">
+            <div class="guest-avatar-circle">
+              {{ selectedJourneyGuest()?.fullName?.substring(0, 2)?.toUpperCase() || 'IN' }}
+            </div>
+            <div>
+              <div class="d-flex align-items-center gap-2 flex-wrap">
+                <h4 class="mb-0 fw-bold fs-base text-white">{{ selectedJourneyGuest()?.fullName }}</h4>
+                <span class="badge rounded-pill px-2.5 py-1 fs-3xs fw-bold" [ngClass]="journey.currentStatusBadgeClass">
+                  {{ journey.currentStatusLabel }}
+                </span>
+              </div>
+              <div class="d-flex align-items-center gap-3 mt-1 text-slate-300 fs-xs flex-wrap">
+                <span *ngIf="selectedJourneyGuest()?.phone"><i class="fa fa-phone me-1 text-info"></i> {{ selectedJourneyGuest()?.phone }}</span>
+                <span *ngIf="selectedJourneyGuest()?.email"><i class="far fa-envelope me-1 text-warning"></i> {{ selectedJourneyGuest()?.email }}</span>
+              </div>
+            </div>
+          </div>
+          <button type="button" class="btn btn-sm btn-link text-white-50 p-0 fs-5" (click)="closeGuestJourney()" aria-label="Close">
+            <i class="fa fa-times"></i>
+          </button>
+        </div>
+
+        <!-- Progress Bar Indicator -->
+        <div class="bg-dark bg-opacity-50 p-2.5 rounded-3 border border-white border-opacity-10">
+          <div class="d-flex justify-content-between align-items-center fs-xxs fw-semibold text-uppercase text-slate-300 mb-1.5">
+            <span><i class="fa fa-route me-1 text-primary"></i> Progression dans l'invitation</span>
+            <span class="text-white fw-bold">{{ journey.completionPercentage }}%</span>
+          </div>
+          <div class="progress" style="height: 6px; background-color: rgba(255,255,255,0.15);">
+            <div class="progress-bar bg-gradient bg-primary progress-bar-striped progress-bar-animated" 
+                 role="progressbar" 
+                 [style.width.%]="journey.completionPercentage"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Body: Visual Screen Mockup Cards Grid -->
+      <div class="modal-body p-4 bg-light">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="fs-xs fw-bold text-uppercase text-muted mb-0 tracking-wider">
+            <i class="fa fa-layer-group me-1.5 text-primary"></i> Écrans & Étapes consultés par l'invité
+          </h5>
+          <span class="fs-3xs text-muted fw-semibold">
+            Écran Actuel : <strong class="text-primary">Écran {{ journey.currentActiveStepIndex }} / 4</strong>
+          </span>
+        </div>
+
+        <div class="journey-screens-grid">
+          <!-- CARD 1: ÉCRAN ENVOI NOTIFICATION -->
+          <div class="screen-card-item" [ngClass]="{
+            'status-completed': journey.steps[0].isCompleted,
+            'status-current': journey.steps[0].isCurrent,
+            'status-pending': !journey.steps[0].isCompleted && !journey.steps[0].isCurrent
+          }">
+            <div class="screen-card-header">
+              <span class="fw-bold fs-xs text-dark"><i class="fa fa-paper-plane text-primary me-1"></i> 1. Notification</span>
+              <span class="badge rounded-pill px-2 py-0.5 fs-3xs" [ngClass]="journey.steps[0].badgeClass">
+                {{ journey.steps[0].badgeLabel }}
+              </span>
+            </div>
+            <!-- Mockup -->
+            <div class="screen-mockup-frame">
+              <div class="mockup-sms">
+                <div class="d-flex align-items-center gap-1.5 text-success fw-bold mb-1 fs-3xs">
+                  <i class="fab fa-whatsapp"></i> <span>Message Officiel</span>
+                </div>
+                <div class="text-dark mb-1" style="font-size: 0.68rem; line-height: 1.2;">
+                  "Bonjour {{ selectedJourneyGuest()?.fullName }}, découvrez votre invitation..."
+                </div>
+                <div class="text-primary text-truncate fw-semibold" style="font-size: 0.65rem;">
+                  🔗 rsvp/{{ selectedJourneyGuest()?.invitationToken || selectedJourneyGuest()?.id }}
+                </div>
+              </div>
+            </div>
+            <div class="screen-card-footer">
+              <div class="d-flex align-items-center gap-1 mb-1">
+                <span class="badge bg-body-light border text-dark py-0.5 px-1.5 fs-3xs" *ngFor="let ch of journey.steps[0].channels">
+                  <i [class]="ch.icon" [ngClass]="ch.colorClass"></i> {{ ch.name }}
+                </span>
+              </div>
+              <span class="fs-3xs text-muted">{{ journey.steps[0].isCompleted ? 'Envoyé avec succès' : 'En attente d\'envoi' }}</span>
+            </div>
+          </div>
+
+          <!-- CARD 2: ÉCRAN OUVERTURE ENVELOPPE -->
+          <div class="screen-card-item" [ngClass]="{
+            'status-completed': journey.steps[1].isCompleted,
+            'status-current': journey.steps[1].isCurrent,
+            'status-pending': !journey.steps[1].isCompleted && !journey.steps[1].isCurrent
+          }">
+            <div class="screen-card-header">
+              <span class="fw-bold fs-xs text-dark"><i class="fa fa-envelope-open-text text-warning me-1"></i> 2. Enveloppe</span>
+              <span class="badge rounded-pill px-2 py-0.5 fs-3xs" [ngClass]="journey.steps[1].badgeClass">
+                {{ journey.steps[1].badgeLabel }}
+              </span>
+            </div>
+            <!-- Mockup -->
+            <div class="screen-mockup-frame">
+              <div class="mockup-envelope">
+                <div class="wax-seal mb-1">
+                  <i class="fa fa-stamp"></i>
+                </div>
+                <span class="fw-bold fs-3xs text-amber-900">SCEAU D'OR</span>
+                <span style="font-size: 0.55rem; color: #92400e;">Décachetage virtuel</span>
+              </div>
+            </div>
+            <div class="screen-card-footer">
+              <div class="fw-semibold fs-3xs text-dark">
+                {{ journey.steps[1].isCompleted ? 'Enveloppe ouverte & Page 1 vue' : 'En attente d\'ouverture (Fermée)' }}
+              </div>
+              <span class="fs-3xs text-muted" *ngIf="journey.steps[1].timestamp">
+                <i class="fa fa-clock me-0.5"></i> {{ journey.steps[1].timestamp }}
+              </span>
+            </div>
+          </div>
+
+          <!-- CARD 3: ÉCRAN CHOIX DU MENU -->
+          <div class="screen-card-item" [ngClass]="{
+            'status-completed': journey.steps[2].isCompleted,
+            'status-current': journey.steps[2].isCurrent,
+            'status-pending': !journey.steps[2].isCompleted && !journey.steps[2].isCurrent
+          }">
+            <div class="screen-card-header">
+              <span class="fw-bold fs-xs text-dark"><i class="fa fa-utensils text-success me-1"></i> 3. Choix Menu</span>
+              <span class="badge rounded-pill px-2 py-0.5 fs-3xs" [ngClass]="journey.steps[2].badgeClass">
+                {{ journey.steps[2].badgeLabel }}
+              </span>
+            </div>
+            <!-- Mockup -->
+            <div class="screen-mockup-frame">
+              <div class="mockup-menu-card">
+                <div class="menu-mini-tabs">
+                  <span *ngFor="let tab of journey.steps[2].cateringTabs" 
+                        class="mini-tab" 
+                        [class.active]="tab.key === journey.steps[2].dishCategoryKey">
+                    <i *ngIf="tab.key === 'STARTER'" class="fa fa-utensils me-0.5" style="font-size: 0.5rem;"></i>
+                    <i *ngIf="tab.key === 'MAIN'" class="fa fa-fire me-0.5" style="font-size: 0.5rem;"></i>
+                    <i *ngIf="tab.key === 'DESSERT'" class="fa fa-cake-candles me-0.5" style="font-size: 0.5rem;"></i>
+                    {{ tab.label }}
+                  </span>
+                </div>
+                <div class="dish-preview-row">
+                  <img [src]="journey.steps[2].dishImage" alt="Plat" onerror="this.src='/assets/images/menu_main.png'">
+                  <div class="text-truncate" style="min-width: 0;">
+                    <div class="fw-bold text-dark text-truncate" style="font-size: 0.62rem;" [title]="journey.steps[2].dishChoice">
+                      {{ journey.steps[2].dishChoice || 'Sélection en cours' }}
+                    </div>
+                    <span class="badge bg-light text-dark border border-secondary-subtle" style="font-size: 0.5rem; padding: 1px 4px;">
+                      {{ journey.steps[2].dishCategory }}
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Dietary & Allergies Badge Section -->
+                <div class="dietary-preview-box mt-1 pt-1 border-top" style="border-color: #f1f5f9 !important;">
+                  <div class="d-flex flex-wrap gap-1" *ngIf="journey.steps[2].dietaryTags && journey.steps[2].dietaryTags.length > 0">
+                    <span *ngFor="let dt of journey.steps[2].dietaryTags" 
+                          class="badge rounded-pill fw-semibold d-inline-flex align-items-center gap-0.5" 
+                          [ngClass]="dt.badgeClass"
+                          style="font-size: 0.48rem; padding: 1.5px 5px;">
+                      <i class="fa" [ngClass]="dt.icon" style="font-size: 0.45rem;"></i> {{ dt.label }}
+                    </span>
+                  </div>
+                  <div *ngIf="!journey.steps[2].dietaryTags || journey.steps[2].dietaryTags.length === 0" style="font-size: 0.48rem;" class="text-muted fst-italic">
+                    <i class="fa fa-circle-check text-success me-0.5"></i> Sans restriction alimentaire
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="screen-card-footer">
+              <div class="fw-semibold fs-3xs text-dark text-truncate" [title]="journey.steps[2].dishChoice || 'En cours'">
+                {{ journey.steps[2].dishChoice ? journey.steps[2].dishChoice : (journey.steps[2].isCompleted ? 'Menu validé' : 'En attente de choix') }}
+              </div>
+              <div class="d-flex align-items-center justify-content-between gap-1 mt-0.5">
+                <span class="fs-3xs text-muted text-truncate" [title]="journey.steps[2].cateringFormula">
+                  <i class="fa fa-bowl-food me-0.5 text-primary"></i> {{ journey.steps[2].cateringFormula }}
+                </span>
+                <span *ngIf="journey.steps[2].dietaryTags && journey.steps[2].dietaryTags.length > 0" 
+                      class="badge bg-warning-subtle text-amber-900 border border-warning fs-4xs px-1.5 py-0.5 rounded-pill flex-shrink-0"
+                      [title]="journey.steps[2].dietarySummary">
+                  <i class="fa fa-triangle-exclamation me-0.5"></i> {{ journey.steps[2].dietaryTags.length }} régimes
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- CARD 4: ÉCRAN DÉCISION FINALE RSVP -->
+          <div class="screen-card-item" [ngClass]="{
+            'status-completed': journey.steps[3].isCompleted,
+            'status-current': journey.steps[3].isCurrent,
+            'status-pending': !journey.steps[3].isCompleted && !journey.steps[3].isCurrent
+          }">
+            <div class="screen-card-header">
+              <span class="fw-bold fs-xs text-dark"><i class="fa fa-circle-check text-primary me-1"></i> 4. Décision RSVP</span>
+              <span class="badge rounded-pill px-2 py-0.5 fs-3xs" [ngClass]="journey.steps[3].badgeClass">
+                {{ journey.steps[3].badgeLabel }}
+              </span>
+            </div>
+            <!-- Mockup -->
+            <div class="screen-mockup-frame">
+              <div class="mockup-rsvp-verdict">
+                <div class="verdict-badge-box mb-1" [ngClass]="selectedJourneyGuest()?.status === 'DECLINED' ? 'bg-danger-light text-danger border border-danger' : 'bg-success-light text-success border border-success'">
+                  <i class="fa" [ngClass]="selectedJourneyGuest()?.status === 'DECLINED' ? 'fa-circle-xmark' : 'fa-circle-check'"></i>
+                  <span>{{ selectedJourneyGuest()?.status === 'DECLINED' ? 'Absent(e)' : 'Présence Confirmée' }}</span>
+                </div>
+                <span class="text-muted" style="font-size: 0.55rem;">
+                  {{ selectedJourneyGuest()?.status === 'CONFIRMED' ? 'Table & Couvert réservés' : (selectedJourneyGuest()?.status === 'DECLINED' ? 'Invitation déclinée' : 'En attente de validation') }}
+                </span>
+              </div>
+            </div>
+            <div class="screen-card-footer">
+              <div class="fw-semibold fs-3xs" [ngClass]="selectedJourneyGuest()?.status === 'CONFIRMED' ? 'text-success' : (selectedJourneyGuest()?.status === 'DECLINED' ? 'text-danger' : 'text-dark')">
+                {{ selectedJourneyGuest()?.status === 'CONFIRMED' ? 'Confirmé à l\'événement' : (selectedJourneyGuest()?.status === 'DECLINED' ? 'Absence confirmée' : 'En attente') }}
+              </div>
+              <span class="fs-3xs text-muted" *ngIf="journey.steps[3].timestamp">
+                <i class="fa fa-clock me-0.5"></i> {{ journey.steps[3].timestamp }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Footer: Quick Relance & Interactive Actions -->
+      <div class="modal-footer bg-body-light border-top p-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+          <!-- WhatsApp Relance -->
+          <a [href]="getJourneyGuestWhatsAppUrl(selectedJourneyGuest()!)" target="_blank" 
+             class="btn btn-xs btn-success d-inline-flex align-items-center gap-1.5 px-2.5 py-1.5" 
+             *ngIf="selectedJourneyGuest()?.phone" 
+             title="Envoyer un rappel sur WhatsApp">
+            <i class="fab fa-whatsapp"></i> WhatsApp
+          </a>
+
+          <!-- Email Relance -->
+          <a [href]="getJourneyGuestEmailUrl(selectedJourneyGuest()!)" 
+             class="btn btn-xs btn-primary d-inline-flex align-items-center gap-1.5 px-2.5 py-1.5" 
+             *ngIf="selectedJourneyGuest()?.email" 
+             title="Envoyer un rappel par e-mail">
+            <i class="fa fa-envelope"></i> E-mail
+          </a>
+
+          <!-- SMS Relance -->
+          <a [href]="getJourneyGuestSmsUrl(selectedJourneyGuest()!)" 
+             class="btn btn-xs btn-warning d-inline-flex align-items-center gap-1.5 px-2.5 py-1.5" 
+             *ngIf="selectedJourneyGuest()?.phone" 
+             title="Envoyer un SMS direct">
+            <i class="fa fa-comment-sms"></i> SMS
+          </a>
+
+          <!-- Copy link -->
+          <button type="button" class="btn btn-xs btn-alt-secondary d-inline-flex align-items-center gap-1 px-2.5 py-1.5" 
+                  (click)="copyJourneyGuestLink(selectedJourneyGuest()!)" 
+                  title="Copier le lien d'invitation de l'invité">
+            <i class="fa" [ngClass]="copiedJourneyLinkId() === selectedJourneyGuest()?.id ? 'fa-check text-success' : 'fa-copy'"></i>
+            <span>{{ copiedJourneyLinkId() === selectedJourneyGuest()?.id ? 'Copié !' : 'Copier lien' }}</span>
+          </button>
+        </div>
+
+        <div class="d-flex gap-2">
+          <!-- Test RSVP -->
+          <a [routerLink]="['/rsvp', selectedJourneyGuest()?.invitationToken || selectedJourneyGuest()?.id]" target="_blank" 
+             class="btn btn-xs btn-alt-warning d-inline-flex align-items-center gap-1.5 px-2.5 py-1.5" 
+             title="Visualiser l'invitation telle que vue par l'invité">
+            <i class="fa fa-external-link-alt"></i> Tester le rendu
+          </a>
+          <button type="button" class="btn btn-xs btn-dark px-3 py-1.5" (click)="closeGuestJourney()">
+            Fermer
+          </button>
+        </div>
+
+      </div>
+
     </div>
   </div>
 </div>

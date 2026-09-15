@@ -14,6 +14,42 @@ import {
   getCategoryTaxonomy 
 } from '../../../../core/constants/template-taxonomy.constants';
 
+export interface DietaryTag {
+  label: string;
+  icon: string;
+  badgeClass: string;
+}
+
+export interface CateringTab {
+  key: string;
+  label: string;
+}
+
+export interface JourneyStep {
+  stepNumber: number;
+  title: string;
+  shortTitle: string;
+  subtitle: string;
+  icon: string;
+  screenType: 'SMS_MESSAGE' | 'ENVELOPE_SEAL' | 'INVITATION_CARD' | 'MENU_CHOICE' | 'RSVP_DECISION';
+  isCompleted: boolean;
+  isCurrent: boolean;
+  timestamp?: string;
+  badgeLabel: string;
+  badgeClass: string;
+  details?: string;
+  channels?: { name: string; icon: string; colorClass: string }[];
+  dishChoice?: string;
+  dishCategory?: string;
+  dishCategoryKey?: string;
+  dishImage?: string;
+  cateringFormula?: string;
+  cateringTabs?: CateringTab[];
+  dietaryTags?: DietaryTag[];
+  hasDietaryRestrictions?: boolean;
+  dietarySummary?: string;
+}
+
 @Component({
   selector: 'app-organiser-invitation-setup',
   standalone: true,
@@ -41,7 +77,7 @@ export class OrganiserInvitationSetup implements OnInit {
   protected readonly selectedGuestIds = signal<Record<number, boolean>>({});
   protected readonly channelWhatsapp = signal(true);
   protected readonly channelEmail = signal(true);
-  protected readonly channelSms = signal(false);
+  protected readonly channelSms = signal(true);
   protected readonly channelPaper = signal(false);
   protected readonly isSending = signal(false);
 
@@ -100,6 +136,329 @@ export class OrganiserInvitationSetup implements OnInit {
   // Generated Link Info
   protected readonly invitationLink = signal<string>('');
   protected isCopied = false;
+
+  // Guest Journey Modal State
+  protected readonly selectedJourneyGuest = signal<Guest | null>(null);
+  protected readonly isJourneyModalOpen = signal<boolean>(false);
+  protected readonly copiedJourneyLinkId = signal<number | null>(null);
+
+  protected openGuestJourney(guest: Guest): void {
+    this.selectedJourneyGuest.set(guest);
+    this.isJourneyModalOpen.set(true);
+  }
+
+  protected closeGuestJourney(): void {
+    this.isJourneyModalOpen.set(false);
+    this.selectedJourneyGuest.set(null);
+  }
+
+  protected getGuestJourneyLink(guest: Guest): string {
+    const tokenOrId = (guest as any).invitationToken || guest.id;
+    return `${window.location.origin}/rsvp/${tokenOrId}`;
+  }
+
+  protected copyJourneyGuestLink(guest: Guest): void {
+    if (!guest.id) return;
+    const url = this.getGuestJourneyLink(guest);
+    navigator.clipboard.writeText(url).then(() => {
+      this.copiedJourneyLinkId.set(guest.id!);
+      setTimeout(() => this.copiedJourneyLinkId.set(null), 2500);
+    });
+  }
+
+  protected getJourneyGuestWhatsAppUrl(guest: Guest): string {
+    const cleanPhone = (guest.phone || '').replace(/[^0-9+]/g, '');
+    const link = this.getGuestJourneyLink(guest);
+    const msg = encodeURIComponent(`Bonjour ${guest.fullName},\nVoici votre invitation officielle pour l'événement "${this.event()?.title || ''}". Cliquez ici pour découvrir votre carton et confirmer votre présence : ${link}`);
+    return cleanPhone ? `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${msg}` : `https://api.whatsapp.com/send?text=${msg}`;
+  }
+
+  protected getJourneyGuestEmailUrl(guest: Guest): string {
+    const link = this.getGuestJourneyLink(guest);
+    const subject = encodeURIComponent(`Invitation officielle : ${this.event()?.title || 'Votre événement'}`);
+    const body = encodeURIComponent(`Bonjour ${guest.fullName},\n\nNous avons le plaisir de vous convier à l'événement "${this.event()?.title || ''}".\n\nVeuillez découvrir votre carton d'invitation personnalisé et confirmer votre présence en cliquant sur le lien suivant :\n${link}\n\nCordialement.`);
+    return `mailto:${guest.email || ''}?subject=${subject}&body=${body}`;
+  }
+
+  protected getJourneyGuestSmsUrl(guest: Guest): string {
+    const link = this.getGuestJourneyLink(guest);
+    const body = encodeURIComponent(`Bonjour ${guest.fullName}, découvrez votre invitation pour "${this.event()?.title || ''}" et confirmez votre présence : ${link}`);
+    return `sms:${guest.phone || ''}?body=${body}`;
+  }
+
+  protected getJourneyData(guest: Guest): {
+    guest: Guest;
+    completionPercentage: number;
+    currentStatusLabel: string;
+    currentStatusBadgeClass: string;
+    currentActiveStepIndex: number;
+    steps: JourneyStep[];
+  } {
+    const gid = guest.id;
+    const isSent = guest.isSent === true || guest.invitationStatus === 'SENT' || localStorage.getItem(`guest_${gid}_isSent`) === 'true';
+    const isConfirmed = guest.status === 'CONFIRMED' || localStorage.getItem(`guest_${gid}_status`) === 'CONFIRMED';
+    const isDeclined = guest.status === 'DECLINED' || localStorage.getItem(`guest_${gid}_status`) === 'DECLINED';
+    const hasResponded = isConfirmed || isDeclined || !!localStorage.getItem(`guest_${gid}_responded_at`);
+
+    // Stored timestamps and triggers
+    const sentAt = isSent ? (localStorage.getItem(`guest_${gid}_sent_at`) || 'Envoyé') : undefined;
+    const openedAt = (hasResponded || localStorage.getItem(`guest_${gid}_opened_at`)) ? (localStorage.getItem(`guest_${gid}_opened_at`) || 'Consulté') : undefined;
+    const isOpened = !!openedAt || hasResponded;
+    const isDetailsViewed = isOpened || hasResponded || !!localStorage.getItem(`guest_${gid}_viewed_details_at`);
+    const isMenuViewed = isConfirmed || (!!guest.dietaryRequirements && guest.dietaryRequirements.trim().length > 0) || localStorage.getItem(`guest_${gid}_menu_viewed`) === 'true';
+
+    // Catering formula details for realistic visual mockup
+    const rawMealType = ((guest as any).mealType || this.event()?.mealType || '').toUpperCase();
+    const isMixMode = rawMealType.includes('MIX') || 
+                      (rawMealType.includes('BUFFET') && rawMealType.includes('PLATS_FIXES')) || 
+                      (rawMealType.includes('BUFFET_ENTREES') && rawMealType.includes('PLATS_FIXES'));
+    const isBuffetMode = !isMixMode && rawMealType.includes('BUFFET');
+    const isPlatedMode = !isMixMode && !isBuffetMode;
+
+    let cateringFormulaName = 'Service à Table (Plats Fixes)';
+    let cateringTabs: CateringTab[] = [
+      { key: 'STARTER', label: 'Entrées' },
+      { key: 'MAIN', label: 'Plats' },
+      { key: 'DESSERT', label: 'Desserts' }
+    ];
+
+    if (isMixMode) {
+      cateringFormulaName = 'Formule Mixte (Buffet & Plat Chaud)';
+      cateringTabs = [
+        { key: 'STARTER', label: 'Buffet Entrées' },
+        { key: 'MAIN', label: 'Plat Chaud' },
+        { key: 'DESSERT', label: 'Buffet Desserts' }
+      ];
+    } else if (isBuffetMode) {
+      cateringFormulaName = 'Formule Buffet Libre-Service';
+      cateringTabs = [
+        { key: 'STARTER', label: 'Entrées Buffet' },
+        { key: 'MAIN', label: 'Plats Buffet' },
+        { key: 'DESSERT', label: 'Desserts Buffet' }
+      ];
+    }
+
+    // Parse dietary requirements & allergies (e.g. Vegan, Sans gluten, Sans lactose, Halal, Custom notes)
+    const rawDietStr = (guest.dietaryRequirements || '').trim();
+    const rawLocalAllergies = localStorage.getItem(`guest_${gid}_allergies`);
+    let localAllergiesList: string[] = [];
+    if (rawLocalAllergies) {
+      try {
+        localAllergiesList = JSON.parse(rawLocalAllergies);
+      } catch (e) {}
+    }
+
+    const rawParts = rawDietStr.split(',').map(p => p.trim()).filter(Boolean);
+    const dietaryList: string[] = [...localAllergiesList];
+    let extractedDish = '';
+
+    rawParts.forEach(part => {
+      const lower = part.toLowerCase();
+      if (lower.startsWith('plat:') || lower.startsWith('main:')) {
+        extractedDish = part.replace(/^(plat|main):\s*/i, '').trim();
+      } else if (lower.startsWith('entrée:') || lower.startsWith('starter:')) {
+        if (!extractedDish) extractedDish = part.replace(/^(entrée|starter):\s*/i, '').trim();
+      } else if (lower.startsWith('dessert:')) {
+        if (!extractedDish) extractedDish = part.replace(/^dessert:\s*/i, '').trim();
+      } else if (lower.startsWith('boisson:') || lower.startsWith('beverage:')) {
+        if (!extractedDish) extractedDish = part.replace(/^(boisson|beverage):\s*/i, '').trim();
+      } else if (!lower.startsWith('message:')) {
+        if (!dietaryList.includes(part)) {
+          dietaryList.push(part);
+        }
+      }
+    });
+
+    const localDish = localStorage.getItem(`guest_${gid}_last_selected_dish`);
+    let cleanDishName = extractedDish || (localDish ? localDish.trim() : '');
+    let detectedCat = localStorage.getItem(`guest_${gid}_last_selected_cat`) || 'MAIN';
+
+    // Remove any raw enum prefix like 'MAIN: ', 'STARTER: ', 'DESSERT: ', 'Plat: '
+    if (cleanDishName.startsWith('MAIN:')) {
+      cleanDishName = cleanDishName.replace(/^MAIN:\s*/i, '').trim();
+      detectedCat = 'MAIN';
+    } else if (cleanDishName.startsWith('STARTER:')) {
+      cleanDishName = cleanDishName.replace(/^STARTER:\s*/i, '').trim();
+      detectedCat = 'STARTER';
+    } else if (cleanDishName.startsWith('DESSERT:')) {
+      cleanDishName = cleanDishName.replace(/^DESSERT:\s*/i, '').trim();
+      detectedCat = 'DESSERT';
+    } else if (cleanDishName.startsWith('Plat:')) {
+      cleanDishName = cleanDishName.replace(/^Plat:\s*/i, '').trim();
+      detectedCat = 'MAIN';
+    } else if (cleanDishName.startsWith('Entrée:')) {
+      cleanDishName = cleanDishName.replace(/^Entrée:\s*/i, '').trim();
+      detectedCat = 'STARTER';
+    } else if (cleanDishName.startsWith('Dessert:')) {
+      cleanDishName = cleanDishName.replace(/^Dessert:\s*/i, '').trim();
+      detectedCat = 'DESSERT';
+    }
+
+    if (!cleanDishName && isMenuViewed) {
+      cleanDishName = isMixMode ? 'Dos de cabillaud sauce vierge' : 'Sélection des plats du menu';
+    }
+
+    let dishCategoryLabel = isMixMode ? 'Plat Chaud' : (isBuffetMode ? 'Plat Buffet' : 'Plat Principal');
+    if (detectedCat === 'STARTER') dishCategoryLabel = isMixMode ? 'Buffet Entrées' : (isBuffetMode ? 'Entrée Buffet' : 'Entrée');
+    else if (detectedCat === 'MAIN') dishCategoryLabel = isMixMode ? 'Plat Chaud' : (isBuffetMode ? 'Plat Buffet' : 'Plat Principal');
+    else if (detectedCat === 'DESSERT') dishCategoryLabel = isMixMode ? 'Buffet Desserts' : (isBuffetMode ? 'Dessert Buffet' : 'Dessert');
+    else if (detectedCat === 'BEVERAGE') dishCategoryLabel = 'Boisson & Bar';
+
+    const dishImg = localStorage.getItem(`guest_${gid}_last_selected_image`) || 
+      (detectedCat === 'DESSERT' ? '/assets/images/menu_dessert.png' : 
+      (detectedCat === 'STARTER' ? '/assets/images/menu_starter.png' : '/assets/images/menu_main.png'));
+
+    const dietaryTags = dietaryList.map(tag => {
+      const lower = tag.toLowerCase();
+      let icon = 'fa-circle-exclamation';
+      let badgeClass = 'bg-warning-subtle text-amber-900 border border-warning';
+
+      if (lower.includes('vegan') || lower.includes('végétalien')) {
+        icon = 'fa-leaf';
+        badgeClass = 'bg-success-subtle text-success border border-success';
+      } else if (lower.includes('végéta') || lower.includes('veggie')) {
+        icon = 'fa-carrot';
+        badgeClass = 'bg-success-subtle text-success border border-success';
+      } else if (lower.includes('gluten')) {
+        icon = 'fa-wheat-awn';
+        badgeClass = 'bg-warning-subtle text-amber-900 border border-warning';
+      } else if (lower.includes('lactose')) {
+        icon = 'fa-cow';
+        badgeClass = 'bg-info-subtle text-primary border border-info';
+      } else if (lower.includes('halal')) {
+        icon = 'fa-moon';
+        badgeClass = 'bg-primary-subtle text-primary border border-primary';
+      } else if (lower.includes('arachide') || lower.includes('cacahuète') || lower.includes('noix')) {
+        icon = 'fa-ban';
+        badgeClass = 'bg-danger-subtle text-danger border border-danger';
+      } else if (lower.includes('fruit') || lower.includes('mer') || lower.includes('poisson')) {
+        icon = 'fa-fish-fins';
+        badgeClass = 'bg-info-subtle text-info border border-info';
+      } else if (lower.includes('sucre') || lower.includes('diab')) {
+        icon = 'fa-cubes-stacked';
+        badgeClass = 'bg-secondary-subtle text-secondary border border-secondary';
+      } else if (lower.includes('allerg') || lower.includes('intolér')) {
+        icon = 'fa-triangle-exclamation';
+        badgeClass = 'bg-danger-subtle text-danger border border-danger';
+      }
+
+      return {
+        label: tag,
+        icon,
+        badgeClass
+      };
+    });
+
+    const activeChannels = this.getGuestChannels(guest);
+
+    // Compute active step index (1-based)
+    let currentStepNum = 1;
+    if (hasResponded) currentStepNum = 4;
+    else if (isMenuViewed) currentStepNum = 3;
+    else if (isOpened) currentStepNum = 2;
+    else if (isSent) currentStepNum = 2;
+
+    const steps: JourneyStep[] = [
+      {
+        stepNumber: 1,
+        title: "Écran 1 : Envoi & Notification",
+        shortTitle: "1. Envoi Notification",
+        subtitle: isSent ? "Notification reçue sur mobile" : "En attente d'expédition",
+        icon: "fa-paper-plane",
+        screenType: 'SMS_MESSAGE' as const,
+        isCompleted: isSent,
+        isCurrent: !isSent,
+        timestamp: sentAt,
+        badgeLabel: isSent ? "Envoyé" : "En attente",
+        badgeClass: isSent ? "bg-success text-white" : "bg-warning-light text-black border border-warning-light",
+        details: isSent ? `Message avec lien unique transmis` : `En attente du clic d'envoi`,
+        channels: activeChannels.map(c => ({ name: c.type, icon: c.icon, colorClass: c.colorClass }))
+      },
+      {
+        stepNumber: 2,
+        title: "Écran 2 : Ouverture Enveloppe",
+        shortTitle: "2. Ouverture Enveloppe",
+        subtitle: isOpened ? "L'invité a décacheté l'enveloppe et découvert la page 1" : (isSent ? "En attente de décachetage" : "Non distribué"),
+        icon: "fa-envelope-open-text",
+        screenType: 'ENVELOPE_SEAL' as const,
+        isCompleted: isOpened,
+        isCurrent: isSent && !isOpened,
+        timestamp: openedAt,
+        badgeLabel: isOpened ? "Ouvert" : (isSent ? "En cours" : "En attente"),
+        badgeClass: isOpened ? "bg-success text-white" : (isSent && !isOpened ? "bg-warning text-dark fw-bold" : "bg-body-dark text-muted"),
+        details: isOpened ? `Invitation décachetée et page 1 consultée` : `Enveloppe / portes encore fermées`
+      },
+      {
+        stepNumber: 3,
+        title: "Écran 3 : Sélection Gastronomie",
+        shortTitle: "3. Choix Menu",
+        subtitle: isMenuViewed ? (cleanDishName ? `${dishCategoryLabel} : ${cleanDishName}` : "Plats en cours de découverte") : (isDeclined ? "Non requis" : "En attente"),
+        icon: "fa-utensils",
+        screenType: 'MENU_CHOICE' as const,
+        isCompleted: isMenuViewed || isConfirmed,
+        isCurrent: isOpened && !isMenuViewed && !hasResponded,
+        badgeLabel: isMenuViewed ? (isConfirmed ? "Sélectionné" : "En consultation") : (isDeclined ? "Non requis" : "En attente"),
+        badgeClass: isMenuViewed ? "bg-success text-white" : (isOpened && !hasResponded ? "bg-warning text-dark fw-bold" : "bg-body-dark text-muted"),
+        details: isMenuViewed ? `${dishCategoryLabel} : ${cleanDishName}` : `L'invité n'a pas encore validé ses plats`,
+        dishChoice: cleanDishName,
+        dishCategory: dishCategoryLabel,
+        dishCategoryKey: detectedCat,
+        dishImage: dishImg,
+        cateringFormula: cateringFormulaName,
+        cateringTabs: cateringTabs,
+        dietaryTags: dietaryTags,
+        hasDietaryRestrictions: dietaryTags.length > 0,
+        dietarySummary: dietaryList.join(', ') || 'Aucune restriction particulière'
+      },
+      {
+        stepNumber: 4,
+        title: "Écran 4 : Décision Finale (RSVP)",
+        shortTitle: "4. Décision RSVP",
+        subtitle: isConfirmed ? "Présence confirmée" : (isDeclined ? "Invitation déclinée" : "En attente"),
+        icon: isConfirmed ? "fa-circle-check" : (isDeclined ? "fa-circle-xmark" : "fa-clock"),
+        screenType: 'RSVP_DECISION' as const,
+        isCompleted: hasResponded,
+        isCurrent: isMenuViewed && !hasResponded,
+        badgeLabel: isConfirmed ? "Confirmé" : (isDeclined ? "Décliné" : "En attente"),
+        badgeClass: isConfirmed ? "bg-success text-white" : (isDeclined ? "bg-danger text-white" : "bg-warning-light text-black border border-warning-light"),
+        details: isConfirmed ? `Place réservée` : (isDeclined ? `Absence notifiée` : `En attente de la confirmation`)
+      }
+    ];
+
+    let pct = 0;
+    if (isConfirmed || isDeclined) pct = 100;
+    else if (isMenuViewed) pct = 75;
+    else if (isOpened) pct = 50;
+    else if (isSent) pct = 25;
+
+    let statusLabel = 'En attente d\'envoi';
+    let statusBadge = 'bg-body-dark text-black border';
+    if (isConfirmed) {
+      statusLabel = 'Présence Confirmée';
+      statusBadge = 'bg-success text-white shadow-sm';
+    } else if (isDeclined) {
+      statusLabel = 'Invitation Déclinée';
+      statusBadge = 'bg-danger text-white shadow-sm';
+    } else if (isMenuViewed) {
+      statusLabel = 'En cours de sélection du Menu';
+      statusBadge = 'bg-warning text-dark shadow-sm';
+    } else if (isOpened) {
+      statusLabel = 'Invitation Ouverte';
+      statusBadge = 'bg-info text-white shadow-sm';
+    } else if (isSent) {
+      statusLabel = 'Invitation Envoyée';
+      statusBadge = 'bg-primary text-white shadow-sm';
+    }
+
+    return {
+      guest,
+      completionPercentage: pct,
+      currentStatusLabel: statusLabel,
+      currentStatusBadgeClass: statusBadge,
+      currentActiveStepIndex: currentStepNum,
+      steps
+    };
+  }
 
   public ngOnInit(): void {
     const eventIdStr = this.route.snapshot.paramMap.get('id');
@@ -166,10 +525,17 @@ export class OrganiserInvitationSetup implements OnInit {
             const updatedList = (guestList || []).map(g => {
               if (!g.id) return g;
               const localSent = localStorage.getItem(`guest_${g.id}_isSent`);
-              if (localSent === 'true') {
-                return { ...g, isSent: true, invitationStatus: 'SENT' };
+              const rawChannels = localStorage.getItem(`guest_${g.id}_sentChannels`);
+              let sentChannels: string[] | undefined = undefined;
+              if (rawChannels) {
+                try {
+                  sentChannels = JSON.parse(rawChannels);
+                } catch (e) {}
               }
-              return g;
+              if (localSent === 'true') {
+                return { ...g, isSent: true, invitationStatus: 'SENT', sentChannels: sentChannels || g.sentChannels };
+              }
+              return { ...g, sentChannels: sentChannels || g.sentChannels };
             });
             this.guests.set(updatedList);
 
@@ -367,6 +733,38 @@ export class OrganiserInvitationSetup implements OnInit {
     return this.guests().filter(g => g.id && selection[g.id]).length;
   }
 
+  protected getGuestChannels(g: Guest): { type: string; icon: string; colorClass: string; title: string }[] {
+    const channels: { type: string; icon: string; colorClass: string; title: string }[] = [];
+    
+    // If guest has recorded sent channels, display ONLY those sent channels
+    if (g.sentChannels && g.sentChannels.length > 0) {
+      if (g.sentChannels.includes('WhatsApp')) {
+        channels.push({ type: 'WhatsApp', icon: 'fab fa-whatsapp', colorClass: 'text-success', title: `Envoyé via WhatsApp: ${g.phone || ''}` });
+      }
+      if (g.sentChannels.includes('SMS')) {
+        channels.push({ type: 'SMS', icon: 'fa fa-comment-sms', colorClass: 'text-warning', title: `Envoyé via SMS: ${g.phone || ''}` });
+      }
+      if (g.sentChannels.includes('E-mail')) {
+        channels.push({ type: 'E-mail', icon: 'fa fa-envelope', colorClass: 'text-primary', title: `Envoyé via E-mail: ${g.email || ''}` });
+      }
+      if (g.sentChannels.includes('Papier')) {
+        channels.push({ type: 'Papier', icon: 'fa fa-envelope-open-text', colorClass: 'text-secondary', title: 'Format Papier / En main propre' });
+      }
+      return channels;
+    }
+
+    // Otherwise (pending / not sent yet), show available channels based on provided contact details
+    if (g.phone && g.phone.trim().length > 0) {
+      channels.push({ type: 'WhatsApp', icon: 'fab fa-whatsapp', colorClass: 'text-success', title: `WhatsApp: ${g.phone}` });
+      channels.push({ type: 'SMS', icon: 'fa fa-comment-sms', colorClass: 'text-warning', title: `SMS: ${g.phone}` });
+    }
+    if (g.email && g.email.trim().length > 0) {
+      channels.push({ type: 'E-mail', icon: 'fa fa-envelope', colorClass: 'text-primary', title: `E-mail: ${g.email}` });
+    }
+
+    return channels;
+  }
+
   protected sendInvitations(): void {
     if (this.isSubscriptionExpired()) {
       this.errorMessage.set("Abonnement expiré — Mode consultation uniquement. L'envoi d'invitations est restreint. Veuillez renouveler votre abonnement.");
@@ -405,7 +803,8 @@ export class OrganiserInvitationSetup implements OnInit {
         const guestLink = `${window.location.origin}/rsvp/${tokenOrId}`;
         console.log(`Envoi à: ${guest.fullName} | Lien unique: ${guestLink} | Canaux: ${activeChannels.join(', ')}`);
         localStorage.setItem(`guest_${guest.id}_isSent`, 'true');
-        return { ...guest, isSent: true, invitationStatus: 'SENT' };
+        localStorage.setItem(`guest_${guest.id}_sentChannels`, JSON.stringify(activeChannels));
+        return { ...guest, isSent: true, invitationStatus: 'SENT', sentChannels: activeChannels };
       }
       return guest;
     });

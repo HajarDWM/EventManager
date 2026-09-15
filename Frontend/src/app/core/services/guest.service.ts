@@ -16,6 +16,7 @@ export interface Guest {
   groupName?: string;
   isSent?: boolean;
   invitationStatus?: 'PENDING' | 'SENT' | string;
+  sentChannels?: string[];
   paymentStatus?: 'NOT_REQUIRED' | 'UNPAID' | 'PAID' | 'PENDING_VERIFICATION' | string;
   paidAmount?: number;
   paymentReference?: string;
