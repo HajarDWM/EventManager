@@ -962,6 +962,10 @@ export class GuestRsvp implements OnInit, OnDestroy {
     if (step === 0) {
       this.starterChoice = '';
     } else if (step === 1) {
+      // Plat principal / Plat chaud is mandatory in MIX and PLATS_FIXES - do not skip without a choice
+      if (this.isMixMode() || this.isPlatedMode()) {
+        return;
+      }
       this.mealChoice = '';
     } else if (step === 2) {
       this.dessertChoice = '';
@@ -979,6 +983,16 @@ export class GuestRsvp implements OnInit, OnDestroy {
     }
     this.selectedItemTransition.set(null);
     this.isAdvancing.set(false);
+
+    // If attempting to jump past step 1 without selecting a main dish in MIX / PLATS_FIXES mode
+    if (!this.isDiscoveryMode() && (this.isMixMode() || this.isPlatedMode())) {
+      if (stepIndex > 1 && !this.mealChoice) {
+        this.currentRsvpStep.set(1);
+        this.saveCurrentRsvpProgress();
+        return;
+      }
+    }
+
     this.currentRsvpStep.set(stepIndex);
     const catMap: ('STARTER' | 'MAIN' | 'DESSERT' | 'BEVERAGE')[] = ['STARTER', 'MAIN', 'DESSERT', 'BEVERAGE'];
     if (catMap[stepIndex]) {
@@ -1367,6 +1381,11 @@ export class GuestRsvp implements OnInit, OnDestroy {
     const mode = this.cateringMode();
     const step = this.currentRsvpStep();
 
+    // Guard: Step 1 requires a choice in MIX and PLATS_FIXES
+    if (step === 1 && (mode === 'MIX' || mode === 'PLATS_FIXES') && !this.mealChoice) {
+      return;
+    }
+
     if (step === 4 || this.hasAnyDietOrAllergySelected()) {
       this.syncDietaryToStorage();
     }
@@ -1579,6 +1598,12 @@ export class GuestRsvp implements OnInit, OnDestroy {
     const choice = this.selectedAttendanceChoice() || 'CONFIRMED';
     this.status.set(choice);
     this.attendanceStatus = (choice === 'CONFIRMED');
+
+    // If confirmed and main dish is required (MIX or PLATS_FIXES) but not selected yet, redirect to Step 1
+    if (this.attendanceStatus && (this.isMixMode() || this.isPlatedMode()) && !this.mealChoice) {
+      this.currentRsvpStep.set(1);
+      return;
+    }
 
     const currentGuest = this.guest();
     if (choice === 'CONFIRMED' && currentGuest?.isPaidEvent && currentGuest?.paymentStatus !== 'PAID') {

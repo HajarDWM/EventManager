@@ -71,10 +71,18 @@
   <!-- 2. SECTION 1: SUIVI DES PAIEMENTS CLIENTS -->
   <div class="col-12 mt-3 animate__animated animate__fadeIn">
     <div class="block block-rounded shadow-sm border border-light bg-white mb-0">
-      <div class="block-header block-header-default border-bottom p-3">
+      <div class="block-header block-header-default border-bottom p-3 d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2">
         <h3 class="block-title fw-bold text-dark mb-0">
           <i class="fa fa-hand-holding-usd text-primary me-2"></i>1. SUIVI DES PAIEMENTS CLIENTS
         </h3>
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+          <button type="button" *ngIf="activeQuote" class="btn btn-sm btn-alt-primary rounded-pill px-3 fw-semibold d-inline-flex align-items-center gap-1.5 shadow-sm" (click)="openAvenantModal()" title="Ajouter un avenant ou une réduction au budget">
+            <i class="fa fa-file-circle-plus"></i> Ajouter un Avenant
+          </button>
+          <button type="button" class="btn btn-sm btn-success rounded-pill px-3 fw-semibold d-inline-flex align-items-center gap-1.5 shadow-sm" [disabled]="eventTotalPrice() <= 0" (click)="openPaymentModal()" title="Enregistrer un acompte ou versement client">
+            <i class="fa fa-money-bill-wave"></i> Enregistrer un Règlement
+          </button>
+        </div>
       </div>
       <div class="block-content p-3">
         
@@ -127,9 +135,9 @@
                 <h5 class="block-title fw-bold mb-0">
                   <i class="fa fa-cogs text-primary me-2"></i>Configuration Tarifaire
                 </h5>
-                <button type="button" class="btn btn-success btn-sm rounded-pill px-3 fw-bold shadow-sm" [disabled]="eventTotalPrice() <= 0" (click)="openPaymentModal()">
-                  <i class="fa fa-plus me-1"></i> Enregistrer un Règlement
-                </button>
+                <span class="badge bg-primary-light text-primary rounded-pill px-3 py-1.5 fs-xs fw-bold" *ngIf="activeQuote">
+                  {{ activeQuote.items.length }} ligne(s)
+                </span>
               </div>
               <div class="block-content p-3">
                 <!-- If no active quote, show budget initial input -->
@@ -150,9 +158,6 @@
                 <div *ngIf="activeQuote" class="mb-4">
                   <div class="d-flex justify-content-between align-items-center mb-2">
                     <label class="form-label fw-semibold fs-sm text-dark mb-0">Lignes du Budget</label>
-                    <button type="button" class="btn btn-sm btn-alt-primary rounded-pill px-3 fs-xs fw-semibold" (click)="openAvenantModal()">
-                      <i class="fa fa-plus me-1"></i> Ajouter un Avenant
-                    </button>
                   </div>
                   <div class="table-responsive rounded border mb-3">
                     <table class="table table-sm table-vcenter table-striped fs-sm mb-0">
@@ -243,12 +248,12 @@
   <!-- 3. SECTION 2: GESTION DES DÉPENSES DE L'ÉVÉNEMENT -->
   <div class="col-12 mt-4 animate__animated animate__fadeIn">
     <div class="block block-rounded shadow-sm border border-light bg-white mb-0">
-      <div class="block-header block-header-default border-bottom p-3 d-flex justify-content-between align-items-center">
+      <div class="block-header block-header-default border-bottom p-3 d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2">
         <h3 class="block-title fw-bold text-dark mb-0">
           <i class="fa fa-receipt text-primary me-2"></i>2. GESTION DES DÉPENSES DE L'ÉVÉNEMENT
         </h3>
-        <button type="button" class="btn btn-sm btn-danger rounded-pill px-3 fw-bold" (click)="openExpenseModal()">
-          <i class="fa fa-plus me-1"></i> Enregistrer une Dépense
+        <button type="button" class="btn btn-sm btn-danger rounded-pill px-3 fw-semibold d-inline-flex align-items-center gap-1.5 shadow-sm" (click)="openExpenseModal()" title="Enregistrer une dépense ou coût pour l'événement">
+          <i class="fa fa-plus-circle"></i> Enregistrer une Dépense
         </button>
       </div>
       <div class="block-content p-3">

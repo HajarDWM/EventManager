@@ -272,85 +272,140 @@
                 Voir tout
               </a>
             </div>
-            <div class="block-content p-3">
-              <!-- Service type check -->
-              <ng-container *ngIf="event()?.mealType?.includes('PLATS_FIXES'); else buffetLayout">
-                <!-- Servis / Plats Layout -->
-                <div class="row g-3">
-                  <!-- Left side: Metrics -->
-                  <div class="col-12 col-sm-6">
-                    <div class="mb-3">
-                      <span class="fs-xxs fw-semibold text-uppercase text-muted d-block mb-1">Total Plats &
-                        Boissons</span>
-                      <h4 class="fw-extrabold text-dark mb-0">{{ totalPlatesAndBeverages() }} <span
-                          class="fs-xs fw-normal text-muted">unités</span></h4>
+            <div class="block-content p-3 d-flex flex-column justify-content-between">
+              <div>
+                <!-- 1. Formule & Format de Restauration -->
+                <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 p-2.5 rounded bg-body-light border mb-3">
+                  <div class="d-flex align-items-center gap-2.5">
+                    <div class="rounded-circle bg-white shadow-2xs d-flex align-items-center justify-content-center text-primary flex-shrink-0" style="width: 36px; height: 36px;">
+                      <i class="fa" [ngClass]="cateringFormatDetails().icon"></i>
                     </div>
-                    <div class="mb-3 border-top pt-2">
-                      <span class="fs-xxs fw-semibold text-uppercase text-muted d-block mb-1">Budget Traiteur
-                        (Est.)</span>
-                      <h4 class="fw-extrabold text-success mb-0">{{ cateringBudget() |
-                        number:'1.2-2':'fr' }} {{ currencySymbol() }}</h4>
-                    </div>
-                    <div class="border-top pt-2" *ngIf="dietaryGuests().length > 0">
-                      <span class="fs-xxs fw-semibold text-uppercase text-muted d-block mb-1">Allergies &
-                        Restrictions</span>
-                      <span class="badge bg-danger-light text-black border border-danger-light px-2 py-1.5 fs-xs mt-1">
-                        <i class="fa fa-exclamation-triangle text-danger me-1"></i> {{ dietaryGuests().length }}
-                        Convives à risque
-                      </span>
-                    </div>
-                    <div class="border-top pt-2" *ngIf="dietaryGuests().length === 0">
-                      <span class="fs-xxs fw-semibold text-uppercase text-muted d-block mb-1">Allergies &
-                        Restrictions</span>
-                      <span
-                        class="badge bg-success-light text-black border border-success-light px-2 py-1.5 fs-xs mt-1">
-                        <i class="fa fa-check-circle text-success me-1"></i> Aucune alerte
-                      </span>
+                    <div>
+                      <div class="fs-xs fw-bold text-dark">{{ cateringFormatDetails().title }}</div>
+                      <div class="fs-3xs text-muted">{{ cateringFormatDetails().description }}</div>
                     </div>
                   </div>
-
-                  <!-- Right side: Répartition breakdown -->
-                  <div class="col-12 col-sm-6 border-start-sm">
-                    <h5 class="fw-bold fs-xs text-uppercase text-muted border-bottom pb-1 mb-2">Répartition</h5>
-                    <div class="d-flex flex-column gap-2" *ngIf="menuCategoriesBreakdown().length > 0; else noBreakdown">
-                      <div class="d-flex justify-content-between align-items-center fs-xs" *ngFor="let item of menuCategoriesBreakdown()">
-                        <span class="text-dark"><i class="fa {{ item.icon }} text-muted me-1"></i> {{ item.label }}</span>
-                        <span class="badge bg-body-dark text-black px-2">{{ item.count }}</span>
-                      </div>
-                    </div>
-                    <ng-template #noBreakdown>
-                      <div class="text-muted fs-xs fst-italic">Aucun plat défini pour ce menu.</div>
-                    </ng-template>
+                  <div class="text-end">
+                    <span class="badge bg-white text-dark border fw-bold fs-xs px-2.5 py-1.5 shadow-2xs">
+                      <i class="fa fa-utensils text-primary me-1"></i>{{ menuItems().length }} plats
+                    </span>
                   </div>
                 </div>
-              </ng-container>
 
-              <!-- Buffet Layout fallback -->
-              <ng-template #buffetLayout>
-                <div class="row g-3">
-                  <div class="col-12 col-sm-6">
-                    <span class="fs-xxs fw-semibold text-uppercase text-muted d-block mb-1">Formule de Service</span>
-                    <h4 class="fw-extrabold text-primary mb-2"><i class="fa fa-concierge-bell me-1"></i> Buffet Libre
-                    </h4>
-                    <p class="text-muted fs-xs mb-0">Tous les plats du menu sont présentés en accès libre pour les
-                      convives.</p>
+                <!-- 2. KPIs: Coût moyen / personne + Budget Traiteur + Allergies -->
+                <div class="row g-2 text-center mb-3">
+                  <!-- Coût moyen / personne -->
+                  <div class="col-4 border-end">
+                    <div class="py-1">
+                      <span class="fs-3xs fw-semibold text-uppercase text-muted d-block mb-1">Coût / Convive</span>
+                      <span class="fs-sm fw-bold text-primary">{{ averageCostPerPerson() | number:'1.2-2':'fr' }} {{ currencySymbol() }}</span>
+                    </div>
                   </div>
-                  <div class="col-12 col-sm-6 border-start-sm">
-                    <h5 class="fw-bold fs-xs text-uppercase text-muted border-bottom pb-1 mb-2">Plats au Buffet</h5>
-                    <div class="d-flex flex-column gap-2 fs-xs">
-                      <div class="d-flex justify-content-between align-items-center">
-                        <span class="text-dark">Nombre total de plats</span>
-                        <span class="badge bg-primary text-white px-2">{{ menuItems().length }}</span>
-                      </div>
-                      <div class="d-flex justify-content-between align-items-center" *ngIf="dietaryGuests().length > 0">
-                        <span class="text-danger fw-semibold"><i class="fa fa-exclamation-triangle me-1"></i> Allergies
-                          au buffet</span>
-                        <span class="badge bg-danger-light text-black px-2">{{ dietaryGuests().length }}</span>
-                      </div>
+                  <!-- Budget Traiteur Est. -->
+                  <div class="col-4 border-end">
+                    <div class="py-1">
+                      <span class="fs-3xs fw-semibold text-uppercase text-muted d-block mb-1">Budget Traiteur</span>
+                      <span class="fs-sm fw-bold text-success">{{ cateringBudget() > 0 ? (cateringBudget() | number:'1.2-2':'fr') : ((averageCostPerPerson() * (confirmedGuestsCount() || 1)) | number:'1.2-2':'fr') }} {{ currencySymbol() }}</span>
+                    </div>
+                  </div>
+                  <!-- Allergies & Alertes -->
+                  <div class="col-4">
+                    <div class="py-1">
+                      <span class="fs-3xs fw-semibold text-uppercase text-muted d-block mb-1">Allergies</span>
+                      <span class="badge rounded-pill px-2 py-1 fs-3xs" [ngClass]="dietaryGuests().length > 0 ? 'bg-danger-light text-danger border border-danger-light' : 'bg-success-light text-success border border-success-light'">
+                        <i class="fa" [ngClass]="dietaryGuests().length > 0 ? 'fa-exclamation-triangle me-1' : 'fa-check me-1'"></i>
+                        {{ dietaryGuests().length > 0 ? (dietaryGuests().length + ' à risque') : '0 alerte' }}
+                      </span>
                     </div>
                   </div>
                 </div>
-              </ng-template>
+
+                <!-- 3. AFFICHAGE SELON LA FORMULE (SANS BARRE DE PROGRESSION) -->
+
+                <!-- CAS 1: FORMULE GRAND BUFFET (100% Libre-Service) -->
+                <div *ngIf="masterCateringMode() === 'BUFFET'" class="bg-body-light border rounded p-2.5 mb-1 shadow-2xs">
+                  <div class="d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center gap-2.5">
+                      <div class="rounded-circle bg-white shadow-2xs d-flex align-items-center justify-content-center text-primary flex-shrink-0" style="width: 34px; height: 34px;">
+                        <i class="fa fa-concierge-bell fs-xs"></i>
+                      </div>
+                      <div>
+                        <span class="fs-xs text-dark fw-bold d-block">Buffet Libre</span>
+                        <span class="fs-3xs text-muted">Accès libre à l'ensemble du buffet pour tous les convives</span>
+                      </div>
+                    </div>
+                    <span class="badge bg-primary text-white fw-bold fs-xs px-2.5 py-1.5 rounded-pill shadow-2xs">
+                      <i class="fa fa-users me-1"></i>{{ confirmedGuestsCount() }} convives confirmés
+                    </span>
+                  </div>
+                </div>
+
+                <!-- CAS 2: FORMULE COMBINÉE (MIX) -->
+                <div *ngIf="masterCateringMode() === 'MIX'" class="bg-body-light border rounded p-2.5 mb-1 shadow-2xs">
+                  <!-- Ligne 1: Buffet Libre avec nombre de convives confirmés -->
+                  <div class="d-flex align-items-center justify-content-between p-2 rounded bg-white border mb-2 shadow-2xs">
+                    <div class="d-flex align-items-center gap-2">
+                      <i class="fa fa-concierge-bell text-primary fs-xs"></i>
+                      <span class="fs-3xs text-dark fw-bold">Buffet Libre</span>
+                    </div>
+                    <span class="badge bg-primary-light text-primary border border-primary-light fw-bold fs-3xs px-2.5 py-1 rounded-pill">
+                      <i class="fa fa-users me-1"></i>{{ confirmedGuestsCount() }} convives confirmés
+                    </span>
+                  </div>
+
+                  <!-- Ligne 2: Plats Chauds à Table Choisis -->
+                  <div class="p-2 rounded bg-white border shadow-2xs">
+                    <div class="fs-4xs text-uppercase fw-bold text-muted tracking-wider mb-1.5 d-flex align-items-center gap-1">
+                      <i class="fa fa-utensils text-primary"></i> Plats Chauds à Table Choisis
+                    </div>
+
+                    <!-- Liste des plats choisis -->
+                    <div class="d-flex flex-wrap gap-1.5" *ngIf="mainDishBreakdown().chosenDishes.length > 0">
+                      <div *ngFor="let dish of mainDishBreakdown().chosenDishes"
+                           class="badge bg-body-light text-dark border px-2 py-1 fs-3xs d-flex align-items-center gap-1.5 rounded-2">
+                        <span class="badge bg-primary text-white rounded-pill px-1.5 py-0.5 fw-bold fs-4xs">
+                          {{ dish.count }}
+                        </span>
+                        <span class="fw-semibold text-truncate" style="max-width: 180px;" [title]="dish.name">
+                          {{ dish.name }}
+                        </span>
+                      </div>
+                    </div>
+
+                    <!-- Message si aucun plat n'a encore été choisi -->
+                    <div *ngIf="mainDishBreakdown().chosenDishes.length === 0" class="fs-3xs text-muted fst-italic py-0.5 text-center">
+                      <i class="fa fa-clock text-muted me-1"></i>En attente des premières sélections des convives...
+                    </div>
+                  </div>
+                </div>
+
+                <!-- CAS 3: FORMULE SERVICE À TABLE (PLATS_FIXES) -->
+                <div *ngIf="masterCateringMode() === 'PLATS_FIXES'" class="bg-body-light border rounded p-2.5 mb-1 shadow-2xs">
+                  <div class="p-2 rounded bg-white border shadow-2xs">
+                    <div class="fs-4xs text-uppercase fw-bold text-muted tracking-wider mb-1.5 d-flex align-items-center gap-1">
+                      <i class="fa fa-utensils text-primary"></i> Plats Principaux Choisis
+                    </div>
+
+                    <!-- Liste des plats choisis -->
+                    <div class="d-flex flex-wrap gap-1.5" *ngIf="mainDishBreakdown().chosenDishes.length > 0">
+                      <div *ngFor="let dish of mainDishBreakdown().chosenDishes"
+                           class="badge bg-body-light text-dark border px-2 py-1 fs-3xs d-flex align-items-center gap-1.5 rounded-2">
+                        <span class="badge bg-primary text-white rounded-pill px-1.5 py-0.5 fw-bold fs-4xs">
+                          {{ dish.count }}
+                        </span>
+                        <span class="fw-semibold text-truncate" style="max-width: 180px;" [title]="dish.name">
+                          {{ dish.name }}
+                        </span>
+                      </div>
+                    </div>
+
+                    <!-- Message si aucun plat n'a encore été choisi -->
+                    <div *ngIf="mainDishBreakdown().chosenDishes.length === 0" class="fs-3xs text-muted fst-italic py-0.5 text-center">
+                      <i class="fa fa-clock text-muted me-1"></i>En attente des premières sélections des convives...
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -548,56 +603,109 @@
                 Voir tout
               </a>
             </div>
-            <div class="block-content p-3">
-              <!-- Three Financial KPIs at the top -->
-              <div class="row g-2 mb-4 text-center border-bottom pb-3">
-                <div class="col-4 border-end">
-                  <span class="fs-xxs fw-semibold text-uppercase text-muted d-block mb-1">Budget Total</span>
-                  <span class="fs-sm fw-bold text-dark">{{ totalBudget() | number:'1.2-2':'fr'
-                    }} {{ currencySymbol() }}</span>
+            <div class="block-content p-3 d-flex flex-column justify-content-between">
+              <div>
+                <!-- 1. Four Financial KPIs (Budget, Charges, Acomptes, Bénéfice Net) -->
+                <div class="row g-2 mb-3 text-center">
+                  <!-- Budget Total -->
+                  <div class="col-6 col-sm-3 border-end">
+                    <div class="p-1">
+                      <span class="fs-3xs fw-semibold text-uppercase text-muted d-block mb-1">Budget Total</span>
+                      <span class="fs-sm fw-bold text-dark">{{ totalBudget() | number:'1.2-2':'fr' }} {{ currencySymbol() }}</span>
+                    </div>
+                  </div>
+                  <!-- Charges / Dépenses -->
+                  <div class="col-6 col-sm-3 border-end">
+                    <div class="p-1">
+                      <span class="fs-3xs fw-semibold text-uppercase text-muted d-block mb-1">Charges</span>
+                      <span class="fs-sm fw-bold text-danger">{{ totalExpenses() | number:'1.2-2':'fr' }} {{ currencySymbol() }}</span>
+                    </div>
+                  </div>
+                  <!-- Acomptes Payés -->
+                  <div class="col-6 col-sm-3 border-end">
+                    <div class="p-1">
+                      <span class="fs-3xs fw-semibold text-uppercase text-muted d-block mb-1">Acomptes Reçus</span>
+                      <span class="fs-sm fw-bold text-success">{{ totalPaid() | number:'1.2-2':'fr' }} {{ currencySymbol() }}</span>
+                    </div>
+                  </div>
+                  <!-- Bénéfice Net -->
+                  <div class="col-6 col-sm-3">
+                    <div class="p-1">
+                      <span class="fs-3xs fw-semibold text-uppercase text-muted d-block mb-1">Bénéfice Net</span>
+                      <span class="fs-sm fw-bold" [ngClass]="netProfitAmount() >= 0 ? 'text-success' : 'text-danger'">
+                        {{ netProfitAmount() | number:'1.2-2':'fr' }} {{ currencySymbol() }}
+                      </span>
+                    </div>
+                  </div>
                 </div>
-                <div class="col-4 border-end">
-                  <span class="fs-xxs fw-semibold text-uppercase text-muted d-block mb-1">Acomptes Payés</span>
-                  <span class="fs-sm fw-bold text-success">{{ totalPaid() | number:'1.2-2':'fr'
-                    }} {{ currencySymbol() }}</span>
-                </div>
-                <div class="col-4">
-                  <span class="fs-xxs fw-semibold text-uppercase text-muted d-block mb-1">Solde Restant</span>
-                  <span class="fs-sm fw-bold text-danger">{{ remainingBudget() | number:'1.2-2':'fr'
-                    }} {{ currencySymbol() }}</span>
-                </div>
-              </div>
 
-              <!-- Recent payment logs -->
-              <h5 class="fw-bold fs-xs text-uppercase text-muted border-bottom pb-1 mb-2">Transactions Récentes</h5>
-              <div class="text-center py-3 text-muted fs-xs" *ngIf="payments().length === 0">
-                Aucune transaction enregistrée pour le moment.
-              </div>
-              <div class="table-responsive" *ngIf="payments().length > 0">
-                <table class="table table-sm table-striped table-vcenter fs-xs mb-0">
-                  <thead>
-                    <tr>
-                      <th>Date</th>
-                      <th>Référence / Moyen de paiement</th>
-                      <th class="text-end">Montant</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr *ngFor="let p of payments()">
-                      <td>{{ p.paymentDate | date:'dd/MM/yyyy' }}</td>
-                      <td class="text-muted">
-                        {{ p.reference || '-' }} ({{ p.paymentMethod === 'BANK_TRANSFER' ? 'Virement' : p.paymentMethod
-                        === 'CREDIT_CARD' ? 'Carte Bancaire' : p.paymentMethod }})
-                      </td>
-                      <td class="text-end fw-semibold text-success">{{ p.amount | number:'1.2-2':'fr'
-                        }} {{ currencySymbol() }}</td>
-                    </tr>
-                  </tbody>
-                </table>
+                <!-- 2. Barre de Progression des Encaissements & Marge -->
+                <div class="bg-body-light border rounded p-2.5 mb-3">
+                  <div class="d-flex justify-content-between align-items-center mb-1.5 flex-wrap gap-1">
+                    <div class="d-flex align-items-center gap-1.5">
+                      <span class="fs-xs fw-semibold text-dark">
+                        <i class="fa fa-hand-holding-dollar text-success me-1"></i> Progression des Règlements
+                      </span>
+                      <span class="badge bg-success text-white rounded-pill px-2 py-0.5 fs-3xs fw-bold">
+                        {{ paymentProgressPercentage() }}% Encaissé
+                      </span>
+                    </div>
+                    <div class="fs-3xs fw-semibold" [ngClass]="netProfitAmount() >= 0 ? 'text-success' : 'text-danger'">
+                      Marge : <strong>{{ netProfitMargin() }}%</strong>
+                    </div>
+                  </div>
+                  <div class="progress rounded-pill mb-1.5" style="height: 7px; background-color: #e2e8f0;">
+                    <div class="progress-bar bg-success progress-bar-striped progress-bar-animated rounded-pill"
+                         role="progressbar"
+                         [style.width.%]="paymentProgressPercentage()"
+                         [attr.aria-valuenow]="paymentProgressPercentage()"
+                         aria-valuemin="0"
+                         aria-valuemax="100">
+                    </div>
+                  </div>
+                  <div class="d-flex justify-content-between align-items-center fs-3xs text-muted">
+                    <span>Encaissé : <strong class="text-success">{{ totalPaid() | number:'1.2-2':'fr' }} {{ currencySymbol() }}</strong></span>
+                    <span>Solde Restant : <strong class="text-danger">{{ remainingBudget() | number:'1.2-2':'fr' }} {{ currencySymbol() }}</strong></span>
+                  </div>
+                </div>
+
+                <!-- 3. Recent payment transactions -->
+                <div class="border-top pt-2">
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="fs-3xs fw-bold text-uppercase text-muted">Transactions & Règlements Récents</span>
+                    <span class="badge bg-body-dark text-dark px-2 py-0.5 fs-3xs">{{ payments().length }} paiement(s)</span>
+                  </div>
+                  <div class="text-center py-2 text-muted fs-xs" *ngIf="payments().length === 0">
+                    Aucun règlement enregistré pour le moment.
+                  </div>
+                  <div class="table-responsive" *ngIf="payments().length > 0">
+                    <table class="table table-sm table-striped table-vcenter fs-xs mb-0">
+                      <thead>
+                        <tr>
+                          <th class="py-1">Date</th>
+                          <th class="py-1">Mode / Réf</th>
+                          <th class="text-end py-1">Montant</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let p of payments()">
+                          <td class="py-1">{{ p.paymentDate | date:'dd/MM/yyyy' }}</td>
+                          <td class="py-1 text-muted">
+                            {{ p.reference || '-' }} ({{ p.paymentMethod === 'BANK_TRANSFER' ? 'Virement' : p.paymentMethod === 'CREDIT_CARD' || p.paymentMethod === 'CARD' ? 'Carte' : p.paymentMethod === 'CASH' ? 'Espèces' : p.paymentMethod }})
+                          </td>
+                          <td class="text-end fw-semibold text-success py-1">
+                            + {{ p.amount | number:'1.2-2':'fr' }} {{ currencySymbol() }}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
               </div>
             </div>
           </div>
-      </div>
+        </div>
 
       </div>
     </div>

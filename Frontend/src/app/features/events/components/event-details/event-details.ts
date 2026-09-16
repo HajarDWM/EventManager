@@ -5,7 +5,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { EventService } from '../../services/event.service';
 import { Event } from '../../models/event.model';
 import { GuestService, Guest } from '../../../../core/services/guest.service';
-import { BillingService, PaymentDTO } from '../../../../core/services/billing.service';
+import { BillingService, PaymentDTO, EventExpenseDTO } from '../../../../core/services/billing.service';
 import { MenuItemService, MenuItem } from '../../../../core/services/menu-item.service';
 import { CatererService } from '../../../../core/services/caterer.service';
 import { CurrencyService } from '../../../../core/services/currency.service';
@@ -34,6 +34,7 @@ export class EventDetails implements OnInit {
   protected readonly totalPaid = signal<number>(0);
   protected readonly menuItems = signal<MenuItem[]>([]);
   protected readonly payments = signal<PaymentDTO[]>([]);
+  protected readonly expenses = signal<EventExpenseDTO[]>([]);
 
   protected readonly isLoading = signal(true);
   protected readonly errorMessage = signal('');
@@ -122,6 +123,227 @@ export class EventDetails implements OnInit {
   protected readonly remainingBudget = computed(() => {
     const rem = this.totalBudget() - this.totalPaid();
     return rem < 0 ? 0 : rem;
+  });
+
+  // Financial & Expense KPIs
+  protected readonly totalExpenses = computed(() => {
+    return this.expenses().reduce((sum, exp) => sum + (exp.amount || 0), 0);
+  });
+
+  protected readonly netProfitAmount = computed(() => {
+    return this.totalBudget() - this.totalExpenses();
+  });
+
+  protected readonly netProfitMargin = computed(() => {
+    const budget = this.totalBudget();
+    if (budget <= 0) return 0;
+    return Math.round((this.netProfitAmount() / budget) * 100);
+  });
+
+  protected readonly paymentProgressPercentage = computed(() => {
+    const budget = this.totalBudget();
+    if (budget <= 0) return 0;
+    return Math.min(100, Math.round((this.totalPaid() / budget) * 100));
+  });
+
+  // Catering Format & Service Details with dynamic counts
+  protected readonly cateringFormatDetails = computed(() => {
+    const mode = this.masterCateringMode();
+    const mealType = this.event()?.mealType || '';
+    const items = this.menuItems();
+
+    const starterCount = items.filter(i => i.category === 'STARTER' || i.category === 'BUFFET_STARTER').length;
+    const mainCount = items.filter(i => i.category === 'MAIN' || i.category === 'BUFFET_MAIN').length;
+    const dessertCount = items.filter(i => i.category === 'DESSERT' || i.category === 'BUFFET_DESSERT').length;
+    const beverageCount = items.filter(i => i.category === 'BEVERAGE' || i.category === 'BUFFET_BEVERAGES').length;
+    
+    if (mode === 'MIX') {
+      const subParts: string[] = [];
+      if (mealType.includes('BUFFET_ENTREES') || starterCount > 0) subParts.push(`Entrées Buffet (${starterCount})`);
+      if (mealType.includes('PLATS_FIXES') || mainCount > 0) subParts.push(`Plat à table (${mainCount})`);
+      if (mealType.includes('BUFFET_DESSERTS') || dessertCount > 0) subParts.push(`Desserts Buffet (${dessertCount})`);
+      if (mealType.includes('BUFFET_BEVERAGES') || beverageCount > 0) subParts.push(`Boissons Buffet (${beverageCount})`);
+      return {
+        title: 'Formule Combinée (Mix)',
+        badgeClass: 'bg-primary text-white',
+        icon: 'fa-layer-group',
+        description: subParts.length > 0 ? subParts.join(' • ') : 'Buffets & Service assis'
+      };
+    } else if (mode === 'BUFFET') {
+      const subParts: string[] = [];
+      if (starterCount > 0) subParts.push(`Cocktail & Entrées (${starterCount})`);
+      if (mainCount > 0) subParts.push(`Plats Chauds (${mainCount})`);
+      if (dessertCount > 0) subParts.push(`Desserts (${dessertCount})`);
+      if (beverageCount > 0) subParts.push(`Boissons (${beverageCount})`);
+      return {
+        title: 'Formule Buffet Libre',
+        badgeClass: 'bg-info text-white',
+        icon: 'fa-concierge-bell',
+        description: subParts.length > 0 ? subParts.join(' • ') : 'Libre-service intégral pour tous les convives'
+      };
+    } else {
+      const subParts: string[] = [];
+      if (starterCount > 0) subParts.push(`Entrées (${starterCount})`);
+      if (mainCount > 0) subParts.push(`Plats (${mainCount})`);
+      if (dessertCount > 0) subParts.push(`Desserts (${dessertCount})`);
+      if (beverageCount > 0) subParts.push(`Boissons (${beverageCount})`);
+      return {
+        title: 'Service à l\'assiette',
+        badgeClass: 'bg-warning text-dark',
+        icon: 'fa-utensils',
+        description: subParts.length > 0 ? subParts.join(' • ') : 'Service traditionnel des plats à table'
+      };
+    }
+  });
+
+  protected readonly totalDishesSelected = computed(() => {
+    return this.menuItems().reduce((sum, item) => sum + (item.selectedCount || 0), 0);
+  });
+
+  protected readonly menuSelectionCount = computed(() => {
+    const confirmed = this.confirmedGuestsCount();
+    if (confirmed === 0) return 0;
+    if (this.masterCateringMode() === 'BUFFET') return confirmed;
+    const mainDishes = this.menuItems().filter(i => i.category === 'MAIN');
+    const mainSelections = mainDishes.reduce((sum, i) => sum + (i.selectedCount || 0), 0);
+    if (mainSelections > 0) return Math.min(confirmed, mainSelections);
+    return Math.min(confirmed, this.totalDishesSelected());
+  });
+
+  protected readonly menuSelectionRate = computed(() => {
+    const confirmed = this.confirmedGuestsCount();
+    if (confirmed === 0) return 0;
+    if (this.masterCateringMode() === 'BUFFET') return confirmed > 0 ? 100 : 0;
+    const count = this.menuSelectionCount();
+    return Math.min(100, Math.round((count / confirmed) * 100));
+  });
+
+  protected readonly mainDishBreakdown = computed(() => {
+    const confirmedGuests = this.guests().filter(g => g.status === 'CONFIRMED');
+    const items = this.menuItems();
+    const mainItems = items.filter(i => i.category === 'MAIN' || i.category === 'BUFFET_MAIN');
+
+    const countsMap = new Map<string, number>();
+
+    // 1. First tally from menuItems selectedCount if available
+    mainItems.forEach(item => {
+      if (item.selectedCount && item.selectedCount > 0) {
+        countsMap.set(item.name.trim(), (countsMap.get(item.name.trim()) || 0) + item.selectedCount);
+      }
+    });
+
+    // 2. Parse from confirmed guests' dietaryRequirements & localStorage
+    confirmedGuests.forEach(g => {
+      let chosenDish: string | null = null;
+      
+      if (g.dietaryRequirements) {
+        const match = g.dietaryRequirements.match(/Plat:\s*([^,]+)/i);
+        if (match && match[1]) {
+          chosenDish = match[1].trim();
+        }
+      }
+
+      if (!chosenDish && g.id) {
+        const localChoice = localStorage.getItem(`guest_${g.id}_mealChoice`);
+        if (localChoice && localChoice.trim()) {
+          chosenDish = localChoice.trim();
+        }
+      }
+
+      if (chosenDish) {
+        const matchedItem = mainItems.find(i => i.name.trim().toLowerCase() === chosenDish!.toLowerCase());
+        const canonicalName = matchedItem ? matchedItem.name.trim() : chosenDish;
+        
+        if (mainItems.every(i => !i.selectedCount || i.selectedCount === 0)) {
+          countsMap.set(canonicalName, (countsMap.get(canonicalName) || 0) + 1);
+        }
+      }
+    });
+
+    // Format list of chosen dishes
+    const chosenDishes: { name: string; count: number; percentage: number }[] = [];
+    let totalSelected = 0;
+
+    countsMap.forEach((count, name) => {
+      if (count > 0) {
+        totalSelected += count;
+        chosenDishes.push({
+          name,
+          count,
+          percentage: confirmedGuests.length > 0 ? Math.round((count / confirmedGuests.length) * 100) : 0
+        });
+      }
+    });
+
+    // Sort by highest count first
+    chosenDishes.sort((a, b) => b.count - a.count);
+
+    const unselectedCount = Math.max(0, confirmedGuests.length - totalSelected);
+
+    return {
+      chosenDishes,
+      totalSelected,
+      unselectedCount,
+      confirmedCount: confirmedGuests.length
+    };
+  });
+
+  protected readonly cateringBudget = computed(() => {
+    const items = this.menuItems();
+    const confirmed = this.confirmedGuestsCount();
+    if (items.length === 0) return 0;
+    
+    const mode = this.masterCateringMode();
+    const guestMultiplier = confirmed > 0 ? confirmed : 1;
+
+    if (mode === 'MIX') {
+      // 1. Buffet items: consumed by ALL confirmed guests
+      const buffetItems = items.filter(i => i.category !== 'MAIN' && i.category !== 'BUFFET_MAIN');
+      const buffetPerPersonCost = buffetItems.reduce((sum, item) => sum + (item.pricePerPerson || 0), 0);
+      const totalBuffetCost = buffetPerPersonCost * guestMultiplier;
+
+      // 2. Main course (Plat à table): Each guest chooses only 1 main dish
+      const mainItems = items.filter(i => i.category === 'MAIN' || i.category === 'BUFFET_MAIN');
+      let totalMainCost = 0;
+      
+      if (mainItems.length > 0) {
+        const totalSelections = mainItems.reduce((sum, i) => sum + (i.selectedCount || 0), 0);
+        const actualSelectionsCost = mainItems.reduce((sum, i) => sum + ((i.pricePerPerson || 0) * (i.selectedCount || 0)), 0);
+        
+        const avgMainPrice = mainItems.reduce((sum, i) => sum + (i.pricePerPerson || 0), 0) / mainItems.length;
+        const unselectedGuests = Math.max(0, guestMultiplier - totalSelections);
+        
+        totalMainCost = actualSelectionsCost + (unselectedGuests * avgMainPrice);
+      }
+
+      return totalBuffetCost + totalMainCost;
+    } else if (mode === 'BUFFET') {
+      const buffetPerPerson = items.reduce((sum, item) => sum + (item.pricePerPerson || 0), 0);
+      return buffetPerPerson * guestMultiplier;
+    } else {
+      // PLATS_FIXES: 1 starter + 1 main + 1 dessert + 1 beverage per guest
+      const starters = items.filter(i => i.category === 'STARTER' || i.category === 'BUFFET_STARTER');
+      const mains = items.filter(i => i.category === 'MAIN' || i.category === 'BUFFET_MAIN');
+      const desserts = items.filter(i => i.category === 'DESSERT' || i.category === 'BUFFET_DESSERT');
+      const beverages = items.filter(i => i.category === 'BEVERAGE' || i.category === 'BUFFET_BEVERAGES');
+
+      const avgStarter = starters.length > 0 ? starters.reduce((s, i) => s + (i.pricePerPerson || 0), 0) / starters.length : 0;
+      const avgMain = mains.length > 0 ? mains.reduce((s, i) => s + (i.pricePerPerson || 0), 0) / mains.length : 0;
+      const avgDessert = desserts.length > 0 ? desserts.reduce((s, i) => s + (i.pricePerPerson || 0), 0) / desserts.length : 0;
+      const avgBeverage = beverages.length > 0 ? beverages.reduce((s, i) => s + (i.pricePerPerson || 0), 0) / beverages.length : 0;
+
+      const singleGuestCost = avgStarter + avgMain + avgDessert + avgBeverage;
+      return singleGuestCost * guestMultiplier;
+    }
+  });
+
+  protected readonly averageCostPerPerson = computed(() => {
+    const confirmed = this.confirmedGuestsCount();
+    const totalBudget = this.cateringBudget();
+    if (confirmed > 0) {
+      return totalBudget / confirmed;
+    }
+    return totalBudget;
   });
 
   protected readonly vegetarianCount = computed(() => 
@@ -246,10 +468,6 @@ export class EventDetails implements OnInit {
     const confirmCount = this.confirmedGuestsCount();
     const dishCount = this.menuItems().length;
     return confirmCount * (dishCount > 0 ? dishCount : 1);
-  });
-
-  protected readonly cateringBudget = computed(() => {
-    return this.menuItems().reduce((sum, item) => sum + ((item.pricePerPerson || 0) * (item.selectedCount || 0)), 0);
   });
 
   // Invitation Filter & Pagination
@@ -502,6 +720,16 @@ export class EventDetails implements OnInit {
       },
       error: (err) => {
         console.error('Erreur chargement factures', err);
+      }
+    });
+
+    // Fetch expenses / charges
+    this.billingService.getEventExpenses(eventId).subscribe({
+      next: (expList) => {
+        this.expenses.set(expList || []);
+      },
+      error: (err) => {
+        console.error('Erreur chargement dépenses', err);
       }
     });
   }

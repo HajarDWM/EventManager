@@ -1018,8 +1018,12 @@
                 <div class="spotlight-underline mx-auto mt-1"
                   [style.backgroundColor]="getPrimaryColor()"
                   style="width: 40px; height: 1.5px; opacity: 0.65;"></div>
-                <p class="fs-xxs mt-1 mb-0 font-serif" [style.color]="getMenuMutedTextColor()" *ngIf="isMixMode()">
-                  Servi chaud à table selon votre préférence
+                <p class="fs-xxs mt-1 mb-0 font-serif" [style.color]="getMenuMutedTextColor()" *ngIf="!isDiscoveryMode()">
+                  <i class="fa fa-info-circle me-1" [style.color]="getPrimaryColor()"></i>
+                  Choix obligatoire • Servi chaud à table selon votre préférence
+                </p>
+                <p class="fs-xxs mt-1 mb-0 font-serif" [style.color]="getMenuMutedTextColor()" *ngIf="isDiscoveryMode()">
+                  Servi chaud à table selon la sélection des convives
                 </p>
               </div>
 
@@ -1079,15 +1083,16 @@
               </div>
 
 
-              <!-- Actions de Navigation en Bas : Retour (page invitation 1) + Passer -->
+              <!-- Actions de Navigation en Bas : Retour (étape précédente) + Continuer (si plat déjà sélectionné) -->
               <div class="step-bottom-actions-wrapper step-optout-wrapper d-flex align-items-center justify-content-center flex-nowrap gap-2 mt-1.5 pt-0 mb-1" *ngIf="!isDiscoveryMode()">
                 <button type="button" class="btn btn-sm btn-step-back rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
-                  (click)="closeMenuAndRsvp()">
+                  (click)="goToPrevStep()">
                   <i class="fa fa-arrow-left me-1"></i> Retour
                 </button>
                 <button type="button" class="btn btn-sm btn-opt-out rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
-                  (click)="skipCurrentCourse()">
-                  Passer <i class="fa fa-arrow-right ms-1"></i>
+                  *ngIf="mealChoice"
+                  (click)="goToNextStep()">
+                  Continuer <i class="fa fa-arrow-right ms-1"></i>
                 </button>
               </div>
             </div>
@@ -1188,10 +1193,10 @@
                 </div>
 
 
-                <!-- Actions de navigation MIX : Retour (page invitation 1) + Passer (sans couleur or) -->
+                <!-- Actions de navigation MIX : Retour + Passer -->
                 <div class="step-bottom-actions-wrapper step-optout-wrapper d-flex align-items-center justify-content-center flex-nowrap gap-2 mt-1.5 pt-0 mb-1" *ngIf="!isDiscoveryMode()">
                   <button type="button" class="btn btn-sm btn-step-back rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
-                    (click)="closeMenuAndRsvp()">
+                    (click)="goToPrevStep()">
                     <i class="fa fa-arrow-left me-1"></i> Retour
                   </button>
                   <button type="button" class="btn btn-sm btn-opt-out rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
@@ -1278,10 +1283,10 @@
                 </div>
 
 
-                <!-- Actions de Navigation en Bas : Retour (page invitation 1) + Passer -->
+                <!-- Actions de Navigation en Bas : Retour + Passer -->
                 <div class="step-bottom-actions-wrapper step-optout-wrapper d-flex align-items-center justify-content-center flex-nowrap gap-2 mt-1.5 pt-0 mb-1" *ngIf="!isDiscoveryMode()">
                   <button type="button" class="btn btn-sm btn-step-back rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
-                    (click)="closeMenuAndRsvp()">
+                    (click)="goToPrevStep()">
                     <i class="fa fa-arrow-left me-1"></i> Retour
                   </button>
                   <button type="button" class="btn btn-sm btn-opt-out rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
@@ -1370,10 +1375,10 @@
               </div>
 
 
-              <!-- Actions de Navigation en Bas : Retour (page invitation 1) + Passer -->
+              <!-- Actions de Navigation en Bas : Retour + Passer -->
               <div class="step-bottom-actions-wrapper step-optout-wrapper d-flex align-items-center justify-content-center flex-nowrap gap-2 mt-1.5 pt-0 mb-1" *ngIf="!isDiscoveryMode()">
                 <button type="button" class="btn btn-sm btn-step-back rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
-                  (click)="closeMenuAndRsvp()">
+                  (click)="goToPrevStep()">
                   <i class="fa fa-arrow-left me-1"></i> Retour
                 </button>
                 <button type="button" class="btn btn-sm btn-opt-out rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
