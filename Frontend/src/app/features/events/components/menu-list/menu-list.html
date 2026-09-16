@@ -230,13 +230,19 @@
       </div>
       <div>
         <h3 class="h6 fw-bold text-dark mb-1">Estimation du Coût Traiteur</h3>
-        <p class="text-muted fs-sm mb-0">Basé sur {{ event()?.guestCount || 0 }} invités et {{ menuItems().length }} plats/boissons sélectionnés.</p>
+        <p class="text-muted fs-sm mb-0">Basé sur {{ confirmedGuestsCount() > 0 ? confirmedGuestsCount() : (event()?.guestCount || 0) }} invités {{ confirmedGuestsCount() > 0 ? 'confirmés' : 'attendus' }} et {{ menuItems().length }} plats/boissons sélectionnés.</p>
       </div>
     </div>
-    <div class="d-flex text-center text-md-end bg-white p-2 px-3 rounded shadow-sm border border-white">
-      <div>
+    <div class="d-flex align-items-center gap-2 flex-wrap justify-content-center justify-content-md-end">
+      <!-- Coût / Convive -->
+      <div class="text-center bg-white p-2 px-3 rounded shadow-sm border border-white">
+        <span class="fs-xs fw-semibold text-uppercase text-muted d-block mb-1">Coût / Convive</span>
+        <span class="fs-5 fw-bold text-primary">{{ averageCostPerPerson() | number:'1.2-2':'fr' }} {{ currencySymbol() }}</span>
+      </div>
+      <!-- Budget Total -->
+      <div class="text-center bg-white p-2 px-3 rounded shadow-sm border border-white">
         <span class="fs-xs fw-semibold text-uppercase text-muted d-block mb-1">Budget Total (Est.)</span>
-        <span class="fs-4 fw-extrabold text-primary">{{ totalCateringBudget() | number:'1.2-2':'fr' }} {{ currencySymbol() }}</span>
+        <span class="fs-5 fw-extrabold text-success">{{ totalCateringBudget() | number:'1.2-2':'fr' }} {{ currencySymbol() }}</span>
       </div>
     </div>
   </div>

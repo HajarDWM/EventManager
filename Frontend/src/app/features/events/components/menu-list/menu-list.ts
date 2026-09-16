@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MenuItemService, MenuItem } from '../../../../core/services/menu-item.service';
 import { EventService } from '../../services/event.service';
+import { GuestService, Guest } from '../../../../core/services/guest.service';
 import { CatererService } from '../../../../core/services/caterer.service';
 import { CurrencyService } from '../../../../core/services/currency.service';
 import { Event } from '../../models/event.model';
@@ -18,6 +19,7 @@ export class MenuList implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly menuItemService = inject(MenuItemService);
   private readonly eventService = inject(EventService);
+  private readonly guestService = inject(GuestService);
   private readonly catererService = inject(CatererService);
   protected readonly currencyService = inject(CurrencyService);
 
@@ -29,9 +31,14 @@ export class MenuList implements OnInit {
 
   protected readonly eventId = signal<number | null>(null);
   protected readonly event = signal<Event | null>(null);
+  protected readonly guests = signal<Guest[]>([]);
   protected readonly menuItems = signal<MenuItem[]>([]);
   protected readonly mealType = signal<string>('PLATS_FIXES');
   protected readonly masterCateringMode = signal<'BUFFET' | 'PLATS_FIXES' | 'MIX'>('PLATS_FIXES');
+
+  protected readonly confirmedGuestsCount = computed(() => 
+    this.guests().filter(g => g.status === 'CONFIRMED').length
+  );
 
   protected readonly isLoading = signal<boolean>(true);
   protected readonly isSaving = signal<boolean>(false);
@@ -169,7 +176,62 @@ export class MenuList implements OnInit {
 
 
   protected readonly totalCateringBudget = computed(() => {
-    return this.menuItems().reduce((sum, item) => sum + ((item.pricePerPerson || 0) * (item.selectedCount || 0)), 0);
+    const items = this.menuItems();
+    const confirmed = this.confirmedGuestsCount();
+    if (items.length === 0) return 0;
+
+    const mode = this.masterCateringMode();
+    const guestMultiplier = confirmed > 0 ? confirmed : (this.event()?.guestCount || 1);
+
+    if (mode === 'MIX') {
+      // 1. Buffet items: consumed by ALL confirmed guests
+      const buffetItems = items.filter(i => i.category !== 'MAIN' && i.category !== 'BUFFET_MAIN');
+      const buffetPerPersonCost = buffetItems.reduce((sum, item) => sum + (item.pricePerPerson || 0), 0);
+      const totalBuffetCost = buffetPerPersonCost * guestMultiplier;
+
+      // 2. Main course (Plat à table): Each guest chooses only 1 main dish
+      const mainItems = items.filter(i => i.category === 'MAIN' || i.category === 'BUFFET_MAIN');
+      let totalMainCost = 0;
+      
+      if (mainItems.length > 0) {
+        const totalSelections = mainItems.reduce((sum, i) => sum + (i.selectedCount || 0), 0);
+        const actualSelectionsCost = mainItems.reduce((sum, i) => sum + ((i.pricePerPerson || 0) * (i.selectedCount || 0)), 0);
+        
+        const avgMainPrice = mainItems.reduce((sum, i) => sum + (i.pricePerPerson || 0), 0) / mainItems.length;
+        const unselectedGuests = Math.max(0, guestMultiplier - totalSelections);
+        
+        totalMainCost = actualSelectionsCost + (unselectedGuests * avgMainPrice);
+      }
+
+      return totalBuffetCost + totalMainCost;
+    } else if (mode === 'BUFFET') {
+      const buffetPerPerson = items.reduce((sum, item) => sum + (item.pricePerPerson || 0), 0);
+      return buffetPerPerson * guestMultiplier;
+    } else {
+      // PLATS_FIXES: 1 starter + 1 main + 1 dessert + 1 beverage per guest
+      const starters = items.filter(i => i.category === 'STARTER' || i.category === 'BUFFET_STARTER');
+      const mains = items.filter(i => i.category === 'MAIN' || i.category === 'BUFFET_MAIN');
+      const desserts = items.filter(i => i.category === 'DESSERT' || i.category === 'BUFFET_DESSERT');
+      const beverages = items.filter(i => i.category === 'BEVERAGE' || i.category === 'BUFFET_BEVERAGES');
+
+      const avgStarter = starters.length > 0 ? starters.reduce((s, i) => s + (i.pricePerPerson || 0), 0) / starters.length : 0;
+      const avgMain = mains.length > 0 ? mains.reduce((s, i) => s + (i.pricePerPerson || 0), 0) / mains.length : 0;
+      const avgDessert = desserts.length > 0 ? desserts.reduce((s, i) => s + (i.pricePerPerson || 0), 0) / desserts.length : 0;
+      const avgBeverage = beverages.length > 0 ? beverages.reduce((s, i) => s + (i.pricePerPerson || 0), 0) / beverages.length : 0;
+
+      const singleGuestCost = avgStarter + avgMain + avgDessert + avgBeverage;
+      return singleGuestCost * guestMultiplier;
+    }
+  });
+
+  protected readonly averageCostPerPerson = computed(() => {
+    const confirmed = this.confirmedGuestsCount();
+    const totalBudget = this.totalCateringBudget();
+    const guestMultiplier = confirmed > 0 ? confirmed : (this.event()?.guestCount || 1);
+    if (guestMultiplier > 0) {
+      return totalBudget / guestMultiplier;
+    }
+    return totalBudget;
   });
 
   protected readonly starterCount = computed(() => {
@@ -237,7 +299,15 @@ export class MenuList implements OnInit {
       this.loadEventData(id);
       this.loadMenuItems(id);
       this.loadCatererMenuItems();
+      this.loadGuests(id);
     }
+  }
+
+  private loadGuests(id: number): void {
+    this.guestService.getGuestsByEvent(id).subscribe({
+      next: (data) => this.guests.set(data),
+      error: (err) => console.error('Erreur chargement invités', err)
+    });
   }
 
   private loadCatererMenuItems(): void {

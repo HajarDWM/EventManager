@@ -2,6 +2,7 @@ import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { forkJoin } from 'rxjs';
 import { EventService } from '../../services/event.service';
 import { TemplateService, DigitalTemplate } from '../../../../core/services/template.service';
 import { GuestService, Guest } from '../../../../core/services/guest.service';
@@ -527,101 +528,89 @@ export class OrganiserInvitationSetup implements OnInit {
   private loadData(eventId: number): void {
     this.isLoading.set(true);
 
-    // Fetch templates first
-    this.templateService.getTemplates().subscribe({
-      next: (templateList) => {
-        const modifiedList = templateList.map(t => {
+    forkJoin({
+      templateList: this.templateService.getTemplates(),
+      guestList: this.guestService.getGuestsByEvent(eventId),
+      evt: this.eventService.getEventById(eventId)
+    }).subscribe({
+      next: ({ templateList, guestList, evt }) => {
+        // 1. Process templates
+        const modifiedList = (templateList || []).map(t => {
           if (t.id === 2 || t.title === 'Or & Velours') {
             return {
               ...t,
-              imageUrl: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=500'
+              imageUrl: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=400&q=75'
             };
           }
           return t;
         });
         this.templates.set(modifiedList);
 
-        // Fetch guests
-        this.guestService.getGuestsByEvent(eventId).subscribe({
-          next: (guestList) => {
-            const updatedList = (guestList || []).map(g => {
-              if (!g.id) return g;
-              const localSent = localStorage.getItem(`guest_${g.id}_isSent`);
-              const rawChannels = localStorage.getItem(`guest_${g.id}_sentChannels`);
-              let sentChannels: string[] | undefined = undefined;
-              if (rawChannels) {
-                try {
-                  sentChannels = JSON.parse(rawChannels);
-                } catch (e) {}
-              }
-              if (localSent === 'true') {
-                return { ...g, isSent: true, invitationStatus: 'SENT', sentChannels: sentChannels || g.sentChannels };
-              }
-              return { ...g, sentChannels: sentChannels || g.sentChannels };
-            });
-            this.guests.set(updatedList);
+        // 2. Process guests
+        const updatedList = (guestList || []).map(g => {
+          if (!g.id) return g;
+          const localSent = localStorage.getItem(`guest_${g.id}_isSent`);
+          const rawChannels = localStorage.getItem(`guest_${g.id}_sentChannels`);
+          let sentChannels: string[] | undefined = undefined;
+          if (rawChannels) {
+            try {
+              sentChannels = JSON.parse(rawChannels);
+            } catch (e) {}
+          }
+          if (localSent === 'true') {
+            return { ...g, isSent: true, invitationStatus: 'SENT', sentChannels: sentChannels || g.sentChannels };
+          }
+          return { ...g, sentChannels: sentChannels || g.sentChannels };
+        });
+        this.guests.set(updatedList);
 
-            // Default select only guests who are STILL PENDING (not sent yet)
-            const initialSelection: Record<number, boolean> = {};
-            updatedList.forEach(g => {
-              if (g.id) {
-                initialSelection[g.id] = !(g.isSent === true || g.invitationStatus === 'SENT');
-              }
-            });
-            this.selectedGuestIds.set(initialSelection);
-          },
-          error: (err) => {
-            console.error('Erreur chargement invités:', err);
+        // Default select only guests who are STILL PENDING (not sent yet)
+        const initialSelection: Record<number, boolean> = {};
+        updatedList.forEach(g => {
+          if (g.id) {
+            initialSelection[g.id] = !(g.isSent === true || g.invitationStatus === 'SENT');
           }
         });
+        this.selectedGuestIds.set(initialSelection);
 
-        // Then fetch event details
-        this.eventService.getEventById(eventId).subscribe({
-          next: (evt) => {
-            this.event.set(evt);
-            
-            // Pre-fill customization fields with existing invitation info or default to event details
-            this.invitationTitle = evt.invitationTitle || evt.title;
-            this.invitationSubtitle = evt.invitationSubtitle || '';
-            this.invitationLocation = evt.invitationLocation || evt.location;
-            this.invitationParking = evt.parkingLocation || '';
-            
-            const rawDate = evt.invitationDate ? new Date(evt.invitationDate) : new Date(evt.eventDate);
-            this.invitationDateStr = rawDate.toISOString().split('T')[0];
-            this.invitationTimeStr = rawDate.toTimeString().split(' ')[0].substring(0, 5);
-            
-            this.invitationToken = evt.invitationToken || '';
-            if (this.invitationToken) {
-              this.updateInvitationLink(this.invitationToken);
-            }
+        // 3. Process event details
+        this.event.set(evt);
+        
+        // Pre-fill customization fields with existing invitation info or default to event details
+        this.invitationTitle = evt.invitationTitle || evt.title;
+        this.invitationSubtitle = evt.invitationSubtitle || '';
+        this.invitationLocation = evt.invitationLocation || evt.location;
+        this.invitationParking = evt.parkingLocation || '';
+        
+        const rawDate = evt.invitationDate ? new Date(evt.invitationDate) : new Date(evt.eventDate);
+        this.invitationDateStr = rawDate.toISOString().split('T')[0];
+        this.invitationTimeStr = rawDate.toTimeString().split(' ')[0].substring(0, 5);
+        
+        this.invitationToken = evt.invitationToken || '';
+        if (this.invitationToken) {
+          this.updateInvitationLink(this.invitationToken);
+        }
 
-            // Find selected template if any
-            if (evt.digitalTemplateId) {
-              const selected = templateList.find(t => t.id === evt.digitalTemplateId);
-              if (selected) {
-                this.selectedTemplate.set(selected);
-                const tax = getCategoryTaxonomy(selected.category);
-                if (tax) {
-                  this.selectedCategory.set(tax.id);
-                  if (selected.subCategory) {
-                    this.selectedSubCategory.set(selected.subCategory);
-                  }
-                }
+        // Find selected template if any
+        if (evt.digitalTemplateId) {
+          const selected = modifiedList.find(t => t.id === evt.digitalTemplateId);
+          if (selected) {
+            this.selectedTemplate.set(selected);
+            const tax = getCategoryTaxonomy(selected.category);
+            if (tax) {
+              this.selectedCategory.set(tax.id);
+              if (selected.subCategory) {
+                this.selectedSubCategory.set(selected.subCategory);
               }
             }
-
-            this.isLoading.set(false);
-          },
-          error: (err) => {
-            console.error(err);
-            this.errorMessage.set('Impossible de charger les détails de l\'événement.');
-            this.isLoading.set(false);
           }
-        });
+        }
+
+        this.isLoading.set(false);
       },
       error: (err) => {
-        console.error(err);
-        this.errorMessage.set('Impossible de charger les modèles d\'invitation.');
+        console.error('Erreur chargement données:', err);
+        this.errorMessage.set('Impossible de charger les données de l\'événement.');
         this.isLoading.set(false);
       }
     });

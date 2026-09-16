@@ -74,36 +74,36 @@
     <div class="col-12">
       
       <!-- Full-Width Client Portal Banner -->
-      <div class="block block-rounded shadow-sm mb-4 bg-primary-subtle border-0">
-        <div class="block-content p-4 d-flex flex-column flex-md-row align-items-center justify-content-between gap-4">
-          <div class="d-flex align-items-center gap-3 text-center text-md-start">
-            <div class="p-3 bg-white rounded-circle shadow-sm d-flex align-items-center justify-content-center text-primary flex-shrink-0" style="width: 56px; height: 56px;">
-              <i class="fa fa-share-nodes fa-lg"></i>
+      <div class="block block-rounded shadow-sm mb-3 bg-primary-subtle border-0">
+        <div class="block-content py-2.5 px-3 d-flex flex-column flex-md-row align-items-center justify-content-between gap-2.5">
+          <div class="d-flex align-items-center gap-2.5 text-center text-md-start">
+            <div class="bg-white rounded-circle shadow-sm d-flex align-items-center justify-content-center text-primary flex-shrink-0" style="width: 38px; height: 38px;">
+              <i class="fa fa-share-nodes fs-sm"></i>
             </div>
             <div>
-              <h3 class="h5 fw-bold text-dark mb-1">Portail Client</h3>
-              <p class="text-muted fs-sm mb-0">Partagez ce lien sécurisé avec votre client pour qu'il puisse gérer sa liste d'invités.</p>
+              <h3 class="fs-sm fw-bold text-dark mb-0.5">Portail Client</h3>
+              <p class="text-muted fs-xs mb-0">Partagez ce lien sécurisé avec votre client pour qu'il puisse gérer sa liste d'invités.</p>
             </div>
           </div>
           
-          <div class="w-100 flex-grow-1" style="max-width: 550px;">
-            <div class="input-group shadow-sm rounded-pill overflow-hidden bg-white mb-3 border">
-              <input type="text" class="form-control bg-transparent border-0 text-primary fw-semibold px-4" readonly [value]="clientPortalUrl()">
-              <button class="btn btn-primary fw-medium px-4" type="button" (click)="copyClientLink()" [disabled]="linkCopied()" style="min-width: 140px; transition: all 0.2s ease;">
-                <i class="fa me-2" [ngClass]="linkCopied() ? 'fa-check' : 'fa-copy'"></i> 
+          <div class="w-100 flex-grow-1" style="max-width: 480px;">
+            <div class="input-group input-group-sm shadow-sm rounded-pill overflow-hidden bg-white mb-1.5 border">
+              <input type="text" class="form-control form-control-sm bg-transparent border-0 text-primary fw-semibold px-3 fs-xs" readonly [value]="clientPortalUrl()">
+              <button class="btn btn-sm btn-primary fw-medium px-3 fs-xs" type="button" (click)="copyClientLink()" [disabled]="linkCopied()" style="min-width: 110px; transition: all 0.2s ease;">
+                <i class="fa me-1.5" [ngClass]="linkCopied() ? 'fa-check' : 'fa-copy'"></i> 
                 {{ linkCopied() ? 'Lien copié' : 'Copier' }}
               </button>
             </div>
             
-            <div class="d-flex gap-2 flex-wrap">
-              <a [href]="whatsappShareUrl()" target="_blank" class="btn btn-sm btn-alt-success rounded-pill fw-medium px-3 flex-grow-1 d-flex align-items-center justify-content-center shadow-sm hover-elevate" style="transition: all 0.2s ease;">
-                <i class="fab fa-whatsapp me-2 fs-6"></i> WhatsApp
+            <div class="d-flex gap-1.5 flex-wrap">
+              <a [href]="whatsappShareUrl()" target="_blank" class="btn btn-xs btn-alt-success rounded-pill fw-medium px-2 py-0.5 flex-grow-1 d-flex align-items-center justify-content-center shadow-2xs hover-elevate" style="transition: all 0.2s ease; font-size: 0.65rem; line-height: 1.2;">
+                <i class="fab fa-whatsapp me-1 text-success" style="font-size: 0.7rem;"></i> WhatsApp
               </a>
-              <a [href]="emailShareUrl()" class="btn btn-sm btn-alt-info rounded-pill fw-medium px-3 flex-grow-1 d-flex align-items-center justify-content-center shadow-sm hover-elevate" style="transition: all 0.2s ease;">
-                <i class="fa fa-envelope me-2 fs-6"></i> E-mail
+              <a [href]="emailShareUrl()" class="btn btn-xs btn-alt-info rounded-pill fw-medium px-2 py-0.5 flex-grow-1 d-flex align-items-center justify-content-center shadow-2xs hover-elevate" style="transition: all 0.2s ease; font-size: 0.65rem; line-height: 1.2;">
+                <i class="fa fa-envelope me-1 text-info" style="font-size: 0.7rem;"></i> E-mail
               </a>
-              <a [href]="smsShareUrl()" class="btn btn-sm btn-alt-secondary rounded-pill fw-medium px-3 flex-grow-1 d-flex align-items-center justify-content-center shadow-sm hover-elevate" style="transition: all 0.2s ease;">
-                <i class="fa fa-comment-sms me-2 fs-6"></i> SMS
+              <a [href]="smsShareUrl()" class="btn btn-xs btn-alt-secondary rounded-pill fw-medium px-2 py-0.5 flex-grow-1 d-flex align-items-center justify-content-center shadow-2xs hover-elevate" style="transition: all 0.2s ease; font-size: 0.65rem; line-height: 1.2;">
+                <i class="fa fa-comment-sms me-1 text-secondary" style="font-size: 0.7rem;"></i> SMS
               </a>
             </div>
           </div>
@@ -118,7 +118,7 @@
             <div
               class="block-header block-header-default border-bottom p-3 d-flex justify-content-between align-items-center">
               <h3 class="block-title fw-bold fs-sm mb-0">
-                <i class="fa fa-users text-primary me-2"></i>Gestion des Invités
+                <i class="fa fa-users text-primary me-2"></i>Invités
               </h3>
               <a class="btn btn-xs btn-alt-primary rounded-pill px-2.5"
                 [routerLink]="['/events', event()?.id, 'guests']">
@@ -266,7 +266,7 @@
             <div
               class="block-header block-header-default border-bottom p-3 d-flex justify-content-between align-items-center">
               <h3 class="block-title fw-bold fs-sm mb-0">
-                <i class="fa fa-utensils text-danger me-2"></i>Gestion des Repas & Menus
+                <i class="fa fa-utensils text-danger me-2"></i>Repas & Menus
               </h3>
               <a class="btn btn-xs btn-alt-primary rounded-pill px-2.5" [routerLink]="['/events', event()?.id, 'menu']">
                 Voir tout
@@ -275,27 +275,27 @@
             <div class="block-content p-3 d-flex flex-column justify-content-between">
               <div>
                 <!-- 1. Formule & Format de Restauration (Design Épuré & Haute Finition) -->
-                <div class="p-2.5 px-3 rounded-3 bg-body-light border mb-3 shadow-2xs">
+                <div class="p-2 px-2.5 rounded-3 bg-body-light border mb-2 shadow-2xs">
                   <!-- Ligne 1 : Titre de la formule + Total Plats -->
-                  <div class="d-flex align-items-center justify-content-between gap-2" [class.mb-2]="cateringFormatDetails().parts.length > 0">
+                  <div class="d-flex align-items-center justify-content-between gap-2" [class.mb-1.5]="cateringFormatDetails().parts.length > 0">
                     <div class="d-flex align-items-center gap-2">
-                      <div class="rounded-circle bg-white shadow-2xs d-flex align-items-center justify-content-center text-primary flex-shrink-0" style="width: 32px; height: 32px;">
-                        <i class="fa" [ngClass]="cateringFormatDetails().icon" style="font-size: 0.9rem;"></i>
+                      <div class="rounded-circle bg-white shadow-2xs d-flex align-items-center justify-content-center text-primary flex-shrink-0" style="width: 28px; height: 28px;">
+                        <i class="fa" [ngClass]="cateringFormatDetails().icon" style="font-size: 0.8rem;"></i>
                       </div>
                       <div>
                         <div class="fs-xs fw-bold text-dark">{{ cateringFormatDetails().title }}</div>
                       </div>
                     </div>
-                    <span class="badge bg-white text-dark border fw-bold fs-3xs px-2.5 py-1 rounded-pill shadow-2xs">
+                    <span class="badge bg-white text-dark border fw-bold fs-3xs px-2 py-0.5 rounded-pill shadow-2xs">
                       <i class="fa fa-utensils text-primary me-1"></i>{{ menuItems().length }} plats au menu
                     </span>
                   </div>
 
                   <!-- Ligne 2 : Détails des sous-sections (Discret, typographie fine et couleur douce) -->
-                  <div class="d-flex flex-wrap align-items-center gap-2 pt-1.5 border-top" *ngIf="cateringFormatDetails().parts.length > 0">
+                  <div class="d-flex flex-wrap align-items-center gap-2 pt-1 border-top" *ngIf="cateringFormatDetails().parts.length > 0">
                     <div *ngFor="let part of cateringFormatDetails().parts; let last = last" 
-                         class="d-flex align-items-center gap-1 text-muted" style="font-size: 0.73rem;">
-                      <i class="fa text-secondary opacity-75" [ngClass]="part.icon" style="font-size: 0.68rem;"></i>
+                         class="d-flex align-items-center gap-1 text-muted" style="font-size: 0.72rem;">
+                      <i class="fa text-secondary opacity-75" [ngClass]="part.icon" style="font-size: 0.65rem;"></i>
                       <span>{{ part.label }}</span>
                       <span class="fw-semibold text-dark">({{ part.count }})</span>
                       <span class="text-muted opacity-40 ms-1.5" *ngIf="!last">•</span>
@@ -303,134 +303,109 @@
                   </div>
                 </div>
 
-                <!-- 2. KPIs: Coût moyen / personne + Budget Traiteur + Régimes & Allergies -->
-                <div class="row g-2 text-center mb-3">
+                <!-- 2. KPIs: Coût moyen / personne + Budget Traiteur -->
+                <div class="row g-1 text-center mb-2.5">
                   <!-- Coût moyen / personne -->
-                  <div class="col-4 border-end">
-                    <div class="py-1">
-                      <span class="fs-3xs fw-semibold text-uppercase text-muted d-block mb-1">Coût / Convive</span>
-                      <span class="fs-sm fw-bold text-primary">{{ averageCostPerPerson() | number:'1.2-2':'fr' }} {{ currencySymbol() }}</span>
+                  <div class="col-6 border-end">
+                    <div class="py-1 px-1">
+                      <span class="fs-3xs fw-semibold text-uppercase text-muted d-block mb-0.5">Coût / Convive</span>
+                      <span class="fs-xs fw-bold text-primary">{{ averageCostPerPerson() | number:'1.2-2':'fr' }} {{ currencySymbol() }}</span>
                     </div>
                   </div>
                   <!-- Budget Traiteur Est. -->
-                  <div class="col-4 border-end">
-                    <div class="py-1">
-                      <span class="fs-3xs fw-semibold text-uppercase text-muted d-block mb-1">Budget Traiteur</span>
-                      <span class="fs-sm fw-bold text-success">{{ cateringBudget() > 0 ? (cateringBudget() | number:'1.2-2':'fr') : ((averageCostPerPerson() * (confirmedGuestsCount() || 1)) | number:'1.2-2':'fr') }} {{ currencySymbol() }}</span>
-                    </div>
-                  </div>
-                  <!-- Régimes & Allergies (Détaillés et explicites) -->
-                  <div class="col-4">
-                    <div class="py-1">
-                      <span class="fs-3xs fw-semibold text-uppercase text-muted d-block mb-1">Régimes & Allergies</span>
-                      
-                      <!-- Cas 1 : Aucune restriction -->
-                      <span class="badge rounded-pill px-2 py-1 fs-3xs bg-success-light text-success border border-success-light" 
-                            *ngIf="realDietarySummary().totalGuests === 0">
-                        <i class="fa fa-check me-1"></i>0 restriction
-                      </span>
-
-                      <!-- Cas 2 : Présence de régimes/allergies réels déclarés -->
-                      <div *ngIf="realDietarySummary().totalGuests > 0">
-                        <span class="badge rounded-pill px-2 py-0.5 fs-3xs bg-warning-light text-dark border border-warning-subtle fw-bold"
-                              [title]="realDietarySummary().label">
-                          <i class="fa fa-shield-alt text-warning me-1"></i>{{ realDietarySummary().totalGuests }} convive(s)
-                        </span>
-                        <div class="fs-4xs text-muted text-truncate mt-0.5" 
-                             style="max-width: 140px; margin: 0 auto;" 
-                             [title]="realDietarySummary().label">
-                          {{ realDietarySummary().label }}
-                        </div>
-                      </div>
+                  <div class="col-6">
+                    <div class="py-1 px-1">
+                      <span class="fs-3xs fw-semibold text-uppercase text-muted d-block mb-0.5">Budget Traiteur</span>
+                      <span class="fs-xs fw-bold text-success">{{ cateringBudget() > 0 ? (cateringBudget() | number:'1.2-2':'fr') : ((averageCostPerPerson() * (confirmedGuestsCount() || 1)) | number:'1.2-2':'fr') }} {{ currencySymbol() }}</span>
                     </div>
                   </div>
                 </div>
 
-                <!-- 3. AFFICHAGE SELON LA FORMULE (SANS BARRE DE PROGRESSION) -->
-
-                <!-- CAS 1: FORMULE GRAND BUFFET (100% Libre-Service) -->
-                <div *ngIf="masterCateringMode() === 'BUFFET'" class="bg-body-light border rounded p-2.5 mb-1 shadow-2xs">
-                  <div class="d-flex align-items-center justify-content-between">
-                    <div class="d-flex align-items-center gap-2.5">
-                      <div class="rounded-circle bg-white shadow-2xs d-flex align-items-center justify-content-center text-primary flex-shrink-0" style="width: 34px; height: 34px;">
-                        <i class="fa fa-concierge-bell fs-xs"></i>
-                      </div>
-                      <div>
-                        <span class="fs-xs text-dark fw-bold d-block">Buffet Libre</span>
-                        <span class="fs-3xs text-muted">Accès libre à l'ensemble du buffet pour tous les convives</span>
-                      </div>
-                    </div>
-                    <span class="badge bg-primary text-white fw-bold fs-xs px-2.5 py-1.5 rounded-pill shadow-2xs">
-                      <i class="fa fa-users me-1"></i>{{ confirmedGuestsCount() }} convives confirmés
+                <!-- 3. Interactive Diet Filter Buttons Strip (Style propre et aéré comme Invités) -->
+                <div class="d-flex flex-wrap align-items-center gap-2 mb-2.5" *ngIf="realDietarySummary().breakdown.length > 0">
+                  <button type="button"
+                          class="btn btn-sm rounded-pill px-3 py-1 fs-xs fw-semibold border transition-all d-flex align-items-center gap-1.5 shadow-2xs"
+                          [ngClass]="selectedMealDietFilter() === 'ALL' ? 'btn-primary text-white border-primary shadow-xs' : 'bg-body-light text-dark'"
+                          (click)="setMealDietFilter('ALL')">
+                    <i class="fa fa-utensils fs-xs" [ngClass]="selectedMealDietFilter() === 'ALL' ? 'text-white' : 'text-primary'"></i>
+                    <span>Tous</span>
+                    <span class="badge rounded-pill ms-0.5 px-1.5 py-0.5 fs-3xs fw-bold"
+                          [ngClass]="selectedMealDietFilter() === 'ALL' ? 'bg-white text-primary' : 'bg-body-dark text-dark'">
+                      {{ confirmedGuestsCount() }}
                     </span>
-                  </div>
-                </div>
+                  </button>
 
-                <!-- CAS 2: FORMULE COMBINÉE (MIX) -->
-                <div *ngIf="masterCateringMode() === 'MIX'" class="bg-body-light border rounded p-2.5 mb-1 shadow-2xs">
-                  <!-- Ligne 1: Buffet Libre avec nombre de convives confirmés -->
-                  <div class="d-flex align-items-center justify-content-between p-2 rounded bg-white border mb-2 shadow-2xs">
-                    <div class="d-flex align-items-center gap-2">
-                      <i class="fa fa-concierge-bell text-primary fs-xs"></i>
-                      <span class="fs-3xs text-dark fw-bold">Buffet Libre</span>
-                    </div>
-                    <span class="badge bg-primary-light text-primary border border-primary-light fw-bold fs-3xs px-2.5 py-1 rounded-pill">
-                      <i class="fa fa-users me-1"></i>{{ confirmedGuestsCount() }} convives confirmés
+                  <button *ngFor="let diet of realDietarySummary().breakdown"
+                          type="button"
+                          class="btn btn-sm rounded-pill px-3 py-1 fs-xs fw-semibold border transition-all d-flex align-items-center gap-1.5 shadow-2xs"
+                          [ngClass]="selectedMealDietFilter() === diet.name ? 'btn-primary text-white border-primary shadow-xs' : 'bg-body-light text-dark'"
+                          (click)="setMealDietFilter(diet.name)">
+                    <i class="fa {{ getDietIcon(diet.name) }} fs-xs" [ngClass]="selectedMealDietFilter() === diet.name ? 'text-white' : 'text-primary'"></i>
+                    <span>{{ diet.name }}</span>
+                    <span class="badge rounded-pill ms-0.5 px-1.5 py-0.5 fs-3xs fw-bold"
+                          [ngClass]="selectedMealDietFilter() === diet.name ? 'bg-white text-primary' : 'bg-body-dark text-dark'">
+                      {{ diet.count }}
                     </span>
-                  </div>
+                  </button>
+                </div>
 
-                  <!-- Ligne 2: Plats Chauds à Table Choisis -->
-                  <div class="p-2 rounded bg-white border shadow-2xs">
-                    <div class="fs-4xs text-uppercase fw-bold text-muted tracking-wider mb-1.5 d-flex align-items-center gap-1">
-                      <i class="fa fa-utensils text-primary"></i> Plats Chauds à Table Choisis
-                    </div>
+                <!-- Empty State -->
+                <div class="text-center py-3 text-muted fs-xs" *ngIf="mealTableItems().length === 0">
+                  <i class="fa fa-utensils text-muted fs-3 mb-2"></i>
+                  <p class="mb-0">Aucun plat enregistré ou correspondant à ce filtre.</p>
+                </div>
 
-                    <!-- Liste des plats choisis -->
-                    <div class="d-flex flex-wrap gap-1.5" *ngIf="mainDishBreakdown().chosenDishes.length > 0">
-                      <div *ngFor="let dish of mainDishBreakdown().chosenDishes"
-                           class="badge bg-body-light text-dark border px-2 py-1 fs-3xs d-flex align-items-center gap-1.5 rounded-2">
-                        <span class="badge bg-primary text-white rounded-pill px-1.5 py-0.5 fw-bold fs-4xs">
-                          {{ dish.count }}
-                        </span>
-                        <span class="fw-semibold text-truncate" style="max-width: 180px;" [title]="dish.name">
-                          {{ dish.name }}
-                        </span>
-                      </div>
-                    </div>
+                <!-- Paginated Meals Table -->
+                <div class="table-responsive" *ngIf="mealPagedItems().length > 0">
+                  <table class="table table-sm table-striped table-vcenter fs-xs mb-0">
+                    <thead>
+                      <tr>
+                        <th>Plat / Article</th>
+                        <th>Service</th>
+                        <th>Régime</th>
+                        <th class="text-end">Choix / Quantité</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let item of mealPagedItems()">
+                        <td class="fw-semibold text-dark">
+                          <span class="text-truncate d-inline-block" style="max-width: 200px;" [title]="item.name">{{ item.name }}</span>
+                        </td>
+                        <td>
+                          <span class="badge bg-body-dark text-dark border px-2 py-0.5 fs-4xs">
+                            <i class="fa {{ item.serviceIcon }} me-1 text-secondary"></i>{{ item.serviceType }}
+                          </span>
+                        </td>
+                        <td>
+                          <span class="badge rounded-pill px-2 py-0.5 fs-4xs"
+                                [ngClass]="item.dietaryTag !== 'Standard' ? 'bg-warning-light text-dark border border-warning-subtle' : 'bg-body-light text-muted border'">
+                            <i class="fa {{ getDietIcon(item.dietaryTag) }} me-1" *ngIf="item.dietaryTag !== 'Standard'"></i>{{ item.dietaryTag }}
+                          </span>
+                        </td>
+                        <td class="text-end">
+                          <span class="badge rounded-pill px-2 py-0.5 fs-3xs fw-bold"
+                                [ngClass]="item.isBuffet ? 'bg-info-light text-dark border border-info-subtle' : (item.portionsCount > 0 ? 'bg-primary text-white' : 'bg-body-dark text-muted')">
+                            {{ item.portionLabel }}
+                          </span>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
 
-                    <!-- Message si aucun plat n'a encore été choisi -->
-                    <div *ngIf="mainDishBreakdown().chosenDishes.length === 0" class="fs-3xs text-muted fst-italic py-0.5 text-center">
-                      <i class="fa fa-clock text-muted me-1"></i>En attente des premières sélections des convives...
-                    </div>
+                <!-- Mini Pagination Footer -->
+                <div class="d-flex justify-content-between align-items-center mt-2" *ngIf="mealTableItems().length > mealPageSize">
+                  <span class="fs-xxs text-muted">Page {{ mealCurrentPage() }} / {{ mealTotalPages() }}</span>
+                  <div class="d-flex gap-1">
+                    <button class="btn btn-xs btn-alt-secondary rounded-pill px-2" (click)="mealPrevPage()" [disabled]="mealCurrentPage() === 1">
+                      <i class="fa fa-angle-left"></i>
+                    </button>
+                    <button class="btn btn-xs btn-alt-secondary rounded-pill px-2" (click)="mealNextPage()" [disabled]="mealCurrentPage() === mealTotalPages()">
+                      <i class="fa fa-angle-right"></i>
+                    </button>
                   </div>
                 </div>
 
-                <!-- CAS 3: FORMULE SERVICE À TABLE (PLATS_FIXES) -->
-                <div *ngIf="masterCateringMode() === 'PLATS_FIXES'" class="bg-body-light border rounded p-2.5 mb-1 shadow-2xs">
-                  <div class="p-2 rounded bg-white border shadow-2xs">
-                    <div class="fs-4xs text-uppercase fw-bold text-muted tracking-wider mb-1.5 d-flex align-items-center gap-1">
-                      <i class="fa fa-utensils text-primary"></i> Plats Principaux Choisis
-                    </div>
-
-                    <!-- Liste des plats choisis -->
-                    <div class="d-flex flex-wrap gap-1.5" *ngIf="mainDishBreakdown().chosenDishes.length > 0">
-                      <div *ngFor="let dish of mainDishBreakdown().chosenDishes"
-                           class="badge bg-body-light text-dark border px-2 py-1 fs-3xs d-flex align-items-center gap-1.5 rounded-2">
-                        <span class="badge bg-primary text-white rounded-pill px-1.5 py-0.5 fw-bold fs-4xs">
-                          {{ dish.count }}
-                        </span>
-                        <span class="fw-semibold text-truncate" style="max-width: 180px;" [title]="dish.name">
-                          {{ dish.name }}
-                        </span>
-                      </div>
-                    </div>
-
-                    <!-- Message si aucun plat n'a encore été choisi -->
-                    <div *ngIf="mainDishBreakdown().chosenDishes.length === 0" class="fs-3xs text-muted fst-italic py-0.5 text-center">
-                      <i class="fa fa-clock text-muted me-1"></i>En attente des premières sélections des convives...
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
@@ -442,7 +417,7 @@
             <div
               class="block-header block-header-default border-bottom p-3 d-flex justify-content-between align-items-center">
               <h3 class="block-title fw-bold fs-sm mb-0">
-                <i class="fa fa-paper-plane text-info me-2"></i>Gestion des Invitations
+                <i class="fa fa-paper-plane text-info me-2"></i>Invitations
               </h3>
               <a class="btn btn-xs btn-alt-primary rounded-pill px-2.5"
                 [routerLink]="['/events', event()?.id, 'invitation-setup']">
@@ -622,7 +597,7 @@
             <div
               class="block-header block-header-default border-bottom p-3 d-flex justify-content-between align-items-center">
               <h3 class="block-title fw-bold fs-sm mb-0">
-                <i class="fa fa-file-invoice-dollar text-success me-2"></i>Suivi Financier & Budget
+                <i class="fa fa-file-invoice-dollar text-success me-2"></i>Budget & Finances
               </h3>
               <a class="btn btn-xs btn-alt-primary rounded-pill px-2.5"
                 [routerLink]="['/events', event()?.id, 'billing']">
@@ -632,41 +607,41 @@
             <div class="block-content p-3 d-flex flex-column justify-content-between">
               <div>
                 <!-- 1. Four Financial KPIs (Budget, Charges, Acomptes, Bénéfice Net) -->
-                <div class="row g-2 mb-3 text-center">
+                <div class="row g-1 mb-2 text-center">
                   <!-- Budget Total -->
                   <div class="col-6 col-sm-3 border-end">
-                    <div class="p-1">
-                      <span class="fs-3xs fw-semibold text-uppercase text-muted d-block mb-1">Budget Total</span>
-                      <span class="fs-sm fw-bold text-dark">{{ totalBudget() | number:'1.2-2':'fr' }} {{ currencySymbol() }}</span>
+                    <div class="py-0.5 px-1">
+                      <span class="fs-4xs fw-semibold text-uppercase text-muted d-block mb-0.5">Budget Total</span>
+                      <span class="fs-xs fw-bold text-dark">{{ totalBudget() | number:'1.2-2':'fr' }} {{ currencySymbol() }}</span>
                     </div>
                   </div>
                   <!-- Charges / Dépenses -->
                   <div class="col-6 col-sm-3 border-end">
-                    <div class="p-1">
-                      <span class="fs-3xs fw-semibold text-uppercase text-muted d-block mb-1">Charges</span>
-                      <span class="fs-sm fw-bold text-danger">{{ totalExpenses() | number:'1.2-2':'fr' }} {{ currencySymbol() }}</span>
+                    <div class="py-0.5 px-1">
+                      <span class="fs-4xs fw-semibold text-uppercase text-muted d-block mb-0.5">Charges</span>
+                      <span class="fs-xs fw-bold text-danger">{{ totalExpenses() | number:'1.2-2':'fr' }} {{ currencySymbol() }}</span>
                     </div>
                   </div>
                   <!-- Acomptes Payés -->
                   <div class="col-6 col-sm-3 border-end">
-                    <div class="p-1">
-                      <span class="fs-3xs fw-semibold text-uppercase text-muted d-block mb-1">Acomptes Reçus</span>
-                      <span class="fs-sm fw-bold text-success">{{ totalPaid() | number:'1.2-2':'fr' }} {{ currencySymbol() }}</span>
+                    <div class="py-0.5 px-1">
+                      <span class="fs-4xs fw-semibold text-uppercase text-muted d-block mb-0.5">Acomptes Reçus</span>
+                      <span class="fs-xs fw-bold text-success">{{ totalPaid() | number:'1.2-2':'fr' }} {{ currencySymbol() }}</span>
                     </div>
                   </div>
                   <!-- Bénéfice Net -->
                   <div class="col-6 col-sm-3">
-                    <div class="p-1">
-                      <span class="fs-3xs fw-semibold text-uppercase text-muted d-block mb-1">Bénéfice Net</span>
-                      <span class="fs-sm fw-bold" [ngClass]="netProfitAmount() >= 0 ? 'text-success' : 'text-danger'">
+                    <div class="py-0.5 px-1">
+                      <span class="fs-4xs fw-semibold text-uppercase text-muted d-block mb-0.5">Bénéfice Net</span>
+                      <span class="fs-xs fw-bold" [ngClass]="netProfitAmount() >= 0 ? 'text-success' : 'text-danger'">
                         {{ netProfitAmount() | number:'1.2-2':'fr' }} {{ currencySymbol() }}
                       </span>
                     </div>
                   </div>
                 </div>
 
-                <!-- 2. Barre de Progression des Encaissements & Marge -->
-                <div class="bg-body-light border rounded p-2.5 mb-3">
+                <!-- 2. Barre de Progression des Encaissements -->
+                <div class="bg-body-light border rounded p-2 mb-2.5">
                   <div class="d-flex justify-content-between align-items-center mb-1.5 flex-wrap gap-1">
                     <div class="d-flex align-items-center gap-1.5">
                       <span class="fs-xs fw-semibold text-dark">
@@ -675,9 +650,6 @@
                       <span class="badge bg-success text-white rounded-pill px-2 py-0.5 fs-3xs fw-bold">
                         {{ paymentProgressPercentage() }}% Encaissé
                       </span>
-                    </div>
-                    <div class="fs-3xs fw-semibold" [ngClass]="netProfitAmount() >= 0 ? 'text-success' : 'text-danger'">
-                      Marge : <strong>{{ netProfitMargin() }}%</strong>
                     </div>
                   </div>
                   <div class="progress rounded-pill mb-1.5" style="height: 7px; background-color: #e2e8f0;">
@@ -689,8 +661,7 @@
                          aria-valuemax="100">
                     </div>
                   </div>
-                  <div class="d-flex justify-content-between align-items-center fs-3xs text-muted">
-                    <span>Encaissé : <strong class="text-success">{{ totalPaid() | number:'1.2-2':'fr' }} {{ currencySymbol() }}</strong></span>
+                  <div class="d-flex justify-content-end align-items-center fs-3xs text-muted">
                     <span>Solde Restant : <strong class="text-danger">{{ remainingBudget() | number:'1.2-2':'fr' }} {{ currencySymbol() }}</strong></span>
                   </div>
                 </div>

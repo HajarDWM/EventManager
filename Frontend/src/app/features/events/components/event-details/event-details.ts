@@ -9,6 +9,7 @@ import { BillingService, PaymentDTO, EventExpenseDTO } from '../../../../core/se
 import { MenuItemService, MenuItem } from '../../../../core/services/menu-item.service';
 import { CatererService } from '../../../../core/services/caterer.service';
 import { CurrencyService } from '../../../../core/services/currency.service';
+import { TemplateService } from '../../../../core/services/template.service';
 
 @Component({
   selector: 'app-event-details',
@@ -23,6 +24,7 @@ export class EventDetails implements OnInit {
   private readonly menuItemService = inject(MenuItemService);
   private readonly catererService = inject(CatererService);
   private readonly currencyService = inject(CurrencyService);
+  private readonly templateService = inject(TemplateService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
 
@@ -273,31 +275,38 @@ export class EventDetails implements OnInit {
     return Math.min(100, Math.round((count / confirmed) * 100));
   });
 
+  protected readonly selectedMealDietFilter = signal<string>('ALL');
+
+  protected setMealDietFilter(filter: string): void {
+    this.selectedMealDietFilter.set(filter);
+  }
+
+  protected getDietIcon(dietName: string): string {
+    const lower = dietName.toLowerCase();
+    if (lower.includes('halal')) return 'fa-drumstick-bite';
+    if (lower.includes('veg') || lower.includes('vegan')) return 'fa-leaf';
+    if (lower.includes('gluten') || lower.includes('lactose')) return 'fa-wheat-awn';
+    if (lower.includes('arachid') || lower.includes('alert') || lower.includes('médical')) return 'fa-shield-alt';
+    if (lower.includes('fruit') || lower.includes('mer') || lower.includes('fish') || lower.includes('poisson')) return 'fa-fish';
+    if (lower.includes('sucre') || lower.includes('diab')) return 'fa-cube';
+    return 'fa-check';
+  }
+
   protected readonly mainDishBreakdown = computed(() => {
     const confirmedGuests = this.guests().filter(g => g.status === 'CONFIRMED');
     const items = this.menuItems();
     const mainItems = items.filter(i => i.category === 'MAIN' || i.category === 'BUFFET_MAIN');
+    const activeFilter = this.selectedMealDietFilter();
 
-    const countsMap = new Map<string, number>();
-
-    // 1. First tally from menuItems selectedCount if available
-    mainItems.forEach(item => {
-      if (item.selectedCount && item.selectedCount > 0) {
-        countsMap.set(item.name.trim(), (countsMap.get(item.name.trim()) || 0) + item.selectedCount);
-      }
-    });
-
-    // 2. Parse from confirmed guests' dietaryRequirements & localStorage
-    confirmedGuests.forEach(g => {
+    // 1. Build guest profiles with chosenDish and diets
+    const guestProfiles = confirmedGuests.map(g => {
       let chosenDish: string | null = null;
-      
       if (g.dietaryRequirements) {
         const match = g.dietaryRequirements.match(/Plat:\s*([^,]+)/i);
         if (match && match[1]) {
           chosenDish = match[1].trim();
         }
       }
-
       if (!chosenDish && g.id) {
         const localChoice = localStorage.getItem(`guest_${g.id}_mealChoice`);
         if (localChoice && localChoice.trim()) {
@@ -305,11 +314,64 @@ export class EventDetails implements OnInit {
         }
       }
 
-      if (chosenDish) {
-        const matchedItem = mainItems.find(i => i.name.trim().toLowerCase() === chosenDish!.toLowerCase());
-        const canonicalName = matchedItem ? matchedItem.name.trim() : chosenDish;
+      let rawDiets = g.dietaryRequirements || '';
+      if (!rawDiets && g.id) {
+        const localAllergies = localStorage.getItem(`guest_${g.id}_allergies`);
+        if (localAllergies) {
+          try {
+            const arr = JSON.parse(localAllergies);
+            if (Array.isArray(arr)) rawDiets = arr.join(', ');
+          } catch (e) {}
+        }
+      }
+
+      const dietsList: string[] = [];
+      if (rawDiets) {
+        const parts = rawDiets.split(',').map(s => s.trim()).filter(s => s.length > 0);
+        parts.forEach(p => {
+          const lower = p.toLowerCase();
+          if (!lower.startsWith('plat:') && 
+              !lower.startsWith('entrée:') && 
+              !lower.startsWith('entree:') && 
+              !lower.startsWith('dessert:') && 
+              !lower.startsWith('boisson:') && 
+              !lower.startsWith('menu:') &&
+              !lower.startsWith('message:')) {
+            dietsList.push(p);
+          }
+        });
+      }
+
+      return {
+        guest: g,
+        chosenDish,
+        dietsList
+      };
+    });
+
+    // 2. Filter guests matching active diet filter
+    const matchingProfiles = guestProfiles.filter(p => {
+      if (activeFilter === 'ALL') return true;
+      return p.dietsList.some(d => d.toLowerCase().includes(activeFilter.toLowerCase()) || activeFilter.toLowerCase().includes(d.toLowerCase()));
+    });
+
+    const countsMap = new Map<string, number>();
+
+    if (activeFilter === 'ALL') {
+      // Tally from menuItems selectedCount if available
+      mainItems.forEach(item => {
+        if (item.selectedCount && item.selectedCount > 0) {
+          countsMap.set(item.name.trim(), (countsMap.get(item.name.trim()) || 0) + item.selectedCount);
+        }
+      });
+    }
+
+    matchingProfiles.forEach(p => {
+      if (p.chosenDish) {
+        const matchedItem = mainItems.find(i => i.name.trim().toLowerCase() === p.chosenDish!.toLowerCase());
+        const canonicalName = matchedItem ? matchedItem.name.trim() : p.chosenDish;
         
-        if (mainItems.every(i => !i.selectedCount || i.selectedCount === 0)) {
+        if (activeFilter !== 'ALL' || mainItems.every(i => !i.selectedCount || i.selectedCount === 0)) {
           countsMap.set(canonicalName, (countsMap.get(canonicalName) || 0) + 1);
         }
       }
@@ -325,23 +387,200 @@ export class EventDetails implements OnInit {
         chosenDishes.push({
           name,
           count,
-          percentage: confirmedGuests.length > 0 ? Math.round((count / confirmedGuests.length) * 100) : 0
+          percentage: matchingProfiles.length > 0 ? Math.round((count / matchingProfiles.length) * 100) : 0
         });
       }
     });
 
-    // Sort by highest count first
     chosenDishes.sort((a, b) => b.count - a.count);
 
-    const unselectedCount = Math.max(0, confirmedGuests.length - totalSelected);
+    const unselectedCount = Math.max(0, matchingProfiles.length - totalSelected);
 
     return {
       chosenDishes,
       totalSelected,
       unselectedCount,
-      confirmedCount: confirmedGuests.length
+      confirmedCount: confirmedGuests.length,
+      matchingCount: matchingProfiles.length,
+      activeFilter
     };
   });
+
+  // Meal Table Pagination & Dietary Matching
+  protected readonly mealCurrentPage = signal<number>(1);
+  protected readonly mealPageSize = 4;
+
+  protected readonly mealTableItems = computed(() => {
+    const items = this.menuItems();
+    const confirmedGuests = this.guests().filter(g => g.status === 'CONFIRMED');
+    const activeFilter = this.selectedMealDietFilter();
+    const mode = this.masterCateringMode();
+
+    // 1. Build guest profiles with chosen dish and diets
+    const guestProfiles = confirmedGuests.map(g => {
+      let chosenDish: string | null = null;
+      if (g.dietaryRequirements) {
+        const match = g.dietaryRequirements.match(/Plat:\s*([^,]+)/i);
+        if (match && match[1]) chosenDish = match[1].trim();
+      }
+      if (!chosenDish && g.id) {
+        const localChoice = localStorage.getItem(`guest_${g.id}_mealChoice`);
+        if (localChoice && localChoice.trim()) chosenDish = localChoice.trim();
+      }
+
+      let rawDiets = g.dietaryRequirements || '';
+      if (!rawDiets && g.id) {
+        const localAllergies = localStorage.getItem(`guest_${g.id}_allergies`);
+        if (localAllergies) {
+          try {
+            const arr = JSON.parse(localAllergies);
+            if (Array.isArray(arr)) rawDiets = arr.join(', ');
+          } catch (e) {}
+        }
+      }
+
+      const dietsList: string[] = [];
+      if (rawDiets) {
+        const parts = rawDiets.split(',').map(s => s.trim()).filter(s => s.length > 0);
+        parts.forEach(p => {
+          const lower = p.toLowerCase();
+          if (!lower.startsWith('plat:') && 
+              !lower.startsWith('entrée:') && 
+              !lower.startsWith('entree:') && 
+              !lower.startsWith('dessert:') && 
+              !lower.startsWith('boisson:') && 
+              !lower.startsWith('menu:') &&
+              !lower.startsWith('message:')) {
+            dietsList.push(p);
+          }
+        });
+      }
+
+      return { guest: g, chosenDish, dietsList };
+    });
+
+    const matchingProfiles = guestProfiles.filter(p => {
+      if (activeFilter === 'ALL') return true;
+      return p.dietsList.some(d => d.toLowerCase().includes(activeFilter.toLowerCase()) || activeFilter.toLowerCase().includes(d.toLowerCase()));
+    });
+
+    const list: {
+      id?: number;
+      name: string;
+      category: string;
+      serviceType: string;
+      serviceIcon: string;
+      dietaryTag: string;
+      portionsCount: number;
+      portionLabel: string;
+      isBuffet: boolean;
+    }[] = [];
+
+    items.forEach(item => {
+      const isBuffetItem = item.category.startsWith('BUFFET_') || mode === 'BUFFET' || (mode === 'MIX' && item.category !== 'MAIN');
+      const tagMatches = !!(item.dietaryTag && item.dietaryTag.toLowerCase().includes(activeFilter.toLowerCase()));
+      
+      // Calculate portions chosen
+      let count = 0;
+      if (isBuffetItem) {
+        count = activeFilter === 'ALL' ? confirmedGuests.length : matchingProfiles.length;
+      } else {
+        matchingProfiles.forEach(p => {
+          if (p.chosenDish && p.chosenDish.toLowerCase() === item.name.toLowerCase()) {
+            count++;
+          }
+        });
+        if (activeFilter === 'ALL' && count === 0 && item.selectedCount) {
+          count = item.selectedCount;
+        }
+      }
+
+      // Check relevance when filtering by specific diet
+      let isRelevant = false;
+      if (activeFilter === 'ALL') {
+        isRelevant = true;
+      } else {
+        const isChosenByDietGuest = count > 0;
+        // Strictly relevant if tagged with this specific diet OR chosen by guest with this diet
+        isRelevant = tagMatches || isChosenByDietGuest;
+      }
+
+      if (isRelevant) {
+        let serviceType = 'À Table';
+        let serviceIcon = 'fa-utensils';
+        if (isBuffetItem) {
+          serviceType = 'Buffet Libre';
+          serviceIcon = 'fa-concierge-bell';
+        } else if (item.category === 'BEVERAGE' || item.category === 'BUFFET_BEVERAGES') {
+          serviceType = 'Boisson';
+          serviceIcon = 'fa-glass-cheers';
+        }
+
+        let portionLabel = '';
+        if (isBuffetItem) {
+          portionLabel = `${count} convive(s)`;
+        } else {
+          portionLabel = count > 0 ? `${count} choix` : '0 choix';
+        }
+
+        // Strictly display the filtered diet name when a filter is active
+        const displayedDiet = activeFilter !== 'ALL' ? activeFilter : (item.dietaryTag || 'Standard');
+
+        list.push({
+          id: item.id,
+          name: item.name,
+          category: this.formatItemCategory(item.category),
+          serviceType,
+          serviceIcon,
+          dietaryTag: displayedDiet,
+          portionsCount: count,
+          portionLabel,
+          isBuffet: isBuffetItem
+        });
+      }
+    });
+
+    // Sort: items with chosen portions > 0 first
+    list.sort((a, b) => b.portionsCount - a.portionsCount);
+
+    return list;
+  });
+
+  protected formatItemCategory(cat: string): string {
+    switch (cat) {
+      case 'STARTER':
+      case 'BUFFET_STARTER':
+        return 'Entrée';
+      case 'MAIN':
+      case 'BUFFET_MAIN':
+        return 'Plat Principal';
+      case 'DESSERT':
+      case 'BUFFET_DESSERT':
+        return 'Dessert';
+      case 'BEVERAGE':
+      case 'BUFFET_BEVERAGES':
+        return 'Boisson';
+      default:
+        return cat || 'Plat';
+    }
+  }
+
+  protected readonly mealTotalPages = computed(() =>
+    Math.max(1, Math.ceil(this.mealTableItems().length / this.mealPageSize))
+  );
+
+  protected readonly mealPagedItems = computed(() => {
+    const start = (this.mealCurrentPage() - 1) * this.mealPageSize;
+    return this.mealTableItems().slice(start, start + this.mealPageSize);
+  });
+
+  protected mealPrevPage(): void {
+    if (this.mealCurrentPage() > 1) this.mealCurrentPage.update(p => p - 1);
+  }
+
+  protected mealNextPage(): void {
+    if (this.mealCurrentPage() < this.mealTotalPages()) this.mealCurrentPage.update(p => p + 1);
+  }
 
   protected readonly cateringBudget = computed(() => {
     const items = this.menuItems();
@@ -657,6 +896,8 @@ export class EventDetails implements OnInit {
       this.loadGuests(id);
       this.loadBilling(id);
       this.loadMenuItems(id);
+      // Pre-warm template cache in background for instant navigation to invitation setup
+      this.templateService.preloadTemplates();
     } else {
       this.errorMessage.set('Identifiant d\'événement manquant.');
       this.isLoading.set(false);
