@@ -158,42 +158,97 @@ export class EventDetails implements OnInit {
     const beverageCount = items.filter(i => i.category === 'BEVERAGE' || i.category === 'BUFFET_BEVERAGES').length;
     
     if (mode === 'MIX') {
-      const subParts: string[] = [];
-      if (mealType.includes('BUFFET_ENTREES') || starterCount > 0) subParts.push(`Entrées Buffet (${starterCount})`);
-      if (mealType.includes('PLATS_FIXES') || mainCount > 0) subParts.push(`Plat à table (${mainCount})`);
-      if (mealType.includes('BUFFET_DESSERTS') || dessertCount > 0) subParts.push(`Desserts Buffet (${dessertCount})`);
-      if (mealType.includes('BUFFET_BEVERAGES') || beverageCount > 0) subParts.push(`Boissons Buffet (${beverageCount})`);
+      const parts: { label: string; count: number; icon: string }[] = [];
+      if (mealType.includes('BUFFET_ENTREES') || starterCount > 0) parts.push({ label: 'Entrées Buffet', count: starterCount, icon: 'fa-leaf' });
+      if (mealType.includes('PLATS_FIXES') || mainCount > 0) parts.push({ label: 'Plat à table', count: mainCount, icon: 'fa-drumstick-bite' });
+      if (mealType.includes('BUFFET_DESSERTS') || dessertCount > 0) parts.push({ label: 'Desserts Buffet', count: dessertCount, icon: 'fa-birthday-cake' });
+      if (mealType.includes('BUFFET_BEVERAGES') || beverageCount > 0) parts.push({ label: 'Boissons Buffet', count: beverageCount, icon: 'fa-glass-cheers' });
       return {
         title: 'Formule Combinée (Mix)',
         badgeClass: 'bg-primary text-white',
         icon: 'fa-layer-group',
-        description: subParts.length > 0 ? subParts.join(' • ') : 'Buffets & Service assis'
+        parts,
+        description: parts.map(p => `${p.label} (${p.count})`).join(' • ') || 'Buffets & Service assis'
       };
     } else if (mode === 'BUFFET') {
-      const subParts: string[] = [];
-      if (starterCount > 0) subParts.push(`Cocktail & Entrées (${starterCount})`);
-      if (mainCount > 0) subParts.push(`Plats Chauds (${mainCount})`);
-      if (dessertCount > 0) subParts.push(`Desserts (${dessertCount})`);
-      if (beverageCount > 0) subParts.push(`Boissons (${beverageCount})`);
+      const parts: { label: string; count: number; icon: string }[] = [];
+      if (starterCount > 0) parts.push({ label: 'Cocktail & Entrées', count: starterCount, icon: 'fa-leaf' });
+      if (mainCount > 0) parts.push({ label: 'Plats Chauds', count: mainCount, icon: 'fa-drumstick-bite' });
+      if (dessertCount > 0) parts.push({ label: 'Douceurs & Desserts', count: dessertCount, icon: 'fa-birthday-cake' });
+      if (beverageCount > 0) parts.push({ label: 'Boissons & Bar', count: beverageCount, icon: 'fa-glass-cheers' });
       return {
         title: 'Formule Buffet Libre',
         badgeClass: 'bg-info text-white',
         icon: 'fa-concierge-bell',
-        description: subParts.length > 0 ? subParts.join(' • ') : 'Libre-service intégral pour tous les convives'
+        parts,
+        description: parts.map(p => `${p.label} (${p.count})`).join(' • ') || 'Libre-service intégral pour tous les convives'
       };
     } else {
-      const subParts: string[] = [];
-      if (starterCount > 0) subParts.push(`Entrées (${starterCount})`);
-      if (mainCount > 0) subParts.push(`Plats (${mainCount})`);
-      if (dessertCount > 0) subParts.push(`Desserts (${dessertCount})`);
-      if (beverageCount > 0) subParts.push(`Boissons (${beverageCount})`);
+      const parts: { label: string; count: number; icon: string }[] = [];
+      if (starterCount > 0) parts.push({ label: 'Entrées', count: starterCount, icon: 'fa-leaf' });
+      if (mainCount > 0) parts.push({ label: 'Plats Principaux', count: mainCount, icon: 'fa-drumstick-bite' });
+      if (dessertCount > 0) parts.push({ label: 'Desserts', count: dessertCount, icon: 'fa-birthday-cake' });
+      if (beverageCount > 0) parts.push({ label: 'Boissons', count: beverageCount, icon: 'fa-glass-cheers' });
       return {
         title: 'Service à l\'assiette',
         badgeClass: 'bg-warning text-dark',
         icon: 'fa-utensils',
-        description: subParts.length > 0 ? subParts.join(' • ') : 'Service traditionnel des plats à table'
+        parts,
+        description: parts.map(p => `${p.label} (${p.count})`).join(' • ') || 'Service traditionnel des plats à table'
       };
     }
+  });
+
+  protected readonly realDietarySummary = computed(() => {
+    const confirmedGuests = this.guests().filter(g => g.status === 'CONFIRMED');
+    const dietsMap = new Map<string, number>();
+    let guestsWithDietCount = 0;
+
+    confirmedGuests.forEach(g => {
+      let rawDiets = g.dietaryRequirements || '';
+      if (!rawDiets && g.id) {
+        const localAllergies = localStorage.getItem(`guest_${g.id}_allergies`);
+        if (localAllergies) {
+          try {
+            const arr = JSON.parse(localAllergies);
+            if (Array.isArray(arr)) rawDiets = arr.join(', ');
+          } catch (e) {}
+        }
+      }
+
+      if (rawDiets) {
+        const parts = rawDiets.split(',').map(s => s.trim()).filter(s => s.length > 0);
+        const filteredDiets = parts.filter(p => {
+          const lower = p.toLowerCase();
+          return !lower.startsWith('plat:') && 
+                 !lower.startsWith('entrée:') && 
+                 !lower.startsWith('entree:') && 
+                 !lower.startsWith('dessert:') && 
+                 !lower.startsWith('boisson:') && 
+                 !lower.startsWith('menu:') &&
+                 !lower.startsWith('message:');
+        });
+
+        if (filteredDiets.length > 0) {
+          guestsWithDietCount++;
+          filteredDiets.forEach(d => {
+            dietsMap.set(d, (dietsMap.get(d) || 0) + 1);
+          });
+        }
+      }
+    });
+
+    const breakdown: { name: string; count: number }[] = [];
+    dietsMap.forEach((count, name) => {
+      breakdown.push({ name, count });
+    });
+    breakdown.sort((a, b) => b.count - a.count);
+
+    return {
+      totalGuests: guestsWithDietCount,
+      breakdown,
+      label: breakdown.length > 0 ? breakdown.map(b => `${b.count} ${b.name}`).join(', ') : 'Aucune restriction'
+    };
   });
 
   protected readonly totalDishesSelected = computed(() => {

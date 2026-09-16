@@ -274,25 +274,36 @@
             </div>
             <div class="block-content p-3 d-flex flex-column justify-content-between">
               <div>
-                <!-- 1. Formule & Format de Restauration -->
-                <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 p-2.5 rounded bg-body-light border mb-3">
-                  <div class="d-flex align-items-center gap-2.5">
-                    <div class="rounded-circle bg-white shadow-2xs d-flex align-items-center justify-content-center text-primary flex-shrink-0" style="width: 36px; height: 36px;">
-                      <i class="fa" [ngClass]="cateringFormatDetails().icon"></i>
+                <!-- 1. Formule & Format de Restauration (Design Épuré & Haute Finition) -->
+                <div class="p-2.5 px-3 rounded-3 bg-body-light border mb-3 shadow-2xs">
+                  <!-- Ligne 1 : Titre de la formule + Total Plats -->
+                  <div class="d-flex align-items-center justify-content-between gap-2" [class.mb-2]="cateringFormatDetails().parts.length > 0">
+                    <div class="d-flex align-items-center gap-2">
+                      <div class="rounded-circle bg-white shadow-2xs d-flex align-items-center justify-content-center text-primary flex-shrink-0" style="width: 32px; height: 32px;">
+                        <i class="fa" [ngClass]="cateringFormatDetails().icon" style="font-size: 0.9rem;"></i>
+                      </div>
+                      <div>
+                        <div class="fs-xs fw-bold text-dark">{{ cateringFormatDetails().title }}</div>
+                      </div>
                     </div>
-                    <div>
-                      <div class="fs-xs fw-bold text-dark">{{ cateringFormatDetails().title }}</div>
-                      <div class="fs-3xs text-muted">{{ cateringFormatDetails().description }}</div>
-                    </div>
-                  </div>
-                  <div class="text-end">
-                    <span class="badge bg-white text-dark border fw-bold fs-xs px-2.5 py-1.5 shadow-2xs">
-                      <i class="fa fa-utensils text-primary me-1"></i>{{ menuItems().length }} plats
+                    <span class="badge bg-white text-dark border fw-bold fs-3xs px-2.5 py-1 rounded-pill shadow-2xs">
+                      <i class="fa fa-utensils text-primary me-1"></i>{{ menuItems().length }} plats au menu
                     </span>
+                  </div>
+
+                  <!-- Ligne 2 : Détails des sous-sections (Discret, typographie fine et couleur douce) -->
+                  <div class="d-flex flex-wrap align-items-center gap-2 pt-1.5 border-top" *ngIf="cateringFormatDetails().parts.length > 0">
+                    <div *ngFor="let part of cateringFormatDetails().parts; let last = last" 
+                         class="d-flex align-items-center gap-1 text-muted" style="font-size: 0.73rem;">
+                      <i class="fa text-secondary opacity-75" [ngClass]="part.icon" style="font-size: 0.68rem;"></i>
+                      <span>{{ part.label }}</span>
+                      <span class="fw-semibold text-dark">({{ part.count }})</span>
+                      <span class="text-muted opacity-40 ms-1.5" *ngIf="!last">•</span>
+                    </div>
                   </div>
                 </div>
 
-                <!-- 2. KPIs: Coût moyen / personne + Budget Traiteur + Allergies -->
+                <!-- 2. KPIs: Coût moyen / personne + Budget Traiteur + Régimes & Allergies -->
                 <div class="row g-2 text-center mb-3">
                   <!-- Coût moyen / personne -->
                   <div class="col-4 border-end">
@@ -308,14 +319,29 @@
                       <span class="fs-sm fw-bold text-success">{{ cateringBudget() > 0 ? (cateringBudget() | number:'1.2-2':'fr') : ((averageCostPerPerson() * (confirmedGuestsCount() || 1)) | number:'1.2-2':'fr') }} {{ currencySymbol() }}</span>
                     </div>
                   </div>
-                  <!-- Allergies & Alertes -->
+                  <!-- Régimes & Allergies (Détaillés et explicites) -->
                   <div class="col-4">
                     <div class="py-1">
-                      <span class="fs-3xs fw-semibold text-uppercase text-muted d-block mb-1">Allergies</span>
-                      <span class="badge rounded-pill px-2 py-1 fs-3xs" [ngClass]="dietaryGuests().length > 0 ? 'bg-danger-light text-danger border border-danger-light' : 'bg-success-light text-success border border-success-light'">
-                        <i class="fa" [ngClass]="dietaryGuests().length > 0 ? 'fa-exclamation-triangle me-1' : 'fa-check me-1'"></i>
-                        {{ dietaryGuests().length > 0 ? (dietaryGuests().length + ' à risque') : '0 alerte' }}
+                      <span class="fs-3xs fw-semibold text-uppercase text-muted d-block mb-1">Régimes & Allergies</span>
+                      
+                      <!-- Cas 1 : Aucune restriction -->
+                      <span class="badge rounded-pill px-2 py-1 fs-3xs bg-success-light text-success border border-success-light" 
+                            *ngIf="realDietarySummary().totalGuests === 0">
+                        <i class="fa fa-check me-1"></i>0 restriction
                       </span>
+
+                      <!-- Cas 2 : Présence de régimes/allergies réels déclarés -->
+                      <div *ngIf="realDietarySummary().totalGuests > 0">
+                        <span class="badge rounded-pill px-2 py-0.5 fs-3xs bg-warning-light text-dark border border-warning-subtle fw-bold"
+                              [title]="realDietarySummary().label">
+                          <i class="fa fa-shield-alt text-warning me-1"></i>{{ realDietarySummary().totalGuests }} convive(s)
+                        </span>
+                        <div class="fs-4xs text-muted text-truncate mt-0.5" 
+                             style="max-width: 140px; margin: 0 auto;" 
+                             [title]="realDietarySummary().label">
+                          {{ realDietarySummary().label }}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
