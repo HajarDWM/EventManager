@@ -56,6 +56,10 @@ export const routes: Routes = [
     component: GuestRsvp
   },
   {
+    path: 'template-preview-frame',
+    loadComponent: () => import('./features/template-preview-frame/template-preview-frame').then(m => m.TemplatePreviewFrame)
+  },
+  {
     path: 'client/login',
     component: ClientLogin
   },

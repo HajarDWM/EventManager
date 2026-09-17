@@ -8,8 +8,196 @@
   @media (max-width: 575.98px) {
     padding-left: 8px !important;
     padding-right: 8px !important;
-    padding-top: 32px !important;
+    padding-top: 58px !important;
     padding-bottom: 32px !important;
+  }
+
+  &.card-only-mobile-mode {
+    min-height: 100% !important;
+    height: auto !important;
+    padding: 20px 10px !important;
+    position: relative !important;
+    overflow-y: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+
+    .mobile-luxury-bg-wallpaper {
+      position: absolute !important;
+      inset: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      display: block !important;
+      z-index: 0 !important;
+      background-size: cover !important;
+      background-position: center !important;
+    }
+
+    .guest-particles-stage {
+      position: absolute !important;
+      inset: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      z-index: 1 !important;
+      pointer-events: none !important;
+    }
+
+    .invitation-outer-container {
+      max-width: 100% !important;
+      width: 100% !important;
+      margin: 0 auto !important;
+      position: relative !important;
+      z-index: 2 !important;
+    }
+
+    .floating-music-widget {
+      position: relative !important;
+      margin: 0 auto 14px !important;
+      display: flex !important;
+      justify-content: center !important;
+      z-index: 3 !important;
+    }
+
+    .luxury-card {
+      width: 100% !important;
+      max-width: 100% !important;
+      margin: 0 auto !important;
+      border-radius: 18px !important;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45) !important;
+      overflow: hidden !important;
+      background-color: var(--card-mobile-bg, rgba(15, 23, 42, 0.75)) !important;
+      backdrop-filter: blur(12px) !important;
+      -webkit-backdrop-filter: blur(12px) !important;
+    }
+
+    .luxury-inner-border {
+      margin: 6px !important;
+      padding: 20px 12px !important;
+      border-radius: 14px !important;
+      background: transparent !important;
+    }
+
+    .invitation-dynamic-text-overlay {
+      width: 100% !important;
+      max-width: 100% !important;
+      margin: 0 auto !important;
+    }
+
+    .invitation-header-tag {
+      margin-bottom: 2px !important;
+      .luxury-subtitle {
+        font-size: 1.25rem !important;
+        line-height: 1.2 !important;
+      }
+    }
+
+    .invitation-main-title {
+      font-size: 1.9rem !important;
+      line-height: 1.2 !important;
+      margin-bottom: 12px !important;
+      letter-spacing: 1.5px !important;
+    }
+
+    .invitation-guest-salutation {
+      width: 100% !important;
+      max-width: 100% !important;
+      padding: 10px 12px !important;
+      margin: 0 auto 14px !important;
+      border-radius: 12px !important;
+      background: rgba(255, 255, 255, 0.05) !important;
+      border: 1px solid var(--primary-color, rgba(212, 175, 55, 0.35)) !important;
+
+      .salutation-guest-text {
+        font-size: 1rem !important;
+      }
+
+      .salutation-invitation-message {
+        font-size: 0.92rem !important;
+        line-height: 1.45 !important;
+      }
+    }
+
+    .artistic-invitation-details {
+      display: grid !important;
+      grid-template-columns: 1fr 1fr !important;
+      gap: 8px !important;
+      width: 100% !important;
+      margin-bottom: 14px !important;
+    }
+
+    .artistic-detail-card {
+      min-height: 125px !important;
+      padding: 10px 6px !important;
+      border-radius: 14px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: space-between !important;
+      align-items: center !important;
+      background: rgba(255, 255, 255, 0.05) !important;
+      border: 1px solid var(--primary-color, rgba(212, 175, 55, 0.35)) !important;
+
+      .detail-card-icon-circle {
+        width: 32px !important;
+        height: 32px !important;
+        min-width: 32px !important;
+        font-size: 0.85rem !important;
+        border-radius: 50% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        margin: 0 auto 4px !important;
+      }
+
+      .hero-event-day-number {
+        font-size: 2rem !important;
+        line-height: 1 !important;
+        margin: 2px 0 !important;
+      }
+
+      .event-card-day-label,
+      .event-card-month-label {
+        font-size: 0.7rem !important;
+        font-weight: 700 !important;
+      }
+
+      .detail-card-subtitle {
+        font-size: 0.62rem !important;
+        letter-spacing: 1px !important;
+      }
+
+      .detail-card-main-title {
+        font-size: 0.82rem !important;
+      }
+
+      .detail-card-bottom-info {
+        font-size: 0.7rem !important;
+      }
+    }
+
+    .page1-actions-container {
+      display: block !important;
+      margin-top: 14px !important;
+
+      .page1-decision-buttons {
+        display: flex !important;
+        gap: 8px !important;
+        justify-content: center !important;
+
+        .btn-decision-accept,
+        .btn-decision-decline {
+          padding: 8px 16px !important;
+          font-size: 0.85rem !important;
+          border-radius: 20px !important;
+          font-weight: 700 !important;
+        }
+      }
+
+      .btn-discover-first {
+        font-size: 0.8rem !important;
+        padding: 4px 10px !important;
+      }
+    }
   }
 
   /* --- OR ET VELOURS THEME (Dynamic Admin Customizations) --- */

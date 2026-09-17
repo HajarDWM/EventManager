@@ -1,4 +1,5 @@
 <div class="rsvp-luxury-wrapper py-5 px-3 d-flex align-items-center justify-content-center position-relative"
+  [class.card-only-mobile-mode]="cardOnlyMode"
   [class.fleurs-de-coton-theme]="resolvedTemplateId === 'fleurs-de-coton'"
   [class.or-et-velours-theme]="resolvedTemplateId === 'or-et-velours'"
   [class.corporate-professional-theme]="resolvedTemplateId === 'corporate-professional'"
@@ -124,6 +125,7 @@
 
     <!-- Floating Audio Player Widget (Positioned directly above the card) -->
     <div class="floating-music-widget animate__animated animate__fadeIn" [class.is-playing]="isMusicPlaying()"
+      *ngIf="guest()?.templateMusicUrl"
       (click)="toggleMusic()"
       [attr.aria-label]="isMusicPlaying() ? 'Mettre la musique en pause' : 'Lancer la musique d\'ambiance'">
 

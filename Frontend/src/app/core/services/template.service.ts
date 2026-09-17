@@ -1,6 +1,7 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, shareReplay, tap } from 'rxjs';
+import { MainCategoryInfo, TEMPLATE_TAXONOMY, getCategoryTaxonomy, getAllSubcategoriesForCategory } from '../constants/template-taxonomy.constants';
 
 export interface DigitalTemplate {
   id?: number;
@@ -40,7 +41,63 @@ export class TemplateService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = '/api/admin/templates';
   private readonly sharedUrl = '/api/templates';
+  private readonly STORAGE_KEY_CUSTOM_CATEGORIES = 'custom_template_categories';
+
   private cachedTemplates$: Observable<DigitalTemplate[]> | null = null;
+
+  // Reactive Categories Signal (Built-in + Admin Custom Categories)
+  public readonly categories = signal<MainCategoryInfo[]>(this.loadInitialCategories());
+
+  private loadInitialCategories(): MainCategoryInfo[] {
+    const list: MainCategoryInfo[] = [...TEMPLATE_TAXONOMY];
+    try {
+      const stored = localStorage.getItem(this.STORAGE_KEY_CUSTOM_CATEGORIES);
+      if (stored) {
+        const parsed: MainCategoryInfo[] = JSON.parse(stored);
+        parsed.forEach(c => {
+          const index = list.findIndex(item => item.id === c.id);
+          if (index > -1) {
+            list[index] = c;
+          } else {
+            list.push(c);
+          }
+        });
+      }
+    } catch (e) {
+      console.warn('Erreur lors du chargement des catégories personnalisées', e);
+    }
+    return list;
+  }
+
+  private saveCustomCategories(categories: MainCategoryInfo[]): void {
+    // Only persist categories that differ from or extend the built-in defaults
+    const customOnly = categories.filter(c => !TEMPLATE_TAXONOMY.some(t => t.id === c.id) || 
+      JSON.stringify(c) !== JSON.stringify(TEMPLATE_TAXONOMY.find(t => t.id === c.id)));
+    localStorage.setItem(this.STORAGE_KEY_CUSTOM_CATEGORIES, JSON.stringify(customOnly));
+    this.categories.set([...categories]);
+  }
+
+  public addCategory(cat: MainCategoryInfo): void {
+    const current = this.categories();
+    const updated = [...current, cat];
+    this.saveCustomCategories(updated);
+  }
+
+  public updateCategory(id: string, updatedCat: MainCategoryInfo): void {
+    const current = this.categories();
+    const index = current.findIndex(c => c.id === id);
+    if (index > -1) {
+      const copy = [...current];
+      copy[index] = updatedCat;
+      this.saveCustomCategories(copy);
+    }
+  }
+
+  public deleteCategory(id: string): void {
+    const current = this.categories();
+    const filtered = current.filter(c => c.id !== id);
+    this.saveCustomCategories(filtered);
+  }
 
   public getTemplates(forceRefresh = false): Observable<DigitalTemplate[]> {
     if (!this.cachedTemplates$ || forceRefresh) {

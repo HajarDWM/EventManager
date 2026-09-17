@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, signal, inject, computed, Input } from '@angular/core';
+import { Component, OnInit, OnDestroy, OnChanges, SimpleChanges, signal, inject, computed, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
@@ -66,11 +66,12 @@ export interface PublicRsvpDetail {
   templateUrl: './guest-rsvp.html',
   styleUrls: ['./guest-rsvp.scss']
 })
-export class GuestRsvp implements OnInit, OnDestroy {
+export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
   private readonly route = inject(ActivatedRoute);
   private readonly http = inject(HttpClient);
 
   @Input() previewMode: boolean = false;
+  @Input() cardOnlyMode: boolean = false;
   @Input() previewData?: PublicRsvpDetail | null;
 
   protected readonly guest = signal<PublicRsvpDetail | null>(null);
@@ -80,6 +81,7 @@ export class GuestRsvp implements OnInit, OnDestroy {
   protected readonly errorMessage = signal('');
   protected readonly isFullMenuModalOpen = signal(false);
   protected readonly isMenuRsvpOpen = signal(false);
+  public readonly currentRsvpStep = signal<number>(0);
   protected readonly isDeclineModalOpen = signal(false);
   public declineMessage = '';
   protected readonly isPaymentModalOpen = signal(false);
@@ -1165,16 +1167,39 @@ export class GuestRsvp implements OnInit, OnDestroy {
     return this.guest()?.templateBackgroundImageDesktopUrl || this.resolvedBackgroundImage;
   }
 
+  public ngOnChanges(changes: SimpleChanges): void {
+    if (changes['previewData'] && this.previewMode && this.previewData) {
+      this.guest.set(this.previewData);
+      this.status.set(this.previewData.guestStatus || 'PENDING');
+      this.attendanceStatus = this.previewData.guestStatus !== 'DECLINED';
+      this.isInvitationOpened.set(true);
+
+      if (this.previewData.guestStatus === 'DECLINED') {
+        this.selectedAttendanceChoice.set('DECLINED');
+        this.isSuccess.set(true);
+      } else if (this.previewData.guestStatus === 'CONFIRMED') {
+        this.selectedAttendanceChoice.set('CONFIRMED');
+        this.isSuccess.set(true);
+      }
+      
+      if (this.previewData.menuItems) {
+        this.starters.set(this.previewData.menuItems.filter(item => item.category === 'STARTER' || item.category === 'BUFFET_STARTER'));
+        this.mainDishes.set(this.previewData.menuItems.filter(item => item.category === 'MAIN' || item.category === 'BUFFET_MAIN'));
+        this.beverages.set(this.previewData.menuItems.filter(item => item.category === 'BEVERAGE'));
+        this.desserts.set(this.previewData.menuItems.filter(item => item.category === 'DESSERT' || item.category === 'BUFFET_DESSERT'));
+      }
+      
+      this.isLoading.set(false);
+    }
+  }
+
   public ngOnInit(): void {
     if (this.previewMode && this.previewData) {
       console.log('Running in Preview Mode', this.previewData);
       this.guest.set(this.previewData);
       this.status.set(this.previewData.guestStatus || 'PENDING');
       this.attendanceStatus = this.previewData.guestStatus !== 'DECLINED';
-      
-      const anim = this.previewData.openingAnimation;
-      const isInteractive = !!anim && ['envelope-wax', 'ribbon-cut', 'curtain-unveil', 'sliding-doors', 'vip-badge'].includes(anim);
-      this.isInvitationOpened.set(!isInteractive);
+      this.isInvitationOpened.set(true);
 
       if (this.previewData.guestStatus === 'DECLINED') {
         this.selectedAttendanceChoice.set('DECLINED');
@@ -1374,8 +1399,6 @@ export class GuestRsvp implements OnInit, OnDestroy {
       }
     });
   }
-
-  public readonly currentRsvpStep = signal<number>(0);
 
   public goToNextStep(): void {
     const mode = this.cateringMode();

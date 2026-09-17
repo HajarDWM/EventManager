@@ -274,79 +274,82 @@
             </div>
             <div class="block-content p-3 d-flex flex-column justify-content-between">
               <div>
-                <!-- 1. Formule & Format de Restauration (Design Épuré & Haute Finition) -->
-                <div class="p-2 px-2.5 rounded-3 bg-body-light border mb-2 shadow-2xs">
-                  <!-- Ligne 1 : Titre de la formule + Total Plats -->
-                  <div class="d-flex align-items-center justify-content-between gap-2" [class.mb-1.5]="cateringFormatDetails().parts.length > 0">
-                    <div class="d-flex align-items-center gap-2">
-                      <div class="rounded-circle bg-white shadow-2xs d-flex align-items-center justify-content-center text-primary flex-shrink-0" style="width: 28px; height: 28px;">
-                        <i class="fa" [ngClass]="cateringFormatDetails().icon" style="font-size: 0.8rem;"></i>
+                <!-- 1. Formule & Format de Restauration (Design Épuré & Agrandie avec KPIs intégrés) -->
+                <div class="p-2.5 px-3 rounded-3 bg-body-light border mb-3 shadow-2xs">
+                  <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+                    <!-- Formule + Total plats -->
+                    <div class="d-flex align-items-center gap-2.5">
+                      <div class="rounded-circle bg-white shadow-2xs d-flex align-items-center justify-content-center text-primary flex-shrink-0" style="width: 36px; height: 36px;">
+                        <i class="fa" [ngClass]="cateringFormatDetails().icon" style="font-size: 0.95rem;"></i>
                       </div>
-                      <div>
-                        <div class="fs-xs fw-bold text-dark">{{ cateringFormatDetails().title }}</div>
+                      <div class="d-flex align-items-center gap-2 flex-wrap">
+                        <span class="fs-sm fw-bold text-dark">{{ cateringFormatDetails().title }}</span>
+                        <span class="badge bg-white text-dark border fw-semibold fs-3xs px-2 py-1 rounded-pill shadow-2xs">
+                          <i class="fa fa-utensils text-primary me-1"></i>{{ menuItems().length }} plats
+                        </span>
                       </div>
                     </div>
-                    <span class="badge bg-white text-dark border fw-bold fs-3xs px-2 py-0.5 rounded-pill shadow-2xs">
-                      <i class="fa fa-utensils text-primary me-1"></i>{{ menuItems().length }} plats au menu
-                    </span>
-                  </div>
 
-                  <!-- Ligne 2 : Détails des sous-sections (Discret, typographie fine et couleur douce) -->
-                  <div class="d-flex flex-wrap align-items-center gap-2 pt-1 border-top" *ngIf="cateringFormatDetails().parts.length > 0">
-                    <div *ngFor="let part of cateringFormatDetails().parts; let last = last" 
-                         class="d-flex align-items-center gap-1 text-muted" style="font-size: 0.72rem;">
-                      <i class="fa text-secondary opacity-75" [ngClass]="part.icon" style="font-size: 0.65rem;"></i>
-                      <span>{{ part.label }}</span>
-                      <span class="fw-semibold text-dark">({{ part.count }})</span>
-                      <span class="text-muted opacity-40 ms-1.5" *ngIf="!last">•</span>
+                    <!-- Badges Financiers Agrandis : Coût / convive + Budget -->
+                    <div class="d-flex align-items-center gap-2 flex-wrap ms-auto">
+                      <div class="badge bg-white text-dark border px-2.5 py-1.5 rounded-pill shadow-2xs d-flex align-items-center gap-1" title="Coût moyen par convive">
+                        <span class="text-muted text-uppercase fw-semibold" style="font-size: 0.7rem;">Coût :</span>
+                        <span class="fs-xs fw-bold text-primary">{{ averageCostPerPerson() | number:'1.2-2':'fr' }} {{ currencySymbol() }}</span>
+                      </div>
+                      <div class="badge bg-white text-dark border px-2.5 py-1.5 rounded-pill shadow-2xs d-flex align-items-center gap-1" title="Budget traiteur estimé">
+                        <span class="text-muted text-uppercase fw-semibold" style="font-size: 0.7rem;">Budget :</span>
+                        <span class="fs-xs fw-bold text-success">{{ cateringBudget() > 0 ? (cateringBudget() | number:'1.2-2':'fr') : ((averageCostPerPerson() * (confirmedGuestsCount() || 1)) | number:'1.2-2':'fr') }} {{ currencySymbol() }}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                <!-- 2. KPIs: Coût moyen / personne + Budget Traiteur -->
-                <div class="row g-1 text-center mb-2.5">
-                  <!-- Coût moyen / personne -->
-                  <div class="col-6 border-end">
-                    <div class="py-1 px-1">
-                      <span class="fs-3xs fw-semibold text-uppercase text-muted d-block mb-0.5">Coût / Convive</span>
-                      <span class="fs-xs fw-bold text-primary">{{ averageCostPerPerson() | number:'1.2-2':'fr' }} {{ currencySymbol() }}</span>
+                <!-- 2. Interactive Diet Filter Cards Strip (Auto-expanding balanced flex cards, style Invités) -->
+                <div class="d-flex flex-wrap gap-2 mb-3 text-center" *ngIf="realDietarySummary().breakdown.length > 0">
+                  <!-- TOUS -->
+                  <div class="flex-fill rounded-3 py-2 px-1.5 cursor-pointer transition-all border d-flex flex-column justify-content-between shadow-2xs"
+                       style="min-width: 85px;"
+                       (click)="setMealDietFilter('ALL')"
+                       [style.cursor]="'pointer'"
+                       [class.bg-primary]="selectedMealDietFilter() === 'ALL'"
+                       [class.text-white]="selectedMealDietFilter() === 'ALL'"
+                       [class.border-primary]="selectedMealDietFilter() === 'ALL'"
+                       [class.shadow-xs]="selectedMealDietFilter() === 'ALL'"
+                       [class.bg-body-light]="selectedMealDietFilter() !== 'ALL'"
+                       [class.text-dark]="selectedMealDietFilter() !== 'ALL'"
+                       title="Afficher tous les plats">
+                    <div class="mb-1">
+                      <span class="fs-xs fw-semibold" style="font-size: 0.75rem;">Tous</span>
                     </div>
-                  </div>
-                  <!-- Budget Traiteur Est. -->
-                  <div class="col-6">
-                    <div class="py-1 px-1">
-                      <span class="fs-3xs fw-semibold text-uppercase text-muted d-block mb-0.5">Budget Traiteur</span>
-                      <span class="fs-xs fw-bold text-success">{{ cateringBudget() > 0 ? (cateringBudget() | number:'1.2-2':'fr') : ((averageCostPerPerson() * (confirmedGuestsCount() || 1)) | number:'1.2-2':'fr') }} {{ currencySymbol() }}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- 3. Interactive Diet Filter Buttons Strip (Style propre et aéré comme Invités) -->
-                <div class="d-flex flex-wrap align-items-center gap-2 mb-2.5" *ngIf="realDietarySummary().breakdown.length > 0">
-                  <button type="button"
-                          class="btn btn-sm rounded-pill px-3 py-1 fs-xs fw-semibold border transition-all d-flex align-items-center gap-1.5 shadow-2xs"
-                          [ngClass]="selectedMealDietFilter() === 'ALL' ? 'btn-primary text-white border-primary shadow-xs' : 'bg-body-light text-dark'"
-                          (click)="setMealDietFilter('ALL')">
-                    <i class="fa fa-utensils fs-xs" [ngClass]="selectedMealDietFilter() === 'ALL' ? 'text-white' : 'text-primary'"></i>
-                    <span>Tous</span>
-                    <span class="badge rounded-pill ms-0.5 px-1.5 py-0.5 fs-3xs fw-bold"
-                          [ngClass]="selectedMealDietFilter() === 'ALL' ? 'bg-white text-primary' : 'bg-body-dark text-dark'">
+                    <div class="fs-sm fw-bold"
+                         [class.text-white]="selectedMealDietFilter() === 'ALL'"
+                         [class.text-primary]="selectedMealDietFilter() !== 'ALL'">
                       {{ confirmedGuestsCount() }}
-                    </span>
-                  </button>
+                    </div>
+                  </div>
 
-                  <button *ngFor="let diet of realDietarySummary().breakdown"
-                          type="button"
-                          class="btn btn-sm rounded-pill px-3 py-1 fs-xs fw-semibold border transition-all d-flex align-items-center gap-1.5 shadow-2xs"
-                          [ngClass]="selectedMealDietFilter() === diet.name ? 'btn-primary text-white border-primary shadow-xs' : 'bg-body-light text-dark'"
-                          (click)="setMealDietFilter(diet.name)">
-                    <i class="fa {{ getDietIcon(diet.name) }} fs-xs" [ngClass]="selectedMealDietFilter() === diet.name ? 'text-white' : 'text-primary'"></i>
-                    <span>{{ diet.name }}</span>
-                    <span class="badge rounded-pill ms-0.5 px-1.5 py-0.5 fs-3xs fw-bold"
-                          [ngClass]="selectedMealDietFilter() === diet.name ? 'bg-white text-primary' : 'bg-body-dark text-dark'">
+                  <!-- Dynamic Diet Cards -->
+                  <div *ngFor="let diet of realDietarySummary().breakdown"
+                       class="flex-fill rounded-3 py-2 px-1.5 cursor-pointer transition-all border d-flex flex-column justify-content-between shadow-2xs"
+                       style="min-width: 85px;"
+                       (click)="setMealDietFilter(diet.name)"
+                       [style.cursor]="'pointer'"
+                       [class.bg-primary]="selectedMealDietFilter() === diet.name"
+                       [class.text-white]="selectedMealDietFilter() === diet.name"
+                       [class.border-primary]="selectedMealDietFilter() === diet.name"
+                       [class.shadow-xs]="selectedMealDietFilter() === diet.name"
+                       [class.bg-body-light]="selectedMealDietFilter() !== diet.name"
+                       [class.text-dark]="selectedMealDietFilter() !== diet.name"
+                       [title]="diet.name + ' (' + diet.count + ')'">
+                    <div class="mb-1">
+                      <span class="fs-xs fw-semibold" style="font-size: 0.72rem; line-height: 1.15;">{{ diet.name }}</span>
+                    </div>
+                    <div class="fs-sm fw-bold"
+                         [class.text-white]="selectedMealDietFilter() === diet.name"
+                         [class.text-dark]="selectedMealDietFilter() !== diet.name">
                       {{ diet.count }}
-                    </span>
-                  </button>
+                    </div>
+                  </div>
                 </div>
 
                 <!-- Empty State -->

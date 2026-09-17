@@ -2,6 +2,7 @@ import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { forkJoin } from 'rxjs';
 import { EventService } from '../../services/event.service';
 import { TemplateService, DigitalTemplate } from '../../../../core/services/template.service';
@@ -14,6 +15,7 @@ import {
   SubCategoryInfo, 
   getCategoryTaxonomy 
 } from '../../../../core/constants/template-taxonomy.constants';
+import { GuestRsvp, PublicRsvpDetail } from '../guest-rsvp/guest-rsvp';
 
 export interface DietaryTag {
   label: string;
@@ -65,6 +67,7 @@ export class OrganiserInvitationSetup implements OnInit {
   private readonly templateService = inject(TemplateService);
   private readonly guestService = inject(GuestService);
   private readonly catererService = inject(CatererService);
+  private readonly sanitizer = inject(DomSanitizer);
 
   protected readonly event = signal<Event | null>(null);
   protected readonly templates = signal<DigitalTemplate[]>([]);
@@ -93,23 +96,24 @@ export class OrganiserInvitationSetup implements OnInit {
   protected readonly errorMessage = signal('');
 
   // Taxonomy & Filters
-  protected readonly taxonomy = TEMPLATE_TAXONOMY;
+  protected readonly taxonomy = computed(() => this.templateService.categories());
   protected readonly selectedCategory = signal<string>('TRADITIONAL');
   protected readonly selectedSubCategory = signal<string>('ALL');
 
-  protected readonly currentMainCategoryInfo = computed(() => getCategoryTaxonomy(this.selectedCategory()));
+  protected readonly currentMainCategoryInfo = computed(() => getCategoryTaxonomy(this.selectedCategory(), this.taxonomy()));
   protected readonly availableSubCategoriesForFilter = computed(() => this.currentMainCategoryInfo()?.subCategories || []);
 
   // Filtered templates
   protected readonly filteredTemplates = computed(() => {
     const cat = this.selectedCategory();
     const sub = this.selectedSubCategory();
-    const mainCat = getCategoryTaxonomy(cat);
+    const allTaxonomy = this.taxonomy();
+    const mainCat = getCategoryTaxonomy(cat, allTaxonomy);
     
     let list = this.templates();
     if (mainCat) {
       list = list.filter(t => {
-        const tMain = getCategoryTaxonomy(t.category);
+        const tMain = getCategoryTaxonomy(t.category, allTaxonomy);
         return tMain?.id === mainCat.id || t.category === mainCat.name;
       });
     }
@@ -125,6 +129,159 @@ export class OrganiserInvitationSetup implements OnInit {
   protected readonly isModalOpen = signal(false);
   protected readonly selectedTemplate = signal<DigitalTemplate | null>(null);
 
+  // Dedicated Template Preview Modal State
+  protected readonly isPreviewModalOpen = signal(false);
+  protected readonly previewTemplate = signal<DigitalTemplate | null>(null);
+  protected readonly previewDevice = signal<'MOBILE' | 'DESKTOP'>('MOBILE');
+
+  protected openTemplatePreview(template: DigitalTemplate): void {
+    this.previewTemplate.set(template);
+    this.previewDevice.set('MOBILE');
+    this.isPreviewModalOpen.set(true);
+  }
+
+  protected setPreviewDevice(device: 'MOBILE' | 'DESKTOP'): void {
+    this.previewDevice.set(device);
+  }
+
+  protected closeTemplatePreview(): void {
+    this.isPreviewModalOpen.set(false);
+    this.previewTemplate.set(null);
+  }
+
+  protected chooseFromPreview(): void {
+    const tpl = this.previewTemplate();
+    this.closeTemplatePreview();
+    if (tpl) {
+      this.selectTemplate(tpl);
+    }
+  }
+
+  protected readonly templatePreviewData = computed<PublicRsvpDetail | null>(() => {
+    const tpl = this.previewTemplate();
+    const ev = this.event();
+    if (!tpl) return null;
+
+    const baseDate = ev?.invitationDate || ev?.eventDate || new Date().toISOString();
+    const baseLocation = ev?.invitationLocation || ev?.location || 'Casablanca, Maroc';
+    const baseTitle = ev?.invitationTitle || ev?.title || tpl.title || 'Notre Célébration';
+    const baseSubtitle = ev?.invitationSubtitle || tpl.subCategory || tpl.category || 'Invitation Officielle';
+
+    return {
+      guestId: 0,
+      guestName: 'Amine Idrissi',
+      guestEmail: 'invite@example.com',
+      guestPhone: '+212 600 000 000',
+      guestStatus: 'PENDING',
+      tableNumber: 'Table d\'Honneur',
+      dietaryRequirements: '',
+      eventId: ev?.id || 0,
+      eventTitle: ev?.title || tpl.title,
+      eventDate: baseDate,
+      eventLocation: baseLocation,
+      locationMapUrl: ev?.locationMapUrl || undefined,
+      digitalTemplateId: tpl.id,
+      templateId: tpl.templateKey || (tpl.id === 1 ? 'fleurs-de-coton' : (tpl.id === 2 ? 'or-et-velours' : (tpl.id === 3 ? 'corporate-professional' : 'fleurs-de-coton'))),
+      templateTitle: tpl.title,
+      templateCategory: tpl.category,
+      decorativeFrame: tpl.decorativeFrame || 'gold-border',
+      accentColor: tpl.accentColor || '#d4af37',
+      backgroundColor: tpl.backgroundColor || '#fdfbf7',
+      templateBackgroundImageUrl: tpl.backgroundImageUrl || tpl.imageUrl || undefined,
+      templateBackgroundImageDesktopUrl: tpl.backgroundImageDesktopUrl || tpl.backgroundImageUrl || tpl.imageUrl || undefined,
+      primaryFont: tpl.primaryFont || 'Alex Brush',
+      primaryFontSize: tpl.primaryFontSize || '2.8rem',
+      secondaryFont: tpl.secondaryFont || 'Cinzel',
+      secondaryFontSize: tpl.secondaryFontSize || '0.9rem',
+      secondaryFontColor: tpl.secondaryFontColor || '#1e293b',
+      templateMusicUrl: tpl.musicUrl || '/assets/music/gala-ambient.mp3',
+      openingAnimation: tpl.openingAnimation || 'none',
+      visualParticles: tpl.visualParticles && tpl.visualParticles !== 'none' ? tpl.visualParticles : 'confetti',
+      invitationTitle: baseTitle,
+      invitationSubtitle: baseSubtitle,
+      invitationDate: baseDate,
+      invitationLocation: baseLocation,
+      parkingLocation: ev?.parkingLocation || 'Parking VIP disponible',
+      mealType: ev?.mealType || 'PLATS_FIXES',
+      isPaidEvent: ev?.isPaidEvent,
+      ticketPrice: ev?.ticketPrice,
+      currency: ev?.currency,
+      paymentStatus: 'UNPAID',
+      paidAmount: 0
+    };
+  });
+
+  protected readonly studioLivePreviewData = computed<PublicRsvpDetail | null>(() => {
+    const tpl = this.selectedTemplate();
+    const ev = this.event();
+    if (!tpl) return null;
+
+    let combinedDate = ev?.invitationDate || ev?.eventDate || new Date().toISOString();
+    if (this.invitationDateStr) {
+      try {
+        const timePart = this.invitationTimeStr || '19:00';
+        combinedDate = new Date(`${this.invitationDateStr}T${timePart}:00`).toISOString();
+      } catch (e) {}
+    }
+
+    return {
+      guestId: 0,
+      guestName: 'Amine Idrissi',
+      guestEmail: 'invite@example.com',
+      guestPhone: '+212 600 000 000',
+      guestStatus: 'PENDING',
+      tableNumber: 'Table d\'Honneur',
+      dietaryRequirements: '',
+      eventId: ev?.id || 0,
+      eventTitle: this.invitationTitle || ev?.title || tpl.title,
+      eventDate: combinedDate,
+      eventLocation: this.invitationLocation || ev?.location || 'Casablanca, Maroc',
+      locationMapUrl: ev?.locationMapUrl || undefined,
+      digitalTemplateId: tpl.id,
+      templateId: tpl.templateKey || (tpl.id === 1 ? 'fleurs-de-coton' : (tpl.id === 2 ? 'or-et-velours' : (tpl.id === 3 ? 'corporate-professional' : 'fleurs-de-coton'))),
+      templateTitle: tpl.title,
+      templateCategory: tpl.category,
+      decorativeFrame: tpl.decorativeFrame || 'gold-border',
+      accentColor: tpl.accentColor || '#d4af37',
+      backgroundColor: tpl.backgroundColor || '#fdfbf7',
+      templateBackgroundImageUrl: tpl.backgroundImageUrl || tpl.imageUrl || undefined,
+      templateBackgroundImageDesktopUrl: tpl.backgroundImageDesktopUrl || tpl.backgroundImageUrl || tpl.imageUrl || undefined,
+      primaryFont: tpl.primaryFont || 'Alex Brush',
+      primaryFontSize: tpl.primaryFontSize || '2.8rem',
+      secondaryFont: tpl.secondaryFont || 'Cinzel',
+      secondaryFontSize: tpl.secondaryFontSize || '0.9rem',
+      secondaryFontColor: tpl.secondaryFontColor || '#1e293b',
+      templateMusicUrl: tpl.musicUrl || '/assets/music/gala-ambient.mp3',
+      openingAnimation: tpl.openingAnimation || 'none',
+      visualParticles: tpl.visualParticles && tpl.visualParticles !== 'none' ? tpl.visualParticles : 'confetti',
+      invitationTitle: this.invitationTitle || ev?.title || tpl.title,
+      invitationSubtitle: this.invitationSubtitle || tpl.subCategory || 'Invitation Officielle',
+      invitationDate: combinedDate,
+      invitationLocation: this.invitationLocation || ev?.location || 'Casablanca, Maroc',
+      parkingLocation: this.invitationParking || 'Parking VIP disponible',
+      mealType: ev?.mealType || 'PLATS_FIXES',
+      isPaidEvent: ev?.isPaidEvent,
+      ticketPrice: ev?.ticketPrice,
+      currency: ev?.currency,
+      paymentStatus: 'UNPAID',
+      paidAmount: 0
+    };
+  });
+
+  protected readonly modalPreviewIframeUrl = computed<SafeResourceUrl | null>(() => {
+    const data = this.templatePreviewData();
+    if (!data) return null;
+    sessionStorage.setItem('active_template_preview_data', JSON.stringify(data));
+    return this.sanitizer.bypassSecurityTrustResourceUrl(`/template-preview-frame?templateId=${data.digitalTemplateId || 0}`);
+  });
+
+  protected readonly studioLivePreviewIframeUrl = computed<SafeResourceUrl | null>(() => {
+    const data = this.studioLivePreviewData();
+    if (!data) return null;
+    sessionStorage.setItem('active_template_preview_data', JSON.stringify(data));
+    return this.sanitizer.bypassSecurityTrustResourceUrl(`/template-preview-frame?templateId=${data.digitalTemplateId || 0}`);
+  });
+
   // Customized invitation fields
   protected invitationTitle = '';
   protected invitationSubtitle = '';
@@ -138,10 +295,28 @@ export class OrganiserInvitationSetup implements OnInit {
   protected readonly invitationLink = signal<string>('');
   protected isCopied = false;
 
+  protected copyLink(): void {
+    const link = this.invitationLink();
+    if (!link) return;
+    navigator.clipboard.writeText(link).then(() => {
+      this.isCopied = true;
+      setTimeout(() => {
+        this.isCopied = false;
+      }, 2500);
+    });
+  }
+
   // Guest Journey Modal State
   protected readonly selectedJourneyGuest = signal<Guest | null>(null);
   protected readonly isJourneyModalOpen = signal<boolean>(false);
   protected readonly copiedJourneyLinkId = signal<number | null>(null);
+
+  protected testGuestInvitation(guest: Guest): void {
+    const tokenOrId = (guest as any).invitationToken || guest.id;
+    if (tokenOrId) {
+      window.open(`/rsvp/${tokenOrId}`, '_blank');
+    }
+  }
 
   protected openGuestJourney(guest: Guest): void {
     this.selectedJourneyGuest.set(guest);
@@ -508,19 +683,29 @@ export class OrganiserInvitationSetup implements OnInit {
     this.invitationSubtitle = subtitle;
   }
 
+  public getTemplateCountForCategory(catId: string): number {
+    const allTaxonomy = this.taxonomy();
+    const mainCat = getCategoryTaxonomy(catId, allTaxonomy);
+    if (!mainCat) return 0;
+    return this.templates().filter(t => {
+      const tMain = getCategoryTaxonomy(t.category, allTaxonomy);
+      return tMain?.id === mainCat.id || t.category === mainCat.name;
+    }).length;
+  }
+
   public getMainCategoryBadgeClass(category: string): string {
-    const tax = getCategoryTaxonomy(category);
+    const tax = getCategoryTaxonomy(category, this.taxonomy());
     return tax ? tax.badgeClass : 'bg-secondary-subtle text-secondary';
   }
 
   public getMainCategoryIcon(category: string): string {
-    const tax = getCategoryTaxonomy(category);
+    const tax = getCategoryTaxonomy(category, this.taxonomy());
     return tax ? tax.icon : 'fa-tag';
   }
 
   public getSubCategoryIcon(category: string, subCategory?: string): string {
     if (!subCategory) return 'fa-folder';
-    const tax = getCategoryTaxonomy(category);
+    const tax = getCategoryTaxonomy(category, this.taxonomy());
     const sub = tax?.subCategories.find(s => s.name.toLowerCase() === subCategory.toLowerCase());
     return sub ? sub.icon : 'fa-star';
   }
@@ -649,6 +834,23 @@ export class OrganiserInvitationSetup implements OnInit {
     this.isModalOpen.set(false);
   }
 
+  protected formatPreviewDate(): string {
+    if (!this.invitationDateStr) return 'Date de la réception';
+    try {
+      const d = new Date(this.invitationDateStr + 'T00:00:00');
+      return d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    } catch {
+      return this.invitationDateStr;
+    }
+  }
+
+  protected getTemplateAccentColor(template?: DigitalTemplate | null): string {
+    if (!template) return '#4f46e5';
+    if (template.accentColor) return template.accentColor;
+    const tax = getCategoryTaxonomy(template.category, this.taxonomy());
+    return tax?.colorAccent || '#4f46e5';
+  }
+
   protected saveSetup(): void {
     const evt = this.event();
     const template = this.selectedTemplate();
@@ -732,6 +934,30 @@ export class OrganiserInvitationSetup implements OnInit {
     this.selectedGuestIds.set(selection);
   }
 
+  protected selectOnlyUnsent(): void {
+    const selection: Record<number, boolean> = {};
+    this.guests().forEach(g => {
+      if (g.id) {
+        selection[g.id] = !(g.isSent === true || g.invitationStatus === 'SENT');
+      }
+    });
+    this.selectedGuestIds.set(selection);
+  }
+
+  protected selectAll(): void {
+    const selection: Record<number, boolean> = {};
+    this.guests().forEach(g => {
+      if (g.id) {
+        selection[g.id] = true;
+      }
+    });
+    this.selectedGuestIds.set(selection);
+  }
+
+  protected openBatchPaperModal(): void {
+    window.print();
+  }
+
   protected isAllSelected(): boolean {
     const list = this.guests().filter(g => !(g.isSent === true || g.invitationStatus === 'SENT'));
     if (list.length === 0) return false;
@@ -742,6 +968,31 @@ export class OrganiserInvitationSetup implements OnInit {
   protected getSelectedCount(): number {
     const selection = this.selectedGuestIds();
     return this.guests().filter(g => g.id && selection[g.id]).length;
+  }
+
+  protected getGuestRsvpBadge(guest: Guest): { label: string; icon: string; cssClass: string } {
+    const gid = guest.id;
+    const localStatus = gid ? localStorage.getItem(`guest_${gid}_status`) : null;
+    const status = localStatus || guest.status;
+
+    if (status === 'CONFIRMED') {
+      return {
+        label: 'Confirmé',
+        icon: 'fa-circle-check',
+        cssClass: 'bg-success-subtle text-success border border-success-subtle'
+      };
+    } else if (status === 'DECLINED') {
+      return {
+        label: 'Absent',
+        icon: 'fa-circle-xmark',
+        cssClass: 'bg-danger-subtle text-danger border border-danger-subtle'
+      };
+    }
+    return {
+      label: 'En attente',
+      icon: 'fa-clock',
+      cssClass: 'bg-warning-subtle text-warning border border-warning-subtle'
+    };
   }
 
   protected getGuestChannels(g: Guest): { type: string; icon: string; colorClass: string; title: string }[] {

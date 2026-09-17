@@ -29,125 +29,173 @@
   <button type="button" class="btn-close ms-auto" (click)="errorMessage.set('')"></button>
 </div>
 
-<!-- Hierarchy Category Selector Cards & Subcategory Filters -->
-<div class="block block-rounded bg-white shadow-sm border border-light mt-4">
-  <div class="block-content p-4 border-bottom border-light">
-    <!-- Level 1: 4 Luxury Interactive Category Cards Grid -->
-    <div class="category-cards-grid">
-      <div class="category-choice-card"
-           *ngFor="let cat of taxonomy"
-           [class.active]="selectedCategory() === cat.id"
-           [class.active-traditional]="selectedCategory() === cat.id && cat.id === 'TRADITIONAL'"
-           [class.active-family]="selectedCategory() === cat.id && cat.id === 'FAMILY'"
-           [class.active-corporate]="selectedCategory() === cat.id && cat.id === 'CORPORATE'"
-           [class.active-seasonal]="selectedCategory() === cat.id && cat.id === 'SEASONAL_SOCIAL'"
-           (click)="setCategory(cat.id)">
-        <div>
-          <div class="card-icon-bubble" [style.backgroundColor]="selectedCategory() === cat.id ? '' : '#f1f5f9'" [style.color]="selectedCategory() === cat.id ? '' : cat.colorAccent">
+<!-- Unified Studio Panel Board -->
+<div class="block block-rounded bg-white shadow-sm border border-light overflow-hidden mt-3 studio-unified-board">
+  <div class="studio-board-inner">
+    <!-- LEFT PANEL: Integrated Sidebar Navigation (Fixed comfortable width) -->
+    <div class="studio-sidebar-panel">
+      <!-- Sidebar Header -->
+      <div class="p-3 bg-body-light border-bottom border-light d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center gap-2">
+          <i class="fa fa-folder-open text-primary fs-xs"></i>
+          <span class="fw-bold fs-xs text-uppercase letter-spacing-sm text-dark mb-0">Thématiques</span>
+        </div>
+        <span class="badge bg-primary-subtle text-primary rounded-pill px-2 py-0.5 fs-4xs fw-bold">
+          {{ taxonomy().length }}
+        </span>
+      </div>
+
+      <!-- Categories Navigation List -->
+      <div class="studio-category-list p-2.5">
+        <div class="studio-category-item"
+             *ngFor="let cat of taxonomy()"
+             [class.active]="selectedCategory() === cat.id"
+             (click)="setCategory(cat.id)">
+          
+          <div class="cat-item-icon shadow-2xs" 
+               [style.backgroundColor]="selectedCategory() === cat.id ? (cat.colorAccent || '#4f46e5') : (cat.colorAccent ? cat.colorAccent + '18' : '#f1f5f9')"
+               [style.color]="selectedCategory() === cat.id ? '#ffffff' : (cat.colorAccent || '#4f46e5')">
             <i class="fa {{ cat.icon }}"></i>
           </div>
-          <div class="card-category-title">{{ cat.name }}</div>
-          <div class="card-category-subtext">{{ cat.subSummary }}</div>
-        </div>
-      </div>
-    </div>
 
-    <!-- Level 2: Subcategory Pills Strip -->
-    <div class="sub-filter-strip animate__animated animate__fadeIn"
-         *ngIf="availableSubCategoriesForFilter().length > 0">
-      <span class="strip-title">
-        <i class="fa fa-sparkles text-warning"></i> Choisir l'occasion :
-      </span>
-      <button type="button" class="sub-chip-btn"
-              [class.active]="selectedSubCategory() === 'ALL'"
-              (click)="setSubCategory('ALL')">
-        <i class="fa fa-asterisk"></i>
-        <span>Toutes les fêtes</span>
-      </button>
-      <button type="button" class="sub-chip-btn"
-              *ngFor="let sub of availableSubCategoriesForFilter()"
-              [class.active]="selectedSubCategory() === sub.name"
-              (click)="setSubCategory(sub.name)">
-        <i class="fa {{ sub.icon }}"></i>
-        <span>{{ sub.name }}</span>
-      </button>
-    </div>
-  </div>
-
-  <!-- Skeleton Loader for Templates Grid -->
-  <div class="block-content p-4" *ngIf="isLoading()">
-    <div class="row">
-      <div class="col-md-6 col-xl-4 mb-4" *ngFor="let s of [1, 2, 3]">
-        <div class="card h-100 border border-light shadow-sm overflow-hidden placeholder-glow">
-          <div class="placeholder w-100 bg-secondary-subtle" style="height: 220px;"></div>
-          <div class="card-body p-3.5">
-            <div class="placeholder col-8 mb-2 py-2 rounded bg-secondary-subtle"></div>
-            <div class="placeholder col-11 mb-1 py-1 rounded bg-secondary-subtle"></div>
-            <div class="placeholder col-6 mb-3 py-1 rounded bg-secondary-subtle"></div>
-            <div class="placeholder col-12 py-3 rounded-pill bg-secondary-subtle mt-2"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="block-content p-4" *ngIf="!isLoading()">
-    <!-- Grid Templates -->
-    <div class="row">
-      <div class="col-md-6 col-xl-4 mb-4" *ngFor="let template of filteredTemplates()">
-        <div class="card h-100 border border-light shadow-sm overflow-hidden d-flex flex-column"
-             [class.border-primary]="event()?.digitalTemplateId === template.id"
-             [class.selected-card]="event()?.digitalTemplateId === template.id">
-          
-          <!-- Badge active template & preview -->
-          <div class="position-relative" style="height: 220px; overflow: hidden;">
-            <img [src]="template.imageUrl || 'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?auto=format&fit=crop&w=500&q=75'" 
-                 class="w-100 h-100 object-fit-cover" 
-                 loading="lazy"
-                 decoding="async"
-                 [alt]="template.title">
-            
-            <!-- Category & Subcategory Overlays -->
-            <div class="position-absolute top-0 start-0 m-2.5 d-flex flex-column gap-1 align-items-start" style="z-index: 2;">
-              <span class="badge px-2.5 py-1 fs-xxs rounded-pill shadow-sm {{ getMainCategoryBadgeClass(template.category) }}">
-                <i class="fa {{ getMainCategoryIcon(template.category) }} me-1"></i> {{ template.category }}
-              </span>
-              <span class="badge bg-dark bg-opacity-85 text-white px-2.5 py-0.5 fs-xxs rounded-pill shadow-xs" *ngIf="template.subCategory" style="backdrop-filter: blur(4px);">
-                <i class="fa {{ getSubCategoryIcon(template.category, template.subCategory) }} me-1"></i> {{ template.subCategory }}
-              </span>
+          <div class="cat-item-info flex-grow-1 min-w-0">
+            <div class="cat-item-name" [class.fw-bold]="selectedCategory() === cat.id" [title]="cat.name">
+              {{ cat.name }}
             </div>
+            <div class="cat-item-sub" [title]="cat.subSummary">
+              {{ cat.subSummary }}
+            </div>
+          </div>
 
-            <!-- Selected template check badge -->
-            <span class="position-absolute top-0 end-0 m-2.5 badge bg-primary px-3 py-1.5 fs-xs rounded-pill shadow-sm" *ngIf="event()?.digitalTemplateId === template.id" style="z-index: 2;">
-              <i class="fa fa-check-circle me-1"></i> Modèle Actif
+          <div class="cat-item-count">
+            <span class="badge rounded-pill fs-4xs px-2 py-0.5" 
+                  [ngClass]="selectedCategory() === cat.id ? 'bg-primary text-white' : 'bg-light text-muted border'">
+              {{ getTemplateCountForCategory(cat.id) }}
             </span>
           </div>
+        </div>
+      </div>
+    </div>
 
-          <div class="card-body p-3.5 flex-grow-1 d-flex flex-column justify-content-between">
-            <div>
-              <div class="d-flex justify-content-between align-items-start mb-1.5">
-                <h3 class="h5 fw-bold text-dark mb-0">{{ template.title }}</h3>
-              </div>
-              <p class="text-muted fs-sm mb-3">{{ template.description || 'Design élégant et soigné pour vos événements.' }}</p>
+    <!-- RIGHT PANEL: Subcategory Filters & Compact 4-Column Templates Grid -->
+    <div class="studio-main-panel d-flex flex-column">
+      <!-- Active Category Header + Subcategories Strip -->
+      <div class="p-3 border-bottom border-light bg-light-subtle">
+        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 mb-2">
+          <div class="d-flex align-items-center gap-2">
+            <div class="rounded-circle d-flex align-items-center justify-content-center shadow-2xs"
+                 [style.backgroundColor]="currentMainCategoryInfo()?.colorAccent ? (currentMainCategoryInfo()?.colorAccent + '18') : '#e0e7ff'"
+                 [style.color]="currentMainCategoryInfo()?.colorAccent || '#4f46e5'"
+                 style="width: 32px; height: 32px; font-size: 0.85rem;">
+              <i class="fa {{ currentMainCategoryInfo()?.icon || 'fa-folder' }}"></i>
             </div>
+            <div>
+              <h2 class="fs-sm fw-bold text-dark mb-0">{{ currentMainCategoryInfo()?.name }}</h2>
+              <span class="fs-4xs text-muted">{{ currentMainCategoryInfo()?.subSummary }}</span>
+            </div>
+          </div>
+          <span class="badge bg-white text-muted border shadow-2xs px-2 py-0.5 rounded-pill fs-3xs">
+            {{ filteredTemplates().length }} Modèle(s)
+          </span>
+        </div>
 
-            <button type="button" class="btn w-100 mt-2 rounded-pill fw-semibold shadow-xs" 
-                    [ngClass]="event()?.digitalTemplateId === template.id ? 'btn-success' : 'btn-alt-primary'"
-                    (click)="selectTemplate(template)">
-              <i class="fa fa-magic me-1"></i>
-              {{ event()?.digitalTemplateId === template.id ? 'Modifier la personnalisation' : 'Choisir ce modèle' }}
+        <!-- Level 2: Subcategory Pills Strip -->
+        <div class="sub-filter-strip py-1 px-2" *ngIf="availableSubCategoriesForFilter().length > 0">
+          <span class="strip-title fs-3xs">
+            <i class="fa fa-sparkles text-warning"></i> Occasion :
+          </span>
+          <button type="button" class="sub-chip-btn py-0.5 px-2 fs-3xs"
+                  [class.active]="selectedSubCategory() === 'ALL'"
+                  (click)="setSubCategory('ALL')">
+            <i class="fa fa-asterisk fs-4xs"></i>
+            <span>Toutes les occasions</span>
+          </button>
+          <button type="button" class="sub-chip-btn py-0.5 px-2 fs-3xs"
+                  *ngFor="let sub of availableSubCategoriesForFilter()"
+                  [class.active]="selectedSubCategory() === sub.name"
+                  (click)="setSubCategory(sub.name)">
+            <i class="fa {{ sub.icon }} fs-4xs"></i>
+            <span>{{ sub.name }}</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Templates Grid in 4 Columns -->
+      <div class="p-3 flex-grow-1">
+        <!-- Skeleton Loader -->
+        <div class="row g-2.5" *ngIf="isLoading()">
+          <div class="col-sm-6 col-md-6 col-lg-4 col-xl-3" *ngFor="let s of [1, 2, 3, 4]">
+            <div class="card h-100 border border-light shadow-2xs overflow-hidden placeholder-glow">
+              <div class="placeholder w-100 bg-secondary-subtle" style="height: 145px;"></div>
+              <div class="card-body p-2">
+                <div class="placeholder col-8 mb-1 py-1 rounded bg-secondary-subtle"></div>
+                <div class="placeholder col-11 mb-2 py-1 rounded bg-secondary-subtle"></div>
+                <div class="placeholder col-12 py-2 rounded-pill bg-secondary-subtle"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Real Templates Grid -->
+        <div class="row g-2.5" *ngIf="!isLoading()">
+          <div class="col-sm-6 col-md-6 col-lg-4 col-xl-3" *ngFor="let template of filteredTemplates()">
+            <div class="card h-100 border border-light shadow-2xs overflow-hidden d-flex flex-column studio-compact-card"
+                 [class.border-primary]="event()?.digitalTemplateId === template.id"
+                 [class.selected-card]="event()?.digitalTemplateId === template.id">
+              
+              <!-- Badge active template & preview -->
+              <div class="position-relative compact-preview-container" style="height: 140px; overflow: hidden;">
+                <img [src]="template.imageUrl || 'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?auto=format&fit=crop&w=400&q=75'" 
+                     class="w-100 h-100 object-fit-cover template-hover-zoom" 
+                     loading="lazy"
+                     decoding="async"
+                     [alt]="template.title">
+
+                <!-- Selected template check badge -->
+                <span class="position-absolute top-0 end-0 m-1.5 badge bg-success text-white px-2 py-0.5 fs-4xs rounded-pill shadow-sm" *ngIf="event()?.digitalTemplateId === template.id" style="z-index: 2;">
+                  <i class="fa fa-check-circle me-0.5"></i> Actif
+                </span>
+              </div>
+
+              <div class="card-body p-2 flex-grow-1 d-flex flex-column justify-content-between">
+                <div>
+                  <h3 class="fs-xs fw-bold text-dark mb-0.5 text-truncate" [title]="template.title">{{ template.title }}</h3>
+                  <span class="fs-4xs text-muted d-block text-truncate mb-1" *ngIf="template.subCategory">
+                    {{ template.subCategory }}
+                  </span>
+                </div>
+
+                <div class="d-flex align-items-center gap-2 mt-auto pt-1">
+                  <!-- Button 1: Icon only for Preview (Larger & Distinctive) -->
+                  <button type="button" 
+                          class="btn-preview-eye shadow-sm" 
+                          (click)="openTemplatePreview(template)" 
+                          title="Aperçu réel du carton d'invitation">
+                    <i class="fa fa-eye"></i>
+                  </button>
+
+                  <!-- Button 2: Action Button -->
+                  <button type="button" 
+                          class="btn btn-xs rounded-pill fw-semibold shadow-2xs py-2 px-2.5 fs-3xs d-flex align-items-center justify-content-center gap-1.5 flex-grow-1" 
+                          [ngClass]="event()?.digitalTemplateId === template.id ? 'btn-success' : 'btn-primary'"
+                          (click)="selectTemplate(template)">
+                    <i class="fa fa-magic fs-4xs"></i>
+                    <span>{{ event()?.digitalTemplateId === template.id ? 'Modifier' : 'Choisir' }}</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 text-center py-5 text-muted" *ngIf="filteredTemplates().length === 0">
+            <i class="fa fa-paint-brush fs-2 mb-2 opacity-50"></i>
+            <h4 class="h6 fw-bold text-muted mb-1">Aucun modèle dans cette catégorie</h4>
+            <p class="fs-xs text-muted mb-2">Sélectionnez une autre sous-catégorie ou parcourez nos autres univers.</p>
+            <button type="button" class="btn btn-xs btn-alt-secondary rounded-pill px-3" (click)="setSubCategory('ALL')">
+              Voir toutes les célébrations de ce groupe
             </button>
           </div>
         </div>
-      </div>
-
-      <div class="col-12 text-center py-5 text-muted" *ngIf="filteredTemplates().length === 0">
-        <i class="fa fa-paint-brush fs-1 mb-3 opacity-50"></i>
-        <h4 class="h5 fw-bold text-muted mb-1">Aucun modèle dans cette catégorie</h4>
-        <p class="fs-sm text-muted mb-2">Sélectionnez une autre sous-catégorie ou parcourez nos autres univers.</p>
-        <button type="button" class="btn btn-sm btn-alt-secondary rounded-pill" (click)="setSubCategory('ALL')">
-          Voir toutes les célébrations de ce groupe
-        </button>
       </div>
     </div>
   </div>
@@ -234,73 +282,88 @@
       <!-- Guests Selection Table -->
       <div class="col-lg-8">
         <div class="border border-light rounded h-100 d-flex flex-column" style="min-height: 250px;">
-          <div class="bg-body-light p-3 border-bottom border-light">
-            <h4 class="fs-sm fw-bold text-uppercase text-muted mb-0"><i class="fa fa-users me-1"></i> 2. Sélectionner les destinataires</h4>
-          </div>
-          
-          <div class="flex-grow-1 overflow-auto" style="max-height: 250px;">
-            <!-- Empty state -->
-            <div class="text-center py-5 text-muted animate__animated animate__fadeIn" *ngIf="guests().length === 0">
-              <i class="fa fa-user-slash fs-3 mb-2"></i>
-              <p class="fs-sm mb-0">Aucun invité enregistré pour cet événement.</p>
-              <a class="fs-xs fw-semibold" [routerLink]="['/events', event()?.id, 'guests']">Ajouter des invités</a>
+          <div class="p-3 bg-body-light border-bottom d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center gap-2">
+              <input type="checkbox" class="form-check-input" id="selectAllGuests"
+                     [checked]="isAllSelected()" 
+                     (change)="toggleAllGuests($event)">
+              <label class="form-check-label fw-bold fs-sm mb-0 cursor-pointer" for="selectAllGuests">
+                2. Sélectionner les destinataires ({{ getSelectedCount() }} / {{ guests().length }})
+              </label>
             </div>
+            
+            <div class="btn-group btn-group-sm">
+              <button type="button" class="btn btn-xs btn-outline-secondary" (click)="selectOnlyUnsent()">
+                Non envoyés uniquement
+              </button>
+              <button type="button" class="btn btn-xs btn-outline-secondary" (click)="selectAll()">
+                Tous
+              </button>
+            </div>
+          </div>
 
-            <!-- Table -->
-            <table class="table table-vcenter table-striped table-hover fs-sm mb-0" *ngIf="guests().length > 0">
-              <thead class="table-light position-sticky top-0" style="z-index: 1;">
+          <div class="table-responsive flex-grow-1" style="max-height: 320px; overflow-y: auto;">
+            <table class="table table-hover table-vcenter fs-sm mb-0">
+              <thead class="table-light text-uppercase fs-xxs">
                 <tr>
-                  <th class="text-center" style="width: 50px;">
-                    <input class="form-check-input" type="checkbox" 
-                           [checked]="isAllSelected()" 
-                           (change)="toggleAllGuests($event)">
-                  </th>
-                  <th>Nom complet</th>
+                  <th style="width: 40px;"></th>
+                  <th>Nom Complet</th>
                   <th>Coordonnées</th>
-                  <th class="text-center" style="width: 120px;">Statut Envoi</th>
-                  <th class="text-center" style="width: 100px;">Canaux</th>
-                  <th class="text-center" style="width: 110px;">Test</th>
+                  <th class="text-center">Statut Envoi</th>
+                  <th class="text-center">Confirmation</th>
+                  <th class="text-center">Canaux</th>
+                  <th class="text-center" style="width: 120px;">Action</th>
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let guest of guests()" 
-                    (click)="openGuestJourney(guest)" 
-                    style="cursor: pointer;"
-                    title="Cliquer pour voir le parcours détaillé de l'invité">
-                  <td class="text-center" (click)="$event.stopPropagation()">
-                    <input class="form-check-input" type="checkbox" 
-                           [checked]="selectedGuestIds()[guest.id!]" 
-                           (change)="toggleGuest(guest.id!)">
-                  </td>
-                  <td class="fw-semibold text-dark">
-                    <div class="d-flex align-items-center gap-1.5">
-                      <span>{{ guest.fullName }}</span>
-                      <i class="fa fa-chart-line text-primary fs-3xs opacity-50" title="Suivi en temps réel"></i>
-                    </div>
+                <tr *ngFor="let guest of guests()" [class.table-active]="guest.id ? selectedGuestIds()[guest.id] : false">
+                  <td>
+                    <input type="checkbox" class="form-check-input" 
+                           [checked]="guest.id ? selectedGuestIds()[guest.id] : false" 
+                           (change)="guest.id && toggleGuest(guest.id)">
                   </td>
                   <td>
-                    <div class="fs-xs text-muted" *ngIf="guest.email"><i class="far fa-envelope me-1"></i> {{ guest.email }}</div>
-                    <div class="fs-xs text-muted" *ngIf="guest.phone"><i class="fa fa-phone me-1"></i> {{ guest.phone }}</div>
-                    <div class="fs-xs text-muted text-danger fw-semibold" *ngIf="!guest.email && !guest.phone">Aucun contact saisi</div>
+                    <div class="fw-semibold text-dark">{{ guest.fullName }}</div>
+                    <span class="fs-xxs text-muted" *ngIf="guest.tableNumber">Table : {{ guest.tableNumber }}</span>
+                  </td>
+                  <td>
+                    <div class="fs-xs text-muted" *ngIf="guest.email"><i class="far fa-envelope me-1"></i>{{ guest.email }}</div>
+                    <div class="fs-xs text-muted" *ngIf="guest.phone"><i class="fa fa-phone me-1"></i>{{ guest.phone }}</div>
+                    <span class="fs-xxs text-danger" *ngIf="!guest.email && !guest.phone">Coordonnées manquantes</span>
                   </td>
                   <td class="text-center">
-                    <span class="badge rounded-pill px-2 py-1 fs-xxs" 
-                          [ngClass]="(guest.isSent === true || guest.invitationStatus === 'SENT') ? 'bg-success-light text-black border border-success-light' : 'bg-warning-light text-black border border-warning-light'">
-                      {{ (guest.isSent === true || guest.invitationStatus === 'SENT') ? 'Envoyé' : 'Non envoyé' }}
+                    <span class="badge px-2 py-1 fs-xxs" 
+                          [ngClass]="(guest.isSent || guest.invitationStatus === 'SENT') ? 'bg-success-subtle text-success' : 'bg-warning-subtle text-warning'">
+                      {{ (guest.isSent || guest.invitationStatus === 'SENT') ? 'Envoyé' : 'En attente' }}
                     </span>
                   </td>
-                  <td class="text-center" (click)="$event.stopPropagation()">
-                    <div class="d-inline-flex align-items-center justify-content-center gap-1.5" *ngIf="getGuestChannels(guest).length > 0; else noSetupChannel">
-                      <i *ngFor="let c of getGuestChannels(guest)" [class]="c.icon" [ngClass]="c.colorClass" style="font-size: 1rem;" [title]="c.title"></i>
-                    </div>
-                    <ng-template #noSetupChannel>
-                      <span class="text-muted fs-3xs fst-italic">Manuel</span>
-                    </ng-template>
+                  <td class="text-center">
+                    <span class="badge px-2.5 py-1 fs-xxs d-inline-flex align-items-center gap-1 shadow-2xs rounded-pill" 
+                          [ngClass]="getGuestRsvpBadge(guest).cssClass">
+                      <i class="fa {{ getGuestRsvpBadge(guest).icon }}"></i>
+                      <span>{{ getGuestRsvpBadge(guest).label }}</span>
+                    </span>
                   </td>
-                  <td class="text-center" (click)="$event.stopPropagation()">
-                    <a [routerLink]="['/rsvp', guest.invitationToken || guest.id]" target="_blank" class="btn btn-xs btn-alt-warning d-inline-flex align-items-center gap-1 py-1 px-2" title="Tester RSVP">
-                      <i class="fa fa-external-link-alt"></i> Tester
-                    </a>
+                  <td class="text-center">
+                    <div class="d-flex justify-content-center gap-1.5">
+                      <i class="fab fa-whatsapp text-success fs-xs" *ngIf="guest.phone" title="WhatsApp possible"></i>
+                      <i class="far fa-envelope text-info fs-xs" *ngIf="guest.email" title="E-mail possible"></i>
+                      <i class="fa fa-comment-sms text-warning fs-xs" *ngIf="guest.phone" title="SMS possible"></i>
+                    </div>
+                  </td>
+                  <td class="text-center">
+                    <button type="button" class="btn btn-xs btn-alt-primary rounded-pill px-2.5 py-1 d-inline-flex align-items-center gap-1 shadow-2xs"
+                            (click)="testGuestInvitation(guest)"
+                            title="Tester l'invitation personnalisée de cet invité (Nouvel onglet)">
+                      <i class="fa fa-arrow-up-right-from-square text-primary"></i>
+                      <span>Tester</span>
+                    </button>
+                  </td>
+                </tr>
+                <tr *ngIf="guests().length === 0">
+                  <td colspan="7" class="text-center py-4 text-muted fs-sm">
+                    <i class="fa fa-users-slash d-block mb-1 fs-4 opacity-50"></i>
+                    Aucun invité enregistré pour cet événement.
                   </td>
                 </tr>
               </tbody>
@@ -311,38 +374,34 @@
     </div>
 
     <!-- Actions Footer -->
-    <div class="d-flex justify-content-end align-items-center gap-3 border-top pt-3 flex-wrap">
-      <div class="text-muted fs-xs" *ngIf="getSelectedCount() > 0">
-        Prêt à envoyer <strong class="text-dark">{{ getSelectedCount() }}</strong> invitation(s) unique(s) via le canal sélectionné.
-      </div>
-      <button type="button" class="btn btn-primary d-flex align-items-center gap-2 px-4" 
-              [disabled]="isSending() || getSelectedCount() === 0 || !hasSelectedChannel()"
-              (click)="sendInvitations()">
-        <span *ngIf="!isSending()">
-          <i class="fa fa-paper-plane me-1"></i> Envoyer les invitations
-        </span>
-        <span *ngIf="isSending()">
-          <i class="fa fa-circle-notch fa-spin me-1"></i> Envoi en cours...
-        </span>
+    <div class="d-flex flex-column flex-sm-row justify-content-end align-items-center gap-2 pt-3 border-top">
+      <button type="button" class="btn btn-alt-secondary btn-sm" (click)="openBatchPaperModal()" [disabled]="getSelectedCount() === 0">
+        <i class="fa fa-print me-1"></i> Imprimer invitations
+      </button>
+      <button type="button" class="btn btn-primary btn-sm px-4 shadow-sm" (click)="sendInvitations()" [disabled]="isSending() || getSelectedCount() === 0 || !hasSelectedChannel()">
+        <span *ngIf="!isSending()"><i class="fa fa-paper-plane me-1"></i> Envoyer la sélection ({{ getSelectedCount() }})</span>
+        <span *ngIf="isSending()"><i class="fa fa-spinner fa-spin me-1"></i> Envoi en cours...</span>
       </button>
     </div>
   </div>
 </div>
 
-<!-- Modal: Customize Invitation details -->
-<div class="modal fade show animate__animated animate__fadeIn" tabindex="-1" style="display: block; background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(4px);" *ngIf="isModalOpen()">
-  <div class="modal-dialog modal-lg modal-dialog-centered">
-    <div class="modal-content luxury-modal-content">
+<!-- ========================================================================= -->
+<!-- MODAL: PERSONNALISATION & APERÇU LIVE STUDIO SPLIT (2 COLONNES)           -->
+<!-- ========================================================================= -->
+<div class="modal fade show animate__animated animate__fadeIn" tabindex="-1" style="display: block; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(6px); z-index: 1055;" *ngIf="isModalOpen()">
+  <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content luxury-modal-content border-0 shadow-lg rounded-4 overflow-hidden">
       
-      <!-- Luxury Modal Header (Clean White / Slate) -->
-      <div class="luxury-modal-header">
+      <!-- Luxury Modal Header -->
+      <div class="luxury-modal-header py-3 px-4 bg-white border-bottom d-flex align-items-center justify-content-between">
         <div class="d-flex align-items-center gap-3">
-          <div class="modal-icon-badge">
-            <i class="fa fa-sliders"></i>
+          <div class="modal-icon-badge shadow-2xs" [style.backgroundColor]="getTemplateAccentColor(selectedTemplate()) + '18'" [style.color]="getTemplateAccentColor(selectedTemplate())">
+            <i class="fa fa-magic"></i>
           </div>
           <div>
-            <h4 class="modal-title-luxury mb-0">Personnalisation du Modèle</h4>
-            <p class="modal-subtitle-luxury mb-0">{{ selectedTemplate()?.title }} &bull; {{ selectedTemplate()?.category }}</p>
+            <h4 class="modal-title-luxury mb-0 fs-base fw-bold text-dark">Studio de Personnalisation de l'Invitation</h4>
+            <p class="modal-subtitle-luxury mb-0 fs-xs text-muted">{{ selectedTemplate()?.title }} &bull; {{ selectedTemplate()?.category }} {{ selectedTemplate()?.subCategory ? '(' + selectedTemplate()?.subCategory + ')' : '' }}</p>
           </div>
         </div>
         <button type="button" class="btn-close-luxury" (click)="closeModal()" aria-label="Close">
@@ -350,103 +409,237 @@
         </button>
       </div>
 
-      <form (ngSubmit)="saveSetup()">
-        <div class="modal-body p-4">
-          <!-- Step Form Sections -->
-          <div class="form-section-card mb-4">
-            <h5 class="section-card-title">
-              <i class="fa fa-pen-nib text-primary me-2"></i>1. Textes & Titres Officiels
-            </h5>
+      <form (ngSubmit)="saveSetup()" class="d-flex flex-column flex-grow-1 overflow-hidden">
+        <div class="modal-body p-0 overflow-y-auto">
+          <div class="row g-0">
             
-            <div class="mb-3">
-              <label class="form-label fw-bold text-dark fs-sm mb-1.5">Grand Titre de l'Invitation <span class="text-danger">*</span></label>
-              <div class="input-group luxury-input-group">
-                <span class="input-group-text input-icon-box"><i class="fa fa-heading"></i></span>
-                <input type="text" class="form-control" 
-                       placeholder="Ex: Sarah & Youssef" 
-                       [(ngModel)]="invitationTitle" name="invTitle" required>
+            <!-- LEFT COLUMN: Form Inputs -->
+            <div class="col-lg-7 p-4 border-end border-light">
+              <!-- Section 1: Titres Officiels -->
+              <div class="form-section-card mb-3.5">
+                <h5 class="section-card-title fs-xs fw-bold text-uppercase letter-spacing-sm text-dark mb-3">
+                  <i class="fa fa-pen-nib text-primary me-2"></i>1. Textes & Titres Officiels
+                </h5>
+                
+                <div class="mb-3">
+                  <label class="form-label fw-semibold text-dark fs-xs mb-1">Grand Titre de l'Invitation <span class="text-danger">*</span></label>
+                  <div class="input-group input-group-sm luxury-input-group shadow-2xs">
+                    <span class="input-group-text bg-light text-primary"><i class="fa fa-heading"></i></span>
+                    <input type="text" class="form-control" 
+                           placeholder="Ex: Sarah & Youssef" 
+                           [(ngModel)]="invitationTitle" name="invTitle" required>
+                  </div>
+                </div>
+
+                <div class="mb-2">
+                  <label class="form-label fw-semibold text-dark fs-xs mb-1">Sous-titre / Type d'Événement</label>
+                  <div class="input-group input-group-sm luxury-input-group mb-2 shadow-2xs">
+                    <span class="input-group-text bg-light text-primary"><i class="fa fa-quote-left"></i></span>
+                    <input type="text" class="form-control" 
+                           placeholder="Ex: Le Mariage de, Soirée de Gala, Anniversaire" 
+                           [(ngModel)]="invitationSubtitle" name="invSubtitle">
+                  </div>
+                  
+                  <!-- Quick Subtitle Suggestions -->
+                  <div class="d-flex align-items-center gap-1.5 flex-wrap">
+                    <span class="fs-4xs text-muted me-1">Suggestions :</span>
+                    <button type="button" class="badge bg-light text-dark border px-2 py-1 rounded-pill fs-4xs cursor-pointer shadow-2xs" 
+                            *ngFor="let sub of currentMainCategoryInfo()?.subCategories"
+                            [class.bg-primary-subtle]="invitationSubtitle === sub.defaultSubtitle"
+                            [class.text-primary]="invitationSubtitle === sub.defaultSubtitle"
+                            [class.border-primary]="invitationSubtitle === sub.defaultSubtitle"
+                            (click)="setQuickSubtitle(sub.defaultSubtitle)">
+                      {{ sub.defaultSubtitle }}
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Section 2: Date, Horaires & Emplacement -->
+              <div class="form-section-card">
+                <h5 class="section-card-title fs-xs fw-bold text-uppercase letter-spacing-sm text-dark mb-3">
+                  <i class="fa fa-calendar-days text-primary me-2"></i>2. Date, Horaires & Emplacement
+                </h5>
+
+                <div class="row g-2.5 mb-2.5">
+                  <div class="col-sm-6">
+                    <label class="form-label fw-semibold text-dark fs-xs mb-1">Date de la Cérémonie <span class="text-danger">*</span></label>
+                    <div class="input-group input-group-sm luxury-input-group shadow-2xs">
+                      <span class="input-group-text bg-light text-primary"><i class="fa fa-calendar"></i></span>
+                      <input type="date" class="form-control" [(ngModel)]="invitationDateStr" name="invDate" required>
+                    </div>
+                  </div>
+                  <div class="col-sm-6">
+                    <label class="form-label fw-semibold text-dark fs-xs mb-1">Heure d'Accueil <span class="text-danger">*</span></label>
+                    <div class="input-group input-group-sm luxury-input-group shadow-2xs">
+                      <span class="input-group-text bg-light text-primary"><i class="fa fa-clock"></i></span>
+                      <input type="time" class="form-control" [(ngModel)]="invitationTimeStr" name="invTime" required>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row g-2.5">
+                  <div class="col-sm-6">
+                    <label class="form-label fw-semibold text-dark fs-xs mb-1">Lieu / Salle de réception <span class="text-danger">*</span></label>
+                    <div class="input-group input-group-sm luxury-input-group shadow-2xs">
+                      <span class="input-group-text bg-light text-danger"><i class="fa fa-map-marker-alt"></i></span>
+                      <input type="text" class="form-control" 
+                             placeholder="Ex: Palais des Roses, Casablanca" 
+                             [(ngModel)]="invitationLocation" name="invLoc" required>
+                    </div>
+                  </div>
+                  <div class="col-sm-6">
+                    <label class="form-label fw-semibold text-dark fs-xs mb-1">Zone de Parking (facultatif)</label>
+                    <div class="input-group input-group-sm luxury-input-group shadow-2xs">
+                      <span class="input-group-text bg-light text-primary"><i class="fa fa-square-parking"></i></span>
+                      <input type="text" class="form-control" 
+                             placeholder="Ex: Parking P1 - Entrée Sud" 
+                             [(ngModel)]="invitationParking" name="invParking">
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
-            <div class="mb-2">
-              <label class="form-label fw-bold text-dark fs-sm mb-1.5">Sous-titre / Type d'Événement</label>
-              <div class="input-group luxury-input-group mb-2">
-                <span class="input-group-text input-icon-box"><i class="fa fa-quote-left"></i></span>
-                <input type="text" class="form-control" 
-                       placeholder="Ex: Le Mariage de, Soirée de Gala, Anniversaire" 
-                       [(ngModel)]="invitationSubtitle" name="invSubtitle">
+            <!-- RIGHT COLUMN: Real Live Interactive Invitation Card (Exact Guest View) -->
+            <div class="col-lg-5 p-3 bg-dark d-flex flex-column align-items-center justify-content-start overflow-hidden position-relative">
+              <div class="d-flex align-items-center justify-content-between w-100 mb-2 px-2 text-white">
+                <div class="d-flex align-items-center gap-2">
+                  <span class="rounded-circle bg-success d-inline-block" style="width: 8px; height: 8px; box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3);"></span>
+                  <span class="fs-xs fw-bold text-white text-uppercase letter-spacing-sm">Aperçu Réel Invité</span>
+                </div>
+                <span class="badge bg-white bg-opacity-10 text-white border border-white border-opacity-25 fs-4xs px-2 py-0.5 rounded-pill shadow-2xs">
+                  Modèle Réel &bull; Rendu 100% Fidèle
+                </span>
               </div>
-              
-              <!-- Quick Subtitle Tags -->
-              <div class="d-flex align-items-center gap-1.5 flex-wrap">
-                <span class="fs-xs text-muted me-1">Suggestions :</span>
-                <button type="button" class="badge-quick-tag" 
-                        *ngFor="let sub of currentMainCategoryInfo()?.subCategories"
-                        [class.active-tag]="invitationSubtitle === sub.defaultSubtitle"
-                        (click)="setQuickSubtitle(sub.defaultSubtitle)">
-                  {{ sub.defaultSubtitle }}
-                </button>
+
+              <!-- Real Guest RSVP Canvas in Studio (Page 1 Format Mobile - Real Isolated Iframe View) -->
+              <div class="w-100 rounded-4 overflow-hidden border border-secondary shadow-lg position-relative flex-grow-1 d-flex justify-content-center" 
+                   style="height: 560px; max-height: 560px; background: #0f172a;">
+                <iframe 
+                  *ngIf="studioLivePreviewIframeUrl()" 
+                  [src]="studioLivePreviewIframeUrl()" 
+                  class="w-100 h-100 border-0"
+                  style="width: 100%; max-width: 400px; height: 100%; border: none;">
+                </iframe>
               </div>
+
+              <span class="fs-4xs text-white text-opacity-75 mt-2 text-center">
+                <i class="fa fa-sparkles text-warning me-1"></i> Ce carton d'invitation officiel reflète exactement ce que verront vos invités.
+              </span>
             </div>
+
           </div>
-
-          <div class="form-section-card">
-            <h5 class="section-card-title">
-              <i class="fa fa-calendar-days text-primary me-2"></i>2. Date, Horaires & Emplacement
-            </h5>
-
-            <div class="row g-3 mb-3">
-              <div class="col-sm-6">
-                <label class="form-label fw-bold text-dark fs-sm mb-1.5">Date de la Cérémonie <span class="text-danger">*</span></label>
-                <div class="input-group luxury-input-group">
-                  <span class="input-group-text input-icon-box"><i class="fa fa-calendar"></i></span>
-                  <input type="date" class="form-control" [(ngModel)]="invitationDateStr" name="invDate" required>
-                </div>
-              </div>
-              <div class="col-sm-6">
-                <label class="form-label fw-bold text-dark fs-sm mb-1.5">Heure d'Accueil <span class="text-danger">*</span></label>
-                <div class="input-group luxury-input-group">
-                  <span class="input-group-text input-icon-box"><i class="fa fa-clock"></i></span>
-                  <input type="time" class="form-control" [(ngModel)]="invitationTimeStr" name="invTime" required>
-                </div>
-              </div>
-            </div>
-
-            <div class="row g-3">
-              <div class="col-sm-6">
-                <label class="form-label fw-bold text-dark fs-sm mb-1.5">Lieu / Salle de réception <span class="text-danger">*</span></label>
-                <div class="input-group luxury-input-group">
-                  <span class="input-group-text input-icon-box"><i class="fa fa-map-marker-alt text-danger"></i></span>
-                  <input type="text" class="form-control" 
-                         placeholder="Ex: Palais des Roses, Casablanca" 
-                         [(ngModel)]="invitationLocation" name="invLoc" required>
-                </div>
-              </div>
-              <div class="col-sm-6">
-                <label class="form-label fw-bold text-dark fs-sm mb-1.5">Zone de Parking (facultatif)</label>
-                <div class="input-group luxury-input-group">
-                  <span class="input-group-text input-icon-box"><i class="fa fa-square-parking text-primary"></i></span>
-                  <input type="text" class="form-control" 
-                         placeholder="Ex: Parking P1 - Entrée Sud" 
-                         [(ngModel)]="invitationParking" name="invParking">
-                </div>
-              </div>
-            </div>
-          </div>
-
         </div>
 
         <!-- Luxury Modal Footer -->
-        <div class="luxury-modal-footer">
-          <button type="button" class="btn btn-cancel" (click)="closeModal()">
+        <div class="luxury-modal-footer p-3 bg-white border-top d-flex justify-content-end align-items-center gap-2">
+          <button type="button" class="btn btn-sm btn-alt-secondary rounded-pill px-4" (click)="closeModal()">
             Annuler
           </button>
-          <button type="submit" class="btn btn-submit-luxury" [disabled]="isSubmitting()">
-            <span *ngIf="!isSubmitting()"><i class="fa fa-check-circle me-1.5"></i> Valider et Activer l'Invitation</span>
-            <span *ngIf="isSubmitting()"><i class="fa fa-spinner fa-spin me-1.5"></i> Enregistrement en cours...</span>
+          <button type="submit" class="btn btn-sm btn-primary rounded-pill px-4 shadow-sm d-flex align-items-center gap-1.5" [disabled]="isSubmitting()">
+            <span *ngIf="!isSubmitting()"><i class="fa fa-check-circle"></i> Valider et Activer l'Invitation</span>
+            <span *ngIf="isSubmitting()"><i class="fa fa-spinner fa-spin"></i> Enregistrement en cours...</span>
           </button>
         </div>
       </form>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- MODAL: APERÇU OFFICIEL DU CARTON D'INVITATION (MOBILE & PC)               -->
+<!-- ========================================================================= -->
+<div class="modal fade show animate__animated animate__fadeIn" tabindex="-1" style="display: block; background: rgba(15, 23, 42, 0.88); backdrop-filter: blur(8px); z-index: 1060;" *ngIf="isPreviewModalOpen()">
+  <div class="modal-dialog modal-dialog-centered" 
+       [style.maxWidth]="previewDevice() === 'MOBILE' ? '430px' : '1060px'"
+       style="transition: max-width 0.35s cubic-bezier(0.16, 1, 0.3, 1); width: 95%; margin: auto;">
+    <div class="modal-content border-0 shadow-2xl rounded-4 overflow-hidden" style="background: #0b1120; border: 1px solid rgba(255, 255, 255, 0.1) !important;">
+      
+      <!-- Compact Sleek Modal Header -->
+      <div class="modal-header py-2.5 px-3 bg-white border-bottom d-flex flex-column gap-2">
+        <!-- Top Bar: Template Name on left, Actions on right -->
+        <div class="d-flex align-items-center justify-content-between w-100">
+          <div class="d-flex align-items-center gap-2 min-w-0">
+            <span class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" 
+                  style="width: 28px; height: 28px; background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe;">
+              <i class="fa fa-eye" style="font-size: 0.8rem;"></i>
+            </span>
+            <span class="fs-sm fw-bold text-dark text-truncate d-block" style="max-width: 240px;" [title]="previewTemplate()?.title">
+              {{ previewTemplate()?.title }}
+            </span>
+          </div>
+
+          <!-- Action Buttons: Choisir + Close Button -->
+          <div class="d-flex align-items-center gap-2 flex-shrink-0">
+            <button type="button" class="btn btn-sm btn-success rounded-pill px-3 py-1 fs-xs fw-bold shadow-2xs d-flex align-items-center gap-1.5" (click)="chooseFromPreview()">
+              <i class="fa fa-check"></i>
+              <span>Choisir</span>
+            </button>
+            <button type="button" class="btn-close" (click)="closeTemplatePreview()" aria-label="Fermer"></button>
+          </div>
+        </div>
+
+        <!-- Bottom Bar: Ultra-Compact Centered Device Switch (📱 Mobile / 💻 PC) -->
+        <div class="d-flex justify-content-center w-100">
+          <div class="device-switch-pill d-inline-flex align-items-center p-0.5 rounded-pill border bg-light shadow-2xs">
+            <button type="button" 
+                    class="btn btn-xs rounded-pill px-3 py-1 d-flex align-items-center gap-1.5 transition" 
+                    [ngClass]="previewDevice() === 'MOBILE' ? 'btn-primary text-white shadow-2xs fw-bold' : 'text-muted border-0 bg-transparent'"
+                    (click)="setPreviewDevice('MOBILE')"
+                    title="Format Smartphone (95% des invités)">
+              <i class="fa fa-mobile-screen fs-xs"></i>
+              <span class="fs-3xs fw-semibold">Mobile</span>
+            </button>
+            <button type="button" 
+                    class="btn btn-xs rounded-pill px-3 py-1 d-flex align-items-center gap-1.5 transition" 
+                    [ngClass]="previewDevice() === 'DESKTOP' ? 'btn-primary text-white shadow-2xs fw-bold' : 'text-muted border-0 bg-transparent'"
+                    (click)="setPreviewDevice('DESKTOP')"
+                    title="Format Ordinateur & Grand Écran">
+              <i class="fa fa-laptop fs-xs"></i>
+              <span class="fs-3xs fw-semibold">PC / Tablette</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Body: Compact & Scroll-Free Viewport -->
+      <div class="modal-body p-2 p-sm-2.5 d-flex justify-content-center align-items-center position-relative overflow-hidden" 
+           style="background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);">
+        
+        <!-- 1. MOBILE FORMAT: Clean 380px iPhone Device with Unobstructed Screen -->
+        <div *ngIf="previewDevice() === 'MOBILE'" 
+             class="smartphone-preview-frame shadow-2xl position-relative animate__animated animate__fadeIn" 
+             style="width: 380px; max-width: 100%; height: calc(86vh - 50px); max-height: 760px; border-radius: 40px; border: 6px solid #1e293b; background: #000; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85); overflow: hidden; display: flex; flex-direction: column;">
+          
+          <!-- Smartphone Screen with Isolated Mobile Viewport -->
+          <div class="smartphone-screen-content w-100 h-100 overflow-hidden position-relative" style="border-radius: 34px; background: #0b1120;">
+            <iframe 
+              *ngIf="modalPreviewIframeUrl()" 
+              [src]="modalPreviewIframeUrl()" 
+              class="w-100 h-100 border-0"
+              style="width: 100%; height: 100%; border: none; overflow: hidden;">
+            </iframe>
+          </div>
+        </div>
+
+        <!-- 2. DESKTOP FORMAT: Clean Fullscreen Screen Frame for PC Experience -->
+        <div *ngIf="previewDevice() === 'DESKTOP'" 
+             class="desktop-preview-frame w-100 shadow-2xl rounded-4 overflow-hidden border border-secondary animate__animated animate__fadeIn" 
+             style="max-width: 1040px; height: calc(86vh - 50px); max-height: 760px; background: #0b1120; border: 4px solid #1e293b; border-radius: 20px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85);">
+          
+          <!-- Direct Full Content Frame Without URL Topbar -->
+          <div class="flex-grow-1 w-100 h-100 overflow-hidden">
+            <iframe 
+              *ngIf="modalPreviewIframeUrl()" 
+              [src]="modalPreviewIframeUrl()" 
+              class="w-100 h-100 border-0"
+              style="width: 100%; height: 100%; border: none; overflow: hidden;">
+            </iframe>
+          </div>
+        </div>
+
+      </div>
     </div>
   </div>
 </div>

@@ -27,26 +27,27 @@ export class AdminTemplates implements OnInit {
   protected readonly successMessage = signal('');
   protected readonly errorMessage = signal('');
 
-  // Taxonomy Reference
-  protected readonly taxonomy = TEMPLATE_TAXONOMY;
+  // Dynamic Taxonomy Reference from TemplateService
+  protected readonly taxonomy = computed(() => this.templateService.categories());
 
   // Category & SubCategory Filters
   protected readonly activeCategoryFilter = signal<string>('ALL');
   protected readonly activeSubCategoryFilter = signal<string>('ALL');
 
-  protected readonly currentMainCategoryInfo = computed(() => getCategoryTaxonomy(this.activeCategoryFilter()));
+  protected readonly currentMainCategoryInfo = computed(() => getCategoryTaxonomy(this.activeCategoryFilter(), this.taxonomy()));
   protected readonly availableSubCategoriesForFilter = computed(() => this.currentMainCategoryInfo()?.subCategories || []);
 
   protected readonly filteredTemplates = computed(() => {
     const catFilter = this.activeCategoryFilter();
     const subFilter = this.activeSubCategoryFilter();
+    const allTaxonomy = this.taxonomy();
     let list = this.templates();
 
     if (catFilter !== 'ALL') {
-      const mainCat = getCategoryTaxonomy(catFilter);
+      const mainCat = getCategoryTaxonomy(catFilter, allTaxonomy);
       if (mainCat) {
         list = list.filter(t => {
-          const tMain = getCategoryTaxonomy(t.category);
+          const tMain = getCategoryTaxonomy(t.category, allTaxonomy);
           return tMain?.id === mainCat.id || t.category === mainCat.name;
         });
       }
@@ -58,6 +59,164 @@ export class AdminTemplates implements OnInit {
 
     return list;
   });
+
+  public setCategoryFilter(id: string): void {
+    this.activeCategoryFilter.set(id);
+    this.activeSubCategoryFilter.set('ALL');
+  }
+
+  public setSubCategoryFilter(subName: string): void {
+    this.activeSubCategoryFilter.set(subName);
+  }
+
+  public getTemplateCountForCategory(catId: string): number {
+    if (catId === 'ALL') return this.templates().length;
+    const allTaxonomy = this.taxonomy();
+    const mainCat = getCategoryTaxonomy(catId, allTaxonomy);
+    if (!mainCat) return 0;
+    return this.templates().filter(t => {
+      const tMain = getCategoryTaxonomy(t.category, allTaxonomy);
+      return tMain?.id === mainCat.id || t.category === mainCat.name;
+    }).length;
+  }
+
+  // ==========================================
+  // GESTION DYNAMIQUE DES CATÉGORIES (MODAL)
+  // ==========================================
+  protected readonly isCategoryModalOpen = signal(false);
+  protected readonly isCategoryFormOpen = signal(false);
+  protected readonly isEditingCategory = signal(false);
+  protected readonly editingCategoryId = signal<string | null>(null);
+
+  protected catIdField = '';
+  protected catNameField = '';
+  protected catShortNameField = '';
+  protected catIconField = 'fa-star';
+  protected catColorAccentField = '#4f46e5';
+  protected catSubCategoriesList: string[] = [];
+  protected newSubCategoryInput = '';
+
+  protected openCategoryModal(): void {
+    this.isCategoryModalOpen.set(true);
+    this.isCategoryFormOpen.set(false);
+  }
+
+  protected closeCategoryModal(): void {
+    this.isCategoryModalOpen.set(false);
+    this.isCategoryFormOpen.set(false);
+  }
+
+  protected openAddCategoryForm(): void {
+    this.isEditingCategory.set(false);
+    this.editingCategoryId.set(null);
+    this.catIdField = '';
+    this.catNameField = '';
+    this.catShortNameField = '';
+    this.catIconField = 'fa-star';
+    this.catColorAccentField = '#4f46e5';
+    this.catSubCategoriesList = [];
+    this.newSubCategoryInput = '';
+    this.isCategoryFormOpen.set(true);
+  }
+
+  protected openEditCategoryForm(cat: MainCategoryInfo): void {
+    this.isEditingCategory.set(true);
+    this.editingCategoryId.set(cat.id);
+    this.catIdField = cat.id;
+    this.catNameField = cat.name;
+    this.catShortNameField = cat.shortName;
+    this.catIconField = cat.icon || 'fa-star';
+    this.catColorAccentField = cat.colorAccent || '#4f46e5';
+    this.catSubCategoriesList = cat.subCategories ? cat.subCategories.map(s => s.name) : [];
+    this.newSubCategoryInput = '';
+    this.isCategoryFormOpen.set(true);
+  }
+
+  protected cancelCategoryForm(): void {
+    this.isCategoryFormOpen.set(false);
+  }
+
+  protected addSubCategory(): void {
+    const val = this.newSubCategoryInput?.trim();
+    if (!val) return;
+    if (!this.catSubCategoriesList.some(s => s.toLowerCase() === val.toLowerCase())) {
+      this.catSubCategoriesList.push(val);
+    }
+    this.newSubCategoryInput = '';
+  }
+
+  protected removeSubCategory(index: number): void {
+    if (index >= 0 && index < this.catSubCategoriesList.length) {
+      this.catSubCategoriesList.splice(index, 1);
+    }
+  }
+
+  protected onSubCategoryKeydown(event: KeyboardEvent): void {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      this.addSubCategory();
+    }
+  }
+
+  protected saveCategory(): void {
+    if (!this.catNameField?.trim() || !this.catShortNameField?.trim()) {
+      alert('Veuillez renseigner le nom complet et le nom court de la catégorie.');
+      return;
+    }
+
+    // Auto-add any text typed in input if user didn't click + before submitting
+    if (this.newSubCategoryInput?.trim()) {
+      this.addSubCategory();
+    }
+
+    const subCatsList = this.catSubCategoriesList.filter(Boolean);
+
+    const subCategories: SubCategoryInfo[] = subCatsList.map(name => ({
+      name,
+      icon: this.catIconField || 'fa-star',
+      defaultSubtitle: `Célébration de ${name}`
+    }));
+
+    const catId = this.isEditingCategory() && this.editingCategoryId()
+      ? this.editingCategoryId()!
+      : (this.catIdField?.trim().toUpperCase().replace(/[^A-Z0-9_]/g, '_') || 
+         this.catShortNameField.trim().toUpperCase().replace(/[^A-Z0-9_]/g, '_'));
+
+    const categoryObj: MainCategoryInfo = {
+      id: catId,
+      name: this.catNameField.trim(),
+      shortName: this.catShortNameField.trim(),
+      icon: this.catIconField || 'fa-star',
+      badgeClass: 'bg-primary-subtle text-primary border-primary-subtle',
+      colorAccent: this.catColorAccentField || '#4f46e5',
+      themeClass: `theme-${catId.toLowerCase()}`,
+      subSummary: subCatsList.slice(0, 4).join(', ') || 'Modèles & Célébrations',
+      subCategories
+    };
+
+    if (this.isEditingCategory() && this.editingCategoryId()) {
+      this.templateService.updateCategory(this.editingCategoryId()!, categoryObj);
+      this.successMessage.set(`Catégorie "${categoryObj.shortName}" modifiée avec succès.`);
+    } else {
+      this.templateService.addCategory(categoryObj);
+      this.successMessage.set(`Catégorie "${categoryObj.shortName}" créée avec succès.`);
+    }
+
+    this.isCategoryFormOpen.set(false);
+    setTimeout(() => this.successMessage.set(''), 4000);
+  }
+
+  protected deleteCategory(cat: MainCategoryInfo): void {
+    if (confirm(`Êtes-vous sûr de vouloir supprimer la catégorie "${cat.shortName}" ?`)) {
+      this.templateService.deleteCategory(cat.id);
+      this.successMessage.set(`Catégorie "${cat.shortName}" supprimée.`);
+      setTimeout(() => this.successMessage.set(''), 3000);
+    }
+  }
+
+  protected isBuiltInDefaultCategory(id: string): boolean {
+    return ['TRADITIONAL', 'FAMILY', 'CORPORATE', 'SEASONAL_SOCIAL', 'SCOLAIRE'].includes(id);
+  }
 
   // Studio Page View & Form States
   protected readonly isEditorOpen = signal(false);
@@ -210,7 +369,7 @@ export class AdminTemplates implements OnInit {
   }
 
   protected readonly availableSubCategoriesForForm = computed(() => {
-    return getAllSubcategoriesForCategory(this.categoryField);
+    return getAllSubcategoriesForCategory(this.categoryField, this.taxonomy());
   });
 
   // Preset Font Sizes & Styles
@@ -379,38 +538,19 @@ export class AdminTemplates implements OnInit {
     });
   }
 
-  protected setCategoryFilter(categoryId: string): void {
-    this.activeCategoryFilter.set(categoryId);
-    this.activeSubCategoryFilter.set('ALL');
-  }
-
-  protected setSubCategoryFilter(subCategory: string): void {
-    this.activeSubCategoryFilter.set(subCategory);
-  }
-
-  public getTemplateCountForCategory(catId: string): number {
-    if (catId === 'ALL') return this.templates().length;
-    const mainCat = getCategoryTaxonomy(catId);
-    if (!mainCat) return 0;
-    return this.templates().filter(t => {
-      const tMain = getCategoryTaxonomy(t.category);
-      return tMain?.id === mainCat.id || t.category === mainCat.name;
-    }).length;
-  }
-
   public getMainCategoryBadgeClass(category: string): string {
-    const tax = getCategoryTaxonomy(category);
+    const tax = getCategoryTaxonomy(category, this.taxonomy());
     return tax ? tax.badgeClass : 'bg-secondary-subtle text-secondary';
   }
 
   public getMainCategoryIcon(category: string): string {
-    const tax = getCategoryTaxonomy(category);
+    const tax = getCategoryTaxonomy(category, this.taxonomy());
     return tax ? tax.icon : 'fa-tag';
   }
 
   public getSubCategoryIcon(category: string, subCategory?: string): string {
     if (!subCategory) return 'fa-folder';
-    const tax = getCategoryTaxonomy(category);
+    const tax = getCategoryTaxonomy(category, this.taxonomy());
     const sub = tax?.subCategories.find(s => s.name.toLowerCase() === subCategory.toLowerCase());
     return sub ? sub.icon : 'fa-star';
   }

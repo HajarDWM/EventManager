@@ -79,13 +79,31 @@ export const TEMPLATE_TAXONOMY: MainCategoryInfo[] = [
       { name: 'Événement Caritatif', icon: 'fa-hand-holding-heart', defaultSubtitle: 'Gala de Bienfaisance & Solidarité' },
       { name: 'Réception Sociale', icon: 'fa-cocktail', defaultSubtitle: 'Cocktail & Réception d\'Exception' }
     ]
+  },
+  {
+    id: 'SCOLAIRE',
+    name: 'Événements Scolaires & Universitaires',
+    shortName: 'Scolaire & Éducation',
+    icon: 'fa-graduation-cap',
+    badgeClass: 'bg-cyan-50 text-cyan-700 border-cyan-200',
+    colorAccent: '#0891b2',
+    themeClass: 'theme-scolaire',
+    subSummary: 'Remise de Diplôme, Fête d\'école, Bal de Promo, Kermesse...',
+    subCategories: [
+      { name: 'Remise de Diplôme', icon: 'fa-graduation-cap', defaultSubtitle: 'Cérémonie de Remise de Diplôme de' },
+      { name: 'Fête d\'école & Kermesse', icon: 'fa-school', defaultSubtitle: 'Grande Fête de Fin d\'Année' },
+      { name: 'Bal de Promo / Gala', icon: 'fa-masks-theater', defaultSubtitle: 'Bal de Promo Annuel de' },
+      { name: 'Gala d\'Anciens Élèves', icon: 'fa-user-graduate', defaultSubtitle: 'Retrouvailles & Soirée des Alumni' }
+    ]
   }
 ];
 
-export function getCategoryTaxonomy(categoryName?: string): MainCategoryInfo | undefined {
+export function getCategoryTaxonomy(categoryName?: string, customTaxonomy?: MainCategoryInfo[]): MainCategoryInfo | undefined {
   if (!categoryName) return undefined;
   const norm = categoryName.trim().toLowerCase();
-  return TEMPLATE_TAXONOMY.find(c => 
+  const source = customTaxonomy && customTaxonomy.length > 0 ? customTaxonomy : TEMPLATE_TAXONOMY;
+  
+  return source.find(c => 
     c.name.toLowerCase() === norm || 
     c.shortName.toLowerCase() === norm ||
     c.id.toLowerCase() === norm ||
@@ -96,11 +114,16 @@ export function getCategoryTaxonomy(categoryName?: string): MainCategoryInfo | u
     (norm.includes('corporate') && c.id === 'CORPORATE') ||
     (norm.includes('professionnel') && c.id === 'CORPORATE') ||
     (norm.includes('saisonnier') && c.id === 'SEASONAL_SOCIAL') ||
-    (norm.includes('social') && c.id === 'SEASONAL_SOCIAL')
+    (norm.includes('social') && c.id === 'SEASONAL_SOCIAL') ||
+    (norm.includes('scolaire') && c.id === 'SCOLAIRE') ||
+    (norm.includes('diplome') && c.id === 'SCOLAIRE') ||
+    (norm.includes('diplôme') && c.id === 'SCOLAIRE') ||
+    (norm.includes('education') && c.id === 'SCOLAIRE') ||
+    (norm.includes('éducation') && c.id === 'SCOLAIRE')
   );
 }
 
-export function getAllSubcategoriesForCategory(categoryName?: string): SubCategoryInfo[] {
-  const cat = getCategoryTaxonomy(categoryName);
+export function getAllSubcategoriesForCategory(categoryName?: string, customTaxonomy?: MainCategoryInfo[]): SubCategoryInfo[] {
+  const cat = getCategoryTaxonomy(categoryName, customTaxonomy);
   return cat ? cat.subCategories : [];
 }

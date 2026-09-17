@@ -8,111 +8,210 @@
   object-fit: cover;
 }
 
-// Main Taxonomy Category Cards Grid
-.category-cards-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-  gap: 12px;
-  margin-bottom: 16px;
+// Unified Studio Board
+.studio-unified-board {
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+
+  .studio-board-inner {
+    display: flex;
+    flex-direction: row;
+    min-height: 520px;
+
+    @media (max-width: 991.98px) {
+      flex-direction: column;
+    }
+  }
 }
 
-.category-choice-card {
-  position: relative;
-  background: #ffffff;
-  border: 2px solid #e2e8f0;
-  border-radius: 14px;
-  padding: 14px 16px;
-  cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  user-select: none;
+.studio-sidebar-panel {
+  width: 300px;
+  min-width: 300px;
+  max-width: 300px;
+  flex-shrink: 0;
+  background: #f8fafc;
+  border-right: 1px solid #e2e8f0;
+
+  @media (max-width: 991.98px) {
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #e2e8f0;
+  }
+}
+
+.studio-category-list {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  gap: 5px;
+  max-height: calc(100vh - 220px);
+  overflow-y: auto;
 
-  &:hover {
-    transform: translateY(-2px);
-    border-color: #cbd5e1;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+  &::-webkit-scrollbar {
+    width: 3px;
   }
+  &::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+  }
+}
 
-  .card-icon-bubble {
-    width: 38px;
-    height: 38px;
-    border-radius: 10px;
+.studio-category-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1.5px solid transparent;
+  background-color: transparent;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+
+  .cat-item-icon {
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.1rem;
-    margin-bottom: 10px;
+    font-size: 0.9rem;
     transition: transform 0.2s ease;
   }
 
-  .card-category-title {
-    font-size: 0.95rem;
-    font-weight: 700;
-    color: #1e293b;
-    margin-bottom: 4px;
+  .cat-item-info {
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .cat-item-name {
+    font-size: 0.825rem;
+    color: #334155;
     line-height: 1.3;
+    margin-bottom: 2px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
-  .card-category-subtext {
-    font-size: 0.75rem;
-    color: #64748b;
-    line-height: 1.35;
+  .cat-item-sub {
+    font-size: 0.7rem;
+    color: #94a3b8;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
-  // Active State styling per category
+  .cat-item-count {
+    flex-shrink: 0;
+    margin-left: 2px;
+  }
+
+  &:hover {
+    background-color: #f1f5f9;
+    border-color: #e2e8f0;
+    transform: translateX(2px);
+
+    .cat-item-icon {
+      transform: scale(1.06);
+    }
+  }
+
   &.active {
     background: #ffffff;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    border-color: #4f46e5;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.12);
 
-    .card-icon-bubble {
+    .cat-item-name {
+      color: #1e1b4b;
+      font-weight: 700;
+    }
+
+    .cat-item-sub {
+      color: #64748b;
+    }
+
+    .cat-item-icon {
+      transform: scale(1.06);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+  }
+}
+
+.studio-main-panel {
+  flex: 1 1 0;
+  min-width: 0;
+  background: #ffffff;
+}
+
+// Compact 4-Column Template Cards
+.studio-compact-card {
+  border-radius: 12px;
+  background: #ffffff;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.07) !important;
+
+    .template-hover-zoom {
+      transform: scale(1.05);
+    }
+  }
+
+  .compact-preview-container {
+    border-top-left-radius: 11px;
+    border-top-right-radius: 11px;
+  }
+
+  .template-hover-zoom {
+    transition: transform 0.3s ease;
+  }
+}
+
+// Distinctive & Accessible Preview Eye Button
+.btn-preview-eye {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  border-radius: 50%;
+  background: #eff6ff;
+  color: #2563eb;
+  border: 1.5px solid #bfdbfe;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.12);
+  cursor: pointer;
+  padding: 0;
+
+  i {
+    color: #2563eb;
+    transition: transform 0.2s ease, color 0.2s ease;
+  }
+
+  &:hover {
+    background: #2563eb;
+    border-color: #2563eb;
+    color: #ffffff;
+    transform: scale(1.08);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.28);
+
+    i {
+      color: #ffffff;
       transform: scale(1.1);
     }
   }
 
-  &.active-traditional {
-    border-color: #e11d48;
-    .card-icon-bubble {
-      background: #ffe4e6;
-      color: #e11d48;
-    }
-    .card-category-title {
-      color: #be123c;
-    }
-  }
-
-  &.active-family {
-    border-color: #d97706;
-    .card-icon-bubble {
-      background: #fef3c7;
-      color: #d97706;
-    }
-    .card-category-title {
-      color: #b45309;
-    }
-  }
-
-  &.active-corporate {
-    border-color: #4f46e5;
-    .card-icon-bubble {
-      background: #e0e7ff;
-      color: #4f46e5;
-    }
-    .card-category-title {
-      color: #4338ca;
-    }
-  }
-
-  &.active-seasonal {
-    border-color: #059669;
-    .card-icon-bubble {
-      background: #d1fae5;
-      color: #059669;
-    }
-    .card-category-title {
-      color: #047857;
-    }
+  &:active {
+    transform: scale(0.95);
   }
 }
 
@@ -616,3 +715,85 @@
     justify-content: space-between;
   }
 }
+
+// Live Realistic Invitation Card Mockup inside Customization Modal
+.live-card-mockup-wrapper {
+  width: 100%;
+  max-width: 320px;
+  height: 460px;
+  border-radius: 20px;
+  border: 2.5px solid #d4af37;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.22);
+  display: flex;
+  flex-direction: column;
+  background-color: #0f172a;
+}
+
+.live-card-gradient-overlay {
+  background: linear-gradient(
+    180deg, 
+    rgba(15, 23, 42, 0.55) 0%, 
+    rgba(15, 23, 42, 0.2) 35%, 
+    rgba(15, 23, 42, 0.4) 65%, 
+    rgba(15, 23, 42, 0.85) 100%
+  );
+  backdrop-filter: blur(1px);
+}
+
+.live-card-frame-border {
+  inset: 12px;
+  border: 1.5px double rgba(255, 255, 255, 0.4);
+  border-radius: 12px;
+  pointer-events: none;
+}
+
+.live-card-grand-title {
+  font-family: 'Playfair Display', 'Cinzel', 'Outfit', serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  line-height: 1.25;
+}
+
+.live-card-divider {
+  width: 46px;
+  height: 2px;
+  border-radius: 2px;
+  margin: 6px auto;
+  opacity: 0.85;
+}
+
+.live-card-details-box {
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+// Smartphone Realistic Preview Frame in Modal
+.smartphone-preview-frame {
+  width: 375px;
+  max-width: 100%;
+  height: calc(82vh - 65px);
+  max-height: 700px;
+  border-radius: 40px !important;
+  border: 6px solid #1e293b !important;
+  background: #000000 !important;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(255, 255, 255, 0.12) !important;
+  position: relative;
+  overflow: hidden;
+
+  .smartphone-screen-content {
+    border-radius: 34px !important;
+    overflow: hidden !important;
+    background: #0b1120 !important;
+    width: 100%;
+    height: 100%;
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+  }
+}
+
