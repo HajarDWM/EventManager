@@ -27,6 +27,7 @@ public class EventDTO {
     private String clientEmail;
     private String clientPhone;
     private String accessLinkToken;
+    private LocalDateTime accessLinkExpiresAt;
     private LocalDateTime createdAt;
     private Long digitalTemplateId;
     private String templateId;

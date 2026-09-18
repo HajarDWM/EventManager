@@ -8,6 +8,7 @@ import com.example.eventmanager.infrastructure.persistence.repository.ClientRepo
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -20,6 +21,7 @@ public class ClientAuthService {
 
     public Optional<JwtToken> authenticate(String accessLinkToken) {
         return clientRepository.findByAccessLinkToken(accessLinkToken)
+                .filter(c -> c.getAccessLinkExpiresAt() == null || LocalDateTime.now().isBefore(c.getAccessLinkExpiresAt()))
                 .map(clientMapper::toDomain)
                 .map(jwtServicePort::generateClientToken);
     }

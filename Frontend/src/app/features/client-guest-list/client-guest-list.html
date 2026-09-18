@@ -7,9 +7,31 @@
     <button type="button" class="btn btn-outline-primary" (click)="onDownloadTemplate()" style="background: transparent; border: 1px solid #3b82f6; color: #3b82f6;">
       <i class="fas fa-file-excel"></i> Télécharger modèle Excel
     </button>
-    <button class="btn btn-primary" (click)="openAddModal()">
-      <i class="fas fa-plus"></i> Ajouter un invité
+    <button class="btn btn-primary" [disabled]="isGuestAdditionLocked()" (click)="openAddModal()" [title]="isGuestAdditionLocked() ? 'Délai d\'ajout expiré (72h avant l\'événement)' : ''">
+      <i class="fas" [ngClass]="isGuestAdditionLocked() ? 'fa-lock' : 'fa-plus'"></i> 
+      {{ isGuestAdditionLocked() ? 'Ajouts Clôturés' : 'Ajouter un invité' }}
     </button>
+  </div>
+</div>
+
+<!-- Deadline Passed Banner -->
+<div *ngIf="isGuestAdditionLocked()" class="alert mb-4 shadow-sm d-flex align-items-center gap-3 p-3 text-start" style="background-color: #fffbeb; border: 1px solid #fde68a; border-radius: 12px; color: #92400e;">
+  <div class="rounded-circle d-flex align-items-center justify-content-center bg-white shadow-xs flex-shrink-0" style="width: 40px; height: 40px;">
+    <i class="fas fa-lock text-warning fs-5"></i>
+  </div>
+  <div>
+    <strong class="d-block mb-0.5 fs-sm">Clôture des ajouts d'invités</strong>
+    <span class="fs-xs">
+      La période d'ajout et de modification des invités est clôturée depuis le <strong>{{ guestAdditionDeadline() | date:'dd/MM/yyyy à HH:mm' }}</strong> (72h avant l'événement pour la logistique traiteur). Vous pouvez toujours consulter votre liste et les réponses reçues. Pour tout ajustement exceptionnel, veuillez vous adresser directement à votre organisateur.
+    </span>
+  </div>
+</div>
+
+<!-- Deadline Info Banner (When still open) -->
+<div *ngIf="!isGuestAdditionLocked() && guestAdditionDeadline()" class="alert mb-4 shadow-2xs d-flex align-items-center gap-2.5 py-2 px-3 text-start" style="background-color: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; color: #1e40af;">
+  <i class="fas fa-info-circle text-primary fs-6 flex-shrink-0"></i>
+  <div class="fs-xs">
+    Les ajouts et modifications d'invités sont autorisés jusqu'au <strong>{{ guestAdditionDeadline() | date:'dd/MM/yyyy à HH:mm' }}</strong> (72h avant l'événement pour la préparation traiteur).
   </div>
 </div>
 
@@ -86,10 +108,10 @@
         </td>
         <td>{{ guest.tableNumber || '-' }}</td>
         <td class="actions-col">
-          <button class="btn-icon" title="Modifier" (click)="openEditModal(guest)">
+          <button class="btn-icon" [disabled]="isGuestAdditionLocked()" [title]="isGuestAdditionLocked() ? 'Modifications verrouillées' : 'Modifier'" (click)="openEditModal(guest)" [style.opacity]="isGuestAdditionLocked() ? '0.35' : '1'" [style.cursor]="isGuestAdditionLocked() ? 'not-allowed' : 'pointer'">
             <i class="fas fa-edit"></i>
           </button>
-          <button class="btn-icon text-danger" title="Supprimer" (click)="onDeleteGuest(guest)">
+          <button class="btn-icon text-danger" [disabled]="isGuestAdditionLocked()" [title]="isGuestAdditionLocked() ? 'Suppressions verrouillées' : 'Supprimer'" (click)="onDeleteGuest(guest)" [style.opacity]="isGuestAdditionLocked() ? '0.35' : '1'" [style.cursor]="isGuestAdditionLocked() ? 'not-allowed' : 'pointer'">
             <i class="fas fa-trash-alt"></i>
           </button>
         </td>
@@ -102,8 +124,9 @@
   <div class="empty-icon"><i class="fas fa-user-plus"></i></div>
   <h3>Aucun invité</h3>
   <p>Commencez à créer votre liste en ajoutant votre premier invité.</p>
-  <button class="btn btn-primary mt-3" (click)="openAddModal()">
-    Ajouter un invité
+  <button class="btn btn-primary mt-3" [disabled]="isGuestAdditionLocked()" (click)="openAddModal()">
+    <i class="fas" [ngClass]="isGuestAdditionLocked() ? 'fa-lock me-1' : 'fa-plus me-1'"></i>
+    {{ isGuestAdditionLocked() ? 'Ajouts Clôturés' : 'Ajouter un invité' }}
   </button>
 </div>
 

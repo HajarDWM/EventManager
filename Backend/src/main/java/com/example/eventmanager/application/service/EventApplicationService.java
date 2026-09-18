@@ -133,11 +133,16 @@ public class EventApplicationService implements CreateEventUseCase, GetEventUseC
                 ? eventDTO.getClientName() 
                 : "Client pour " + eventToSave.getTitle();
                 
+        java.time.LocalDateTime expiresAt = eventToSave.getEventDate() != null
+                ? eventToSave.getEventDate().plusDays(7)
+                : java.time.LocalDateTime.now().plusMonths(1);
+
         com.example.eventmanager.domain.model.Client client = com.example.eventmanager.domain.model.Client.builder()
                 .name(cName)
                 .email(eventDTO.getClientEmail())
                 .phone(eventDTO.getClientPhone())
                 .accessLinkToken(java.util.UUID.randomUUID().toString().replace("-", ""))
+                .accessLinkExpiresAt(expiresAt)
                 .build();
         com.example.eventmanager.infrastructure.persistence.entity.ClientEntity savedClient = 
                 clientRepository.save(clientPersistenceMapper.toEntity(client));
@@ -147,6 +152,7 @@ public class EventApplicationService implements CreateEventUseCase, GetEventUseC
         Event savedEvent = eventRepositoryPort.save(eventToSave);
         EventDTO createdEventDTO = eventMapper.toDTO(savedEvent);
         createdEventDTO.setAccessLinkToken(client.getAccessLinkToken());
+        createdEventDTO.setAccessLinkExpiresAt(savedClient.getAccessLinkExpiresAt());
         createdEventDTO.setClientName(savedClient.getName());
         createdEventDTO.setClientEmail(savedClient.getEmail());
         createdEventDTO.setClientPhone(savedClient.getPhone());
@@ -222,6 +228,10 @@ public class EventApplicationService implements CreateEventUseCase, GetEventUseC
                     clientEntity.setPhone(eventDTO.getClientPhone());
                     clientUpdated = true;
                 }
+                if (eventDTO.getEventDate() != null) {
+                    clientEntity.setAccessLinkExpiresAt(eventDTO.getEventDate().plusDays(7));
+                    clientUpdated = true;
+                }
                 if (clientUpdated) {
                     clientRepository.save(clientEntity);
                 }
@@ -229,7 +239,36 @@ public class EventApplicationService implements CreateEventUseCase, GetEventUseC
         }
 
         Event updatedEvent = eventRepositoryPort.save(existingEvent);
-        return eventMapper.toDTO(updatedEvent);
+        return getEventById(updatedEvent.getId());
+    }
+
+    @Override
+    @Transactional
+    public EventDTO regenerateClientToken(Long id) {
+        Long currentCatererId = securityContextPort.getCurrentCatererId();
+        
+        Event existingEvent = eventRepositoryPort.findById(id)
+                .orElseThrow(() -> new EventNotFoundException(id));
+                
+        com.example.eventmanager.domain.model.Caterer caterer = catererRepositoryPort.findById(currentCatererId).orElse(null);
+        boolean isSuperAdmin = caterer != null && "SUPER_ADMIN".equals(caterer.getRole().name());
+
+        if (!isSuperAdmin && existingEvent.getCatererId() != null && !existingEvent.getCatererId().equals(currentCatererId)) {
+            throw new UnauthorizedAccessException("Vous n'êtes pas autorisé à modifier cet événement.");
+        }
+
+        if (existingEvent.getClientId() != null) {
+            clientRepository.findById(existingEvent.getClientId()).ifPresent(clientEntity -> {
+                clientEntity.setAccessLinkToken(java.util.UUID.randomUUID().toString().replace("-", ""));
+                java.time.LocalDateTime expiresAt = existingEvent.getEventDate() != null
+                        ? existingEvent.getEventDate().plusDays(7)
+                        : java.time.LocalDateTime.now().plusDays(7);
+                clientEntity.setAccessLinkExpiresAt(expiresAt);
+                clientRepository.save(clientEntity);
+            });
+        }
+
+        return getEventById(id);
     }
 
     @Override
@@ -271,6 +310,7 @@ public class EventApplicationService implements CreateEventUseCase, GetEventUseC
         if (event.getClientId() != null) {
             clientRepository.findById(event.getClientId()).ifPresent(clientEntity -> {
                 eventDTO.setAccessLinkToken(clientEntity.getAccessLinkToken());
+                eventDTO.setAccessLinkExpiresAt(clientEntity.getAccessLinkExpiresAt());
                 eventDTO.setClientName(clientEntity.getName());
                 eventDTO.setClientEmail(clientEntity.getEmail());
                 eventDTO.setClientPhone(clientEntity.getPhone());
@@ -295,6 +335,7 @@ public class EventApplicationService implements CreateEventUseCase, GetEventUseC
                     if (event.getClientId() != null) {
                         clientRepository.findById(event.getClientId()).ifPresent(clientEntity -> {
                             eventDTO.setAccessLinkToken(clientEntity.getAccessLinkToken());
+                            eventDTO.setAccessLinkExpiresAt(clientEntity.getAccessLinkExpiresAt());
                             eventDTO.setClientName(clientEntity.getName());
                             eventDTO.setClientEmail(clientEntity.getEmail());
                             eventDTO.setClientPhone(clientEntity.getPhone());

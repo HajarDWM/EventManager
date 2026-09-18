@@ -21,8 +21,14 @@
         >
       </div>
 
-      <div *ngIf="errorMessage()" class="alert alert-error">
-        {{ errorMessage() }}
+      <div *ngIf="errorMessage()" class="alert mb-3" [ngClass]="isExpired() ? 'alert-warning' : 'alert-danger'" style="border-radius: 12px; font-size: 0.85rem; line-height: 1.4;">
+        <div class="d-flex align-items-start gap-2">
+          <i class="fa mt-1" [ngClass]="isExpired() ? 'fa-lock text-warning fs-5' : 'fa-circle-exclamation text-danger fs-5'"></i>
+          <div>
+            <strong *ngIf="isExpired()" class="d-block mb-1">Accès Expiré</strong>
+            {{ errorMessage() }}
+          </div>
+        </div>
       </div>
 
       <button type="submit" class="btn btn-primary w-100" [disabled]="isLoading() || !accessLinkToken()">

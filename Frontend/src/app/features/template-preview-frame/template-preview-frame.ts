@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, OnDestroy, signal } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy, signal, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
@@ -8,6 +8,7 @@ import { GuestRsvp, PublicRsvpDetail } from '../events/components/guest-rsvp/gue
   selector: 'app-template-preview-frame',
   standalone: true,
   imports: [CommonModule, GuestRsvp],
+  encapsulation: ViewEncapsulation.None,
   template: `
     <div class="template-preview-frame-container">
       <app-guest-rsvp
@@ -22,47 +23,46 @@ import { GuestRsvp, PublicRsvpDetail } from '../events/components/guest-rsvp/gue
     </div>
   `,
   styles: [`
-    :host {
+    html, body {
+      margin: 0 !important;
+      padding: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      background: #0f172a !important;
+      overflow-x: hidden !important;
+      overflow-y: auto !important;
+      scrollbar-width: none !important;
+      -ms-overflow-style: none !important;
+    }
+    html::-webkit-scrollbar,
+    body::-webkit-scrollbar,
+    *::-webkit-scrollbar {
+      display: none !important;
+      width: 0 !important;
+      height: 0 !important;
+    }
+    * {
+      scrollbar-width: none !important;
+      -ms-overflow-style: none !important;
+    }
+    app-template-preview-frame {
       display: block;
       width: 100%;
-      height: 100%;
-      min-height: 100vh;
+      min-height: 100%;
       margin: 0;
       padding: 0;
       background: #0f172a;
-      overflow-x: hidden;
     }
     .template-preview-frame-container {
       width: 100%;
-      min-height: 100vh;
+      min-height: 100%;
       margin: 0;
       padding: 0;
-      overflow-x: hidden;
-      overflow-y: auto;
-      scrollbar-width: none;
-      -ms-overflow-style: none;
     }
-    .template-preview-frame-container::-webkit-scrollbar {
-      display: none;
-      width: 0;
-      height: 0;
-    }
-    :host ::ng-deep {
-      html, body {
-        overflow-x: hidden !important;
-        scrollbar-width: none !important;
-        -ms-overflow-style: none !important;
-      }
-      ::-webkit-scrollbar {
-        display: none !important;
-        width: 0 !important;
-        height: 0 !important;
-      }
-      .rsvp-luxury-wrapper {
-        box-sizing: border-box !important;
-        padding-top: 55px !important;
-        padding-bottom: 25px !important;
-      }
+    .rsvp-luxury-wrapper {
+      box-sizing: border-box !important;
+      padding-top: 55px !important;
+      padding-bottom: 25px !important;
     }
   `]
 })

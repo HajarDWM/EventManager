@@ -81,21 +81,32 @@
               <i class="fa fa-share-nodes fs-sm"></i>
             </div>
             <div>
-              <h3 class="fs-sm fw-bold text-dark mb-0.5">Portail Client</h3>
-              <p class="text-muted fs-xs mb-0">Partagez ce lien sécurisé avec votre client pour qu'il puisse gérer sa liste d'invités.</p>
+              <div class="d-flex align-items-center gap-2 flex-wrap">
+                <h3 class="fs-sm fw-bold text-dark mb-0">Portail Client</h3>
+                <!-- Token Status Badge -->
+                <span *ngIf="event()?.accessLinkExpiresAt && !isClientTokenExpired()" 
+                      class="badge bg-success-light text-success border border-success-subtle rounded-pill px-2 py-0.5 fs-4xs fw-bold">
+                  <i class="fa fa-circle-check me-1"></i>Actif jusqu'au {{ event()?.accessLinkExpiresAt | date:'dd/MM/yyyy' }}
+                </span>
+                <span *ngIf="event()?.accessLinkExpiresAt && isClientTokenExpired()" 
+                      class="badge bg-danger-light text-danger border border-danger-subtle rounded-pill px-2 py-0.5 fs-4xs fw-bold animate__animated animate__pulse">
+                  <i class="fa fa-triangle-exclamation me-1"></i>Expiré depuis le {{ event()?.accessLinkExpiresAt | date:'dd/MM/yyyy' }}
+                </span>
+              </div>
+              <p class="text-muted fs-xs mb-0 mt-0.5">Partagez ce lien sécurisé avec votre client pour qu'il puisse gérer sa liste d'invités.</p>
             </div>
           </div>
           
-          <div class="w-100 flex-grow-1" style="max-width: 480px;">
+          <div class="w-100 flex-grow-1" style="max-width: 520px;">
             <div class="input-group input-group-sm shadow-sm rounded-pill overflow-hidden bg-white mb-1.5 border">
               <input type="text" class="form-control form-control-sm bg-transparent border-0 text-primary fw-semibold px-3 fs-xs" readonly [value]="clientPortalUrl()">
-              <button class="btn btn-sm btn-primary fw-medium px-3 fs-xs" type="button" (click)="copyClientLink()" [disabled]="linkCopied()" style="min-width: 110px; transition: all 0.2s ease;">
+              <button class="btn btn-sm btn-primary fw-medium px-3 fs-xs" type="button" (click)="copyClientLink()" [disabled]="linkCopied()" style="min-width: 100px; transition: all 0.2s ease;">
                 <i class="fa me-1.5" [ngClass]="linkCopied() ? 'fa-check' : 'fa-copy'"></i> 
                 {{ linkCopied() ? 'Lien copié' : 'Copier' }}
               </button>
             </div>
             
-            <div class="d-flex gap-1.5 flex-wrap">
+            <div class="d-flex gap-1.5 flex-wrap align-items-center">
               <a [href]="whatsappShareUrl()" target="_blank" class="btn btn-xs btn-alt-success rounded-pill fw-medium px-2 py-0.5 flex-grow-1 d-flex align-items-center justify-content-center shadow-2xs hover-elevate" style="transition: all 0.2s ease; font-size: 0.65rem; line-height: 1.2;">
                 <i class="fab fa-whatsapp me-1 text-success" style="font-size: 0.7rem;"></i> WhatsApp
               </a>
@@ -105,6 +116,9 @@
               <a [href]="smsShareUrl()" class="btn btn-xs btn-alt-secondary rounded-pill fw-medium px-2 py-0.5 flex-grow-1 d-flex align-items-center justify-content-center shadow-2xs hover-elevate" style="transition: all 0.2s ease; font-size: 0.65rem; line-height: 1.2;">
                 <i class="fa fa-comment-sms me-1 text-secondary" style="font-size: 0.7rem;"></i> SMS
               </a>
+              <button type="button" (click)="regenerateClientLink()" [disabled]="isRegeneratingToken()" class="btn btn-xs btn-alt-warning rounded-pill fw-medium px-2 py-0.5 d-flex align-items-center justify-content-center shadow-2xs hover-elevate" style="transition: all 0.2s ease; font-size: 0.65rem; line-height: 1.2;" title="Régénérer le lien et réinitialiser sa validité">
+                <i class="fa fa-rotate me-1 text-warning" [class.fa-spin]="isRegeneratingToken()" style="font-size: 0.7rem;"></i> Régénérer
+              </button>
             </div>
           </div>
         </div>

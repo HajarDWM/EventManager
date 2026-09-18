@@ -1087,6 +1087,33 @@ export class EventDetails implements OnInit {
     return roles[guest.id % roles.length];
   }
 
+  protected readonly isRegeneratingToken = signal(false);
+
+  protected readonly isClientTokenExpired = computed(() => {
+    const expiresAt = this.event()?.accessLinkExpiresAt;
+    if (!expiresAt) return false;
+    return new Date(expiresAt).getTime() < Date.now();
+  });
+
+  protected regenerateClientLink(): void {
+    const eventId = this.event()?.id;
+    if (!eventId) return;
+    if (!confirm('Voulez-vous générer un nouveau lien pour votre client ? L\'ancien lien ne sera plus accessible et la validité sera réinitialisée.')) {
+      return;
+    }
+    this.isRegeneratingToken.set(true);
+    this.eventService.regenerateClientToken(eventId).subscribe({
+      next: (updatedEvent) => {
+        this.isRegeneratingToken.set(false);
+        this.event.set(updatedEvent);
+      },
+      error: (err) => {
+        this.isRegeneratingToken.set(false);
+        console.error('Erreur lors de la régénération du lien client:', err);
+      }
+    });
+  }
+
   protected clientPortalUrl(): string {
     const e = this.event();
     if (e && e.accessLinkToken) {

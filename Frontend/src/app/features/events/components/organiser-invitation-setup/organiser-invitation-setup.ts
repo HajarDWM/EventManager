@@ -28,13 +28,19 @@ export interface CateringTab {
   label: string;
 }
 
+export interface SampleDish {
+  name: string;
+  category: string;
+  image: string;
+}
+
 export interface JourneyStep {
   stepNumber: number;
   title: string;
   shortTitle: string;
   subtitle: string;
   icon: string;
-  screenType: 'SMS_MESSAGE' | 'ENVELOPE_SEAL' | 'INVITATION_CARD' | 'MENU_CHOICE' | 'DIETARY_CHOICE' | 'RSVP_DECISION';
+  screenType: 'SMS_MESSAGE' | 'ENVELOPE_SEAL' | 'INVITATION_CARD' | 'INVITATION_PAGE1' | 'MENU_CHOICE' | 'DIETARY_CHOICE' | 'RSVP_DECISION';
   isCompleted: boolean;
   isCurrent: boolean;
   timestamp?: string;
@@ -42,15 +48,33 @@ export interface JourneyStep {
   badgeClass: string;
   details?: string;
   channels?: { name: string; icon: string; colorClass: string }[];
+  page1Title?: string;
+  page1Subtitle?: string;
+  page1GuestName?: string;
+  page1Date?: string;
+  page1Location?: string;
+  page1BgImage?: string;
+  page1AccentColor?: string;
   dishChoice?: string;
   dishCategory?: string;
   dishCategoryKey?: string;
   dishImage?: string;
   cateringFormula?: string;
   cateringTabs?: CateringTab[];
+  isBuffetMode?: boolean;
+  sampleBuffetDishes?: SampleDish[];
   dietaryTags?: DietaryTag[];
   hasDietaryRestrictions?: boolean;
   dietarySummary?: string;
+  guestFirstName?: string;
+  narrativeMessage?: string;
+  primaryChannelType?: 'WHATSAPP' | 'EMAIL' | 'SMS' | 'PAPER';
+  isPaidEvent?: boolean;
+  ticketPrice?: number;
+  currency?: string;
+  isPaid?: boolean;
+  tableNumber?: string;
+  guestStatus?: string;
 }
 
 @Component({
@@ -330,7 +354,18 @@ export class OrganiserInvitationSetup implements OnInit {
 
   protected getGuestJourneyLink(guest: Guest): string {
     const tokenOrId = (guest as any).invitationToken || guest.id;
-    return `${window.location.origin}/rsvp/${tokenOrId}`;
+    const j = this.getJourneyData(guest);
+    let stepParam = '';
+    if (j.currentActiveStepIndex === 2) {
+      stepParam = '?step=envelope';
+    } else if (j.currentActiveStepIndex === 3) {
+      stepParam = '?step=menu';
+    } else if (j.currentActiveStepIndex === 4) {
+      stepParam = '?step=dietary';
+    } else if (j.currentActiveStepIndex === 5) {
+      stepParam = '?step=rsvp';
+    }
+    return `${window.location.origin}/rsvp/${tokenOrId}${stepParam}`;
   }
 
   protected copyJourneyGuestLink(guest: Guest): void {
@@ -345,21 +380,111 @@ export class OrganiserInvitationSetup implements OnInit {
   protected getJourneyGuestWhatsAppUrl(guest: Guest): string {
     const cleanPhone = (guest.phone || '').replace(/[^0-9+]/g, '');
     const link = this.getGuestJourneyLink(guest);
-    const msg = encodeURIComponent(`Bonjour ${guest.fullName},\nVoici votre invitation officielle pour l'événement "${this.event()?.title || ''}". Cliquez ici pour découvrir votre carton et confirmer votre présence : ${link}`);
+    const j = this.getJourneyData(guest);
+    const eventName = this.event()?.title || "l'événement";
+    let stepContext = "finaliser votre réponse";
+    if (j.currentActiveStepIndex === 2) {
+      stepContext = "découvrir votre invitation et décacheter votre enveloppe";
+    } else if (j.currentActiveStepIndex === 3) {
+      stepContext = "sélectionner vos choix de menu pour le traiteur";
+    } else if (j.currentActiveStepIndex === 4) {
+      stepContext = "indiquer vos préférences et régimes alimentaires pour le traiteur";
+    } else if (j.currentActiveStepIndex === 5) {
+      stepContext = "confirmer définitivement votre présence";
+    }
+    const msg = encodeURIComponent(`Bonjour ${guest.fullName},\n\nRappel amical concernant ${eventName}.\nAfin de permettre au traiteur d'ajuster au mieux les préparatifs, merci de ${stepContext} directement via votre lien personnalisé :\n${link}`);
     return cleanPhone ? `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${msg}` : `https://api.whatsapp.com/send?text=${msg}`;
   }
 
   protected getJourneyGuestEmailUrl(guest: Guest): string {
     const link = this.getGuestJourneyLink(guest);
-    const subject = encodeURIComponent(`Invitation officielle : ${this.event()?.title || 'Votre événement'}`);
-    const body = encodeURIComponent(`Bonjour ${guest.fullName},\n\nNous avons le plaisir de vous convier à l'événement "${this.event()?.title || ''}".\n\nVeuillez découvrir votre carton d'invitation personnalisé et confirmer votre présence en cliquant sur le lien suivant :\n${link}\n\nCordialement.`);
+    const j = this.getJourneyData(guest);
+    const eventName = this.event()?.title || "l'événement";
+    let stepContext = "finaliser votre réponse";
+    if (j.currentActiveStepIndex === 2) {
+      stepContext = "découvrir votre invitation et décacheter votre enveloppe";
+    } else if (j.currentActiveStepIndex === 3) {
+      stepContext = "sélectionner vos choix de menu avec le traiteur";
+    } else if (j.currentActiveStepIndex === 4) {
+      stepContext = "indiquer vos préférences alimentaires et allergies";
+    } else if (j.currentActiveStepIndex === 5) {
+      stepContext = "confirmer votre présence";
+    }
+    const subject = encodeURIComponent(`Rappel : Votre invitation officielle pour ${eventName}`);
+    const body = encodeURIComponent(`Bonjour ${guest.fullName},\n\nNous nous permettons de vous rappeler votre invitation à l'événement "${eventName}".\n\nAfin de nous coordonner avec le traiteur pour un accueil parfait, nous vous serions reconnaissants de bien vouloir ${stepContext} en cliquant sur le lien suivant :\n${link}\n\nAu plaisir de vous compter parmi nous,\nL'organisation.`);
     return `mailto:${guest.email || ''}?subject=${subject}&body=${body}`;
   }
 
   protected getJourneyGuestSmsUrl(guest: Guest): string {
     const link = this.getGuestJourneyLink(guest);
-    const body = encodeURIComponent(`Bonjour ${guest.fullName}, découvrez votre invitation pour "${this.event()?.title || ''}" et confirmez votre présence : ${link}`);
+    const eventName = this.event()?.title || "l'événement";
+    const body = encodeURIComponent(`Bonjour ${guest.fullName}, rappel pour ${eventName}. Merci de finaliser votre confirmation traiteur ici : ${link}`);
     return `sms:${guest.phone || ''}?body=${body}`;
+  }
+
+  protected getPreferredReminderChannel(guest: Guest | null): {
+    type: 'WHATSAPP' | 'EMAIL' | 'SMS' | 'LINK';
+    label: string;
+    actionTitle: string;
+    icon: string;
+    btnClass: string;
+    url: string;
+    isExternal: boolean;
+  } | null {
+    if (!guest) return null;
+    const hasPhone = !!guest.phone && guest.phone.trim().length > 0;
+    const hasEmail = !!guest.email && guest.email.trim().length > 0;
+    const sentChannels = guest.sentChannels || [];
+    
+    // 1. If sent ONLY via Email (or only Email is available)
+    if ((sentChannels.includes('E-mail') && !sentChannels.includes('WhatsApp')) || (!hasPhone && hasEmail)) {
+      return {
+        type: 'EMAIL',
+        label: 'Rappeler par E-mail',
+        actionTitle: 'Ouvrir votre messagerie et envoyer le rappel par E-mail',
+        icon: 'far fa-envelope',
+        btnClass: 'btn-info text-white',
+        url: this.getJourneyGuestEmailUrl(guest),
+        isExternal: true
+      };
+    }
+
+    // 2. If sent via WhatsApp or phone is available
+    if (hasPhone) {
+      return {
+        type: 'WHATSAPP',
+        label: 'Rappeler par WhatsApp',
+        actionTitle: 'Ouvrir WhatsApp et envoyer le rappel personnalisé',
+        icon: 'fab fa-whatsapp',
+        btnClass: 'btn-success',
+        url: this.getJourneyGuestWhatsAppUrl(guest),
+        isExternal: true
+      };
+    }
+
+    // 3. If email is available
+    if (hasEmail) {
+      return {
+        type: 'EMAIL',
+        label: 'Rappeler par E-mail',
+        actionTitle: 'Ouvrir votre messagerie et envoyer le rappel par E-mail',
+        icon: 'far fa-envelope',
+        btnClass: 'btn-info text-white',
+        url: this.getJourneyGuestEmailUrl(guest),
+        isExternal: true
+      };
+    }
+
+    // 4. Default fallback: Copy link
+    return {
+      type: 'LINK',
+      label: 'Copier le lien direct',
+      actionTitle: 'Copier le lien direct de relance',
+      icon: 'fa fa-copy',
+      btnClass: 'btn-primary',
+      url: this.getGuestJourneyLink(guest),
+      isExternal: false
+    };
   }
 
   protected getJourneyData(guest: Guest): {
@@ -539,12 +664,58 @@ export class OrganiserInvitationSetup implements OnInit {
     else if (isOpened) currentStepNum = 2;
     else if (isSent) currentStepNum = 2;
 
+    const sampleBuffetDishes: SampleDish[] = [
+      {
+        name: 'Pastilla Royale aux Fruits de Mer',
+        category: 'Buffet • Entrée Prestige',
+        image: '/assets/images/menu_starter.png'
+      },
+      {
+        name: 'Tajine d\'Agneau M\'rouzia & Pruneaux',
+        category: 'Buffet • Plat Signature',
+        image: '/assets/images/menu_main.png'
+      }
+    ];
+
+    const evTitle = this.event()?.invitationTitle || this.event()?.title || 'Notre Célébration';
+    const evSubtitle = this.event()?.invitationSubtitle || 'Invitation Officielle';
+    const rawEvDate = this.event()?.invitationDate || this.event()?.eventDate;
+    let formattedDate = 'Date à confirmer';
+    if (rawEvDate) {
+      try {
+        formattedDate = new Date(rawEvDate).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' });
+      } catch (e) {
+        formattedDate = String(rawEvDate);
+      }
+    }
+    const evLocation = this.event()?.invitationLocation || this.event()?.location || 'Casablanca, Maroc';
+
+    const guestFullName = guest.fullName || (guest as any).name || 'L\'invité(e)';
+    const guestFirstName = guestFullName.split(' ')[0] || guestFullName;
+
+    const isPaidEvent = this.event()?.isPaidEvent === true || !!this.event()?.ticketPrice;
+    const ticketPrice = this.event()?.ticketPrice || 0;
+    const currency = this.event()?.currency || 'DH';
+    const isPaid = guest.paymentStatus === 'PAID' || (guest.paidAmount !== undefined && guest.paidAmount >= ticketPrice);
+
+    const sentChs = guest.sentChannels || [];
+    let primaryChannel: 'WHATSAPP' | 'EMAIL' | 'SMS' | 'PAPER' = 'WHATSAPP';
+    if (sentChs.includes('E-mail') && !sentChs.includes('WhatsApp')) {
+      primaryChannel = 'EMAIL';
+    } else if (sentChs.includes('SMS') && !sentChs.includes('WhatsApp')) {
+      primaryChannel = 'SMS';
+    } else if (sentChs.includes('Papier') && sentChs.length === 1) {
+      primaryChannel = 'PAPER';
+    } else if (!guest.phone && guest.email) {
+      primaryChannel = 'EMAIL';
+    }
+
     const steps: JourneyStep[] = [
       {
         stepNumber: 1,
         title: "Écran 1 : Envoi & Notification",
         shortTitle: "1. Envoi Notification",
-        subtitle: isSent ? "Notification reçue sur mobile" : "En attente d'expédition",
+        subtitle: isSent ? `Notification reçue par ${guestFirstName}` : "En attente d'expédition",
         icon: "fa-paper-plane",
         screenType: 'SMS_MESSAGE' as const,
         isCompleted: isSent,
@@ -552,70 +723,106 @@ export class OrganiserInvitationSetup implements OnInit {
         timestamp: sentAt,
         badgeLabel: isSent ? "Envoyé" : "En attente",
         badgeClass: isSent ? "bg-success text-white" : "bg-warning-light text-black border border-warning-light",
-        details: isSent ? `Message avec lien unique transmis` : `En attente du clic d'envoi`,
-        channels: activeChannels.map(c => ({ name: c.type, icon: c.icon, colorClass: c.colorClass }))
+        details: isSent ? `Transmis par ${activeChannels.map(c => c.type).join(' & ') || 'Notification'}` : `En attente du clic d'envoi`,
+        channels: activeChannels.map(c => ({ name: c.type, icon: c.icon, colorClass: c.colorClass })),
+        guestFirstName: guestFirstName,
+        primaryChannelType: primaryChannel,
+        narrativeMessage: isSent 
+          ? `Invitation transmise avec succès à ${guestFirstName} par ${activeChannels.map(c => c.type).join(' & ') || 'message'}` 
+          : `En attente d'expédition de l'invitation à ${guestFirstName}`
       },
       {
         stepNumber: 2,
-        title: "Écran 2 : Ouverture Enveloppe",
-        shortTitle: "2. Ouverture Enveloppe",
-        subtitle: isOpened ? "L'invité a décacheté l'enveloppe et découvert la page 1" : (isSent ? "En attente de décachetage" : "Non distribué"),
+        title: "Écran 2 : Découverte de l'Invitation",
+        shortTitle: "2. Carte d'Invitation",
+        subtitle: isOpened ? `${guestFirstName} a ouvert la carte d'invitation` : (isSent ? "En attente de consultation" : "Non distribué"),
         icon: "fa-envelope-open-text",
-        screenType: 'ENVELOPE_SEAL' as const,
+        screenType: 'INVITATION_PAGE1' as const,
         isCompleted: isOpened,
         isCurrent: isSent && !isOpened,
         timestamp: openedAt,
-        badgeLabel: isOpened ? "Ouvert" : (isSent ? "En cours" : "En attente"),
+        badgeLabel: isOpened ? "Consulté" : (isSent ? "En cours" : "En attente"),
         badgeClass: isOpened ? "bg-success text-white" : (isSent && !isOpened ? "bg-warning text-dark fw-bold" : "bg-body-dark text-muted"),
-        details: isOpened ? `Invitation décachetée et page 1 consultée` : `Enveloppe / portes encore fermées`
+        details: isOpened ? `Programme, date & lieu consultés (${evLocation})` : `Invitation non encore consultée`,
+        page1Title: evTitle,
+        page1Subtitle: evSubtitle,
+        page1GuestName: guestFullName,
+        page1Date: formattedDate,
+        page1Location: evLocation,
+        guestFirstName: guestFirstName,
+        narrativeMessage: isOpened ? `${guestFirstName} a ouvert l'invitation et découvert le programme & le lieu` : `En attente de découverte par ${guestFirstName}`
       },
       {
         stepNumber: 3,
-        title: "Écran 3 : Sélection Gastronomie",
+        title: "Écran 3 : Sélection Menu & Formule",
         shortTitle: "3. Choix Menu",
-        subtitle: isMenuViewed ? (cleanDishName ? `${dishCategoryLabel} : ${cleanDishName}` : "Plats en cours de découverte") : (isDeclined ? "Non requis" : "En attente"),
+        subtitle: isBuffetMode 
+          ? `Formule Buffet : ${guestFirstName} a découvert le menu` 
+          : (cleanDishName ? `${guestFirstName} a choisi : ${cleanDishName}` : (isMenuViewed ? "Plats en cours de découverte" : (isDeclined ? "Non requis" : "En attente"))),
         icon: "fa-utensils",
         screenType: 'MENU_CHOICE' as const,
         isCompleted: isMenuViewed || isConfirmed,
         isCurrent: isOpened && !isMenuViewed && !hasResponded,
-        badgeLabel: isMenuViewed ? (isConfirmed ? "Sélectionné" : "En consultation") : (isDeclined ? "Non requis" : "En attente"),
-        badgeClass: isMenuViewed ? "bg-success text-white" : (isOpened && !hasResponded ? "bg-warning text-dark fw-bold" : "bg-body-dark text-muted"),
-        details: isMenuViewed ? `${dishCategoryLabel} : ${cleanDishName}` : `L'invité n'a pas encore validé ses plats`,
+        badgeLabel: isBuffetMode ? "Buffet" : (isMenuViewed ? (isConfirmed ? "Sélectionné" : "En consultation") : (isDeclined ? "Non requis" : "En attente")),
+        badgeClass: (isBuffetMode || isMenuViewed) ? "bg-success text-white" : (isOpened && !hasResponded ? "bg-warning text-dark fw-bold" : "bg-body-dark text-muted"),
+        details: isBuffetMode ? `Formule Buffet : Présentation des plats du chef` : (cleanDishName ? `${dishCategoryLabel} : ${cleanDishName}` : `En attente du choix de menu`),
         dishChoice: cleanDishName,
         dishCategory: dishCategoryLabel,
         dishCategoryKey: detectedCat,
         dishImage: dishImg,
         cateringFormula: cateringFormulaName,
-        cateringTabs: cateringTabs
+        cateringTabs: cateringTabs,
+        isBuffetMode: isBuffetMode,
+        sampleBuffetDishes: sampleBuffetDishes,
+        guestFirstName: guestFirstName,
+        narrativeMessage: isBuffetMode 
+          ? `${guestFirstName} a pris connaissance de la Formule Buffet Libre-Service` 
+          : (cleanDishName ? `${guestFirstName} a sélectionné son plat : ${cleanDishName}` : (isMenuViewed ? `${guestFirstName} consulte actuellement le menu` : `En attente du choix de menu par ${guestFirstName}`))
       },
       {
         stepNumber: 4,
         title: "Écran 4 : Régimes & Allergies",
         shortTitle: "4. Régimes & Allergies",
-        subtitle: dietaryTags.length > 0 ? `${dietaryTags.length} restriction(s) déclarée(s)` : (isDietViewed ? "Sans restriction particulière" : "En attente"),
+        subtitle: dietaryTags.length > 0 ? `${guestFirstName} a déclaré ${dietaryTags.length} restriction(s)` : (isDietViewed ? "Aucune allergie (Menu standard)" : "En attente"),
         icon: "fa-leaf",
         screenType: 'DIETARY_CHOICE' as const,
         isCompleted: isDietViewed || isConfirmed,
         isCurrent: isMenuViewed && !isDietViewed && !hasResponded,
         badgeLabel: dietaryTags.length > 0 ? `${dietaryTags.length} régimes` : (isDietViewed ? (isConfirmed ? "Standard" : "Consulté") : "En attente"),
         badgeClass: isDietViewed ? "bg-success text-white" : (isMenuViewed && !hasResponded ? "bg-warning text-dark fw-bold" : "bg-body-dark text-muted"),
-        details: dietaryTags.length > 0 ? dietaryList.join(', ') : (isDietViewed ? 'Menu classique sans restriction' : 'En attente des préférences de l\'invité'),
+        details: dietaryTags.length > 0 ? `${dietaryList.join(', ')} • Fiche traiteur` : (isDietViewed ? 'Menu classique sans restriction' : 'Préférences alimentaires en attente'),
         dietaryTags: dietaryTags,
         hasDietaryRestrictions: dietaryTags.length > 0,
-        dietarySummary: dietaryList.join(', ') || 'Aucune restriction particulière'
+        dietarySummary: dietaryList.join(', ') || 'Aucune restriction particulière',
+        guestFirstName: guestFirstName,
+        narrativeMessage: dietaryTags.length > 0 
+          ? `${guestFirstName} a déclaré : ${dietaryList.join(', ')}` 
+          : (isDietViewed ? `${guestFirstName} n'a signalé aucune allergie ni restriction (Menu Standard)` : `En attente des préférences alimentaires de ${guestFirstName}`)
       },
       {
         stepNumber: 5,
         title: "Écran 5 : Décision Finale (RSVP)",
         shortTitle: "5. Décision RSVP",
-        subtitle: isConfirmed ? "Présence confirmée" : (isDeclined ? "Invitation déclinée" : "En attente"),
+        subtitle: isConfirmed ? `${guestFirstName} a confirmé sa présence` : (isDeclined ? `${guestFirstName} a décliné l'invitation` : "En attente"),
         icon: isConfirmed ? "fa-circle-check" : (isDeclined ? "fa-circle-xmark" : "fa-clock"),
         screenType: 'RSVP_DECISION' as const,
         isCompleted: hasResponded,
         isCurrent: isDietViewed && !hasResponded,
         badgeLabel: isConfirmed ? "Confirmé" : (isDeclined ? "Décliné" : "En attente"),
         badgeClass: isConfirmed ? "bg-success text-white" : (isDeclined ? "bg-danger text-white" : "bg-warning-light text-black border border-warning-light"),
-        details: isConfirmed ? `Place réservée` : (isDeclined ? `Absence notifiée` : `En attente de la confirmation`)
+        details: isConfirmed 
+          ? (isPaidEvent ? `Présence confirmée • ${isPaid ? 'Billet VIP Réglé' : 'Paiement en attente'}` : `Place réservée (${(guest as any).tableNumber || 'Table d\'Honneur'})`)
+          : (isDeclined ? `Absence notifiée` : `En attente de la réponse finale`),
+        tableNumber: (guest as any).tableNumber || (guest as any).table?.name || 'Table d\'Honneur',
+        guestStatus: guest.status || 'PENDING',
+        guestFirstName: guestFirstName,
+        isPaidEvent: isPaidEvent,
+        ticketPrice: ticketPrice,
+        currency: currency,
+        isPaid: isPaid,
+        narrativeMessage: isConfirmed
+          ? (isPaidEvent ? `${guestFirstName} a confirmé sa présence et validé son pass VIP` : `${guestFirstName} a confirmé sa présence • Table & Place réservées`)
+          : (isDeclined ? `${guestFirstName} a décliné l'invitation et ne pourra pas être présent(e)` : `En attente de la décision finale de ${guestFirstName}`)
       }
     ];
 

@@ -37,4 +37,8 @@ export class EventService {
   public setupInvitation(eventId: number, setupData: any): Observable<any> {
     return this.http.post<any>(`/api/organizer/events/${eventId}/invitation-setup`, setupData);
   }
+
+  public regenerateClientToken(eventId: number): Observable<Event> {
+    return this.http.post<Event>(`${this.apiUrl}/${eventId}/regenerate-client-token`, {});
+  }
 }

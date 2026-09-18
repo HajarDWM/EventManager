@@ -32,6 +32,12 @@ public class EventResource {
         return ResponseEntity.ok(updatedEvent);
     }
 
+    @PostMapping("/{id}/regenerate-client-token")
+    public ResponseEntity<EventDTO> regenerateClientToken(@PathVariable Long id) {
+        EventDTO updatedEvent = updateEventUseCase.regenerateClientToken(id);
+        return ResponseEntity.ok(updatedEvent);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteEvent(@PathVariable Long id) {
         deleteEventUseCase.deleteEvent(id);

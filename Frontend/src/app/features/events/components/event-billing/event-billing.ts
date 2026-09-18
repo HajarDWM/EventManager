@@ -312,9 +312,13 @@ export class EventBilling implements OnInit {
     this.paymentReferenceInput = '';
     
     if (this.paymentsList().length === 0) {
-      this.paymentLabelInput = 'AVANCE';
+      this.paymentLabelInput = 'Acompte / Avance';
+    } else if (this.paymentsList().length === 1) {
+      this.paymentLabelInput = 'Deuxième versement';
+    } else if (this.paymentsList().length === 2) {
+      this.paymentLabelInput = 'Troisième versement';
     } else {
-      this.paymentLabelInput = `VERSEMENT_${this.paymentsList().length + 1}`;
+      this.paymentLabelInput = 'Solde final';
     }
     
     this.isRecordingPaymentModal.set(true);
@@ -508,23 +512,33 @@ export class EventBilling implements OnInit {
   }
 
   protected getPaymentLabelText(label?: string): string {
+    if (!label) return 'Règlement';
     switch (label) {
       case 'AVANCE': return 'Acompte / Avance';
       case 'VERSEMENT_2': return '2ème versement';
       case 'VERSEMENT_3': return '3ème versement';
       case 'SOLDE': return 'Solde final';
-      default: return label ? label.replace('_', ' ') : 'Règlement';
+      case 'AUTRE': return 'Autre règlement';
+      default: return label;
     }
   }
 
   protected getPaymentLabelBadgeClass(label?: string): string {
-    switch (label) {
-      case 'AVANCE': return 'bg-info-light text-info border border-info-light';
-      case 'VERSEMENT_2':
-      case 'VERSEMENT_3': return 'bg-warning-light text-warning border border-warning-light';
-      case 'SOLDE': return 'bg-success-light text-success border border-success-light';
-      default: return 'bg-body-light text-muted border border-light';
+    if (!label) return 'bg-body-light text-muted border border-light';
+    const lower = label.toLowerCase();
+    if (label === 'AVANCE' || lower.includes('acompte') || lower.includes('avance')) {
+      return 'bg-info-light text-info border border-info-light';
     }
+    if (label === 'SOLDE' || lower.includes('solde') || lower.includes('final')) {
+      return 'bg-success-light text-success border border-success-light';
+    }
+    if (label === 'VERSEMENT_2' || label === 'VERSEMENT_3' || lower.includes('versement')) {
+      return 'bg-warning-light text-warning border border-warning-light';
+    }
+    if (lower.includes('caution') || lower.includes('garantie')) {
+      return 'bg-secondary-light text-secondary border border-secondary-light';
+    }
+    return 'bg-primary-light text-primary border border-primary-light';
   }
 
   protected getExpenseCategoryLabel(category?: string): string {

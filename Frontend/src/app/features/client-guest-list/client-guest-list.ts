@@ -86,12 +86,35 @@ export class ClientGuestList implements OnInit {
     return suggestions.filter(s => s.toLowerCase().includes(input));
   });
 
+  protected readonly currentEvent = computed(() => {
+    const id = this.eventId();
+    if (!id) return null;
+    return this.clientAuthService.clientEvents().find(e => e.id === id) || null;
+  });
+
+  protected readonly guestAdditionDeadline = computed(() => {
+    const ev = this.currentEvent();
+    if (!ev || !ev.eventDate) return null;
+    const evDate = new Date(ev.eventDate);
+    // Deadline is 72h (3 days) before eventDate
+    return new Date(evDate.getTime() - (72 * 60 * 60 * 1000));
+  });
+
+  protected readonly isGuestAdditionLocked = computed(() => {
+    const deadline = this.guestAdditionDeadline();
+    if (!deadline) return false;
+    return Date.now() > deadline.getTime();
+  });
+
   public ngOnInit(): void {
     const idParam = this.route.snapshot.paramMap.get('id');
     if (idParam) {
       const parsedId = Number(idParam);
       this.eventId.set(parsedId);
       this.loadGuests(parsedId);
+      if (this.clientAuthService.clientEvents().length === 0) {
+        this.clientAuthService.fetchEvents().subscribe();
+      }
     } else {
       this.errorMessage.set('Identifiant d\'événement invalide.');
       this.isLoading.set(false);
@@ -114,6 +137,10 @@ export class ClientGuestList implements OnInit {
   }
 
   protected openAddModal(): void {
+    if (this.isGuestAdditionLocked()) {
+      alert('La date limite d\'ajout d\'invités est dépassée (72h avant l\'événement). Veuillez contacter votre organisateur.');
+      return;
+    }
     this.isEditing.set(false);
     this.editingGuestId.set(null);
     this.resetForm();
@@ -121,6 +148,10 @@ export class ClientGuestList implements OnInit {
   }
 
   protected openEditModal(guest: Guest): void {
+    if (this.isGuestAdditionLocked()) {
+      alert('La date limite de modification des invités est dépassée. Veuillez contacter votre organisateur.');
+      return;
+    }
     this.isEditing.set(true);
     this.editingGuestId.set(guest.id || null);
     this.fullName.set(guest.fullName || '');
@@ -148,6 +179,11 @@ export class ClientGuestList implements OnInit {
   }
 
   protected onSaveGuest(): void {
+    if (this.isGuestAdditionLocked()) {
+      this.errorMessage.set('La date limite d\'ajout ou de modification des invités est dépassée (72h avant l\'événement).');
+      return;
+    }
+
     if (!this.fullName().trim()) {
       this.errorMessage.set('Le nom complet est obligatoire.');
       return;
@@ -206,6 +242,10 @@ export class ClientGuestList implements OnInit {
   }
 
   protected onDeleteGuest(guest: Guest): void {
+    if (this.isGuestAdditionLocked()) {
+      alert('La date limite de suppression des invités est dépassée.');
+      return;
+    }
     if (!guest.id) return;
     if (confirm(`Êtes-vous sûr de vouloir supprimer l'invité "${guest.fullName}" ?`)) {
       const currentEventId = this.eventId();

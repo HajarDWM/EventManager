@@ -30,6 +30,9 @@ public class ClientEntity {
     @Column(name = "access_link_token", unique = true)
     private String accessLinkToken;
 
+    @Column(name = "access_link_expires_at")
+    private LocalDateTime accessLinkExpiresAt;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

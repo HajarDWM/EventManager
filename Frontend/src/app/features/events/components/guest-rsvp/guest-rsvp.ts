@@ -1387,6 +1387,33 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
               }
             }
           }
+
+          // Check query param for explicit step resume from Organizer Reminder Link:
+          const stepQuery = this.route.snapshot.queryParamMap.get('step');
+          if (stepQuery && data.guestStatus !== 'CONFIRMED' && data.guestStatus !== 'DECLINED') {
+            if (stepQuery !== 'envelope') {
+              this.isInvitationOpened.set(true);
+            }
+            if (stepQuery === 'menu') {
+              this.attendanceStatus = true;
+              this.status.set('CONFIRMED');
+              this.selectedAttendanceChoice.set('CONFIRMED');
+              this.isMenuRsvpOpen.set(true);
+              this.currentRsvpStep.set(0);
+            } else if (stepQuery === 'dietary') {
+              this.attendanceStatus = true;
+              this.status.set('CONFIRMED');
+              this.selectedAttendanceChoice.set('CONFIRMED');
+              this.isMenuRsvpOpen.set(true);
+              this.currentRsvpStep.set(this.isPlatedMode() ? 3 : 2);
+            } else if (stepQuery === 'rsvp') {
+              this.attendanceStatus = true;
+              this.status.set('CONFIRMED');
+              this.selectedAttendanceChoice.set('CONFIRMED');
+              this.isMenuRsvpOpen.set(true);
+              this.currentRsvpStep.set(this.isPlatedMode() ? 4 : 3);
+            }
+          }
         }
 
         this.isLoading.set(false);

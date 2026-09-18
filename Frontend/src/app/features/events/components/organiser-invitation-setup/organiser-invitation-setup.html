@@ -207,11 +207,6 @@
     <h3 class="block-title fw-bold mb-0">
       <i class="fa fa-paper-plane text-primary me-2"></i>Envoi des Invitations
     </h3>
-    <div class="block-options">
-      <span class="badge bg-primary px-3 py-2 rounded-pill fs-xs">
-        {{ getSelectedCount() }} / {{ guests().length }} invité(s) sélectionné(s)
-      </span>
-    </div>
   </div>
   
   <div class="block-content p-4">
@@ -284,22 +279,17 @@
         <div class="border border-light rounded h-100 d-flex flex-column" style="min-height: 250px;">
           <div class="p-3 bg-body-light border-bottom d-flex justify-content-between align-items-center">
             <div class="d-flex align-items-center gap-2">
-              <input type="checkbox" class="form-check-input" id="selectAllGuests"
+              <input type="checkbox" class="form-check-input cursor-pointer" id="selectAllGuests"
                      [checked]="isAllSelected()" 
                      (change)="toggleAllGuests($event)">
               <label class="form-check-label fw-bold fs-sm mb-0 cursor-pointer" for="selectAllGuests">
-                2. Sélectionner les destinataires ({{ getSelectedCount() }} / {{ guests().length }})
+                2. Sélectionner les destinataires
               </label>
             </div>
             
-            <div class="btn-group btn-group-sm">
-              <button type="button" class="btn btn-xs btn-outline-secondary" (click)="selectOnlyUnsent()">
-                Non envoyés uniquement
-              </button>
-              <button type="button" class="btn btn-xs btn-outline-secondary" (click)="selectAll()">
-                Tous
-              </button>
-            </div>
+            <span class="badge bg-white text-dark border shadow-2xs rounded-pill px-2.5 py-1 fs-3xs fw-semibold">
+              <i class="fa fa-users text-primary me-1"></i> {{ getSelectedCount() }} / {{ guests().length }} sélectionné(s)
+            </span>
           </div>
 
           <div class="table-responsive flex-grow-1" style="max-height: 320px; overflow-y: auto;">
@@ -316,9 +306,13 @@
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let guest of guests()" [class.table-active]="guest.id ? selectedGuestIds()[guest.id] : false">
-                  <td>
-                    <input type="checkbox" class="form-check-input" 
+                <tr *ngFor="let guest of guests()" 
+                    [class.table-active]="guest.id ? selectedGuestIds()[guest.id] : false"
+                    style="cursor: pointer;"
+                    (click)="openGuestJourney(guest)"
+                    title="Cliquer pour voir le parcours et les écrans de cet invité">
+                  <td (click)="$event.stopPropagation()">
+                    <input type="checkbox" class="form-check-input cursor-pointer" 
                            [checked]="guest.id ? selectedGuestIds()[guest.id] : false" 
                            (change)="guest.id && toggleGuest(guest.id)">
                   </td>
@@ -351,7 +345,7 @@
                       <i class="fa fa-comment-sms text-warning fs-xs" *ngIf="guest.phone" title="SMS possible"></i>
                     </div>
                   </td>
-                  <td class="text-center">
+                  <td class="text-center" (click)="$event.stopPropagation()">
                     <button type="button" class="btn btn-xs btn-alt-primary rounded-pill px-2.5 py-1 d-inline-flex align-items-center gap-1 shadow-2xs"
                             (click)="testGuestInvitation(guest)"
                             title="Tester l'invitation personnalisée de cet invité (Nouvel onglet)">
@@ -404,9 +398,7 @@
             <p class="modal-subtitle-luxury mb-0 fs-xs text-muted">{{ selectedTemplate()?.title }} &bull; {{ selectedTemplate()?.category }} {{ selectedTemplate()?.subCategory ? '(' + selectedTemplate()?.subCategory + ')' : '' }}</p>
           </div>
         </div>
-        <button type="button" class="btn-close-luxury" (click)="closeModal()" aria-label="Close">
-          <i class="fa fa-times"></i>
-        </button>
+        <button type="button" class="btn-close" (click)="closeModal()" aria-label="Fermer"></button>
       </div>
 
       <form (ngSubmit)="saveSetup()" class="d-flex flex-column flex-grow-1 overflow-hidden">
@@ -502,31 +494,27 @@
             </div>
 
             <!-- RIGHT COLUMN: Real Live Interactive Invitation Card (Exact Guest View) -->
-            <div class="col-lg-5 p-3 bg-dark d-flex flex-column align-items-center justify-content-start overflow-hidden position-relative">
-              <div class="d-flex align-items-center justify-content-between w-100 mb-2 px-2 text-white">
+            <div class="col-lg-5 p-3 bg-dark d-flex flex-column align-items-center justify-content-center overflow-hidden position-relative">
+              <div class="d-flex align-items-center justify-content-center w-100 mb-3 text-white">
                 <div class="d-flex align-items-center gap-2">
                   <span class="rounded-circle bg-success d-inline-block" style="width: 8px; height: 8px; box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3);"></span>
                   <span class="fs-xs fw-bold text-white text-uppercase letter-spacing-sm">Aperçu Réel Invité</span>
                 </div>
-                <span class="badge bg-white bg-opacity-10 text-white border border-white border-opacity-25 fs-4xs px-2 py-0.5 rounded-pill shadow-2xs">
-                  Modèle Réel &bull; Rendu 100% Fidèle
-                </span>
               </div>
 
-              <!-- Real Guest RSVP Canvas in Studio (Page 1 Format Mobile - Real Isolated Iframe View) -->
-              <div class="w-100 rounded-4 overflow-hidden border border-secondary shadow-lg position-relative flex-grow-1 d-flex justify-content-center" 
-                   style="height: 560px; max-height: 560px; background: #0f172a;">
-                <iframe 
-                  *ngIf="studioLivePreviewIframeUrl()" 
-                  [src]="studioLivePreviewIframeUrl()" 
-                  class="w-100 h-100 border-0"
-                  style="width: 100%; max-width: 400px; height: 100%; border: none;">
-                </iframe>
+              <!-- Real Guest RSVP Canvas in Studio (Mobile Smartphone Frame) -->
+              <div class="smartphone-preview-frame shadow-2xl position-relative d-flex flex-column w-100" 
+                   style="max-width: 365px; height: 615px; max-height: 615px; border-radius: 36px; border: 5px solid #1e293b; background: #000; box-shadow: 0 16px 40px rgba(0, 0, 0, 0.75); overflow: hidden;">
+                
+                <div class="smartphone-screen-content w-100 h-100 overflow-hidden position-relative" style="border-radius: 30px; background: #0b1120;">
+                  <iframe 
+                    *ngIf="studioLivePreviewIframeUrl()" 
+                    [src]="studioLivePreviewIframeUrl()" 
+                    class="w-100 h-100 border-0"
+                    style="width: 100%; height: 100%; border: none; overflow: hidden;">
+                  </iframe>
+                </div>
               </div>
-
-              <span class="fs-4xs text-white text-opacity-75 mt-2 text-center">
-                <i class="fa fa-sparkles text-warning me-1"></i> Ce carton d'invitation officiel reflète exactement ce que verront vos invités.
-              </span>
             </div>
 
           </div>
@@ -674,9 +662,7 @@
               </div>
             </div>
           </div>
-          <button type="button" class="btn btn-sm btn-link text-white-50 p-0 fs-5" (click)="closeGuestJourney()" aria-label="Close">
-            <i class="fa fa-times"></i>
-          </button>
+          <button type="button" class="btn-close btn-close-white" (click)="closeGuestJourney()" aria-label="Fermer"></button>
         </div>
 
         <!-- Progress Bar Indicator -->
@@ -705,7 +691,7 @@
         </div>
 
         <div class="journey-screens-grid">
-          <!-- CARD 1: ÉCRAN ENVOI NOTIFICATION -->
+          <!-- CARD 1: ÉCRAN ENVOI & NOTIFICATION -->
           <div class="screen-card-item" [ngClass]="{
             'status-completed': journey.steps[0].isCompleted,
             'status-current': journey.steps[0].isCurrent,
@@ -719,104 +705,171 @@
             </div>
             <!-- Mockup -->
             <div class="screen-mockup-frame">
-              <div class="mockup-sms">
-                <div class="d-flex align-items-center gap-1.5 text-success fw-bold mb-1 fs-3xs">
-                  <i class="fab fa-whatsapp"></i> <span>Message Officiel</span>
+              <!-- Case A: Sent via E-mail -->
+              <div class="mockup-email-card" *ngIf="journey.steps[0].primaryChannelType === 'EMAIL'">
+                <div class="d-flex align-items-center justify-content-between mb-1">
+                  <span class="d-flex align-items-center gap-1 text-primary fw-bold" style="font-size: 0.58rem; white-space: nowrap;">
+                    <i class="fa fa-envelope" style="font-size: 0.55rem;"></i> E-mail Officiel
+                  </span>
+                  <span class="badge bg-primary-subtle text-primary border border-primary-subtle" style="font-size: 0.48rem; padding: 1px 4px;">Reçu</span>
                 </div>
-                <div class="text-dark mb-1" style="font-size: 0.68rem; line-height: 1.2;">
+                <div class="text-dark fw-bold text-truncate" style="font-size: 0.62rem;">
+                  ✉️ {{ event()?.title || 'Invitation Officielle' }}
+                </div>
+                <div class="text-muted text-truncate" style="font-size: 0.55rem; line-height: 1.2;">
+                  "Bonjour {{ selectedJourneyGuest()?.fullName }}, découvrez..."
+                </div>
+                <div class="text-primary fw-semibold mt-0.5" style="font-size: 0.56rem;">
+                  🔗 Consulter l'Invitation & RSVP
+                </div>
+              </div>
+
+              <!-- Case B: Sent via WhatsApp / SMS -->
+              <div class="mockup-sms" *ngIf="journey.steps[0].primaryChannelType !== 'EMAIL'">
+                <div class="d-flex align-items-center gap-1.5 fw-bold mb-1 fs-3xs" [ngClass]="journey.steps[0].primaryChannelType === 'SMS' ? 'text-warning' : 'text-success'">
+                  <i [class]="journey.steps[0].primaryChannelType === 'SMS' ? 'fa fa-comment-sms' : 'fab fa-whatsapp'"></i> 
+                  <span>{{ journey.steps[0].primaryChannelType === 'SMS' ? 'SMS Officiel' : 'Message WhatsApp' }}</span>
+                </div>
+                <div class="text-dark mb-1" style="font-size: 0.65rem; line-height: 1.25;">
                   "Bonjour {{ selectedJourneyGuest()?.fullName }}, découvrez votre invitation..."
                 </div>
-                <div class="text-primary text-truncate fw-semibold" style="font-size: 0.65rem;">
+                <div class="text-primary text-truncate fw-semibold" style="font-size: 0.62rem;">
                   🔗 rsvp/{{ selectedJourneyGuest()?.invitationToken || selectedJourneyGuest()?.id }}
                 </div>
               </div>
             </div>
             <div class="screen-card-footer">
-              <div class="d-flex align-items-center gap-1 mb-1">
-                <span class="badge bg-body-light border text-dark py-0.5 px-1.5 fs-3xs" *ngFor="let ch of journey.steps[0].channels">
-                  <i [class]="ch.icon" [ngClass]="ch.colorClass"></i> {{ ch.name }}
+              <div class="screen-footer-narrative">
+                {{ journey.steps[0].narrativeMessage }}
+              </div>
+              <div class="screen-footer-meta">
+                <div class="d-flex align-items-center gap-1">
+                  <span class="badge bg-body-light border text-dark py-0.5 px-1.5 fs-4xs" *ngFor="let ch of journey.steps[0].channels">
+                    <i [class]="ch.icon" [ngClass]="ch.colorClass"></i> {{ ch.name }}
+                  </span>
+                </div>
+                <span class="fs-4xs text-muted" *ngIf="journey.steps[0].timestamp">
+                  <i class="fa fa-clock me-0.5"></i> {{ journey.steps[0].timestamp }}
                 </span>
               </div>
-              <span class="fs-3xs text-muted">{{ journey.steps[0].isCompleted ? 'Envoyé avec succès' : 'En attente d\'envoi' }}</span>
             </div>
           </div>
 
-          <!-- CARD 2: ÉCRAN OUVERTURE ENVELOPPE -->
+          <!-- CARD 2: ÉCRAN CARTE D'INVITATION -->
           <div class="screen-card-item" [ngClass]="{
             'status-completed': journey.steps[1].isCompleted,
             'status-current': journey.steps[1].isCurrent,
             'status-pending': !journey.steps[1].isCompleted && !journey.steps[1].isCurrent
           }">
             <div class="screen-card-header">
-              <span class="fw-bold fs-xs text-dark"><i class="fa fa-envelope-open-text text-warning me-1"></i> 2. Enveloppe</span>
+              <span class="fw-bold fs-xs text-dark"><i class="fa fa-envelope-open-text text-warning me-1"></i> 2. Carte d'Invitation</span>
               <span class="badge rounded-pill px-2 py-0.5 fs-3xs" [ngClass]="journey.steps[1].badgeClass">
                 {{ journey.steps[1].badgeLabel }}
               </span>
             </div>
-            <!-- Mockup -->
+            <!-- Mockup Invitation Card -->
             <div class="screen-mockup-frame">
-              <div class="mockup-envelope">
-                <div class="wax-seal mb-1">
-                  <i class="fa fa-stamp"></i>
+              <div class="mockup-invitation-page1">
+                <div class="page1-card-inner">
+                  <div class="page1-ornament-top">
+                    <i class="fa fa-gem text-warning"></i>
+                  </div>
+                  <div class="page1-title-text" [title]="journey.steps[1].page1Title">
+                    {{ journey.steps[1].page1Title || 'Notre Célébration' }}
+                  </div>
+                  <div class="page1-subtitle-text" [title]="journey.steps[1].page1Subtitle">
+                    {{ journey.steps[1].page1Subtitle || 'Invitation Officielle' }}
+                  </div>
+                  <div class="page1-guest-badge">
+                    <i class="fa fa-user me-1 text-warning"></i>
+                    <span>{{ journey.steps[1].page1GuestName }}</span>
+                  </div>
+                  <div class="page1-meta-row">
+                    <span><i class="fa fa-calendar-day me-0.5 text-warning"></i> {{ journey.steps[1].page1Date }}</span>
+                    <span><i class="fa fa-location-dot me-0.5 text-danger"></i> {{ journey.steps[1].page1Location }}</span>
+                  </div>
                 </div>
-                <span class="fw-bold fs-3xs text-amber-900">SCEAU D'OR</span>
-                <span style="font-size: 0.55rem; color: #92400e;">Décachetage virtuel</span>
               </div>
             </div>
             <div class="screen-card-footer">
-              <div class="fw-semibold fs-3xs text-dark">
-                {{ journey.steps[1].isCompleted ? 'Enveloppe ouverte & Page 1 vue' : 'En attente d\'ouverture (Fermée)' }}
+              <div class="screen-footer-narrative">
+                {{ journey.steps[1].narrativeMessage }}
               </div>
-              <span class="fs-3xs text-muted" *ngIf="journey.steps[1].timestamp">
-                <i class="fa fa-clock me-0.5"></i> {{ journey.steps[1].timestamp }}
-              </span>
+              <div class="screen-footer-meta">
+                <span class="fs-4xs text-muted text-truncate" [title]="journey.steps[1].page1Location">
+                  <i class="fa fa-location-dot me-0.5 text-danger"></i> {{ journey.steps[1].page1Location }}
+                </span>
+                <span class="fs-4xs text-muted text-nowrap" *ngIf="journey.steps[1].timestamp">
+                  <i class="fa fa-clock me-0.5"></i> {{ journey.steps[1].timestamp }}
+                </span>
+              </div>
             </div>
           </div>
 
-          <!-- CARD 3: ÉCRAN CHOIX DU MENU -->
+          <!-- CARD 3: ÉCRAN CHOIX DU MENU & FORMULE TRAITEUR -->
           <div class="screen-card-item" [ngClass]="{
             'status-completed': journey.steps[2].isCompleted,
             'status-current': journey.steps[2].isCurrent,
             'status-pending': !journey.steps[2].isCompleted && !journey.steps[2].isCurrent
           }">
             <div class="screen-card-header">
-              <span class="fw-bold fs-xs text-dark"><i class="fa fa-utensils text-success me-1"></i> 3. Choix Menu</span>
+              <span class="fw-bold fs-xs text-dark"><i class="fa fa-utensils text-success me-1"></i> 3. Menu & Formule</span>
               <span class="badge rounded-pill px-2 py-0.5 fs-3xs" [ngClass]="journey.steps[2].badgeClass">
                 {{ journey.steps[2].badgeLabel }}
               </span>
             </div>
-            <!-- Mockup -->
+            <!-- Mockup Menu & Traiteur -->
             <div class="screen-mockup-frame">
               <div class="mockup-menu-card">
-                <div class="menu-mini-tabs">
-                  <span *ngFor="let tab of journey.steps[2].cateringTabs" 
-                        class="mini-tab" 
-                        [class.active]="tab.key === journey.steps[2].dishCategoryKey">
-                    <i *ngIf="tab.key === 'STARTER'" class="fa fa-utensils me-0.5" style="font-size: 0.5rem;"></i>
-                    <i *ngIf="tab.key === 'MAIN'" class="fa fa-fire me-0.5" style="font-size: 0.5rem;"></i>
-                    <i *ngIf="tab.key === 'DESSERT'" class="fa fa-cake-candles me-0.5" style="font-size: 0.5rem;"></i>
-                    {{ tab.label }}
-                  </span>
+                <!-- Top Formula Badge -->
+                <div class="formula-header-badge">
+                  <i class="fa fa-bowl-food me-1 text-warning"></i>
+                  <span class="fw-bold text-truncate">{{ journey.steps[2].cateringFormula }}</span>
                 </div>
-                <div class="dish-preview-row">
-                  <img [src]="journey.steps[2].dishImage" alt="Plat" onerror="this.src='/assets/images/menu_main.png'">
-                  <div class="text-truncate" style="min-width: 0;">
-                    <div class="fw-bold text-dark text-truncate" style="font-size: 0.62rem;" [title]="journey.steps[2].dishChoice">
-                      {{ journey.steps[2].dishChoice || 'Sélection en cours' }}
+
+                <!-- Case A: Formule Buffet (2 dishes preview) -->
+                <div *ngIf="journey.steps[2].isBuffetMode" class="buffet-dishes-grid">
+                  <div class="buffet-dish-item" *ngFor="let dish of journey.steps[2].sampleBuffetDishes">
+                    <img [src]="dish.image" alt="Plat" onerror="this.src='/assets/images/menu_main.png'">
+                    <div class="buffet-dish-info">
+                      <span class="buffet-dish-name text-truncate" [title]="dish.name">{{ dish.name }}</span>
+                      <span class="buffet-dish-cat">{{ dish.category }}</span>
                     </div>
-                    <span class="badge bg-light text-dark border border-secondary-subtle" style="font-size: 0.5rem; padding: 1px 4px;">
-                      {{ journey.steps[2].dishCategory }}
+                  </div>
+                </div>
+
+                <!-- Case B: Formule Service à Table / Mixte (Guest selection or Tabs) -->
+                <div *ngIf="!journey.steps[2].isBuffetMode" class="plated-dish-container">
+                  <div class="menu-mini-tabs" *ngIf="journey.steps[2].cateringTabs">
+                    <span *ngFor="let tab of journey.steps[2].cateringTabs" 
+                          class="mini-tab" 
+                          [class.active]="tab.key === journey.steps[2].dishCategoryKey">
+                      <i *ngIf="tab.key === 'STARTER'" class="fa fa-utensils me-0.5" style="font-size: 0.5rem;"></i>
+                      <i *ngIf="tab.key === 'MAIN'" class="fa fa-fire me-0.5" style="font-size: 0.5rem;"></i>
+                      <i *ngIf="tab.key === 'DESSERT'" class="fa fa-cake-candles me-0.5" style="font-size: 0.5rem;"></i>
+                      {{ tab.label }}
                     </span>
+                  </div>
+                  <div class="dish-preview-row">
+                    <img [src]="journey.steps[2].dishImage" alt="Plat" onerror="this.src='/assets/images/menu_main.png'">
+                    <div class="text-truncate" style="min-width: 0;">
+                      <div class="fw-bold text-dark text-truncate" style="font-size: 0.62rem;" [title]="journey.steps[2].dishChoice">
+                        {{ journey.steps[2].dishChoice || 'Sélection des plats' }}
+                      </div>
+                      <span class="badge bg-light text-dark border border-secondary-subtle" style="font-size: 0.5rem; padding: 1px 4px;">
+                        {{ journey.steps[2].dishCategory }}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
             <div class="screen-card-footer">
-              <div class="fw-semibold fs-3xs text-dark text-truncate" [title]="journey.steps[2].dishChoice || 'En cours'">
-                {{ journey.steps[2].dishChoice ? journey.steps[2].dishChoice : (journey.steps[2].isCompleted ? 'Menu validé' : 'En attente de choix') }}
+              <div class="screen-footer-narrative">
+                {{ journey.steps[2].narrativeMessage }}
               </div>
-              <div class="mt-0.5">
-                <span class="fs-3xs text-muted text-truncate d-block" [title]="journey.steps[2].cateringFormula">
+              <div class="screen-footer-meta">
+                <span class="fs-4xs text-muted text-truncate d-block" [title]="journey.steps[2].cateringFormula">
                   <i class="fa fa-bowl-food me-0.5 text-primary"></i> {{ journey.steps[2].cateringFormula }}
                 </span>
               </div>
@@ -835,36 +888,48 @@
                 {{ journey.steps[3].badgeLabel }}
               </span>
             </div>
-            <!-- Mockup -->
+            <!-- Mockup Dietary -->
             <div class="screen-mockup-frame">
               <div class="mockup-dietary-card">
-                <div *ngIf="journey.steps[3].dietaryTags && journey.steps[3].dietaryTags.length > 0" class="d-flex flex-wrap gap-1 align-items-center justify-content-center">
-                  <span *ngFor="let dt of journey.steps[3].dietaryTags" 
-                        class="badge rounded-pill fw-semibold d-inline-flex align-items-center gap-1 shadow-2xs" 
-                        [ngClass]="dt.badgeClass"
-                        style="font-size: 0.52rem; padding: 2px 6px;">
-                    <i class="fa" [ngClass]="dt.icon" style="font-size: 0.5rem;"></i> {{ dt.label }}
-                  </span>
+                <div class="dietary-header-label mb-1">
+                  <i class="fa fa-shield-halved text-success me-1"></i> Fiche Traiteur & Allergies
                 </div>
-                <div *ngIf="!journey.steps[3].dietaryTags || journey.steps[3].dietaryTags.length === 0" class="text-center p-1">
-                  <div class="d-inline-flex align-items-center gap-1 px-2 py-0.5 rounded-pill bg-success-subtle text-success border border-success-subtle fs-3xs fw-medium">
-                    <i class="fa fa-circle-check"></i> Sans restriction
+
+                <!-- Case A: Has Restrictions -->
+                <div *ngIf="journey.steps[3].hasDietaryRestrictions" class="text-center">
+                  <div class="d-flex flex-wrap gap-1 align-items-center justify-content-center mb-1">
+                    <span *ngFor="let dt of journey.steps[3].dietaryTags" 
+                          class="badge rounded-pill fw-semibold d-inline-flex align-items-center gap-1 shadow-2xs" 
+                          [ngClass]="dt.badgeClass"
+                          style="font-size: 0.54rem; padding: 2px 6px;">
+                      <i class="fa" [ngClass]="dt.icon"></i> {{ dt.label }}
+                    </span>
                   </div>
-                  <div class="text-muted fs-4xs mt-0.5">Menu standard</div>
+                  <div class="dietary-narrative-note">
+                    <i class="fa fa-circle-check text-success me-0.5"></i> 
+                    <span>{{ journey.steps[3].guestFirstName }} : <strong>{{ journey.steps[3].dietarySummary }}</strong></span>
+                  </div>
+                </div>
+
+                <!-- Case B: Standard Menu (No restrictions) -->
+                <div *ngIf="!journey.steps[3].hasDietaryRestrictions" class="text-center py-0.5">
+                  <div class="d-inline-flex align-items-center gap-1 px-2.5 py-0.5 rounded-pill bg-success-subtle text-success border border-success-subtle fs-3xs fw-bold mb-1">
+                    <i class="fa fa-circle-check"></i> Sans Allergie Déclarée
+                  </div>
+                  <div class="dietary-narrative-note text-muted">
+                    {{ journey.steps[3].guestFirstName }} n'a signalé aucun régime ni allergie
+                  </div>
                 </div>
               </div>
             </div>
             <div class="screen-card-footer">
-              <div class="fw-semibold fs-3xs text-dark text-truncate" [title]="journey.steps[3].dietarySummary">
-                {{ journey.steps[3].dietarySummary || 'Aucune restriction' }}
+              <div class="screen-footer-narrative">
+                {{ journey.steps[3].narrativeMessage }}
               </div>
-              <div class="d-flex align-items-center justify-content-between gap-1 mt-0.5">
-                <span class="fs-3xs text-muted">
+              <div class="screen-footer-meta">
+                <span class="fs-4xs text-muted">
                   <i class="fa fa-shield-halved me-0.5 text-warning"></i> 
-                  {{ (journey.steps[3].dietaryTags && journey.steps[3].dietaryTags.length > 0) ? (journey.steps[3].dietaryTags.length + ' restriction(s)') : 'Standard' }}
-                </span>
-                <span class="badge bg-body-light text-muted border fs-4xs px-1.5 py-0.5 rounded-pill">
-                  Sécurité traiteur
+                  {{ journey.steps[3].hasDietaryRestrictions ? (journey.steps[3].dietaryTags?.length + ' restriction(s) déclarée(s)') : 'Aucune restriction' }}
                 </span>
               </div>
             </div>
@@ -882,35 +947,160 @@
                 {{ journey.steps[4].badgeLabel }}
               </span>
             </div>
-            <!-- Mockup -->
+            <!-- Mockup RSVP Decision -->
             <div class="screen-mockup-frame">
               <div class="mockup-rsvp-verdict">
-                <div class="verdict-badge-box mb-1" [ngClass]="selectedJourneyGuest()?.status === 'DECLINED' ? 'bg-danger-light text-danger border border-danger' : 'bg-success-light text-success border border-success'">
-                  <i class="fa" [ngClass]="selectedJourneyGuest()?.status === 'DECLINED' ? 'fa-circle-xmark' : 'fa-circle-check'"></i>
-                  <span>{{ selectedJourneyGuest()?.status === 'DECLINED' ? 'Absent(e)' : 'Présence Confirmée' }}</span>
+                
+                <!-- Confirmed -->
+                <div *ngIf="selectedJourneyGuest()?.status === 'CONFIRMED'" class="text-center w-100">
+                  <div class="verdict-badge-box bg-success-light text-success border border-success mb-1">
+                    <i class="fa fa-circle-check"></i>
+                    <span>Présence Confirmée</span>
+                  </div>
+                  <div class="d-flex align-items-center justify-content-center gap-1 flex-wrap mb-1">
+                    <span class="table-badge-ticket">
+                      <i class="fa fa-chair text-primary me-1"></i> {{ journey.steps[4].tableNumber }}
+                    </span>
+                    <span *ngIf="journey.steps[4].isPaidEvent" class="badge rounded-pill" [ngClass]="journey.steps[4].isPaid ? 'bg-success text-white' : 'bg-warning text-dark'">
+                      <i class="fa" [ngClass]="journey.steps[4].isPaid ? 'fa-check' : 'fa-clock'"></i>
+                      {{ journey.steps[4].isPaid ? (journey.steps[4].ticketPrice + ' ' + journey.steps[4].currency + ' Réglé') : 'Paiement en attente' }}
+                    </span>
+                  </div>
+                  <div class="rsvp-narrative-note text-success fw-medium">
+                    {{ journey.steps[4].guestFirstName }} sera bien présent(e)
+                  </div>
                 </div>
-                <span class="text-muted" style="font-size: 0.55rem;">
-                  {{ selectedJourneyGuest()?.status === 'CONFIRMED' ? 'Table & Couvert réservés' : (selectedJourneyGuest()?.status === 'DECLINED' ? 'Invitation déclinée' : 'En attente de validation') }}
-                </span>
+
+                <!-- Declined -->
+                <div *ngIf="selectedJourneyGuest()?.status === 'DECLINED'" class="text-center w-100">
+                  <div class="verdict-badge-box bg-danger-light text-danger border border-danger mb-1">
+                    <i class="fa fa-circle-xmark"></i>
+                    <span>Absent(e) Déclaré(e)</span>
+                  </div>
+                  <div class="rsvp-narrative-note text-danger fw-medium mt-1">
+                    {{ journey.steps[4].guestFirstName }} ne pourra pas assister
+                  </div>
+                </div>
+
+                <!-- Pending -->
+                <div *ngIf="selectedJourneyGuest()?.status !== 'CONFIRMED' && selectedJourneyGuest()?.status !== 'DECLINED'" class="text-center w-100">
+                  <div class="verdict-badge-box bg-warning-light text-dark border border-warning mb-1">
+                    <i class="fa fa-clock text-warning"></i>
+                    <span>Décision En Attente</span>
+                  </div>
+                  <div *ngIf="journey.steps[4].isPaidEvent" class="badge bg-body-light text-dark border mb-1 fs-4xs">
+                    <i class="fa fa-ticket me-1 text-primary"></i> Tarif : {{ journey.steps[4].ticketPrice }} {{ journey.steps[4].currency }}
+                  </div>
+                  <div class="rsvp-narrative-note text-muted">
+                    {{ journey.steps[4].guestFirstName }} n'a pas encore répondu
+                  </div>
+                </div>
+
               </div>
             </div>
             <div class="screen-card-footer">
-              <div class="fw-semibold fs-3xs" [ngClass]="selectedJourneyGuest()?.status === 'CONFIRMED' ? 'text-success' : (selectedJourneyGuest()?.status === 'DECLINED' ? 'text-danger' : 'text-dark')">
-                {{ selectedJourneyGuest()?.status === 'CONFIRMED' ? 'Confirmé à l\'événement' : (selectedJourneyGuest()?.status === 'DECLINED' ? 'Absence confirmée' : 'En attente') }}
+              <div class="screen-footer-narrative">
+                {{ journey.steps[4].narrativeMessage }}
               </div>
-              <span class="fs-3xs text-muted" *ngIf="journey.steps[4].timestamp">
-                <i class="fa fa-clock me-0.5"></i> {{ journey.steps[4].timestamp }}
-              </span>
+              <div class="screen-footer-meta">
+                <span class="fs-4xs text-muted" [ngClass]="selectedJourneyGuest()?.status === 'CONFIRMED' ? 'text-success fw-medium' : ''">
+                  {{ selectedJourneyGuest()?.status === 'CONFIRMED' ? (journey.steps[4].isPaidEvent && journey.steps[4].isPaid ? 'Billet VIP Validé' : 'Couvert & Table validés') : (selectedJourneyGuest()?.status === 'DECLINED' ? 'Absence confirmée' : 'Réponse en attente') }}
+                </span>
+                <span class="fs-4xs text-muted text-nowrap" *ngIf="journey.steps[4].timestamp">
+                  <i class="fa fa-clock me-0.5"></i> {{ journey.steps[4].timestamp }}
+                </span>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Modal Footer -->
-      <div class="modal-footer bg-body-light border-top py-2.5 px-3 d-flex justify-content-end align-items-center">
-        <button type="button" class="btn btn-sm btn-dark px-4 py-1.5 rounded-pill fw-medium shadow-sm d-inline-flex align-items-center gap-1.5" (click)="closeGuestJourney()">
-          <i class="fa fa-xmark"></i> Fermer
-        </button>
+      <!-- Modal Footer with Smart Relance Action & Direct Link -->
+      <div class="modal-footer bg-body-light border-top py-2.5 px-3 d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2">
+        <!-- Left: Smart Direct Link + Copy -->
+        <div class="d-flex align-items-center gap-2 w-100 w-sm-auto">
+          <button type="button" class="btn btn-xs btn-alt-secondary rounded-pill px-3 py-1.5 d-inline-flex align-items-center gap-1.5 shadow-2xs" 
+                  (click)="copyJourneyGuestLink(selectedJourneyGuest()!)"
+                  [title]="'Copier le lien direct de relance : ' + getGuestJourneyLink(selectedJourneyGuest()!)">
+            <i class="fa" [ngClass]="copiedJourneyLinkId() === selectedJourneyGuest()?.id ? 'fa-check text-success' : 'fa-copy text-primary'"></i>
+            <span>{{ copiedJourneyLinkId() === selectedJourneyGuest()?.id ? 'Lien copié !' : 'Copier le lien direct (Écran ' + journey.currentActiveStepIndex + ')' }}</span>
+          </button>
+        </div>
+
+        <!-- Right: Single Smart Primary Reminder Button with Alternative Channels Dropdown + Close -->
+        <div class="d-flex align-items-center gap-2 flex-wrap justify-content-end w-100 w-sm-auto" *ngIf="getPreferredReminderChannel(selectedJourneyGuest()!) as primaryChannel">
+          
+          <!-- Smart Single Reminder Button Group -->
+          <div class="btn-group shadow-2xs">
+            <!-- Main Auto-Selected Button -->
+            <a *ngIf="primaryChannel.isExternal"
+               [href]="primaryChannel.url" 
+               target="_blank" 
+               class="btn btn-sm rounded-start-pill px-3.5 py-1.5 fw-semibold d-inline-flex align-items-center gap-2"
+               [ngClass]="primaryChannel.btnClass"
+               [title]="primaryChannel.actionTitle">
+              <i [class]="primaryChannel.icon" class="fs-sm"></i>
+              <span>{{ primaryChannel.label }}</span>
+            </a>
+
+            <button *ngIf="!primaryChannel.isExternal"
+                    type="button" 
+                    class="btn btn-sm rounded-start-pill px-3.5 py-1.5 fw-semibold d-inline-flex align-items-center gap-2"
+                    [ngClass]="primaryChannel.btnClass"
+                    (click)="copyJourneyGuestLink(selectedJourneyGuest()!)">
+              <i [class]="primaryChannel.icon" class="fs-sm"></i>
+              <span>{{ primaryChannel.label }}</span>
+            </button>
+
+            <!-- Dropdown Toggle for Alternative Channels (if multiple contact methods exist) -->
+            <button type="button" 
+                    class="btn btn-sm dropdown-toggle dropdown-toggle-split rounded-end-pill px-2"
+                    [ngClass]="primaryChannel.btnClass"
+                    data-bs-toggle="dropdown" 
+                    aria-expanded="false"
+                    title="Autres canaux de relance">
+              <span class="visually-hidden">Autres canaux</span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-3 p-1.5 fs-xs">
+              <li *ngIf="selectedJourneyGuest()?.phone && primaryChannel.type !== 'WHATSAPP'">
+                <a class="dropdown-item rounded-2 py-1.5 d-flex align-items-center gap-2 text-success" 
+                   [href]="getJourneyGuestWhatsAppUrl(selectedJourneyGuest()!)" 
+                   target="_blank">
+                  <i class="fab fa-whatsapp"></i>
+                  <span>Relancer via WhatsApp</span>
+                </a>
+              </li>
+              <li *ngIf="selectedJourneyGuest()?.email && primaryChannel.type !== 'EMAIL'">
+                <a class="dropdown-item rounded-2 py-1.5 d-flex align-items-center gap-2 text-info" 
+                   [href]="getJourneyGuestEmailUrl(selectedJourneyGuest()!)">
+                  <i class="far fa-envelope"></i>
+                  <span>Relancer par E-mail</span>
+                </a>
+              </li>
+              <li *ngIf="selectedJourneyGuest()?.phone && primaryChannel.type !== 'SMS'">
+                <a class="dropdown-item rounded-2 py-1.5 d-flex align-items-center gap-2 text-warning" 
+                   [href]="getJourneyGuestSmsUrl(selectedJourneyGuest()!)">
+                  <i class="fa fa-comment-sms"></i>
+                  <span>Relancer par SMS</span>
+                </a>
+              </li>
+              <li><hr class="dropdown-divider my-1"></li>
+              <li>
+                <button type="button" class="dropdown-item rounded-2 py-1.5 d-flex align-items-center gap-2 text-dark" 
+                        (click)="copyJourneyGuestLink(selectedJourneyGuest()!)">
+                  <i class="fa fa-link text-primary"></i>
+                  <span>Copier le lien direct (Écran {{ journey.currentActiveStepIndex }})</span>
+                </button>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Close Modal -->
+          <button type="button" class="btn btn-sm btn-dark px-3.5 py-1.5 rounded-pill fw-medium shadow-sm d-inline-flex align-items-center gap-1" (click)="closeGuestJourney()">
+            <i class="fa fa-xmark"></i>
+            <span>Fermer</span>
+          </button>
+        </div>
       </div>
 
     </div>

@@ -372,14 +372,65 @@
           </div>
 
           <div class="mb-3">
-            <label class="form-label fs-sm fw-bold">Type de règlement</label>
-            <select class="form-select" [(ngModel)]="paymentLabelInput" name="paymentLabelInput">
-              <option value="AVANCE">Acompte / Avance</option>
-              <option value="VERSEMENT_2">Deuxième versement</option>
-              <option value="VERSEMENT_3">Troisième versement</option>
-              <option value="SOLDE">Solde final</option>
-              <option value="AUTRE">Autre règlement</option>
-            </select>
+            <label class="form-label fs-sm fw-bold d-flex justify-content-between align-items-center">
+              <span>Type / Libellé de règlement</span>
+              <span class="fs-4xs text-muted fw-normal">Sélectionnez ou écrivez librement</span>
+            </label>
+            <input type="text" 
+                   class="form-control" 
+                   list="paymentTypeSuggestions" 
+                   [(ngModel)]="paymentLabelInput" 
+                   name="paymentLabelInput" 
+                   placeholder="Ex: Acompte / Avance, 2ème versement, Solde, Avance traiteur...">
+            
+            <datalist id="paymentTypeSuggestions">
+              <option value="Acompte / Avance">
+              <option value="Deuxième versement">
+              <option value="Troisième versement">
+              <option value="Solde final">
+              <option value="Caution / Garantie">
+              <option value="Paiement partiel">
+              <option value="Frais supplémentaires">
+            </datalist>
+
+            <!-- Quick Selection Pills (Single line & Compact) -->
+            <div class="d-flex align-items-center gap-1.5 mt-1.5 flex-nowrap overflow-x-auto pb-1" style="scrollbar-width: none;">
+              <button type="button" 
+                      class="btn btn-xs rounded-pill px-2 py-0.5 text-nowrap fw-semibold flex-shrink-0" 
+                      style="font-size: 0.67rem; line-height: 1.2;"
+                      [ngClass]="(paymentLabelInput === 'Acompte / Avance' || paymentLabelInput === 'Acompte') ? 'btn-info text-white shadow-xs' : 'btn-alt-secondary text-dark'"
+                      (click)="paymentLabelInput = 'Acompte / Avance'">
+                Acompte
+              </button>
+              <button type="button" 
+                      class="btn btn-xs rounded-pill px-2 py-0.5 text-nowrap fw-semibold flex-shrink-0" 
+                      style="font-size: 0.67rem; line-height: 1.2;"
+                      [ngClass]="(paymentLabelInput === 'Deuxième versement' || paymentLabelInput === '2ème versement') ? 'btn-warning text-dark shadow-xs' : 'btn-alt-secondary text-dark'"
+                      (click)="paymentLabelInput = 'Deuxième versement'">
+                2ème vers.
+              </button>
+              <button type="button" 
+                      class="btn btn-xs rounded-pill px-2 py-0.5 text-nowrap fw-semibold flex-shrink-0" 
+                      style="font-size: 0.67rem; line-height: 1.2;"
+                      [ngClass]="(paymentLabelInput === 'Troisième versement' || paymentLabelInput === '3ème versement') ? 'btn-warning text-dark shadow-xs' : 'btn-alt-secondary text-dark'"
+                      (click)="paymentLabelInput = 'Troisième versement'">
+                3ème vers.
+              </button>
+              <button type="button" 
+                      class="btn btn-xs rounded-pill px-2 py-0.5 text-nowrap fw-semibold flex-shrink-0" 
+                      style="font-size: 0.67rem; line-height: 1.2;"
+                      [ngClass]="(paymentLabelInput === 'Solde final' || paymentLabelInput === 'Solde') ? 'btn-success text-white shadow-xs' : 'btn-alt-secondary text-dark'"
+                      (click)="paymentLabelInput = 'Solde final'">
+                Solde final
+              </button>
+              <button type="button" 
+                      class="btn btn-xs rounded-pill px-2 py-0.5 text-nowrap fw-semibold flex-shrink-0" 
+                      style="font-size: 0.67rem; line-height: 1.2;"
+                      [ngClass]="(paymentLabelInput === 'Caution / Garantie' || paymentLabelInput === 'Caution') ? 'btn-secondary text-white shadow-xs' : 'btn-alt-secondary text-dark'"
+                      (click)="paymentLabelInput = 'Caution / Garantie'">
+                Caution
+              </button>
+            </div>
           </div>
 
           <div class="mb-3">

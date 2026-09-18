@@ -18,6 +18,7 @@ public class ClientPersistenceMapper {
                 .email(entity.getEmail())
                 .phone(entity.getPhone())
                 .accessLinkToken(entity.getAccessLinkToken())
+                .accessLinkExpiresAt(entity.getAccessLinkExpiresAt())
                 .createdAt(entity.getCreatedAt())
                 .updatedAt(entity.getUpdatedAt())
                 .build();
@@ -34,6 +35,7 @@ public class ClientPersistenceMapper {
                 .email(domain.getEmail())
                 .phone(domain.getPhone())
                 .accessLinkToken(domain.getAccessLinkToken())
+                .accessLinkExpiresAt(domain.getAccessLinkExpiresAt())
                 .createdAt(domain.getCreatedAt())
                 .updatedAt(domain.getUpdatedAt())
                 .build();

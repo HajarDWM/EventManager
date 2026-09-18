@@ -19,6 +19,7 @@ export class ClientLogin {
   public accessLinkToken = signal('');
   public isLoading = signal(false);
   public errorMessage = signal('');
+  public isExpired = signal(false);
 
   constructor() {
     this.route.queryParams.subscribe(params => {
@@ -38,6 +39,7 @@ export class ClientLogin {
 
     this.isLoading.set(true);
     this.errorMessage.set('');
+    this.isExpired.set(false);
 
     this.clientAuthService.login(this.accessLinkToken()).subscribe({
       next: (res) => {
@@ -46,7 +48,12 @@ export class ClientLogin {
       },
       error: (err) => {
         this.isLoading.set(false);
-        this.errorMessage.set('Lien d\'accès invalide ou expiré. Veuillez vérifier votre jeton.');
+        if (err.error && err.error.error === 'TOKEN_EXPIRED') {
+          this.isExpired.set(true);
+          this.errorMessage.set(err.error.message || 'Ce lien d\'accès a expiré (clôturé 7 jours après l\'événement).');
+        } else {
+          this.errorMessage.set('Lien d\'accès invalide ou introuvable. Veuillez vérifier votre jeton.');
+        }
         console.error(err);
       }
     });

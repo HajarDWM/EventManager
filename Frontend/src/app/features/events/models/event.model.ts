@@ -14,6 +14,7 @@ export interface Event {
   clientPhone?: string;
   clientEmail?: string;
   accessLinkToken?: string;
+  accessLinkExpiresAt?: string;
   digitalTemplateId?: number;
   invitationToken?: string;
   invitationTitle?: string;

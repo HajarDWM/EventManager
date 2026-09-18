@@ -552,64 +552,106 @@
     font-size: 0.72rem;
   }
 
-  .mockup-envelope {
-    width: 160px;
-    height: 95px;
-    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
-    border: 1.5px solid #d97706;
-    border-radius: 8px;
+  .mockup-email-card {
+    background: #ffffff;
+    border: 1px solid #93c5fd;
+    border-radius: 10px;
+    padding: 8px 10px;
+    width: 100%;
+    max-width: 210px;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.08);
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    box-shadow: 0 4px 12px rgba(217, 119, 6, 0.15);
-
-    .wax-seal {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
-      color: #ffffff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.85rem;
-      box-shadow: 0 2px 6px rgba(180, 83, 9, 0.4);
-    }
+    gap: 3px;
   }
 
-  .mockup-invitation-card {
-    width: 175px;
-    height: 105px;
-    background: #ffffff;
-    border: 2px solid #881337;
-    border-radius: 8px;
-    padding: 8px;
+  .mockup-invitation-page1 {
+    width: 100%;
+    max-width: 210px;
+    min-height: 120px;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    border: 1.5px solid #d4af37;
+    border-radius: 10px;
+    padding: 6px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    text-align: center;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+    position: relative;
 
-    .card-border-pattern {
-      border: 1px dashed #be123c;
+    .page1-card-inner {
       width: 100%;
       height: 100%;
-      border-radius: 6px;
-      padding: 4px;
+      border: 1px double rgba(212, 175, 55, 0.6);
+      border-radius: 7px;
+      padding: 6px 8px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      text-align: center;
+      background: radial-gradient(circle at center, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.95) 100%);
+    }
+
+    .page1-ornament-top {
+      font-size: 0.6rem;
+      margin-bottom: 2px;
+    }
+
+    .page1-title-text {
+      font-family: 'Cinzel', 'Playfair Display', serif;
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: #fef3c7;
+      letter-spacing: 0.5px;
+      line-height: 1.2;
+      max-width: 180px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .page1-subtitle-text {
+      font-size: 0.52rem;
+      color: #cbd5e1;
+      margin-top: 1px;
+      margin-bottom: 4px;
+      max-width: 180px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .page1-guest-badge {
+      background: rgba(212, 175, 55, 0.15);
+      border: 1px solid rgba(212, 175, 55, 0.4);
+      color: #fef08a;
+      font-size: 0.55rem;
+      font-weight: 600;
+      padding: 1px 8px;
+      border-radius: 12px;
+      margin-bottom: 4px;
+      max-width: 170px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .page1-meta-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: 0.48rem;
+      color: #94a3b8;
     }
   }
 
   .mockup-menu-card {
     width: 100%;
     max-width: 210px;
-    min-height: 106px;
+    min-height: 120px;
     background: #ffffff;
     border: 1.5px solid #e2e8f0;
     border-radius: 8px;
@@ -619,15 +661,76 @@
     justify-content: space-between;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 
+    .formula-header-badge {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      color: #92400e;
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-size: 0.54rem;
+      display: flex;
+      align-items: center;
+      margin-bottom: 5px;
+    }
+
+    .buffet-dishes-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+
+      .buffet-dish-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: #f8fafc;
+        border: 1px solid #f1f5f9;
+        border-radius: 6px;
+        padding: 3px 5px;
+
+        img {
+          width: 24px;
+          height: 24px;
+          border-radius: 4px;
+          object-fit: cover;
+          border: 1px solid #e2e8f0;
+          flex-shrink: 0;
+        }
+
+        .buffet-dish-info {
+          display: flex;
+          flex-direction: column;
+          min-width: 0;
+
+          .buffet-dish-name {
+            font-size: 0.56rem;
+            font-weight: 700;
+            color: #1e293b;
+            line-height: 1.1;
+          }
+
+          .buffet-dish-cat {
+            font-size: 0.46rem;
+            color: #64748b;
+          }
+        }
+      }
+    }
+
+    .plated-dish-container {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
     .menu-mini-tabs {
       display: flex;
       flex-wrap: wrap;
       gap: 3px;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
 
       .mini-tab {
-        font-size: 0.52rem;
-        padding: 2px 5px;
+        font-size: 0.5rem;
+        padding: 1px 4px;
         border-radius: 4px;
         background: #f1f5f9;
         color: #475569;
@@ -652,11 +755,11 @@
       background: #f8fafc;
       border: 1px solid #e2e8f0;
       border-radius: 6px;
-      padding: 4px 6px;
+      padding: 3px 5px;
 
       img {
-        width: 30px;
-        height: 30px;
+        width: 26px;
+        height: 26px;
         border-radius: 5px;
         object-fit: cover;
         border: 1px solid #cbd5e1;
@@ -668,20 +771,38 @@
   .mockup-dietary-card {
     width: 100%;
     max-width: 210px;
-    min-height: 106px;
+    min-height: 120px;
     background: #ffffff;
     border: 1.5px solid #e2e8f0;
     border-radius: 8px;
-    padding: 8px 6px;
+    padding: 6px 8px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+
+    .dietary-header-label {
+      font-size: 0.55rem;
+      font-weight: 700;
+      color: #334155;
+      text-align: center;
+    }
+
+    .dietary-narrative-note {
+      font-size: 0.52rem;
+      color: #334155;
+      background: #f8fafc;
+      border: 1px solid #f1f5f9;
+      border-radius: 6px;
+      padding: 3px 6px;
+      margin-top: 3px;
+      line-height: 1.2;
+    }
   }
 
   .mockup-rsvp-verdict {
-    width: 170px;
-    height: 95px;
+    width: 175px;
+    min-height: 110px;
     background: #ffffff;
     border: 1.5px solid #cbd5e1;
     border-radius: 8px;
@@ -695,24 +816,67 @@
 
     .verdict-badge-box {
       border-radius: 20px;
-      padding: 4px 10px;
-      font-size: 0.75rem;
+      padding: 3px 8px;
+      font-size: 0.7rem;
       font-weight: 700;
       display: inline-flex;
       align-items: center;
       gap: 4px;
     }
+
+    .table-badge-ticket {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      color: #1e40af;
+      font-size: 0.58rem;
+      font-weight: 600;
+      border-radius: 6px;
+      padding: 2px 6px;
+      margin-top: 3px;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .rsvp-narrative-note {
+      font-size: 0.54rem;
+      margin-top: 4px;
+      line-height: 1.2;
+    }
   }
 
   .screen-card-footer {
-    padding: 10px 12px;
+    padding: 8px 10px;
     background: #ffffff;
     border-top: 1px solid #f1f5f9;
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     flex-grow: 1;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    gap: 4px;
+    min-height: 52px;
+
+    .screen-footer-narrative {
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: #1e293b;
+      line-height: 1.3;
+      white-space: normal;
+      word-break: normal;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .screen-footer-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 4px;
+      font-size: 0.58rem;
+      color: #64748b;
+    }
   }
 }
 

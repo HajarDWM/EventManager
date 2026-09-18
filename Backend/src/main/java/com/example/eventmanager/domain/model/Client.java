@@ -13,6 +13,7 @@ public class Client {
     private String email;
     private String phone;
     private String accessLinkToken;
+    private LocalDateTime accessLinkExpiresAt;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

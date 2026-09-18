@@ -106,6 +106,15 @@ public class ClientGuestController {
         }
     }
 
+    private boolean isGuestModificationDeadlinePassed(Long eventId) {
+        EventEntity event = eventRepository.findById(eventId).orElse(null);
+        if (event != null && event.getEventDate() != null) {
+            java.time.LocalDateTime deadline = event.getEventDate().minusHours(72);
+            return java.time.LocalDateTime.now().isAfter(deadline);
+        }
+        return false;
+    }
+
     @PostMapping
     public ResponseEntity<?> addGuest(
             @PathVariable Long eventId,
@@ -114,6 +123,12 @@ public class ClientGuestController {
 
         if (!isClientAuthorizedForEvent(clientDetails.getClientId(), eventId)) {
             return ResponseEntity.status(403).body("Access denied to this event");
+        }
+
+        if (isGuestModificationDeadlinePassed(eventId)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
+                java.util.Map.of("error", "DEADLINE_PASSED", "message", "La date limite d'ajout d'invités est dépassée (clôturée 72h avant l'événement pour la logistique traiteur). Veuillez contacter votre organisateur.")
+            );
         }
 
         if (guestDTO.getFullName() == null || guestDTO.getFullName().trim().isEmpty()) {
@@ -140,6 +155,12 @@ public class ClientGuestController {
 
         if (!isClientAuthorizedForEvent(clientDetails.getClientId(), eventId)) {
             return ResponseEntity.status(403).body("Access denied to this event");
+        }
+
+        if (isGuestModificationDeadlinePassed(eventId)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
+                java.util.Map.of("error", "DEADLINE_PASSED", "message", "La date limite de modification des invités est dépassée (clôturée 72h avant l'événement). Veuillez contacter votre organisateur.")
+            );
         }
 
         if (guestDTO.getFullName() == null || guestDTO.getFullName().trim().isEmpty()) {
@@ -179,6 +200,12 @@ public class ClientGuestController {
 
         if (!isClientAuthorizedForEvent(clientDetails.getClientId(), eventId)) {
             return ResponseEntity.status(403).body("Access denied to this event");
+        }
+
+        if (isGuestModificationDeadlinePassed(eventId)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
+                java.util.Map.of("error", "DEADLINE_PASSED", "message", "La date limite de suppression des invités est dépassée (clôturée 72h avant l'événement). Veuillez contacter votre organisateur.")
+            );
         }
 
         return guestRepository.findById(guestId)

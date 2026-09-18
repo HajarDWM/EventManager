@@ -18,6 +18,7 @@ public class ClientMapper {
                 .email(dto.getEmail())
                 .phone(dto.getPhone())
                 .accessLinkToken(dto.getAccessLinkToken())
+                .accessLinkExpiresAt(dto.getAccessLinkExpiresAt())
                 .createdAt(dto.getCreatedAt())
                 .updatedAt(dto.getUpdatedAt())
                 .build();
@@ -34,6 +35,7 @@ public class ClientMapper {
                 .email(domain.getEmail())
                 .phone(domain.getPhone())
                 .accessLinkToken(domain.getAccessLinkToken())
+                .accessLinkExpiresAt(domain.getAccessLinkExpiresAt())
                 .createdAt(domain.getCreatedAt())
                 .updatedAt(domain.getUpdatedAt())
                 .build();
