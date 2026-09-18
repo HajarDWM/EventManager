@@ -539,6 +539,8 @@
     .preview-stage-container {
       border-color: #cbd5e1;
       overflow-x: auto;
+      padding: 16px 8px !important;
+      min-height: unset !important;
     }
 
     // Carte d'invitation réelle en direct
@@ -1947,23 +1949,23 @@
 }
 
 // ----------------------------------------------------------------------------
-// SMARTPHONE SIMULATOR (ÉCRAN MOBILE RÉEL 9:16 - IMAGE 3)
+// SMARTPHONE SIMULATOR (ÉCRAN MOBILE RÉEL 9:16 - PROPORTIONS HARMONIEUSES)
 // ----------------------------------------------------------------------------
 .preview-phone-chassis {
   width: 100%;
-  max-width: 380px !important;
-  min-height: 740px !important;
-  aspect-ratio: 9 / 18.5;
+  max-width: 320px !important;
+  height: 580px !important;
+  min-height: 580px !important;
+  max-height: 580px !important;
   margin: 0 auto;
-  border-radius: 44px;
-  border: 11px solid #0f172a;
+  border-radius: 36px;
+  border: 8px solid #0f172a;
   box-shadow:
     0 0 0 2px #334155,
-    0 25px 65px -15px rgba(15, 23, 42, 0.5),
-    0 10px 25px -5px rgba(15, 23, 42, 0.3);
+    0 20px 45px -10px rgba(15, 23, 42, 0.45),
+    0 8px 20px -4px rgba(15, 23, 42, 0.25);
   position: relative;
-  overflow-y: auto !important;
-  overflow-x: hidden !important;
+  overflow: hidden !important;
   scrollbar-width: none;
   &::-webkit-scrollbar {
     display: none;
@@ -1974,44 +1976,44 @@
   justify-content: flex-start;
   align-items: center;
   box-sizing: border-box;
-  padding-bottom: 14px;
+  padding-bottom: 12px;
 
   // Modern Dynamic Island / Notch
   .phone-dynamic-island {
-    top: 10px;
+    top: 6px;
     z-index: 50;
 
     .island-pill {
-      width: 96px;
-      height: 22px;
+      width: 78px;
+      height: 18px;
       background: #000000;
-      border-radius: 20px;
+      border-radius: 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 14px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+      padding: 0 10px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
 
       .island-camera {
-        width: 9px;
-        height: 9px;
+        width: 7px;
+        height: 7px;
         border-radius: 50%;
         background: radial-gradient(circle at 35% 35%, #1e293b, #020617);
         border: 1px solid #334155;
       }
 
       .island-sensor {
-        width: 6px;
-        height: 6px;
+        width: 4px;
+        height: 4px;
         border-radius: 50%;
         background: #0f172a;
       }
     }
   }
 
-  // Floating Music Widget (En haut au centre, sous le notch, au-dessus de la carte - Image 1)
+  // Floating Music Widget (En haut au centre, sous le notch, au-dessus de la carte)
   .mobile-floating-music-wrapper {
-    top: 14px !important;
+    top: 10px !important;
     z-index: 40;
     transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 
@@ -2024,8 +2026,8 @@
     }
 
     .music-badge-circle {
-      width: 36px;
-      height: 36px;
+      width: 28px;
+      height: 28px;
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       border: 1.5px solid var(--admin-accent-color, #d4af37);
@@ -2039,47 +2041,44 @@
       border: 1px solid rgba(212, 175, 55, 0.35);
       border: 1px solid color-mix(in srgb, var(--admin-accent-color, #d4af37) 35%, transparent);
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-      padding: 4px 14px;
+      padding: 3px 10px;
       border-radius: 9999px;
 
       span {
-        font-size: 0.76rem;
+        font-size: 0.68rem;
         font-weight: 700;
         letter-spacing: 0.3px;
       }
     }
   }
 
-  // Mobile Wallpaper Canvas (Proportions 9:16 Portrait Naturelle - Pas de déformation)
+  // Mobile Wallpaper Canvas
   .preview-mobile-bg-wallpaper {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
     z-index: 0;
     pointer-events: none;
     transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1);
 
     .preview-mobile-bg-overlay {
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(circle at center, rgba(0, 0, 0, 0.02) 0%, rgba(0, 0, 0, 0.16) 100%);
-      pointer-events: none;
+      display: none !important;
     }
   }
 
   // Prestige Envelope inside Phone Frame
   .prestige-envelope-overlay {
-    padding: 0.75rem;
+    padding: 0.5rem;
 
     .prestige-envelope-box {
       width: 100% !important;
-      max-width: 345px !important;
-      min-height: 500px !important;
-      border-radius: 20px !important;
+      max-width: 290px !important;
+      min-height: 420px !important;
+      border-radius: 18px !important;
       margin: auto;
     }
   }
@@ -2089,42 +2088,51 @@
     inset: 0;
   }
 
-  // LIVE INVITATION CARD (FUSION TOTALE & TRANSPARENCE ROYALE - EXACT IMAGE 2)
+  // LIVE INVITATION CARD (Exact Image 2 - Harmonious Full Screen Framing)
   .live-invitation-card {
-    width: calc(100% - 12px) !important;
-    max-width: 356px !important;
-    min-height: unset !important;
-    height: auto !important;
-    max-height: none !important;
-    margin: 50px auto 14px !important;
+    width: calc(100% - 22px) !important;
+    max-width: 298px !important;
+    height: calc(100% - 58px) !important;
+    min-height: calc(100% - 58px) !important;
+    max-height: calc(100% - 58px) !important;
+    margin: 46px auto 12px !important;
     background-image: none !important;
-    background: radial-gradient(ellipse at 50% 45%, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.06) 55%, transparent 95%) !important;
-    backdrop-filter: blur(1.5px) !important;
-    -webkit-backdrop-filter: blur(1.5px) !important;
-    border: 1px solid rgba(212, 175, 55, 0.22) !important;
-    border: 1px solid color-mix(in srgb, var(--admin-accent-color, #d4af37) 25%, transparent) !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border: 1px solid rgba(212, 175, 55, 0.35) !important;
+    border: 1px solid color-mix(in srgb, var(--admin-accent-color, #d4af37) 35%, transparent) !important;
     border-radius: 20px !important;
     box-shadow: none !important;
     z-index: 2;
-    padding: 0 !important;
+    padding: 12px 10px 10px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    box-sizing: border-box !important;
 
     .luxury-inner-border {
       background: transparent !important;
       border: none !important;
       margin: 0 !important;
-      padding: 16px 14px 14px !important;
-      min-height: unset !important;
-      height: auto !important;
+      padding: 0 !important;
+      height: 100% !important;
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: space-between !important;
+      box-sizing: border-box !important;
     }
 
     .invitation-header-tag {
-      margin-top: 2px !important;
-      margin-bottom: 4px !important;
+      margin-top: 1px !important;
+      margin-bottom: 2px !important;
       overflow: visible !important;
 
       .luxury-subtitle {
-        letter-spacing: 2.5px !important;
-        line-height: 1.4 !important;
+        font-size: 0.65rem !important;
+        letter-spacing: 2px !important;
+        line-height: 1.2 !important;
         display: inline-block !important;
         font-weight: 700 !important;
         text-shadow: 0 1px 2px rgba(255, 255, 255, 0.85) !important;
@@ -2133,39 +2141,37 @@
     }
 
     .invitation-live-title {
-      margin: 2px 0 6px !important;
-      line-height: 1.18 !important;
-      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.55), 0 0 12px rgba(255, 255, 255, 0.95), 0 0 22px rgba(255, 255, 255, 0.75) !important;
+      margin: 1px 0 4px !important;
+      font-size: 1.4rem !important;
+      line-height: 1.15 !important;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.35), 0 0 12px rgba(255, 255, 255, 0.95), 0 0 22px rgba(255, 255, 255, 0.75) !important;
     }
 
     .invitation-guest-salutation {
-      background: rgba(255, 255, 255, 0.12) !important;
-      border-top: 1px solid rgba(212, 175, 55, 0.22) !important;
-      border-top: 1px solid color-mix(in srgb, var(--admin-accent-color, #d4af37) 22%, transparent) !important;
-      border-bottom: 1px solid rgba(212, 175, 55, 0.22) !important;
-      border-bottom: 1px solid color-mix(in srgb, var(--admin-accent-color, #d4af37) 22%, transparent) !important;
-      border-left: none !important;
-      border-right: none !important;
-      border-radius: 0 !important;
-      backdrop-filter: blur(2px) !important;
-      -webkit-backdrop-filter: blur(2px) !important;
+      background: transparent !important;
+      background-color: transparent !important;
+      border: 1px solid rgba(212, 175, 55, 0.35) !important;
+      border: 1px solid color-mix(in srgb, var(--admin-accent-color, #d4af37) 35%, transparent) !important;
+      border-radius: 12px !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
       box-shadow: none !important;
-      margin: 6px auto 8px !important;
-      padding: 8px 12px !important;
+      margin: 4px auto !important;
+      padding: 6px 8px !important;
 
       .salutation-honorific {
-        font-size: 1.05rem !important;
+        font-size: 0.90rem !important;
       }
 
       .salutation-guest-name {
-        font-size: 1.05rem !important;
+        font-size: 0.90rem !important;
         text-shadow: 0 1px 2px rgba(255, 255, 255, 0.95), 0 0 8px rgba(255, 255, 255, 0.9) !important;
       }
 
       .salutation-invitation-message {
-        font-size: 0.86rem !important;
-        line-height: 1.55 !important;
-        margin-top: 6px !important;
+        font-size: 0.72rem !important;
+        line-height: 1.35 !important;
+        margin-top: 2px !important;
         text-shadow: 0 1px 2px rgba(255, 255, 255, 0.95), 0 0 8px rgba(255, 255, 255, 0.9) !important;
       }
     }
@@ -2173,93 +2179,94 @@
     .artistic-invitation-details {
       display: grid !important;
       grid-template-columns: 1fr 1fr !important;
-      gap: 10px !important;
-      margin: 8px 0 8px !important;
+      gap: 6px !important;
+      margin: 4px 0 !important;
     }
 
     .artistic-detail-card {
-      min-height: 120px !important;
-      background: rgba(255, 255, 255, 0.18) !important;
-      border: 1px solid rgba(212, 175, 55, 0.24) !important;
-      border: 1px solid color-mix(in srgb, var(--admin-accent-color, #d4af37) 24%, transparent) !important;
-      border-radius: 16px !important;
-      padding: 8px 6px !important;
-      backdrop-filter: blur(2px) !important;
-      -webkit-backdrop-filter: blur(2px) !important;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
+      min-height: 96px !important;
+      background: transparent !important;
+      background-color: transparent !important;
+      border: 1px solid rgba(212, 175, 55, 0.35) !important;
+      border: 1px solid color-mix(in srgb, var(--admin-accent-color, #d4af37) 35%, transparent) !important;
+      border-radius: 14px !important;
+      padding: 5px 4px !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+      box-shadow: none !important;
 
       .detail-card-icon-circle {
-        width: 30px !important;
-        height: 30px !important;
-        font-size: 0.84rem !important;
-        margin-bottom: 3px !important;
+        width: 22px !important;
+        height: 22px !important;
+        font-size: 0.70rem !important;
+        margin-bottom: 2px !important;
       }
 
       .event-card-day-label,
       .detail-card-subtitle {
-        font-size: 0.68rem !important;
-        letter-spacing: 1.2px !important;
+        font-size: 0.56rem !important;
+        letter-spacing: 1px !important;
         text-shadow: 0 1px 2px rgba(255, 255, 255, 0.95), 0 0 8px rgba(255, 255, 255, 0.9) !important;
       }
 
       .hero-event-day-number {
-        font-size: 2.1rem !important;
+        font-size: 1.5rem !important;
         line-height: 1 !important;
-        margin: 2px 0 !important;
+        margin: 1px 0 !important;
         text-shadow: 0 1px 3px rgba(0, 0, 0, 0.45), 0 0 12px rgba(255, 255, 255, 0.9) !important;
       }
 
       .event-card-month-label {
-        font-size: 0.68rem !important;
-        letter-spacing: 1.2px !important;
+        font-size: 0.56rem !important;
+        letter-spacing: 1px !important;
         text-shadow: 0 1px 2px rgba(255, 255, 255, 0.95), 0 0 8px rgba(255, 255, 255, 0.9) !important;
       }
 
       .detail-card-main-title {
-        font-size: 0.84rem !important;
-        line-height: 1.25 !important;
-        margin: 2px 0 !important;
+        font-size: 0.70rem !important;
+        line-height: 1.2 !important;
+        margin: 1px 0 !important;
         text-shadow: 0 1px 2px rgba(255, 255, 255, 0.95), 0 0 8px rgba(255, 255, 255, 0.9) !important;
       }
 
       .detail-card-bottom-info {
-        font-size: 0.70rem !important;
-        margin-top: 4px !important;
+        font-size: 0.58rem !important;
+        margin-top: 2px !important;
       }
     }
 
     .page1-actions-container {
-      margin-top: 8px !important;
+      margin-top: 4px !important;
       padding-top: 0 !important;
-      margin-bottom: 2px !important;
+      margin-bottom: 0 !important;
 
       .page1-decision-buttons {
-        gap: 10px !important;
+        gap: 6px !important;
 
         .btn {
-          padding: 8px 18px !important;
-          font-size: 0.82rem !important;
+          padding: 5px 14px !important;
+          font-size: 0.72rem !important;
           font-weight: 700 !important;
-          letter-spacing: 0.6px !important;
+          letter-spacing: 0.4px !important;
           border-radius: 9999px !important;
         }
       }
 
       .btn-discover-first-pill {
-        margin-top: 14px !important;
+        margin-top: 6px !important;
         background: rgba(255, 255, 255, 0.5) !important;
         border: 1px solid rgba(255, 255, 255, 0.65) !important;
-        border-radius: 20px !important;
-        padding: 5px 14px !important;
+        border-radius: 16px !important;
+        padding: 3px 10px !important;
         backdrop-filter: blur(4px) !important;
         -webkit-backdrop-filter: blur(4px) !important;
         color: #1e293b !important;
-        font-size: 0.74rem !important;
+        font-size: 0.64rem !important;
         font-weight: 600 !important;
         display: inline-flex !important;
         align-items: center !important;
-        gap: 6px !important;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
+        gap: 4px !important;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05) !important;
       }
     }
   }

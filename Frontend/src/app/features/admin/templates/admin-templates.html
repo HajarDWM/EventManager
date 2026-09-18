@@ -1470,13 +1470,13 @@
                [style.maxWidth]="previewDevice() === 'mobile' ? '355px' : '960px'"
                [style.width]="'100%'"
                [style.backgroundColor]="previewDevice() === 'mobile' ? 'transparent' : (backgroundColorField || '#faf6ee')"
-               [style.backgroundImage]="previewDevice() === 'desktop' && getLivePreviewBackgroundImage() ? 'url(' + getLivePreviewBackgroundImage() + ')' : (previewDevice() === 'mobile' ? 'radial-gradient(ellipse at 50% 45%, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.06) 55%, transparent 95%)' : 'none')"
+               [style.backgroundImage]="previewDevice() === 'desktop' && getLivePreviewBackgroundImage() ? 'url(' + getLivePreviewBackgroundImage() + ')' : 'none'"
                [style.backgroundSize]="previewDevice() === 'desktop' ? 'cover' : 'auto'"
                [style.backgroundPosition]="previewDevice() === 'desktop' ? 'center center' : 'initial'"
                [style.backgroundRepeat]="'no-repeat'"
-               [style.backdropFilter]="previewDevice() === 'mobile' ? 'blur(1.5px)' : 'none'"
-               [style.border]="previewDevice() === 'mobile' ? (accentColorField ? ('1px solid ' + accentColorField + '35') : '1px solid rgba(212, 175, 55, 0.22)') : (accentColorField ? ('1.5px solid ' + accentColorField + '40') : '1.5px solid rgba(212, 175, 55, 0.35)')"
-               [style.borderRadius]="previewDevice() === 'mobile' ? '22px' : '32px'"
+               [style.backdropFilter]="'none'"
+               [style.border]="previewDevice() === 'mobile' ? (accentColorField ? ('1px solid ' + accentColorField + '45') : '1px solid rgba(212, 175, 55, 0.35)') : (accentColorField ? ('1.5px solid ' + accentColorField + '40') : '1.5px solid rgba(212, 175, 55, 0.35)')"
+               [style.borderRadius]="previewDevice() === 'mobile' ? '20px' : '32px'"
                [style.boxShadow]="previewDevice() === 'mobile' ? 'none' : '0 20px 45px rgba(0, 0, 0, 0.12)'">
 
             <!-- BORDURE INTÉRIEURE ÉLÉGANTE (luxury-inner-border) -->
@@ -1537,7 +1537,7 @@
                 <!-- Carte 1 : Date & Heure -->
                 <div class="artistic-detail-card artistic-date-block text-center d-flex flex-column justify-content-between align-items-center p-2.5 rounded-3"
                      [style.borderColor]="accentColorField ? (accentColorField + '35') : 'rgba(212, 175, 55, 0.3)'"
-                     [style.backgroundColor]="accentColorField ? (accentColorField + '0a') : 'rgba(255, 255, 255, 0.35)'">
+                     [style.backgroundColor]="previewDevice() === 'mobile' ? 'transparent' : (accentColorField ? (accentColorField + '0a') : 'rgba(255, 255, 255, 0.35)')">
                   <div class="w-100 d-flex flex-column align-items-center">
                     <!-- Icone Calendrier avec badge teinté -->
                     <div class="detail-card-icon-circle mb-1 mx-auto d-flex align-items-center justify-content-center rounded-circle border"
@@ -1548,44 +1548,46 @@
                       <i class="far fa-calendar-alt"></i>
                     </div>
 
-                    <!-- Jour -->
+                    <!-- Label Jour (SAMEDI) -->
                     <div class="event-card-day-label text-uppercase fw-bold"
                          [style.fontFamily]="secondaryFontField || 'Cinzel'"
                          [style.color]="secondaryFontColorField || '#0f172a'"
-                         style="font-size: 0.7rem; letter-spacing: 1.2px; opacity: 0.9;">
+                         style="font-size: 0.72rem; letter-spacing: 1px;">
                       SAMEDI
                     </div>
 
-                    <!-- Grand Chiffre Hero Date -->
-                    <div class="hero-event-day-number fw-black my-0.5"
-                         [style.color]="accentColorField || '#d4af37'"
+                    <!-- Numéro du Jour Géant Hero (15) -->
+                    <div class="hero-event-day-number fw-bold my-0"
                          [style.fontFamily]="primaryFontField || 'Alex Brush'"
+                         [style.color]="accentColorField || '#d4af37'"
                          style="font-size: 2.2rem; line-height: 1;">
                       15
                     </div>
 
-                    <!-- Mois & Année -->
+                    <!-- Mois & Année (AOÛT 2026) -->
                     <div class="event-card-month-label text-uppercase fw-bold"
                          [style.fontFamily]="secondaryFontField || 'Cinzel'"
                          [style.color]="secondaryFontColorField || '#0f172a'"
-                         style="font-size: 0.7rem; letter-spacing: 1.2px; opacity: 0.9;">
+                         style="font-size: 0.72rem; letter-spacing: 1.5px;">
                       AOÛT 2026
                     </div>
                   </div>
 
-                  <!-- Heure au bas de la carte -->
-                  <div class="detail-card-bottom-info mt-1.5 fw-semibold"
-                       [style.fontFamily]="secondaryFontField || 'Cinzel'"
-                       [style.color]="accentColorField || '#d4af37'"
-                       style="font-size: 0.75rem;">
-                    <i class="far fa-clock me-1"></i> À 19:30
+                  <!-- Heure (19:30) -->
+                  <div class="detail-card-bottom-info d-flex align-items-center justify-content-center gap-1.5 mt-2 pt-1 border-top w-100"
+                       [style.borderColor]="accentColorField ? (accentColorField + '20') : 'rgba(212, 175, 55, 0.2)'">
+                    <i class="far fa-clock" [style.color]="accentColorField || '#d4af37'" style="font-size: 0.75rem;"></i>
+                    <span class="fw-semibold"
+                          [style.fontFamily]="secondaryFontField || 'Cinzel'"
+                          [style.color]="secondaryFontColorField || '#0f172a'"
+                          style="font-size: 0.75rem;">À 19:30</span>
                   </div>
                 </div>
 
                 <!-- Carte 2 : Lieu & Adresse de Réception -->
                 <div class="artistic-detail-card artistic-location-block text-center d-flex flex-column justify-content-between align-items-center p-2.5 rounded-3"
                      [style.borderColor]="accentColorField ? (accentColorField + '35') : 'rgba(212, 175, 55, 0.3)'"
-                     [style.backgroundColor]="accentColorField ? (accentColorField + '0a') : 'rgba(255, 255, 255, 0.35)'">
+                     [style.backgroundColor]="previewDevice() === 'mobile' ? 'transparent' : (accentColorField ? (accentColorField + '0a') : 'rgba(255, 255, 255, 0.35)')">
                   <div class="w-100 d-flex flex-column align-items-center">
                     <!-- Icone Map Marker avec badge teinté -->
                     <div class="detail-card-icon-circle mb-1 mx-auto d-flex align-items-center justify-content-center rounded-circle border"
