@@ -53,6 +53,8 @@ public class PublicRsvpDTO {
     private String templateMusicUrl;
     private String openingAnimation;
     private String visualParticles;
+    private String backgroundMotion;
+    private String contentEntrance;
     private Boolean showCountdown;
     private Boolean showCalendarButton;
     private Boolean showMapRoute;

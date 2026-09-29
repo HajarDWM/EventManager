@@ -88,6 +88,12 @@ public class DigitalInvitationTemplateEntity {
     @Column(name = "visual_particles", length = 50)
     private String visualParticles;
 
+    @Column(name = "background_motion", length = 50)
+    private String backgroundMotion;
+
+    @Column(name = "content_entrance", length = 50)
+    private String contentEntrance;
+
     @Column(name = "show_countdown")
     private Boolean showCountdown;
 

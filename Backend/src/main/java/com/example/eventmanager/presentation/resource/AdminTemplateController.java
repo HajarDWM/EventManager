@@ -75,6 +75,12 @@ public class AdminTemplateController {
         if (template.getVisualParticles() == null || template.getVisualParticles().isBlank()) {
             template.setVisualParticles("gold-dust");
         }
+        if (template.getBackgroundMotion() == null || template.getBackgroundMotion().isBlank()) {
+            template.setBackgroundMotion("ken-burns");
+        }
+        if (template.getContentEntrance() == null || template.getContentEntrance().isBlank()) {
+            template.setContentEntrance("staggered-royal");
+        }
         if (template.getShowCountdown() == null) {
             template.setShowCountdown(true);
         }
@@ -166,6 +172,12 @@ public class AdminTemplateController {
             }
             if (updated.getVisualParticles() != null) {
                 existing.setVisualParticles(updated.getVisualParticles());
+            }
+            if (updated.getBackgroundMotion() != null) {
+                existing.setBackgroundMotion(updated.getBackgroundMotion());
+            }
+            if (updated.getContentEntrance() != null) {
+                existing.setContentEntrance(updated.getContentEntrance());
             }
             if (updated.getShowCountdown() != null) {
                 existing.setShowCountdown(updated.getShowCountdown());

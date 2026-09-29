@@ -60,6 +60,8 @@ public class PublicRsvpController {
         String templateMusicUrl = null;
         String openingAnimation = null;
         String visualParticles = null;
+        String backgroundMotion = null;
+        String contentEntrance = null;
         Boolean showCountdown = null;
         Boolean showCalendarButton = null;
         Boolean showMapRoute = null;
@@ -95,6 +97,8 @@ public class PublicRsvpController {
             templateMusicUrl = tpl.getMusicUrl();
             openingAnimation = tpl.getOpeningAnimation();
             visualParticles = tpl.getVisualParticles();
+            backgroundMotion = tpl.getBackgroundMotion();
+            contentEntrance = tpl.getContentEntrance();
             showCountdown = tpl.getShowCountdown();
             showCalendarButton = tpl.getShowCalendarButton();
             showMapRoute = tpl.getShowMapRoute();
@@ -144,6 +148,8 @@ public class PublicRsvpController {
                 .templateMusicUrl(templateMusicUrl)
                 .openingAnimation(openingAnimation)
                 .visualParticles(visualParticles)
+                .backgroundMotion(backgroundMotion)
+                .contentEntrance(contentEntrance)
                 .showCountdown(showCountdown)
                 .showCalendarButton(showCalendarButton)
                 .showMapRoute(showMapRoute)

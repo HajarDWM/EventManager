@@ -46,6 +46,8 @@ export interface PublicRsvpDetail {
   templateMusicUrl?: string;
   openingAnimation?: string | null;
   visualParticles?: string | null;
+  backgroundMotion?: string | null;
+  contentEntrance?: string | null;
   showCountdown?: boolean | null;
   showCalendarButton?: boolean | null;
   showMapRoute?: boolean | null;
@@ -203,6 +205,22 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
       return vp.trim();
     }
     return 'gold-dust';
+  }
+
+  public getBackgroundMotion(): string {
+    const bm = this.guest()?.backgroundMotion;
+    if (bm && bm.trim() !== '') {
+      return bm.trim();
+    }
+    return 'ken-burns';
+  }
+
+  public getContentEntrance(): string {
+    const ce = this.guest()?.contentEntrance;
+    if (ce && ce.trim() !== '') {
+      return ce.trim();
+    }
+    return 'staggered-royal';
   }
 
   public saveCurrentRsvpProgress(): void {

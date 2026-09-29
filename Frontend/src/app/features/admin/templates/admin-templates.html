@@ -939,6 +939,53 @@
                 </div>
               </div>
 
+              <!-- Effet de Mouvement d'Arrière-plan (Living Wallpaper) -->
+              <div class="p-3 bg-body-light rounded-3 border border-light mb-3">
+                <label class="form-label fw-bold text-dark fs-xs mb-1 d-flex align-items-center gap-1.5">
+                  <i class="fa fa-wand-magic-sparkles text-warning"></i>
+                  <span>Mouvement & Effet de Vie d'Arrière-plan</span>
+                </label>
+                <select class="form-select rounded-3 border-light bg-white shadow-none fs-sm"
+                        name="backgroundMotion"
+                        [(ngModel)]="backgroundMotionField"
+                        (ngModelChange)="replayPreviewAnimation()">
+                  <option value="none">🛑 Arrière-plan Fixe (Classique)</option>
+                  <optgroup label="Cinématique & Dynamique">
+                    <option value="ken-burns">🎥 Zoom Cinématique & Respiration Lente (Ken Burns)</option>
+                    <option value="floral-sway">🌿🌸 Balancement Floral & Brise Délicate (Swaying)</option>
+                    <option value="shimmer-ray">✨ Faisceau & Balayage Lumineux Doré (Shimmer Ray)</option>
+                    <option value="parallax-3d">📱 Profondeur 3D & Parallaxe Dynamique (Perspective)</option>
+                  </optgroup>
+                </select>
+                <div class="form-text fs-xxs text-muted mt-1">
+                  Donne vie à l'image d'arrière-plan avec un mouvement doux et continu sans alourdir la page.
+                </div>
+              </div>
+
+              <!-- Animation d'Apparition du Contenu (Textes & Cartes) -->
+              <div class="p-3 bg-body-light rounded-3 border border-light mb-3">
+                <label class="form-label fw-bold text-dark fs-xs mb-1 d-flex align-items-center gap-1.5">
+                  <i class="fa fa-film text-warning"></i>
+                  <span>Apparition & Enchaînement des Textes</span>
+                </label>
+                <select class="form-select rounded-3 border-light bg-white shadow-none fs-sm"
+                        name="contentEntrance"
+                        [(ngModel)]="contentEntranceField"
+                        (ngModelChange)="replayPreviewAnimation()">
+                  <optgroup label="Expérience Vidéo / Histoire">
+                    <option value="staggered-royal">👑 Apparition Échelonnée Royale (Titre ➜ Message ➜ Détails ➜ Actions)</option>
+                    <option value="smooth-fade-slide">🌊 Glissement & Fondu Élégant de Bas en Haut</option>
+                    <option value="golden-glow-reveal">🌟 Révélation Scintillante & Éclat Doré</option>
+                  </optgroup>
+                  <optgroup label="Standard">
+                    <option value="direct">⚡ Affichage Direct (Sans délai)</option>
+                  </optgroup>
+                </select>
+                <div class="form-text fs-xxs text-muted mt-1">
+                  Les éléments et textes apparaissent séquentiellement pour créer un effet vidéo scénarisé.
+                </div>
+              </div>
+
               <!-- Widgets Intégrés (Page Confirmation) -->
               <div class="p-3 bg-body-light rounded-3 border border-light">
                 <div class="d-flex align-items-center justify-content-between mb-1">
@@ -1060,8 +1107,13 @@
             <!-- FOND D'ÉCRAN MOBILE IMMERSIF (Proportion 9:16 Portrait Naturelle - Image 3) -->
             <div class="preview-mobile-bg-wallpaper position-absolute inset-0 pointer-events-none"
                  *ngIf="previewDevice() === 'mobile' && getLivePreviewBackgroundImage()"
+                 [class.bg-motion-ken-burns]="backgroundMotionField === 'ken-burns'"
+                 [class.bg-motion-floral-sway]="backgroundMotionField === 'floral-sway'"
+                 [class.bg-motion-shimmer-ray]="backgroundMotionField === 'shimmer-ray'"
+                 [class.bg-motion-parallax-3d]="backgroundMotionField === 'parallax-3d'"
                  [style.backgroundImage]="'url(' + getLivePreviewBackgroundImage() + ')'">
               <div class="preview-mobile-bg-overlay"></div>
+              <div class="bg-shimmer-ray-light" *ngIf="backgroundMotionField === 'shimmer-ray'"></div>
             </div>
 
           <!-- 1. COUCHE PARTICULES VISUELLES (Arrière-plan dynamique) -->
@@ -1467,6 +1519,13 @@
                [class.curtain-style]="openingAnimationField === 'curtain-unveil'"
                [class.doors-style]="openingAnimationField === 'sliding-doors'"
                [class.cinematic-card-revealing]="isOpeningTransitioning()"
+               [class.bg-motion-ken-burns]="previewDevice() === 'desktop' && backgroundMotionField === 'ken-burns'"
+               [class.bg-motion-floral-sway]="previewDevice() === 'desktop' && backgroundMotionField === 'floral-sway'"
+               [class.bg-motion-shimmer-ray]="previewDevice() === 'desktop' && backgroundMotionField === 'shimmer-ray'"
+               [class.bg-motion-parallax-3d]="previewDevice() === 'desktop' && backgroundMotionField === 'parallax-3d'"
+               [class.content-entrance-staggered]="contentEntranceField === 'staggered-royal'"
+               [class.content-entrance-slide]="contentEntranceField === 'smooth-fade-slide'"
+               [class.content-entrance-golden]="contentEntranceField === 'golden-glow-reveal'"
                [style.maxWidth]="previewDevice() === 'mobile' ? '355px' : '960px'"
                [style.width]="'100%'"
                [style.backgroundColor]="previewDevice() === 'mobile' ? 'transparent' : (backgroundColorField || '#faf6ee')"
@@ -1479,12 +1538,15 @@
                [style.borderRadius]="previewDevice() === 'mobile' ? '20px' : '32px'"
                [style.boxShadow]="previewDevice() === 'mobile' ? 'none' : '0 20px 45px rgba(0, 0, 0, 0.12)'">
 
+            <!-- Rayon Doré de Balayage (Desktop Live Card) -->
+            <div class="bg-shimmer-ray-light" *ngIf="previewDevice() === 'desktop' && backgroundMotionField === 'shimmer-ray'"></div>
+
             <!-- BORDURE INTÉRIEURE ÉLÉGANTE (luxury-inner-border) -->
             <div class="luxury-inner-border position-relative z-2 m-1 m-sm-2 p-2.5 p-sm-4 rounded-3 text-center"
                  [style.border]="previewDevice() === 'mobile' ? 'none' : (accentColorField ? ('1px solid ' + accentColorField + '30') : '1px solid rgba(212, 175, 55, 0.25)')">
 
               <!-- 1. En-tête / Sous-titre officiel -->
-              <div class="invitation-header-tag mb-1">
+              <div class="invitation-header-tag mb-1 stage-item stage-header">
                 <span class="luxury-subtitle text-uppercase"
                       [style.fontFamily]="secondaryFontField || 'Cinzel'"
                       [style.fontSize]="secondaryFontSizeField || '14px'"
@@ -1497,7 +1559,7 @@
               </div>
 
               <!-- 2. TITRE PRINCIPAL DU MODÈLE (Ex: Yassine & Zineb ou Titre du modèle) -->
-              <h1 class="invitation-live-title my-2"
+              <h1 class="invitation-live-title my-2 stage-item stage-title"
                   [style.fontFamily]="primaryFontField || 'Alex Brush'"
                   [style.fontSize]="primaryFontSizeField || '36px'"
                   [style.fontWeight]="primaryFontWeightField || '700'"
@@ -1508,7 +1570,7 @@
               </h1>
 
               <!-- 3. Salutation & Message d'invitation personnalisé Guest -->
-              <div class="invitation-guest-salutation my-2.5 text-center">
+              <div class="invitation-guest-salutation my-2.5 text-center stage-item stage-salutation">
                 <div class="salutation-guest-text">
                   <span class="salutation-honorific me-1"
                         [style.fontFamily]="secondaryFontField || 'Cinzel'"
@@ -1532,7 +1594,7 @@
               </div>
 
               <!-- 4. CARTES JUMELLES SYMÉTRIQUES (Date & Heure / Lieu de Réception) -->
-              <div class="artistic-invitation-details my-3">
+              <div class="artistic-invitation-details my-3 stage-item stage-details">
                 
                 <!-- Carte 1 : Date & Heure -->
                 <div class="artistic-detail-card artistic-date-block text-center d-flex flex-column justify-content-between align-items-center p-2.5 rounded-3"
@@ -1627,7 +1689,7 @@
               </div>
 
               <!-- 5. BOUTONS D'ACTION RSVP (Mockup Fidèle & Réactif - Image 3) -->
-              <div class="page1-actions-container mt-3 pt-1 mb-1 text-center">
+              <div class="page1-actions-container mt-3 pt-1 mb-1 text-center stage-item stage-actions">
                 <!-- Boutons de décision Accepter / Décliner -->
                 <div class="page1-decision-buttons d-flex align-items-center justify-content-center gap-2 flex-nowrap">
                   <!-- Accepter stylisé avec accentColor dégradé -->

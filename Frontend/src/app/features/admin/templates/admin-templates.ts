@@ -263,6 +263,8 @@ export class AdminTemplates implements OnInit {
   protected htmlContentField = '';
   protected openingAnimationField = 'envelope-wax';
   protected visualParticlesField = 'gold-dust';
+  protected backgroundMotionField = 'ken-burns';
+  protected contentEntranceField = 'staggered-royal';
   protected showCountdownField = true;
   protected showCalendarButtonField = true;
   protected showMapRouteField = true;
@@ -784,6 +786,8 @@ export class AdminTemplates implements OnInit {
     this.htmlContentField = '';
     this.openingAnimationField = 'envelope-wax';
     this.visualParticlesField = 'gold-dust';
+    this.backgroundMotionField = 'ken-burns';
+    this.contentEntranceField = 'staggered-royal';
     this.showCountdownField = true;
     this.showCalendarButtonField = true;
     this.showMapRouteField = true;
@@ -831,6 +835,8 @@ export class AdminTemplates implements OnInit {
     this.htmlContentField = template.htmlContent || '';
     this.openingAnimationField = template.openingAnimation || 'envelope-wax';
     this.visualParticlesField = template.visualParticles || 'gold-dust';
+    this.backgroundMotionField = template.backgroundMotion || 'ken-burns';
+    this.contentEntranceField = template.contentEntrance || 'staggered-royal';
     this.showCountdownField = template.showCountdown !== false;
     this.showCalendarButtonField = template.showCalendarButton !== false;
     this.showMapRouteField = template.showMapRoute !== false;
@@ -1004,6 +1010,8 @@ export class AdminTemplates implements OnInit {
       htmlContent: this.htmlContentField?.trim() || undefined,
       openingAnimation: this.openingAnimationField || 'envelope-wax',
       visualParticles: this.visualParticlesField || 'none',
+      backgroundMotion: this.backgroundMotionField || 'none',
+      contentEntrance: this.contentEntranceField || 'staggered-royal',
       showCountdown: this.showCountdownField,
       showCalendarButton: this.showCalendarButtonField,
       showMapRoute: this.showMapRouteField

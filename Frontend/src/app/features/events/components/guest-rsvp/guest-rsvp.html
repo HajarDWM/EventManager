@@ -22,9 +22,14 @@
   <div class="mobile-luxury-bg-wallpaper position-fixed inset-0 pointer-events-none d-block d-lg-none"
        *ngIf="resolvedBackgroundImage"
        [class.wallpaper-hidden-before-open]="shouldHideWallpaperBeforeOpening()"
+       [class.bg-motion-ken-burns]="getBackgroundMotion() === 'ken-burns'"
+       [class.bg-motion-floral-sway]="getBackgroundMotion() === 'floral-sway'"
+       [class.bg-motion-shimmer-ray]="getBackgroundMotion() === 'shimmer-ray'"
+       [class.bg-motion-parallax-3d]="getBackgroundMotion() === 'parallax-3d'"
        [style.backgroundImage]="'url(' + resolvedBackgroundImage + ')'"
        aria-hidden="true">
     <div class="mobile-luxury-bg-overlay"></div>
+    <div class="bg-shimmer-ray-light" *ngIf="getBackgroundMotion() === 'shimmer-ray'"></div>
   </div>
 
   <!-- DYNAMIC VISUAL PARTICLES & SPECIAL EFFECTS (Configured in Admin Template) -->
@@ -461,6 +466,13 @@
         [class.curtain-style]="guest()?.openingAnimation === 'curtain-unveil'"
         [class.doors-style]="guest()?.openingAnimation === 'sliding-doors'"
         [class.cinematic-card-revealing]="isOpeningTransitioning()"
+        [class.bg-motion-ken-burns]="getBackgroundMotion() === 'ken-burns'"
+        [class.bg-motion-floral-sway]="getBackgroundMotion() === 'floral-sway'"
+        [class.bg-motion-shimmer-ray]="getBackgroundMotion() === 'shimmer-ray'"
+        [class.bg-motion-parallax-3d]="getBackgroundMotion() === 'parallax-3d'"
+        [class.content-entrance-staggered]="getContentEntrance() === 'staggered-royal'"
+        [class.content-entrance-slide]="getContentEntrance() === 'smooth-fade-slide'"
+        [class.content-entrance-golden]="getContentEntrance() === 'golden-glow-reveal'"
         [style.--primary-font]="getPrimaryFont()"
         [style.--primary-font-size]="getPrimaryFontSize()"
         [style.--primary-font-weight]="getPrimaryFontWeight()"
@@ -476,7 +488,8 @@
         [style.backgroundColor]="customBgColor"
         [style.borderColor]="getPrimaryColor() ? (getPrimaryColor() + '40') : 'rgba(212, 175, 55, 0.35)'">
 
-
+      <!-- Rayon Doré de Balayage (Desktop Live Card) -->
+      <div class="bg-shimmer-ray-light" *ngIf="getBackgroundMotion() === 'shimmer-ray'"></div>
 
       <!-- Card Core Content (All Base Elements Protected & High Contrast) -->
       <div class="luxury-inner-border position-relative z-2"
@@ -486,7 +499,7 @@
         <div class="invitation-dynamic-text-overlay text-center mx-auto" *ngIf="!isMenuRsvpOpen() && !isSuccess()">
 
           <!-- Dynamic Subtitle / Intro Header -->
-          <div class="invitation-header-tag mb-1" style="overflow: visible; padding-top: 4px;">
+          <div class="invitation-header-tag mb-1 stage-item stage-header" style="overflow: visible; padding-top: 4px;">
             <span class="luxury-subtitle"
               [style.fontFamily]="getSecondaryFont()"
               [style.fontSize]="getSecondaryFontSize()"
@@ -499,7 +512,7 @@
           </div>
 
           <!-- Dynamic Main Couple / Event Title -->
-          <h1 class="invitation-main-title mb-3"
+          <h1 class="invitation-main-title mb-3 stage-item stage-title"
             [style.fontFamily]="getPrimaryFont()"
             [style.fontSize]="getPrimaryFontSize()"
             [style.fontWeight]="getPrimaryFontWeight()"
@@ -510,7 +523,7 @@
           </h1>
 
           <!-- Personalized Dynamic Guest Salutation (Affichage textuel sobre sans forme de bouton) -->
-          <div class="invitation-guest-salutation mb-3 text-center">
+          <div class="invitation-guest-salutation mb-3 text-center stage-item stage-salutation">
             <div class="salutation-guest-text">
               <span class="salutation-honorific me-1"
                 [style.fontFamily]="getSecondaryFont()"
@@ -528,7 +541,7 @@
           </div>
 
           <!-- Artistic Dynamic Date, Time & Venue Details (Symmetrical Twin Cards) -->
-          <div class="artistic-invitation-details mb-3">
+          <div class="artistic-invitation-details mb-3 stage-item stage-details">
             
             <!-- 1. CARD DATE & HEURE -->
             <div class="artistic-detail-card artistic-date-block text-center d-flex flex-column justify-content-between align-items-center">
@@ -613,7 +626,7 @@
           </div>
 
           <!-- ACTIONS PAGE 1 : Décision immédiate (Accepter / Décliner) + Découvrir le menu d'abord -->
-          <div class="page1-actions-container mt-2 pt-0 mb-1 text-center animate__animated animate__fadeIn">
+          <div class="page1-actions-container mt-2 pt-0 mb-1 text-center stage-item stage-actions">
             <!-- Boutons de décision immédiate -->
             <div class="page1-decision-buttons d-flex align-items-center justify-content-center gap-2 gap-sm-3 flex-nowrap">
               <!-- 1. Accepter (Bouton Principal teinté avec la couleur du modèle) -->

@@ -29,6 +29,8 @@ export interface DigitalTemplate {
   htmlContent?: string;
   openingAnimation?: string | null;
   visualParticles?: string | null;
+  backgroundMotion?: string | null;
+  contentEntrance?: string | null;
   showCountdown?: boolean | null;
   showCalendarButton?: boolean | null;
   showMapRoute?: boolean | null;

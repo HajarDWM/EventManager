@@ -131,6 +131,8 @@ export class TemplatePreviewFrame implements OnInit, OnDestroy {
             templateMusicUrl: tpl.musicUrl || '/assets/music/gala-ambient.mp3',
             openingAnimation: tpl.openingAnimation || 'none',
             visualParticles: tpl.visualParticles || 'confetti',
+            backgroundMotion: tpl.backgroundMotion || 'ken-burns',
+            contentEntrance: tpl.contentEntrance || 'staggered-royal',
             invitationTitle: tpl.title || 'Soirée de Gala',
             invitationSubtitle: tpl.subCategory || tpl.category || 'Invitation d\'Exception',
             invitationDate: new Date().toISOString(),
