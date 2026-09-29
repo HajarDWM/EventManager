@@ -99,6 +99,7 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
   // Invitation Opening Cinematic State (Envelope, Curtains, Ribbon, Doors, etc.)
   public readonly isInvitationOpened = signal<boolean>(false);
   public readonly isOpeningTransitioning = signal<boolean>(false);
+  public readonly isInitialEntranceCompleted = signal<boolean>(false);
 
   public isInteractiveAnimation(): boolean {
     const anim = this.guest()?.openingAnimation;
@@ -135,6 +136,9 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
     setTimeout(() => {
       this.isInvitationOpened.set(true);
       this.isOpeningTransitioning.set(false);
+      setTimeout(() => {
+        this.isInitialEntranceCompleted.set(true);
+      }, 4500);
       const gid = this.guest()?.guestId;
       if (gid) {
         const now = new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
@@ -237,11 +241,13 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
   }
 
   protected openMenuAndRsvp(): void {
+    this.isInitialEntranceCompleted.set(true);
     this.isMenuRsvpOpen.set(true);
     this.saveCurrentRsvpProgress();
   }
 
   protected closeMenuAndRsvp(): void {
+    this.isInitialEntranceCompleted.set(true);
     const gid = this.guest()?.guestId;
     if (gid) {
       localStorage.setItem(`guest_${gid}_is_rsvp_open`, 'false');
