@@ -957,19 +957,41 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
     }
   }
 
+  public autoSelectSingleChoices(): void {
+    if (!this.isPlatedMode()) return;
+    if (this.availableStarters().length === 1 && !this.starterChoice) {
+      this.starterChoice = this.availableStarters()[0].name;
+    }
+    if (this.availableMains().length === 1 && !this.mealChoice) {
+      this.mealChoice = this.availableMains()[0].name;
+    }
+    if (this.availableDesserts().length === 1 && !this.dessertChoice) {
+      this.dessertChoice = this.availableDesserts()[0].name;
+    }
+    if (this.availableBeverages().length === 1 && !this.beverageChoice) {
+      this.beverageChoice = this.availableBeverages()[0].name;
+    }
+  }
+
   public skipCurrentCourse(): void {
     if (this.isAdvancing() || this.isDiscoveryMode()) return;
 
     const step = this.currentRsvpStep();
     if (step === 0) {
+      if (this.isPlatedMode() && this.availableStarters().length > 0) {
+        return;
+      }
       this.starterChoice = '';
     } else if (step === 1) {
-      // Plat principal / Plat chaud is mandatory in MIX and PLATS_FIXES - do not skip without a choice
-      if (this.isMixMode() || this.isPlatedMode()) {
+      // Plat principal / Plat chaud is mandatory in MIX and PLATS_FIXES
+      if ((this.isMixMode() || this.isPlatedMode()) && this.availableMains().length > 0) {
         return;
       }
       this.mealChoice = '';
     } else if (step === 2) {
+      if (this.isPlatedMode() && this.availableDesserts().length > 0) {
+        return;
+      }
       this.dessertChoice = '';
     } else if (step === 3) {
       this.beverageChoice = '';
@@ -986,12 +1008,30 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
     this.selectedItemTransition.set(null);
     this.isAdvancing.set(false);
 
-    // If attempting to jump past step 1 without selecting a main dish in MIX / PLATS_FIXES mode
-    if (!this.isDiscoveryMode() && (this.isMixMode() || this.isPlatedMode())) {
-      if (stepIndex > 1 && !this.mealChoice) {
-        this.currentRsvpStep.set(1);
-        this.saveCurrentRsvpProgress();
-        return;
+    // If attempting to jump ahead without selecting mandatory courses in PLATS_FIXES mode
+    if (!this.isDiscoveryMode()) {
+      if (this.isPlatedMode()) {
+        if (stepIndex > 0 && this.availableStarters().length > 0 && !this.starterChoice) {
+          this.currentRsvpStep.set(0);
+          this.saveCurrentRsvpProgress();
+          return;
+        }
+        if (stepIndex > 1 && this.availableMains().length > 0 && !this.mealChoice) {
+          this.currentRsvpStep.set(1);
+          this.saveCurrentRsvpProgress();
+          return;
+        }
+        if (stepIndex > 2 && this.availableDesserts().length > 0 && !this.dessertChoice) {
+          this.currentRsvpStep.set(2);
+          this.saveCurrentRsvpProgress();
+          return;
+        }
+      } else if (this.isMixMode()) {
+        if (stepIndex > 1 && this.availableMains().length > 0 && !this.mealChoice) {
+          this.currentRsvpStep.set(1);
+          this.saveCurrentRsvpProgress();
+          return;
+        }
       }
     }
 
@@ -1416,6 +1456,9 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
           }
         }
 
+        // Auto-select single choices if only 1 item is available in a category
+        this.autoSelectSingleChoices();
+
         this.isLoading.set(false);
       },
       error: (err) => {
@@ -1431,8 +1474,18 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
     const mode = this.cateringMode();
     const step = this.currentRsvpStep();
 
-    // Guard: Step 1 requires a choice in MIX and PLATS_FIXES
-    if (step === 1 && (mode === 'MIX' || mode === 'PLATS_FIXES') && !this.mealChoice) {
+    // Guard: Step 0 requires an Entrée choice in PLATS_FIXES if starters exist
+    if (step === 0 && this.isPlatedMode() && this.availableStarters().length > 0 && !this.starterChoice) {
+      return;
+    }
+
+    // Guard: Step 1 requires a Main dish choice in MIX and PLATS_FIXES
+    if (step === 1 && (mode === 'MIX' || mode === 'PLATS_FIXES') && this.availableMains().length > 0 && !this.mealChoice) {
+      return;
+    }
+
+    // Guard: Step 2 requires a Dessert choice in PLATS_FIXES if desserts exist
+    if (step === 2 && this.isPlatedMode() && this.availableDesserts().length > 0 && !this.dessertChoice) {
       return;
     }
 
@@ -1649,10 +1702,27 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
     this.status.set(choice);
     this.attendanceStatus = (choice === 'CONFIRMED');
 
-    // If confirmed and main dish is required (MIX or PLATS_FIXES) but not selected yet, redirect to Step 1
-    if (this.attendanceStatus && (this.isMixMode() || this.isPlatedMode()) && !this.mealChoice) {
-      this.currentRsvpStep.set(1);
-      return;
+    // In PLATS_FIXES / MIX mode, ensure all required courses are chosen
+    if (this.attendanceStatus) {
+      if (this.isPlatedMode()) {
+        if (this.availableStarters().length > 0 && !this.starterChoice) {
+          this.currentRsvpStep.set(0);
+          return;
+        }
+        if (this.availableMains().length > 0 && !this.mealChoice) {
+          this.currentRsvpStep.set(1);
+          return;
+        }
+        if (this.availableDesserts().length > 0 && !this.dessertChoice) {
+          this.currentRsvpStep.set(2);
+          return;
+        }
+      } else if (this.isMixMode()) {
+        if (this.availableMains().length > 0 && !this.mealChoice) {
+          this.currentRsvpStep.set(1);
+          return;
+        }
+      }
     }
 
     const currentGuest = this.guest();

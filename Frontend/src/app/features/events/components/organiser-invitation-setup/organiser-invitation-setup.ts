@@ -954,6 +954,8 @@ export class OrganiserInvitationSetup implements OnInit {
           }
           return { ...g, sentChannels: sentChannels || g.sentChannels };
         });
+        // Sort newest first (highest ID on top)
+        updatedList.sort((a, b) => (b.id || 0) - (a.id || 0));
         this.guests.set(updatedList);
 
         // Default select only guests who are STILL PENDING (not sent yet)

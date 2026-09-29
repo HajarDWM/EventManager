@@ -152,8 +152,14 @@
         </thead>
         <tbody>
           <tr *ngFor="let event of filteredEvents()" [routerLink]="['/events', event.id]" style="cursor: pointer;">
-            <td class="fw-semibold text-primary">
-              {{ event.title }}
+            <td>
+              <div class="fw-semibold text-primary">
+                {{ event.title }}
+              </div>
+              <div class="fs-xs text-muted fw-normal mt-0.5 d-flex align-items-center" *ngIf="event.invitationSubtitle">
+                <i class="fa fa-tag me-1 text-muted opacity-75 fs-xs"></i>
+                <span>{{ event.invitationSubtitle }}</span>
+              </div>
             </td>
             <td>
               {{ event.eventDate | date:'dd/MM/yyyy HH:mm' }}

@@ -46,9 +46,13 @@ export class ClientGuestList implements OnInit {
   protected readonly selectedFilter = signal<'ALL' | 'CONFIRMED' | 'PENDING' | 'DECLINED'>('ALL');
 
   protected readonly filteredGuests = computed(() => {
+    let list = [...this.guests()];
+    // Sort newest first (highest ID on top)
+    list.sort((a, b) => (b.id || 0) - (a.id || 0));
+
     const filter = this.selectedFilter();
-    if (filter === 'ALL') return this.guests();
-    return this.guests().filter(g => g.status === filter);
+    if (filter === 'ALL') return list;
+    return list.filter(g => g.status === filter);
   });
 
   protected setFilter(filter: 'ALL' | 'CONFIRMED' | 'PENDING' | 'DECLINED'): void {

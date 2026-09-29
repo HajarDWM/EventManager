@@ -928,6 +928,13 @@
                   <div class="spotlight-underline mx-auto mt-1"
                     [style.backgroundColor]="getPrimaryColor()"
                     style="width: 40px; height: 1.5px; opacity: 0.65;"></div>
+                  <p class="fs-xxs mt-1 mb-0 font-serif" [style.color]="getMenuMutedTextColor()" *ngIf="!isDiscoveryMode() && availableStarters().length > 0">
+                    <i class="fa fa-info-circle me-1" [style.color]="getPrimaryColor()"></i>
+                    Choix obligatoire • Servi frais à table selon votre préférence
+                  </p>
+                  <p class="fs-xxs mt-1 mb-0 font-serif" [style.color]="getMenuMutedTextColor()" *ngIf="isDiscoveryMode()">
+                    Servi frais à table selon la sélection des convives
+                  </p>
                 </div>
 
                 <!-- Onglets de services placés DIRECTEMENT au-dessus des plats -->
@@ -986,15 +993,16 @@
                 </div>
 
 
-                <!-- Actions de Navigation en Bas : Retour (page invitation 1) + Passer -->
+                <!-- Actions de Navigation en Bas : Retour (page invitation 1) + Continuer / Passer -->
                 <div class="step-bottom-actions-wrapper step-optout-wrapper d-flex align-items-center justify-content-center flex-nowrap gap-2 mt-1.5 pt-0 mb-1" *ngIf="!isDiscoveryMode()">
                   <button type="button" class="btn btn-sm btn-step-back rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
                     (click)="closeMenuAndRsvp()">
                     <i class="fa fa-arrow-left me-1"></i> Retour
                   </button>
                   <button type="button" class="btn btn-sm btn-opt-out rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
-                    (click)="skipCurrentCourse()">
-                    Passer <i class="fa fa-arrow-right ms-1"></i>
+                    *ngIf="starterChoice || availableStarters().length === 0"
+                    (click)="goToNextStep()">
+                    Continuer <i class="fa fa-arrow-right ms-1"></i>
                   </button>
                 </div>
               </ng-container>
@@ -1227,6 +1235,13 @@
                   <div class="spotlight-underline mx-auto mt-1"
                     [style.backgroundColor]="getPrimaryColor()"
                     style="width: 40px; height: 1.5px; opacity: 0.65;"></div>
+                  <p class="fs-xxs mt-1 mb-0 font-serif" [style.color]="getMenuMutedTextColor()" *ngIf="!isDiscoveryMode() && availableDesserts().length > 0">
+                    <i class="fa fa-info-circle me-1" [style.color]="getPrimaryColor()"></i>
+                    Choix obligatoire • Servi à table selon votre préférence
+                  </p>
+                  <p class="fs-xxs mt-1 mb-0 font-serif" [style.color]="getMenuMutedTextColor()" *ngIf="isDiscoveryMode()">
+                    Servi à table selon la sélection des convives
+                  </p>
                 </div>
 
                 <!-- Onglets de services placés DIRECTEMENT au-dessus des plats -->
@@ -1285,15 +1300,16 @@
                 </div>
 
 
-                <!-- Actions de Navigation en Bas : Retour + Passer -->
+                <!-- Actions de Navigation en Bas : Retour + Continuer / Passer -->
                 <div class="step-bottom-actions-wrapper step-optout-wrapper d-flex align-items-center justify-content-center flex-nowrap gap-2 mt-1.5 pt-0 mb-1" *ngIf="!isDiscoveryMode()">
                   <button type="button" class="btn btn-sm btn-step-back rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
                     (click)="goToPrevStep()">
                     <i class="fa fa-arrow-left me-1"></i> Retour
                   </button>
                   <button type="button" class="btn btn-sm btn-opt-out rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
-                    (click)="skipCurrentCourse()">
-                    Passer <i class="fa fa-arrow-right ms-1"></i>
+                    *ngIf="dessertChoice || availableDesserts().length === 0"
+                    (click)="goToNextStep()">
+                    Continuer <i class="fa fa-arrow-right ms-1"></i>
                   </button>
                 </div>
               </ng-container>

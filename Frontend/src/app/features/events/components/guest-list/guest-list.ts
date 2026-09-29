@@ -66,7 +66,10 @@ export class GuestList implements OnInit {
   });
 
   protected readonly filteredGuests = computed(() => {
-    const list = this.guests();
+    let list = [...this.guests()];
+    // Sort newest first (highest ID on top)
+    list.sort((a, b) => (b.id || 0) - (a.id || 0));
+
     const groupFilter = this.selectedGroupFilter();
     const statusFilter = this.selectedStatusFilter();
     

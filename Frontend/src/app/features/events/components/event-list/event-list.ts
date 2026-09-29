@@ -55,7 +55,8 @@ export class EventList implements OnInit {
     if (term) {
       list = list.filter(e =>
         (e.title && e.title.toLowerCase().includes(term)) ||
-        (e.location && e.location.toLowerCase().includes(term))
+        (e.location && e.location.toLowerCase().includes(term)) ||
+        (e.invitationSubtitle && e.invitationSubtitle.toLowerCase().includes(term))
       );
     }
 

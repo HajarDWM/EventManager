@@ -34,7 +34,7 @@ public class GuestRepositoryAdapter implements GuestRepositoryPort {
 
     @Override
     public List<Guest> findByEventId(Long eventId) {
-        return jpaGuestRepository.findByEventId(eventId).stream()
+        return jpaGuestRepository.findByEventIdOrderByIdDesc(eventId).stream()
                 .map(guestMapper::toDomainFromEntity)
                 .collect(Collectors.toList());
     }
