@@ -334,8 +334,6 @@ export class AdminTemplates implements OnInit {
       duration = 1640;
     } else if (this.openingAnimationField === 'sliding-doors') {
       duration = 1540;
-    } else if (this.openingAnimationField === 'gift-box') {
-      duration = 1700;
     } else if (this.openingAnimationField === 'vip-badge') {
       duration = 940;
     }

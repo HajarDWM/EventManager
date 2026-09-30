@@ -899,7 +899,6 @@
                         <option value="curtain-unveil">🎭 Lever de Rideau de Gala</option>
                         <option value="ribbon-cut">✂️🎀 Coupure de Ruban Inaugural</option>
                         <option value="sliding-doors">🏢 Portes Coulissantes Modernes</option>
-                        <option value="gift-box">🎁 Boîte Cadeau Royale & Nœud Rose</option>
                         <option value="instant">⚡ Affichage Direct (Sans couverture)</option>
                       </select>
                     </div>
@@ -1237,7 +1236,7 @@
 
           <!-- 3. COUCHE D'EXPÉRIENCE D'OUVERTURE POUR LES AUTRES ANIMATIONS CINÉMATIQUES -->
           <div class="opening-experience-overlay position-absolute z-4 d-flex flex-column align-items-center justify-content-center"
-               *ngIf="!isPreviewOpened() && (openingAnimationField === 'ribbon-cut' || openingAnimationField === 'vip-badge' || openingAnimationField === 'curtain-unveil' || openingAnimationField === 'sliding-doors' || openingAnimationField === 'gift-box')"
+               *ngIf="!isPreviewOpened() && (openingAnimationField === 'ribbon-cut' || openingAnimationField === 'vip-badge' || openingAnimationField === 'curtain-unveil' || openingAnimationField === 'sliding-doors')"
                [class.opening-in-progress]="isOpeningTransitioning()">
 
             <!-- B. COUPURE DE RUBAN (القطع السحري المضيء - بدون مقص) -->
@@ -1424,55 +1423,6 @@
 
             </div>
 
-            <!-- F. BOÎTE CADEAU ROYALE ROSE & NŒUD 3D (Couvercle monte & Corps descend - 1.7s) -->
-            <div *ngIf="openingAnimationField === 'gift-box'"
-                 class="interactive-gift-box w-100 h-100 position-absolute inset-0 d-flex flex-column justify-content-between cursor-pointer overflow-hidden"
-                 (click)="openPreviewExperience()">
-              
-              <!-- COUVERCLE SUPÉRIEUR (S'ÉLÈVE VERS LE HAUT) -->
-              <div class="gift-box-top-lid position-relative w-100 h-50 overflow-hidden d-flex flex-column align-items-center justify-content-end">
-                <div class="gift-silk-pattern"></div>
-                <div class="gift-gold-border-top"></div>
-                <div class="gift-ribbon-vertical-top"></div>
-                <div class="gift-lid-rim position-absolute bottom-0 start-0 end-0"></div>
-              </div>
-
-              <!-- NŒUD PAPILLON ROSE & OR 3D AU CENTRE (ACTION TACTILE) -->
-              <div class="gift-center-action position-absolute top-50 start-50 translate-middle z-10 text-center"
-                   role="button"
-                   tabindex="0"
-                   title="Cliquer pour ouvrir le cadeau"
-                   (click)="openPreviewExperience(); $event.stopPropagation()"
-                   (keydown.enter)="openPreviewExperience()"
-                   (keydown.space)="openPreviewExperience()">
-                <div class="gift-rose-bow-3d position-relative d-flex align-items-center justify-content-center">
-                  <div class="bow-wing wing-left"></div>
-                  <div class="bow-wing wing-right"></div>
-                  <div class="bow-knot-gold">
-                    <i class="fa fa-gift text-warning fs-4"></i>
-                  </div>
-                  <div class="bow-streamer streamer-left"></div>
-                  <div class="bow-streamer streamer-right"></div>
-                </div>
-                <div class="interactive-tap-indicator mt-2">
-                  <span class="tap-ripple-effect"></span>
-                  <span class="tap-ripple-effect delayed"></span>
-                  <div class="tap-hand">
-                    <i class="fa fa-hand-pointer"></i>
-                  </div>
-                </div>
-              </div>
-
-              <!-- CORPS INFÉRIEUR DE LA BOÎTE (DESCEND VERS LE BAS) -->
-              <div class="gift-box-bottom-base position-relative w-100 h-50 overflow-hidden d-flex flex-column align-items-center justify-content-start">
-                <div class="gift-box-rim position-absolute top-0 start-0 end-0"></div>
-                <div class="gift-ribbon-vertical-bottom"></div>
-                <div class="gift-gold-border-bottom"></div>
-                <div class="gift-silk-pattern"></div>
-              </div>
-
-            </div>
-
           </div>
 
           <!-- BOUTON MUSIQUE FLOTTANT DESKTOP (Au-dessus de la carte, exactement comme Image 1) -->
@@ -1518,12 +1468,11 @@
 
           <!-- Carte d'Invitation Réelle (Toujours présente pour permettre la révélation progressive synchronisée) -->
           <div class="live-invitation-card position-relative rounded-4 shadow-xl overflow-hidden animate__animated"
-               [class.cinematic-under-card]="!isPreviewOpened() && (openingAnimationField === 'envelope-wax' || openingAnimationField === 'ribbon-cut' || openingAnimationField === 'curtain-unveil' || openingAnimationField === 'sliding-doors' || openingAnimationField === 'gift-box')"
+               [class.cinematic-under-card]="!isPreviewOpened() && (openingAnimationField === 'envelope-wax' || openingAnimationField === 'ribbon-cut' || openingAnimationField === 'curtain-unveil' || openingAnimationField === 'sliding-doors')"
                [class.envelope-style]="openingAnimationField === 'envelope-wax'"
                [class.ribbon-style]="openingAnimationField === 'ribbon-cut'"
                [class.curtain-style]="openingAnimationField === 'curtain-unveil'"
                [class.doors-style]="openingAnimationField === 'sliding-doors'"
-               [class.gift-style]="openingAnimationField === 'gift-box'"
                [class.cinematic-card-revealing]="isOpeningTransitioning()"
                [class.bg-motion-ken-burns]="previewDevice() === 'desktop' && backgroundMotionField === 'ken-burns'"
                [class.bg-motion-floral-sway]="previewDevice() === 'desktop' && backgroundMotionField === 'floral-sway'"

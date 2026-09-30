@@ -103,7 +103,7 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
 
   public isInteractiveAnimation(): boolean {
     const anim = this.guest()?.openingAnimation;
-    return !!anim && ['envelope-wax', 'ribbon-cut', 'curtain-unveil', 'sliding-doors', 'gift-box', 'vip-badge'].includes(anim);
+    return !!anim && ['envelope-wax', 'ribbon-cut', 'curtain-unveil', 'sliding-doors', 'vip-badge'].includes(anim);
   }
 
   public shouldHideWallpaperBeforeOpening(): boolean {
@@ -129,8 +129,6 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
       duration = 1640;
     } else if (anim === 'sliding-doors') {
       duration = 1540;
-    } else if (anim === 'gift-box') {
-      duration = 1700;
     } else if (anim === 'vip-badge') {
       duration = 940;
     }
