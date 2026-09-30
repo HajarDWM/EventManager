@@ -370,6 +370,61 @@ export class AdminTemplates implements OnInit {
     this.replayPreviewAnimation();
   }
 
+  // ==========================================================================
+  // TAB 4: VISUAL ANIMATIONS & EXPERIENCE OPTIONS
+  // ==========================================================================
+  protected readonly openingAnimationOptions = [
+    { value: 'envelope-wax', label: 'Enveloppe Royale', sub: 'Sceau de cire & cachet 3D', icon: 'fa fa-envelope-open-text', emoji: '💌' },
+    { value: 'curtain-unveil', label: 'Rideau de Gala', sub: 'Lever théâtral velours & or', icon: 'fa fa-masks-theater', emoji: '🎭' },
+    { value: 'ribbon-cut', label: 'Ruban Inaugural', sub: 'Coupe laser & étincelles', icon: 'fa fa-ribbon', emoji: '✂️' },
+    { value: 'sliding-doors', label: 'Portes Coulissantes', sub: 'Noyer noble & poignées or', icon: 'fa fa-door-open', emoji: '🏢' },
+    { value: 'instant', label: 'Affichage Direct', sub: 'Sans couverture interactive', icon: 'fa fa-bolt', emoji: '⚡' }
+  ];
+
+  protected readonly visualParticlesOptions = [
+    { value: 'gold-dust', label: 'Poussière Dorée', sub: 'Scintillements royaux', icon: 'fa fa-sparkles', emoji: '✨' },
+    { value: 'rose-petals', label: 'Pétales de Rose', sub: 'Chute florale romantique', icon: 'fa fa-heart', emoji: '🌹' },
+    { value: 'sparkles-stars', label: 'Étoiles & Éclats', sub: 'Féérie & magie lumineuse', icon: 'fa fa-star', emoji: '🌟' },
+    { value: 'confetti', label: 'Confettis Festifs', sub: 'Ambiance de célébration', icon: 'fa fa-gift', emoji: '🎉' },
+    { value: 'spotlight-glow', label: 'Balayage Lumineux', sub: 'Faisceau & éclat projecteur', icon: 'fa fa-lightbulb', emoji: '💡' },
+    { value: 'tech-network', label: 'Réseau Tech', sub: 'Points & lignes connectées', icon: 'fa fa-network-wired', emoji: '🌐' },
+    { value: 'none', label: 'Aucune Particule', sub: 'Fond épuré & minimaliste', icon: 'fa fa-ban', emoji: '🛑' }
+  ];
+
+  protected readonly backgroundMotionOptions = [
+    { value: 'ken-burns', label: 'Zoom Ken Burns', sub: 'Zoom lent & panoramique doux', icon: 'fa fa-video', emoji: '🎥' },
+    { value: 'floral-sway', label: 'Brise Florale', sub: 'Balancement doux & naturel', icon: 'fa fa-seedling', emoji: '🌿' },
+    { value: 'shimmer-ray', label: 'Rayon Doré', sub: 'Reflet solaire périodique', icon: 'fa fa-sun', emoji: '✨' },
+    { value: 'parallax-3d', label: 'Parallaxe 3D', sub: 'Profondeur dynamique immersive', icon: 'fa fa-cube', emoji: '📱' },
+    { value: 'none', label: 'Arrière-plan Fixe', sub: 'Image statique classique', icon: 'fa fa-image', emoji: '🛑' }
+  ];
+
+  protected readonly contentEntranceOptions = [
+    { value: 'staggered-royal', label: 'Révélation Royale', sub: 'Titre ➜ Message ➜ Détails', icon: 'fa fa-crown', emoji: '👑' },
+    { value: 'smooth-fade-slide', label: 'Glissement Élégant', sub: 'Fondu fluide de bas en haut', icon: 'fa fa-water', emoji: '🌊' },
+    { value: 'golden-glow-reveal', label: 'Éclat Scintillant', sub: 'Lueur dorée en apparition', icon: 'fa fa-wand-magic-sparkles', emoji: '🌟' },
+    { value: 'direct', label: 'Affichage Immédiat', sub: 'Tous les blocs d\'un seul coup', icon: 'fa fa-bolt', emoji: '⚡' }
+  ];
+
+  protected selectOpeningAnimation(val: string): void {
+    this.openingAnimationField = val;
+    this.onOpeningAnimationChange();
+  }
+
+  protected selectVisualParticles(val: string): void {
+    this.visualParticlesField = val;
+  }
+
+  protected selectBackgroundMotion(val: string): void {
+    this.backgroundMotionField = val;
+    this.replayPreviewAnimation();
+  }
+
+  protected selectContentEntrance(val: string): void {
+    this.contentEntranceField = val;
+    this.replayPreviewAnimation();
+  }
+
   protected readonly availableSubCategoriesForForm = computed(() => {
     return getAllSubcategoriesForCategory(this.categoryField, this.taxonomy());
   });

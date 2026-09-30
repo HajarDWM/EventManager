@@ -881,105 +881,124 @@
               </p>
 
               <!-- Grille Compacte 2x2 des Animations & Expérience Visuelle -->
-              <div class="row g-2.5 mb-2">
+              <div class="row gx-3 gy-3.5 mb-2 anim-category-grid">
 
                 <!-- 1. Cinématique d'Ouverture -->
                 <div class="col-12 col-md-6">
-                  <div class="p-2.5 bg-body-light rounded-3 border border-light h-100 d-flex flex-column justify-content-between">
+                  <div class="anim-category-box">
                     <div>
-                      <label class="form-label fw-bold text-dark fs-xs mb-1 d-flex align-items-center gap-1.5">
-                        <i class="fa fa-envelope-open-text text-warning"></i>
-                        <span>1. Animation d'Ouverture</span>
-                      </label>
-                      <select class="form-select form-select-sm rounded-3 border-light bg-white shadow-none fs-xs"
-                              name="openingAnimation"
-                              [(ngModel)]="openingAnimationField"
-                              (ngModelChange)="onOpeningAnimationChange()">
-                        <option value="envelope-wax">💌 Enveloppe Royale avec Sceau de Cire</option>
-                        <option value="curtain-unveil">🎭 Lever de Rideau de Gala</option>
-                        <option value="ribbon-cut">✂️🎀 Coupure de Ruban Inaugural</option>
-                        <option value="sliding-doors">🏢 Portes Coulissantes Modernes</option>
-                        <option value="instant">⚡ Affichage Direct (Sans couverture)</option>
-                      </select>
-                    </div>
-                    <div class="form-text fs-3xs text-muted mt-1 mb-0">
-                      Cinématique interactive vue par l'invité au premier clic.
+                      <div class="d-flex align-items-center justify-content-between mb-1.5">
+                        <label class="form-label fw-bold text-dark fs-xs mb-0 d-flex align-items-center gap-1.5">
+                          <i class="fa fa-envelope-open-text text-warning"></i>
+                          <span>1. Animation d'Ouverture</span>
+                        </label>
+                      </div>
+
+                      <!-- Options List (Radio Compact) -->
+                      <div class="anim-choices-list">
+                        <div *ngFor="let opt of openingAnimationOptions"
+                             class="anim-choice-card"
+                             [class.active]="openingAnimationField === opt.value"
+                             (click)="selectOpeningAnimation(opt.value)">
+                          <div class="anim-choice-radio">
+                            <div class="radio-inner-dot"></div>
+                          </div>
+                          <span class="anim-emoji">{{ opt.emoji }}</span>
+                          <div class="anim-choice-content">
+                            <span class="anim-choice-title">{{ opt.label }}</span>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                <!-- 2. Particules Flottantes -->
+                <!-- 2. Particules d'Ambiance -->
                 <div class="col-12 col-md-6">
-                  <div class="p-2.5 bg-body-light rounded-3 border border-light h-100 d-flex flex-column justify-content-between">
+                  <div class="anim-category-box">
                     <div>
-                      <label class="form-label fw-bold text-dark fs-xs mb-1 d-flex align-items-center gap-1.5">
-                        <i class="fa fa-star text-warning"></i>
-                        <span>2. Particules d'Ambiance</span>
-                      </label>
-                      <select class="form-select form-select-sm rounded-3 border-light bg-white shadow-none fs-xs"
-                              name="visualParticles"
-                              [(ngModel)]="visualParticlesField">
-                        <option value="gold-dust">✨ Poussière Dorée Scintillante</option>
-                        <option value="rose-petals">🌹 Pluie de Pétales de Roses</option>
-                        <option value="sparkles-stars">🌟 Étoiles & Éclats Scintillants</option>
-                        <option value="confetti">🎉 Confettis Festifs de Célébration</option>
-                        <option value="spotlight-glow">💡 Faisceau & Balayage Lumineux</option>
-                        <option value="ambient-bokeh">🔮 Bokeh Lumineux Moderne</option>
-                        <option value="tech-network">🌐 Réseau Lumineux Tech</option>
-                        <option value="none">🛑 Aucun effet de particules</option>
-                      </select>
-                    </div>
-                    <div class="form-text fs-3xs text-muted mt-1 mb-0">
-                      Ambiance flottante sous la carte en arrière-plan.
+                      <div class="d-flex align-items-center justify-content-between mb-1.5">
+                        <label class="form-label fw-bold text-dark fs-xs mb-0 d-flex align-items-center gap-1.5">
+                          <i class="fa fa-star text-warning"></i>
+                          <span>2. Particules d'Ambiance</span>
+                        </label>
+                      </div>
+
+                      <!-- Options List (Radio Compact) -->
+                      <div class="anim-choices-list">
+                        <div *ngFor="let opt of visualParticlesOptions"
+                             class="anim-choice-card"
+                             [class.active]="visualParticlesField === opt.value"
+                             (click)="selectVisualParticles(opt.value)">
+                          <div class="anim-choice-radio">
+                            <div class="radio-inner-dot"></div>
+                          </div>
+                          <span class="anim-emoji">{{ opt.emoji }}</span>
+                          <div class="anim-choice-content">
+                            <span class="anim-choice-title">{{ opt.label }}</span>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
 
                 <!-- 3. Mouvement du Fond & Effet de Vie -->
                 <div class="col-12 col-md-6">
-                  <div class="p-2.5 bg-body-light rounded-3 border border-light h-100 d-flex flex-column justify-content-between">
+                  <div class="anim-category-box">
                     <div>
-                      <label class="form-label fw-bold text-dark fs-xs mb-1 d-flex align-items-center gap-1.5">
-                        <i class="fa fa-wand-magic-sparkles text-warning"></i>
-                        <span>3. Mouvement de l'Arrière-plan</span>
-                      </label>
-                      <select class="form-select form-select-sm rounded-3 border-light bg-white shadow-none fs-xs"
-                              name="backgroundMotion"
-                              [(ngModel)]="backgroundMotionField"
-                              (ngModelChange)="replayPreviewAnimation()">
-                        <option value="ken-burns">🎥 Zoom Lent Cinématique (Ken Burns)</option>
-                        <option value="floral-sway">🌿🌸 Brise & Balancement Floral</option>
-                        <option value="shimmer-ray">✨ Rayon Lumineux Doré Périodique</option>
-                        <option value="parallax-3d">📱 Profondeur 3D & Parallaxe Dynamique</option>
-                        <option value="none">🛑 Arrière-plan Fixe (Classique)</option>
-                      </select>
-                    </div>
-                    <div class="form-text fs-3xs text-muted mt-1 mb-0">
-                      Donne vie à l'image avec un mouvement doux et infini.
+                      <div class="d-flex align-items-center justify-content-between mb-1.5">
+                        <label class="form-label fw-bold text-dark fs-xs mb-0 d-flex align-items-center gap-1.5">
+                          <i class="fa fa-wand-magic-sparkles text-warning"></i>
+                          <span>3. Mouvement de l'Arrière-plan</span>
+                        </label>
+                      </div>
+
+                      <!-- Options List (Radio Compact) -->
+                      <div class="anim-choices-list">
+                        <div *ngFor="let opt of backgroundMotionOptions"
+                             class="anim-choice-card"
+                             [class.active]="backgroundMotionField === opt.value"
+                             (click)="selectBackgroundMotion(opt.value)">
+                          <div class="anim-choice-radio">
+                            <div class="radio-inner-dot"></div>
+                          </div>
+                          <span class="anim-emoji">{{ opt.emoji }}</span>
+                          <div class="anim-choice-content">
+                            <span class="anim-choice-title">{{ opt.label }}</span>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
 
                 <!-- 4. Ordre d'Apparition des Textes -->
                 <div class="col-12 col-md-6">
-                  <div class="p-2.5 bg-body-light rounded-3 border border-light h-100 d-flex flex-column justify-content-between">
+                  <div class="anim-category-box">
                     <div>
-                      <label class="form-label fw-bold text-dark fs-xs mb-1 d-flex align-items-center gap-1.5">
-                        <i class="fa fa-film text-warning"></i>
-                        <span>4. Apparition des Textes</span>
-                      </label>
-                      <select class="form-select form-select-sm rounded-3 border-light bg-white shadow-none fs-xs"
-                              name="contentEntrance"
-                              [(ngModel)]="contentEntranceField"
-                              (ngModelChange)="replayPreviewAnimation()">
-                        <option value="staggered-royal">👑 Révélation Royale (Titre ➜ Message ➜ Détails)</option>
-                        <option value="smooth-fade-slide">🌊 Glissement & Fondu Élégant de Bas en Haut</option>
-                        <option value="golden-glow-reveal">🌟 Révélation Scintillante & Éclat Doré</option>
-                        <option value="direct">⚡ Affichage Immédiat (Tous ensemble)</option>
-                      </select>
-                    </div>
-                    <div class="form-text fs-3xs text-muted mt-1 mb-0">
-                      Apparition scénarisée des textes au premier affichage.
+                      <div class="d-flex align-items-center justify-content-between mb-1.5">
+                        <label class="form-label fw-bold text-dark fs-xs mb-0 d-flex align-items-center gap-1.5">
+                          <i class="fa fa-film text-warning"></i>
+                          <span>4. Apparition des Textes</span>
+                        </label>
+                      </div>
+
+                      <!-- Options List (Radio Compact) -->
+                      <div class="anim-choices-list">
+                        <div *ngFor="let opt of contentEntranceOptions"
+                             class="anim-choice-card"
+                             [class.active]="contentEntranceField === opt.value"
+                             (click)="selectContentEntrance(opt.value)">
+                          <div class="anim-choice-radio">
+                            <div class="radio-inner-dot"></div>
+                          </div>
+                          <span class="anim-emoji">{{ opt.emoji }}</span>
+                          <div class="anim-choice-content">
+                            <span class="anim-choice-title">{{ opt.label }}</span>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1149,18 +1168,6 @@
 
             <!-- Spotlight Glow -->
             <div *ngIf="visualParticlesField === 'spotlight-glow'" class="particle-spotlight-beam"></div>
-
-            <!-- Ambient Bokeh -->
-            <ng-container *ngIf="visualParticlesField === 'ambient-bokeh'">
-              <div *ngFor="let p of bokehBubbles"
-                   class="particle-bokeh-orb"
-                   [style.left]="p.left"
-                   [style.top]="p.top"
-                   [style.width]="p.size"
-                   [style.height]="p.size"
-                   [style.animationDelay]="p.delay"
-                   [style.animationDuration]="p.duration"></div>
-            </ng-container>
 
           </div>
 

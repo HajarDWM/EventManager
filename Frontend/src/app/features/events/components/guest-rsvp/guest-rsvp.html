@@ -112,18 +112,6 @@
     <!-- 6. Spotlight Glow (Faisceau Lumineux VIP) -->
     <div *ngIf="getVisualParticles() === 'spotlight-glow'" class="particle-spotlight-beam"></div>
 
-    <!-- 7. Ambient Bokeh (Bokeh Ambiant Flou) -->
-    <ng-container *ngIf="getVisualParticles() === 'ambient-bokeh'">
-      <div *ngFor="let p of bokehBubbles"
-           class="particle-bokeh-orb"
-           [style.left]="p.left"
-           [style.top]="p.top"
-           [style.width]="p.size"
-           [style.height]="p.size"
-           [style.animationDelay]="p.delay"
-           [style.animationDuration]="p.duration"></div>
-    </ng-container>
-
   </div>
 
   <div class="invitation-outer-container w-100 position-relative">
