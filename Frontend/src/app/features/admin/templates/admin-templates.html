@@ -880,155 +880,111 @@
                 Sublimez l'expérience visuelle de vos invités dès l'ouverture de leur invitation en ligne.
               </p>
 
-              <!-- Effet d'Ouverture / Animation d'Entrée -->
-              <div class="p-3 bg-body-light rounded-3 border border-light mb-3">
-                <label class="form-label fw-bold text-dark fs-xs mb-1 d-flex align-items-center gap-1.5">
-                  <i class="fa fa-envelope-open-text text-warning"></i>
-                  <span>Animation d'Ouverture de l'Invitation</span>
-                </label>
-                <select class="form-select rounded-3 border-light bg-white shadow-none fs-sm"
-                        name="openingAnimation"
-                        [(ngModel)]="openingAnimationField"
-                        (ngModelChange)="onOpeningAnimationChange()">
-                  <optgroup label="Célébrations & Traditionnel">
-                    <option value="envelope-wax">💌 Enveloppe Prestige avec Sceau de Cire Royal (Mariages & Fêtes)</option>
-                    <option value="fade-in">✨ Apparition Royale en Douceur (Fade-in Élégant)</option>
-                    <option value="zoom-royal">🔍 Zoom Majestueux & Déploiement Card</option>
-                  </optgroup>
-                  <optgroup label="Inaugurations & Commerces">
-                    <option value="ribbon-cut">✂️🎀 Coupure de Ruban Inaugural (Ouverture Magasin / Showroom)</option>
-                  </optgroup>
-                  <optgroup label="Entreprises, Conférences & Tech">
-                    <option value="vip-badge">🏷️💳 Pass VIP 3D & Badge Corporate (Conférence / B2B)</option>
-                    <option value="curtain-unveil">🎭 Lever de Rideau Prestigieux (Gala / Lancement de Produit)</option>
-                    <option value="sliding-doors">🏢 Portes Coulissantes Modernes (Tech & Architecture)</option>
-                  </optgroup>
-                  <optgroup label="Standard / Minimaliste">
-                    <option value="instant">⚡ Affichage Direct (Sans animation)</option>
-                  </optgroup>
-                </select>
-                <div class="form-text fs-xxs text-muted mt-1">
-                  Définit la cinématique d'introduction vue par l'invité à l'ouverture de son lien.
-                </div>
-              </div>
+              <!-- Grille Compacte 2x2 des Animations & Expérience Visuelle -->
+              <div class="row g-2.5 mb-2">
 
-              <!-- Effets Visuels Spéciaux (Particules) -->
-              <div class="p-3 bg-body-light rounded-3 border border-light mb-3">
-                <label class="form-label fw-bold text-dark fs-xs mb-1 d-flex align-items-center gap-1.5">
-                  <i class="fa fa-star text-warning"></i>
-                  <span>Particules Décoratives & Effets Visuels</span>
-                </label>
-                <select class="form-select rounded-3 border-light bg-white shadow-none fs-sm"
-                        name="visualParticles"
-                        [(ngModel)]="visualParticlesField">
-                  <option value="none">Aucun effet de particules</option>
-                  <optgroup label="Élégance & Célébrations">
-                    <option value="gold-dust">✨ Poussière Dorée Scintillante (Gold Dust)</option>
-                    <option value="rose-petals">🌹 Chute Délicate de Pétales de Roses</option>
-                    <option value="confetti">🎉 Confettis Festifs de Célébration</option>
-                    <option value="sparkles-stars">🌟 Étoiles Scintillantes & Éclats de Lumière</option>
-                  </optgroup>
-                  <optgroup label="Tech, Business & Événements Modernes">
-                    <option value="tech-network">🌐 Constellation Tech & Réseau Lumineux (IT & Business)</option>
-                    <option value="spotlight-glow">💡 Faisceau / Balayage Lumineux (Lancement & Gala)</option>
-                    <option value="ambient-bokeh">🔮 Bokeh Lumineux Minimaliste & Moderne</option>
-                  </optgroup>
-                </select>
-                <div class="form-text fs-xxs text-muted mt-1">
-                  Ambiance animée flottant subtilement en arrière-plan pendant la consultation de l'invitation.
-                </div>
-              </div>
-
-              <!-- Effet de Mouvement d'Arrière-plan (Living Wallpaper) -->
-              <div class="p-3 bg-body-light rounded-3 border border-light mb-3">
-                <label class="form-label fw-bold text-dark fs-xs mb-1 d-flex align-items-center gap-1.5">
-                  <i class="fa fa-wand-magic-sparkles text-warning"></i>
-                  <span>Mouvement & Effet de Vie d'Arrière-plan</span>
-                </label>
-                <select class="form-select rounded-3 border-light bg-white shadow-none fs-sm"
-                        name="backgroundMotion"
-                        [(ngModel)]="backgroundMotionField"
-                        (ngModelChange)="replayPreviewAnimation()">
-                  <option value="none">🛑 Arrière-plan Fixe (Classique)</option>
-                  <optgroup label="Cinématique & Dynamique">
-                    <option value="ken-burns">🎥 Zoom Cinématique & Respiration Lente (Ken Burns)</option>
-                    <option value="floral-sway">🌿🌸 Balancement Floral & Brise Délicate (Swaying)</option>
-                    <option value="shimmer-ray">✨ Faisceau & Balayage Lumineux Doré (Shimmer Ray)</option>
-                    <option value="parallax-3d">📱 Profondeur 3D & Parallaxe Dynamique (Perspective)</option>
-                  </optgroup>
-                </select>
-                <div class="form-text fs-xxs text-muted mt-1">
-                  Donne vie à l'image d'arrière-plan avec un mouvement doux et continu sans alourdir la page.
-                </div>
-              </div>
-
-              <!-- Animation d'Apparition du Contenu (Textes & Cartes) -->
-              <div class="p-3 bg-body-light rounded-3 border border-light mb-3">
-                <label class="form-label fw-bold text-dark fs-xs mb-1 d-flex align-items-center gap-1.5">
-                  <i class="fa fa-film text-warning"></i>
-                  <span>Apparition & Enchaînement des Textes</span>
-                </label>
-                <select class="form-select rounded-3 border-light bg-white shadow-none fs-sm"
-                        name="contentEntrance"
-                        [(ngModel)]="contentEntranceField"
-                        (ngModelChange)="replayPreviewAnimation()">
-                  <optgroup label="Expérience Vidéo / Histoire">
-                    <option value="staggered-royal">👑 Apparition Échelonnée Royale (Titre ➜ Message ➜ Détails ➜ Actions)</option>
-                    <option value="smooth-fade-slide">🌊 Glissement & Fondu Élégant de Bas en Haut</option>
-                    <option value="golden-glow-reveal">🌟 Révélation Scintillante & Éclat Doré</option>
-                  </optgroup>
-                  <optgroup label="Standard">
-                    <option value="direct">⚡ Affichage Direct (Sans délai)</option>
-                  </optgroup>
-                </select>
-                <div class="form-text fs-xxs text-muted mt-1">
-                  Les éléments et textes apparaissent séquentiellement pour créer un effet vidéo scénarisé.
-                </div>
-              </div>
-
-              <!-- Widgets Intégrés (Page Confirmation) -->
-              <div class="p-3 bg-body-light rounded-3 border border-light">
-                <div class="d-flex align-items-center justify-content-between mb-1">
-                  <label class="form-label fw-bold text-dark fs-xs mb-0">
-                    Widgets de Confirmation Activés
-                  </label>
-                  <span class="badge bg-primary-subtle text-primary fs-xxs">Écran final de confirmation</span>
-                </div>
-                <p class="fs-xxs text-muted mb-2.5">
-                  Ces fonctionnalités s'activent pour l'invité sur son écran de confirmation final une fois sa présence validée.
-                </p>
-                <div class="d-flex flex-column gap-2">
-                  <div class="form-check form-switch">
-                    <input class="form-check-input"
-                           type="checkbox"
-                           id="widgetCountdown"
-                           name="showCountdown"
-                           [(ngModel)]="showCountdownField">
-                    <label class="form-check-label fs-xs fw-medium text-dark" for="widgetCountdown">
-                      Compte à Rebours en Direct (Jours, Heures, Min)
-                    </label>
-                  </div>
-                  <div class="form-check form-switch">
-                    <input class="form-check-input"
-                           type="checkbox"
-                           id="widgetCalendar"
-                           name="showCalendarButton"
-                           [(ngModel)]="showCalendarButtonField">
-                    <label class="form-check-label fs-xs fw-medium text-dark" for="widgetCalendar">
-                      Bouton « Ajouter à Google Calendar »
-                    </label>
-                  </div>
-                  <div class="form-check form-switch">
-                    <input class="form-check-input"
-                           type="checkbox"
-                           id="widgetMap"
-                           name="showMapRoute"
-                           [(ngModel)]="showMapRouteField">
-                    <label class="form-check-label fs-xs fw-medium text-dark" for="widgetMap">
-                      Itinéraire Waze & Google Maps
-                    </label>
+                <!-- 1. Cinématique d'Ouverture -->
+                <div class="col-12 col-md-6">
+                  <div class="p-2.5 bg-body-light rounded-3 border border-light h-100 d-flex flex-column justify-content-between">
+                    <div>
+                      <label class="form-label fw-bold text-dark fs-xs mb-1 d-flex align-items-center gap-1.5">
+                        <i class="fa fa-envelope-open-text text-warning"></i>
+                        <span>1. Animation d'Ouverture</span>
+                      </label>
+                      <select class="form-select form-select-sm rounded-3 border-light bg-white shadow-none fs-xs"
+                              name="openingAnimation"
+                              [(ngModel)]="openingAnimationField"
+                              (ngModelChange)="onOpeningAnimationChange()">
+                        <option value="envelope-wax">💌 Enveloppe Royale avec Sceau de Cire</option>
+                        <option value="curtain-unveil">🎭 Lever de Rideau de Gala</option>
+                        <option value="ribbon-cut">✂️🎀 Coupure de Ruban Inaugural</option>
+                        <option value="sliding-doors">🏢 Portes Coulissantes Modernes</option>
+                        <option value="gift-box">🎁 Boîte Cadeau Royale & Nœud Rose</option>
+                        <option value="instant">⚡ Affichage Direct (Sans couverture)</option>
+                      </select>
+                    </div>
+                    <div class="form-text fs-3xs text-muted mt-1 mb-0">
+                      Cinématique interactive vue par l'invité au premier clic.
+                    </div>
                   </div>
                 </div>
+
+                <!-- 2. Particules Flottantes -->
+                <div class="col-12 col-md-6">
+                  <div class="p-2.5 bg-body-light rounded-3 border border-light h-100 d-flex flex-column justify-content-between">
+                    <div>
+                      <label class="form-label fw-bold text-dark fs-xs mb-1 d-flex align-items-center gap-1.5">
+                        <i class="fa fa-star text-warning"></i>
+                        <span>2. Particules d'Ambiance</span>
+                      </label>
+                      <select class="form-select form-select-sm rounded-3 border-light bg-white shadow-none fs-xs"
+                              name="visualParticles"
+                              [(ngModel)]="visualParticlesField">
+                        <option value="gold-dust">✨ Poussière Dorée Scintillante</option>
+                        <option value="rose-petals">🌹 Pluie de Pétales de Roses</option>
+                        <option value="sparkles-stars">🌟 Étoiles & Éclats Scintillants</option>
+                        <option value="confetti">🎉 Confettis Festifs de Célébration</option>
+                        <option value="spotlight-glow">💡 Faisceau & Balayage Lumineux</option>
+                        <option value="ambient-bokeh">🔮 Bokeh Lumineux Moderne</option>
+                        <option value="tech-network">🌐 Réseau Lumineux Tech</option>
+                        <option value="none">🛑 Aucun effet de particules</option>
+                      </select>
+                    </div>
+                    <div class="form-text fs-3xs text-muted mt-1 mb-0">
+                      Ambiance flottante sous la carte en arrière-plan.
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 3. Mouvement du Fond & Effet de Vie -->
+                <div class="col-12 col-md-6">
+                  <div class="p-2.5 bg-body-light rounded-3 border border-light h-100 d-flex flex-column justify-content-between">
+                    <div>
+                      <label class="form-label fw-bold text-dark fs-xs mb-1 d-flex align-items-center gap-1.5">
+                        <i class="fa fa-wand-magic-sparkles text-warning"></i>
+                        <span>3. Mouvement de l'Arrière-plan</span>
+                      </label>
+                      <select class="form-select form-select-sm rounded-3 border-light bg-white shadow-none fs-xs"
+                              name="backgroundMotion"
+                              [(ngModel)]="backgroundMotionField"
+                              (ngModelChange)="replayPreviewAnimation()">
+                        <option value="ken-burns">🎥 Zoom Lent Cinématique (Ken Burns)</option>
+                        <option value="floral-sway">🌿🌸 Brise & Balancement Floral</option>
+                        <option value="shimmer-ray">✨ Rayon Lumineux Doré Périodique</option>
+                        <option value="parallax-3d">📱 Profondeur 3D & Parallaxe Dynamique</option>
+                        <option value="none">🛑 Arrière-plan Fixe (Classique)</option>
+                      </select>
+                    </div>
+                    <div class="form-text fs-3xs text-muted mt-1 mb-0">
+                      Donne vie à l'image avec un mouvement doux et infini.
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 4. Ordre d'Apparition des Textes -->
+                <div class="col-12 col-md-6">
+                  <div class="p-2.5 bg-body-light rounded-3 border border-light h-100 d-flex flex-column justify-content-between">
+                    <div>
+                      <label class="form-label fw-bold text-dark fs-xs mb-1 d-flex align-items-center gap-1.5">
+                        <i class="fa fa-film text-warning"></i>
+                        <span>4. Apparition des Textes</span>
+                      </label>
+                      <select class="form-select form-select-sm rounded-3 border-light bg-white shadow-none fs-xs"
+                              name="contentEntrance"
+                              [(ngModel)]="contentEntranceField"
+                              (ngModelChange)="replayPreviewAnimation()">
+                        <option value="staggered-royal">👑 Révélation Royale (Titre ➜ Message ➜ Détails)</option>
+                        <option value="smooth-fade-slide">🌊 Glissement & Fondu Élégant de Bas en Haut</option>
+                        <option value="golden-glow-reveal">🌟 Révélation Scintillante & Éclat Doré</option>
+                        <option value="direct">⚡ Affichage Immédiat (Tous ensemble)</option>
+                      </select>
+                    </div>
+                    <div class="form-text fs-3xs text-muted mt-1 mb-0">
+                      Apparition scénarisée des textes au premier affichage.
+                    </div>
+                  </div>
+                </div>
+
               </div>
 
             </div>
@@ -1281,7 +1237,7 @@
 
           <!-- 3. COUCHE D'EXPÉRIENCE D'OUVERTURE POUR LES AUTRES ANIMATIONS CINÉMATIQUES -->
           <div class="opening-experience-overlay position-absolute z-4 d-flex flex-column align-items-center justify-content-center"
-               *ngIf="!isPreviewOpened() && (openingAnimationField === 'ribbon-cut' || openingAnimationField === 'vip-badge' || openingAnimationField === 'curtain-unveil' || openingAnimationField === 'sliding-doors')"
+               *ngIf="!isPreviewOpened() && (openingAnimationField === 'ribbon-cut' || openingAnimationField === 'vip-badge' || openingAnimationField === 'curtain-unveil' || openingAnimationField === 'sliding-doors' || openingAnimationField === 'gift-box')"
                [class.opening-in-progress]="isOpeningTransitioning()">
 
             <!-- B. COUPURE DE RUBAN (القطع السحري المضيء - بدون مقص) -->
@@ -1434,7 +1390,7 @@
               <div class="door-center-action position-absolute top-50 start-50 translate-middle z-4 text-center"
                    role="button"
                    tabindex="0"
-                   title="Cliquer sur les poignées dorées pour ouvrir les portes"
+                   title="Cliquer pour ouvrir les portes"
                    (click)="openPreviewExperience(); $event.stopPropagation()"
                    (keydown.enter)="openPreviewExperience()"
                    (keydown.space)="openPreviewExperience()">
@@ -1464,6 +1420,55 @@
                     <div class="handle-gold-shine"></div>
                   </div>
                 </div>
+              </div>
+
+            </div>
+
+            <!-- F. BOÎTE CADEAU ROYALE ROSE & NŒUD 3D (Couvercle monte & Corps descend - 1.7s) -->
+            <div *ngIf="openingAnimationField === 'gift-box'"
+                 class="interactive-gift-box w-100 h-100 position-absolute inset-0 d-flex flex-column justify-content-between cursor-pointer overflow-hidden"
+                 (click)="openPreviewExperience()">
+              
+              <!-- COUVERCLE SUPÉRIEUR (S'ÉLÈVE VERS LE HAUT) -->
+              <div class="gift-box-top-lid position-relative w-100 h-50 overflow-hidden d-flex flex-column align-items-center justify-content-end">
+                <div class="gift-silk-pattern"></div>
+                <div class="gift-gold-border-top"></div>
+                <div class="gift-ribbon-vertical-top"></div>
+                <div class="gift-lid-rim position-absolute bottom-0 start-0 end-0"></div>
+              </div>
+
+              <!-- NŒUD PAPILLON ROSE & OR 3D AU CENTRE (ACTION TACTILE) -->
+              <div class="gift-center-action position-absolute top-50 start-50 translate-middle z-10 text-center"
+                   role="button"
+                   tabindex="0"
+                   title="Cliquer pour ouvrir le cadeau"
+                   (click)="openPreviewExperience(); $event.stopPropagation()"
+                   (keydown.enter)="openPreviewExperience()"
+                   (keydown.space)="openPreviewExperience()">
+                <div class="gift-rose-bow-3d position-relative d-flex align-items-center justify-content-center">
+                  <div class="bow-wing wing-left"></div>
+                  <div class="bow-wing wing-right"></div>
+                  <div class="bow-knot-gold">
+                    <i class="fa fa-gift text-warning fs-4"></i>
+                  </div>
+                  <div class="bow-streamer streamer-left"></div>
+                  <div class="bow-streamer streamer-right"></div>
+                </div>
+                <div class="interactive-tap-indicator mt-2">
+                  <span class="tap-ripple-effect"></span>
+                  <span class="tap-ripple-effect delayed"></span>
+                  <div class="tap-hand">
+                    <i class="fa fa-hand-pointer"></i>
+                  </div>
+                </div>
+              </div>
+
+              <!-- CORPS INFÉRIEUR DE LA BOÎTE (DESCEND VERS LE BAS) -->
+              <div class="gift-box-bottom-base position-relative w-100 h-50 overflow-hidden d-flex flex-column align-items-center justify-content-start">
+                <div class="gift-box-rim position-absolute top-0 start-0 end-0"></div>
+                <div class="gift-ribbon-vertical-bottom"></div>
+                <div class="gift-gold-border-bottom"></div>
+                <div class="gift-silk-pattern"></div>
               </div>
 
             </div>
@@ -1513,11 +1518,12 @@
 
           <!-- Carte d'Invitation Réelle (Toujours présente pour permettre la révélation progressive synchronisée) -->
           <div class="live-invitation-card position-relative rounded-4 shadow-xl overflow-hidden animate__animated"
-               [class.cinematic-under-card]="!isPreviewOpened() && (openingAnimationField === 'envelope-wax' || openingAnimationField === 'ribbon-cut' || openingAnimationField === 'curtain-unveil' || openingAnimationField === 'sliding-doors')"
+               [class.cinematic-under-card]="!isPreviewOpened() && (openingAnimationField === 'envelope-wax' || openingAnimationField === 'ribbon-cut' || openingAnimationField === 'curtain-unveil' || openingAnimationField === 'sliding-doors' || openingAnimationField === 'gift-box')"
                [class.envelope-style]="openingAnimationField === 'envelope-wax'"
                [class.ribbon-style]="openingAnimationField === 'ribbon-cut'"
                [class.curtain-style]="openingAnimationField === 'curtain-unveil'"
                [class.doors-style]="openingAnimationField === 'sliding-doors'"
+               [class.gift-style]="openingAnimationField === 'gift-box'"
                [class.cinematic-card-revealing]="isOpeningTransitioning()"
                [class.bg-motion-ken-burns]="previewDevice() === 'desktop' && backgroundMotionField === 'ken-burns'"
                [class.bg-motion-floral-sway]="previewDevice() === 'desktop' && backgroundMotionField === 'floral-sway'"
