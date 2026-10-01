@@ -1227,6 +1227,11 @@
 .live-invitation-card.cinematic-under-card {
   will-change: transform, filter, opacity;
 
+  // Masquer les éléments de texte tant que la carte est couverte
+  &:not(.cinematic-card-revealing) .stage-item {
+    opacity: 0 !important;
+  }
+
   // Mode Enveloppe Prestige : zoom-in doux de scale(0.95) -> scale(1) et blur(6px) -> blur(0px) en 1.4s synchronisé
   // L'enveloppe recouvre entièrement la carte sur PC et Mobile, puis la carte émerge en s'agrandissant avec netteté
   &.envelope-style {
@@ -1839,7 +1844,7 @@
   border-radius: 50%;
   background: radial-gradient(circle, #ffd700 0%, #d4af37 60%, rgba(212, 175, 55, 0) 100%);
   box-shadow: 0 0 6px #ffd700;
-  animation: float-dust 4s infinite ease-in-out;
+  animation: float-dust 9s infinite ease-in-out;
 }
 
 @keyframes float-dust {
@@ -1866,7 +1871,7 @@
   background: radial-gradient(circle at 30% 30%, #f43f5e, #be123c);
   border-radius: 50% 0 50% 50%;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
-  animation: fall-petals 6s infinite linear;
+  animation: fall-petals 14s infinite linear;
 }
 
 @keyframes fall-petals {
@@ -1894,7 +1899,7 @@
   position: absolute;
   top: -20px;
   border-radius: 2px;
-  animation: flutter-confetti 4.5s infinite linear;
+  animation: flutter-confetti 10s infinite linear;
 }
 
 @keyframes flutter-confetti {
@@ -1922,7 +1927,7 @@
   position: absolute;
   color: #ffd700;
   text-shadow: 0 0 8px #ffd700;
-  animation: pulse-sparkle 2.5s infinite ease-in-out;
+  animation: pulse-sparkle 6s infinite ease-in-out;
 }
 
 @keyframes pulse-sparkle {
@@ -1993,23 +1998,31 @@
   position: absolute;
   top: 0;
   bottom: 0;
-  width: 140px;
-  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.22) 50%, transparent 100%);
+  width: 180px;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.18) 50%, transparent 100%);
   transform: skewX(-20deg);
-  animation: sweep-spotlight 5s infinite ease-in-out;
+  animation: sweep-spotlight 13s infinite cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
 }
 
 @keyframes sweep-spotlight {
   0% {
-    left: -180px;
+    left: -220px;
+    opacity: 0;
   }
 
-  50% {
-    left: calc(100% + 80px);
+  15% {
+    opacity: 1;
   }
 
-  100% {
-    left: -180px;
+  45% {
+    left: calc(100% + 140px);
+    opacity: 1;
+  }
+
+  50%, 100% {
+    left: calc(100% + 140px);
+    opacity: 0;
   }
 }
 
@@ -2871,132 +2884,219 @@
   }
 }
 
-// 3. STAGGERED CONTENT ENTRANCE ANIMATIONS (STORY REVEAL - CINEMATIC TEMPO)
+// 1. CASCADE ROYALE (STAGGERED ZOOM & FOCUS DROP)
 .content-entrance-staggered {
   .stage-item {
     opacity: 0;
-    animation: royalStaggeredFadeUp 1.25s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation: royalStaggeredZoomFocus 1.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   }
 
   .stage-header {
-    animation-delay: 0.35s;
+    animation-delay: 0.8s;
   }
 
   .stage-title {
-    animation-delay: 1.15s;
-    animation-duration: 1.35s;
-    animation-name: royalStaggeredZoomUp;
+    animation-delay: 2.3s;
+    animation-duration: 2.4s;
+    animation-name: royalGrandZoomTitle;
   }
 
   .stage-salutation {
-    animation-delay: 1.95s;
+    animation-delay: 4.1s;
+    animation-duration: 2.0s;
   }
 
   .stage-details {
-    animation-delay: 2.75s;
-    animation-duration: 1.25s;
-    animation-name: royalStaggeredCardPop;
+    animation-delay: 5.8s;
+    animation-duration: 2.1s;
+    animation-name: royalCardSpringPop;
   }
 
   .stage-actions {
-    animation-delay: 3.55s;
-    animation-name: royalStaggeredFadeUp;
+    animation-delay: 7.5s;
+    animation-duration: 1.8s;
   }
 }
 
-@keyframes royalStaggeredFadeUp {
+@keyframes royalStaggeredZoomFocus {
   0% {
     opacity: 0;
-    transform: translateY(26px);
-    filter: blur(5px);
+    transform: scale(0.85) translateY(22px);
+    filter: blur(10px);
   }
   100% {
     opacity: 1;
-    transform: translateY(0);
+    transform: scale(1) translateY(0);
     filter: blur(0px);
   }
 }
 
-@keyframes royalStaggeredZoomUp {
+@keyframes royalGrandZoomTitle {
   0% {
     opacity: 0;
-    transform: translateY(28px) scale(0.9);
+    transform: scale(0.7) translateY(28px);
+    filter: blur(14px);
+  }
+  65% {
+    transform: scale(1.04) translateY(-2px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    filter: blur(0px);
+  }
+}
+
+@keyframes royalCardSpringPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.86) translateY(28px);
+    filter: blur(8px);
+  }
+  75% {
+    transform: scale(1.02) translateY(-2px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    filter: blur(0px);
+  }
+}
+
+// 2. GLISSEMENT LATÉRAL CROISÉ (HORIZONTAL CROSS-SLIDE)
+.content-entrance-lateral {
+  .stage-item {
+    opacity: 0;
+    animation-duration: 1.8s;
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+    animation-fill-mode: forwards;
+  }
+
+  .stage-header {
+    animation-name: lateralSlideFromTop;
+    animation-delay: 0.8s;
+  }
+
+  .stage-title {
+    animation-name: lateralSlideFromLeft;
+    animation-delay: 2.3s;
+    animation-duration: 2.4s;
+  }
+
+  .stage-salutation {
+    animation-name: lateralSlideFromRight;
+    animation-delay: 4.1s;
+    animation-duration: 2.0s;
+  }
+
+  .stage-details {
+    animation-name: lateralSlideFromBottom;
+    animation-delay: 5.8s;
+    animation-duration: 2.1s;
+  }
+
+  .stage-actions {
+    animation-name: lateralSlideFromBottom;
+    animation-delay: 7.5s;
+    animation-duration: 1.8s;
+  }
+}
+
+@keyframes lateralSlideFromTop {
+  0% {
+    opacity: 0;
+    transform: translateY(-32px);
+    filter: blur(6px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes lateralSlideFromLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-65px) skewX(-4deg);
+    filter: blur(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) skewX(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes lateralSlideFromRight {
+  0% {
+    opacity: 0;
+    transform: translateX(65px) skewX(4deg);
+    filter: blur(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) skewX(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes lateralSlideFromBottom {
+  0% {
+    opacity: 0;
+    transform: translateY(40px) scale(0.9);
     filter: blur(8px);
   }
   100% {
     opacity: 1;
     transform: translateY(0) scale(1);
-    filter: blur(0px);
+    filter: blur(0);
   }
 }
 
-@keyframes royalStaggeredCardPop {
-  0% {
-    opacity: 0;
-    transform: translateY(32px) scale(0.94);
-    filter: blur(5px);
-  }
-  70% {
-    opacity: 0.95;
-    transform: translateY(-2px) scale(1.008);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-    filter: blur(0px);
-  }
-}
-
-// 4. SMOOTH FADE SLIDE
-.content-entrance-slide {
-  .stage-item {
-    opacity: 0;
-    animation: smoothSlideUp 1.1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-  }
-
-  .stage-header { animation-delay: 0.3s; }
-  .stage-title { animation-delay: 0.9s; }
-  .stage-salutation { animation-delay: 1.5s; }
-  .stage-details { animation-delay: 2.1s; }
-  .stage-actions { animation-delay: 2.7s; }
-}
-
-@keyframes smoothSlideUp {
-  0% {
-    opacity: 0;
-    transform: translateY(32px);
-    filter: blur(4px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-    filter: blur(0px);
-  }
-}
-
-// 5. GOLDEN GLOW REVEAL
+// 3. ÉCLAT & LUEUR DORÉE (GOLDEN GLOW RADIANCE)
 .content-entrance-golden {
   .stage-item {
     opacity: 0;
-    animation: goldenGlowFadeIn 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation: goldenBloomShine 2.0s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   }
 
-  .stage-header { animation-delay: 0.35s; }
-  .stage-title {
-    animation-delay: 1.1s;
-    animation-duration: 1.4s;
-    animation-name: goldenGlowRadiance;
+  .stage-header {
+    animation-delay: 0.8s;
   }
-  .stage-salutation { animation-delay: 1.85s; }
-  .stage-details { animation-delay: 2.6s; }
-  .stage-actions { animation-delay: 3.35s; }
+
+  .stage-title {
+    animation-delay: 2.3s;
+    animation-duration: 2.5s;
+    animation-name: goldenTitleFlashRadiance;
+  }
+
+  .stage-salutation {
+    animation-delay: 4.1s;
+    animation-duration: 2.0s;
+  }
+
+  .stage-details {
+    animation-delay: 5.8s;
+    animation-duration: 2.1s;
+    animation-name: goldenDetailsGlowPop;
+  }
+
+  .stage-actions {
+    animation-delay: 7.5s;
+    animation-duration: 1.8s;
+  }
 }
 
-@keyframes goldenGlowFadeIn {
+@keyframes goldenBloomShine {
   0% {
     opacity: 0;
-    transform: scale(0.95);
-    filter: brightness(1.7) drop-shadow(0 0 14px rgba(255, 215, 0, 0.65));
+    transform: scale(0.9);
+    filter: brightness(2.6) drop-shadow(0 0 20px rgba(245, 158, 11, 0.9));
+  }
+  60% {
+    opacity: 0.95;
+    filter: brightness(1.7) drop-shadow(0 0 10px rgba(245, 158, 11, 0.6));
   }
   100% {
     opacity: 1;
@@ -3005,20 +3105,136 @@
   }
 }
 
-@keyframes goldenGlowRadiance {
+@keyframes goldenTitleFlashRadiance {
   0% {
     opacity: 0;
-    transform: translateY(22px) scale(0.88);
-    filter: drop-shadow(0 0 24px #ffd700);
+    transform: scale(0.75) translateY(18px);
+    filter: brightness(3.5) drop-shadow(0 0 35px #fbbf24);
   }
   50% {
-    opacity: 0.9;
-    filter: drop-shadow(0 0 16px rgba(255, 215, 0, 0.85));
+    transform: scale(1.05) translateY(0);
+    filter: brightness(2.2) drop-shadow(0 0 24px #f59e0b);
   }
   100% {
     opacity: 1;
-    transform: translateY(0) scale(1);
-    filter: drop-shadow(0 0 0 transparent);
+    transform: scale(1) translateY(0);
+    filter: brightness(1) drop-shadow(0 0 0 transparent);
+  }
+}
+
+@keyframes goldenDetailsGlowPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.88) translateY(24px);
+    filter: brightness(2.4) drop-shadow(0 0 20px rgba(245, 158, 11, 0.75));
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    filter: brightness(1) drop-shadow(0 0 0 transparent);
+  }
+}
+
+// 4. DÉROULEMENT PAPIER 3D (3D PERSPECTIVE UNTUCK / FLIP)
+.content-entrance-unfold {
+  perspective: 1000px;
+
+  .stage-item {
+    opacity: 0;
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
+    animation-duration: 1.9s;
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+    animation-fill-mode: forwards;
+  }
+
+  .stage-header {
+    animation-name: unfold3dTop;
+    animation-delay: 0.8s;
+    transform-origin: top center;
+  }
+
+  .stage-title {
+    animation-name: unfold3dCenter;
+    animation-delay: 2.3s;
+    animation-duration: 2.5s;
+    transform-origin: center center;
+  }
+
+  .stage-salutation {
+    animation-name: unfold3dBottom;
+    animation-delay: 4.1s;
+    animation-duration: 2.0s;
+    transform-origin: top center;
+  }
+
+  .stage-details {
+    animation-name: unfold3dCard;
+    animation-delay: 5.8s;
+    animation-duration: 2.1s;
+    transform-origin: center center;
+  }
+
+  .stage-actions {
+    animation-name: unfold3dBottom;
+    animation-delay: 7.5s;
+    animation-duration: 1.8s;
+    transform-origin: bottom center;
+  }
+}
+
+@keyframes unfold3dTop {
+  0% {
+    opacity: 0;
+    transform: perspective(700px) rotateX(75deg) translateY(-25px);
+    filter: blur(5px);
+  }
+  100% {
+    opacity: 1;
+    transform: perspective(700px) rotateX(0deg) translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes unfold3dCenter {
+  0% {
+    opacity: 0;
+    transform: perspective(700px) rotateX(-70deg) scale(0.85);
+    filter: blur(8px);
+  }
+  70% {
+    transform: perspective(700px) rotateX(8deg) scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: perspective(700px) rotateX(0deg) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes unfold3dBottom {
+  0% {
+    opacity: 0;
+    transform: perspective(700px) rotateX(65deg) translateY(25px);
+    filter: blur(5px);
+  }
+  100% {
+    opacity: 1;
+    transform: perspective(700px) rotateX(0deg) translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes unfold3dCard {
+  0% {
+    opacity: 0;
+    transform: perspective(800px) rotateX(-50deg) scale(0.88) translateY(20px);
+    filter: blur(6px);
+  }
+  100% {
+    opacity: 1;
+    transform: perspective(800px) rotateX(0deg) scale(1) translateY(0);
+    filter: blur(0);
   }
 }
 

@@ -106,6 +106,13 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
     return !!anim && ['envelope-wax', 'ribbon-cut', 'curtain-unveil', 'sliding-doors', 'vip-badge'].includes(anim);
   }
 
+  public isEntranceActive(): boolean {
+    if (this.isInteractiveAnimation()) {
+      return this.isOpeningTransitioning() || this.isInvitationOpened();
+    }
+    return this.isInvitationOpened();
+  }
+
   public shouldHideWallpaperBeforeOpening(): boolean {
     return this.isInteractiveAnimation() && !this.isInvitationOpened() && !this.isOpeningTransitioning();
   }
@@ -138,7 +145,7 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
       this.isOpeningTransitioning.set(false);
       setTimeout(() => {
         this.isInitialEntranceCompleted.set(true);
-      }, 4500);
+      }, 10000);
       const gid = this.guest()?.guestId;
       if (gid) {
         const now = new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
@@ -161,36 +168,36 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
     left: ((i * 19 + 7) % 96) + 2 + '%',
     top: ((i * 23 + 11) % 94) + 3 + '%',
     size: ((i % 4) + 2.5) + 'px',
-    delay: ((i * 0.28) % 4) + 's',
-    duration: ((i % 3) + 3.2) + 's'
+    delay: ((i * 0.45) % 6) + 's',
+    duration: ((i % 4) * 1.8 + 8.5) + 's'
   }));
 
   public readonly rosePetals = Array.from({ length: 28 }, (_, i) => ({
     id: i,
     left: ((i * 17 + 5) % 94) + 3 + '%',
     top: ((i * 29 + 13) % 92) + 4 + '%',
-    size: ((i % 3) * 4 + 14) + 'px',
-    delay: ((i * 0.35) % 5) + 's',
-    duration: ((i % 3) + 4.5) + 's',
+    size: ((i % 3) * 2 + 7.5) + 'px',
+    delay: ((i * 0.6) % 8) + 's',
+    duration: ((i % 4) * 2.5 + 12) + 's',
     rotation: ((i * 47) % 360) + 'deg'
   }));
 
   public readonly confettiPieces = Array.from({ length: 40 }, (_, i) => ({
     id: i,
     left: ((i * 13 + 3) % 96) + 2 + '%',
-    delay: ((i * 0.22) % 4) + 's',
-    duration: ((i % 3) + 3.2) + 's',
+    delay: ((i * 0.4) % 6) + 's',
+    duration: ((i % 4) * 2 + 9) + 's',
     color: ['#ffd700', '#f43f5e', '#3b82f6', '#10b981', '#a855f7', '#fbbf24', '#ec4899'][i % 7],
-    width: ((i % 2) === 0 ? 8 : 12) + 'px',
-    height: ((i % 2) === 0 ? 12 : 8) + 'px'
+    width: ((i % 2) === 0 ? 4.5 : 6.5) + 'px',
+    height: ((i % 2) === 0 ? 6.5 : 4.5) + 'px'
   }));
 
   public readonly sparklesStars = Array.from({ length: 32 }, (_, i) => ({
     id: i,
     left: ((i * 23 + 9) % 92) + 4 + '%',
     top: ((i * 17 + 13) % 90) + 5 + '%',
-    delay: ((i * 0.25) % 3.5) + 's',
-    duration: ((i % 2) + 2.4) + 's',
+    delay: ((i * 0.5) % 5) + 's',
+    duration: ((i % 3) * 1.5 + 5.5) + 's',
     size: ((i % 3) + 13) + 'px'
   }));
 

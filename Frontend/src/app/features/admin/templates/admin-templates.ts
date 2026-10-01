@@ -281,35 +281,35 @@ export class AdminTemplates implements OnInit {
     left: ((i * 17) % 94) + 3 + '%',
     top: ((i * 23) % 88) + 6 + '%',
     size: ((i % 3) + 2.5) + 'px',
-    delay: ((i * 0.35) % 3.5) + 's',
-    duration: ((i % 3) + 3.2) + 's'
+    delay: ((i * 0.45) % 5) + 's',
+    duration: ((i % 3) * 2 + 8.5) + 's'
   }));
 
   protected readonly rosePetals = Array.from({ length: 16 }, (_, i) => ({
     id: i,
     left: ((i * 19) % 92) + 4 + '%',
-    delay: ((i * 0.4) % 4.5) + 's',
-    duration: ((i % 3) + 4.5) + 's',
-    size: ((i % 4) + 16) + 'px',
+    delay: ((i * 0.6) % 6) + 's',
+    duration: ((i % 4) * 2.5 + 12) + 's',
+    size: ((i % 4) * 1.5 + 7) + 'px',
     rotation: ((i * 47) % 360) + 'deg'
   }));
 
   protected readonly confettiPieces = Array.from({ length: 26 }, (_, i) => ({
     id: i,
     left: ((i * 15) % 94) + 3 + '%',
-    delay: ((i * 0.25) % 3.5) + 's',
-    duration: ((i % 3) + 3) + 's',
+    delay: ((i * 0.4) % 5) + 's',
+    duration: ((i % 3) * 2 + 9) + 's',
     color: ['#ffd700', '#f43f5e', '#3b82f6', '#10b981', '#a855f7', '#fbbf24'][i % 6],
-    width: ((i % 2) === 0 ? 8 : 12) + 'px',
-    height: ((i % 2) === 0 ? 12 : 8) + 'px'
+    width: ((i % 2) === 0 ? 4 : 6) + 'px',
+    height: ((i % 2) === 0 ? 6 : 4) + 'px'
   }));
 
   protected readonly sparklesStars = Array.from({ length: 16 }, (_, i) => ({
     id: i,
     left: ((i * 21) % 90) + 5 + '%',
     top: ((i * 19) % 85) + 8 + '%',
-    delay: ((i * 0.3) % 3) + 's',
-    duration: ((i % 2) + 2.2) + 's',
+    delay: ((i * 0.5) % 4.5) + 's',
+    duration: ((i % 3) * 1.5 + 5.5) + 's',
     size: ((i % 3) + 12) + 'px'
   }));
 
@@ -321,6 +321,18 @@ export class AdminTemplates implements OnInit {
     delay: (i * 0.6) + 's',
     duration: (6 + (i % 3) * 2) + 's'
   }));
+
+  protected isEntranceActive(): boolean {
+    const isInteractive = this.openingAnimationField === 'envelope-wax' || 
+                          this.openingAnimationField === 'ribbon-cut' || 
+                          this.openingAnimationField === 'curtain-unveil' || 
+                          this.openingAnimationField === 'sliding-doors' ||
+                          this.openingAnimationField === 'vip-badge';
+    if (isInteractive) {
+      return this.isOpeningTransitioning() || this.isPreviewOpened();
+    }
+    return this.isPreviewOpened();
+  }
 
   protected openPreviewExperience(): void {
     if (this.isOpeningTransitioning() || this.isPreviewOpened()) return;
@@ -356,14 +368,14 @@ export class AdminTemplates implements OnInit {
       setTimeout(() => this.isPreviewOpened.set(true), 120);
     } else if (this.openingAnimationField === 'instant') {
       this.cardAnimationClass.set('');
-      this.isPreviewOpened.set(true);
+      setTimeout(() => this.isPreviewOpened.set(true), 60);
     } else {
       this.cardAnimationClass.set('animate__fadeIn');
     }
 
     setTimeout(() => {
       this.isAnimationReplaying.set(false);
-    }, 450);
+    }, 550);
   }
 
   protected onOpeningAnimationChange(): void {
@@ -387,7 +399,6 @@ export class AdminTemplates implements OnInit {
     { value: 'sparkles-stars', label: 'Étoiles & Éclats', sub: 'Féérie & magie lumineuse', icon: 'fa fa-star', emoji: '🌟' },
     { value: 'confetti', label: 'Confettis Festifs', sub: 'Ambiance de célébration', icon: 'fa fa-gift', emoji: '🎉' },
     { value: 'spotlight-glow', label: 'Balayage Lumineux', sub: 'Faisceau & éclat projecteur', icon: 'fa fa-lightbulb', emoji: '💡' },
-    { value: 'tech-network', label: 'Réseau Tech', sub: 'Points & lignes connectées', icon: 'fa fa-network-wired', emoji: '🌐' },
     { value: 'none', label: 'Aucune Particule', sub: 'Fond épuré & minimaliste', icon: 'fa fa-ban', emoji: '🛑' }
   ];
 
@@ -400,10 +411,11 @@ export class AdminTemplates implements OnInit {
   ];
 
   protected readonly contentEntranceOptions = [
-    { value: 'staggered-royal', label: 'Révélation Royale', sub: 'Titre ➜ Message ➜ Détails', icon: 'fa fa-crown', emoji: '👑' },
-    { value: 'smooth-fade-slide', label: 'Glissement Élégant', sub: 'Fondu fluide de bas en haut', icon: 'fa fa-water', emoji: '🌊' },
-    { value: 'golden-glow-reveal', label: 'Éclat Scintillant', sub: 'Lueur dorée en apparition', icon: 'fa fa-wand-magic-sparkles', emoji: '🌟' },
-    { value: 'direct', label: 'Affichage Immédiat', sub: 'Tous les blocs d\'un seul coup', icon: 'fa fa-bolt', emoji: '⚡' }
+    { value: 'staggered-royal', label: 'Cascade Royale (Zoom & Focus)', sub: 'Titre ➜ Message ➜ Détails', icon: 'fa fa-crown', emoji: '👑' },
+    { value: 'lateral-slide', label: 'Glissement Latéral (Gauche & Droite)', sub: 'Croisement fluide et dynamique', icon: 'fa fa-arrows-left-right', emoji: '🌊' },
+    { value: 'golden-glow-reveal', label: 'Éclat & Lueur Dorée', sub: 'Rayonnement lumineux étincelant', icon: 'fa fa-wand-magic-sparkles', emoji: '🌟' },
+    { value: 'unfold-3d', label: 'Déroulement Papier 3D', sub: 'Ouverture perspective spatiale', icon: 'fa fa-scroll', emoji: '📜' },
+    { value: 'direct', label: 'Affichage Immédiat', sub: 'Direct sans animation', icon: 'fa fa-bolt', emoji: '⚡' }
   ];
 
   protected selectOpeningAnimation(val: string): void {
@@ -966,7 +978,7 @@ export class AdminTemplates implements OnInit {
       this.secondaryLetterSpacingField = 'normal';
       this.secondaryFontColorField = '#1e293b';
       this.openingAnimationField = 'vip-badge';
-      this.visualParticlesField = 'tech-network';
+      this.visualParticlesField = 'gold-dust';
     } else if (tax?.id === 'SEASONAL_SOCIAL') {
       this.decorativeFrameField = 'none';
       this.backgroundColorField = '#0b0b0b';
