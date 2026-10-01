@@ -767,21 +767,28 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
 
   public getSummaryCardBg(): string {
     if (this.isDarkTheme()) {
-      return 'rgba(0, 0, 0, 0.55)';
+      return 'rgba(14, 16, 22, 0.90)';
     }
-    return 'rgba(255, 255, 255, 0.95)';
+    return 'rgba(255, 255, 255, 0.98)';
   }
 
   public getSummaryCardBorder(): string {
     if (this.isDarkTheme()) {
-      return this.getPrimaryColor() ? (this.getPrimaryColor() + '45') : 'rgba(212, 175, 55, 0.35)';
+      return this.getPrimaryColor() ? (this.getPrimaryColor() + '55') : 'rgba(212, 175, 55, 0.45)';
     }
-    return this.getPrimaryColor() ? (this.getPrimaryColor() + '28') : 'rgba(0, 0, 0, 0.12)';
+    return this.getPrimaryColor() ? (this.getPrimaryColor() + '35') : 'rgba(0, 0, 0, 0.14)';
+  }
+
+  public getSummaryCourseColor(): string {
+    if (this.isDarkTheme()) {
+      return '#f3d375';
+    }
+    return this.getPrimaryColor() || '#b45309';
   }
 
   public getSummaryLabelColor(): string {
     if (this.isDarkTheme()) {
-      return 'rgba(255, 255, 255, 0.78)';
+      return 'rgba(255, 255, 255, 0.82)';
     }
     return '#64748b';
   }

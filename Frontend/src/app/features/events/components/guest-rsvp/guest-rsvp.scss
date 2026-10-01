@@ -4814,15 +4814,17 @@ textarea.luxury-form-control::placeholder {
   .summary-subcard {
     flex: 1 1 0;
     min-width: 0;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif !important;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     border-radius: 14px;
-    padding: 10px 12px;
+    padding: 12px 14px;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     transition: transform 0.25s ease, box-shadow 0.25s ease;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
 
     @media (min-width: 768px) {
       padding: 20px 18px;
@@ -4830,7 +4832,7 @@ textarea.luxury-form-control::placeholder {
     }
 
     &:hover {
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
       transform: translateY(-1px);
     }
   }
@@ -6917,7 +6919,7 @@ textarea.luxury-form-control::placeholder {
 }
 
 .bg-motion-floral-sway {
-  animation: ambientFloralSway 12s ease-in-out infinite alternate !important;
+  animation: ambientFloralSway 20s ease-in-out infinite alternate !important;
   transform-origin: center 80%;
   will-change: transform;
 }
@@ -6927,13 +6929,13 @@ textarea.luxury-form-control::placeholder {
     transform: rotate(0deg) scale(1) translateY(0);
   }
   35% {
-    transform: rotate(0.9deg) scale(1.03) translateY(-4px);
+    transform: rotate(1.1deg) scale(1.03) translateY(-4px);
   }
   70% {
-    transform: rotate(-0.8deg) scale(1.02) translateY(3px);
+    transform: rotate(-0.9deg) scale(1.02) translateY(3px);
   }
   100% {
-    transform: rotate(0.4deg) scale(1.01) translateY(-1px);
+    transform: rotate(0.5deg) scale(1.015) translateY(-2px);
   }
 }
 
