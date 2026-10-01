@@ -724,7 +724,7 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
     if (this.isDarkTheme()) {
       return isSelected 
         ? (this.getPrimaryColor() ? (this.getPrimaryColor() + '2e') : 'rgba(212, 175, 55, 0.25)') 
-        : 'rgba(255, 255, 255, 0.10)';
+        : 'rgba(0, 0, 0, 0.45)';
     }
     return isSelected 
       ? (this.getPrimaryColor() ? (this.getPrimaryColor() + '18') : 'rgba(212, 175, 55, 0.12)') 
@@ -746,7 +746,7 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
       return this.isDarkTheme() ? '#ffffff' : (this.getPrimaryColor() || '#d4af37');
     }
     if (this.isDarkTheme()) {
-      return this.getSecondaryFontColor() || '#f8fafc';
+      return '#ffffff';
     }
     return '#1e293b';
   }
@@ -758,11 +758,39 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
     if (this.isDarkTheme()) {
       return hasSelection
         ? (this.getPrimaryColor() ? (this.getPrimaryColor() + '28') : 'rgba(212, 175, 55, 0.22)')
-        : 'rgba(255, 255, 255, 0.12)';
+        : 'rgba(0, 0, 0, 0.45)';
     }
     return hasSelection
       ? (this.getPrimaryColor() ? (this.getPrimaryColor() + '18') : 'rgba(212, 175, 55, 0.12)')
       : 'rgba(255, 255, 255, 0.92)';
+  }
+
+  public getSummaryCardBg(): string {
+    if (this.isDarkTheme()) {
+      return 'rgba(0, 0, 0, 0.55)';
+    }
+    return 'rgba(255, 255, 255, 0.95)';
+  }
+
+  public getSummaryCardBorder(): string {
+    if (this.isDarkTheme()) {
+      return this.getPrimaryColor() ? (this.getPrimaryColor() + '45') : 'rgba(212, 175, 55, 0.35)';
+    }
+    return this.getPrimaryColor() ? (this.getPrimaryColor() + '28') : 'rgba(0, 0, 0, 0.12)';
+  }
+
+  public getSummaryLabelColor(): string {
+    if (this.isDarkTheme()) {
+      return 'rgba(255, 255, 255, 0.78)';
+    }
+    return '#64748b';
+  }
+
+  public getSummaryValueColor(): string {
+    if (this.isDarkTheme()) {
+      return '#ffffff';
+    }
+    return '#0f172a';
   }
 
   public getStepperTabTextColor(isActive: boolean): string {
@@ -770,7 +798,7 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
       return this.isDarkBg(this.getPrimaryColor()) ? '#ffffff' : '#0c0c0c';
     }
     if (this.isDarkTheme()) {
-      return this.getSecondaryFontColor() || '#f8fafc';
+      return '#f1f5f9';
     }
     return '#1e293b';
   }

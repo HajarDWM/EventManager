@@ -641,9 +641,9 @@
           <!-- Template des Boutons/Onglets de Catégories (Affichés DIRECTEMENT au-dessus des plats) -->
           <ng-template #stepperTabsTpl>
             <!-- Stepper Formule MIX (3 Onglets : Buffet Entrées, Plat Chaud, Buffet Desserts) -->
-            <div class="stepper-interactive-tabs d-flex justify-content-center gap-1.5 flex-wrap mb-2.5"
+            <div class="stepper-interactive-tabs d-flex justify-content-center align-items-center flex-nowrap"
               *ngIf="isMixMode() && (currentRsvpStep() <= 2 || isDiscoveryMode())">
-              <button type="button" class="btn btn-sm stepper-tab-btn rounded-pill px-2.5 py-1 fs-xxs fw-bold shadow-2xs"
+              <button type="button" class="btn btn-sm stepper-tab-btn rounded-pill fw-bold shadow-2xs"
                 [class.active-tab]="currentRsvpStep() === 0"
                 [style.background]="getStepperTabBg(currentRsvpStep() === 0)"
                 [style.color]="getStepperTabTextColor(currentRsvpStep() === 0)"
@@ -651,7 +651,7 @@
                 (click)="goToStep(0)">
                 <i class="fa fa-utensils me-1"></i> Buffet Entrées
               </button>
-              <button type="button" class="btn btn-sm stepper-tab-btn rounded-pill px-2.5 py-1 fs-xxs fw-bold shadow-2xs"
+              <button type="button" class="btn btn-sm stepper-tab-btn rounded-pill fw-bold shadow-2xs"
                 [class.active-tab]="currentRsvpStep() === 1"
                 [class.has-selection]="!isDiscoveryMode() && mealChoice"
                 [style.background]="getStepperTabBg(currentRsvpStep() === 1, !isDiscoveryMode() && !!mealChoice)"
@@ -661,7 +661,7 @@
                 <i class="fa fa-check text-success me-1 fs-3xs" *ngIf="!isDiscoveryMode() && mealChoice && currentRsvpStep() !== 1"></i>
                 <i class="fa fa-drumstick-bite me-1" *ngIf="!(!isDiscoveryMode() && mealChoice && currentRsvpStep() !== 1)"></i> Plat Chaud
               </button>
-              <button type="button" class="btn btn-sm stepper-tab-btn rounded-pill px-2.5 py-1 fs-xxs fw-bold shadow-2xs"
+              <button type="button" class="btn btn-sm stepper-tab-btn rounded-pill fw-bold shadow-2xs"
                 [class.active-tab]="currentRsvpStep() === 2"
                 [style.background]="getStepperTabBg(currentRsvpStep() === 2)"
                 [style.color]="getStepperTabTextColor(currentRsvpStep() === 2)"
@@ -672,10 +672,10 @@
             </div>
 
             <!-- Stepper Formule PLATS_FIXES (4 Onglets : Entrées, Plats, Desserts, Boissons) -->
-            <div class="stepper-interactive-tabs d-flex justify-content-center gap-1.5 flex-wrap mb-2.5"
+            <div class="stepper-interactive-tabs d-flex justify-content-center align-items-center flex-nowrap"
               *ngIf="isPlatedMode() && (currentRsvpStep() <= 3 || isDiscoveryMode())">
               <!-- 1. Entrées -->
-              <button type="button" class="btn btn-sm stepper-tab-btn rounded-pill px-2.5 py-1 fs-xxs fw-bold shadow-2xs"
+              <button type="button" class="btn btn-sm stepper-tab-btn rounded-pill fw-bold shadow-2xs"
                 [class.active-tab]="currentRsvpStep() === 0"
                 [class.has-selection]="!isDiscoveryMode() && starterChoice"
                 [style.background]="getStepperTabBg(currentRsvpStep() === 0, !isDiscoveryMode() && !!starterChoice)"
@@ -688,7 +688,7 @@
               </button>
 
               <!-- 2. Plats -->
-              <button type="button" class="btn btn-sm stepper-tab-btn rounded-pill px-2.5 py-1 fs-xxs fw-bold shadow-2xs"
+              <button type="button" class="btn btn-sm stepper-tab-btn rounded-pill fw-bold shadow-2xs"
                 [class.active-tab]="currentRsvpStep() === 1"
                 [class.has-selection]="!isDiscoveryMode() && mealChoice"
                 [style.background]="getStepperTabBg(currentRsvpStep() === 1, !isDiscoveryMode() && !!mealChoice)"
@@ -701,7 +701,7 @@
               </button>
 
               <!-- 3. Desserts -->
-              <button type="button" class="btn btn-sm stepper-tab-btn rounded-pill px-2.5 py-1 fs-xxs fw-bold shadow-2xs"
+              <button type="button" class="btn btn-sm stepper-tab-btn rounded-pill fw-bold shadow-2xs"
                 [class.active-tab]="currentRsvpStep() === 2"
                 [class.has-selection]="!isDiscoveryMode() && dessertChoice"
                 [style.background]="getStepperTabBg(currentRsvpStep() === 2, !isDiscoveryMode() && !!dessertChoice)"
@@ -714,7 +714,7 @@
               </button>
 
               <!-- 4. Boissons -->
-              <button type="button" class="btn btn-sm stepper-tab-btn rounded-pill px-2.5 py-1 fs-xxs fw-bold shadow-2xs"
+              <button type="button" class="btn btn-sm stepper-tab-btn rounded-pill fw-bold shadow-2xs"
                 [class.active-tab]="currentRsvpStep() === 3"
                 [class.has-selection]="!isDiscoveryMode() && beverageChoice"
                 [style.background]="getStepperTabBg(currentRsvpStep() === 3, !isDiscoveryMode() && !!beverageChoice)"
@@ -1551,12 +1551,12 @@
 
                 <!-- CARTE 1 : Récapitulatif des Choix + Lien Modifier mes choix -->
                 <div class="summary-subcard card-choices-box rounded-3 rounded-md-4 p-2.5 p-sm-3 d-flex flex-column justify-content-between flex-fill shadow-xs"
-                  [style.borderColor]="getPrimaryColor() + '35'"
-                  [style.backgroundColor]="getPrimaryColor() + '06'">
+                  [style.borderColor]="getSummaryCardBorder()"
+                  [style.backgroundColor]="getSummaryCardBg()">
 
                   <div>
                     <!-- En-tête Carte 1 avec bouton Modifier intégré -->
-                    <div class="d-flex align-items-center justify-content-between mb-1.5 pb-1 border-bottom" [style.borderColor]="getPrimaryColor() + '25'">
+                    <div class="d-flex align-items-center justify-content-between mb-2 pb-1 border-bottom" [style.borderColor]="getPrimaryColor() + '25'">
                       <div class="d-flex align-items-center gap-1.5">
                         <i class="fa fa-utensils" [style.color]="getPrimaryColor()" style="font-size: 0.8rem;"></i>
                         <span class="fw-bold text-uppercase" [style.fontFamily]="getSecondaryFont()" [style.color]="getPrimaryColor()" style="font-size: 0.76rem; letter-spacing: 1px;">
@@ -1571,82 +1571,82 @@
                     </div>
 
                     <!-- CAS 1 : FORMULE GRAND BUFFET 100% LIBRE-SERVICE -->
-                    <div *ngIf="isBuffetMode()" class="buffet-recap-box p-2 rounded-3 mb-1.5 text-start border shadow-2xs"
+                    <div *ngIf="isBuffetMode()" class="buffet-recap-box p-2 rounded-3 mb-2 text-start border shadow-2xs"
                       [style.borderColor]="getPrimaryColor() + '30'"
-                      [style.backgroundColor]="getPrimaryColor() + '0c'">
+                      [style.backgroundColor]="getPrimaryColor() + '12'">
                       <div class="d-flex align-items-center gap-1.5 mb-1">
                         <i class="fa fa-concierge-bell" [style.color]="getPrimaryColor()" style="font-size: 0.82rem;"></i>
                         <span class="fw-bold fs-xs text-uppercase" [style.fontFamily]="getSecondaryFont()" [style.color]="getPrimaryColor()">
                           Grand Buffet Libre-Service
                         </span>
                       </div>
-                      <p class="fs-xxs m-0 font-serif" [style.color]="getSecondaryFontColor()" style="opacity: 0.9; line-height: 1.35;">
+                      <p class="fs-xxs m-0 font-serif" [style.color]="getSummaryValueColor()" style="opacity: 0.95; line-height: 1.35;">
                         Accès libre à l'ensemble du buffet salé, des douceurs sucrées et aux rafraîchissements durant toute la réception.
                       </p>
                     </div>
 
                     <!-- CAS 2 : FORMULE MIX (Buffet Entrées + Choix Plat Chaud + Buffet Desserts & Bar) -->
-                    <div *ngIf="isMixMode()" class="summary-dishes-grid mb-1.5 text-start">
-                      <div class="summary-dish-item" [style.borderColor]="getPrimaryColor() + '15'">
-                        <span class="dish-course-num text-uppercase fw-semibold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()">1. Entrées</span>
-                        <span class="dish-course-val fw-semibold font-serif text-truncate" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()">
+                    <div *ngIf="isMixMode()" class="summary-dishes-grid mb-2 text-start">
+                      <div class="summary-dish-item" [style.borderColor]="getPrimaryColor() + '20'">
+                        <span class="dish-course-num text-uppercase fw-semibold" [style.fontFamily]="getSecondaryFont()" [style.color]="getPrimaryColor()">1. Entrées</span>
+                        <span class="dish-course-val fw-semibold font-serif text-truncate" [style.fontFamily]="getSecondaryFont()" [style.color]="getSummaryValueColor()">
                           Buffet d'Accueil & Fraîcheur
                         </span>
                       </div>
-                      <div class="summary-dish-item" [style.borderColor]="getPrimaryColor() + '15'">
-                        <span class="dish-course-num text-uppercase fw-semibold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()">2. Plat Chaud</span>
-                        <span class="dish-course-val fw-bold font-serif text-truncate" [style.fontFamily]="getSecondaryFont()" [style.color]="mealChoice ? getSecondaryFontColor() : getPrimaryColor()">
+                      <div class="summary-dish-item" [style.borderColor]="getPrimaryColor() + '20'">
+                        <span class="dish-course-num text-uppercase fw-semibold" [style.fontFamily]="getSecondaryFont()" [style.color]="getPrimaryColor()">2. Plat Chaud</span>
+                        <span class="dish-course-val fw-bold font-serif text-truncate" [style.fontFamily]="getSecondaryFont()" [style.color]="getSummaryValueColor()">
                           {{ mealChoice || 'Selon suggestion du chef' }}
                         </span>
                       </div>
-                      <div class="summary-dish-item" [style.borderColor]="getPrimaryColor() + '15'" style="grid-column: 1 / -1;">
-                        <span class="dish-course-num text-uppercase fw-semibold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()">3. Desserts & Bar</span>
-                        <span class="dish-course-val fw-semibold font-serif text-truncate" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()">
+                      <div class="summary-dish-item" [style.borderColor]="getPrimaryColor() + '20'">
+                        <span class="dish-course-num text-uppercase fw-semibold" [style.fontFamily]="getSecondaryFont()" [style.color]="getPrimaryColor()">3. Desserts & Bar</span>
+                        <span class="dish-course-val fw-semibold font-serif text-truncate" [style.fontFamily]="getSecondaryFont()" [style.color]="getSummaryValueColor()">
                           Buffet Sucré & Rafraîchissements
                         </span>
                       </div>
                     </div>
 
                     <!-- CAS 3 : FORMULE PLATS_FIXES (Grille 4 services individuels) -->
-                    <div *ngIf="isPlatedMode()" class="summary-dishes-grid mb-1.5 text-start">
-                      <div class="summary-dish-item" [style.borderColor]="getPrimaryColor() + '15'">
-                        <span class="dish-course-num text-uppercase fw-semibold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()">1. Entrée</span>
-                        <span class="dish-course-val fw-semibold font-serif text-truncate" [style.fontFamily]="getSecondaryFont()" [style.color]="starterChoice ? getSecondaryFontColor() : getPrimaryColor()">
+                    <div *ngIf="isPlatedMode()" class="summary-dishes-grid mb-2 text-start">
+                      <div class="summary-dish-item" [style.borderColor]="getPrimaryColor() + '20'">
+                        <span class="dish-course-num text-uppercase fw-semibold" [style.fontFamily]="getSecondaryFont()" [style.color]="getPrimaryColor()">1. Entrée</span>
+                        <span class="dish-course-val fw-semibold font-serif text-truncate" [style.fontFamily]="getSecondaryFont()" [style.color]="getSummaryValueColor()">
                           {{ starterChoice || 'Aucune entrée' }}
                         </span>
                       </div>
-                      <div class="summary-dish-item" [style.borderColor]="getPrimaryColor() + '15'">
-                        <span class="dish-course-num text-uppercase fw-semibold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()">2. Plat</span>
-                        <span class="dish-course-val fw-bold font-serif text-truncate" [style.fontFamily]="getSecondaryFont()" [style.color]="mealChoice ? getSecondaryFontColor() : getPrimaryColor()">
+                      <div class="summary-dish-item" [style.borderColor]="getPrimaryColor() + '20'">
+                        <span class="dish-course-num text-uppercase fw-semibold" [style.fontFamily]="getSecondaryFont()" [style.color]="getPrimaryColor()">2. Plat</span>
+                        <span class="dish-course-val fw-bold font-serif text-truncate" [style.fontFamily]="getSecondaryFont()" [style.color]="getSummaryValueColor()">
                           {{ mealChoice || 'Aucun plat' }}
                         </span>
                       </div>
-                      <div class="summary-dish-item" [style.borderColor]="getPrimaryColor() + '15'">
-                        <span class="dish-course-num text-uppercase fw-semibold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()">3. Dessert</span>
-                        <span class="dish-course-val fw-semibold font-serif text-truncate" [style.fontFamily]="getSecondaryFont()" [style.color]="dessertChoice ? getSecondaryFontColor() : getPrimaryColor()">
+                      <div class="summary-dish-item" [style.borderColor]="getPrimaryColor() + '20'">
+                        <span class="dish-course-num text-uppercase fw-semibold" [style.fontFamily]="getSecondaryFont()" [style.color]="getPrimaryColor()">3. Dessert</span>
+                        <span class="dish-course-val fw-semibold font-serif text-truncate" [style.fontFamily]="getSecondaryFont()" [style.color]="getSummaryValueColor()">
                           {{ dessertChoice || 'Aucun dessert' }}
                         </span>
                       </div>
-                      <div class="summary-dish-item" [style.borderColor]="getPrimaryColor() + '15'">
-                        <span class="dish-course-num text-uppercase fw-semibold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()">4. Boisson</span>
-                        <span class="dish-course-val fw-semibold font-serif text-truncate" [style.fontFamily]="getSecondaryFont()" [style.color]="beverageChoice ? getSecondaryFontColor() : getPrimaryColor()">
+                      <div class="summary-dish-item" [style.borderColor]="getPrimaryColor() + '20'">
+                        <span class="dish-course-num text-uppercase fw-semibold" [style.fontFamily]="getSecondaryFont()" [style.color]="getPrimaryColor()">4. Boisson</span>
+                        <span class="dish-course-val fw-semibold font-serif text-truncate" [style.fontFamily]="getSecondaryFont()" [style.color]="getSummaryValueColor()">
                           {{ beverageChoice || 'Aucune boisson' }}
                         </span>
                       </div>
                     </div>
 
                     <!-- Régimes & Allergies (Ligne compacte intégrée) -->
-                    <div class="summary-diet-compact text-start d-flex align-items-center gap-1.5 flex-wrap" [style.borderColor]="getPrimaryColor() + '15'">
+                    <div class="summary-diet-compact text-start d-flex align-items-center gap-1.5 flex-wrap pt-1" [style.borderColor]="getPrimaryColor() + '20'">
                       <span class="fw-bold text-uppercase d-inline-flex align-items-center gap-1" [style.fontFamily]="getSecondaryFont()" [style.color]="getPrimaryColor()" style="font-size: 0.68rem; letter-spacing: 0.8px;">
                         <i class="fa fa-heartbeat"></i> Régimes :
                       </span>
-                      <span class="fs-3xs fw-semibold" [style.color]="getSecondaryFontColor()" *ngIf="getSelectedDietsArray().length > 0">
+                      <span class="fs-3xs fw-semibold" [style.color]="getSummaryValueColor()" *ngIf="getSelectedDietsArray().length > 0">
                         {{ getSelectedDietsArray().join(', ') }}
                       </span>
-                      <span class="fs-3xs fst-italic text-muted" *ngIf="getSelectedDietsArray().length === 0 && (!otherAllergies.trim() || otherAllergies.trim().toLowerCase() === 'aucun' || otherAllergies.trim().toLowerCase() === 'none')">
+                      <span class="fs-3xs fst-italic" [style.color]="getSummaryLabelColor()" *ngIf="getSelectedDietsArray().length === 0 && (!otherAllergies.trim() || otherAllergies.trim().toLowerCase() === 'aucun' || otherAllergies.trim().toLowerCase() === 'none')">
                         Aucune restriction particulière
                       </span>
-                      <span class="fs-3xs fst-italic" [style.color]="getSecondaryFontColor()" *ngIf="otherAllergies.trim() && otherAllergies.trim().toLowerCase() !== 'aucun' && otherAllergies.trim().toLowerCase() !== 'none'">
+                      <span class="fs-3xs fst-italic" [style.color]="getSummaryValueColor()" *ngIf="otherAllergies.trim() && otherAllergies.trim().toLowerCase() !== 'aucun' && otherAllergies.trim().toLowerCase() !== 'none'">
                         ({{ otherAllergies.trim() }})
                       </span>
                     </div>
@@ -1656,12 +1656,12 @@
 
                 <!-- CARTE 2 : Participation, Montant & Règlement -->
                 <div class="summary-subcard card-payment-box rounded-3 rounded-md-4 p-2.5 p-sm-3 d-flex flex-column justify-content-between flex-fill shadow-xs"
-                  [style.borderColor]="getPrimaryColor() + '45'"
-                  [style.backgroundColor]="getPrimaryColor() + '09'">
+                  [style.borderColor]="getSummaryCardBorder()"
+                  [style.backgroundColor]="getSummaryCardBg()">
 
                   <div>
                     <!-- En-tête Carte 2 -->
-                    <div class="d-flex align-items-center gap-2 mb-1.5 pb-1 border-bottom" [style.borderColor]="getPrimaryColor() + '25'">
+                    <div class="d-flex align-items-center gap-2 mb-2 pb-1 border-bottom" [style.borderColor]="getPrimaryColor() + '25'">
                       <i class="fa fa-ticket-alt" [style.color]="getPrimaryColor()" style="font-size: 0.8rem;"></i>
                       <span class="fw-bold text-uppercase" [style.fontFamily]="getSecondaryFont()" [style.color]="getPrimaryColor()" style="font-size: 0.76rem; letter-spacing: 1px;">
                         Participation & Règlement
@@ -1671,12 +1671,12 @@
                     <!-- Détails Billet & Montant (Compact & Linéaire) -->
                     <div class="summary-payment-details text-start">
                       <div class="d-flex justify-content-between align-items-baseline py-1 border-bottom" [style.borderColor]="getPrimaryColor() + '15'">
-                        <span class="text-uppercase fw-semibold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.7rem; opacity: 0.85;">Invité</span>
-                        <span class="fw-bold text-end font-serif" [style.fontFamily]="getSecondaryFont()" [style.color]="getPrimaryColor()" style="font-size: 0.88rem;">{{ guest()?.guestName }}</span>
+                        <span class="text-uppercase fw-semibold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSummaryLabelColor()" style="font-size: 0.7rem; letter-spacing: 0.4px;">Invité</span>
+                        <span class="fw-bold text-end font-serif" [style.fontFamily]="getSecondaryFont()" [style.color]="getSummaryValueColor()" style="font-size: 0.88rem;">{{ guest()?.guestName }}</span>
                       </div>
 
                       <div class="d-flex justify-content-between align-items-baseline py-1 border-bottom" [style.borderColor]="getPrimaryColor() + '15'" *ngIf="guest()?.isPaidEvent">
-                        <span class="text-uppercase fw-semibold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.7rem; opacity: 0.85;">Statut & Billet</span>
+                        <span class="text-uppercase fw-semibold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSummaryLabelColor()" style="font-size: 0.7rem; letter-spacing: 0.4px;">Statut & Billet</span>
                         <div class="text-end">
                           <span class="d-inline-flex align-items-center gap-1 fw-semibold me-2" style="font-size: 0.76rem;"
                             [style.color]="guest()?.paymentStatus === 'PAID' ? '#16a34a' : '#d97706'">
@@ -1688,7 +1688,7 @@
                       </div>
 
                       <div class="d-flex justify-content-between align-items-baseline py-1 border-bottom" [style.borderColor]="getPrimaryColor() + '15'" *ngIf="!guest()?.isPaidEvent">
-                        <span class="text-uppercase fw-semibold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.7rem; opacity: 0.85;">Accès</span>
+                        <span class="text-uppercase fw-semibold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSummaryLabelColor()" style="font-size: 0.7rem; letter-spacing: 0.4px;">Accès</span>
                         <span class="fw-semibold text-end text-success" style="font-size: 0.78rem;">
                           <i class="fa fa-check me-1"></i> Gratuit (Invité d'honneur)
                         </span>
@@ -1697,7 +1697,7 @@
                       <!-- Total à régler -->
                       <div class="d-flex justify-content-between align-items-center py-1 mt-0.5"
                         *ngIf="guest()?.isPaidEvent && guest()?.paymentStatus !== 'PAID'">
-                        <span class="text-uppercase fw-bold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.74rem; letter-spacing: 0.8px;">
+                        <span class="text-uppercase fw-bold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSummaryValueColor()" style="font-size: 0.74rem; letter-spacing: 0.8px;">
                           Total à régler
                         </span>
                         <div class="fs-5 fw-bold font-serif" [style.color]="getPrimaryColor()">
