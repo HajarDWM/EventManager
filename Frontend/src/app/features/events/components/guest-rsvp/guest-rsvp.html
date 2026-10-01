@@ -464,8 +464,7 @@
       <div class="bg-shimmer-ray-light" *ngIf="getBackgroundMotion() === 'shimmer-ray'"></div>
 
       <!-- Card Core Content (All Base Elements Protected & High Contrast) -->
-      <div class="luxury-inner-border position-relative z-2"
-           [style.borderColor]="getPrimaryColor() ? (getPrimaryColor() + '30') : 'rgba(212, 175, 55, 0.25)'">
+      <div class="luxury-inner-border position-relative z-2">
 
         <!-- LAYER: Centered Dynamic Text (Clean Invitation View) -->
         <div class="invitation-dynamic-text-overlay text-center mx-auto" *ngIf="!isMenuRsvpOpen() && !isSuccess()">

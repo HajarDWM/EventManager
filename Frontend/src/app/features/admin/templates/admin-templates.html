@@ -1474,7 +1474,7 @@
                [style.backgroundPosition]="previewDevice() === 'desktop' ? 'center center' : 'initial'"
                [style.backgroundRepeat]="'no-repeat'"
                [style.backdropFilter]="'none'"
-               [style.border]="previewDevice() === 'mobile' ? (accentColorField ? ('1px solid ' + accentColorField + '45') : '1px solid rgba(212, 175, 55, 0.35)') : (accentColorField ? ('1.5px solid ' + accentColorField + '40') : '1.5px solid rgba(212, 175, 55, 0.35)')"
+               [style.border]="previewDevice() === 'mobile' ? 'none' : (accentColorField ? ('1.5px solid ' + accentColorField + '40') : '1.5px solid rgba(212, 175, 55, 0.35)')"
                [style.borderRadius]="previewDevice() === 'mobile' ? '20px' : '32px'"
                [style.boxShadow]="previewDevice() === 'mobile' ? 'none' : '0 20px 45px rgba(0, 0, 0, 0.12)'">
 
