@@ -291,6 +291,68 @@ export class ClientGuestList implements OnInit {
     });
   }
 
+  protected readonly isTableDropdownOpen = signal<boolean>(false);
+
+  protected readonly tableOptions = computed(() => {
+    const evt = this.currentEvent();
+    const defaultCapacity = evt?.tableCapacity || 10;
+    const defaultShape = evt?.tableShape || 'ROUND';
+    const estimatedCount = evt?.tablesCount || Math.max(5, Math.ceil((evt?.guestCount || 50) / defaultCapacity));
+
+    const customTableNames = new Set<string>();
+    for (let i = 1; i <= estimatedCount; i++) {
+      customTableNames.add(`Table ${i}`);
+    }
+    this.guests().forEach(g => {
+      if (g.tableNumber && g.tableNumber.trim()) {
+        customTableNames.add(g.tableNumber.trim());
+      }
+    });
+
+    const currentSelectedGroup = this.groupName()?.trim().toLowerCase() || '';
+
+    return Array.from(customTableNames).map(name => {
+      const seatedGuests = this.guests().filter(g => g.tableNumber && g.tableNumber.trim().toLowerCase() === name.toLowerCase());
+      const confirmedSeated = seatedGuests.filter(g => g.status === 'CONFIRMED');
+      const occupied = confirmedSeated.length;
+      
+      const capacity = name.toLowerCase().includes('honneur') ? Math.max(defaultCapacity, 12) : defaultCapacity;
+      const isFull = occupied >= capacity;
+
+      const groupsInTable = Array.from(new Set(seatedGuests.map(g => g.groupName).filter(Boolean))) as string[];
+      const isRecommended = currentSelectedGroup ? groupsInTable.some(g => g.toLowerCase() === currentSelectedGroup) && !isFull : false;
+
+      return {
+        name,
+        shape: defaultShape,
+        capacity,
+        occupied,
+        isFull,
+        groupsInTable,
+        isRecommended
+      };
+    }).sort((a, b) => {
+      if (a.isRecommended && !b.isRecommended) return -1;
+      if (!a.isRecommended && b.isRecommended) return 1;
+      return a.name.localeCompare(b.name, undefined, { numeric: true });
+    });
+  });
+
+  protected selectTable(tableName: string): void {
+    this.tableNumber.set(tableName);
+    this.isTableDropdownOpen.set(false);
+  }
+
+  protected toggleTableDropdown(event: MouseEvent): void {
+    event.stopPropagation();
+    this.isTableDropdownOpen.update(v => !v);
+  }
+
+  protected onTableInputChange(val: string): void {
+    this.tableNumber.set(val);
+    this.isTableDropdownOpen.set(true);
+  }
+
   protected toggleGroupDropdown(event: MouseEvent): void {
     event.stopPropagation();
     this.isGroupDropdownOpen.update(v => !v);
@@ -311,6 +373,9 @@ export class ClientGuestList implements OnInit {
     const target = event.target as HTMLElement;
     if (target && !target.closest('.group-autocomplete-container')) {
       this.isGroupDropdownOpen.set(false);
+    }
+    if (target && !target.closest('.table-autocomplete-container')) {
+      this.isTableDropdownOpen.set(false);
     }
   }
 }

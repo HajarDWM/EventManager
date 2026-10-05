@@ -32,6 +32,9 @@ export class EventEdit implements OnInit {
   protected readonly isPaidEvent = signal<boolean>(false);
   protected readonly ticketPrice = signal<number>(0);
   protected readonly currency = signal<string>('MAD');
+  protected readonly tableShape = signal<string>('ROUND');
+  protected readonly tableCapacity = signal<number>(10);
+  protected readonly tablesCount = signal<number | null>(null);
   protected readonly status = signal<'DRAFT' | 'PLANNED' | 'COMPLETED' | 'CANCELLED'>('PLANNED');
   protected readonly selectedTemplateId = signal<number | null>(null);
   protected readonly templates = signal<DigitalTemplate[]>([]);
@@ -88,6 +91,9 @@ export class EventEdit implements OnInit {
         this.locationMapUrl.set(data.locationMapUrl || '');
         this.parkingLocation.set(data.parkingLocation || '');
         this.guestCount.set(data.guestCount ?? null);
+        this.tableShape.set(data.tableShape || 'ROUND');
+        this.tableCapacity.set(data.tableCapacity || 10);
+        this.tablesCount.set(data.tablesCount ?? null);
         if (data.status) {
           this.status.set(data.status);
         }
@@ -141,7 +147,10 @@ export class EventEdit implements OnInit {
       templateId: chosenTemplate?.templateKey || (chosenTemplate?.category === 'Mariage' ? 'fleurs-de-coton' : 'corporate-professional'),
       isPaidEvent: this.isPaidEvent(),
       ticketPrice: this.isPaidEvent() ? this.ticketPrice() : 0,
-      currency: this.currency()
+      currency: this.currency(),
+      tableShape: this.tableShape(),
+      tableCapacity: this.tableCapacity() || 10,
+      tablesCount: this.tablesCount() || undefined
     }).subscribe({
       next: () => {
         this.isSaving.set(false);

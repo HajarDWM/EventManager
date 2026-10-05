@@ -47,19 +47,9 @@ public class MenuItemApplicationService implements CreateMenuItemUseCase, GetMen
         Long currentCatererId = securityContextPort.getCurrentCatererId();
         com.example.eventmanager.domain.model.Caterer caterer = catererRepositoryPort.findById(currentCatererId).orElse(null);
         if (caterer != null && caterer.getRole() != com.example.eventmanager.domain.model.CatererRole.SUPER_ADMIN) {
-            java.time.LocalDateTime now = java.time.LocalDateTime.now();
-            boolean isExpired = false;
-            if (!"FREE".equalsIgnoreCase(caterer.getSubscriptionPlan())) {
-                java.time.LocalDateTime endDate = caterer.getSubscriptionEndDate();
-                if (endDate != null && now.isAfter(endDate.plusDays(10))) {
-                    isExpired = true;
-                } else if ("EXPIRED".equalsIgnoreCase(caterer.getSubscriptionStatus())) {
-                    isExpired = true;
-                }
-            }
-            if (isExpired) {
+            if (caterer.getAccountStatus() == com.example.eventmanager.domain.model.CatererStatus.SUSPENDED) {
                 throw new UnauthorizedAccessException(
-                    "Abonnement expiré — Mode consultation uniquement. La modification des plats est restreinte. Veuillez renouveler votre abonnement."
+                    "Votre compte est suspendu par l'administrateur."
                 );
             }
         }

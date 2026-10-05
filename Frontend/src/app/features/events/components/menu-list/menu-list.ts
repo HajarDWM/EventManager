@@ -417,10 +417,6 @@ export class MenuList implements OnInit {
   }
 
   protected openAddModal(section?: 'BUFFET' | 'ASSIS'): void {
-    if (this.isSubscriptionExpired()) {
-      this.errorMessage.set("Abonnement expiré — Mode consultation uniquement. Veuillez renouveler votre abonnement pour ajouter des plats au menu.");
-      return;
-    }
     this.isEditing.set(false);
     this.editingItemId.set(null);
     this.name.set('');
@@ -488,10 +484,6 @@ export class MenuList implements OnInit {
   }
 
   protected openEditModal(item: MenuItem): void {
-    if (this.isSubscriptionExpired()) {
-      this.errorMessage.set("Abonnement expiré — Mode consultation uniquement. Veuillez renouveler votre abonnement pour modifier des plats.");
-      return;
-    }
     this.isEditing.set(true);
     this.editingItemId.set(item.id || null);
     this.name.set(item.name || '');

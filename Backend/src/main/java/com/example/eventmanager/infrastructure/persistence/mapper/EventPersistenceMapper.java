@@ -37,6 +37,9 @@ public class EventPersistenceMapper {
                 .isPaidEvent(entity.isPaidEvent())
                 .ticketPrice(entity.getTicketPrice())
                 .currency(entity.getCurrency())
+                .tableShape(entity.getTableShape() != null ? entity.getTableShape() : "ROUND")
+                .tableCapacity(entity.getTableCapacity() != null ? entity.getTableCapacity() : 10)
+                .tablesCount(entity.getTablesCount())
                 .build();
     }
 
@@ -69,6 +72,9 @@ public class EventPersistenceMapper {
                 .isPaidEvent(domain.isPaidEvent())
                 .ticketPrice(domain.getTicketPrice())
                 .currency(domain.getCurrency())
+                .tableShape(domain.getTableShape() != null ? domain.getTableShape() : "ROUND")
+                .tableCapacity(domain.getTableCapacity() != null ? domain.getTableCapacity() : 10)
+                .tablesCount(domain.getTablesCount())
                 .build();
     }
 }

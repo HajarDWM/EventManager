@@ -2,6 +2,7 @@ package com.example.eventmanager.application.service;
 
 import com.example.eventmanager.application.dto.GuestDTO;
 import com.example.eventmanager.application.mapper.GuestMapper;
+import com.example.eventmanager.application.port.in.BatchAssignTableUseCase;
 import com.example.eventmanager.application.port.in.CreateGuestUseCase;
 import com.example.eventmanager.application.port.in.DeleteGuestUseCase;
 import com.example.eventmanager.application.port.in.GetGuestsByEventUseCase;
@@ -29,7 +30,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class GuestApplicationService implements CreateGuestUseCase, GetGuestsByEventUseCase, UpdateGuestUseCase, DeleteGuestUseCase, ImportGuestsUseCase {
+public class GuestApplicationService implements CreateGuestUseCase, GetGuestsByEventUseCase, UpdateGuestUseCase, DeleteGuestUseCase, ImportGuestsUseCase, BatchAssignTableUseCase {
 
     private final GuestRepositoryPort guestRepositoryPort;
     private final EventRepositoryPort eventRepositoryPort;
@@ -51,19 +52,9 @@ public class GuestApplicationService implements CreateGuestUseCase, GetGuestsByE
         Long currentCatererId = securityContextPort.getCurrentCatererId();
         com.example.eventmanager.domain.model.Caterer caterer = catererRepositoryPort.findById(currentCatererId).orElse(null);
         if (caterer != null && caterer.getRole() != com.example.eventmanager.domain.model.CatererRole.SUPER_ADMIN) {
-            java.time.LocalDateTime now = java.time.LocalDateTime.now();
-            boolean isExpired = false;
-            if (!"FREE".equalsIgnoreCase(caterer.getSubscriptionPlan())) {
-                java.time.LocalDateTime endDate = caterer.getSubscriptionEndDate();
-                if (endDate != null && now.isAfter(endDate.plusDays(10))) {
-                    isExpired = true;
-                } else if ("EXPIRED".equalsIgnoreCase(caterer.getSubscriptionStatus())) {
-                    isExpired = true;
-                }
-            }
-            if (isExpired) {
+            if (caterer.getAccountStatus() == com.example.eventmanager.domain.model.CatererStatus.SUSPENDED) {
                 throw new com.example.eventmanager.domain.exception.UnauthorizedAccessException(
-                    "Abonnement expiré — Mode consultation uniquement. L'ajout d'invités et l'envoi d'invitations sont restreints. Veuillez renouveler votre abonnement."
+                    "Votre compte est suspendu par l'administrateur."
                 );
             }
         }
@@ -385,5 +376,23 @@ public class GuestApplicationService implements CreateGuestUseCase, GetGuestsByE
             }
         }
         return list;
+    }
+
+    @Override
+    @Transactional
+    public List<GuestDTO> batchAssignTableByGroup(Long eventId, String groupName, String tableNumber, boolean confirmedOnly) {
+        verifyEventOwnership(eventId);
+        verifyActiveSubscription();
+        List<Guest> guests = guestRepositoryPort.findByEventId(eventId);
+        List<Guest> updated = new ArrayList<>();
+        for (Guest g : guests) {
+            if (groupName != null && groupName.equalsIgnoreCase(g.getGroupName())) {
+                if (!confirmedOnly || g.getStatus() == GuestStatus.CONFIRMED) {
+                    g.setTableNumber(tableNumber);
+                    updated.add(guestRepositoryPort.save(g));
+                }
+            }
+        }
+        return updated.stream().map(guestMapper::toDTO).collect(Collectors.toList());
     }
 }

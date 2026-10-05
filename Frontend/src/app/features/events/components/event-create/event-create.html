@@ -192,7 +192,7 @@
                      [disabled]="isQuotaReached()">
             </div>
 
-            <div class="mb-2">
+            <div class="mb-4">
               <label class="form-label fs-sm fw-semibold text-muted" for="event-parking">
                 <i class="fa fa-parking text-primary me-1"></i> Lien Parking
               </label>
@@ -200,6 +200,45 @@
                      id="event-parking" name="event-parking" placeholder="Ex: https://maps.app.goo.gl/parking..."
                      [ngModel]="parkingLocation()" (ngModelChange)="parkingLocation.set($event)"
                      [disabled]="isQuotaReached()">
+            </div>
+
+            <!-- Configuration des Tables & Salle -->
+            <div class="p-4 bg-body-extra-light rounded-4 mb-2">
+              <div class="d-flex align-items-center gap-2 mb-3">
+                <div class="item item-circle bg-primary-light text-primary fs-sm">
+                  <i class="fa fa-chair"></i>
+                </div>
+                <div>
+                  <h4 class="fs-sm fw-bold text-dark mb-0">Configuration de la Salle & Tables</h4>
+                  <div class="fs-xs text-muted">Préparez la disposition des tables pour le placement des invités.</div>
+                </div>
+              </div>
+
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label fs-xs fw-semibold text-muted mb-1">Type de tables principal</label>
+                  <select class="form-select form-select-lg form-control-alt rounded-3 fs-sm border-0 bg-body-light"
+                          [ngModel]="tableShape()" (ngModelChange)="tableShape.set($event)" name="tableShape">
+                    <option value="ROUND">🔵 Tables Rondes (Standard 8-12 pers.)</option>
+                    <option value="RECTANGULAR">🟦 Tables Rectangulaires / Banquets</option>
+                    <option value="MIXED">👑 Disposition Mixte (Rondes + Table d'Honneur)</option>
+                  </select>
+                </div>
+
+                <div class="col-sm-6 col-md-3">
+                  <label class="form-label fs-xs fw-semibold text-muted mb-1">Capacité / table</label>
+                  <input type="number" class="form-control form-control-lg form-control-alt rounded-3 fs-sm border-0 bg-body-light"
+                         [ngModel]="tableCapacity()" (ngModelChange)="tableCapacity.set($event)"
+                         name="tableCapacity" min="2" max="50" placeholder="Ex: 10">
+                </div>
+
+                <div class="col-sm-6 col-md-3">
+                  <label class="form-label fs-xs fw-semibold text-muted mb-1">Nombre estimé</label>
+                  <input type="number" class="form-control form-control-lg form-control-alt rounded-3 fs-sm border-0 bg-body-light"
+                         [ngModel]="tablesCount()" (ngModelChange)="tablesCount.set($event)"
+                         name="tablesCount" min="1" max="100" placeholder="Ex: 15">
+                </div>
+              </div>
             </div>
           </div>
 

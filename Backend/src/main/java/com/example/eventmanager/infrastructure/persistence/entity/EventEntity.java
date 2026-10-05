@@ -95,5 +95,16 @@ public class EventEntity {
     @Column(name = "currency")
     @Builder.Default
     private String currency = "MAD";
+
+    @Column(name = "table_shape")
+    @Builder.Default
+    private String tableShape = "ROUND";
+
+    @Column(name = "table_capacity")
+    @Builder.Default
+    private Integer tableCapacity = 10;
+
+    @Column(name = "tables_count")
+    private Integer tablesCount;
 }
 

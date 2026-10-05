@@ -32,6 +32,9 @@ export class EventCreate implements OnInit {
   protected readonly isPaidEvent = signal<boolean>(false);
   protected readonly ticketPrice = signal<number>(0);
   protected readonly currency = signal<string>('MAD');
+  protected readonly tableShape = signal<string>('ROUND');
+  protected readonly tableCapacity = signal<number>(10);
+  protected readonly tablesCount = signal<number | null>(null);
   protected readonly status = signal<'DRAFT' | 'PLANNED' | 'COMPLETED' | 'CANCELLED'>('DRAFT');
   protected readonly selectedTemplateId = signal<number | null>(null);
   protected readonly templates = signal<DigitalTemplate[]>([]);
@@ -166,7 +169,10 @@ export class EventCreate implements OnInit {
       mealType: 'PLATS_FIXES', // Default to PLATS_FIXES on creation, can be changed in Restaurations dashboard
       isPaidEvent: this.isPaidEvent(),
       ticketPrice: this.isPaidEvent() ? this.ticketPrice() : 0,
-      currency: this.currency()
+      currency: this.currency(),
+      tableShape: this.tableShape(),
+      tableCapacity: this.tableCapacity() || 10,
+      tablesCount: this.tablesCount() || undefined
     }).subscribe({
       next: () => {
         this.isLoading.set(false);

@@ -188,10 +188,6 @@ export class GuestList implements OnInit {
   }
 
   protected openAddModal(): void {
-    if (this.isSubscriptionExpired()) {
-      this.errorMessage.set("Abonnement expiré — Mode consultation uniquement. Veuillez renouveler votre abonnement pour ajouter de nouveaux invités.");
-      return;
-    }
     this.isEditing.set(false);
     this.editingGuestId.set(null);
     this.fullName.set('');
@@ -205,10 +201,6 @@ export class GuestList implements OnInit {
   }
 
   protected openEditModal(guest: Guest): void {
-    if (this.isSubscriptionExpired()) {
-      this.errorMessage.set("Abonnement expiré — Mode consultation uniquement. Veuillez renouveler votre abonnement pour modifier des invités.");
-      return;
-    }
     this.isEditing.set(true);
     this.editingGuestId.set(guest.id || null);
     this.fullName.set(guest.fullName || '');
@@ -393,6 +385,98 @@ export class GuestList implements OnInit {
     });
   }
 
+  protected readonly isTableDropdownOpen = signal<boolean>(false);
+  protected readonly batchSelectedTable = signal<string>('');
+  protected readonly isBatchAssigning = signal<boolean>(false);
+
+  protected readonly tableOptions = computed(() => {
+    const evt = this.event();
+    const defaultCapacity = evt?.tableCapacity || 10;
+    const defaultShape = evt?.tableShape || 'ROUND';
+    const estimatedCount = evt?.tablesCount || Math.max(5, Math.ceil((evt?.guestCount || 50) / defaultCapacity));
+
+    const customTableNames = new Set<string>();
+    for (let i = 1; i <= estimatedCount; i++) {
+      customTableNames.add(`Table ${i}`);
+    }
+    this.guests().forEach(g => {
+      if (g.tableNumber && g.tableNumber.trim()) {
+        customTableNames.add(g.tableNumber.trim());
+      }
+    });
+
+    const currentSelectedGroup = this.groupName()?.trim().toLowerCase() || '';
+
+    return Array.from(customTableNames).map(name => {
+      const seatedGuests = this.guests().filter(g => g.tableNumber && g.tableNumber.trim().toLowerCase() === name.toLowerCase());
+      const confirmedSeated = seatedGuests.filter(g => g.status === 'CONFIRMED');
+      const occupied = confirmedSeated.length;
+      
+      const capacity = name.toLowerCase().includes('honneur') ? Math.max(defaultCapacity, 12) : defaultCapacity;
+      const isFull = occupied >= capacity;
+
+      const groupsInTable = Array.from(new Set(seatedGuests.map(g => g.groupName).filter(Boolean))) as string[];
+      const isRecommended = currentSelectedGroup ? groupsInTable.some(g => g.toLowerCase() === currentSelectedGroup) && !isFull : false;
+
+      return {
+        name,
+        shape: defaultShape,
+        capacity,
+        occupied,
+        isFull,
+        groupsInTable,
+        isRecommended
+      };
+    }).sort((a, b) => {
+      if (a.isRecommended && !b.isRecommended) return -1;
+      if (!a.isRecommended && b.isRecommended) return 1;
+      return a.name.localeCompare(b.name, undefined, { numeric: true });
+    });
+  });
+
+  protected selectTable(tableName: string): void {
+    this.tableNumber.set(tableName);
+    this.isTableDropdownOpen.set(false);
+  }
+
+  protected toggleTableDropdown(event: MouseEvent): void {
+    event.stopPropagation();
+    this.isTableDropdownOpen.update(v => !v);
+  }
+
+  protected onTableInputChange(val: string): void {
+    this.tableNumber.set(val);
+    this.isTableDropdownOpen.set(true);
+  }
+
+  protected batchAssignGroupToTable(groupName: string, tableNumber: string): void {
+    if (!groupName || groupName === 'ALL' || !tableNumber || !this.eventId()) return;
+
+    this.isBatchAssigning.set(true);
+    this.errorMessage.set('');
+
+    this.http.put<Guest[]>(`/api/events/${this.eventId()}/guests/batch-assign-table`, {}, {
+      params: {
+        groupName: groupName,
+        tableNumber: tableNumber,
+        confirmedOnly: true
+      }
+    }).subscribe({
+      next: () => {
+        this.isBatchAssigning.set(false);
+        this.successMessage.set(`Tous les invités confirmés du groupe "${groupName}" ont été assignés à "${tableNumber}".`);
+        this.batchSelectedTable.set('');
+        if (this.eventId()) this.loadGuests(this.eventId()!);
+        setTimeout(() => this.successMessage.set(''), 4000);
+      },
+      error: (err) => {
+        this.isBatchAssigning.set(false);
+        this.errorMessage.set('Erreur lors de l\'assignation groupée de la table.');
+        console.error(err);
+      }
+    });
+  }
+
   protected toggleGroupDropdown(event: MouseEvent): void {
     event.stopPropagation();
     this.isGroupDropdownOpen.update(v => !v);
@@ -413,6 +497,9 @@ export class GuestList implements OnInit {
     const target = event.target as HTMLElement;
     if (target && !target.closest('.group-autocomplete-container')) {
       this.isGroupDropdownOpen.set(false);
+    }
+    if (target && !target.closest('.table-autocomplete-container')) {
+      this.isTableDropdownOpen.set(false);
     }
   }
 }

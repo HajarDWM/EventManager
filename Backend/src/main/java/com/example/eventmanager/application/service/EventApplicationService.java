@@ -55,59 +55,10 @@ public class EventApplicationService implements CreateEventUseCase, GetEventUseC
 
         if (caterer.getRole() != com.example.eventmanager.domain.model.CatererRole.SUPER_ADMIN) {
             if (caterer.getAccountStatus() == com.example.eventmanager.domain.model.CatererStatus.SUSPENDED) {
-                throw new UnauthorizedAccessException("Votre compte est suspendu. Veuillez renouveler ou mettre à niveau votre abonnement pour créer des événements.");
+                throw new UnauthorizedAccessException("Votre compte est suspendu par l'administrateur.");
             }
-            if (!"FREE".equalsIgnoreCase(caterer.getSubscriptionPlan())) {
-                java.time.LocalDateTime endDate = caterer.getSubscriptionEndDate();
-                if (endDate != null && java.time.LocalDateTime.now().isAfter(endDate.plusDays(10))) {
-                    throw new UnauthorizedAccessException("Abonnement expiré — Mode consultation uniquement. Veuillez renouveler votre abonnement pour créer des événements.");
-                }
-                if ("EXPIRED".equalsIgnoreCase(caterer.getSubscriptionStatus())) {
-                    throw new UnauthorizedAccessException("Abonnement expiré — Mode consultation uniquement. Veuillez renouveler votre abonnement pour créer des événements.");
-                }
-            }
-            String plan = caterer.getSubscriptionPlan();
-            int limit = switch (plan != null ? plan.toUpperCase() : "FREE") {
-                case "STANDARD", "STANDARD_PRO", "STANDARD PRO" -> 8;
-                case "PREMIUM" -> 20;
-                default -> 2; // "FREE"
-            };
-
-            java.time.LocalDateTime startDate = caterer.getSubscriptionStartDate();
-            long activeEventsCount = eventRepositoryPort.findAllByCatererId(currentCatererId).size();
-            long consumedInPeriod;
-            if (plan == null || "FREE".equalsIgnoreCase(plan) || plan.isBlank()) {
-                consumedInPeriod = eventRepositoryPort.countByCatererId(currentCatererId);
-            } else {
-                if (startDate != null) {
-                    consumedInPeriod = eventRepositoryPort.countByCatererIdAndCreatedAtAfter(currentCatererId, startDate);
-                } else {
-                    consumedInPeriod = eventRepositoryPort.countByCatererId(currentCatererId);
-                }
-            }
-
-            // Exemption de quota pour le plan FREE (Période d'essai / de grâce)
-            // Si l'organisateur a 0 événement actif (tout premier événement créé ou si tous les événements tests/essais précédents ont été archivés),
-            // on autorise la création pour permettre des tests fluides sans blocage prématuré.
-            if (plan == null || "FREE".equalsIgnoreCase(plan) || plan.isBlank()) {
-                if (activeEventsCount == 0) {
-                    // Période de grâce autorisée
-                } else if (consumedInPeriod >= limit) {
-                    throw new SubscriptionRequiredException("You have reached your free event limit. Please upgrade your plan to create more events.");
-                }
-            } else {
-                if (consumedInPeriod >= limit) {
-                    throw new UnauthorizedAccessException("Quota dépassé : Vous avez atteint la limite de votre forfait. Veuillez renouveler ou mettre à niveau votre abonnement pour ajouter d'autres événements.");
-                }
-            }
-
-            // Enforce guest limit (maximum 300 guests) for Free and Standard Pro plans
-            if (eventDTO.getGuestCount() != null && eventDTO.getGuestCount() > 300) {
-                String planUpper = plan != null ? plan.toUpperCase() : "FREE";
-                if (!"PREMIUM".equals(planUpper)) {
-                    throw new IllegalArgumentException("Le forfait limite le nombre d'invités à 300 par événement. Veuillez passer au forfait Premium VIP pour inviter plus de personnes.");
-                }
-            }
+            // Note: Les restrictions de quotas et d'expiration d'abonnement sont temporairement désactivées
+            // pour permettre aux organisateurs de tester et d'utiliser l'application sans blocage.
         }
         
         Event eventToSave = eventMapper.toDomain(eventDTO);

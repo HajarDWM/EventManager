@@ -23,6 +23,16 @@ public class GuestResource {
     private final UpdateGuestUseCase updateGuestUseCase;
     private final DeleteGuestUseCase deleteGuestUseCase;
     private final ImportGuestsUseCase importGuestsUseCase;
+    private final com.example.eventmanager.application.port.in.BatchAssignTableUseCase batchAssignTableUseCase;
+
+    @PutMapping("/events/{eventId}/guests/batch-assign-table")
+    public ResponseEntity<List<GuestDTO>> batchAssignTable(
+            @PathVariable Long eventId,
+            @RequestParam String groupName,
+            @RequestParam String tableNumber,
+            @RequestParam(defaultValue = "true") boolean confirmedOnly) {
+        return ResponseEntity.ok(batchAssignTableUseCase.batchAssignTableByGroup(eventId, groupName, tableNumber, confirmedOnly));
+    }
 
     @GetMapping("/events/{eventId}/guests/template")
     public ResponseEntity<byte[]> getGuestsTemplate(@PathVariable Long eventId) {

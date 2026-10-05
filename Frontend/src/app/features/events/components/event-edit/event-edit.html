@@ -166,6 +166,43 @@
             </select>
           </div>
 
+          <!-- Configuration des Tables & Salle -->
+          <div class="mb-4 p-3 bg-body-light border rounded-3">
+            <div class="d-flex align-items-center gap-2 mb-3">
+              <i class="fa fa-chair text-primary"></i>
+              <h4 class="h6 fw-bold mb-0">Configuration de la Salle & Disposition des Tables</h4>
+            </div>
+
+            <div class="row g-3">
+              <div class="col-12 col-md-6">
+                <label class="form-label fs-xs fw-semibold text-dark mb-1">Type de tables principal</label>
+                <select class="form-select form-select-sm"
+                        [ngModel]="tableShape()" (ngModelChange)="tableShape.set($event)" name="tableShape">
+                  <option value="ROUND">🔵 Tables Rondes (Standard 8-12 pers.)</option>
+                  <option value="RECTANGULAR">🟦 Tables Rectangulaires / Banquets</option>
+                  <option value="MIXED">👑 Disposition Mixte (Rondes + Table d'Honneur)</option>
+                </select>
+              </div>
+
+              <div class="col-6 col-md-3">
+                <label class="form-label fs-xs fw-semibold text-dark mb-1">Capacité / table</label>
+                <input type="number" class="form-control form-control-sm"
+                       [ngModel]="tableCapacity()" (ngModelChange)="tableCapacity.set($event)"
+                       name="tableCapacity" min="2" max="50" placeholder="Ex: 10">
+              </div>
+
+              <div class="col-6 col-md-3">
+                <label class="form-label fs-xs fw-semibold text-dark mb-1">Nombre estimé</label>
+                <input type="number" class="form-control form-control-sm"
+                       [ngModel]="tablesCount()" (ngModelChange)="tablesCount.set($event)"
+                       name="tablesCount" min="1" max="100" placeholder="Ex: 15">
+              </div>
+            </div>
+            <div class="form-text fs-xs text-muted mt-2">
+              Ces paramètres permettront de générer et d'organiser les tables pour le placement des invités confirmés.
+            </div>
+          </div>
+
           <!-- Billetterie & Format d'Accès (Gratuit / Payant) -->
           <div class="mb-4 p-3 bg-body-light border rounded-3">
             <div class="d-flex align-items-center justify-content-between mb-2">

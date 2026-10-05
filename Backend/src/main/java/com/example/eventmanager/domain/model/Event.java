@@ -36,6 +36,11 @@ public class Event {
     private Double ticketPrice = 0.0;
     @Builder.Default
     private String currency = "MAD";
+    @Builder.Default
+    private String tableShape = "ROUND";
+    @Builder.Default
+    private Integer tableCapacity = 10;
+    private Integer tablesCount;
 
     public void setupInvitation(Long templateId, String templateIdStr, String token, String title, LocalDateTime date, String location) {
         setupInvitation(templateId, templateIdStr, token, title, this.invitationSubtitle, date, location, this.parkingLocation);

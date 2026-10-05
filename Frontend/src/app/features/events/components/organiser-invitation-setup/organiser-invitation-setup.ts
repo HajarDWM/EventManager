@@ -1015,10 +1015,6 @@ export class OrganiserInvitationSetup implements OnInit {
   }
 
   protected selectTemplate(template: DigitalTemplate): void {
-    if (this.isSubscriptionExpired()) {
-      this.errorMessage.set("Abonnement expiré — Mode consultation uniquement. La modification du modèle est restreinte. Veuillez renouveler votre abonnement.");
-      return;
-    }
     this.selectedTemplate.set(template);
     
     // Auto fill defaults corresponding to the chosen celebration
@@ -1241,11 +1237,6 @@ export class OrganiserInvitationSetup implements OnInit {
   }
 
   protected sendInvitations(): void {
-    if (this.isSubscriptionExpired()) {
-      this.errorMessage.set("Abonnement expiré — Mode consultation uniquement. L'envoi d'invitations est restreint. Veuillez renouveler votre abonnement.");
-      setTimeout(() => this.errorMessage.set(''), 4000);
-      return;
-    }
     const selectedCount = this.getSelectedCount();
     if (selectedCount === 0) {
       this.errorMessage.set('Veuillez sélectionner au moins un invité à qui envoyer l\'invitation.');

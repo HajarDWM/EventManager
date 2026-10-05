@@ -111,6 +111,33 @@
       </div>
     </div>
 
+    <!-- Batch Assignment Bar when filtering by group -->
+    <div class="alert alert-info d-flex flex-column flex-md-row align-items-md-center justify-content-between p-2.5 px-3 rounded-3 border-0 bg-info-light text-info mb-3 animate__animated animate__fadeIn"
+         *ngIf="selectedGroupFilter() !== 'ALL'">
+      <div class="d-flex align-items-center gap-2 mb-2 mb-md-0">
+        <i class="fa fa-users text-info fs-5"></i>
+        <span class="fs-sm fw-semibold">
+          Groupe actif : <strong>{{ selectedGroupFilter() }}</strong>
+        </span>
+      </div>
+      <div class="d-flex align-items-center gap-2">
+        <select class="form-select form-select-sm border-0 bg-white fs-xs" style="min-width: 170px;"
+                [ngModel]="batchSelectedTable()" (ngModelChange)="batchSelectedTable.set($event)">
+          <option value="">-- Assigner à une table --</option>
+          <option *ngFor="let tbl of tableOptions()" [value]="tbl.name" [disabled]="tbl.isFull">
+            {{ tbl.name }} ({{ tbl.occupied }}/{{ tbl.capacity }}) {{ tbl.isFull ? '- Pleine' : '' }}
+          </option>
+        </select>
+        <button type="button" class="btn btn-sm btn-primary fw-bold text-nowrap"
+                [disabled]="!batchSelectedTable() || isBatchAssigning()"
+                (click)="batchAssignGroupToTable(selectedGroupFilter(), batchSelectedTable())">
+          <i class="fa fa-check me-1" *ngIf="!isBatchAssigning()"></i>
+          <i class="fa fa-circle-notch fa-spin me-1" *ngIf="isBatchAssigning()"></i>
+          Assigner le groupe
+        </button>
+      </div>
+    </div>
+
     <!-- Table -->
     <div class="table-responsive" *ngIf="!isLoading() && filteredGuests().length > 0">
       <table class="table table-striped table-vcenter">
@@ -282,12 +309,42 @@
                   <option value="DECLINED">Décliné</option>
                 </select>
               </div>
-              <div class="col-md-6">
-                <label class="form-label fw-bold text-dark fs-sm mb-1.5">Position / Table</label>
+              <div class="col-md-6 position-relative table-autocomplete-container">
+                <label class="form-label fw-bold text-dark fs-sm mb-1.5 d-flex justify-content-between align-items-center">
+                  <span>Position / Table</span>
+                  <span class="fs-3xs text-muted" *ngIf="status() !== 'CONFIRMED'">(Optionnel)</span>
+                  <span class="badge bg-success-light text-success fs-3xs" *ngIf="status() === 'CONFIRMED'">Confirmé</span>
+                </label>
                 <div class="input-group luxury-input-group">
                   <span class="input-group-text input-icon-box"><i class="fa fa-location-dot"></i></span>
                   <input type="text" class="form-control"
-                         placeholder="Ex: Table A1, VIP..." [ngModel]="tableNumber()" (ngModelChange)="tableNumber.set($event)" name="tableNumber">
+                         placeholder="Ex: Table 1, Table VIP..."
+                         [ngModel]="tableNumber()" (ngModelChange)="onTableInputChange($event)"
+                         (focus)="isTableDropdownOpen.set(true)"
+                         name="tableNumber" autocomplete="off">
+                  <button type="button" class="btn btn-outline-secondary" (click)="toggleTableDropdown($event)">
+                    <i class="fa" [ngClass]="isTableDropdownOpen() ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+                  </button>
+                </div>
+                <div class="dropdown-menu w-100 shadow border-light py-1 mt-1 show"
+                     style="position: absolute; z-index: 1050; max-height: 220px; overflow-y: auto;"
+                     *ngIf="isTableDropdownOpen() && tableOptions().length > 0">
+                  <div class="px-3 py-1 bg-body-light border-bottom text-muted fs-3xs fw-bold text-uppercase d-flex justify-content-between">
+                    <span>Tables suggérées</span>
+                    <span>Places</span>
+                  </div>
+                  <button type="button" class="dropdown-item fs-sm py-2 px-3 text-start w-100 d-flex justify-content-between align-items-center"
+                          *ngFor="let tbl of tableOptions()"
+                          [class.bg-success-light]="tbl.isRecommended"
+                          (click)="selectTable(tbl.name)">
+                    <div>
+                      <span class="fw-semibold text-dark">{{ tbl.name }}</span>
+                      <span class="badge bg-primary-light text-primary ms-1.5 fs-3xs" *ngIf="tbl.isRecommended">Recommandé pour {{ groupName() }}</span>
+                    </div>
+                    <span class="badge" [ngClass]="tbl.isFull ? 'bg-danger text-white' : (tbl.occupied > 0 ? 'bg-info-light text-info' : 'bg-secondary-light text-secondary')">
+                      {{ tbl.occupied }} / {{ tbl.capacity }}
+                    </span>
+                  </button>
                 </div>
               </div>
             </div>

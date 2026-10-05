@@ -31,4 +31,7 @@ export interface Event {
   depositsPaid?: number;
   balanceDue?: number;
   templateBackgroundImageUrl?: string;
+  tableShape?: 'ROUND' | 'RECTANGULAR' | 'MIXED' | string;
+  tableCapacity?: number;
+  tablesCount?: number;
 }

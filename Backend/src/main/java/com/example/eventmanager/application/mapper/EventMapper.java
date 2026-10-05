@@ -34,7 +34,10 @@ public class EventMapper {
                 .templateId(dto.getTemplateId())
                 .isPaidEvent(dto.getIsPaidEvent() != null ? dto.getIsPaidEvent() : false)
                 .ticketPrice(dto.getTicketPrice() != null ? dto.getTicketPrice() : 0.0)
-                .currency(dto.getCurrency() != null ? dto.getCurrency() : "MAD");
+                .currency(dto.getCurrency() != null ? dto.getCurrency() : "MAD")
+                .tableShape(dto.getTableShape() != null ? dto.getTableShape() : "ROUND")
+                .tableCapacity(dto.getTableCapacity() != null ? dto.getTableCapacity() : 10)
+                .tablesCount(dto.getTablesCount());
 
         if (dto.getStatus() != null) {
             builder.status(EventStatus.valueOf(dto.getStatus()));
@@ -71,6 +74,9 @@ public class EventMapper {
                 .isPaidEvent(event.isPaidEvent())
                 .ticketPrice(event.getTicketPrice())
                 .currency(event.getCurrency())
+                .tableShape(event.getTableShape() != null ? event.getTableShape() : "ROUND")
+                .tableCapacity(event.getTableCapacity() != null ? event.getTableCapacity() : 10)
+                .tablesCount(event.getTablesCount())
                 .build();
     }
 }
