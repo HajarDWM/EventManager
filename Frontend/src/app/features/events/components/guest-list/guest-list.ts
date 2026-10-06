@@ -385,6 +385,10 @@ export class GuestList implements OnInit {
     });
   }
 
+  protected getConfirmedCountForGroup(groupName: string): number {
+    return this.guests().filter(g => g.groupName === groupName && g.status === 'CONFIRMED').length;
+  }
+
   protected readonly isTableDropdownOpen = signal<boolean>(false);
   protected readonly batchSelectedTable = signal<string>('');
   protected readonly isBatchAssigning = signal<boolean>(false);
@@ -415,8 +419,23 @@ export class GuestList implements OnInit {
       const capacity = name.toLowerCase().includes('honneur') ? Math.max(defaultCapacity, 12) : defaultCapacity;
       const isFull = occupied >= capacity;
 
-      const groupsInTable = Array.from(new Set(seatedGuests.map(g => g.groupName).filter(Boolean))) as string[];
+      const groupCounts = new Map<string, number>();
+      seatedGuests.forEach(g => {
+        const grp = g.groupName?.trim() || 'Sans groupe';
+        groupCounts.set(grp, (groupCounts.get(grp) || 0) + 1);
+      });
+
+      const groupsInTable = Array.from(groupCounts.keys()).filter(k => k !== 'Sans groupe');
       const isRecommended = currentSelectedGroup ? groupsInTable.some(g => g.toLowerCase() === currentSelectedGroup) && !isFull : false;
+
+      let groupSummary = '';
+      if (occupied === 0) {
+        groupSummary = 'Table libre';
+      } else {
+        groupSummary = Array.from(groupCounts.entries())
+          .map(([grp, count]) => `${grp} (${count})`)
+          .join(', ');
+      }
 
       return {
         name,
@@ -425,6 +444,7 @@ export class GuestList implements OnInit {
         occupied,
         isFull,
         groupsInTable,
+        groupSummary,
         isRecommended
       };
     }).sort((a, b) => {

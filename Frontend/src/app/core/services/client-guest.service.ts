@@ -29,4 +29,14 @@ export class ClientGuestService {
   public downloadTemplate(eventId: number): Observable<Blob> {
     return this.http.get(`${this.apiUrl}/events/${eventId}/guests/template`, { responseType: 'blob' });
   }
+
+  public batchAssignTable(eventId: number, groupName: string, tableNumber: string, confirmedOnly: boolean = true): Observable<Guest[]> {
+    return this.http.put<Guest[]>(`${this.apiUrl}/events/${eventId}/guests/batch-assign-table`, {}, {
+      params: {
+        groupName: groupName,
+        tableNumber: tableNumber,
+        confirmedOnly: confirmedOnly
+      }
+    });
+  }
 }

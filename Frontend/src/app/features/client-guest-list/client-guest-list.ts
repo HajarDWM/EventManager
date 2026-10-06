@@ -44,15 +44,21 @@ export class ClientGuestList implements OnInit {
   protected readonly declinedCount = computed(() => this.guests().filter(g => g.status === 'DECLINED').length);
 
   protected readonly selectedFilter = signal<'ALL' | 'CONFIRMED' | 'PENDING' | 'DECLINED'>('ALL');
+  protected readonly selectedGroupFilter = signal<string>('ALL');
 
   protected readonly filteredGuests = computed(() => {
     let list = [...this.guests()];
     // Sort newest first (highest ID on top)
     list.sort((a, b) => (b.id || 0) - (a.id || 0));
 
-    const filter = this.selectedFilter();
-    if (filter === 'ALL') return list;
-    return list.filter(g => g.status === filter);
+    const statusFilter = this.selectedFilter();
+    const groupFilter = this.selectedGroupFilter();
+
+    return list.filter(g => {
+      const matchStatus = statusFilter === 'ALL' ? true : g.status === statusFilter;
+      const matchGroup = groupFilter === 'ALL' ? true : g.groupName === groupFilter;
+      return matchStatus && matchGroup;
+    });
   });
 
   protected setFilter(filter: 'ALL' | 'CONFIRMED' | 'PENDING' | 'DECLINED'): void {
@@ -61,6 +67,10 @@ export class ClientGuestList implements OnInit {
     } else {
       this.selectedFilter.set(filter);
     }
+  }
+
+  protected setGroupFilter(grp: string): void {
+    this.selectedGroupFilter.set(grp);
   }
 
   protected readonly uniqueGroups = computed(() => {
@@ -291,7 +301,13 @@ export class ClientGuestList implements OnInit {
     });
   }
 
+  protected getConfirmedCountForGroup(groupName: string): number {
+    return this.guests().filter(g => g.groupName === groupName && g.status === 'CONFIRMED').length;
+  }
+
   protected readonly isTableDropdownOpen = signal<boolean>(false);
+  protected readonly batchSelectedTable = signal<string>('');
+  protected readonly isBatchAssigning = signal<boolean>(false);
 
   protected readonly tableOptions = computed(() => {
     const evt = this.currentEvent();
@@ -319,8 +335,23 @@ export class ClientGuestList implements OnInit {
       const capacity = name.toLowerCase().includes('honneur') ? Math.max(defaultCapacity, 12) : defaultCapacity;
       const isFull = occupied >= capacity;
 
-      const groupsInTable = Array.from(new Set(seatedGuests.map(g => g.groupName).filter(Boolean))) as string[];
+      const groupCounts = new Map<string, number>();
+      seatedGuests.forEach(g => {
+        const grp = g.groupName?.trim() || 'Sans groupe';
+        groupCounts.set(grp, (groupCounts.get(grp) || 0) + 1);
+      });
+
+      const groupsInTable = Array.from(groupCounts.keys()).filter(k => k !== 'Sans groupe');
       const isRecommended = currentSelectedGroup ? groupsInTable.some(g => g.toLowerCase() === currentSelectedGroup) && !isFull : false;
+
+      let groupSummary = '';
+      if (occupied === 0) {
+        groupSummary = 'Table libre';
+      } else {
+        groupSummary = Array.from(groupCounts.entries())
+          .map(([grp, count]) => `${grp} (${count})`)
+          .join(', ');
+      }
 
       return {
         name,
@@ -329,6 +360,7 @@ export class ClientGuestList implements OnInit {
         occupied,
         isFull,
         groupsInTable,
+        groupSummary,
         isRecommended
       };
     }).sort((a, b) => {
@@ -337,6 +369,33 @@ export class ClientGuestList implements OnInit {
       return a.name.localeCompare(b.name, undefined, { numeric: true });
     });
   });
+
+  protected batchAssignGroupToTable(groupName: string, tableNumber: string): void {
+    if (!groupName || groupName === 'ALL' || !tableNumber || !this.eventId()) return;
+
+    if (this.isGuestAdditionLocked()) {
+      alert('La date limite de modification des invités est dépassée.');
+      return;
+    }
+
+    this.isBatchAssigning.set(true);
+    this.errorMessage.set('');
+
+    this.clientGuestService.batchAssignTable(this.eventId()!, groupName, tableNumber, true).subscribe({
+      next: () => {
+        this.isBatchAssigning.set(false);
+        this.successMessage.set(`Tous les invités confirmés du groupe "${groupName}" ont été assignés à "${tableNumber}".`);
+        this.batchSelectedTable.set('');
+        if (this.eventId()) this.loadGuests(this.eventId()!);
+        setTimeout(() => this.successMessage.set(''), 4000);
+      },
+      error: (err) => {
+        this.isBatchAssigning.set(false);
+        this.errorMessage.set('Erreur lors de l\'assignation groupée de la table.');
+        console.error(err);
+      }
+    });
+  }
 
   protected selectTable(tableName: string): void {
     this.tableNumber.set(tableName);

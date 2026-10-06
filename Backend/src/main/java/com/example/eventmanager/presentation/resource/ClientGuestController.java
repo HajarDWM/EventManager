@@ -23,10 +23,32 @@ public class ClientGuestController {
 
     private final JpaGuestRepository guestRepository;
     private final EventRepository eventRepository;
+    private final com.example.eventmanager.application.port.in.BatchAssignTableUseCase batchAssignTableUseCase;
 
     private boolean isClientAuthorizedForEvent(Long clientId, Long eventId) {
         EventEntity event = eventRepository.findById(eventId).orElse(null);
         return event != null && clientId.equals(event.getClientId());
+    }
+
+    @PutMapping("/batch-assign-table")
+    public ResponseEntity<?> batchAssignTable(
+            @PathVariable Long eventId,
+            @RequestParam String groupName,
+            @RequestParam String tableNumber,
+            @RequestParam(defaultValue = "true") boolean confirmedOnly,
+            @AuthenticationPrincipal ClientUserDetails clientDetails) {
+
+        if (!isClientAuthorizedForEvent(clientDetails.getClientId(), eventId)) {
+            return ResponseEntity.status(403).body("Access denied to this event");
+        }
+
+        if (isGuestModificationDeadlinePassed(eventId)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
+                java.util.Map.of("error", "DEADLINE_PASSED", "message", "La date limite de modification des invités est dépassée (clôturée 72h avant l'événement).")
+            );
+        }
+
+        return ResponseEntity.ok(batchAssignTableUseCase.batchAssignTableByGroup(eventId, groupName, tableNumber, confirmedOnly));
     }
 
     @GetMapping

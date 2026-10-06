@@ -162,6 +162,15 @@ public class EventApplicationService implements CreateEventUseCase, GetEventUseC
         if (eventDTO.getCurrency() != null) {
             existingEvent.setCurrency(eventDTO.getCurrency());
         }
+        if (eventDTO.getTableShape() != null) {
+            existingEvent.setTableShape(eventDTO.getTableShape());
+        }
+        if (eventDTO.getTableCapacity() != null) {
+            existingEvent.setTableCapacity(eventDTO.getTableCapacity());
+        }
+        if (eventDTO.getTablesCount() != null) {
+            existingEvent.setTablesCount(eventDTO.getTablesCount());
+        }
 
         // Update Client Entity if fields provided
         if (existingEvent.getClientId() != null) {
