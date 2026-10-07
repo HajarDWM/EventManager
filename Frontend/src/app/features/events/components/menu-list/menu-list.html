@@ -3,20 +3,19 @@
   class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-2 text-center text-md-start">
   <div class="flex-grow-1 mb-1 mb-md-0">
     <h1 class="h3 fw-bold mb-2">
-      Restauration & Menus
+      {{ 'CATERING.TITLE' | translate }}
     </h1>
     <h2 class="h6 fw-medium text-muted mb-0" *ngIf="event()">
-      Événement : <strong class="text-primary">{{ event()?.title }}</strong> ({{ event()?.eventDate | date:'dd/MM/yyyy'
-      }}) -
-      <span class="badge bg-secondary-light text-secondary">{{ event()?.guestCount || 0 }} invités attendus</span>
+      {{ 'EVENTS.NAME' | translate }} : <strong class="text-primary">{{ event()?.title }}</strong> ({{ event()?.eventDate | date:'dd/MM/yyyy' }}) -
+      <span class="badge bg-secondary-light text-secondary">{{ event()?.guestCount || 0 }} {{ 'DASHBOARD.GUESTS_EXPECTED' | translate }}</span>
     </h2>
   </div>
   <div class="mt-3 mt-md-0 d-flex gap-2 justify-content-center">
     <a [routerLink]="['/events', eventId()]" class="btn btn-alt-secondary">
-      <i class="fa fa-arrow-left me-1"></i> Retour
+      <i class="fa fa-arrow-left me-1"></i> {{ 'COMMON.BACK' | translate }}
     </a>
     <button class="btn btn-primary" (click)="openAddModal()">
-      <i class="fa fa-plus me-1"></i> Ajouter un plat / boisson
+      <i class="fa fa-plus me-1"></i> {{ 'CATERING.ADD_DISH' | translate }}
     </button>
   </div>
 </div>
@@ -39,7 +38,7 @@
 <div class="block block-rounded shadow-sm border border-light mt-3">
   <div class="block-header block-header-default border-bottom py-2 px-3">
     <h3 class="block-title fw-bold fs-xs text-uppercase text-muted mb-0">
-      <i class="fa fa-utensils text-primary me-2"></i>Formats de Restauration
+      <i class="fa fa-utensils text-primary me-2"></i>{{ 'CATERING.FORMATS_TITLE' | translate }}
     </h3>
   </div>
   <div class="block-content p-2 bg-white">
@@ -56,8 +55,8 @@
             <i class="fa fa-cheese"></i>
           </div>
           <div class="lh-sm">
-            <h5 class="fw-bold fs-xs text-dark mb-0">Formule Buffet</h5>
-            <span class="fs-xxs text-muted">Libre-service</span>
+            <h5 class="fw-bold fs-xs text-dark mb-0">{{ 'CATERING.BUFFET_FORMULA' | translate }}</h5>
+            <span class="fs-xxs text-muted">{{ 'CATERING.BUFFET_DESC' | translate }}</span>
           </div>
         </div>
       </div>
@@ -73,8 +72,8 @@
             <i class="fa fa-concierge-bell"></i>
           </div>
           <div class="lh-sm">
-            <h5 class="fw-bold fs-xs text-dark mb-0">Service à l'assiette</h5>
-            <span class="fs-xxs text-muted">Service à table</span>
+            <h5 class="fw-bold fs-xs text-dark mb-0">{{ 'CATERING.PLATS_FIXES_FORMULA' | translate }}</h5>
+            <span class="fs-xxs text-muted">{{ 'CATERING.PLATS_FIXES_DESC' | translate }}</span>
           </div>
         </div>
       </div>
@@ -90,8 +89,8 @@
             <i class="fa fa-blender"></i>
           </div>
           <div class="lh-sm">
-            <h5 class="fw-bold fs-xs text-dark mb-0">Formule Combinée (Mix)</h5>
-            <span class="fs-xxs text-muted">Buffets & Service assis</span>
+            <h5 class="fw-bold fs-xs text-dark mb-0">{{ 'CATERING.MIX_FORMULA' | translate }}</h5>
+            <span class="fs-xxs text-muted">{{ 'CATERING.MIX_DESC' | translate }}</span>
           </div>
         </div>
       </div>
@@ -217,7 +216,7 @@
 <div class="alert alert-info d-flex align-items-center gap-2 mt-2 py-2 px-3 animate__animated animate__fadeIn" *ngIf="masterCateringMode() === 'BUFFET' || masterCateringMode() === 'MIX'">
   <i class="fa fa-info-circle text-info fs-sm"></i>
   <div class="fs-xxs fw-medium text-black">
-    Les formules en <strong>Buffet</strong> seront présentées en libre-service pour les invités lors de leur RSVP.
+    {{ 'CATERING.BUFFET_NOTICE' | translate }}
   </div>
 </div>
 
@@ -229,19 +228,19 @@
         <i class="fa fa-calculator fa-lg"></i>
       </div>
       <div>
-        <h3 class="h6 fw-bold text-dark mb-1">Estimation du Coût Traiteur</h3>
-        <p class="text-muted fs-sm mb-0">Basé sur {{ confirmedGuestsCount() > 0 ? confirmedGuestsCount() : (event()?.guestCount || 0) }} invités {{ confirmedGuestsCount() > 0 ? 'confirmés' : 'attendus' }} et {{ menuItems().length }} plats/boissons sélectionnés.</p>
+        <h3 class="h6 fw-bold text-dark mb-1">{{ 'CATERING.COST_ESTIMATION' | translate }}</h3>
+        <p class="text-muted fs-sm mb-0">{{ 'CATERING.BASED_ON' | translate }} {{ confirmedGuestsCount() > 0 ? confirmedGuestsCount() : (event()?.guestCount || 0) }} {{ 'CATERING.CONFIRMED_GUESTS_AND' | translate }} {{ menuItems().length }} {{ 'CATERING.SELECTED_DISHES' | translate }}</p>
       </div>
     </div>
     <div class="d-flex align-items-center gap-2 flex-wrap justify-content-center justify-content-md-end">
       <!-- Coût / Convive -->
       <div class="text-center bg-white p-2 px-3 rounded shadow-sm border border-white">
-        <span class="fs-xs fw-semibold text-uppercase text-muted d-block mb-1">Coût / Convive</span>
+        <span class="fs-xs fw-semibold text-uppercase text-muted d-block mb-1">{{ 'CATERING.COST_PER_GUEST' | translate }}</span>
         <span class="fs-5 fw-bold text-primary">{{ averageCostPerPerson() | number:'1.2-2':'fr' }} {{ currencySymbol() }}</span>
       </div>
       <!-- Budget Total -->
       <div class="text-center bg-white p-2 px-3 rounded shadow-sm border border-white">
-        <span class="fs-xs fw-semibold text-uppercase text-muted d-block mb-1">Budget Total (Est.)</span>
+        <span class="fs-xs fw-semibold text-uppercase text-muted d-block mb-1">{{ 'CATERING.TOTAL_BUDGET_EST' | translate }}</span>
         <span class="fs-5 fw-extrabold text-success">{{ totalCateringBudget() | number:'1.2-2':'fr' }} {{ currencySymbol() }}</span>
       </div>
     </div>
@@ -252,11 +251,11 @@
 <div class="block block-rounded shadow-sm border border-light mt-3">
   <div class="block-header block-header-default d-flex flex-wrap justify-content-between align-items-center gap-2">
     <h3 class="block-title mb-0">
-      <i class="fa fa-utensils me-1 text-primary"></i> Carte & Menu Restauration
+      <i class="fa fa-utensils me-1 text-primary"></i> {{ 'CATERING.MENU_CARD_TITLE' | translate }}
     </h3>
     <div class="btn-group btn-group-sm" role="group">
       <button type="button" class="btn" [class.btn-primary]="selectedCategory() === 'ALL'"
-        [class.btn-alt-secondary]="selectedCategory() !== 'ALL'" (click)="selectedCategory.set('ALL')">Tous</button>
+        [class.btn-alt-secondary]="selectedCategory() !== 'ALL'" (click)="selectedCategory.set('ALL')">{{ 'COMMON.ALL' | translate }}</button>
 
       <!-- Plated/Course Categories -->
       <ng-container *ngIf="masterCateringMode() === 'PLATS_FIXES'">
@@ -274,13 +273,13 @@
       <ng-container *ngIf="masterCateringMode() === 'BUFFET'">
         <button type="button" class="btn" [class.btn-primary]="selectedCategory() === 'BUFFET_STARTER'"
           [class.btn-alt-secondary]="selectedCategory() !== 'BUFFET_STARTER'"
-          (click)="selectedCategory.set('BUFFET_STARTER')">Salad Bar / Entrée</button>
+          (click)="selectedCategory.set('BUFFET_STARTER')">{{ 'CATERING.CAT_SALAD_BAR_ENTREE' | translate }}</button>
         <button type="button" class="btn" [class.btn-primary]="selectedCategory() === 'BUFFET_MAIN'"
           [class.btn-alt-secondary]="selectedCategory() !== 'BUFFET_MAIN'"
-          (click)="selectedCategory.set('BUFFET_MAIN')">Plats Chauds</button>
+          (click)="selectedCategory.set('BUFFET_MAIN')">{{ 'CATERING.CAT_HOT_DISHES' | translate }}</button>
         <button type="button" class="btn" [class.btn-primary]="selectedCategory() === 'BUFFET_DESSERT'"
           [class.btn-alt-secondary]="selectedCategory() !== 'BUFFET_DESSERT'"
-          (click)="selectedCategory.set('BUFFET_DESSERT')">Station Desserts</button>
+          (click)="selectedCategory.set('BUFFET_DESSERT')">{{ 'CATERING.CAT_DESSERT_STATION' | translate }}</button>
       </ng-container>
 
       <!-- Mixed Categories -->
@@ -288,27 +287,27 @@
         <ng-container *ngIf="hasBuffetEntrees()">
           <button type="button" class="btn" [class.btn-primary]="selectedCategory() === 'BUFFET_STARTER'"
             [class.btn-alt-secondary]="selectedCategory() !== 'BUFFET_STARTER'"
-            (click)="selectedCategory.set('BUFFET_STARTER')">Pièces cocktail</button>
+            (click)="selectedCategory.set('BUFFET_STARTER')">{{ 'CATERING.CAT_COCKTAIL_PIECES' | translate }}</button>
           <button type="button" class="btn" [class.btn-primary]="selectedCategory() === 'STARTER'"
             [class.btn-alt-secondary]="selectedCategory() !== 'STARTER'"
-            (click)="selectedCategory.set('STARTER')">Salad Bar</button>
+            (click)="selectedCategory.set('STARTER')">{{ 'CATERING.CAT_SALAD_BAR' | translate }}</button>
         </ng-container>
         
         <button *ngIf="isFormatSelected('PLATS_FIXES')" type="button" class="btn" [class.btn-primary]="selectedCategory() === 'MAIN'"
-          [class.btn-alt-secondary]="selectedCategory() !== 'MAIN'" (click)="selectedCategory.set('MAIN')">Plats</button>
+          [class.btn-alt-secondary]="selectedCategory() !== 'MAIN'" (click)="selectedCategory.set('MAIN')">{{ 'CATERING.CAT_MAINS' | translate }}</button>
           
         <button *ngIf="hasBuffetDesserts()" type="button" class="btn" [class.btn-primary]="selectedCategory() === 'BUFFET_DESSERT'"
           [class.btn-alt-secondary]="selectedCategory() !== 'BUFFET_DESSERT'"
-          (click)="selectedCategory.set('BUFFET_DESSERT')">Station Desserts</button>
+          (click)="selectedCategory.set('BUFFET_DESSERT')">{{ 'CATERING.CAT_DESSERT_STATION' | translate }}</button>
           
         <button *ngIf="!hasBuffetDesserts()" type="button" class="btn" [class.btn-primary]="selectedCategory() === 'DESSERT'"
           [class.btn-alt-secondary]="selectedCategory() !== 'DESSERT'"
-          (click)="selectedCategory.set('DESSERT')">Desserts</button>
+          (click)="selectedCategory.set('DESSERT')">{{ 'CATERING.DESSERTS' | translate }}</button>
       </ng-container>
 
       <button *ngIf="masterCateringMode() !== 'PLATS_FIXES' || isFormatSelected('COURSE_BEVERAGE')" type="button" class="btn" [class.btn-primary]="selectedCategory() === 'BEVERAGE'"
         [class.btn-alt-secondary]="selectedCategory() !== 'BEVERAGE'"
-        (click)="selectedCategory.set('BEVERAGE')">Boissons</button>
+        (click)="selectedCategory.set('BEVERAGE')">{{ 'CATERING.BEVERAGES' | translate }}</button>
     </div>
   </div>
 
@@ -700,14 +699,14 @@
         <h5 class="modal-title fw-bold">
           <i class="fa fa-utensils text-primary me-1" *ngIf="!isEditing()"></i>
           <i class="fa fa-edit text-primary me-1" *ngIf="isEditing()"></i>
-          {{ isEditing() ? 'Modifier le plat' : 'Ajouter un plat / boisson' }}
+          {{ (isEditing() ? 'CATERING.EDIT_DISH' : 'CATERING.ADD_DISH') | translate }}
         </h5>
         <button type="button" class="btn-close" (click)="closeModal()"></button>
       </div>
       <form (ngSubmit)="onSaveMenuItem()">
         <div class="modal-body">
           <div class="mb-3">
-            <label class="form-label fs-sm fw-semibold">Nom du plat ou boisson <span
+            <label class="form-label fs-sm fw-semibold">{{ 'CATERING.DISH_NAME' | translate }} <span
                 class="text-danger">*</span></label>
             <div class="position-relative" (focusout)="onAutocompleteFocusOut()">
               <input type="text" class="form-control form-control-alt fs-sm" 
@@ -759,68 +758,68 @@
           </div>
           <!-- If MIX mode: Selection of section -->
           <div class="mb-3 animate__animated animate__fadeIn" *ngIf="masterCateringMode() === 'MIX'">
-            <label class="form-label fs-sm fw-semibold d-block">Section de service (Formule Mixte)</label>
+            <label class="form-label fs-sm fw-semibold d-block">{{ 'CATERING.MIX_SERVICE_SECTION' | translate }}</label>
             <div class="d-flex gap-4 mt-1">
               <div class="form-check form-check-inline">
                 <input class="form-check-input" type="radio" id="section_buffet" name="mixSection"
                        [value]="'BUFFET'" [ngModel]="mixSectionChoice()" (ngModelChange)="onMixSectionChange($event)">
-                <label class="form-check-label fs-sm text-dark ms-1" for="section_buffet" style="cursor: pointer;">Cocktail / Entrée (Buffet Libre)</label>
+                <label class="form-check-label fs-sm text-dark ms-1" for="section_buffet" style="cursor: pointer;">{{ 'CATERING.COCKTAIL_ENTREE_BUFFET' | translate }}</label>
               </div>
               <div class="form-check form-check-inline">
                 <input class="form-check-input" type="radio" id="section_assis" name="mixSection"
                        [value]="'ASSIS'" [ngModel]="mixSectionChoice()" (ngModelChange)="onMixSectionChange($event)">
-                <label class="form-check-label fs-sm text-dark ms-1" for="section_assis" style="cursor: pointer;">Plat Principal (Service à table)</label>
+                <label class="form-check-label fs-sm text-dark ms-1" for="section_assis" style="cursor: pointer;">{{ 'CATERING.MAIN_PLATED_SERVICE' | translate }}</label>
               </div>
             </div>
           </div>
 
           <div class="row mb-3">
             <div class="col-md-6">
-              <label class="form-label fs-sm fw-semibold">Catégorie</label>
+              <label class="form-label fs-sm fw-semibold">{{ 'CATERING.DISH_CATEGORY' | translate }}</label>
               <select class="form-select form-control-alt fs-sm" [ngModel]="category()"
                 (ngModelChange)="category.set($event)" name="category">
                 <ng-container *ngIf="masterCateringMode() === 'PLATS_FIXES'">
-                  <option value="STARTER">Entrée</option>
-                  <option value="MAIN">Plat Principal</option>
-                  <option value="DESSERT">Dessert</option>
-                  <option value="BEVERAGE">Boisson</option>
-                  <option value="OTHER">Autre</option>
+                  <option value="STARTER">{{ 'CATERING.OPT_STARTER' | translate }}</option>
+                  <option value="MAIN">{{ 'CATERING.OPT_MAIN' | translate }}</option>
+                  <option value="DESSERT">{{ 'CATERING.OPT_DESSERT' | translate }}</option>
+                  <option value="BEVERAGE">{{ 'CATERING.OPT_BEVERAGE' | translate }}</option>
+                  <option value="OTHER">{{ 'CATERING.OPT_OTHER' | translate }}</option>
                 </ng-container>
                 <ng-container *ngIf="masterCateringMode() === 'BUFFET'">
-                  <option value="BUFFET_STARTER">Salad Bar / Entrée (Buffet)</option>
-                  <option value="BUFFET_MAIN">Station Plats Chauds (Buffet)</option>
-                  <option value="BUFFET_DESSERT">Station Desserts (Buffet)</option>
-                  <option value="BEVERAGE">Boisson</option>
+                  <option value="BUFFET_STARTER">{{ 'CATERING.CAT_SALAD_BAR_ENTREE' | translate }}</option>
+                  <option value="BUFFET_MAIN">{{ 'CATERING.CAT_HOT_DISHES' | translate }}</option>
+                  <option value="BUFFET_DESSERT">{{ 'CATERING.CAT_DESSERT_STATION' | translate }}</option>
+                  <option value="BEVERAGE">{{ 'CATERING.OPT_BEVERAGE' | translate }}</option>
                 </ng-container>
                 <ng-container *ngIf="masterCateringMode() === 'MIX'">
                   <!-- Buffet Restrictive Categories -->
                   <ng-container *ngIf="mixSectionChoice() === 'BUFFET'">
                     <ng-container *ngIf="hasBuffetEntrees()">
-                      <option value="BEVERAGE">Boissons d'accueil</option>
-                      <option value="BUFFET_STARTER">Amuse-gueule</option>
-                      <option value="STARTER">Salades</option>
+                      <option value="BEVERAGE">{{ 'CATERING.CAT_WELCOME_DRINKS' | translate }}</option>
+                      <option value="BUFFET_STARTER">{{ 'CATERING.CAT_APPETIZERS' | translate }}</option>
+                      <option value="STARTER">{{ 'CATERING.CAT_SALADS' | translate }}</option>
                     </ng-container>
                     <ng-container *ngIf="hasBuffetDesserts()">
-                      <option value="BUFFET_DESSERT">Station Desserts (Buffet)</option>
+                      <option value="BUFFET_DESSERT">{{ 'CATERING.CAT_DESSERT_STATION' | translate }}</option>
                     </ng-container>
                   </ng-container>
                   <!-- Seated Restrictive Categories -->
                   <ng-container *ngIf="mixSectionChoice() === 'ASSIS'">
-                    <option value="MAIN">Plats</option>
-                    <option value="DESSERT" *ngIf="!hasBuffetDesserts()">Desserts</option>
+                    <option value="MAIN">{{ 'CATERING.CAT_MAINS' | translate }}</option>
+                    <option value="DESSERT" *ngIf="!hasBuffetDesserts()">{{ 'CATERING.DESSERTS' | translate }}</option>
                   </ng-container>
                 </ng-container>
               </select>
             </div>
             <div class="col-md-6">
-              <label class="form-label fs-sm fw-semibold">Prix par personne ({{ currencySymbol() }})</label>
+              <label class="form-label fs-sm fw-semibold">{{ 'CATERING.PRICE_PER_PERSON' | translate }} ({{ currencySymbol() }})</label>
               <input type="number" step="0.5" class="form-control form-control-alt fs-sm" placeholder="Ex: 24.50"
                 [ngModel]="pricePerPerson()" (ngModelChange)="pricePerPerson.set($event)" name="pricePerPerson">
             </div>
           </div>
           <!-- Régimes alimentaires et Allergies -->
           <div class="mb-3">
-            <label class="form-label fs-sm fw-semibold d-block">Régimes alimentaires & Allergies</label>
+            <label class="form-label fs-sm fw-semibold d-block">{{ 'CATERING.DIETARY_ALLERGIES' | translate }}</label>
             <div class="row g-2">
               <div class="col-6 col-sm-6" *ngFor="let option of commonDietaryOptions">
                 <div class="form-check fs-sm">
@@ -830,27 +829,27 @@
                          (ngModelChange)="toggleDiet(option.value, $event)"
                          [name]="'diet-' + option.value">
                   <label class="form-check-label" [for]="'diet-' + option.value">
-                    {{ option.label }}
+                    {{ ('CATERING.DIET_' + option.value) | translate }}
                   </label>
                 </div>
               </div>
             </div>
             
             <div class="mt-2">
-              <label class="form-label fs-xs text-muted mb-1" for="custom-diet">Autres allergies ou régimes particuliers</label>
+              <label class="form-label fs-xs text-muted mb-1" for="custom-diet">{{ 'CATERING.OTHER_ALLERGIES' | translate }}</label>
               <input type="text" class="form-control form-control-alt fs-sm"
-                     id="custom-diet" name="customDietNotes" placeholder="Ex: Allergie au kiwi, sans céleri..."
+                     id="custom-diet" name="customDietNotes" [placeholder]="'CATERING.OTHER_ALLERGIES_PH' | translate"
                      [ngModel]="customDietNotes()" (ngModelChange)="customDietNotes.set($event)">
             </div>
           </div>
           <div class="mb-3">
-            <label class="form-label fs-sm fw-semibold">Description / Composition du plat</label>
+            <label class="form-label fs-sm fw-semibold">{{ 'CATERING.DISH_DESCRIPTION' | translate }}</label>
             <textarea class="form-control form-control-alt fs-sm" rows="3"
-              placeholder="Ex: Servi avec écrasé de pommes de terre à la truffe et légumes de saison."
+              [placeholder]="'CATERING.DISH_DESCRIPTION_PH' | translate"
               [ngModel]="description()" (ngModelChange)="description.set($event)" name="description"></textarea>
           </div>
           <div class="mb-3">
-            <label class="form-label fs-sm fw-semibold">Photo du plat</label>
+            <label class="form-label fs-sm fw-semibold">{{ 'CATERING.DISH_PHOTO' | translate }}</label>
 
             <!-- Upload zone -->
             <div class="border rounded-3 p-3 text-center bg-body position-relative"
@@ -862,13 +861,13 @@
                 <img [src]="imagePreviewUrl() || imageUrl()" alt="Aperçu"
                      class="rounded-3 object-fit-cover mx-auto d-block mb-2"
                      style="max-height: 120px; max-width: 100%;">
-                <span class="fs-xxs text-muted">Cliquer pour changer</span>
+                <span class="fs-xxs text-muted">{{ 'CATERING.CLICK_TO_CHANGE' | translate }}</span>
               </ng-container>
 
               <!-- Placeholder (no image yet) -->
               <ng-container *ngIf="!imagePreviewUrl() && !imageUrl()">
                 <i class="fa fa-cloud-upload-alt fs-2 text-muted mb-2 d-block"></i>
-                <span class="fs-xs text-muted">Glisser une image ou <strong>cliquer</strong> pour choisir</span>
+                <span class="fs-xs text-muted">{{ 'CATERING.DROP_IMAGE' | translate }}</span>
                 <div class="fs-xxs text-muted mt-1">JPG, PNG, WebP — max 2 MB</div>
               </ng-container>
 
@@ -890,7 +889,7 @@
 
             <!-- Manual URL fallback (collapsible) -->
             <div class="mt-2">
-              <small class="text-muted fs-xxs">Ou coller un lien image :</small>
+              <small class="text-muted fs-xxs">{{ 'CATERING.OR_IMAGE_LINK' | translate }}</small>
               <input type="text" class="form-control form-control-alt fs-xs mt-1"
                 placeholder="https://..."
                 [ngModel]="imageUrl()" (ngModelChange)="imageUrl.set($event); imagePreviewUrl.set($event)" name="imageUrl">
@@ -898,11 +897,11 @@
           </div>
         </div>
         <div class="modal-footer bg-body-light">
-          <button type="button" class="btn btn-sm btn-alt-secondary" (click)="closeModal()">Annuler</button>
+          <button type="button" class="btn btn-sm btn-alt-secondary" (click)="closeModal()">{{ 'COMMON.CANCEL' | translate }}</button>
           <button type="submit" class="btn btn-sm btn-primary" [disabled]="isSaving()">
             <i class="fa fa-save me-1" *ngIf="!isSaving()"></i>
             <i class="fa fa-circle-notch fa-spin me-1" *ngIf="isSaving()"></i>
-            Enregistrer
+            {{ 'COMMON.SAVE' | translate }}
           </button>
         </div>
       </form>

@@ -3,19 +3,19 @@
   <div class="flex-grow-1 mb-2 mb-md-0">
     <div class="d-flex align-items-center justify-content-center justify-content-md-start gap-2 mb-1">
       <h1 class="h3 fw-bold mb-0">
-        {{ eventTitle() || 'Chargement...' }}
+        {{ eventTitle() || ('COMMON.LOADING' | translate) }}
       </h1>
       <span class="badge bg-danger-light text-danger px-3 py-2 rounded fs-xs">
-        Suivi Financier Simplifié
+        {{ 'BILLING.SIMPLIFIED_BADGE' | translate }}
       </span>
     </div>
     <h2 class="h6 fw-medium text-muted mb-0">
-      Définissez le montant de l'événement et suivez les acomptes et règlements reçus.
+      {{ 'BILLING.SUBTITLE' | translate }}
     </h2>
   </div>
   <div class="mt-2 mt-md-0 ms-md-3">
     <a class="btn btn-alt-secondary rounded-pill px-3" [routerLink]="['/events', eventId()]">
-      <i class="fa fa-arrow-left me-1"></i> Retour aux détails
+      <i class="fa fa-arrow-left me-1"></i> {{ 'BILLING.BACK_TO_DETAILS' | translate }}
     </a>
   </div>
 </div>
@@ -34,7 +34,7 @@
 <div class="row" *ngIf="isLoading()">
   <div class="col-12 text-center py-5">
     <i class="fa fa-fw fa-circle-notch fa-spin text-primary fs-2"></i>
-    <p class="mt-2 text-muted fs-sm">Mise à jour des données financières...</p>
+    <p class="mt-2 text-muted fs-sm">{{ 'BILLING.UPDATING_DATA' | translate }}</p>
   </div>
 </div>
 
@@ -47,21 +47,21 @@
       <!-- Card 1: Total Price -->
       <div class="col-md-6">
         <div class="block block-rounded bg-white border border-light shadow-sm p-2.5 text-center h-100 d-flex flex-column justify-content-center">
-          <div class="fs-xs fw-bold text-muted text-uppercase mb-1">Total Global de l'Événement</div>
+          <div class="fs-xs fw-bold text-muted text-uppercase mb-1">{{ 'BILLING.TOTAL_GLOBAL' | translate }}</div>
           <div class="fs-4 fw-extrabold text-primary">{{ eventTotalPrice() | number:'1.2-2' }} {{ currencySymbol() }}</div>
-          <div class="fs-xs text-muted mt-1">Tarif global convenu avec le client</div>
+          <div class="fs-xs text-muted mt-1">{{ 'BILLING.GLOBAL_PRICE_DESC' | translate }}</div>
         </div>
       </div>
 
       <!-- Card 2: Net Profit -->
       <div class="col-md-6">
         <div class="block block-rounded bg-white border border-light shadow-sm p-2.5 text-center h-100 d-flex flex-column justify-content-center">
-          <div class="fs-xs fw-bold text-muted text-uppercase mb-1">Bénéfice Net (Est.)</div>
+          <div class="fs-xs fw-bold text-muted text-uppercase mb-1">{{ 'BILLING.NET_PROFIT_EST' | translate }}</div>
           <div class="fs-4 fw-extrabold" [ngClass]="netProfitAmount() >= 0 ? 'text-success' : 'text-danger'">
             {{ netProfitAmount() | number:'1.2-2' }} {{ currencySymbol() }}
           </div>
           <div class="fs-xs mt-1 fw-semibold" [ngClass]="netProfitAmount() >= 0 ? 'text-success' : 'text-danger'">
-            {{ netProfitAmount() >= 0 ? 'Marge bénéficiaire positive' : 'Perte / Déficit' }}
+            {{ (netProfitAmount() >= 0 ? 'BILLING.POSITIVE_MARGIN' : 'BILLING.DEFICIT_MARGIN') | translate }}
           </div>
         </div>
       </div>
@@ -73,14 +73,14 @@
     <div class="block block-rounded shadow-sm border border-light bg-white mb-0">
       <div class="block-header block-header-default border-bottom p-3 d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2">
         <h3 class="block-title fw-bold text-dark mb-0">
-          <i class="fa fa-hand-holding-usd text-primary me-2"></i>1. SUIVI DES PAIEMENTS CLIENTS
+          <i class="fa fa-hand-holding-usd text-primary me-2"></i>{{ 'BILLING.SECTION_CLIENT_PAYMENTS' | translate }}
         </h3>
         <div class="d-flex align-items-center gap-2 flex-wrap">
           <button type="button" *ngIf="activeQuote" class="btn btn-sm btn-alt-primary rounded-pill px-3 fw-semibold d-inline-flex align-items-center gap-1.5 shadow-sm" (click)="openAvenantModal()" title="Ajouter un avenant ou une réduction au budget">
-            <i class="fa fa-file-circle-plus"></i> Ajouter un Avenant
+            <i class="fa fa-file-circle-plus"></i> {{ 'BILLING.ADD_AVENANT' | translate }}
           </button>
           <button type="button" class="btn btn-sm btn-success rounded-pill px-3 fw-semibold d-inline-flex align-items-center gap-1.5 shadow-sm" [disabled]="eventTotalPrice() <= 0" (click)="openPaymentModal()" title="Enregistrer un acompte ou versement client">
-            <i class="fa fa-money-bill-wave"></i> Enregistrer un Règlement
+            <i class="fa fa-money-bill-wave"></i> {{ 'BILLING.RECORD_PAYMENT' | translate }}
           </button>
         </div>
       </div>
@@ -90,19 +90,19 @@
         <div class="row g-3 mb-4">
           <div class="col-md-6">
             <div class="block block-rounded bg-body-light border border-light p-2.5 text-center h-100 d-flex flex-column justify-content-center">
-              <div class="fs-xs fw-bold text-muted text-uppercase mb-1">Acompte / Avance Versé</div>
+              <div class="fs-xs fw-bold text-muted text-uppercase mb-1">{{ 'BILLING.DEPOSITS_PAID_TITLE' | translate }}</div>
               <div class="fs-5 fw-extrabold text-success">{{ totalPaidAmount() | number:'1.2-2' }} {{ currencySymbol() }}</div>
-              <div class="fs-xs text-muted mt-1">Règlements reçus et encaissés</div>
+              <div class="fs-xs text-muted mt-1">{{ 'BILLING.PAYMENTS_RECEIVED_DESC' | translate }}</div>
             </div>
           </div>
           <div class="col-md-6">
             <div class="block block-rounded bg-body-light border border-light p-2.5 text-center h-100 d-flex flex-column justify-content-center">
-              <div class="fs-xs fw-bold text-muted text-uppercase mb-1">Solde Restant Dû</div>
+              <div class="fs-xs fw-bold text-muted text-uppercase mb-1">{{ 'BILLING.REMAINING_BALANCE' | translate }}</div>
               <div class="fs-5 fw-extrabold" [ngClass]="remainingBalanceDue() > 0 ? 'text-danger' : 'text-muted'">
                 {{ remainingBalanceDue() | number:'1.2-2' }} {{ currencySymbol() }}
               </div>
               <div class="fs-xs mt-1 fw-semibold" [ngClass]="remainingBalanceDue() > 0 ? 'text-danger' : 'text-success'">
-                {{ remainingBalanceDue() > 0 ? 'En attente de paiement' : 'Facturation soldée' }}
+                {{ (remainingBalanceDue() > 0 ? 'BILLING.AWAITING_PAYMENT' : 'BILLING.SETTLED') | translate }}
               </div>
             </div>
           </div>
@@ -110,8 +110,8 @@
           <div class="col-12 mt-2">
             <div class="block block-rounded bg-body-light border border-light p-2.5 mb-0">
               <div class="d-flex justify-content-between align-items-center mb-1">
-                <span class="fs-xs fw-bold text-muted text-uppercase">Progression des règlements client</span>
-                <span class="badge bg-success text-white px-2.5 py-1 fw-bold fs-xs">{{ paymentProgressPercentage() }}% Payé</span>
+                <span class="fs-xs fw-bold text-muted text-uppercase">{{ 'BILLING.CLIENT_PAYMENT_PROGRESS' | translate }}</span>
+                <span class="badge bg-success text-white px-2.5 py-1 fw-bold fs-xs">{{ paymentProgressPercentage() }}% {{ 'BILLING.PAID_PERCENT' | translate }}</span>
               </div>
               <div class="progress rounded-pill" style="height: 10px; background-color: #e9ecef;">
                 <div class="progress-bar bg-success progress-bar-striped progress-bar-animated rounded-pill" 
@@ -133,37 +133,36 @@
             <div class="block block-rounded bg-white border border-light h-100">
               <div class="block-header block-header-default border-bottom bg-body-light p-3 d-flex justify-content-between align-items-center">
                 <h5 class="block-title fw-bold mb-0">
-                  <i class="fa fa-cogs text-primary me-2"></i>Configuration Tarifaire
+                  <i class="fa fa-cogs text-primary me-2"></i>{{ 'BILLING.PRICING_CONFIG' | translate }}
                 </h5>
                 <span class="badge bg-primary-light text-primary rounded-pill px-3 py-1.5 fs-xs fw-bold" *ngIf="activeQuote">
                   {{ activeQuote.items.length }} ligne(s)
                 </span>
-              </div>
-              <div class="block-content p-3">
+              </div>              <div class="block-content p-3">
                 <!-- If no active quote, show budget initial input -->
                 <div *ngIf="!activeQuote" class="mb-4">
-                  <label class="form-label fw-semibold fs-sm text-dark mb-1">Budget Initial TTC ({{ currencySymbol() }})</label>
+                  <label class="form-label fw-semibold fs-sm text-dark mb-1">{{ 'BILLING.INITIAL_BUDGET_TTC' | translate }} ({{ currencySymbol() }})</label>
                   <div class="input-group">
-                    <input type="number" class="form-control" placeholder="Entrez le prix total" [(ngModel)]="editTotalPrice" name="editTotalPrice" min="0">
+                    <input type="number" class="form-control" [placeholder]="'BILLING.ENTER_TOTAL_PRICE' | translate" [(ngModel)]="editTotalPrice" name="editTotalPrice" min="0">
                     <button class="btn btn-primary" type="button" (click)="saveTotalPrice()">
-                      Valider le Budget
+                      {{ 'BILLING.VALIDATE_BUDGET' | translate }}
                     </button>
                   </div>
                   <div class="form-text fs-xs text-muted mt-2">
-                    Mettre à jour ce montant ajustera automatiquement le solde restant dû du client.
+                    {{ 'BILLING.BUDGET_HELP' | translate }}
                   </div>
                 </div>
 
                 <!-- If active quote exists, show history of items -->
                 <div *ngIf="activeQuote" class="mb-4">
                   <div class="d-flex justify-content-between align-items-center mb-2">
-                    <label class="form-label fw-semibold fs-sm text-dark mb-0">Lignes du Budget</label>
+                    <label class="form-label fw-semibold fs-sm text-dark mb-0">{{ 'BILLING.BUDGET_ITEMS' | translate }}</label>
                   </div>
                   <div class="table-responsive rounded border mb-3">
                     <table class="table table-sm table-vcenter table-striped fs-sm mb-0">
                       <tbody>
                         <tr *ngFor="let item of activeQuote.items">
-                          <td class="ps-3">{{ item.description }}</td>
+                          <td class="ps-3">{{ (item.description === 'Budget initial' ? ('BILLING.INITIAL_BUDGET_LABEL' | translate) : (item.description && (item.description.toLowerCase().includes('éduction') || item.description.toLowerCase().includes('eduction')) ? (('BILLING.DISCOUNT' | translate) + (item.description.replace(/^Réduction\s*:?\s*/i, '').replace(/^Reduction\s*:?\s*/i, '') ? ' : ' + item.description.replace(/^Réduction\s*:?\s*/i, '').replace(/^Reduction\s*:?\s*/i, '') : '')) : item.description)) }}</td>
                           <td class="text-end pe-3 fw-bold" [ngClass]="item.unitPrice >= 0 ? 'text-success' : 'text-danger'">
                             {{ item.unitPrice >= 0 ? '+' : '' }} {{ item.unitPrice | number:'1.2-2' }} {{ currencySymbol() }}
                           </td>
@@ -172,7 +171,7 @@
                     </table>
                   </div>
                   <div class="d-flex justify-content-between align-items-center p-3 bg-body-light rounded">
-                    <span class="fs-sm fw-semibold text-muted">TOTAL DU BUDGET :</span>
+                    <span class="fs-sm fw-semibold text-muted">{{ 'BILLING.TOTAL_BUDGET_LABEL' | translate }}</span>
                     <span class="fs-5 fw-bold text-dark">{{ eventTotalPrice() | number:'1.2-2' }} {{ currencySymbol() }}</span>
                   </div>
                 </div>
@@ -185,17 +184,17 @@
             <div class="block block-rounded bg-white border border-light h-100">
               <div class="block-header block-header-default border-bottom bg-body-light p-3 d-flex justify-content-between align-items-center">
                 <h5 class="block-title fw-bold mb-0">
-                  <i class="fa fa-history text-primary me-2"></i>Historique des Règlements
+                  <i class="fa fa-history text-primary me-2"></i>{{ 'BILLING.PAYMENT_HISTORY' | translate }}
                 </h5>
                 <span class="badge bg-success-light text-success rounded-pill px-3 py-1.5 fs-xs fw-bold">
-                  {{ paymentsList().length }} paiement(s)
+                  {{ paymentsList().length }} {{ 'BILLING.PAYMENTS_COUNT' | translate }}
                 </span>
               </div>
               <div class="block-content p-3">
                 <!-- Empty State -->
                 <div class="text-center py-4 text-muted" *ngIf="paymentsList().length === 0">
                   <i class="fa fa-receipt fs-1 opacity-50 mb-2"></i>
-                  <p class="fs-sm mb-0">Aucun règlement n'a encore été enregistré.</p>
+                  <p class="fs-sm mb-0">{{ 'BILLING.NO_PAYMENTS_RECORDED' | translate }}</p>
                 </div>
 
                 <!-- Table list of payments -->
@@ -203,12 +202,12 @@
                   <table class="table table-hover table-striped table-vcenter fs-sm mb-0">
                     <thead>
                       <tr>
-                        <th>Date</th>
-                        <th>Type</th>
-                        <th>Mode</th>
-                        <th>Référence</th>
-                        <th class="text-end">Montant</th>
-                        <th class="text-center" style="width: 95px;">Actions</th>
+                        <th>{{ 'COMMON.DATE' | translate }}</th>
+                        <th>{{ 'BILLING.PAYMENT_TYPE' | translate }}</th>
+                        <th>{{ 'BILLING.PAYMENT_METHOD' | translate }}</th>
+                        <th>{{ 'BILLING.PAYMENT_REF' | translate }}</th>
+                        <th class="text-end">{{ 'EVENT_DETAILS.AMOUNT' | translate }}</th>
+                        <th class="text-center" style="width: 95px;">{{ 'COMMON.ACTIONS' | translate }}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -219,14 +218,14 @@
                             {{ getPaymentLabelText(pay.label) }}
                           </span>
                         </td>
-                        <td class="fw-semibold">{{ getPaymentMethodLabel(pay.paymentMethod) }}</td>
+                        <td class="fw-semibold">{{ (pay.paymentMethod ? (('BILLING.METHOD_' + pay.paymentMethod) | translate) : getPaymentMethodLabel(pay.paymentMethod)) }}</td>
                         <td class="text-muted">{{ pay.reference || '-' }}</td>
                         <td class="text-end fw-bold text-success">+ {{ pay.amount | number:'1.2-2' }} {{ currencySymbol() }}</td>
                         <td class="text-center">
                           <div class="d-flex align-items-center justify-content-center gap-1">
                             <button type="button" class="btn btn-sm btn-alt-info rounded-circle p-1 d-inline-flex align-items-center justify-content-center" 
                                     style="width: 28px; height: 28px;"
-                                    title="Imprimer le reçu" 
+                                    [title]="'BILLING.PRINT_RECEIPT' | translate" 
                                     (click)="printPaymentReceipt(pay)">
                               <i class="fa fa-print fs-xs"></i>
                             </button>
@@ -250,10 +249,10 @@
     <div class="block block-rounded shadow-sm border border-light bg-white mb-0">
       <div class="block-header block-header-default border-bottom p-3 d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2">
         <h3 class="block-title fw-bold text-dark mb-0">
-          <i class="fa fa-receipt text-primary me-2"></i>2. GESTION DES DÉPENSES DE L'ÉVÉNEMENT
+          <i class="fa fa-receipt text-primary me-2"></i>{{ 'BILLING.SECTION_EXPENSES' | translate }}
         </h3>
         <button type="button" class="btn btn-sm btn-danger rounded-pill px-3 fw-semibold d-inline-flex align-items-center gap-1.5 shadow-sm" (click)="openExpenseModal()" title="Enregistrer une dépense ou coût pour l'événement">
-          <i class="fa fa-plus-circle"></i> Enregistrer une Dépense
+          <i class="fa fa-plus-circle"></i> {{ 'BILLING.RECORD_EXPENSE' | translate }}
         </button>
       </div>
       <div class="block-content p-3">
@@ -262,9 +261,9 @@
         <div class="row g-3 mb-4">
           <div class="col-12">
             <div class="block block-rounded bg-body-light border border-light p-2.5 text-center h-100 d-flex flex-column justify-content-center">
-              <div class="fs-xs fw-bold text-muted text-uppercase mb-1">Total des Charges / Dépenses</div>
+              <div class="fs-xs fw-bold text-muted text-uppercase mb-1">{{ 'BILLING.TOTAL_EXPENSES' | translate }}</div>
               <div class="fs-5 fw-extrabold text-danger">{{ totalExpensesAmount() | number:'1.2-2' }} {{ currencySymbol() }}</div>
-              <div class="fs-xs text-muted mt-1">Cumul de tous les coûts de revient</div>
+              <div class="fs-xs text-muted mt-1">{{ 'BILLING.EXPENSES_DESC' | translate }}</div>
             </div>
           </div>
         </div>
@@ -273,14 +272,14 @@
         <div class="block block-rounded border border-light">
           <div class="block-header block-header-default border-bottom bg-body-light p-3">
             <h5 class="block-title fw-bold mb-0">
-              <i class="fa fa-list text-primary me-2"></i>Détail des Dépenses Engagées
+              <i class="fa fa-list text-primary me-2"></i>{{ 'BILLING.EXPENSES_DETAIL' | translate }}
             </h5>
           </div>
           <div class="block-content p-2.5">
             <!-- Empty State -->
             <div class="text-center py-4 text-muted" *ngIf="expensesList().length === 0">
               <i class="fa fa-receipt fs-1 opacity-50 mb-2"></i>
-              <p class="fs-sm mb-0">Aucune dépense n'a encore été enregistrée pour cet événement.</p>
+              <p class="fs-sm mb-0">{{ 'BILLING.NO_EXPENSES_RECORDED' | translate }}</p>
             </div>
 
             <!-- Table list of expenses -->
@@ -288,12 +287,12 @@
               <table class="table table-hover table-striped table-vcenter fs-sm mb-0">
                 <thead>
                   <tr>
-                    <th>Date</th>
-                    <th>Catégorie</th>
-                    <th>Description</th>
-                    <th>Fournisseur</th>
-                    <th class="text-end">Montant</th>
-                    <th class="text-center" style="width: 100px;">Actions</th>
+                    <th>{{ 'BILLING.EXPENSE_DATE' | translate }}</th>
+                    <th>{{ 'BILLING.EXPENSE_CATEGORY' | translate }}</th>
+                    <th>{{ 'BILLING.EXPENSE_DESC' | translate }}</th>
+                    <th>{{ 'BILLING.EXPENSE_PROVIDER' | translate }}</th>
+                    <th class="text-end">{{ 'EVENT_DETAILS.AMOUNT' | translate }}</th>
+                    <th class="text-center" style="width: 100px;">{{ 'COMMON.ACTIONS' | translate }}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -301,7 +300,7 @@
                     <td>{{ exp.expenseDate | date:'dd/MM/yyyy' }}</td>
                     <td>
                       <span class="badge" [ngClass]="getExpenseCategoryBadgeClass(exp.category)">
-                        {{ getExpenseCategoryLabel(exp.category) }}
+                        {{ (exp.category ? (('BILLING.CAT_' + exp.category) | translate) : getExpenseCategoryLabel(exp.category)) }}
                       </span>
                     </td>
                     <td class="fw-semibold">{{ exp.description }}</td>
@@ -311,19 +310,19 @@
                       <div class="d-flex align-items-center justify-content-center gap-1">
                         <button type="button" class="btn btn-sm btn-alt-info rounded-circle p-1 d-inline-flex align-items-center justify-content-center" 
                                 style="width: 28px; height: 28px;"
-                                title="Imprimer le bon" 
+                                [title]="'BILLING.PRINT_VOUCHER' | translate" 
                                 (click)="printExpenseReceipt(exp)">
                           <i class="fa fa-print fs-xs"></i>
                         </button>
                         <button type="button" class="btn btn-sm btn-alt-primary rounded-circle p-1 d-inline-flex align-items-center justify-content-center" 
                                 style="width: 28px; height: 28px;"
-                                title="Modifier cette dépense" 
+                                [title]="'BILLING.EDIT_EXPENSE_BTN' | translate" 
                                 (click)="openEditExpenseModal(exp)">
                           <i class="fa fa-pencil-alt fs-xs"></i>
                         </button>
                         <button type="button" class="btn btn-sm btn-alt-danger rounded-circle p-1 d-inline-flex align-items-center justify-content-center" 
                                 style="width: 28px; height: 28px;"
-                                title="Supprimer cette dépense" 
+                                [title]="'BILLING.DELETE_EXPENSE_BTN' | translate" 
                                 (click)="deleteExpense(exp.id!)">
                           <i class="fa fa-trash-alt fs-xs"></i>
                         </button>
@@ -333,9 +332,6 @@
                 </tbody>
               </table>
             </div>
-          </div>
-        </div>
-
       </div>
     </div>
   </div>
@@ -348,40 +344,40 @@
       <div class="block block-rounded block-transparent mb-0">
         <div class="block-header block-header-default border-bottom bg-body-light p-3 d-flex justify-content-between align-items-center">
           <h3 class="block-title fw-bold mb-0">
-            {{ editingPaymentId() ? 'Modifier le Règlement' : 'Enregistrer un Règlement' }}
+            {{ (editingPaymentId() ? 'BILLING.EDIT_PAYMENT_TITLE' : 'BILLING.RECORD_PAYMENT_TITLE') | translate }}
           </h3>
           <button type="button" class="btn-close" (click)="isRecordingPaymentModal.set(false)"></button>
         </div>
         <div class="block-content p-4">
-          <p class="fs-sm text-muted">Saisissez les détails de l'encaissement reçu pour cet événement.</p>
+          <p class="fs-sm text-muted">{{ 'BILLING.PAYMENT_MODAL_DESC' | translate }}</p>
           
           <div class="mb-3">
-            <label class="form-label fs-sm fw-bold">Montant reçu ({{ currencySymbol() }})</label>
+            <label class="form-label fs-sm fw-bold">{{ 'BILLING.AMOUNT_RECEIVED' | translate }} ({{ currencySymbol() }})</label>
             <input type="number" class="form-control" [(ngModel)]="paymentAmountInput" name="paymentAmountInput" step="0.01">
-            <div class="form-text fs-xs text-danger">Solde restant dû : {{ remainingBalanceDue() | number:'1.2-2' }} {{ currencySymbol() }}</div>
+            <div class="form-text fs-xs text-danger">{{ 'BILLING.REMAINING_BALANCE' | translate }} : {{ remainingBalanceDue() | number:'1.2-2' }} {{ currencySymbol() }}</div>
           </div>
 
           <div class="mb-3">
-            <label class="form-label fs-sm fw-bold">Mode de règlement</label>
+            <label class="form-label fs-sm fw-bold">{{ 'BILLING.PAYMENT_METHOD' | translate }}</label>
             <select class="form-select" [(ngModel)]="paymentMethodInput" name="paymentMethodInput">
-              <option value="BANK_TRANSFER">Virement Bancaire</option>
-              <option value="CARD">Carte Bancaire</option>
-              <option value="CASH">Espèces</option>
-              <option value="CHECK">Chèque</option>
+              <option value="BANK_TRANSFER">{{ 'BILLING.METHOD_BANK_TRANSFER' | translate }}</option>
+              <option value="CARD">{{ 'BILLING.METHOD_CARD' | translate }}</option>
+              <option value="CASH">{{ 'BILLING.METHOD_CASH' | translate }}</option>
+              <option value="CHECK">{{ 'BILLING.METHOD_CHECK' | translate }}</option>
             </select>
           </div>
 
           <div class="mb-3">
             <label class="form-label fs-sm fw-bold d-flex justify-content-between align-items-center">
-              <span>Type / Libellé de règlement</span>
-              <span class="fs-4xs text-muted fw-normal">Sélectionnez ou écrivez librement</span>
+              <span>{{ 'BILLING.PAYMENT_LABEL_TITLE' | translate }}</span>
+              <span class="fs-4xs text-muted fw-normal">{{ 'BILLING.TYPE_FREE_TEXT' | translate }}</span>
             </label>
             <input type="text" 
                    class="form-control" 
                    list="paymentTypeSuggestions" 
                    [(ngModel)]="paymentLabelInput" 
                    name="paymentLabelInput" 
-                   placeholder="Ex: Acompte / Avance, 2ème versement, Solde, Avance traiteur...">
+                   [placeholder]="'BILLING.PAYMENT_LABEL_PH' | translate">
             
             <datalist id="paymentTypeSuggestions">
               <option value="Acompte / Avance">
@@ -400,50 +396,50 @@
                       style="font-size: 0.67rem; line-height: 1.2;"
                       [ngClass]="(paymentLabelInput === 'Acompte / Avance' || paymentLabelInput === 'Acompte') ? 'btn-info text-white shadow-xs' : 'btn-alt-secondary text-dark'"
                       (click)="paymentLabelInput = 'Acompte / Avance'">
-                Acompte
+                {{ 'BILLING.PILL_DEPOSIT' | translate }}
               </button>
               <button type="button" 
                       class="btn btn-xs rounded-pill px-2 py-0.5 text-nowrap fw-semibold flex-shrink-0" 
                       style="font-size: 0.67rem; line-height: 1.2;"
                       [ngClass]="(paymentLabelInput === 'Deuxième versement' || paymentLabelInput === '2ème versement') ? 'btn-warning text-dark shadow-xs' : 'btn-alt-secondary text-dark'"
                       (click)="paymentLabelInput = 'Deuxième versement'">
-                2ème vers.
+                {{ 'BILLING.PILL_2ND' | translate }}
               </button>
               <button type="button" 
                       class="btn btn-xs rounded-pill px-2 py-0.5 text-nowrap fw-semibold flex-shrink-0" 
                       style="font-size: 0.67rem; line-height: 1.2;"
                       [ngClass]="(paymentLabelInput === 'Troisième versement' || paymentLabelInput === '3ème versement') ? 'btn-warning text-dark shadow-xs' : 'btn-alt-secondary text-dark'"
                       (click)="paymentLabelInput = 'Troisième versement'">
-                3ème vers.
+                {{ 'BILLING.PILL_3RD' | translate }}
               </button>
               <button type="button" 
                       class="btn btn-xs rounded-pill px-2 py-0.5 text-nowrap fw-semibold flex-shrink-0" 
                       style="font-size: 0.67rem; line-height: 1.2;"
                       [ngClass]="(paymentLabelInput === 'Solde final' || paymentLabelInput === 'Solde') ? 'btn-success text-white shadow-xs' : 'btn-alt-secondary text-dark'"
                       (click)="paymentLabelInput = 'Solde final'">
-                Solde final
+                {{ 'BILLING.PILL_BALANCE' | translate }}
               </button>
               <button type="button" 
                       class="btn btn-xs rounded-pill px-2 py-0.5 text-nowrap fw-semibold flex-shrink-0" 
                       style="font-size: 0.67rem; line-height: 1.2;"
                       [ngClass]="(paymentLabelInput === 'Caution / Garantie' || paymentLabelInput === 'Caution') ? 'btn-secondary text-white shadow-xs' : 'btn-alt-secondary text-dark'"
                       (click)="paymentLabelInput = 'Caution / Garantie'">
-                Caution
+                {{ 'BILLING.PILL_CAUTION' | translate }}
               </button>
             </div>
           </div>
 
           <div class="mb-3">
-            <label class="form-label fs-sm fw-bold">Référence / Numéro (Optionnel)</label>
-            <input type="text" class="form-control" placeholder="Numéro de chèque, transaction, ID virement..." [(ngModel)]="paymentReferenceInput" name="paymentReferenceInput">
+            <label class="form-label fs-sm fw-bold">{{ 'BILLING.REFERENCE_OPTIONAL' | translate }}</label>
+            <input type="text" class="form-control" [placeholder]="'BILLING.REFERENCE_PH' | translate" [(ngModel)]="paymentReferenceInput" name="paymentReferenceInput">
           </div>
 
           <div class="d-flex justify-content-end gap-2 border-top pt-3 mt-4">
             <button type="button" class="btn btn-alt-secondary btn-sm rounded-pill px-3" (click)="isRecordingPaymentModal.set(false)">
-              Annuler
+              {{ 'COMMON.CANCEL' | translate }}
             </button>
             <button type="button" class="btn btn-success btn-sm rounded-pill px-3" (click)="recordPayment()">
-              {{ editingPaymentId() ? 'Enregistrer les modifications' : 'Enregistrer le Règlement' }}
+              {{ (editingPaymentId() ? 'BILLING.SAVE_MODIFICATIONS' : 'BILLING.RECORD_PAYMENT_TITLE') | translate }}
             </button>
           </div>
         </div>
@@ -459,40 +455,40 @@
       <div class="block block-rounded block-transparent mb-0">
         <div class="block-header block-header-default border-bottom bg-body-light p-3 d-flex justify-content-between align-items-center">
           <h3 class="block-title fw-bold mb-0">
-            {{ editingExpenseId() ? 'Modifier la Dépense' : 'Enregistrer une Dépense' }}
+            {{ (editingExpenseId() ? 'BILLING.EDIT_EXPENSE_TITLE' : 'BILLING.RECORD_EXPENSE_TITLE') | translate }}
           </h3>
           <button type="button" class="btn-close" (click)="isRecordingExpenseModal.set(false)"></button>
         </div>
         <div class="block-content p-4">
           <div class="mb-3">
-            <label class="form-label fs-sm fw-bold">Catégorie</label>
+            <label class="form-label fs-sm fw-bold">{{ 'BILLING.EXPENSE_CATEGORY' | translate }}</label>
             <select class="form-select" [(ngModel)]="expenseCategoryInput" name="expenseCategoryInput">
-              <option value="LOCATION">Location de salle</option>
-              <option value="CATERING">Traiteur / Approvisionnement</option>
-              <option value="STAFF">Personnel / Sécurité</option>
-              <option value="DECORATION">Décoration / Fleuriste</option>
-              <option value="LOGISTICS">Logistique / Transport</option>
-              <option value="OTHER">Autre charge</option>
+              <option value="LOCATION">{{ 'BILLING.CAT_LOCATION' | translate }}</option>
+              <option value="CATERING">{{ 'BILLING.CAT_CATERING' | translate }}</option>
+              <option value="STAFF">{{ 'BILLING.CAT_STAFF' | translate }}</option>
+              <option value="DECORATION">{{ 'BILLING.CAT_DECORATION' | translate }}</option>
+              <option value="LOGISTICS">{{ 'BILLING.CAT_LOGISTICS' | translate }}</option>
+              <option value="OTHER">{{ 'BILLING.CAT_OTHER' | translate }}</option>
             </select>
           </div>
           <div class="mb-3">
-            <label class="form-label fs-sm fw-bold">Description / Motif</label>
-            <input type="text" class="form-control" [(ngModel)]="expenseDescriptionInput" name="expenseDescriptionInput" placeholder="Ex: Achat boissons">
+            <label class="form-label fs-sm fw-bold">{{ 'BILLING.EXPENSE_DESC' | translate }}</label>
+            <input type="text" class="form-control" [(ngModel)]="expenseDescriptionInput" name="expenseDescriptionInput" [placeholder]="'BILLING.EXPENSE_DESC_PH' | translate">
           </div>
           <div class="mb-3">
-            <label class="form-label fs-sm fw-bold">Fournisseur (Optionnel)</label>
-            <input type="text" class="form-control" [(ngModel)]="expenseProviderInput" name="expenseProviderInput" placeholder="Ex: Marjane, Fleuriste Z...">
+            <label class="form-label fs-sm fw-bold">{{ 'BILLING.EXPENSE_PROVIDER' | translate }} ({{ 'COMMON.OPTIONAL' | translate }})</label>
+            <input type="text" class="form-control" [(ngModel)]="expenseProviderInput" name="expenseProviderInput" [placeholder]="'BILLING.EXPENSE_PROVIDER_PH' | translate">
           </div>
           <div class="mb-4">
-            <label class="form-label fs-sm fw-bold">Montant dépensé ({{ currencySymbol() }})</label>
+            <label class="form-label fs-sm fw-bold">{{ 'BILLING.EXPENSE_AMOUNT_SPENT' | translate }} ({{ currencySymbol() }})</label>
             <input type="number" class="form-control" [(ngModel)]="expenseAmountInput" name="expenseAmountInput" step="0.01">
           </div>
           <div class="d-flex justify-content-end gap-2 border-top pt-3 mt-4">
             <button type="button" class="btn btn-alt-secondary btn-sm rounded-pill px-3" (click)="isRecordingExpenseModal.set(false)">
-              Annuler
+              {{ 'COMMON.CANCEL' | translate }}
             </button>
             <button type="button" class="btn btn-success btn-sm rounded-pill px-3" (click)="recordExpense()">
-              {{ editingExpenseId() ? 'Enregistrer les modifications' : 'Enregistrer la Dépense' }}
+              {{ (editingExpenseId() ? 'BILLING.SAVE_MODIFICATIONS' : 'BILLING.RECORD_EXPENSE_BTN') | translate }}
             </button>
           </div>
         </div>
@@ -508,27 +504,27 @@
       <div class="block block-rounded block-transparent mb-0">
         <div class="block-header block-header-default border-bottom bg-body-light p-3 d-flex justify-content-between align-items-center">
           <h3 class="block-title fw-bold mb-0">
-            Ajouter un Avenant (Supplément / Réduction)
+            {{ 'BILLING.AVENANT_MODAL_TITLE' | translate }}
           </h3>
           <button type="button" class="btn-close" (click)="isRecordingAvenantModal.set(false)"></button>
         </div>
         <div class="block-content p-4">
-          <p class="fs-sm text-muted">Cette action ajoutera une ligne immuable au budget global de l'événement.</p>
+          <p class="fs-sm text-muted">{{ 'BILLING.AVENANT_MODAL_DESC' | translate }}</p>
           <div class="mb-3">
-            <label class="form-label fs-sm fw-bold">Description de l'avenant</label>
-            <input type="text" class="form-control" [(ngModel)]="avenantDescriptionInput" name="avenantDescriptionInput" placeholder="Ex: Supplément table VIP">
+            <label class="form-label fs-sm fw-bold">{{ 'BILLING.AVENANT_DESC_LABEL' | translate }}</label>
+            <input type="text" class="form-control" [(ngModel)]="avenantDescriptionInput" name="avenantDescriptionInput" [placeholder]="'BILLING.AVENANT_DESC_PH' | translate">
           </div>
           <div class="mb-4">
-            <label class="form-label fs-sm fw-bold">Montant ({{ currencySymbol() }})</label>
+            <label class="form-label fs-sm fw-bold">{{ 'EVENT_DETAILS.AMOUNT' | translate }} ({{ currencySymbol() }})</label>
             <input type="number" class="form-control" [(ngModel)]="avenantAmountInput" name="avenantAmountInput" step="0.01">
-            <div class="form-text fs-xs text-muted">Saisissez un nombre négatif (ex: -200) pour une réduction.</div>
+            <div class="form-text fs-xs text-muted">{{ 'BILLING.AVENANT_HELP' | translate }}</div>
           </div>
           <div class="d-flex justify-content-end gap-2 border-top pt-3 mt-4">
             <button type="button" class="btn btn-alt-secondary btn-sm rounded-pill px-3" (click)="isRecordingAvenantModal.set(false)">
-              Annuler
+              {{ 'COMMON.CANCEL' | translate }}
             </button>
             <button type="button" class="btn btn-primary btn-sm rounded-pill px-3" (click)="recordAvenant()">
-              Valider l'Avenant
+              {{ 'BILLING.VALIDATE_AVENANT' | translate }}
             </button>
           </div>
         </div>
@@ -536,3 +532,4 @@
     </div>
   </div>
 </div>
+

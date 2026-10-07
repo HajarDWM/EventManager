@@ -8,11 +8,12 @@ import { EventTask } from '../../../../core/services/event-task.service';
 import { Guest } from '../../../../core/services/guest.service';
 import { Event } from '../../models/event.model';
 import { FormsModule } from '@angular/forms';
+import { TranslatePipe } from '../../../../core/pipes/translate.pipe';
 
 @Component({
   selector: 'app-event-export',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, RouterLink, FormsModule, TranslatePipe],
   templateUrl: './event-export.html',
   styleUrls: ['./event-export.scss']
 })

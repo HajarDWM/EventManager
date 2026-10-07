@@ -4,11 +4,12 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { ClientAuthService } from '../../core/auth/services/client-auth.service';
 import { GuestRsvp, PublicRsvpDetail } from '../events/components/guest-rsvp/guest-rsvp';
+import { TranslatePipe } from '../../core/pipes/translate.pipe';
 
 @Component({
   selector: 'app-client-invitation-preview',
   standalone: true,
-  imports: [CommonModule, RouterLink, GuestRsvp],
+  imports: [CommonModule, RouterLink, GuestRsvp, TranslatePipe],
   templateUrl: './client-invitation-preview.html',
   styleUrls: ['./client-invitation-preview.scss']
 })

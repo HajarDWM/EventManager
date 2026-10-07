@@ -2,12 +2,12 @@
   <!-- Top Hero Header -->
   <div class="dashboard-hero">
     <div class="hero-content">
-      <div class="hero-badge">Votre Événement</div>
+      <div class="hero-badge">{{ 'CLIENT_PORTAL.YOUR_EVENT' | translate }}</div>
       <h2>{{ events()[0].title }}</h2>
       <p class="hero-subtitle mt-2 mb-0" *ngIf="events()[0].catererName || events()[0].clientName">
         <span *ngIf="events()[0].clientName"><i class="fas fa-user-circle me-1"></i> {{ events()[0].clientName }}</span>
         <span *ngIf="events()[0].clientName && events()[0].catererName" class="mx-2 opacity-50">|</span>
-        <span *ngIf="events()[0].catererName"><i class="fas fa-building me-1"></i> Organisé par : <strong>{{ events()[0].catererName }}</strong></span>
+        <span *ngIf="events()[0].catererName"><i class="fas fa-building me-1"></i> {{ 'CLIENT_PORTAL.ORGANIZED_BY' | translate }} : <strong>{{ events()[0].catererName }}</strong></span>
       </p>
     </div>
   </div>
@@ -20,18 +20,18 @@
         <i class="fas fa-users"></i>
       </div>
       <div class="card-content">
-        <h3>Gestion des Invités</h3>
-        <p>Gérez votre liste d'invités, envoyez les invitations et suivez les confirmations en temps réel.</p>
+        <h3>{{ 'GUESTS.TITLE' | translate }}</h3>
+        <p>{{ 'CLIENT_PORTAL.GUESTS_DESC' | translate }}</p>
         <div class="stats-row" *ngIf="(events()[0].guestCount || 0) > 0">
           <div class="stat-box">
             <span class="stat-value">{{ events()[0].guestCount }}</span>
-            <span class="stat-label">Invités attendus</span>
+            <span class="stat-label">{{ 'DASHBOARD.GUESTS_EXPECTED' | translate }}</span>
           </div>
         </div>
       </div>
       <div class="card-action">
         <a [routerLink]="['/client/events', events()[0].id, 'guests']" class="btn btn-primary w-100 btn-luxury">
-          Accéder à la liste <i class="fas fa-arrow-right ms-2"></i>
+          {{ 'CLIENT_PORTAL.ACCESS_LIST' | translate }} <i class="fas fa-arrow-right ms-2"></i>
         </a>
       </div>
     </div>
@@ -42,36 +42,36 @@
         <i class="fas fa-utensils"></i>
       </div>
       <div class="card-content">
-        <h3>Menu & Détails</h3>
-        <p>Consultez la sélection des plats, les formules et découvrez les options choisies par vos invités.</p>
+        <h3>{{ 'CLIENT_PORTAL.MENU_DETAILS' | translate }}</h3>
+        <p>{{ 'CLIENT_PORTAL.MENU_DESC' | translate }}</p>
         <div class="image-preview">
           <div class="menu-graphic-preview d-flex align-items-center justify-content-center gap-3">
             <div class="menu-category text-center">
               <div class="icon-circle bg-success-light text-success">
                 <i class="fas fa-leaf"></i>
               </div>
-              <span>Entrées</span>
+              <span>{{ 'CLIENT_PORTAL.STARTERS' | translate }}</span>
             </div>
             <i class="fas fa-chevron-right text-muted opacity-25 fs-sm"></i>
             <div class="menu-category text-center">
               <div class="icon-circle bg-danger-light text-danger">
                 <i class="fas fa-fire"></i>
               </div>
-              <span>Plats</span>
+              <span>{{ 'CLIENT_PORTAL.MAIN_DISHES' | translate }}</span>
             </div>
             <i class="fas fa-chevron-right text-muted opacity-25 fs-sm"></i>
             <div class="menu-category text-center">
               <div class="icon-circle bg-info-light text-info">
                 <i class="fas fa-ice-cream"></i>
               </div>
-              <span>Desserts</span>
+              <span>{{ 'CLIENT_PORTAL.DESSERTS' | translate }}</span>
             </div>
           </div>
         </div>
       </div>
       <div class="card-action">
         <a [routerLink]="['/client/events', events()[0].id, 'menu']" class="btn btn-outline-primary w-100 btn-luxury-outline">
-          Voir le Menu <i class="fas fa-arrow-right ms-2"></i>
+          {{ 'CLIENT_PORTAL.VIEW_MENU' | translate }} <i class="fas fa-arrow-right ms-2"></i>
         </a>
       </div>
     </div>
@@ -82,18 +82,18 @@
         <i class="fas fa-envelope-open-text"></i>
       </div>
       <div class="card-content">
-        <h3>Modèle d'Invitation</h3>
-        <p>Prévisualisez la carte d'invitation digitale qui sera envoyée à vos invités avec le formulaire RSVP.</p>
+        <h3>{{ 'CLIENT_PORTAL.INVITATION_TEMPLATE' | translate }}</h3>
+        <p>{{ 'CLIENT_PORTAL.INVITATION_DESC' | translate }}</p>
         <div class="image-preview">
           <div class="preview-box" style="background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); border-color: #fde68a;">
             <i class="fas fa-eye text-warning"></i>
-            <span class="text-warning-dark">Aperçu en direct</span>
+            <span class="text-warning-dark">{{ 'CLIENT_PORTAL.LIVE_PREVIEW' | translate }}</span>
           </div>
         </div>
       </div>
       <div class="card-action">
         <a [routerLink]="['/client/events', events()[0].id, 'invitation-preview']" class="btn btn-alt-warning w-100 btn-luxury-outline" style="border-color: #fcd34d; color: #b45309;">
-          Prévisualiser l'Invitation <i class="fas fa-arrow-right ms-2"></i>
+          {{ 'CLIENT_PORTAL.PREVIEW_INVITATION' | translate }} <i class="fas fa-arrow-right ms-2"></i>
         </a>
       </div>
     </div>
@@ -104,26 +104,25 @@
         <i class="fas fa-file-invoice-dollar"></i>
       </div>
       <div class="card-content">
-        <h3>Suivi des Paiements</h3>
-        <p>Consultez la situation financière globale de votre contrat et suivez le règlement de votre événement.</p>
+        <h3>{{ 'CLIENT_PORTAL.PAYMENT_TRACKING' | translate }}</h3>
+        <p>{{ 'CLIENT_PORTAL.PAYMENT_DESC' | translate }}</p>
         
         <div class="financial-widget">
           <div class="finance-item">
-            <span class="finance-label">Montant Total</span>
+            <span class="finance-label">{{ 'CLIENT_PORTAL.TOTAL_AMOUNT' | translate }}</span>
             <span class="finance-value text-dark">{{ (events()[0].totalContractAmount || 0) | number:'1.2-2' }} DH</span>
           </div>
           <div class="finance-item">
-            <span class="finance-label">Acomptes Versés</span>
+            <span class="finance-label">{{ 'CLIENT_PORTAL.DEPOSITS_PAID' | translate }}</span>
             <span class="finance-value text-success">{{ (events()[0].depositsPaid || 0) | number:'1.2-2' }} DH</span>
           </div>
           <div class="finance-divider"></div>
           <div class="finance-item highlight">
-            <span class="finance-label fw-bold">Reste à Payer</span>
+            <span class="finance-label fw-bold">{{ 'CLIENT_PORTAL.BALANCE_DUE' | translate }}</span>
             <span class="finance-value text-danger fw-bold fs-5">{{ (events()[0].balanceDue || 0) | number:'1.2-2' }} DH</span>
           </div>
         </div>
       </div>
-      <!-- No primary action button needed, or maybe a "Voir le reçu" button, but UI suggests just a transparent widget -->
     </div>
   </div>
 </div>
@@ -133,7 +132,7 @@
     <div class="empty-icon">
       <i class="far fa-folder-open"></i>
     </div>
-    <h3>Aucun événement trouvé</h3>
-    <p>Votre traiteur n'a pas encore associé d'événements à ce jeton d'accès.</p>
+    <h3>{{ 'CLIENT_PORTAL.NO_EVENT_FOUND' | translate }}</h3>
+    <p>{{ 'CLIENT_PORTAL.NO_EVENT_DESC' | translate }}</p>
   </div>
 </ng-template>

@@ -1,15 +1,15 @@
 <div class="guest-list-header">
   <div class="header-content">
-    <h2><a routerLink="/client/dashboard" class="back-link"><i class="fas fa-arrow-left"></i></a> Gestion des Invités</h2>
-    <p>Gérez la liste des personnes invitées à votre événement.</p>
+    <h2><a routerLink="/client/dashboard" class="back-link"><i class="fas fa-arrow-left"></i></a> {{ 'GUESTS.TITLE' | translate }}</h2>
+    <p>{{ 'GUESTS.SUBTITLE_CLIENT' | translate }}</p>
   </div>
   <div class="header-actions" style="display: flex; gap: 0.5rem; align-items: center;">
     <button type="button" class="btn btn-outline-primary" (click)="onDownloadTemplate()" style="background: transparent; border: 1px solid #3b82f6; color: #3b82f6;">
-      <i class="fas fa-file-excel"></i> Télécharger modèle Excel
+      <i class="fas fa-file-excel"></i> {{ 'GUESTS.DOWNLOAD_TEMPLATE' | translate }}
     </button>
-    <button class="btn btn-primary" [disabled]="isGuestAdditionLocked()" (click)="openAddModal()" [title]="isGuestAdditionLocked() ? 'Délai d\'ajout expiré (72h avant l\'événement)' : ''">
+    <button class="btn btn-primary" [disabled]="isGuestAdditionLocked()" (click)="openAddModal()" [title]="isGuestAdditionLocked() ? 'Délai d\'ajout expiré' : ''">
       <i class="fas" [ngClass]="isGuestAdditionLocked() ? 'fa-lock' : 'fa-plus'"></i> 
-      {{ isGuestAdditionLocked() ? 'Ajouts Clôturés' : 'Ajouter un invité' }}
+      {{ isGuestAdditionLocked() ? ('CLIENT_PORTAL.GUEST_LOCKED_BTN' | translate) : ('GUESTS.ADD_GUEST' | translate) }}
     </button>
   </div>
 </div>
@@ -20,9 +20,9 @@
     <i class="fas fa-lock text-warning fs-5"></i>
   </div>
   <div>
-    <strong class="d-block mb-0.5 fs-sm">Clôture des ajouts d'invités</strong>
+    <strong class="d-block mb-0.5 fs-sm">{{ 'CLIENT_PORTAL.GUEST_ADDITION_CLOSED' | translate }}</strong>
     <span class="fs-xs">
-      La période d'ajout et de modification des invités est clôturée depuis le <strong>{{ guestAdditionDeadline() | date:'dd/MM/yyyy à HH:mm' }}</strong> (72h avant l'événement pour la logistique traiteur). Vous pouvez toujours consulter votre liste et les réponses reçues. Pour tout ajustement exceptionnel, veuillez vous adresser directement à votre organisateur.
+      {{ guestAdditionDeadline() | date:'dd/MM/yyyy HH:mm' }}
     </span>
   </div>
 </div>
@@ -31,7 +31,7 @@
 <div *ngIf="!isGuestAdditionLocked() && guestAdditionDeadline()" class="alert mb-4 shadow-2xs d-flex align-items-center gap-2.5 py-2 px-3 text-start" style="background-color: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; color: #1e40af;">
   <i class="fas fa-info-circle text-primary fs-6 flex-shrink-0"></i>
   <div class="fs-xs">
-    Les ajouts et modifications d'invités sont autorisés jusqu'au <strong>{{ guestAdditionDeadline() | date:'dd/MM/yyyy à HH:mm' }}</strong> (72h avant l'événement pour la préparation traiteur).
+    {{ guestAdditionDeadline() | date:'dd/MM/yyyy HH:mm' }}
   </div>
 </div>
 
@@ -39,28 +39,28 @@
   <div class="stat-card clickable-card" [class.active-filter]="selectedFilter() === 'ALL'" (click)="setFilter('ALL')">
     <div class="stat-icon"><i class="fas fa-users"></i></div>
     <div class="stat-content">
-      <h3>Total</h3>
+      <h3>{{ 'COMMON.TOTAL' | translate }}</h3>
       <p>{{ guests().length }}</p>
     </div>
   </div>
   <div class="stat-card success clickable-card" [class.active-filter]="selectedFilter() === 'CONFIRMED'" (click)="setFilter('CONFIRMED')">
     <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
     <div class="stat-content">
-      <h3>Confirmés</h3>
+      <h3>{{ 'GUESTS.CONFIRMED' | translate }}</h3>
       <p>{{ confirmedCount() }}</p>
     </div>
   </div>
   <div class="stat-card warning clickable-card" [class.active-filter]="selectedFilter() === 'PENDING'" (click)="setFilter('PENDING')">
     <div class="stat-icon"><i class="fas fa-clock"></i></div>
     <div class="stat-content">
-      <h3>En attente</h3>
+      <h3>{{ 'GUESTS.PENDING' | translate }}</h3>
       <p>{{ pendingCount() }}</p>
     </div>
   </div>
   <div class="stat-card danger clickable-card" [class.active-filter]="selectedFilter() === 'DECLINED'" (click)="setFilter('DECLINED')">
     <div class="stat-icon"><i class="fas fa-times-circle"></i></div>
     <div class="stat-content">
-      <h3>Déclinés</h3>
+      <h3>{{ 'GUESTS.DECLINED' | translate }}</h3>
       <p>{{ declinedCount() }}</p>
     </div>
   </div>
@@ -68,9 +68,9 @@
 
 <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3 mb-3" *ngIf="guests().length > 0">
   <div class="d-flex align-items-center gap-2">
-    <span class="badge bg-light text-dark border"><i class="fas fa-filter me-1 text-primary"></i> Filtrer par groupe:</span>
+    <span class="badge bg-light text-dark border"><i class="fas fa-filter me-1 text-primary"></i> {{ 'GUESTS.FILTER_BY_GROUP' | translate }}:</span>
     <select class="form-select form-select-sm" style="max-width: 220px;" [ngModel]="selectedGroupFilter()" (ngModelChange)="setGroupFilter($event)">
-      <option value="ALL">Tous les groupes ({{ guests().length }})</option>
+      <option value="ALL">{{ 'GUESTS.ALL_GROUPS' | translate }} ({{ guests().length }})</option>
       <option *ngFor="let grp of uniqueGroups()" [value]="grp">{{ grp }}</option>
     </select>
   </div>
@@ -84,125 +84,140 @@
       <i class="fas fa-users fs-6"></i>
     </div>
     <div>
-      <div class="fs-3xs text-muted text-uppercase fw-bold">Affectation rapide par groupe</div>
+      <div class="fs-3xs text-muted text-uppercase fw-bold">{{ 'GUESTS.FAST_BATCH_ASSIGN' | translate }}</div>
       <span class="fs-sm fw-bold text-dark">
-        Groupe : <span class="text-primary">{{ selectedGroupFilter() }}</span>
-        <span class="badge bg-white text-dark border ms-1 fs-3xs">{{ getConfirmedCountForGroup(selectedGroupFilter()) }} confirmés</span>
+        {{ 'GUESTS.GROUP' | translate }} : <span class="text-primary">{{ selectedGroupFilter() }}</span>
+        <span class="badge bg-white text-dark border ms-1 fs-3xs">{{ getConfirmedCountForGroup(selectedGroupFilter()) }} {{ 'GUESTS.CONFIRMED' | translate }}</span>
       </span>
     </div>
   </div>
   <div class="d-flex align-items-center gap-2">
     <select class="form-select form-select-sm border-0 bg-white shadow-xs fs-xs" style="min-width: 230px;"
             [ngModel]="batchSelectedTable()" (ngModelChange)="batchSelectedTable.set($event)">
-      <option value="">-- Choisir la table de destination --</option>
+      <option value="">-- {{ 'GUESTS.CHOOSE_DEST_TABLE' | translate }} --</option>
       <option *ngFor="let tbl of tableOptions()" [value]="tbl.name" [disabled]="tbl.isFull">
-        {{ tbl.name }} ({{ tbl.occupied }}/{{ tbl.capacity }}) {{ tbl.isFull ? '🔴 Pleine' : (tbl.occupied > 0 ? '• ' + tbl.groupSummary : '⚪ Libre') }}
+        {{ tbl.name }} ({{ tbl.occupied }}/{{ tbl.capacity }}) {{ tbl.isFull ? '🔴 ' + ('GUESTS.FULL_TABLE' | translate) : (tbl.occupied > 0 ? '• ' + tbl.groupSummary : '⚪ ' + ('GUESTS.FREE_TABLE' | translate)) }}
       </option>
     </select>
-    <button type="button" class="btn btn-sm btn-primary fw-bold text-nowrap shadow-xs"
-            [disabled]="!batchSelectedTable() || isBatchAssigning() || getConfirmedCountForGroup(selectedGroupFilter()) === 0 || isGuestAdditionLocked()"
-            (click)="batchAssignGroupToTable(selectedGroupFilter(), batchSelectedTable())">
-      <i class="fas fa-bolt me-1" *ngIf="!isBatchAssigning()"></i>
+    <button type="button" class="btn btn-sm btn-primary px-3 fw-bold rounded-pill text-nowrap"
+            [disabled]="!batchSelectedTable() || isBatchAssigning() || isGuestAdditionLocked()"
+            (click)="onBatchAssignGroup()">
+      <i class="fas fa-check-double me-1" *ngIf="!isBatchAssigning()"></i>
       <i class="fas fa-circle-notch fa-spin me-1" *ngIf="isBatchAssigning()"></i>
-      Assigner tout le groupe
+      {{ 'GUESTS.ASSIGN_ALL_GROUP' | translate }}
     </button>
   </div>
 </div>
 
-<div class="alert alert-success" *ngIf="successMessage()">
-  {{ successMessage() }}
+<div class="alert alert-success d-flex align-items-center gap-2" role="alert" *ngIf="successMessage()">
+  <i class="fas fa-check-circle"></i>
+  <div class="fs-sm fw-medium">{{ successMessage() }}</div>
 </div>
 
-<div class="alert alert-error" *ngIf="errorMessage()">
-  {{ errorMessage() }}
+<div class="alert alert-danger d-flex align-items-center gap-2" role="alert" *ngIf="errorMessage()">
+  <i class="fas fa-exclamation-circle"></i>
+  <div class="fs-sm fw-medium">{{ errorMessage() }}</div>
 </div>
 
-<div class="table-container" *ngIf="guests().length > 0">
-  <table class="table">
+<div class="text-center py-5" *ngIf="isLoading()">
+  <i class="fas fa-circle-notch fa-spin text-primary fs-2"></i>
+  <p class="mt-2 text-muted fs-sm">{{ 'COMMON.LOADING' | translate }}</p>
+</div>
+
+<div class="empty-state" *ngIf="!isLoading() && guests().length === 0">
+  <div class="empty-icon"><i class="fas fa-users-slash"></i></div>
+  <h3>{{ 'GUESTS.NO_GUESTS' | translate }}</h3>
+  <p>{{ 'GUESTS.SUBTITLE_CLIENT' | translate }}</p>
+</div>
+
+<div class="table-container" *ngIf="!isLoading() && guests().length > 0">
+  <table>
     <thead>
       <tr>
-        <th>Nom Complet</th>
-        <th>Email / Tél</th>
-        <th>Groupe</th>
-        <th>Statut</th>
-        <th>Table</th>
-        <th class="actions-col">Actions</th>
+        <th>{{ 'GUESTS.FULL_NAME' | translate }}</th>
+        <th>{{ 'GUESTS.CONTACT' | translate }}</th>
+        <th>{{ 'GUESTS.GROUP' | translate }}</th>
+        <th>{{ 'COMMON.STATUS' | translate }}</th>
+        <th>{{ 'GUESTS.POSITION_TABLE' | translate }}</th>
+        <th>{{ 'GUESTS.DIETARY' | translate }}</th>
+        <th class="text-end">{{ 'COMMON.ACTIONS' | translate }}</th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let guest of filteredGuests()">
+        <td class="fw-semibold text-dark">{{ guest.fullName }}</td>
         <td>
-          <strong>{{ guest.fullName }}</strong>
-          <div class="dietary" *ngIf="guest.dietaryRequirements">
-            <i class="fas fa-utensils"></i> {{ guest.dietaryRequirements }}
+          <div class="contact-info">
+            <div *ngIf="guest.email" class="text-truncate" style="max-width: 180px;"><i class="fas fa-envelope me-1 text-muted"></i>{{ guest.email }}</div>
+            <div *ngIf="guest.phone"><i class="fas fa-phone me-1 text-muted"></i>{{ guest.phone }}</div>
+            <span *ngIf="!guest.email && !guest.phone" class="text-muted fst-italic fs-xs">-</span>
           </div>
         </td>
         <td>
-          <div *ngIf="guest.email"><i class="far fa-envelope"></i> {{ guest.email }}</div>
-          <div *ngIf="guest.phone"><i class="fas fa-phone"></i> {{ guest.phone }}</div>
-        </td>
-        <td>
-          <span class="badge" *ngIf="guest.groupName">{{ guest.groupName }}</span>
+          <span class="badge bg-light text-dark border" *ngIf="guest.groupName">
+            <i class="fas fa-tag me-1 text-primary"></i>{{ guest.groupName }}
+          </span>
+          <span *ngIf="!guest.groupName" class="text-muted fs-xs">-</span>
         </td>
         <td>
           <span class="status-badge" [ngClass]="guest.status.toLowerCase()">
-            {{ guest.status === 'CONFIRMED' ? 'Confirmé' : (guest.status === 'DECLINED' ? 'Refusé' : 'En attente') }}
+            {{ (guest.status === 'CONFIRMED' ? 'GUESTS.CONFIRMED' : (guest.status === 'PENDING' ? 'GUESTS.PENDING' : 'GUESTS.DECLINED')) | translate }}
           </span>
         </td>
-        <td>{{ guest.tableNumber || '-' }}</td>
-        <td class="actions-col">
-          <button class="btn-icon" [disabled]="isGuestAdditionLocked()" [title]="isGuestAdditionLocked() ? 'Modifications verrouillées' : 'Modifier'" (click)="openEditModal(guest)" [style.opacity]="isGuestAdditionLocked() ? '0.35' : '1'" [style.cursor]="isGuestAdditionLocked() ? 'not-allowed' : 'pointer'">
-            <i class="fas fa-edit"></i>
-          </button>
-          <button class="btn-icon text-danger" [disabled]="isGuestAdditionLocked()" [title]="isGuestAdditionLocked() ? 'Suppressions verrouillées' : 'Supprimer'" (click)="onDeleteGuest(guest)" [style.opacity]="isGuestAdditionLocked() ? '0.35' : '1'" [style.cursor]="isGuestAdditionLocked() ? 'not-allowed' : 'pointer'">
-            <i class="fas fa-trash-alt"></i>
-          </button>
+        <td>
+          <span class="badge bg-info-light text-info fw-semibold" *ngIf="guest.tableNumber">
+            <i class="fas fa-chair me-1"></i>{{ guest.tableNumber }}
+          </span>
+          <span *ngIf="!guest.tableNumber" class="text-muted fs-xs">-</span>
+        </td>
+        <td class="fs-xs text-muted" style="max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" [title]="guest.dietaryRequirements || ''">
+          {{ guest.dietaryRequirements || '-' }}
+        </td>
+        <td class="text-end">
+          <div class="btn-group btn-group-sm">
+            <button class="btn btn-outline-secondary" (click)="openEditModal(guest)" [title]="'COMMON.EDIT' | translate">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="btn btn-outline-danger" [disabled]="isGuestAdditionLocked()" (click)="onDelete(guest.id!)" [title]="isGuestAdditionLocked() ? 'Action verrouillée' : ('COMMON.DELETE' | translate)">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
         </td>
       </tr>
     </tbody>
   </table>
 </div>
 
-<div class="empty-state" *ngIf="!isLoading() && guests().length === 0">
-  <div class="empty-icon"><i class="fas fa-user-plus"></i></div>
-  <h3>Aucun invité</h3>
-  <p>Commencez à créer votre liste en ajoutant votre premier invité.</p>
-  <button class="btn btn-primary mt-3" [disabled]="isGuestAdditionLocked()" (click)="openAddModal()">
-    <i class="fas" [ngClass]="isGuestAdditionLocked() ? 'fa-lock me-1' : 'fa-plus me-1'"></i>
-    {{ isGuestAdditionLocked() ? 'Ajouts Clôturés' : 'Ajouter un invité' }}
-  </button>
-</div>
-
-<!-- Modal Form (Unified Luxury Design) -->
-<div class="modal fade show animate__animated animate__fadeIn d-block" tabindex="-1" style="background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(8px);" *ngIf="isModalOpen()">
-  <div class="modal-dialog modal-dialog-centered" style="max-width: 650px;">
-    <div class="modal-content luxury-modal-content">
-      
-      <!-- Luxury Modal Header -->
-      <div class="luxury-modal-header d-flex align-items-center justify-content-between">
-        <div class="d-flex align-items-center gap-2.5">
-          <div class="rounded-circle bg-primary-subtle text-primary p-2 d-flex align-items-center justify-content-center flex-shrink-0" style="width: 38px; height: 38px;">
-            <i class="fa {{ isEditing() ? 'fa-user-pen' : 'fa-user-plus' }}"></i>
+<!-- Luxury Guest Form Modal -->
+<div class="luxury-modal-overlay" *ngIf="isModalOpen()" (click)="closeModal()">
+  <div class="luxury-modal-dialog" (click)="$event.stopPropagation()">
+    <div class="luxury-modal-content animate__animated animate__zoomIn animate__faster">
+      <div class="luxury-modal-header">
+        <div class="d-flex align-items-center gap-2">
+          <div class="header-icon-box">
+            <i class="fa" [ngClass]="isEditing() ? 'fa-user-pen' : 'fa-user-plus'"></i>
           </div>
           <div>
-            <h4 class="modal-title fw-bold text-dark mb-0">
-              {{ isEditing() ? 'Modifier l\'Invité' : 'Ajouter un Invité' }}
-            </h4>
+            <h5 class="luxury-modal-title mb-0">{{ (isEditing() ? 'GUESTS.EDIT_GUEST' : 'GUESTS.ADD_GUEST') | translate }}</h5>
+            <span class="luxury-modal-subtitle">{{ 'GUESTS.TITLE' | translate }}</span>
           </div>
         </div>
-        <button type="button" class="btn-close" (click)="closeModal()"></button>
+        <button type="button" class="btn-close-luxury" (click)="closeModal()">
+          <i class="fa fa-times"></i>
+        </button>
       </div>
 
-      <form (ngSubmit)="onSaveGuest()">
-        <div class="modal-body p-4 bg-light">
-          
+      <form (ngSubmit)="onSubmit()">
+        <div class="luxury-modal-body">
+
+          <!-- Section 1: Informations Personnelles -->
           <div class="modal-section-card">
             <div class="section-badge-header">
-              <i class="fa fa-id-card text-primary"></i> Informations Personnelles
+              <i class="fa fa-id-card text-primary"></i> {{ 'EVENTS.GENERAL_INFO' | translate }}
             </div>
 
             <div class="mb-3">
-              <label class="form-label fw-bold text-dark fs-sm mb-1.5">Nom complet <span class="text-danger">*</span></label>
+              <label class="form-label fw-bold text-dark fs-sm mb-1.5">{{ 'GUESTS.FULL_NAME' | translate }} <span class="text-danger">*</span></label>
               <div class="input-group luxury-input-group">
                 <span class="input-group-text input-icon-box"><i class="fa fa-user"></i></span>
                 <input type="text" class="form-control"
@@ -212,7 +227,7 @@
 
             <div class="row g-3">
               <div class="col-md-6">
-                <label class="form-label fw-bold text-dark fs-sm mb-1.5">Email</label>
+                <label class="form-label fw-bold text-dark fs-sm mb-1.5">{{ 'GUESTS.EMAIL' | translate }}</label>
                 <div class="input-group luxury-input-group">
                   <span class="input-group-text input-icon-box"><i class="fa fa-envelope"></i></span>
                   <input type="email" class="form-control"
@@ -220,31 +235,29 @@
                 </div>
               </div>
               <div class="col-md-6">
-                <label class="form-label fw-bold text-dark fs-sm mb-1.5">Téléphone</label>
+                <label class="form-label fw-bold text-dark fs-sm mb-1.5">{{ 'GUESTS.PHONE' | translate }}</label>
                 <div class="input-group luxury-input-group">
                   <span class="input-group-text input-icon-box"><i class="fa fa-phone"></i></span>
                   <input type="tel" class="form-control"
                          placeholder="+212 600 000 000" [ngModel]="phone()" (ngModelChange)="phone.set($event)" name="phone">
                 </div>
               </div>
-              <div class="col-12 mt-1">
-                <span class="fs-3xs text-muted fst-italic"><i class="fa fa-info-circle text-primary me-1"></i>Au moins un moyen de contact (Téléphone ou E-mail) est requis pour l'invitation.</span>
-              </div>
             </div>
           </div>
 
+          <!-- Section 2: Placement & Organisation -->
           <div class="modal-section-card">
             <div class="section-badge-header">
-              <i class="fa fa-chair text-primary"></i> Placement & Organisation
+              <i class="fa fa-chair text-primary"></i> {{ 'EVENTS.TABLE_CONFIG' | translate }}
             </div>
 
             <div class="row g-3 mb-3">
               <div class="col-md-6 position-relative group-autocomplete-container">
-                <label class="form-label fw-bold text-dark fs-sm mb-1.5">Groupe</label>
+                <label class="form-label fw-bold text-dark fs-sm mb-1.5">{{ 'GUESTS.GROUP' | translate }}</label>
                 <div class="input-group luxury-input-group">
                   <span class="input-group-text input-icon-box"><i class="fa fa-users"></i></span>
                   <input type="text" class="form-control"
-                         placeholder="Ex: Famille Proche, VIP, Staff..."
+                         [placeholder]="'GUESTS.GROUP_PLACEHOLDER' | translate"
                          [ngModel]="groupName()" (ngModelChange)="onGroupInputChange($event)"
                          (focus)="isGroupDropdownOpen.set(true)"
                          name="groupName" autocomplete="off">
@@ -264,14 +277,14 @@
               </div>
               <div class="col-md-6 position-relative table-autocomplete-container">
                 <label class="form-label fw-bold text-dark fs-sm mb-1.5 d-flex justify-content-between align-items-center">
-                  <span>Position / Table</span>
-                  <span class="fs-3xs text-muted" *ngIf="status() !== 'CONFIRMED'">(Optionnel)</span>
-                  <span class="badge bg-success-light text-success fs-3xs" *ngIf="status() === 'CONFIRMED'">Confirmé</span>
+                  <span>{{ 'GUESTS.POSITION_TABLE' | translate }}</span>
+                  <span class="fs-3xs text-muted" *ngIf="status() !== 'CONFIRMED'">({{ 'COMMON.OPTIONAL' | translate }})</span>
+                  <span class="badge bg-success-light text-success fs-3xs" *ngIf="status() === 'CONFIRMED'">{{ 'GUESTS.CONFIRMED' | translate }}</span>
                 </label>
                 <div class="input-group luxury-input-group">
                   <span class="input-group-text input-icon-box"><i class="fa fa-location-dot"></i></span>
                   <input type="text" class="form-control"
-                         placeholder="Ex: Table 1, Table VIP..."
+                         [placeholder]="'GUESTS.TABLE_PLACEHOLDER' | translate"
                          [ngModel]="tableNumber()" (ngModelChange)="onTableInputChange($event)"
                          (focus)="isTableDropdownOpen.set(true)"
                          name="tableNumber" autocomplete="off">
@@ -283,8 +296,8 @@
                      style="position: absolute; z-index: 1050; max-height: 250px; overflow-y: auto;"
                      *ngIf="isTableDropdownOpen() && tableOptions().length > 0">
                   <div class="px-3 py-1.5 bg-body-light border-bottom text-muted fs-3xs fw-bold text-uppercase d-flex justify-content-between">
-                    <span>Table & Groupes installés</span>
-                    <span>Places</span>
+                    <span>{{ 'GUESTS.TABLES_SUGGESTED' | translate }}</span>
+                    <span>{{ 'GUESTS.SEATS' | translate }}</span>
                   </div>
                   <button type="button" class="dropdown-item fs-sm py-2 px-3 text-start w-100 d-flex justify-content-between align-items-center"
                           *ngFor="let tbl of tableOptions()"
@@ -295,7 +308,7 @@
                       <div class="d-flex align-items-center gap-1.5">
                         <span class="fw-bold text-dark">{{ tbl.name }}</span>
                         <span class="badge bg-success text-white fs-3xs py-0.5 px-1.5" *ngIf="tbl.isRecommended">
-                          <i class="fas fa-star me-0.5"></i> Même groupe ({{ groupName() }})
+                          <i class="fas fa-star me-0.5"></i> {{ 'GUESTS.RECOMMENDED_GROUP' | translate }} ({{ groupName() }})
                         </span>
                       </div>
                       <span class="text-muted fs-3xs mt-0.5">
@@ -313,19 +326,19 @@
 
             <div class="row g-3">
               <div class="col-md-6">
-                <label class="form-label fw-bold text-dark fs-sm mb-1.5">Statut de présence</label>
+                <label class="form-label fw-bold text-dark fs-sm mb-1.5">{{ 'GUESTS.STATUS_PRESENCE' | translate }}</label>
                 <select class="form-select form-control" [ngModel]="status()" (ngModelChange)="status.set($event)" name="status">
-                  <option value="PENDING">En attente</option>
-                  <option value="CONFIRMED">Confirmé</option>
-                  <option value="DECLINED">Décliné</option>
+                  <option value="PENDING">{{ 'GUESTS.PENDING' | translate }}</option>
+                  <option value="CONFIRMED">{{ 'GUESTS.CONFIRMED' | translate }}</option>
+                  <option value="DECLINED">{{ 'GUESTS.DECLINED' | translate }}</option>
                 </select>
               </div>
               <div class="col-md-6">
-                <label class="form-label fw-bold text-dark fs-sm mb-1.5">Régime / Remarques</label>
+                <label class="form-label fw-bold text-dark fs-sm mb-1.5">{{ 'GUESTS.DIETARY' | translate }}</label>
                 <div class="input-group luxury-input-group">
                   <span class="input-group-text input-icon-box"><i class="fa fa-utensils"></i></span>
                   <input type="text" class="form-control"
-                         placeholder="Ex: Végétarien, sans gluten"
+                         [placeholder]="'GUESTS.DIETARY_PLACEHOLDER' | translate"
                          [ngModel]="dietaryRequirements()" (ngModelChange)="dietaryRequirements.set($event)" name="dietaryRequirements">
                 </div>
               </div>
@@ -335,11 +348,11 @@
         </div>
 
         <div class="luxury-modal-footer">
-          <button type="button" class="btn btn-cancel" (click)="closeModal()">Annuler</button>
+          <button type="button" class="btn btn-cancel" (click)="closeModal()">{{ 'COMMON.CANCEL' | translate }}</button>
           <button type="submit" class="btn btn-submit-luxury" [disabled]="isSaving()">
             <i class="fa fa-save me-1" *ngIf="!isSaving()"></i>
             <i class="fa fa-circle-notch fa-spin me-1" *ngIf="isSaving()"></i>
-            {{ isEditing() ? 'Mettre à jour' : 'Enregistrer l\'Invité' }}
+            {{ (isEditing() ? 'COMMON.UPDATE' : 'COMMON.SAVE') | translate }}
           </button>
         </div>
       </form>

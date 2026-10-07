@@ -1,20 +1,20 @@
 <div class="client-login-container">
   <div class="login-card">
     <div class="logo-area">
-      <h1>Portail Client</h1>
-      <p class="subtitle">Accédez à la gestion de votre événement</p>
+      <h1>{{ 'AUTH.CLIENT_PORTAL_TITLE' | translate }}</h1>
+      <p class="subtitle">{{ 'AUTH.CLIENT_PORTAL_SUBTITLE' | translate }}</p>
     </div>
 
     <form (ngSubmit)="login()">
       <div class="form-group">
-        <label for="token">Jeton d'accès (Access Token)</label>
+        <label for="token">{{ 'AUTH.ACCESS_TOKEN_LABEL' | translate }}</label>
         <input 
           type="text" 
           id="token" 
           name="token" 
           [ngModel]="accessLinkToken()" 
           (ngModelChange)="accessLinkToken.set($event)"
-          placeholder="Ex: a1b2c3d4..." 
+          [placeholder]="'AUTH.ACCESS_TOKEN_PH' | translate" 
           class="form-control"
           [disabled]="isLoading()"
           required
@@ -25,7 +25,7 @@
         <div class="d-flex align-items-start gap-2">
           <i class="fa mt-1" [ngClass]="isExpired() ? 'fa-lock text-warning fs-5' : 'fa-circle-exclamation text-danger fs-5'"></i>
           <div>
-            <strong *ngIf="isExpired()" class="d-block mb-1">Accès Expiré</strong>
+            <strong *ngIf="isExpired()" class="d-block mb-1">{{ 'AUTH.EXPIRED_ACCESS_TITLE' | translate }}</strong>
             {{ errorMessage() }}
           </div>
         </div>
@@ -33,12 +33,12 @@
 
       <button type="submit" class="btn btn-primary w-100" [disabled]="isLoading() || !accessLinkToken()">
         <span *ngIf="isLoading()" class="spinner"></span>
-        <span *ngIf="!isLoading()">Se Connecter</span>
+        <span *ngIf="!isLoading()">{{ 'AUTH.SIGN_IN_BTN' | translate }}</span>
       </button>
     </form>
     
     <div class="footer-links">
-      <p>Vous êtes traiteur ? <a routerLink="/login">Connexion Traiteur</a></p>
+      <p>{{ 'AUTH.ARE_YOU_ORGANIZER' | translate }} <a routerLink="/login">{{ 'AUTH.ORGANIZER_SIGNIN_LINK' | translate }}</a></p>
     </div>
   </div>
 </div>

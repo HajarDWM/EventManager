@@ -2,15 +2,15 @@
 <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-2 text-center text-md-start">
   <div class="flex-grow-1 mb-1 mb-md-0">
     <h1 class="h3 fw-bold mb-2">
-      Événements
+      {{ 'EVENTS.TITLE' | translate }}
     </h1>
     <h2 class="h6 fw-medium text-muted mb-0">
-      Visualisez et gérez toutes vos prestations d'organisateur.
+      {{ 'EVENTS.SUBTITLE' | translate }}
     </h2>
   </div>
   <div class="mt-3 mt-md-0 ms-md-3">
     <a class="btn btn-primary" routerLink="/events/create" *ngIf="!isSuspended()">
-      <i class="fa fa-fw fa-plus me-1"></i> Planifier un événement
+      <i class="fa fa-fw fa-plus me-1"></i> {{ 'EVENTS.CREATE_EVENT' | translate }}
     </a>
   </div>
 </div>
@@ -24,10 +24,9 @@
         <div class="d-flex align-items-center gap-2 mb-1">
           <i class="fa fa-info-circle text-primary fs-5"></i>
           <div>
-            <span class="fw-semibold text-dark">Utilisation de votre quota</span>
+            <span class="fw-semibold text-dark">{{ 'EVENTS.QUOTA_USAGE' | translate }}</span>
             <span class="fs-xs text-muted ms-2">
-              ({{ filteredQuotaEventsUsed() }} / {{ eventsLimit() }} événements créés sous le forfait 
-              <span class="fw-bold">{{ currentPlan() === 'FREE' ? 'Pack Free' : 'Pack Standard Pro' }}</span>)
+              ({{ filteredQuotaEventsUsed() }} / {{ eventsLimit() }} {{ 'NAV.EVENTS' | translate | lowercase }})
             </span>
           </div>
         </div>
@@ -45,7 +44,7 @@
       </div>
       <div class="col-md-4 text-md-end">
         <a class="btn btn-sm btn-alt-primary px-3 fs-xs fw-semibold" routerLink="/subscription">
-          <i class="fa fa-arrow-up me-1"></i> Mettre à niveau le forfait
+          <i class="fa fa-arrow-up me-1"></i> {{ 'EVENTS.UPGRADE_PLAN' | translate }}
         </a>
       </div>
     </div>
@@ -62,7 +61,7 @@
           <i class="fa fa-search text-muted"></i>
         </span>
         <input type="text" class="form-control border-0 bg-body-light fs-sm"
-               placeholder="Rechercher par titre ou lieu..."
+               [placeholder]="'EVENTS.SEARCH_PLACEHOLDER' | translate"
                [ngModel]="searchTerm()" (ngModelChange)="searchTerm.set($event)">
       </div>
     </div>
@@ -71,11 +70,11 @@
     <div class="col-md-3">
       <select class="form-select border-0 bg-body-light fs-sm"
               [ngModel]="statusFilter()" (ngModelChange)="statusFilter.set($event)">
-        <option value="ALL">Tous les statuts</option>
-        <option value="PLANNED">Planifiés</option>
-        <option value="DRAFT">Brouillons</option>
-        <option value="COMPLETED">Terminés</option>
-        <option value="CANCELLED">Annulés</option>
+        <option value="ALL">{{ 'EVENTS.ALL_STATUSES' | translate }}</option>
+        <option value="PLANNED">{{ 'EVENTS.STATUS_PLANNED' | translate }}</option>
+        <option value="DRAFT">{{ 'EVENTS.STATUS_DRAFT' | translate }}</option>
+        <option value="COMPLETED">{{ 'EVENTS.STATUS_COMPLETED' | translate }}</option>
+        <option value="CANCELLED">{{ 'EVENTS.STATUS_CANCELLED' | translate }}</option>
       </select>
     </div>
 
@@ -83,17 +82,17 @@
     <div class="col-md-3">
       <select class="form-select border-0 bg-body-light fs-sm"
               [ngModel]="sortBy()" (ngModelChange)="sortBy.set($event)">
-        <option value="date-asc">Date (Plus proche)</option>
-        <option value="date-desc">Date (Plus éloignée)</option>
-        <option value="guests-desc">Invités (Décroissant)</option>
-        <option value="title-asc">Titre (A-Z)</option>
+        <option value="date-asc">{{ 'EVENTS.SORT_DATE_ASC' | translate }}</option>
+        <option value="date-desc">{{ 'EVENTS.SORT_DATE_DESC' | translate }}</option>
+        <option value="guests-desc">{{ 'EVENTS.SORT_GUESTS_DESC' | translate }}</option>
+        <option value="title-asc">{{ 'EVENTS.SORT_TITLE_ASC' | translate }}</option>
       </select>
     </div>
 
     <!-- Reset Button -->
     <div class="col-md-2 text-md-end">
-      <button type="button" class="btn btn-sm btn-alt-secondary w-100" (click)="resetFilters()" title="Réinitialiser les filtres">
-        <i class="fa fa-sync-alt me-1"></i> Réinitialiser
+      <button type="button" class="btn btn-sm btn-alt-secondary w-100" (click)="resetFilters()" [title]="'EVENTS.RESET_FILTERS' | translate">
+        <i class="fa fa-sync-alt me-1"></i> {{ 'EVENTS.RESET_FILTERS' | translate }}
       </button>
     </div>
   </div>
@@ -101,9 +100,9 @@
 
 <div class="block block-rounded mt-3 shadow-sm border border-light">
   <div class="block-header block-header-default bg-body-light border-bottom border-light d-flex justify-content-between align-items-center">
-    <h3 class="block-title mb-0">Liste de mes Prestations</h3>
+    <h3 class="block-title mb-0">{{ 'EVENTS.TITLE' | translate }}</h3>
     <span class="badge bg-primary px-3 py-2 rounded-pill fs-xs">
-      {{ filteredEvents().length }} prestation(s)
+      {{ filteredEvents().length }} {{ 'NAV.EVENTS' | translate }}
     </span>
   </div>
 
@@ -117,20 +116,20 @@
     <!-- Loading Spinner -->
     <div class="text-center py-5" *ngIf="isLoading()">
       <i class="fa fa-fw fa-circle-notch fa-spin text-primary fs-2"></i>
-      <p class="mt-2 text-muted fs-sm">Chargement des événements...</p>
+      <p class="mt-2 text-muted fs-sm">{{ 'COMMON.LOADING' | translate }}</p>
     </div>
 
     <!-- Empty State -->
     <div class="text-center py-5" *ngIf="!isLoading() && filteredEvents().length === 0">
       <i class="far fa-calendar-times text-muted fs-1 mb-3"></i>
-      <h3 class="h5 fw-bold mb-1">Aucun événement trouvé</h3>
-      <p class="text-muted fs-sm mb-4" *ngIf="events().length === 0">Commencez par planifier votre première prestation d'organisateur.</p>
-      <p class="text-muted fs-sm mb-4" *ngIf="events().length > 0">Aucun résultat ne correspond à vos filtres de recherche.</p>
+      <h3 class="h5 fw-bold mb-1">{{ 'EVENTS.NO_EVENTS_FOUND' | translate }}</h3>
+      <p class="text-muted fs-sm mb-4" *ngIf="events().length === 0">{{ 'EVENTS.SUBTITLE' | translate }}</p>
+      <p class="text-muted fs-sm mb-4" *ngIf="events().length > 0">{{ 'EVENTS.NO_EVENTS_MATCH' | translate }}</p>
       <a class="btn btn-sm btn-alt-primary" routerLink="/events/create" *ngIf="events().length === 0">
-        <i class="fa fa-plus me-1"></i> Créer un événement
+        <i class="fa fa-plus me-1"></i> {{ 'EVENTS.CREATE_EVENT' | translate }}
       </a>
       <button class="btn btn-sm btn-alt-secondary ms-2" (click)="resetFilters()" *ngIf="events().length > 0">
-        <i class="fa fa-sync-alt me-1"></i> Effacer les filtres
+        <i class="fa fa-sync-alt me-1"></i> {{ 'EVENTS.RESET_FILTERS' | translate }}
       </button>
     </div>
 
@@ -139,12 +138,12 @@
       <table class="table table-bordered table-striped table-hover table-vcenter fs-sm">
         <thead class="table-light">
           <tr>
-            <th>Titre</th>
-            <th>Date & Heure</th>
-            <th>Lieu</th>
-            <th class="text-center" style="width: 12%;">Invités</th>
-            <th class="text-center" style="width: 15%;">Statut</th>
-            <th class="text-center" style="width: 110px;">Actions</th>
+            <th>{{ 'EVENTS.NAME' | translate }}</th>
+            <th>{{ 'EVENTS.DATE_TIME' | translate }}</th>
+            <th>{{ 'COMMON.LOCATION' | translate }}</th>
+            <th class="text-center" style="width: 12%;">{{ 'EVENTS.GUEST_COUNT' | translate }}</th>
+            <th class="text-center" style="width: 15%;">{{ 'COMMON.STATUS' | translate }}</th>
+            <th class="text-center" style="width: 110px;">{{ 'COMMON.ACTIONS' | translate }}</th>
           </tr>
         </thead>
         <tbody>
@@ -176,10 +175,10 @@
             </td>
             <td class="text-center" (click)="$event.stopPropagation()">
               <div class="d-flex align-items-center justify-content-center gap-1">
-                <a class="btn btn-sm btn-alt-secondary" [routerLink]="['/events/edit', event.id]" title="Modifier">
+                <a class="btn btn-sm btn-alt-secondary" [routerLink]="['/events/edit', event.id]" [title]="'COMMON.EDIT' | translate">
                   <i class="fa fa-pencil-alt"></i>
                 </a>
-                <button type="button" class="btn btn-sm btn-alt-danger" (click)="deleteEvent(event.id!)" title="Supprimer">
+                <button type="button" class="btn btn-sm btn-alt-danger" (click)="deleteEvent(event.id!)" [title]="'COMMON.DELETE' | translate">
                   <i class="fa fa-trash-alt"></i>
                 </button>
               </div>

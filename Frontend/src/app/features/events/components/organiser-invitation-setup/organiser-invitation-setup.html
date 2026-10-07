@@ -2,15 +2,15 @@
 <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-2 text-center text-md-start">
   <div class="flex-grow-1 mb-1 mb-md-0">
     <h1 class="h3 fw-bold mb-2">
-      Personnalisation de l'Invitation : {{ event()?.title }}
+      {{ 'INVITATION_SETUP.TITLE' | translate }} : {{ event()?.title }}
     </h1>
     <h2 class="h6 fw-medium text-muted mb-0">
-      Sélectionnez un modèle d'invitation interactif et personnalisez les détails de l'événement.
+      {{ 'INVITATION_SETUP.SUBTITLE' | translate }}
     </h2>
   </div>
   <div class="mt-2 mt-md-0">
     <a [routerLink]="['/events', event()?.id]" class="btn btn-alt-secondary">
-      <i class="fa fa-arrow-left me-1"></i> Retour
+      <i class="fa fa-arrow-left me-1"></i> {{ 'COMMON.BACK' | translate }}
     </a>
   </div>
 </div>
@@ -38,7 +38,7 @@
       <div class="p-3 bg-body-light border-bottom border-light d-flex align-items-center justify-content-between">
         <div class="d-flex align-items-center gap-2">
           <i class="fa fa-folder-open text-primary fs-xs"></i>
-          <span class="fw-bold fs-xs text-uppercase letter-spacing-sm text-dark mb-0">Thématiques</span>
+          <span class="fw-bold fs-xs text-uppercase letter-spacing-sm text-dark mb-0">{{ 'INVITATION_SETUP.THEMES' | translate }}</span>
         </div>
         <span class="badge bg-primary-subtle text-primary rounded-pill px-2 py-0.5 fs-4xs fw-bold">
           {{ taxonomy().length }}
@@ -60,10 +60,10 @@
 
           <div class="cat-item-info flex-grow-1 min-w-0">
             <div class="cat-item-name" [class.fw-bold]="selectedCategory() === cat.id" [title]="cat.name">
-              {{ cat.name }}
+              {{ ('TAXONOMY.CAT_' + cat.id) | translate }}
             </div>
             <div class="cat-item-sub" [title]="cat.subSummary">
-              {{ cat.subSummary }}
+              {{ ('TAXONOMY.SUMMARY_' + cat.id) | translate }}
             </div>
           </div>
 
@@ -90,32 +90,32 @@
               <i class="fa {{ currentMainCategoryInfo()?.icon || 'fa-folder' }}"></i>
             </div>
             <div>
-              <h2 class="fs-sm fw-bold text-dark mb-0">{{ currentMainCategoryInfo()?.name }}</h2>
-              <span class="fs-4xs text-muted">{{ currentMainCategoryInfo()?.subSummary }}</span>
+              <h2 class="fs-sm fw-bold text-dark mb-0">{{ currentMainCategoryInfo() ? (('TAXONOMY.CAT_' + currentMainCategoryInfo()?.id) | translate) : '' }}</h2>
+              <span class="fs-4xs text-muted">{{ currentMainCategoryInfo() ? (('TAXONOMY.SUMMARY_' + currentMainCategoryInfo()?.id) | translate) : '' }}</span>
             </div>
           </div>
           <span class="badge bg-white text-muted border shadow-2xs px-2 py-0.5 rounded-pill fs-3xs">
-            {{ filteredTemplates().length }} Modèle(s)
+            {{ filteredTemplates().length }} {{ 'INVITATION_SETUP.MODELS_COUNT' | translate }}
           </span>
         </div>
 
         <!-- Level 2: Subcategory Pills Strip -->
         <div class="sub-filter-strip py-1 px-2" *ngIf="availableSubCategoriesForFilter().length > 0">
           <span class="strip-title fs-3xs">
-            <i class="fa fa-sparkles text-warning"></i> Occasion :
+            <i class="fa fa-sparkles text-warning"></i> {{ 'INVITATION_SETUP.OCCASION' | translate }}
           </span>
           <button type="button" class="sub-chip-btn py-0.5 px-2 fs-3xs"
                   [class.active]="selectedSubCategory() === 'ALL'"
                   (click)="setSubCategory('ALL')">
             <i class="fa fa-asterisk fs-4xs"></i>
-            <span>Toutes les occasions</span>
+            <span>{{ 'INVITATION_SETUP.ALL_OCCASIONS' | translate }}</span>
           </button>
           <button type="button" class="sub-chip-btn py-0.5 px-2 fs-3xs"
                   *ngFor="let sub of availableSubCategoriesForFilter()"
                   [class.active]="selectedSubCategory() === sub.name"
                   (click)="setSubCategory(sub.name)">
             <i class="fa {{ sub.icon }} fs-4xs"></i>
-            <span>{{ sub.name }}</span>
+            <span>{{ ('TAXONOMY.SUB_' + sub.name) | translate }}</span>
           </button>
         </div>
       </div>
@@ -153,15 +153,15 @@
 
                 <!-- Selected template check badge -->
                 <span class="position-absolute top-0 end-0 m-1.5 badge bg-success text-white px-2 py-0.5 fs-4xs rounded-pill shadow-sm" *ngIf="event()?.digitalTemplateId === template.id" style="z-index: 2;">
-                  <i class="fa fa-check-circle me-0.5"></i> Actif
+                  <i class="fa fa-check-circle me-0.5"></i> {{ 'INVITATION_SETUP.ACTIVE' | translate }}
                 </span>
               </div>
 
               <div class="card-body p-2 flex-grow-1 d-flex flex-column justify-content-between">
                 <div>
-                  <h3 class="fs-xs fw-bold text-dark mb-0.5 text-truncate" [title]="template.title">{{ template.title }}</h3>
+                  <h3 class="fs-xs fw-bold text-dark mb-0.5 text-truncate" [title]="template.title">{{ (('TAXONOMY.TITLE_' + template.title) | translate) || template.title }}</h3>
                   <span class="fs-4xs text-muted d-block text-truncate mb-1" *ngIf="template.subCategory">
-                    {{ template.subCategory }}
+                    {{ ('TAXONOMY.SUB_' + template.subCategory) | translate }}
                   </span>
                 </div>
 
@@ -170,7 +170,7 @@
                   <button type="button" 
                           class="btn-preview-eye shadow-sm" 
                           (click)="openTemplatePreview(template)" 
-                          title="Aperçu réel du carton d'invitation">
+                          [title]="'INVITATION_SETUP.REAL_PREVIEW_TOOLTIP' | translate">
                     <i class="fa fa-eye"></i>
                   </button>
 
@@ -180,7 +180,7 @@
                           [ngClass]="event()?.digitalTemplateId === template.id ? 'btn-success' : 'btn-primary'"
                           (click)="selectTemplate(template)">
                     <i class="fa fa-magic fs-4xs"></i>
-                    <span>{{ event()?.digitalTemplateId === template.id ? 'Modifier' : 'Choisir' }}</span>
+                    <span>{{ (event()?.digitalTemplateId === template.id ? 'INVITATION_SETUP.EDIT_SETUP' : 'INVITATION_SETUP.CHOOSE') | translate }}</span>
                   </button>
                 </div>
               </div>
@@ -189,10 +189,10 @@
 
           <div class="col-12 text-center py-5 text-muted" *ngIf="filteredTemplates().length === 0">
             <i class="fa fa-paint-brush fs-2 mb-2 opacity-50"></i>
-            <h4 class="h6 fw-bold text-muted mb-1">Aucun modèle dans cette catégorie</h4>
-            <p class="fs-xs text-muted mb-2">Sélectionnez une autre sous-catégorie ou parcourez nos autres univers.</p>
+            <h4 class="h6 fw-bold text-muted mb-1">{{ 'INVITATION_SETUP.NO_TEMPLATE_CAT' | translate }}</h4>
+            <p class="fs-xs text-muted mb-2">{{ 'INVITATION_SETUP.NO_TEMPLATE_DESC' | translate }}</p>
             <button type="button" class="btn btn-xs btn-alt-secondary rounded-pill px-3" (click)="setSubCategory('ALL')">
-              Voir toutes les célébrations de ce groupe
+              {{ 'INVITATION_SETUP.VIEW_ALL_GROUP' | translate }}
             </button>
           </div>
         </div>
@@ -205,7 +205,7 @@
 <div class="block block-rounded shadow-sm border border-light mt-4 animate__animated animate__fadeIn" *ngIf="invitationToken">
   <div class="block-header block-header-default bg-body-light border-bottom border-light">
     <h3 class="block-title fw-bold mb-0">
-      <i class="fa fa-paper-plane text-primary me-2"></i>Envoi des Invitations
+      <i class="fa fa-paper-plane text-primary me-2"></i>{{ 'INVITATION_SETUP.SEND_INVITATIONS' | translate }}
     </h3>
   </div>
   
@@ -220,7 +220,7 @@
       <!-- Channel Selection -->
       <div class="col-lg-4">
         <div class="bg-body-light p-3 rounded h-100 border border-light">
-          <h4 class="fs-sm fw-bold text-uppercase text-muted mb-3"><i class="fa fa-share-alt me-1"></i> 1. Choisir le canal d'envoi</h4>
+          <h4 class="fs-sm fw-bold text-uppercase text-muted mb-3"><i class="fa fa-share-alt me-1"></i> {{ 'INVITATION_SETUP.STEP_CHOOSE_CHANNEL' | translate }}</h4>
           
           <div class="space-y-3">
             <div class="form-check form-check-block mb-3">
@@ -230,7 +230,7 @@
                 <i class="fab fa-whatsapp text-success fs-5"></i>
                 <div>
                   <span class="fw-semibold d-block fs-sm">WhatsApp</span>
-                  <span class="fs-xs text-muted">Lien direct envoyé sur leur numéro mobile</span>
+                  <span class="fs-xs text-muted">{{ 'INVITATION_SETUP.WHATSAPP_DESC' | translate }}</span>
                 </div>
               </label>
             </div>
@@ -242,7 +242,7 @@
                 <i class="far fa-envelope text-info fs-5"></i>
                 <div>
                   <span class="fw-semibold d-block fs-sm">E-mail</span>
-                  <span class="fs-xs text-muted">Invitation formelle envoyée dans leur boîte mail</span>
+                  <span class="fs-xs text-muted">{{ 'INVITATION_SETUP.EMAIL_DESC' | translate }}</span>
                 </div>
               </label>
             </div>
@@ -254,7 +254,7 @@
                 <i class="fa fa-comment-sms text-warning fs-5"></i>
                 <div>
                   <span class="fw-semibold d-block fs-sm">SMS</span>
-                  <span class="fs-xs text-muted">SMS standard envoyé sur leur numéro</span>
+                  <span class="fs-xs text-muted">{{ 'INVITATION_SETUP.SMS_DESC' | translate }}</span>
                 </div>
               </label>
             </div>
@@ -265,8 +265,8 @@
               <label class="form-check-label d-flex align-items-center gap-2" for="channelPaper" style="cursor: pointer;">
                 <i class="fa fa-envelope-open-text text-danger fs-5"></i>
                 <div>
-                  <span class="fw-semibold d-block fs-sm">Format Papier</span>
-                  <span class="fs-xs text-muted">Générer un PDF imprimable avec code QR</span>
+                  <span class="fw-semibold d-block fs-sm">{{ 'INVITATION_SETUP.FORMAT_PAPER' | translate }}</span>
+                  <span class="fs-xs text-muted">{{ 'INVITATION_SETUP.FORMAT_PAPER_DESC' | translate }}</span>
                 </div>
               </label>
             </div>
@@ -283,12 +283,12 @@
                      [checked]="isAllSelected()" 
                      (change)="toggleAllGuests($event)">
               <label class="form-check-label fw-bold fs-sm mb-0 cursor-pointer" for="selectAllGuests">
-                2. Sélectionner les destinataires
+                {{ 'INVITATION_SETUP.STEP_SELECT_GUESTS' | translate }}
               </label>
             </div>
             
             <span class="badge bg-white text-dark border shadow-2xs rounded-pill px-2.5 py-1 fs-3xs fw-semibold">
-              <i class="fa fa-users text-primary me-1"></i> {{ getSelectedCount() }} / {{ guests().length }} sélectionné(s)
+              <i class="fa fa-users text-primary me-1"></i> {{ getSelectedCount() }} / {{ guests().length }} {{ 'INVITATION_SETUP.SELECTED' | translate }}
             </span>
           </div>
 
@@ -297,12 +297,12 @@
               <thead class="table-light text-uppercase fs-xxs">
                 <tr>
                   <th style="width: 40px;"></th>
-                  <th>Nom Complet</th>
-                  <th>Coordonnées</th>
-                  <th class="text-center">Statut Envoi</th>
-                  <th class="text-center">Confirmation</th>
-                  <th class="text-center">Canaux</th>
-                  <th class="text-center" style="width: 120px;">Action</th>
+                  <th>{{ 'GUESTS.FULL_NAME' | translate }}</th>
+                  <th>{{ 'GUESTS.CONTACT' | translate }}</th>
+                  <th class="text-center">{{ 'INVITATION_SETUP.DELIVERY_STATUS' | translate }}</th>
+                  <th class="text-center">{{ 'INVITATION_SETUP.CONFIRMATION' | translate }}</th>
+                  <th class="text-center">{{ 'INVITATION_SETUP.CHANNELS' | translate }}</th>
+                  <th class="text-center" style="width: 120px;">{{ 'COMMON.ACTIONS' | translate }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -323,12 +323,12 @@
                   <td>
                     <div class="fs-xs text-muted" *ngIf="guest.email"><i class="far fa-envelope me-1"></i>{{ guest.email }}</div>
                     <div class="fs-xs text-muted" *ngIf="guest.phone"><i class="fa fa-phone me-1"></i>{{ guest.phone }}</div>
-                    <span class="fs-xxs text-danger" *ngIf="!guest.email && !guest.phone">Coordonnées manquantes</span>
+                    <span class="fs-xxs text-danger" *ngIf="!guest.email && !guest.phone">{{ 'INVITATION_SETUP.MISSING_CONTACT' | translate }}</span>
                   </td>
                   <td class="text-center">
                     <span class="badge px-2 py-1 fs-xxs" 
                           [ngClass]="(guest.isSent || guest.invitationStatus === 'SENT') ? 'bg-success-subtle text-success' : 'bg-warning-subtle text-warning'">
-                      {{ (guest.isSent || guest.invitationStatus === 'SENT') ? 'Envoyé' : 'En attente' }}
+                      {{ ((guest.isSent || guest.invitationStatus === 'SENT') ? 'INVITATION_SETUP.SENT' : 'INVITATION_SETUP.PENDING') | translate }}
                     </span>
                   </td>
                   <td class="text-center">
@@ -348,16 +348,16 @@
                   <td class="text-center" (click)="$event.stopPropagation()">
                     <button type="button" class="btn btn-xs btn-alt-primary rounded-pill px-2.5 py-1 d-inline-flex align-items-center gap-1 shadow-2xs"
                             (click)="testGuestInvitation(guest)"
-                            title="Tester l'invitation personnalisée de cet invité (Nouvel onglet)">
+                            [title]="'INVITATION_SETUP.TEST_GUEST_TOOLTIP' | translate">
                       <i class="fa fa-arrow-up-right-from-square text-primary"></i>
-                      <span>Tester</span>
+                      <span>{{ 'INVITATION_SETUP.TEST_PREVIEW' | translate }}</span>
                     </button>
                   </td>
                 </tr>
                 <tr *ngIf="guests().length === 0">
                   <td colspan="7" class="text-center py-4 text-muted fs-sm">
                     <i class="fa fa-users-slash d-block mb-1 fs-4 opacity-50"></i>
-                    Aucun invité enregistré pour cet événement.
+                    {{ 'INVITATION_SETUP.NO_GUESTS_RECORDED' | translate }}
                   </td>
                 </tr>
               </tbody>
@@ -370,11 +370,11 @@
     <!-- Actions Footer -->
     <div class="d-flex flex-column flex-sm-row justify-content-end align-items-center gap-2 pt-3 border-top">
       <button type="button" class="btn btn-alt-secondary btn-sm" (click)="openBatchPaperModal()" [disabled]="getSelectedCount() === 0">
-        <i class="fa fa-print me-1"></i> Imprimer invitations
+        <i class="fa fa-print me-1"></i> {{ 'INVITATION_SETUP.PRINT_INVITATIONS' | translate }}
       </button>
       <button type="button" class="btn btn-primary btn-sm px-4 shadow-sm" (click)="sendInvitations()" [disabled]="isSending() || getSelectedCount() === 0 || !hasSelectedChannel()">
-        <span *ngIf="!isSending()"><i class="fa fa-paper-plane me-1"></i> Envoyer la sélection ({{ getSelectedCount() }})</span>
-        <span *ngIf="isSending()"><i class="fa fa-spinner fa-spin me-1"></i> Envoi en cours...</span>
+        <span *ngIf="!isSending()"><i class="fa fa-paper-plane me-1"></i> {{ 'INVITATION_SETUP.SEND_SELECTED' | translate }} ({{ getSelectedCount() }})</span>
+        <span *ngIf="isSending()"><i class="fa fa-spinner fa-spin me-1"></i> {{ 'INVITATION_SETUP.SENDING' | translate }}</span>
       </button>
     </div>
   </div>
@@ -394,7 +394,7 @@
             <i class="fa fa-magic"></i>
           </div>
           <div>
-            <h4 class="modal-title-luxury mb-0 fs-base fw-bold text-dark">Studio de Personnalisation de l'Invitation</h4>
+            <h4 class="modal-title-luxury mb-0 fs-base fw-bold text-dark">{{ 'INVITATION_SETUP.STUDIO_TITLE' | translate }}</h4>
             <p class="modal-subtitle-luxury mb-0 fs-xs text-muted">{{ selectedTemplate()?.title }} &bull; {{ selectedTemplate()?.category }} {{ selectedTemplate()?.subCategory ? '(' + selectedTemplate()?.subCategory + ')' : '' }}</p>
           </div>
         </div>
@@ -410,31 +410,31 @@
               <!-- Section 1: Titres Officiels -->
               <div class="form-section-card mb-3.5">
                 <h5 class="section-card-title fs-xs fw-bold text-uppercase letter-spacing-sm text-dark mb-3">
-                  <i class="fa fa-pen-nib text-primary me-2"></i>1. Textes & Titres Officiels
+                  <i class="fa fa-pen-nib text-primary me-2"></i>{{ 'INVITATION_SETUP.OFFICIAL_TEXTS' | translate }}
                 </h5>
                 
                 <div class="mb-3">
-                  <label class="form-label fw-semibold text-dark fs-xs mb-1">Grand Titre de l'Invitation <span class="text-danger">*</span></label>
+                  <label class="form-label fw-semibold text-dark fs-xs mb-1">{{ 'INVITATION_SETUP.MAIN_TITLE' | translate }} <span class="text-danger">*</span></label>
                   <div class="input-group input-group-sm luxury-input-group shadow-2xs">
                     <span class="input-group-text bg-light text-primary"><i class="fa fa-heading"></i></span>
                     <input type="text" class="form-control" 
-                           placeholder="Ex: Sarah & Youssef" 
+                           [placeholder]="'INVITATION_SETUP.MAIN_TITLE_PH' | translate" 
                            [(ngModel)]="invitationTitle" name="invTitle" required>
                   </div>
                 </div>
 
                 <div class="mb-2">
-                  <label class="form-label fw-semibold text-dark fs-xs mb-1">Sous-titre / Type d'Événement</label>
+                  <label class="form-label fw-semibold text-dark fs-xs mb-1">{{ 'INVITATION_SETUP.SUBTITLE_TYPE' | translate }}</label>
                   <div class="input-group input-group-sm luxury-input-group mb-2 shadow-2xs">
                     <span class="input-group-text bg-light text-primary"><i class="fa fa-quote-left"></i></span>
                     <input type="text" class="form-control" 
-                           placeholder="Ex: Le Mariage de, Soirée de Gala, Anniversaire" 
+                           [placeholder]="'INVITATION_SETUP.SUBTITLE_TYPE_PH' | translate" 
                            [(ngModel)]="invitationSubtitle" name="invSubtitle">
                   </div>
                   
                   <!-- Quick Subtitle Suggestions -->
                   <div class="d-flex align-items-center gap-1.5 flex-wrap">
-                    <span class="fs-4xs text-muted me-1">Suggestions :</span>
+                    <span class="fs-4xs text-muted me-1">{{ 'INVITATION_SETUP.SUGGESTIONS' | translate }}</span>
                     <button type="button" class="badge bg-light text-dark border px-2 py-1 rounded-pill fs-4xs cursor-pointer shadow-2xs" 
                             *ngFor="let sub of currentMainCategoryInfo()?.subCategories"
                             [class.bg-primary-subtle]="invitationSubtitle === sub.defaultSubtitle"
@@ -450,19 +450,19 @@
               <!-- Section 2: Date, Horaires & Emplacement -->
               <div class="form-section-card">
                 <h5 class="section-card-title fs-xs fw-bold text-uppercase letter-spacing-sm text-dark mb-3">
-                  <i class="fa fa-calendar-days text-primary me-2"></i>2. Date, Horaires & Emplacement
+                  <i class="fa fa-calendar-days text-primary me-2"></i>{{ 'INVITATION_SETUP.DATE_TIME_LOCATION' | translate }}
                 </h5>
 
                 <div class="row g-2.5 mb-2.5">
                   <div class="col-sm-6">
-                    <label class="form-label fw-semibold text-dark fs-xs mb-1">Date de la Cérémonie <span class="text-danger">*</span></label>
+                    <label class="form-label fw-semibold text-dark fs-xs mb-1">{{ 'INVITATION_SETUP.CEREMONY_DATE' | translate }} <span class="text-danger">*</span></label>
                     <div class="input-group input-group-sm luxury-input-group shadow-2xs">
                       <span class="input-group-text bg-light text-primary"><i class="fa fa-calendar"></i></span>
                       <input type="date" class="form-control" [(ngModel)]="invitationDateStr" name="invDate" required>
                     </div>
                   </div>
                   <div class="col-sm-6">
-                    <label class="form-label fw-semibold text-dark fs-xs mb-1">Heure d'Accueil <span class="text-danger">*</span></label>
+                    <label class="form-label fw-semibold text-dark fs-xs mb-1">{{ 'INVITATION_SETUP.RECEPTION_TIME' | translate }} <span class="text-danger">*</span></label>
                     <div class="input-group input-group-sm luxury-input-group shadow-2xs">
                       <span class="input-group-text bg-light text-primary"><i class="fa fa-clock"></i></span>
                       <input type="time" class="form-control" [(ngModel)]="invitationTimeStr" name="invTime" required>
@@ -472,20 +472,20 @@
 
                 <div class="row g-2.5">
                   <div class="col-sm-6">
-                    <label class="form-label fw-semibold text-dark fs-xs mb-1">Lieu / Salle de réception <span class="text-danger">*</span></label>
+                    <label class="form-label fw-semibold text-dark fs-xs mb-1">{{ 'INVITATION_SETUP.VENUE_LOCATION' | translate }} <span class="text-danger">*</span></label>
                     <div class="input-group input-group-sm luxury-input-group shadow-2xs">
                       <span class="input-group-text bg-light text-danger"><i class="fa fa-map-marker-alt"></i></span>
                       <input type="text" class="form-control" 
-                             placeholder="Ex: Palais des Roses, Casablanca" 
+                             [placeholder]="'INVITATION_SETUP.VENUE_LOCATION_PH' | translate" 
                              [(ngModel)]="invitationLocation" name="invLoc" required>
                     </div>
                   </div>
                   <div class="col-sm-6">
-                    <label class="form-label fw-semibold text-dark fs-xs mb-1">Zone de Parking (facultatif)</label>
+                    <label class="form-label fw-semibold text-dark fs-xs mb-1">{{ 'INVITATION_SETUP.PARKING_ZONE' | translate }}</label>
                     <div class="input-group input-group-sm luxury-input-group shadow-2xs">
                       <span class="input-group-text bg-light text-primary"><i class="fa fa-square-parking"></i></span>
                       <input type="text" class="form-control" 
-                             placeholder="Ex: Parking P1 - Entrée Sud" 
+                             [placeholder]="'INVITATION_SETUP.PARKING_ZONE_PH' | translate" 
                              [(ngModel)]="invitationParking" name="invParking">
                     </div>
                   </div>
@@ -498,7 +498,7 @@
               <div class="d-flex align-items-center justify-content-center w-100 mb-3 text-white">
                 <div class="d-flex align-items-center gap-2">
                   <span class="rounded-circle bg-success d-inline-block" style="width: 8px; height: 8px; box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3);"></span>
-                  <span class="fs-xs fw-bold text-white text-uppercase letter-spacing-sm">Aperçu Réel Invité</span>
+                  <span class="fs-xs fw-bold text-white text-uppercase letter-spacing-sm">{{ 'INVITATION_SETUP.REAL_GUEST_PREVIEW' | translate }}</span>
                 </div>
               </div>
 
@@ -523,11 +523,11 @@
         <!-- Luxury Modal Footer -->
         <div class="luxury-modal-footer p-3 bg-white border-top d-flex justify-content-end align-items-center gap-2">
           <button type="button" class="btn btn-sm btn-alt-secondary rounded-pill px-4" (click)="closeModal()">
-            Annuler
+            {{ 'COMMON.CANCEL' | translate }}
           </button>
           <button type="submit" class="btn btn-sm btn-primary rounded-pill px-4 shadow-sm d-flex align-items-center gap-1.5" [disabled]="isSubmitting()">
-            <span *ngIf="!isSubmitting()"><i class="fa fa-check-circle"></i> Valider et Activer l'Invitation</span>
-            <span *ngIf="isSubmitting()"><i class="fa fa-spinner fa-spin"></i> Enregistrement en cours...</span>
+            <span *ngIf="!isSubmitting()"><i class="fa fa-check-circle"></i> {{ 'INVITATION_SETUP.VALIDATE_ACTIVATE' | translate }}</span>
+            <span *ngIf="isSubmitting()"><i class="fa fa-spinner fa-spin"></i> {{ 'INVITATION_SETUP.SAVING' | translate }}</span>
           </button>
         </div>
       </form>
@@ -562,7 +562,7 @@
           <div class="d-flex align-items-center gap-2 flex-shrink-0">
             <button type="button" class="btn btn-sm btn-success rounded-pill px-3 py-1 fs-xs fw-bold shadow-2xs d-flex align-items-center gap-1.5" (click)="chooseFromPreview()">
               <i class="fa fa-check"></i>
-              <span>Choisir</span>
+              <span>{{ 'INVITATION_SETUP.CHOOSE' | translate }}</span>
             </button>
             <button type="button" class="btn-close" (click)="closeTemplatePreview()" aria-label="Fermer"></button>
           </div>
@@ -577,7 +577,7 @@
                     (click)="setPreviewDevice('MOBILE')"
                     title="Format Smartphone (95% des invités)">
               <i class="fa fa-mobile-screen fs-xs"></i>
-              <span class="fs-3xs fw-semibold">Mobile</span>
+              <span class="fs-3xs fw-semibold">{{ 'INVITATION_SETUP.DEVICE_MOBILE' | translate }}</span>
             </button>
             <button type="button" 
                     class="btn btn-xs rounded-pill px-3 py-1 d-flex align-items-center gap-1.5 transition" 
@@ -585,7 +585,7 @@
                     (click)="setPreviewDevice('DESKTOP')"
                     title="Format Ordinateur & Grand Écran">
               <i class="fa fa-laptop fs-xs"></i>
-              <span class="fs-3xs fw-semibold">PC / Tablette</span>
+              <span class="fs-3xs fw-semibold">{{ 'INVITATION_SETUP.DEVICE_PC' | translate }}</span>
             </button>
           </div>
         </div>
@@ -653,7 +653,7 @@
               <div class="d-flex align-items-center gap-2 flex-wrap">
                 <h4 class="mb-0 fw-bold fs-base text-white">{{ selectedJourneyGuest()?.fullName }}</h4>
                 <span class="badge rounded-pill px-2.5 py-1 fs-3xs fw-bold" [ngClass]="journey.currentStatusBadgeClass">
-                  {{ journey.currentStatusLabel }}
+                  {{ ('INVITATION_SETUP.' + journey.currentStatusKey) | translate }}
                 </span>
               </div>
               <div class="d-flex align-items-center gap-3 mt-1 text-slate-300 fs-xs flex-wrap">
@@ -662,13 +662,13 @@
               </div>
             </div>
           </div>
-          <button type="button" class="btn-close btn-close-white" (click)="closeGuestJourney()" aria-label="Fermer"></button>
+          <button type="button" class="btn-close btn-close-white" (click)="closeGuestJourney()" [attr.aria-label]="'COMMON.CLOSE' | translate"></button>
         </div>
 
         <!-- Progress Bar Indicator -->
         <div class="bg-dark bg-opacity-50 p-2.5 rounded-3 border border-white border-opacity-10">
           <div class="d-flex justify-content-between align-items-center fs-xxs fw-semibold text-uppercase text-slate-300 mb-1.5">
-            <span><i class="fa fa-route me-1 text-primary"></i> Progression dans l'invitation</span>
+            <span><i class="fa fa-route me-1 text-primary"></i> {{ 'INVITATION_SETUP.JOURNEY_PROGRESS' | translate }}</span>
             <span class="text-white fw-bold">{{ journey.completionPercentage }}%</span>
           </div>
           <div class="progress" style="height: 6px; background-color: rgba(255,255,255,0.15);">
@@ -683,10 +683,10 @@
       <div class="modal-body p-4 bg-light">
         <div class="d-flex justify-content-between align-items-center mb-3">
           <h5 class="fs-xs fw-bold text-uppercase text-muted mb-0 tracking-wider">
-            <i class="fa fa-layer-group me-1.5 text-primary"></i> Écrans & Étapes consultés par l'invité
+            <i class="fa fa-layer-group me-1.5 text-primary"></i> {{ 'INVITATION_SETUP.JOURNEY_SCREENS' | translate }}
           </h5>
           <span class="fs-3xs text-muted fw-semibold">
-            Écran Actuel : <strong class="text-primary">Écran {{ journey.currentActiveStepIndex }} / {{ journey.steps.length }}</strong>
+            {{ 'INVITATION_SETUP.CURRENT_SCREEN' | translate }} <strong class="text-primary">{{ 'INVITATION_SETUP.SCREEN' | translate }} {{ journey.currentActiveStepIndex }} / {{ journey.steps.length }}</strong>
           </span>
         </div>
 
@@ -698,9 +698,9 @@
             'status-pending': !journey.steps[0].isCompleted && !journey.steps[0].isCurrent
           }">
             <div class="screen-card-header">
-              <span class="fw-bold fs-xs text-dark"><i class="fa fa-paper-plane text-primary me-1"></i> 1. Notification</span>
+              <span class="fw-bold fs-xs text-dark"><i class="fa fa-paper-plane text-primary me-1"></i> {{ 'INVITATION_SETUP.STEP1_TITLE' | translate }}</span>
               <span class="badge rounded-pill px-2 py-0.5 fs-3xs" [ngClass]="journey.steps[0].badgeClass">
-                {{ journey.steps[0].badgeLabel }}
+                {{ (journey.steps[0].badgeKey ? ('INVITATION_SETUP.' + journey.steps[0].badgeKey) : journey.steps[0].badgeLabel) | translate }}
               </span>
             </div>
             <!-- Mockup -->
@@ -709,18 +709,18 @@
               <div class="mockup-email-card" *ngIf="journey.steps[0].primaryChannelType === 'EMAIL'">
                 <div class="d-flex align-items-center justify-content-between mb-1">
                   <span class="d-flex align-items-center gap-1 text-primary fw-bold" style="font-size: 0.58rem; white-space: nowrap;">
-                    <i class="fa fa-envelope" style="font-size: 0.55rem;"></i> E-mail Officiel
+                    <i class="fa fa-envelope" style="font-size: 0.55rem;"></i> {{ 'INVITATION_SETUP.OFFICIAL_EMAIL' | translate }}
                   </span>
-                  <span class="badge bg-primary-subtle text-primary border border-primary-subtle" style="font-size: 0.48rem; padding: 1px 4px;">Reçu</span>
+                  <span class="badge bg-primary-subtle text-primary border border-primary-subtle" style="font-size: 0.48rem; padding: 1px 4px;">{{ 'INVITATION_SETUP.RECEIVED' | translate }}</span>
                 </div>
                 <div class="text-dark fw-bold text-truncate" style="font-size: 0.62rem;">
-                  ✉️ {{ event()?.title || 'Invitation Officielle' }}
+                  ✉️ {{ event()?.title || ('INVITATION_SETUP.OFFICIAL_INVITATION' | translate) }}
                 </div>
                 <div class="text-muted text-truncate" style="font-size: 0.55rem; line-height: 1.2;">
-                  "Bonjour {{ selectedJourneyGuest()?.fullName }}, découvrez..."
+                  "{{ 'INVITATION_SETUP.GREETING_EMAIL' | translate:{ name: selectedJourneyGuest()?.fullName } }}"
                 </div>
                 <div class="text-primary fw-semibold mt-0.5" style="font-size: 0.56rem;">
-                  🔗 Consulter l'Invitation & RSVP
+                  🔗 {{ 'INVITATION_SETUP.VIEW_INVITATION_RSVP' | translate }}
                 </div>
               </div>
 
@@ -728,10 +728,10 @@
               <div class="mockup-sms" *ngIf="journey.steps[0].primaryChannelType !== 'EMAIL'">
                 <div class="d-flex align-items-center gap-1.5 fw-bold mb-1 fs-3xs" [ngClass]="journey.steps[0].primaryChannelType === 'SMS' ? 'text-warning' : 'text-success'">
                   <i [class]="journey.steps[0].primaryChannelType === 'SMS' ? 'fa fa-comment-sms' : 'fab fa-whatsapp'"></i> 
-                  <span>{{ journey.steps[0].primaryChannelType === 'SMS' ? 'SMS Officiel' : 'Message WhatsApp' }}</span>
+                  <span>{{ journey.steps[0].primaryChannelType === 'SMS' ? ('INVITATION_SETUP.OFFICIAL_SMS' | translate) : ('INVITATION_SETUP.WHATSAPP_MSG' | translate) }}</span>
                 </div>
                 <div class="text-dark mb-1" style="font-size: 0.65rem; line-height: 1.25;">
-                  "Bonjour {{ selectedJourneyGuest()?.fullName }}, découvrez votre invitation..."
+                  "{{ 'INVITATION_SETUP.GREETING_SMS' | translate:{ name: selectedJourneyGuest()?.fullName } }}"
                 </div>
                 <div class="text-primary text-truncate fw-semibold" style="font-size: 0.62rem;">
                   🔗 rsvp/{{ selectedJourneyGuest()?.invitationToken || selectedJourneyGuest()?.id }}
@@ -740,7 +740,7 @@
             </div>
             <div class="screen-card-footer">
               <div class="screen-footer-narrative">
-                {{ journey.steps[0].narrativeMessage }}
+                {{ journey.steps[0].isCompleted ? ('INVITATION_SETUP.STEP1_NARRATIVE_SENT' | translate:{ name: journey.steps[0].guestFirstName, channels: journey.steps[0].channelsText }) : ('INVITATION_SETUP.STEP1_NARRATIVE_PENDING' | translate:{ name: journey.steps[0].guestFirstName }) }}
               </div>
               <div class="screen-footer-meta">
                 <div class="d-flex align-items-center gap-1">
@@ -762,9 +762,9 @@
             'status-pending': !journey.steps[1].isCompleted && !journey.steps[1].isCurrent
           }">
             <div class="screen-card-header">
-              <span class="fw-bold fs-xs text-dark"><i class="fa fa-envelope-open-text text-warning me-1"></i> 2. Carte d'Invitation</span>
+              <span class="fw-bold fs-xs text-dark"><i class="fa fa-envelope-open-text text-warning me-1"></i> {{ 'INVITATION_SETUP.STEP2_TITLE' | translate }}</span>
               <span class="badge rounded-pill px-2 py-0.5 fs-3xs" [ngClass]="journey.steps[1].badgeClass">
-                {{ journey.steps[1].badgeLabel }}
+                {{ (journey.steps[1].badgeKey ? ('INVITATION_SETUP.' + journey.steps[1].badgeKey) : journey.steps[1].badgeLabel) | translate }}
               </span>
             </div>
             <!-- Mockup Invitation Card -->
@@ -775,10 +775,10 @@
                     <i class="fa fa-gem text-warning"></i>
                   </div>
                   <div class="page1-title-text" [title]="journey.steps[1].page1Title">
-                    {{ journey.steps[1].page1Title || 'Notre Célébration' }}
+                    {{ journey.steps[1].page1Title || ('INVITATION_SETUP.DEFAULT_CELEBRATION' | translate) }}
                   </div>
                   <div class="page1-subtitle-text" [title]="journey.steps[1].page1Subtitle">
-                    {{ journey.steps[1].page1Subtitle || 'Invitation Officielle' }}
+                    {{ journey.steps[1].page1Subtitle || ('INVITATION_SETUP.OFFICIAL_INVITATION' | translate) }}
                   </div>
                   <div class="page1-guest-badge">
                     <i class="fa fa-user me-1 text-warning"></i>
@@ -793,7 +793,7 @@
             </div>
             <div class="screen-card-footer">
               <div class="screen-footer-narrative">
-                {{ journey.steps[1].narrativeMessage }}
+                {{ journey.steps[1].isCompleted ? ('INVITATION_SETUP.STEP2_NARRATIVE_OPENED' | translate:{ name: journey.steps[1].guestFirstName }) : ('INVITATION_SETUP.STEP2_NARRATIVE_PENDING' | translate:{ name: journey.steps[1].guestFirstName }) }}
               </div>
               <div class="screen-footer-meta">
                 <span class="fs-4xs text-muted text-truncate" [title]="journey.steps[1].page1Location">
@@ -813,9 +813,9 @@
             'status-pending': !journey.steps[2].isCompleted && !journey.steps[2].isCurrent
           }">
             <div class="screen-card-header">
-              <span class="fw-bold fs-xs text-dark"><i class="fa fa-utensils text-success me-1"></i> 3. Menu & Formule</span>
+              <span class="fw-bold fs-xs text-dark"><i class="fa fa-utensils text-success me-1"></i> {{ 'INVITATION_SETUP.STEP3_TITLE' | translate }}</span>
               <span class="badge rounded-pill px-2 py-0.5 fs-3xs" [ngClass]="journey.steps[2].badgeClass">
-                {{ journey.steps[2].badgeLabel }}
+                {{ (journey.steps[2].badgeKey ? ('INVITATION_SETUP.' + journey.steps[2].badgeKey) : journey.steps[2].badgeLabel) | translate }}
               </span>
             </div>
             <!-- Mockup Menu & Traiteur -->
@@ -824,7 +824,7 @@
                 <!-- Top Formula Badge -->
                 <div class="formula-header-badge">
                   <i class="fa fa-bowl-food me-1 text-warning"></i>
-                  <span class="fw-bold text-truncate">{{ journey.steps[2].cateringFormula }}</span>
+                  <span class="fw-bold text-truncate">{{ journey.steps[2].cateringFormulaKey ? (journey.steps[2].cateringFormulaKey | translate) : journey.steps[2].cateringFormula }}</span>
                 </div>
 
                 <!-- Case A: Formule Buffet (2 dishes preview) -->
@@ -847,17 +847,17 @@
                       <i *ngIf="tab.key === 'STARTER'" class="fa fa-utensils me-0.5" style="font-size: 0.5rem;"></i>
                       <i *ngIf="tab.key === 'MAIN'" class="fa fa-fire me-0.5" style="font-size: 0.5rem;"></i>
                       <i *ngIf="tab.key === 'DESSERT'" class="fa fa-cake-candles me-0.5" style="font-size: 0.5rem;"></i>
-                      {{ tab.label }}
+                      {{ tab.key === 'STARTER' ? ('CATERING.STARTERS_IN_BUFFET' | translate) : (tab.key === 'MAIN' ? ('CATERING.MAIN_SERVED_TABLE' | translate) : ('CATERING.DESSERTS_IN_BUFFET' | translate)) }}
                     </span>
                   </div>
                   <div class="dish-preview-row">
                     <img [src]="journey.steps[2].dishImage" alt="Plat" onerror="this.src='/assets/images/menu_main.png'">
                     <div class="text-truncate" style="min-width: 0;">
                       <div class="fw-bold text-dark text-truncate" style="font-size: 0.62rem;" [title]="journey.steps[2].dishChoice">
-                        {{ journey.steps[2].dishChoice || 'Sélection des plats' }}
+                        {{ journey.steps[2].dishChoice || ('CATERING.MENU_CARD_TITLE' | translate) }}
                       </div>
                       <span class="badge bg-light text-dark border border-secondary-subtle" style="font-size: 0.5rem; padding: 1px 4px;">
-                        {{ journey.steps[2].dishCategory }}
+                        {{ journey.steps[2].dishCategoryKey ? (('EVENT_DETAILS.SERVICE_' + journey.steps[2].dishCategoryKey) | translate) : journey.steps[2].dishCategory }}
                       </span>
                     </div>
                   </div>
@@ -866,33 +866,33 @@
             </div>
             <div class="screen-card-footer">
               <div class="screen-footer-narrative">
-                {{ journey.steps[2].narrativeMessage }}
+                {{ journey.steps[2].isBuffetMode ? ('INVITATION_SETUP.STEP3_NARRATIVE_BUFFET' | translate:{ name: journey.steps[2].guestFirstName }) : (journey.steps[2].dishChoice ? ('INVITATION_SETUP.STEP3_NARRATIVE_SELECTED' | translate:{ name: journey.steps[2].guestFirstName, dish: journey.steps[2].dishChoice }) : (journey.steps[2].isCompleted ? ('INVITATION_SETUP.STEP3_NARRATIVE_VIEWING' | translate:{ name: journey.steps[2].guestFirstName }) : ('INVITATION_SETUP.STEP3_NARRATIVE_PENDING' | translate:{ name: journey.steps[2].guestFirstName }))) }}
               </div>
               <div class="screen-footer-meta">
                 <span class="fs-4xs text-muted text-truncate d-block" [title]="journey.steps[2].cateringFormula">
-                  <i class="fa fa-bowl-food me-0.5 text-primary"></i> {{ journey.steps[2].cateringFormula }}
+                  <i class="fa fa-bowl-food me-0.5 text-primary"></i> {{ journey.steps[2].cateringFormulaKey ? (journey.steps[2].cateringFormulaKey | translate) : journey.steps[2].cateringFormula }}
                 </span>
               </div>
             </div>
           </div>
 
-          <!-- CARD 4: ÉCRAN RÉGIMES & ALLERGIES -->
+          <!-- CARD 4: É          <!-- CARD 4: ÉCRAN RÉGIMES & ALLERGIES -->
           <div class="screen-card-item" [ngClass]="{
             'status-completed': journey.steps[3].isCompleted,
             'status-current': journey.steps[3].isCurrent,
             'status-pending': !journey.steps[3].isCompleted && !journey.steps[3].isCurrent
           }">
             <div class="screen-card-header">
-              <span class="fw-bold fs-xs text-dark"><i class="fa fa-leaf text-success me-1"></i> 4. Régimes & Allergies</span>
+              <span class="fw-bold fs-xs text-dark"><i class="fa fa-leaf text-success me-1"></i> {{ 'INVITATION_SETUP.STEP4_TITLE' | translate }}</span>
               <span class="badge rounded-pill px-2 py-0.5 fs-3xs" [ngClass]="journey.steps[3].badgeClass">
-                {{ journey.steps[3].badgeLabel }}
+                {{ journey.steps[3].hasDietaryRestrictions ? ((journey.steps[3].dietaryTags?.length || 1) + ' ' + ('INVITATION_SETUP.DIETS_COUNT' | translate)) : ('INVITATION_SETUP.STATUS_STANDARD' | translate) }}
               </span>
             </div>
             <!-- Mockup Dietary -->
             <div class="screen-mockup-frame">
               <div class="mockup-dietary-card">
                 <div class="dietary-header-label mb-1">
-                  <i class="fa fa-shield-halved text-success me-1"></i> Fiche Traiteur & Allergies
+                  <i class="fa fa-shield-halved text-success me-1"></i> {{ 'INVITATION_SETUP.CATERER_ALLERGY_SHEET' | translate }}
                 </div>
 
                 <!-- Case A: Has Restrictions -->
@@ -902,7 +902,7 @@
                           class="badge rounded-pill fw-semibold d-inline-flex align-items-center gap-1 shadow-2xs" 
                           [ngClass]="dt.badgeClass"
                           style="font-size: 0.54rem; padding: 2px 6px;">
-                      <i class="fa" [ngClass]="dt.icon"></i> {{ dt.label }}
+                      <i class="fa" [ngClass]="dt.icon"></i> {{ (('TAXONOMY.DIET_' + dt.label) | translate) || dt.label }}
                     </span>
                   </div>
                   <div class="dietary-narrative-note">
@@ -914,22 +914,22 @@
                 <!-- Case B: Standard Menu (No restrictions) -->
                 <div *ngIf="!journey.steps[3].hasDietaryRestrictions" class="text-center py-0.5">
                   <div class="d-inline-flex align-items-center gap-1 px-2.5 py-0.5 rounded-pill bg-success-subtle text-success border border-success-subtle fs-3xs fw-bold mb-1">
-                    <i class="fa fa-circle-check"></i> Sans Allergie Déclarée
+                    <i class="fa fa-circle-check"></i> {{ 'INVITATION_SETUP.NO_ALLERGIES_DECLARED' | translate }}
                   </div>
                   <div class="dietary-narrative-note text-muted">
-                    {{ journey.steps[3].guestFirstName }} n'a signalé aucun régime ni allergie
+                    {{ 'INVITATION_SETUP.NO_ALLERGIES_DESC' | translate:{ name: journey.steps[3].guestFirstName } }}
                   </div>
                 </div>
               </div>
             </div>
             <div class="screen-card-footer">
               <div class="screen-footer-narrative">
-                {{ journey.steps[3].narrativeMessage }}
+                {{ journey.steps[3].hasDietaryRestrictions ? ('INVITATION_SETUP.STEP4_NARRATIVE_DECLARED' | translate:{ name: journey.steps[3].guestFirstName, diet: journey.steps[3].dietarySummary }) : (journey.steps[3].isCompleted ? ('INVITATION_SETUP.STEP4_NARRATIVE_STANDARD' | translate:{ name: journey.steps[3].guestFirstName }) : ('INVITATION_SETUP.STEP4_NARRATIVE_PENDING' | translate:{ name: journey.steps[3].guestFirstName })) }}
               </div>
               <div class="screen-footer-meta">
                 <span class="fs-4xs text-muted">
                   <i class="fa fa-shield-halved me-0.5 text-warning"></i> 
-                  {{ journey.steps[3].hasDietaryRestrictions ? (journey.steps[3].dietaryTags?.length + ' restriction(s) déclarée(s)') : 'Aucune restriction' }}
+                  {{ journey.steps[3].hasDietaryRestrictions ? (journey.steps[3].dietaryTags?.length + ' ' + ('INVITATION_SETUP.RESTRICTIONS_DECLARED' | translate)) : ('INVITATION_SETUP.NO_RESTRICTIONS_META' | translate) }}
                 </span>
               </div>
             </div>
@@ -942,9 +942,9 @@
             'status-pending': !journey.steps[4].isCompleted && !journey.steps[4].isCurrent
           }">
             <div class="screen-card-header">
-              <span class="fw-bold fs-xs text-dark"><i class="fa fa-circle-check text-primary me-1"></i> 5. Décision RSVP</span>
+              <span class="fw-bold fs-xs text-dark"><i class="fa fa-circle-check text-primary me-1"></i> {{ 'INVITATION_SETUP.STEP5_TITLE' | translate }}</span>
               <span class="badge rounded-pill px-2 py-0.5 fs-3xs" [ngClass]="journey.steps[4].badgeClass">
-                {{ journey.steps[4].badgeLabel }}
+                {{ (journey.steps[4].badgeKey ? ('INVITATION_SETUP.' + journey.steps[4].badgeKey) : journey.steps[4].badgeLabel) | translate }}
               </span>
             </div>
             <!-- Mockup RSVP Decision -->
@@ -955,7 +955,7 @@
                 <div *ngIf="selectedJourneyGuest()?.status === 'CONFIRMED'" class="text-center w-100">
                   <div class="verdict-badge-box bg-success-light text-success border border-success mb-1">
                     <i class="fa fa-circle-check"></i>
-                    <span>Présence Confirmée</span>
+                    <span>{{ 'INVITATION_SETUP.PRESENCE_CONFIRMED' | translate }}</span>
                   </div>
                   <div class="d-flex align-items-center justify-content-center gap-1 flex-wrap mb-1">
                     <span class="table-badge-ticket">
@@ -963,11 +963,11 @@
                     </span>
                     <span *ngIf="journey.steps[4].isPaidEvent" class="badge rounded-pill" [ngClass]="journey.steps[4].isPaid ? 'bg-success text-white' : 'bg-warning text-dark'">
                       <i class="fa" [ngClass]="journey.steps[4].isPaid ? 'fa-check' : 'fa-clock'"></i>
-                      {{ journey.steps[4].isPaid ? (journey.steps[4].ticketPrice + ' ' + journey.steps[4].currency + ' Réglé') : 'Paiement en attente' }}
+                      {{ journey.steps[4].isPaid ? (journey.steps[4].ticketPrice + ' ' + journey.steps[4].currency + ' ' + ('INVITATION_SETUP.PAID_TAG' | translate)) : ('INVITATION_SETUP.PAYMENT_PENDING' | translate) }}
                     </span>
                   </div>
                   <div class="rsvp-narrative-note text-success fw-medium">
-                    {{ journey.steps[4].guestFirstName }} sera bien présent(e)
+                    {{ 'INVITATION_SETUP.WILL_BE_PRESENT' | translate:{ name: journey.steps[4].guestFirstName } }}
                   </div>
                 </div>
 
@@ -975,10 +975,10 @@
                 <div *ngIf="selectedJourneyGuest()?.status === 'DECLINED'" class="text-center w-100">
                   <div class="verdict-badge-box bg-danger-light text-danger border border-danger mb-1">
                     <i class="fa fa-circle-xmark"></i>
-                    <span>Absent(e) Déclaré(e)</span>
+                    <span>{{ 'INVITATION_SETUP.ABSENCE_DECLARED' | translate }}</span>
                   </div>
                   <div class="rsvp-narrative-note text-danger fw-medium mt-1">
-                    {{ journey.steps[4].guestFirstName }} ne pourra pas assister
+                    {{ 'INVITATION_SETUP.WILL_NOT_ATTEND' | translate:{ name: journey.steps[4].guestFirstName } }}
                   </div>
                 </div>
 
@@ -986,13 +986,13 @@
                 <div *ngIf="selectedJourneyGuest()?.status !== 'CONFIRMED' && selectedJourneyGuest()?.status !== 'DECLINED'" class="text-center w-100">
                   <div class="verdict-badge-box bg-warning-light text-dark border border-warning mb-1">
                     <i class="fa fa-clock text-warning"></i>
-                    <span>Décision En Attente</span>
+                    <span>{{ 'INVITATION_SETUP.DECISION_PENDING' | translate }}</span>
                   </div>
                   <div *ngIf="journey.steps[4].isPaidEvent" class="badge bg-body-light text-dark border mb-1 fs-4xs">
-                    <i class="fa fa-ticket me-1 text-primary"></i> Tarif : {{ journey.steps[4].ticketPrice }} {{ journey.steps[4].currency }}
+                    <i class="fa fa-ticket me-1 text-primary"></i> {{ 'INVITATION_SETUP.RATE' | translate }} : {{ journey.steps[4].ticketPrice }} {{ journey.steps[4].currency }}
                   </div>
                   <div class="rsvp-narrative-note text-muted">
-                    {{ journey.steps[4].guestFirstName }} n'a pas encore répondu
+                    {{ 'INVITATION_SETUP.HAS_NOT_RESPONDED' | translate:{ name: journey.steps[4].guestFirstName } }}
                   </div>
                 </div>
 
@@ -1004,7 +1004,7 @@
               </div>
               <div class="screen-footer-meta">
                 <span class="fs-4xs text-muted" [ngClass]="selectedJourneyGuest()?.status === 'CONFIRMED' ? 'text-success fw-medium' : ''">
-                  {{ selectedJourneyGuest()?.status === 'CONFIRMED' ? (journey.steps[4].isPaidEvent && journey.steps[4].isPaid ? 'Billet VIP Validé' : 'Couvert & Table validés') : (selectedJourneyGuest()?.status === 'DECLINED' ? 'Absence confirmée' : 'Réponse en attente') }}
+                  {{ selectedJourneyGuest()?.status === 'CONFIRMED' ? (journey.steps[4].isPaidEvent && journey.steps[4].isPaid ? ('INVITATION_SETUP.VIP_PASS_VALIDATED' | translate) : ('INVITATION_SETUP.SEAT_TABLE_VALIDATED' | translate)) : (selectedJourneyGuest()?.status === 'DECLINED' ? ('INVITATION_SETUP.ABSENCE_CONFIRMED' | translate) : ('INVITATION_SETUP.RESPONSE_AWAITING' | translate)) }}
                 </span>
                 <span class="fs-4xs text-muted text-nowrap" *ngIf="journey.steps[4].timestamp">
                   <i class="fa fa-clock me-0.5"></i> {{ journey.steps[4].timestamp }}
@@ -1021,9 +1021,9 @@
         <div class="d-flex align-items-center gap-2 w-100 w-sm-auto">
           <button type="button" class="btn btn-xs btn-alt-secondary rounded-pill px-3 py-1.5 d-inline-flex align-items-center gap-1.5 shadow-2xs" 
                   (click)="copyJourneyGuestLink(selectedJourneyGuest()!)"
-                  [title]="'Copier le lien direct de relance : ' + getGuestJourneyLink(selectedJourneyGuest()!)">
+                  [title]="('INVITATION_SETUP.COPY_DIRECT_LINK' | translate) + ' : ' + getGuestJourneyLink(selectedJourneyGuest()!)">
             <i class="fa" [ngClass]="copiedJourneyLinkId() === selectedJourneyGuest()?.id ? 'fa-check text-success' : 'fa-copy text-primary'"></i>
-            <span>{{ copiedJourneyLinkId() === selectedJourneyGuest()?.id ? 'Lien copié !' : 'Copier le lien direct (Écran ' + journey.currentActiveStepIndex + ')' }}</span>
+            <span>{{ copiedJourneyLinkId() === selectedJourneyGuest()?.id ? ('INVITATION_SETUP.LINK_COPIED' | translate) : (('INVITATION_SETUP.COPY_DIRECT_LINK' | translate) + ' (' + ('INVITATION_SETUP.SCREEN' | translate) + ' ' + journey.currentActiveStepIndex + ')') }}</span>
           </button>
         </div>
 
@@ -1040,7 +1040,7 @@
                [ngClass]="primaryChannel.btnClass"
                [title]="primaryChannel.actionTitle">
               <i [class]="primaryChannel.icon" class="fs-sm"></i>
-              <span>{{ primaryChannel.label }}</span>
+              <span>{{ (primaryChannel.key ? (primaryChannel.key | translate) : primaryChannel.label) }}</span>
             </a>
 
             <button *ngIf="!primaryChannel.isExternal"
@@ -1049,7 +1049,7 @@
                     [ngClass]="primaryChannel.btnClass"
                     (click)="copyJourneyGuestLink(selectedJourneyGuest()!)">
               <i [class]="primaryChannel.icon" class="fs-sm"></i>
-              <span>{{ primaryChannel.label }}</span>
+              <span>{{ (primaryChannel.key ? (primaryChannel.key | translate) : primaryChannel.label) }}</span>
             </button>
 
             <!-- Dropdown Toggle for Alternative Channels (if multiple contact methods exist) -->
@@ -1067,21 +1067,21 @@
                    [href]="getJourneyGuestWhatsAppUrl(selectedJourneyGuest()!)" 
                    target="_blank">
                   <i class="fab fa-whatsapp"></i>
-                  <span>Relancer via WhatsApp</span>
+                  <span>{{ 'INVITATION_SETUP.REMIND_WHATSAPP' | translate }}</span>
                 </a>
               </li>
               <li *ngIf="selectedJourneyGuest()?.email && primaryChannel.type !== 'EMAIL'">
                 <a class="dropdown-item rounded-2 py-1.5 d-flex align-items-center gap-2 text-info" 
                    [href]="getJourneyGuestEmailUrl(selectedJourneyGuest()!)">
                   <i class="far fa-envelope"></i>
-                  <span>Relancer par E-mail</span>
+                  <span>{{ 'INVITATION_SETUP.REMIND_EMAIL' | translate }}</span>
                 </a>
               </li>
               <li *ngIf="selectedJourneyGuest()?.phone && primaryChannel.type !== 'SMS'">
                 <a class="dropdown-item rounded-2 py-1.5 d-flex align-items-center gap-2 text-warning" 
                    [href]="getJourneyGuestSmsUrl(selectedJourneyGuest()!)">
                   <i class="fa fa-comment-sms"></i>
-                  <span>Relancer par SMS</span>
+                  <span>{{ 'INVITATION_SETUP.REMIND_SMS' | translate }}</span>
                 </a>
               </li>
               <li><hr class="dropdown-divider my-1"></li>
@@ -1089,7 +1089,7 @@
                 <button type="button" class="dropdown-item rounded-2 py-1.5 d-flex align-items-center gap-2 text-dark" 
                         (click)="copyJourneyGuestLink(selectedJourneyGuest()!)">
                   <i class="fa fa-link text-primary"></i>
-                  <span>Copier le lien direct (Écran {{ journey.currentActiveStepIndex }})</span>
+                  <span>{{ 'INVITATION_SETUP.COPY_DIRECT_LINK' | translate }} ({{ 'INVITATION_SETUP.SCREEN' | translate }} {{ journey.currentActiveStepIndex }})</span>
                 </button>
               </li>
             </ul>
@@ -1098,7 +1098,7 @@
           <!-- Close Modal -->
           <button type="button" class="btn btn-sm btn-dark px-3.5 py-1.5 rounded-pill fw-medium shadow-sm d-inline-flex align-items-center gap-1" (click)="closeGuestJourney()">
             <i class="fa fa-xmark"></i>
-            <span>Fermer</span>
+            <span>{{ 'COMMON.CLOSE' | translate }}</span>
           </button>
         </div>
       </div>

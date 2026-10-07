@@ -4,11 +4,12 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ClientMenuService } from '../../core/services/client-menu.service';
 import { MenuItem } from '../../core/services/menu-item.service';
 import { ClientAuthService } from '../../core/auth/services/client-auth.service';
+import { TranslatePipe } from '../../core/pipes/translate.pipe';
 
 @Component({
   selector: 'app-client-menu-list',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, TranslatePipe],
   templateUrl: './client-menu-list.html',
   styleUrls: ['./client-menu-list.scss']
 })

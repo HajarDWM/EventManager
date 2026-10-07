@@ -5,10 +5,12 @@ import { EventService } from '../events/services/event.service';
 import { Event } from '../events/models/event.model';
 import { CatererService } from '../../core/services/caterer.service';
 
+import { TranslatePipe } from '../../core/pipes/translate.pipe';
+
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, TranslatePipe],
   templateUrl: './dashboard.html'
 })
 export class Dashboard implements OnInit {

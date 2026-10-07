@@ -1,7 +1,7 @@
 <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-2 text-center text-md-start">
   <div class="flex-grow-1 mb-2 mb-md-0">
-    <h1 class="h3 fw-bold mb-2">Abonnement</h1>
-    <h2 class="h6 fw-medium text-muted mb-0">Suivez votre consommation de quota et gérez votre forfait.</h2>
+    <h1 class="h3 fw-bold mb-2">{{ 'SUBSCRIPTION.TITLE' | translate }}</h1>
+    <h2 class="h6 fw-medium text-muted mb-0">{{ 'SUBSCRIPTION.SUBTITLE' | translate }}</h2>
   </div>
   <!-- Currency Selector & Auto-Detection Badge -->
   <div class="d-flex align-items-center justify-content-center gap-2">
@@ -38,9 +38,9 @@
         <i class="fa fa-exclamation-triangle"></i>
       </div>
       <div>
-        <h4 class="alert-heading fs-sm fw-bold mb-1 text-danger">Abonnement expiré : Mode consultation 🔒</h4>
+        <h4 class="alert-heading fs-sm fw-bold mb-1 text-danger">{{ 'SUBSCRIPTION.EXPIRED_ALERT_TITLE' | translate }}</h4>
         <p class="fs-sm fw-medium mb-0 text-dark-danger">
-          La période de grâce est terminée. Vous pouvez uniquement consulter vos événements passés et vos statistiques ; la création, la modification et l’envoi d’invitations sont bloqués jusqu’au renouvellement de votre abonnement.
+          {{ 'SUBSCRIPTION.EXPIRED_ALERT_DESC' | translate }}
         </p>
       </div>
     </div>
@@ -53,9 +53,9 @@
         <i class="fa fa-clock"></i>
       </div>
       <div>
-        <h4 class="alert-heading fs-sm fw-bold mb-1 text-warning-dark">Rappel : Période de grâce ⏳</h4>
+        <h4 class="alert-heading fs-sm fw-bold mb-1 text-warning-dark">{{ 'SUBSCRIPTION.GRACE_ALERT_TITLE' | translate }}</h4>
         <p class="fs-sm fw-medium mb-0">
-          Votre date de facturation est dépassée. Il vous reste <strong>{{ gracePeriodDaysRemaining() }} jour(s)</strong> de grâce pour régulariser votre abonnement et garder votre compte actif sans interruption.
+          {{ 'SUBSCRIPTION.GRACE_ALERT_DESC' | translate }}
         </p>
       </div>
     </div>
@@ -64,24 +64,24 @@
   <!-- Summary Dashboard Block (Compacted) -->
   <div class="block block-rounded shadow-sm border border-light bg-white mb-3">
     <div class="block-header block-header-default bg-body-light border-bottom border-light py-1.5 px-3">
-      <h3 class="block-title fw-bold text-dark fs-sm mb-0"><i class="fa fa-info-circle text-primary me-2"></i>Statut de l'abonnement</h3>
+      <h3 class="block-title fw-bold text-dark fs-sm mb-0"><i class="fa fa-info-circle text-primary me-2"></i>{{ 'SUBSCRIPTION.STATUS_TITLE' | translate }}</h3>
     </div>
     <div class="block-content py-2 px-3">
       <div class="row align-items-center g-2">
         <!-- Plan Name & Status Badge -->
         <div class="col-md-3 mb-2 mb-md-0 border-end border-light py-0">
-          <span class="fs-xs text-uppercase fw-bold text-muted d-block" style="line-height: 1; font-size: 10px;">Forfait Actuel</span>
+          <span class="fs-xs text-uppercase fw-bold text-muted d-block" style="line-height: 1; font-size: 10px;">{{ 'SUBSCRIPTION.CURRENT_PLAN' | translate }}</span>
           <h5 class="fw-bold text-dark my-1" style="line-height: 1.1;">
-            <span *ngIf="currentPlan() === 'FREE'">Pack Free</span>
-            <span *ngIf="currentPlan() === 'STANDARD'">Pack Standard Pro</span>
-            <span *ngIf="currentPlan() === 'PREMIUM'">Pack Premium VIP</span>
+            <span *ngIf="currentPlan() === 'FREE'">{{ 'SUBSCRIPTION.PACK_FREE' | translate }}</span>
+            <span *ngIf="currentPlan() === 'STANDARD'">{{ 'SUBSCRIPTION.PACK_STANDARD' | translate }}</span>
+            <span *ngIf="currentPlan() === 'PREMIUM'">{{ 'SUBSCRIPTION.PACK_PREMIUM' | translate }}</span>
           </h5>
           <div class="d-flex align-items-center gap-1.5 mt-0.5" style="line-height: 1;">
             <span class="badge bg-success-light text-success px-1.5 py-0.5 fw-bold rounded-pill text-uppercase" style="font-size: 10px;">
-              {{ subscriptionStatus() === 'ACTIVE' ? 'Actif' : subscriptionStatus() }}
+              {{ subscriptionStatus() === 'ACTIVE' ? ('SUBSCRIPTION.STATUS_ACTIVE' | translate) : subscriptionStatus() }}
             </span>
             <span class="fs-xs text-muted" *ngIf="subscriptionEndDate() && currentPlan() !== 'FREE'" style="font-size: 10px; margin-left: 4px;">
-              (Exp. {{ subscriptionEndDate() | date:'dd/MM/yyyy' }})
+              ({{ 'SUBSCRIPTION.EXP_DATE' | translate }} {{ subscriptionEndDate() | date:'dd/MM/yyyy' }})
             </span>
           </div>
         </div>
@@ -89,7 +89,7 @@
         <!-- Quota Usage Stats & Progress Bar -->
         <div class="col-md-9 px-md-3 py-0">
           <div class="d-flex justify-content-between align-items-center mb-1" style="line-height: 1;">
-            <span class="fs-xs text-uppercase fw-bold text-muted" style="font-size: 10px;">Événements Créés</span>
+            <span class="fs-xs text-uppercase fw-bold text-muted" style="font-size: 10px;">{{ 'SUBSCRIPTION.EVENTS_CREATED' | translate }}</span>
             <span class="fs-xs fw-bold text-dark" style="font-size: 11px;">{{ eventsUsed() }} / {{ eventsLimit() }}</span>
           </div>
           <div class="progress rounded-pill bg-body" style="height: 8px;">
@@ -104,9 +104,9 @@
             </div>
           </div>
           <div class="d-flex justify-content-between mt-1 fs-xs" style="line-height: 1; font-size: 10px;">
-            <span class="text-muted">Utilisation : {{ usagePercentage() }}%</span>
+            <span class="text-muted">{{ 'SUBSCRIPTION.USAGE' | translate }} {{ usagePercentage() }}%</span>
             <span class="text-warning fw-semibold" *ngIf="eventsUsed() >= eventsLimit() && currentPlan() !== 'PREMIUM'">
-              Quota épuisé. Veuillez mettre à niveau.
+              {{ 'SUBSCRIPTION.QUOTA_EXHAUSTED' | translate }}
             </span>
           </div>
         </div>
@@ -116,7 +116,7 @@
 
   <!-- Upgrade Title (Compacted) -->
   <div class="my-3">
-    <h3 class="h6 fw-bold text-dark mb-0"><i class="fa fa-arrow-up text-primary me-2"></i>Mettre à niveau ou modifier votre formule</h3>
+    <h3 class="h6 fw-bold text-dark mb-0"><i class="fa fa-arrow-up text-primary me-2"></i>{{ 'SUBSCRIPTION.UPGRADE_TITLE' | translate }}</h3>
   </div>
 
   <div class="row">
@@ -124,8 +124,8 @@
     <div class="col-md-4 mb-3">
       <div class="block block-rounded text-center shadow-sm border border-light h-100 d-flex flex-column justify-content-between bg-white">
         <div class="block-content block-content-full bg-body-light py-2.5 border-bottom border-light">
-          <div class="h6 fw-bold text-uppercase text-muted mb-1">Pack Free</div>
-          <div class="h3 fw-bold text-dark mb-0">0 {{ currencySymbol() }} <span class="fs-sm text-muted">/ mois</span></div>
+          <div class="h6 fw-bold text-uppercase text-muted mb-1">{{ 'SUBSCRIPTION.PACK_FREE' | translate }}</div>
+          <div class="h3 fw-bold text-dark mb-0">0 {{ currencySymbol() }} <span class="fs-sm text-muted">{{ 'SUBSCRIPTION.PER_MONTH' | translate }}</span></div>
         </div>
         <div class="block-content py-2.5 text-start">
           <ul class="list-unstyled fs-sm mb-0">
@@ -133,57 +133,57 @@
             <li class="d-flex align-items-start gap-2 mb-2.5">
               <span class="mt-0.5">✅</span>
               <div>
-                <strong class="text-dark">Limite d'événements : 2 événements</strong>
-                <div class="text-muted fs-xs">Nombre maximum d'événements gérés.</div>
+                <strong class="text-dark">{{ 'SUBSCRIPTION.LIMIT_EVENTS_2' | translate }}</strong>
+                <div class="text-muted fs-xs">{{ 'SUBSCRIPTION.LIMIT_EVENTS_2_DESC' | translate }}</div>
               </div>
             </li>
             <li class="d-flex align-items-start gap-2 mb-2.5">
               <span class="mt-0.5">✅</span>
               <div>
-                <strong class="text-dark">Limite d'invités : 300 maximum</strong>
-                <div class="text-muted fs-xs">Capacité maximale par événement.</div>
+                <strong class="text-dark">{{ 'SUBSCRIPTION.LIMIT_GUESTS_300' | translate }}</strong>
+                <div class="text-muted fs-xs">{{ 'SUBSCRIPTION.LIMIT_GUESTS_300_DESC' | translate }}</div>
               </div>
             </li>
             <li class="d-flex align-items-start gap-2 mb-2.5">
               <span class="mt-0.5">✅</span>
               <div>
-                <strong class="text-dark">Invitations & Suivi RSVP</strong>
-                <div class="text-muted fs-xs">Envoi digital et suivi des présences.</div>
+                <strong class="text-dark">{{ 'SUBSCRIPTION.FEAT_INVITATIONS' | translate }}</strong>
+                <div class="text-muted fs-xs">{{ 'SUBSCRIPTION.FEAT_INVITATIONS_DESC' | translate }}</div>
               </div>
             </li>
             
             <hr class="border-light my-2">
             
-            <!-- Unavailable features (displayed below, faded, no strike-through) -->
+            <!-- Unavailable features -->
             <li class="d-flex align-items-start gap-2 mb-2.5 text-muted opacity-50">
               <i class="fa fa-times text-danger mt-1"></i>
               <div>
-                <strong>Menus & Restrictions</strong>
-                <div class="text-muted fs-xs">Gestion des régimes et allergies.</div>
+                <strong>{{ 'SUBSCRIPTION.FEAT_MENUS' | translate }}</strong>
+                <div class="text-muted fs-xs">{{ 'SUBSCRIPTION.FEAT_MENUS_DESC' | translate }}</div>
               </div>
             </li>
             <li class="d-flex align-items-start gap-2 mb-2.5 text-muted opacity-50">
               <i class="fa fa-times text-danger mt-1"></i>
               <div>
-                <strong>Plan de Table Numérique</strong>
-                <div class="text-muted fs-xs">Organisation visuelle des invités.</div>
+                <strong>{{ 'SUBSCRIPTION.FEAT_SEATING' | translate }}</strong>
+                <div class="text-muted fs-xs">{{ 'SUBSCRIPTION.FEAT_SEATING_DESC' | translate }}</div>
               </div>
             </li>
             <li class="d-flex align-items-start gap-2 text-muted opacity-50">
               <i class="fa fa-times text-danger mt-1"></i>
               <div>
-                <strong>Check-in QR & Rapports Cuisine</strong>
-                <div class="text-muted fs-xs">Contrôle d'accès et listes de préparation.</div>
+                <strong>{{ 'SUBSCRIPTION.FEAT_CHECKIN' | translate }}</strong>
+                <div class="text-muted fs-xs">{{ 'SUBSCRIPTION.FEAT_CHECKIN_DESC' | translate }}</div>
               </div>
             </li>
           </ul>
         </div>
         <div class="block-content block-content-full bg-body-light border-top border-light py-2.5">
           <button class="btn btn-success w-100 animate__animated animate__fadeIn py-1.5 fs-sm" [disabled]="true" *ngIf="currentPlan() === 'FREE'">
-            <i class="fa fa-check-circle me-1"></i> Abonnement Actif
+            <i class="fa fa-check-circle me-1"></i> {{ 'SUBSCRIPTION.ACTIVE_PLAN_BTN' | translate }}
           </button>
           <button class="btn btn-primary w-100 py-1.5 fs-sm" (click)="selectPlan('FREE')" *ngIf="currentPlan() !== 'FREE'" [disabled]="isLoading()">
-            Choisir Gratuit
+            {{ 'SUBSCRIPTION.CHOOSE_FREE' | translate }}
           </button>
         </div>
       </div>
@@ -193,9 +193,9 @@
     <div class="col-md-4 mb-3">
       <div class="block block-rounded text-center shadow border border-primary h-100 d-flex flex-column justify-content-between bg-white" style="transform: scale(1.02); z-index: 10;">
         <div class="block-content block-content-full bg-primary-light py-2 border-bottom border-light">
-          <span class="badge bg-primary text-white rounded-pill px-2.5 py-0.5 mb-1 fs-xs">Recommandé</span>
-          <div class="h6 fw-bold text-uppercase text-primary mb-1">Pack Standard Pro</div>
-          <div class="h3 fw-bold text-dark mb-0">{{ standardPrice() }} {{ currencySymbol() }} <span class="fs-sm text-muted">/ mois</span></div>
+          <span class="badge bg-primary text-white rounded-pill px-2.5 py-0.5 mb-1 fs-xs">{{ 'SUBSCRIPTION.RECOMMENDED' | translate }}</span>
+          <div class="h6 fw-bold text-uppercase text-primary mb-1">{{ 'SUBSCRIPTION.PACK_STANDARD' | translate }}</div>
+          <div class="h3 fw-bold text-dark mb-0">{{ standardPrice() }} {{ currencySymbol() }} <span class="fs-sm text-muted">{{ 'SUBSCRIPTION.PER_MONTH' | translate }}</span></div>
         </div>
         <div class="block-content py-2.5 text-start">
           <ul class="list-unstyled fs-sm mb-0">
@@ -203,57 +203,57 @@
             <li class="d-flex align-items-start gap-2 mb-2.5">
               <span class="mt-0.5">✅</span>
               <div>
-                <strong class="text-dark">Limite d'événements : 8 événements</strong>
-                <div class="text-muted fs-xs">Nombre maximum d'événements gérés.</div>
+                <strong class="text-dark">{{ 'SUBSCRIPTION.LIMIT_EVENTS_8' | translate }}</strong>
+                <div class="text-muted fs-xs">{{ 'SUBSCRIPTION.LIMIT_EVENTS_8_DESC' | translate }}</div>
               </div>
             </li>
             <li class="d-flex align-items-start gap-2 mb-2.5">
               <span class="mt-0.5">✅</span>
               <div>
-                <strong class="text-dark">Limite d'invités : 300 maximum</strong>
-                <div class="text-muted fs-xs">Capacité maximale par événement.</div>
+                <strong class="text-dark">{{ 'SUBSCRIPTION.LIMIT_GUESTS_300' | translate }}</strong>
+                <div class="text-muted fs-xs">{{ 'SUBSCRIPTION.LIMIT_GUESTS_300_DESC' | translate }}</div>
               </div>
             </li>
             <li class="d-flex align-items-start gap-2 mb-2.5">
               <span class="mt-0.5">✅</span>
               <div>
-                <strong class="text-dark">Invitations & Suivi RSVP</strong>
-                <div class="text-muted fs-xs">Envoi digital et suivi des présences.</div>
+                <strong class="text-dark">{{ 'SUBSCRIPTION.FEAT_INVITATIONS' | translate }}</strong>
+                <div class="text-muted fs-xs">{{ 'SUBSCRIPTION.FEAT_INVITATIONS_DESC' | translate }}</div>
               </div>
             </li>
             <li class="d-flex align-items-start gap-2 mb-2.5">
               <span class="mt-0.5">✅</span>
               <div>
-                <strong class="text-dark">Menus & Restrictions</strong>
-                <div class="text-muted fs-xs">Gestion des régimes et allergies.</div>
+                <strong class="text-dark">{{ 'SUBSCRIPTION.FEAT_MENUS' | translate }}</strong>
+                <div class="text-muted fs-xs">{{ 'SUBSCRIPTION.FEAT_MENUS_DESC' | translate }}</div>
               </div>
             </li>
             <li class="d-flex align-items-start gap-2 mb-2.5">
               <span class="mt-0.5">✅</span>
               <div>
-                <strong class="text-dark">Plan de Table Numérique</strong>
-                <div class="text-muted fs-xs">Organisation visuelle des invités.</div>
+                <strong class="text-dark">{{ 'SUBSCRIPTION.FEAT_SEATING' | translate }}</strong>
+                <div class="text-muted fs-xs">{{ 'SUBSCRIPTION.FEAT_SEATING_DESC' | translate }}</div>
               </div>
             </li>
             
             <hr class="border-light my-2">
             
-            <!-- Unavailable features (displayed below, faded, no strike-through) -->
+            <!-- Unavailable features -->
             <li class="d-flex align-items-start gap-2 text-muted opacity-50">
               <i class="fa fa-times text-danger mt-1"></i>
               <div>
-                <strong>Check-in QR & Rapports Cuisine</strong>
-                <div class="text-muted fs-xs">Contrôle d'accès et listes de préparation.</div>
+                <strong>{{ 'SUBSCRIPTION.FEAT_CHECKIN' | translate }}</strong>
+                <div class="text-muted fs-xs">{{ 'SUBSCRIPTION.FEAT_CHECKIN_DESC' | translate }}</div>
               </div>
             </li>
           </ul>
         </div>
         <div class="block-content block-content-full bg-body-light border-top border-light py-2.5">
           <button class="btn btn-success w-100 animate__animated animate__fadeIn py-1.5 fs-sm" (click)="selectPlan('STANDARD')" *ngIf="currentPlan() === 'STANDARD'">
-            <i class="fa fa-sync me-1"></i> Renouveler l'abonnement
+            <i class="fa fa-sync me-1"></i> {{ 'SUBSCRIPTION.RENEW_PLAN' | translate }}
           </button>
           <button class="btn btn-primary w-100 py-1.5 fs-sm" (click)="selectPlan('STANDARD')" *ngIf="currentPlan() !== 'STANDARD'" [disabled]="isLoading()">
-            Mettre à niveau (Standard Pro)
+            {{ 'SUBSCRIPTION.UPGRADE_STANDARD' | translate }}
           </button>
         </div>
       </div>
@@ -263,8 +263,8 @@
     <div class="col-md-4 mb-3">
       <div class="block block-rounded text-center shadow-sm border border-light h-100 d-flex flex-column justify-content-between bg-white">
         <div class="block-content block-content-full bg-body-light py-2.5 border-bottom border-light">
-          <div class="h6 fw-bold text-uppercase text-muted mb-1">Pack Premium VIP</div>
-          <div class="h3 fw-bold text-dark mb-0">{{ premiumPrice() }} {{ currencySymbol() }} <span class="fs-sm text-muted">/ mois</span></div>
+          <div class="h6 fw-bold text-uppercase text-muted mb-1">{{ 'SUBSCRIPTION.PACK_PREMIUM' | translate }}</div>
+          <div class="h3 fw-bold text-dark mb-0">{{ premiumPrice() }} {{ currencySymbol() }} <span class="fs-sm text-muted">{{ 'SUBSCRIPTION.PER_MONTH' | translate }}</span></div>
         </div>
         <div class="block-content py-2.5 text-start">
           <ul class="list-unstyled fs-sm mb-0">
@@ -272,53 +272,53 @@
             <li class="d-flex align-items-start gap-2 mb-2.5">
               <span class="mt-0.5">✅</span>
               <div>
-                <strong class="text-dark">Limite d'événements : 20 événements</strong>
-                <div class="text-muted fs-xs">Nombre maximum d'événements gérés.</div>
+                <strong class="text-dark">{{ 'SUBSCRIPTION.LIMIT_EVENTS_20' | translate }}</strong>
+                <div class="text-muted fs-xs">{{ 'SUBSCRIPTION.LIMIT_EVENTS_20_DESC' | translate }}</div>
               </div>
             </li>
             <li class="d-flex align-items-start gap-2 mb-2.5">
               <span class="mt-0.5">✅</span>
               <div>
-                <strong class="text-dark">Limite d'invités : Illimitée</strong>
-                <div class="text-muted fs-xs">Capacité maximale par événement.</div>
+                <strong class="text-dark">{{ 'SUBSCRIPTION.LIMIT_GUESTS_UNLIMITED' | translate }}</strong>
+                <div class="text-muted fs-xs">{{ 'SUBSCRIPTION.LIMIT_GUESTS_UNLIMITED_DESC' | translate }}</div>
               </div>
             </li>
             <li class="d-flex align-items-start gap-2 mb-2.5">
               <span class="mt-0.5">✅</span>
               <div>
-                <strong class="text-dark">Invitations & Suivi RSVP</strong>
-                <div class="text-muted fs-xs">Envoi digital et suivi des présences.</div>
+                <strong class="text-dark">{{ 'SUBSCRIPTION.FEAT_INVITATIONS' | translate }}</strong>
+                <div class="text-muted fs-xs">{{ 'SUBSCRIPTION.FEAT_INVITATIONS_DESC' | translate }}</div>
               </div>
             </li>
             <li class="d-flex align-items-start gap-2 mb-2.5">
               <span class="mt-0.5">✅</span>
               <div>
-                <strong class="text-dark">Menus & Restrictions</strong>
-                <div class="text-muted fs-xs">Gestion des régimes et allergies.</div>
+                <strong class="text-dark">{{ 'SUBSCRIPTION.FEAT_MENUS' | translate }}</strong>
+                <div class="text-muted fs-xs">{{ 'SUBSCRIPTION.FEAT_MENUS_DESC' | translate }}</div>
               </div>
             </li>
             <li class="d-flex align-items-start gap-2 mb-2.5">
               <span class="mt-0.5">✅</span>
               <div>
-                <strong class="text-dark">Plan de Table Numérique</strong>
-                <div class="text-muted fs-xs">Organisation visuelle des invités.</div>
+                <strong class="text-dark">{{ 'SUBSCRIPTION.FEAT_SEATING' | translate }}</strong>
+                <div class="text-muted fs-xs">{{ 'SUBSCRIPTION.FEAT_SEATING_DESC' | translate }}</div>
               </div>
             </li>
             <li class="d-flex align-items-start gap-2 mb-2.5">
               <span class="mt-0.5">✅</span>
               <div>
-                <strong class="text-dark">Check-in QR & Rapports Cuisine</strong>
-                <div class="text-muted fs-xs">Contrôle d'accès et listes de préparation.</div>
+                <strong class="text-dark">{{ 'SUBSCRIPTION.FEAT_CHECKIN' | translate }}</strong>
+                <div class="text-muted fs-xs">{{ 'SUBSCRIPTION.FEAT_CHECKIN_DESC' | translate }}</div>
               </div>
             </li>
           </ul>
         </div>
         <div class="block-content block-content-full bg-body-light border-top border-light py-2.5">
           <button class="btn btn-success w-100 animate__animated animate__fadeIn py-1.5 fs-sm" (click)="selectPlan('PREMIUM')" *ngIf="currentPlan() === 'PREMIUM'">
-            <i class="fa fa-sync me-1"></i> Renouveler l'abonnement
+            <i class="fa fa-sync me-1"></i> {{ 'SUBSCRIPTION.RENEW_PLAN' | translate }}
           </button>
           <button class="btn btn-primary w-100 py-1.5 fs-sm" (click)="selectPlan('PREMIUM')" *ngIf="currentPlan() !== 'PREMIUM'" [disabled]="isLoading()">
-            Mettre à niveau (Premium VIP)
+            {{ 'SUBSCRIPTION.UPGRADE_PREMIUM' | translate }}
           </button>
         </div>
       </div>
@@ -330,10 +330,10 @@
     <div class="block block-rounded bg-white shadow-sm border border-light">
       <div class="block-header block-header-default border-bottom bg-body-light d-flex justify-content-between align-items-center">
         <h3 class="block-title fw-bold text-dark mb-0">
-          <i class="fa fa-history text-primary me-2"></i>Historique de vos Abonnements & Factures ({{ subscriptionHistory().length }})
+          <i class="fa fa-history text-primary me-2"></i>{{ 'SUBSCRIPTION.HISTORY_TITLE' | translate }} ({{ subscriptionHistory().length }})
         </h3>
         <span class="badge bg-primary-light text-primary fs-xs">
-          Facturation Organisateur
+          {{ 'SUBSCRIPTION.ORGANIZER_BILLING' | translate }}
         </span>
       </div>
       <div class="block-content p-3">
@@ -341,11 +341,11 @@
           <table class="table table-bordered table-striped table-vcenter fs-sm mb-0">
             <thead class="table-light">
               <tr>
-                <th>Forfait Souscrit</th>
-                <th style="width: 170px;" class="text-end">Montant Payé</th>
-                <th style="width: 320px;" class="text-center">Période de Validité</th>
-                <th style="width: 120px;" class="text-center">Statut</th>
-                <th style="width: 180px;" class="text-center">Facture PDF</th>
+                <th>{{ 'SUBSCRIPTION.TH_PLAN' | translate }}</th>
+                <th style="width: 170px;" class="text-end">{{ 'SUBSCRIPTION.TH_AMOUNT' | translate }}</th>
+                <th style="width: 320px;" class="text-center">{{ 'SUBSCRIPTION.TH_VALIDITY' | translate }}</th>
+                <th style="width: 120px;" class="text-center">{{ 'SUBSCRIPTION.TH_STATUS' | translate }}</th>
+                <th style="width: 180px;" class="text-center">{{ 'SUBSCRIPTION.TH_INVOICE' | translate }}</th>
               </tr>
             </thead>
             <tbody>
@@ -377,14 +377,14 @@
                 </td>
                 <td class="text-center">
                   <button type="button" class="btn btn-sm btn-alt-primary rounded-pill px-3 py-1 fs-xs fw-semibold" (click)="downloadInvoice(t)">
-                    <i class="fa fa-file-pdf text-danger me-1"></i> Facture PDF
+                    <i class="fa fa-file-pdf text-danger me-1"></i> {{ 'SUBSCRIPTION.TH_INVOICE' | translate }}
                   </button>
                 </td>
               </tr>
               <tr *ngIf="subscriptionHistory().length === 0">
                 <td colspan="5" class="text-center py-4 text-muted">
                   <i class="fa fa-receipt text-muted fs-3 mb-2 d-block opacity-50"></i>
-                  Aucun historique de souscription ou de renouvellement d'abonnement trouvé pour votre compte.
+                  {{ 'SUBSCRIPTION.NO_HISTORY' | translate }}
                 </td>
               </tr>
             </tbody>
@@ -399,9 +399,9 @@
 <ng-template #loadingTpl>
   <div class="text-center py-4">
     <div class="spinner-border text-primary" role="status">
-      <span class="visually-hidden">Chargement...</span>
+      <span class="visually-hidden">Loading...</span>
     </div>
-    <p class="text-muted mt-2 fs-sm">Chargement des données de votre abonnement...</p>
+    <p class="text-muted mt-2 fs-sm">{{ 'COMMON.LOADING' | translate }}</p>
   </div>
 </ng-template>
 
@@ -411,32 +411,32 @@
     <div class="modal-content border-0 shadow-lg">
       <div class="block block-rounded block-transparent mb-0 bg-white">
         <div class="block-header block-header-default bg-body-light border-bottom border-light d-flex justify-content-between align-items-center p-3">
-          <h3 class="block-title fw-bold text-dark mb-0"><i class="fa fa-credit-card text-primary me-2"></i>Paiement Stripe (Simulation)</h3>
+          <h3 class="block-title fw-bold text-dark mb-0"><i class="fa fa-credit-card text-primary me-2"></i>{{ 'SUBSCRIPTION.STRIPE_TITLE' | translate }}</h3>
           <button type="button" class="btn btn-sm btn-alt-secondary" (click)="showPaymentModal.set(false)" style="border: none; background: transparent;">
             <i class="fa fa-times text-dark"></i>
           </button>
         </div>
         <div class="block-content py-4 px-4">
           <div class="text-center mb-4">
-            <span class="fs-sm text-muted">Abonnement choisi</span>
+            <span class="fs-sm text-muted">{{ 'SUBSCRIPTION.SELECTED_PLAN' | translate }}</span>
             <h4 class="fw-bold text-dark mt-1 mb-2">{{ selectedPlanLabel() }}</h4>
-            <div class="h3 fw-bold text-primary mb-0">{{ selectedPlanPrice() }} {{ currencySymbol() }} <span class="fs-xs text-muted">/ mois</span></div>
+            <div class="h3 fw-bold text-primary mb-0">{{ selectedPlanPrice() }} {{ currencySymbol() }} <span class="fs-xs text-muted">{{ 'SUBSCRIPTION.PER_MONTH' | translate }}</span></div>
           </div>
           
           <form (ngSubmit)="confirmPayment()">
             <!-- Mock Credit Card Input -->
             <div class="mb-3">
-              <label class="form-label fs-sm fw-semibold text-dark">Numéro de carte de test Stripe</label>
+              <label class="form-label fs-sm fw-semibold text-dark">{{ 'SUBSCRIPTION.TEST_CARD_NUM' | translate }}</label>
               <div class="input-group">
                 <span class="input-group-text bg-body border-light"><i class="fa fa-credit-card text-muted"></i></span>
                 <input type="text" class="form-control border-light fs-sm bg-body" value="4242 4242 4242 4242" disabled>
               </div>
-              <div class="form-text fs-xs text-muted">Utilisez la carte de test Stripe par défaut pour la simulation.</div>
+              <div class="form-text fs-xs text-muted">{{ 'SUBSCRIPTION.TEST_CARD_HINT' | translate }}</div>
             </div>
             
             <div class="row mb-4">
               <div class="col-6">
-                <label class="form-label fs-sm fw-semibold text-dark">Expiration</label>
+                <label class="form-label fs-sm fw-semibold text-dark">{{ 'SUBSCRIPTION.EXPIRATION' | translate }}</label>
                 <input type="text" class="form-control border-light fs-sm bg-body" value="12 / 29" disabled>
               </div>
               <div class="col-6">
@@ -449,19 +449,19 @@
             <div class="d-flex gap-2 justify-content-between border-top border-light pt-3">
               <div>
                 <button type="button" class="btn btn-alt-success fs-sm" (click)="confirmPaymentTest()" [disabled]="isProcessingPayment()">
-                  <i class="fa fa-flask me-1"></i> Activer en Mode Test (Gratuit)
+                  <i class="fa fa-flask me-1"></i> {{ 'SUBSCRIPTION.TEST_ACTIVATE_BTN' | translate }}
                 </button>
               </div>
               <div class="d-flex gap-2">
                 <button type="button" class="btn btn-alt-secondary fs-sm" (click)="showPaymentModal.set(false)" [disabled]="isProcessingPayment()">
-                  Annuler
+                  {{ 'COMMON.CANCEL' | translate }}
                 </button>
                 <button type="submit" class="btn btn-primary fs-sm" [disabled]="isProcessingPayment()">
                   <span *ngIf="!isProcessingPayment()">
-                    <i class="fa fa-check me-1"></i> Simuler le Paiement Stripe
+                    <i class="fa fa-check me-1"></i> {{ 'SUBSCRIPTION.SIMULATE_PAYMENT' | translate }}
                   </span>
                   <span *ngIf="isProcessingPayment()">
-                    <i class="fa fa-circle-notch fa-spin me-1"></i> Traitement...
+                    <i class="fa fa-circle-notch fa-spin me-1"></i> {{ 'SUBSCRIPTION.PROCESSING' | translate }}
                   </span>
                 </button>
               </div>

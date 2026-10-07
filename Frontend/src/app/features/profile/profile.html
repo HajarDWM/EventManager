@@ -2,10 +2,10 @@
 <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-2 text-center text-md-start">
   <div class="flex-grow-1 mb-1 mb-md-0">
     <h1 class="h3 fw-bold mb-2">
-      Mon Profil Organisateur
+      {{ 'PROFILE.TITLE' | translate }}
     </h1>
     <h2 class="h6 fw-medium text-muted mb-0">
-      Gérez les informations de votre entreprise et votre sécurité.
+      {{ 'PROFILE.SUBTITLE' | translate }}
     </h2>
   </div>
 </div>
@@ -17,7 +17,7 @@
     <div class="block block-rounded shadow-sm border border-light h-100">
       <div class="block-header block-header-default bg-body-light border-bottom border-light">
         <h3 class="block-title">
-          <i class="fa fa-user-circle me-1 text-primary"></i> Informations de l'entreprise
+          <i class="fa fa-user-circle me-1 text-primary"></i> {{ 'PROFILE.BUSINESS_INFO' | translate }}
         </h3>
       </div>
       <div class="block-content">
@@ -36,21 +36,21 @@
         <!-- Loading Spinner -->
         <div class="text-center py-4" *ngIf="isLoading()">
           <i class="fa fa-fw fa-circle-notch fa-spin text-primary fs-3"></i>
-          <p class="mt-2 text-muted fs-sm">Chargement du profil...</p>
+          <p class="mt-2 text-muted fs-sm">{{ 'COMMON.LOADING' | translate }}</p>
         </div>
 
         <form (ngSubmit)="onUpdateProfile()" *ngIf="!isLoading()">
           <!-- Email (Read-only) -->
           <div class="mb-4">
-            <label class="form-label fs-sm fw-semibold" for="profile-email">Adresse Email (Identifiant)</label>
+            <label class="form-label fs-sm fw-semibold" for="profile-email">{{ 'PROFILE.EMAIL_IDENTIFIER' | translate }}</label>
             <input type="email" class="form-control form-control-alt fs-sm bg-body"
                    id="profile-email" [value]="email()" readonly disabled>
-            <div class="form-text fs-xs">L'adresse email ne peut pas être modifiée directement.</div>
+            <div class="form-text fs-xs">{{ 'PROFILE.EMAIL_IMMUTABLE_HINT' | translate }}</div>
           </div>
 
           <!-- Business Name -->
           <div class="mb-4">
-            <label class="form-label fs-sm fw-semibold" for="profile-business">Nom de l'entreprise / Organisateur <span class="text-danger">*</span></label>
+            <label class="form-label fs-sm fw-semibold" for="profile-business">{{ 'PROFILE.BUSINESS_NAME_LABEL' | translate }} <span class="text-danger">*</span></label>
             <input type="text" class="form-control form-control-alt fs-sm"
                    id="profile-business" name="profile-business" placeholder="Ex: Gourmet Events"
                    [ngModel]="businessName()" (ngModelChange)="businessName.set($event)" required>
@@ -58,10 +58,10 @@
 
           <!-- Account Status -->
           <div class="mb-4">
-            <label class="form-label fs-sm fw-semibold">Statut du Compte</label>
+            <label class="form-label fs-sm fw-semibold">{{ 'PROFILE.ACCOUNT_STATUS' | translate }}</label>
             <div>
               <span class="badge bg-success-light text-success px-3 py-2 rounded-pill fw-bold" *ngIf="accountStatus() === 'ACTIVE'">
-                <i class="fa fa-check-circle me-1"></i> Compte Actif
+                <i class="fa fa-check-circle me-1"></i> {{ 'PROFILE.ACCOUNT_ACTIVE' | translate }}
               </span>
               <span class="badge bg-danger-light text-danger px-3 py-2 rounded-pill fw-bold" *ngIf="accountStatus() !== 'ACTIVE'">
                 <i class="fa fa-ban me-1"></i> {{ accountStatus() }}
@@ -72,12 +72,12 @@
           <!-- Currency Preference Section -->
           <div class="mb-4 pt-3 border-top border-light">
             <label class="form-label fs-sm fw-semibold d-flex justify-content-between align-items-center">
-              <span><i class="fa fa-globe text-primary me-1"></i> Devise d'affichage & facturation</span>
+              <span><i class="fa fa-globe text-primary me-1"></i> {{ 'PROFILE.CURRENCY_SECTION' | translate }}</span>
               <span class="badge bg-info-light text-info fs-xs" *ngIf="currencyService.isAutoDetected()">
-                <i class="fa fa-map-marker-alt me-1"></i> Détectée par IP ({{ currencyService.detectedCountry() || 'Auto' }})
+                <i class="fa fa-map-marker-alt me-1"></i> {{ 'PROFILE.CURRENCY_IP_DETECTED' | translate }} ({{ currencyService.detectedCountry() || 'Auto' }})
               </span>
               <span class="badge bg-secondary-light text-dark fs-xs" *ngIf="!currencyService.isAutoDetected()">
-                <i class="fa fa-user-cog me-1"></i> Manuel
+                <i class="fa fa-user-cog me-1"></i> {{ 'PROFILE.CURRENCY_MANUAL' | translate }}
               </span>
             </label>
             <div class="input-group">
@@ -86,12 +86,12 @@
                   {{ curr.label }}
                 </option>
               </select>
-              <button type="button" class="btn btn-alt-secondary btn-sm" (click)="onResetAutoDetection()" title="Réinitialiser la détection automatique par localisation">
-                <i class="fa fa-sync-alt me-1"></i> Auto
+              <button type="button" class="btn btn-alt-secondary btn-sm" (click)="onResetAutoDetection()" [attr.title]="'PROFILE.RESET_AUTO_TITLE' | translate">
+                <i class="fa fa-sync-alt me-1"></i> {{ 'PROFILE.AUTO_RESET' | translate }}
               </button>
             </div>
             <div class="form-text fs-xs text-muted">
-              Détectée automatiquement selon votre localisation IP ou modifiable manuellement à tout moment.
+              {{ 'PROFILE.CURRENCY_HINT' | translate }}
             </div>
           </div>
 
@@ -99,10 +99,10 @@
           <div class="mb-4">
             <button type="submit" class="btn btn-primary fs-sm px-4" [disabled]="isSavingProfile()">
               <span *ngIf="!isSavingProfile()">
-                <i class="fa fa-save me-1"></i> Mettre à jour le profil
+                <i class="fa fa-save me-1"></i> {{ 'PROFILE.SAVE_PROFILE' | translate }}
               </span>
               <span *ngIf="isSavingProfile()">
-                <i class="fa fa-circle-notch fa-spin me-1"></i> Enregistrement...
+                <i class="fa fa-circle-notch fa-spin me-1"></i> {{ 'PROFILE.SAVING' | translate }}
               </span>
             </button>
           </div>
@@ -116,7 +116,7 @@
     <div class="block block-rounded shadow-sm border border-light h-100">
       <div class="block-header block-header-default bg-body-light border-bottom border-light">
         <h3 class="block-title">
-          <i class="fa fa-lock me-1 text-primary"></i> Sécurité & Mot de passe
+          <i class="fa fa-lock me-1 text-primary"></i> {{ 'PROFILE.SECURITY_SECTION' | translate }}
         </h3>
       </div>
       <div class="block-content">
@@ -135,25 +135,25 @@
         <form (ngSubmit)="onChangePassword()">
           <!-- Current Password -->
           <div class="mb-4">
-            <label class="form-label fs-sm fw-semibold" for="current-password">Mot de passe actuel <span class="text-danger">*</span></label>
+            <label class="form-label fs-sm fw-semibold" for="current-password">{{ 'PROFILE.CURRENT_PASSWORD' | translate }} <span class="text-danger">*</span></label>
             <input type="password" class="form-control form-control-alt fs-sm"
-                   id="current-password" name="current-password" placeholder="Entrez votre mot de passe actuel"
+                   id="current-password" name="current-password" [placeholder]="'PROFILE.CURRENT_PWD_PLACEHOLDER' | translate"
                    [ngModel]="currentPassword()" (ngModelChange)="currentPassword.set($event)" required>
           </div>
 
           <!-- New Password -->
           <div class="mb-4">
-            <label class="form-label fs-sm fw-semibold" for="new-password">Nouveau mot de passe <span class="text-danger">*</span></label>
+            <label class="form-label fs-sm fw-semibold" for="new-password">{{ 'PROFILE.NEW_PASSWORD' | translate }} <span class="text-danger">*</span></label>
             <input type="password" class="form-control form-control-alt fs-sm"
-                   id="new-password" name="new-password" placeholder="Minimum 6 caractères"
+                   id="new-password" name="new-password" [placeholder]="'PROFILE.NEW_PWD_PLACEHOLDER' | translate"
                    [ngModel]="newPassword()" (ngModelChange)="newPassword.set($event)" required>
           </div>
 
           <!-- Confirm New Password -->
           <div class="mb-4">
-            <label class="form-label fs-sm fw-semibold" for="confirm-password">Confirmer le nouveau mot de passe <span class="text-danger">*</span></label>
+            <label class="form-label fs-sm fw-semibold" for="confirm-password">{{ 'PROFILE.CONFIRM_NEW_PASSWORD' | translate }} <span class="text-danger">*</span></label>
             <input type="password" class="form-control form-control-alt fs-sm"
-                   id="confirm-password" name="confirm-password" placeholder="Répétez le nouveau mot de passe"
+                   id="confirm-password" name="confirm-password" [placeholder]="'PROFILE.CONFIRM_PWD_PLACEHOLDER' | translate"
                    [ngModel]="confirmNewPassword()" (ngModelChange)="confirmNewPassword.set($event)" required>
           </div>
 
@@ -161,10 +161,10 @@
           <div class="mb-4">
             <button type="submit" class="btn btn-alt-primary fs-sm px-4" [disabled]="isSavingPassword()">
               <span *ngIf="!isSavingPassword()">
-                <i class="fa fa-key me-1"></i> Changer le mot de passe
+                <i class="fa fa-key me-1"></i> {{ 'PROFILE.UPDATE_PASSWORD' | translate }}
               </span>
               <span *ngIf="isSavingPassword()">
-                <i class="fa fa-circle-notch fa-spin me-1"></i> Modification...
+                <i class="fa fa-circle-notch fa-spin me-1"></i> {{ 'PROFILE.UPDATING_PWD' | translate }}
               </span>
             </button>
           </div>

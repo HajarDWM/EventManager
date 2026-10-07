@@ -10,11 +10,12 @@ import { MenuItemService, MenuItem } from '../../../../core/services/menu-item.s
 import { CatererService } from '../../../../core/services/caterer.service';
 import { CurrencyService } from '../../../../core/services/currency.service';
 import { TemplateService } from '../../../../core/services/template.service';
+import { TranslatePipe } from '../../../../core/pipes/translate.pipe';
 
 @Component({
   selector: 'app-event-details',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, TranslatePipe],
   templateUrl: './event-details.html'
 })
 export class EventDetails implements OnInit {
@@ -166,6 +167,7 @@ export class EventDetails implements OnInit {
       if (mealType.includes('BUFFET_DESSERTS') || dessertCount > 0) parts.push({ label: 'Desserts Buffet', count: dessertCount, icon: 'fa-birthday-cake' });
       if (mealType.includes('BUFFET_BEVERAGES') || beverageCount > 0) parts.push({ label: 'Boissons Buffet', count: beverageCount, icon: 'fa-glass-cheers' });
       return {
+        titleKey: 'EVENT_DETAILS.FORMULA_MIX',
         title: 'Formule Combinée (Mix)',
         badgeClass: 'bg-primary text-white',
         icon: 'fa-layer-group',
@@ -179,6 +181,7 @@ export class EventDetails implements OnInit {
       if (dessertCount > 0) parts.push({ label: 'Douceurs & Desserts', count: dessertCount, icon: 'fa-birthday-cake' });
       if (beverageCount > 0) parts.push({ label: 'Boissons & Bar', count: beverageCount, icon: 'fa-glass-cheers' });
       return {
+        titleKey: 'EVENT_DETAILS.FORMULA_BUFFET',
         title: 'Formule Buffet Libre',
         badgeClass: 'bg-info text-white',
         icon: 'fa-concierge-bell',
@@ -192,6 +195,7 @@ export class EventDetails implements OnInit {
       if (dessertCount > 0) parts.push({ label: 'Desserts', count: dessertCount, icon: 'fa-birthday-cake' });
       if (beverageCount > 0) parts.push({ label: 'Boissons', count: beverageCount, icon: 'fa-glass-cheers' });
       return {
+        titleKey: 'EVENT_DETAILS.FORMULA_PLATED',
         title: 'Service à l\'assiette',
         badgeClass: 'bg-warning text-dark',
         icon: 'fa-utensils',
@@ -468,6 +472,7 @@ export class EventDetails implements OnInit {
       id?: number;
       name: string;
       category: string;
+      serviceTypeKey?: string;
       serviceType: string;
       serviceIcon: string;
       dietaryTag: string;
@@ -506,12 +511,15 @@ export class EventDetails implements OnInit {
       }
 
       if (isRelevant) {
+        let serviceTypeKey = 'EVENT_DETAILS.SERVICE_TABLE';
         let serviceType = 'À Table';
         let serviceIcon = 'fa-utensils';
         if (isBuffetItem) {
+          serviceTypeKey = 'EVENT_DETAILS.SERVICE_BUFFET';
           serviceType = 'Buffet Libre';
           serviceIcon = 'fa-concierge-bell';
         } else if (item.category === 'BEVERAGE' || item.category === 'BUFFET_BEVERAGES') {
+          serviceTypeKey = 'EVENT_DETAILS.SERVICE_BEVERAGE';
           serviceType = 'Boisson';
           serviceIcon = 'fa-glass-cheers';
         }
@@ -530,6 +538,7 @@ export class EventDetails implements OnInit {
           id: item.id,
           name: item.name,
           category: this.formatItemCategory(item.category),
+          serviceTypeKey,
           serviceType,
           serviceIcon,
           dietaryTag: displayedDiet,

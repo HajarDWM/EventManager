@@ -3,10 +3,10 @@
   class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-2 text-center text-md-start">
   <div class="flex-grow-1 mb-1 mb-md-0">
     <h1 class="h3 fw-bold mb-2">
-      Modifier l'événement
+      {{ 'EVENTS.EDIT_EVENT' | translate }}
     </h1>
     <h2 class="h6 fw-medium text-muted mb-0">
-      Mettez à jour les détails de cette prestation.
+      {{ 'EVENTS.EDIT_SUBTITLE' | translate }}
     </h2>
   </div>
 </div>
@@ -16,7 +16,7 @@
   <div class="col-md-8 col-lg-6">
     <div class="block block-rounded shadow-sm border border-light">
       <div class="block-header block-header-default bg-body-light border-bottom border-light">
-        <h3 class="block-title">Édition de la prestation #{{ eventId() }}</h3>
+        <h3 class="block-title">{{ 'EVENTS.EDIT_TITLE_LABEL' | translate }} #{{ eventId() }}</h3>
       </div>
       <div class="block-content">
         <!-- Error Alert -->
@@ -28,56 +28,56 @@
         <!-- Loading Spinner -->
         <div class="text-center py-5" *ngIf="isLoading()">
           <i class="fa fa-fw fa-circle-notch fa-spin text-primary fs-2"></i>
-          <p class="mt-2 text-muted fs-sm">Chargement des données de l'événement...</p>
+          <p class="mt-2 text-muted fs-sm">{{ 'COMMON.LOADING' | translate }}</p>
         </div>
 
         <form (ngSubmit)="onSubmit()" *ngIf="!isLoading()">
           <!-- Titre -->
           <div class="mb-4">
-            <label class="form-label fs-sm fw-semibold" for="event-title">Nom de l'événement <span
+            <label class="form-label fs-sm fw-semibold" for="event-title">{{ 'EVENTS.NAME' | translate }} <span
                 class="text-danger">*</span></label>
             <input type="text" class="form-control form-control-alt fs-sm" id="event-title" name="event-title"
-              placeholder="Ex: Yassine & Zineb ou BrainToys" [ngModel]="title()" (ngModelChange)="title.set($event)"
+              [placeholder]="'EVENTS.NAME_PLACEHOLDER' | translate" [ngModel]="title()" (ngModelChange)="title.set($event)"
               required>
           </div>
 
           <!-- Informations du Client -->
           <div class="mb-4 p-3 bg-body-light border rounded-3">
-            <h4 class="h6 fw-bold mb-3"><i class="fa fa-user-circle text-primary me-1"></i> Informations du Client (Accès Portail)</h4>
+            <h4 class="h6 fw-bold mb-3"><i class="fa fa-user-circle text-primary me-1"></i> {{ 'EVENTS.CLIENT_INFO_TITLE' | translate }}</h4>
             <div class="row g-3">
               <div class="col-12">
-                <label class="form-label fs-xs fw-semibold text-dark mb-1" for="client-name">Nom complet du client / marié(s)</label>
+                <label class="form-label fs-xs fw-semibold text-dark mb-1" for="client-name">{{ 'EVENTS.CLIENT_NAME' | translate }}</label>
                 <input type="text" class="form-control form-control-sm"
-                       id="client-name" name="client-name" placeholder="Ex: Yassine Berrada"
+                       id="client-name" name="client-name" [placeholder]="'EVENTS.CLIENT_NAME_PLACEHOLDER' | translate"
                        [ngModel]="clientName()" (ngModelChange)="clientName.set($event)">
               </div>
               <div class="col-md-6">
-                <label class="form-label fs-xs fw-semibold text-dark mb-1" for="client-phone">Téléphone</label>
+                <label class="form-label fs-xs fw-semibold text-dark mb-1" for="client-phone">{{ 'EVENTS.CLIENT_PHONE' | translate }}</label>
                 <input type="tel" class="form-control form-control-sm"
-                       id="client-phone" name="client-phone" placeholder="Ex: +212 600 000 000"
+                       id="client-phone" name="client-phone" [placeholder]="'EVENTS.CLIENT_PHONE_PLACEHOLDER' | translate"
                        [ngModel]="clientPhone()" (ngModelChange)="clientPhone.set($event)">
               </div>
               <div class="col-md-6">
-                <label class="form-label fs-xs fw-semibold text-dark mb-1" for="client-email">Email</label>
+                <label class="form-label fs-xs fw-semibold text-dark mb-1" for="client-email">{{ 'EVENTS.CLIENT_EMAIL' | translate }}</label>
                 <input type="email" class="form-control form-control-sm"
-                       id="client-email" name="client-email" placeholder="Ex: client@email.com"
+                       id="client-email" name="client-email" [placeholder]="'EVENTS.CLIENT_EMAIL_PLACEHOLDER' | translate"
                        [ngModel]="clientEmail()" (ngModelChange)="clientEmail.set($event)">
               </div>
             </div>
             <div class="form-text fs-xs text-muted mt-2">
-              Ces informations permettront au client de s'identifier sur son espace privé (Portail Client).
+              {{ 'EVENTS.CLIENT_INFO_SUBTITLE' | translate }}
             </div>
           </div>
 
           <!-- Type / Sous-titre de l'événement (pour l'invitation) -->
           <div class="mb-4">
             <label class="form-label fs-sm fw-semibold" for="event-subtitle">
-              <i class="fa fa-tag text-primary me-1"></i> Type / Nature de l'événement (Sous-titre de l'invitation)
+              <i class="fa fa-tag text-primary me-1"></i> {{ 'EVENTS.SUBTITLE_NATURE' | translate }}
             </label>
             <input type="text" class="form-control form-control-alt fs-sm"
                    id="event-subtitle" name="event-subtitle"
                    list="subtitle-suggestions-edit"
-                   placeholder="Ex: Le Mariage de, Soirée de Gala, Dîner d'Affaires, L'Anniversaire de..."
+                   [placeholder]="'EVENTS.SUBTITLE_PLACEHOLDER' | translate"
                    [ngModel]="invitationSubtitle()" (ngModelChange)="invitationSubtitle.set($event)">
             <datalist id="subtitle-suggestions-edit">
               <option value="Le Mariage de">
@@ -95,20 +95,20 @@
               <option value="Invitation d'Exception">
             </datalist>
             <div class="form-text fs-xs text-muted">
-              Ce texte apparaîtra au-dessus du nom sur l'invitation (choisissez une suggestion ou écrivez votre propre texte).
+              {{ 'EVENTS.SUBTITLE_HELP' | translate }}
             </div>
           </div>
 
           <!-- Date & Heure -->
           <div class="row mb-4">
             <div class="col-sm-8">
-              <label class="form-label fs-sm fw-semibold" for="event-date">Date de l'événement <span
+              <label class="form-label fs-sm fw-semibold" for="event-date">{{ 'EVENTS.EVENT_DATE' | translate }} <span
                   class="text-danger">*</span></label>
               <input type="date" class="form-control form-control-alt fs-sm" id="event-date" name="event-date"
                 [ngModel]="eventDateOnly()" (ngModelChange)="eventDateOnly.set($event)" required>
             </div>
             <div class="col-sm-4">
-              <label class="form-label fs-sm fw-semibold" for="event-time">Heure (facultatif)</label>
+              <label class="form-label fs-sm fw-semibold" for="event-time">{{ 'EVENTS.EVENT_TIME' | translate }}</label>
               <input type="time" class="form-control form-control-alt fs-sm" id="event-time" name="event-time"
                 [ngModel]="eventTimeOnly()" (ngModelChange)="eventTimeOnly.set($event)">
             </div>
@@ -116,53 +116,53 @@
 
           <!-- Lieu de la Salle -->
           <div class="mb-4">
-            <label class="form-label fs-sm fw-semibold" for="event-location">Lieu / Nom de la salle <span class="text-danger">*</span></label>
+            <label class="form-label fs-sm fw-semibold" for="event-location">{{ 'EVENTS.VENUE_HALL' | translate }} <span class="text-danger">*</span></label>
             <input type="text" class="form-control form-control-alt fs-sm"
-                   id="event-location" name="event-location" placeholder="Ex: Palais des Roses, Galerie des Glaces"
+                   id="event-location" name="event-location" [placeholder]="'EVENTS.VENUE_PLACEHOLDER' | translate"
                    [ngModel]="location()" (ngModelChange)="location.set($event)" required>
           </div>
 
           <!-- Lien Google Maps / Adresse exacte -->
           <div class="mb-4">
-            <label class="form-label fs-sm fw-semibold" for="event-map-url">Adresse exacte / Lien Google Maps</label>
+            <label class="form-label fs-sm fw-semibold" for="event-map-url">{{ 'EVENTS.MAP_URL' | translate }}</label>
             <input type="url" class="form-control form-control-alt fs-sm"
-                   id="event-map-url" name="event-map-url" placeholder="Ex: https://maps.app.goo.gl/..."
+                   id="event-map-url" name="event-map-url" [placeholder]="'EVENTS.MAP_URL_PLACEHOLDER' | translate"
                    [ngModel]="locationMapUrl()" (ngModelChange)="locationMapUrl.set($event)">
             <div class="form-text fs-xs text-muted">
-              Ce lien sera utilisé pour le bouton d'itinéraire sur l'invitation digitale.
+              {{ 'EVENTS.MAP_URL_HELP' | translate }}
             </div>
           </div>
 
           <!-- Lien Parking -->
           <div class="mb-4">
             <label class="form-label fs-sm fw-semibold" for="event-parking">
-              <i class="fa fa-parking text-primary me-1"></i> Lien Parking
+              <i class="fa fa-parking text-primary me-1"></i> {{ 'EVENTS.PARKING_URL' | translate }}
             </label>
             <input type="url" class="form-control form-control-alt fs-sm" id="event-parking" name="event-parking"
-              placeholder="Ex: https://maps.app.goo.gl/parking..." [ngModel]="parkingLocation()"
+              [placeholder]="'EVENTS.PARKING_URL_PLACEHOLDER' | translate" [ngModel]="parkingLocation()"
               (ngModelChange)="parkingLocation.set($event)">
             <div class="form-text fs-xs text-muted">
-              Permet aux invités d'obtenir un itinéraire GPS direct vers le parking sur leur invitation.
+              {{ 'EVENTS.PARKING_URL_HELP' | translate }}
             </div>
           </div>
 
           <!-- Nombre d'invités -->
           <div class="mb-4">
-            <label class="form-label fs-sm fw-semibold" for="event-guests">Nombre d'invités attendus</label>
+            <label class="form-label fs-sm fw-semibold" for="event-guests">{{ 'EVENTS.GUEST_COUNT' | translate }}</label>
             <input type="number" class="form-control form-control-alt fs-sm" id="event-guests" name="event-guests"
-              placeholder="Ex: 150 (facultatif)" min="1" [ngModel]="guestCount()"
+              [placeholder]="'EVENTS.GUEST_COUNT_PLACEHOLDER' | translate" min="1" [ngModel]="guestCount()"
               (ngModelChange)="guestCount.set($event)">
           </div>
 
           <!-- Statut -->
           <div class="mb-4">
-            <label class="form-label fs-sm fw-semibold" for="event-status">Statut de la prestation</label>
+            <label class="form-label fs-sm fw-semibold" for="event-status">{{ 'COMMON.STATUS' | translate }}</label>
             <select class="form-select form-control-alt fs-sm" id="event-status" name="event-status"
               [ngModel]="status()" (ngModelChange)="status.set($event)">
-              <option value="PLANNED">Planifié</option>
-              <option value="DRAFT">Brouillon</option>
-              <option value="COMPLETED">Terminé</option>
-              <option value="CANCELLED">Annulé</option>
+              <option value="PLANNED">{{ 'EVENTS.STATUS_PLANNED' | translate }}</option>
+              <option value="DRAFT">{{ 'EVENTS.STATUS_DRAFT' | translate }}</option>
+              <option value="COMPLETED">{{ 'EVENTS.STATUS_COMPLETED' | translate }}</option>
+              <option value="CANCELLED">{{ 'EVENTS.STATUS_CANCELLED' | translate }}</option>
             </select>
           </div>
 
@@ -170,36 +170,36 @@
           <div class="mb-4 p-3 bg-body-light border rounded-3">
             <div class="d-flex align-items-center gap-2 mb-3">
               <i class="fa fa-chair text-primary"></i>
-              <h4 class="h6 fw-bold mb-0">Configuration de la Salle & Disposition des Tables</h4>
+              <h4 class="h6 fw-bold mb-0">{{ 'EVENTS.TABLE_CONFIG' | translate }}</h4>
             </div>
 
             <div class="row g-3">
               <div class="col-12 col-md-6">
-                <label class="form-label fs-xs fw-semibold text-dark mb-1">Type de tables principal</label>
+                <label class="form-label fs-xs fw-semibold text-dark mb-1">{{ 'EVENTS.TABLE_SHAPE' | translate }}</label>
                 <select class="form-select form-select-sm"
                         [ngModel]="tableShape()" (ngModelChange)="tableShape.set($event)" name="tableShape">
-                  <option value="ROUND">🔵 Tables Rondes (Standard 8-12 pers.)</option>
-                  <option value="RECTANGULAR">🟦 Tables Rectangulaires / Banquets</option>
-                  <option value="MIXED">👑 Disposition Mixte (Rondes + Table d'Honneur)</option>
+                  <option value="ROUND">🔵 {{ 'EVENTS.TABLE_SHAPE_ROUND' | translate }}</option>
+                  <option value="RECTANGULAR">🟦 {{ 'EVENTS.TABLE_SHAPE_RECT' | translate }}</option>
+                  <option value="MIXED">👑 {{ 'EVENTS.TABLE_SHAPE_MIXED' | translate }}</option>
                 </select>
               </div>
 
               <div class="col-6 col-md-3">
-                <label class="form-label fs-xs fw-semibold text-dark mb-1">Capacité / table</label>
+                <label class="form-label fs-xs fw-semibold text-dark mb-1">{{ 'EVENTS.TABLE_CAPACITY' | translate }}</label>
                 <input type="number" class="form-control form-control-sm"
                        [ngModel]="tableCapacity()" (ngModelChange)="tableCapacity.set($event)"
                        name="tableCapacity" min="2" max="50" placeholder="Ex: 10">
               </div>
 
               <div class="col-6 col-md-3">
-                <label class="form-label fs-xs fw-semibold text-dark mb-1">Nombre de tables</label>
+                <label class="form-label fs-xs fw-semibold text-dark mb-1">{{ 'EVENTS.TABLE_COUNT' | translate }}</label>
                 <input type="number" class="form-control form-control-sm"
                        [ngModel]="tablesCount()" (ngModelChange)="tablesCount.set($event)"
                        name="tablesCount" min="1" max="100" placeholder="Ex: 15">
               </div>
             </div>
             <div class="form-text fs-xs text-muted mt-2">
-              Ces paramètres permettront de générer et d'organiser les tables pour le placement des invités confirmés.
+              {{ 'EVENTS.TABLE_CONFIG_HELP' | translate }}
             </div>
           </div>
 
@@ -208,9 +208,9 @@
             <div class="d-flex align-items-center justify-content-between mb-2">
               <div>
                 <label class="form-label fs-sm fw-bold text-dark mb-0">
-                  <i class="fa fa-ticket text-primary me-1"></i> Format d'accès & Participation financière
+                  <i class="fa fa-ticket text-primary me-1"></i> {{ 'EVENTS.TICKETING_TITLE' | translate }}
                 </label>
-                <div class="fs-xs text-muted">Activez la billetterie si les invités doivent régler leur participation d'avance.</div>
+                <div class="fs-xs text-muted">{{ 'EVENTS.TICKETING_DESC' | translate }}</div>
               </div>
               <div class="form-check form-switch">
                 <input class="form-check-input" type="checkbox" id="isPaidEventSwitchEdit"
@@ -222,7 +222,7 @@
             <!-- Champs de tarification si Payant activé -->
             <div *ngIf="isPaidEvent()" class="row g-2 mt-2 pt-2 border-top animate__animated animate__fadeIn">
               <div class="col-sm-7">
-                <label class="form-label fs-xs fw-semibold text-dark mb-1">Tarif / Prix par invité <span class="text-danger">*</span></label>
+                <label class="form-label fs-xs fw-semibold text-dark mb-1">{{ 'EVENTS.TICKET_PRICE' | translate }} <span class="text-danger">*</span></label>
                 <div class="input-group input-group-sm">
                   <span class="input-group-text"><i class="fa fa-coins text-warning"></i></span>
                   <input type="number" class="form-control" placeholder="Ex: 350" min="1"
@@ -231,7 +231,7 @@
                 </div>
               </div>
               <div class="col-sm-5">
-                <label class="form-label fs-xs fw-semibold text-dark mb-1">Devise</label>
+                <label class="form-label fs-xs fw-semibold text-dark mb-1">{{ 'EVENTS.CURRENCY' | translate }}</label>
                 <select class="form-select form-select-sm" [ngModel]="currency()" (ngModelChange)="currency.set($event)" name="currency">
                   <option value="MAD">MAD (Dirham)</option>
                   <option value="EUR">EUR (€)</option>
@@ -245,14 +245,14 @@
           <div class="mb-4 d-flex gap-2">
             <button type="submit" class="btn btn-primary fs-sm px-4" [disabled]="isSaving()">
               <span *ngIf="!isSaving()">
-                <i class="fa fa-save me-1"></i> Mettre à jour
+                <i class="fa fa-save me-1"></i> {{ 'COMMON.UPDATE' | translate }}
               </span>
               <span *ngIf="isSaving()">
-                <i class="fa fa-circle-notch fa-spin me-1"></i> Mise à jour...
+                <i class="fa fa-circle-notch fa-spin me-1"></i> {{ 'EVENTS.UPDATING' | translate }}
               </span>
             </button>
             <a class="btn btn-alt-secondary fs-sm px-4" routerLink="/events">
-              Annuler
+              {{ 'COMMON.CANCEL' | translate }}
             </a>
           </div>
         </form>

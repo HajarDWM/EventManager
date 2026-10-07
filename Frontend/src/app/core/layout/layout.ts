@@ -3,11 +3,13 @@ import { CommonModule } from '@angular/common';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../auth/services/auth.service';
 import { CatererService, CatererProfile } from '../services/caterer.service';
+import { LanguageSwitcher } from '../../shared/components/language-switcher/language-switcher';
+import { TranslatePipe } from '../pipes/translate.pipe';
 
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive],
+  imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive, LanguageSwitcher, TranslatePipe],
   templateUrl: './layout.html',
   styleUrl: './layout.scss'
 })

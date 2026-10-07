@@ -1,15 +1,16 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CatererService } from '../../core/services/caterer.service';
 import { CurrencyService } from '../../core/services/currency.service';
 import { HttpClient } from '@angular/common/http';
-import { FormsModule } from '@angular/forms';
+import { TranslatePipe } from '../../core/pipes/translate.pipe';
 
 @Component({
   selector: 'app-pricing',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslatePipe],
   templateUrl: './pricing.html'
 })
 export class Pricing implements OnInit {

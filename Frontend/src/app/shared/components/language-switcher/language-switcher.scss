@@ -1,0 +1,30 @@
+.lang-toggle-btn {
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background-color: #f8fafc;
+  color: #334155;
+  transition: all 0.2s ease;
+
+  &:hover, &.active {
+    background-color: #f1f5f9;
+    border-color: rgba(0, 0, 0, 0.15);
+    color: #0f172a;
+  }
+}
+
+.dropdown-item {
+  transition: background-color 0.15s ease;
+
+  &.active-lang {
+    background-color: #f0f9ff;
+    color: #0284c7;
+
+    .text-dark {
+      color: #0284c7 !important;
+      font-weight: 600 !important;
+    }
+  }
+
+  &:hover:not(.active-lang) {
+    background-color: #f8fafc;
+  }
+}

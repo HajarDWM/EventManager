@@ -5,11 +5,12 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ClientGuestService } from '../../core/services/client-guest.service';
 import { Guest, GuestStatus } from '../../core/services/guest.service';
 import { ClientAuthService } from '../../core/auth/services/client-auth.service';
+import { TranslatePipe } from '../../core/pipes/translate.pipe';
 
 @Component({
   selector: 'app-client-guest-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, TranslatePipe],
   templateUrl: './client-guest-list.html',
   styleUrls: ['./client-guest-list.scss']
 })
@@ -436,5 +437,24 @@ export class ClientGuestList implements OnInit {
     if (target && !target.closest('.table-autocomplete-container')) {
       this.isTableDropdownOpen.set(false);
     }
+  }
+
+  protected onBatchAssignGroup(): void {
+    const grp = this.selectedGroupFilter();
+    const tbl = this.batchSelectedTable();
+    if (grp && tbl) {
+      this.batchAssignGroupToTable(grp, tbl);
+    }
+  }
+
+  protected onDelete(guestId: number): void {
+    const g = this.guests().find(x => x.id === guestId);
+    if (g) {
+      this.onDeleteGuest(g);
+    }
+  }
+
+  protected onSubmit(): void {
+    this.onSaveGuest();
   }
 }

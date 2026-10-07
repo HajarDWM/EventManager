@@ -4,10 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { CatererService, CatererProfile } from '../../core/services/caterer.service';
 import { CurrencyService } from '../../core/services/currency.service';
 
+import { TranslatePipe } from '../../core/pipes/translate.pipe';
+
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslatePipe],
   templateUrl: './profile.html'
 })
 export class Profile implements OnInit {

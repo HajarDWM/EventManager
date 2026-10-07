@@ -2,18 +2,18 @@
 <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-2 text-center text-md-start no-print">
   <div class="flex-grow-1 mb-1 mb-md-0">
     <h1 class="h3 fw-bold mb-2">
-      Exportation & Impression PDF
+      {{ 'EVENT_EXPORT.TITLE' | translate }}
     </h1>
     <h2 class="h6 fw-medium text-muted mb-0" *ngIf="event()">
-      Événement : <strong class="text-primary">{{ event()?.title }}</strong> ({{ event()?.eventDate | date:'dd/MM/yyyy' }})
+      {{ 'EVENT_EXPORT.EVENT_PREFIX' | translate }} <strong class="text-primary">{{ event()?.title }}</strong> ({{ event()?.eventDate | date:'dd/MM/yyyy' }})
     </h2>
   </div>
   <div class="mt-3 mt-md-0 d-flex gap-2 justify-content-center">
     <a [routerLink]="['/events', eventId()]" class="btn btn-alt-secondary">
-      <i class="fa fa-arrow-left me-1"></i> Retour
+      <i class="fa fa-arrow-left me-1"></i> {{ 'EVENT_EXPORT.BACK_TO_DETAILS' | translate }}
     </a>
     <button class="btn btn-success" (click)="printDocument()">
-      <i class="fa fa-print me-1"></i> Imprimer / Sauvegarder PDF
+      <i class="fa fa-print me-1"></i> {{ 'EVENT_EXPORT.PRINT_BTN' | translate }}
     </button>
   </div>
 </div>
@@ -22,16 +22,16 @@
 <!-- Non-Printable Document Selector Tabs -->
 <div class="block block-rounded shadow-sm border border-light mt-3 no-print">
   <div class="block-content block-content-full d-flex flex-wrap justify-content-between align-items-center gap-2">
-    <span class="fs-sm fw-semibold text-uppercase text-muted">Sélectionnez le document à générer :</span>
+    <span class="fs-sm fw-semibold text-uppercase text-muted">{{ 'EVENT_EXPORT.DOCUMENT_SELECTOR' | translate }}</span>
     <div class="btn-group" role="group">
       <button type="button" class="btn" [class.btn-primary]="activeTab() === 'kitchen'" [class.btn-alt-secondary]="activeTab() !== 'kitchen'" (click)="setTab('kitchen')">
-        <i class="fa fa-utensils me-1"></i> Fiche Cuisine & Restauration
+        <i class="fa fa-utensils me-1"></i> {{ 'EVENT_EXPORT.TAB_KITCHEN_BTN' | translate }}
       </button>
       <button type="button" class="btn" [class.btn-primary]="activeTab() === 'guests'" [class.btn-alt-secondary]="activeTab() !== 'guests'" (click)="setTab('guests')">
-        <i class="fa fa-users me-1"></i> Positionnement & Invités
+        <i class="fa fa-users me-1"></i> {{ 'EVENT_EXPORT.TAB_GUESTS_BTN' | translate }}
       </button>
       <button type="button" class="btn" [class.btn-primary]="activeTab() === 'tasks'" [class.btn-alt-secondary]="activeTab() !== 'tasks'" (click)="setTab('tasks')">
-        <i class="fa fa-tasks me-1"></i> Fiche Rétroplanning
+        <i class="fa fa-tasks me-1"></i> {{ 'EVENT_EXPORT.TAB_TASKS_BTN' | translate }}
       </button>
     </div>
   </div>
@@ -40,7 +40,7 @@
 <!-- Loading -->
 <div class="text-center py-5 no-print" *ngIf="isLoading()">
   <i class="fa fa-circle-notch fa-spin text-primary fs-2"></i>
-  <p class="mt-2 text-muted fs-sm">Préparation du document PDF...</p>
+  <p class="mt-2 text-muted fs-sm">{{ 'EVENT_EXPORT.PREPARING_PDF' | translate }}</p>
 </div>
 
 <!-- Error Alert -->
@@ -55,18 +55,18 @@
     <!-- Document Header -->
     <div class="d-flex justify-content-between align-items-start border-bottom pb-3 mb-4">
       <div>
-        <h2 class="h4 fw-bold text-primary mb-1">EventManager Organisateur</h2>
+        <h2 class="h4 fw-bold text-primary mb-1">EventManager</h2>
         <h1 class="h3 fw-bold text-dark mb-2">{{ event()?.title }}</h1>
         <div class="fs-sm text-muted">
           <span class="me-3"><i class="fa fa-calendar-alt me-1 text-primary"></i> {{ event()?.eventDate | date:'dd/MM/yyyy HH:mm' }}</span>
-          <span><i class="fa fa-map-marker-alt me-1 text-danger"></i> {{ event()?.location || 'Lieu non renseigné' }}</span>
+          <span><i class="fa fa-map-marker-alt me-1 text-danger"></i> {{ event()?.location || ('COMMON.NOT_SPECIFIED' | translate) }}</span>
         </div>
       </div>
       <div class="text-end">
         <div class="badge bg-primary px-3 py-2 fs-6 mb-2">
-          {{ event()?.guestCount || 0 }} Invités Attendus
+          {{ event()?.guestCount || 0 }} {{ 'EVENT_EXPORT.EXPECTED_GUESTS' | translate }}
         </div>
-        <div class="fs-xs text-muted">Document généré le {{ today | date:'dd/MM/yyyy HH:mm' }}</div>
+        <div class="fs-xs text-muted">{{ 'EVENT_EXPORT.GENERATED_ON' | translate }} {{ today | date:'dd/MM/yyyy HH:mm' }}</div>
       </div>
     </div>
 
@@ -74,14 +74,14 @@
     <div *ngIf="activeTab() === 'kitchen'">
       <div class="d-flex justify-content-between align-items-center mb-3">
         <h3 class="h5 fw-bold text-uppercase tracking-wider text-dark mb-0">
-          <i class="fa fa-utensils text-primary me-2"></i> Fiche Technique Restauration & Menus
+          <i class="fa fa-utensils text-primary me-2"></i> {{ 'EVENT_EXPORT.KITCHEN_SHEET_TITLE' | translate }}
         </h3>
-        <span class="fs-sm text-muted">Coût total menu : <strong>{{ convert(pricePerPerson()) | number:'1.2-2' }} {{ currencySymbol() }} / pers</strong></span>
+        <span class="fs-sm text-muted">{{ 'EVENT_EXPORT.TOTAL_MENU_COST' | translate }} <strong>{{ convert(pricePerPerson()) | number:'1.2-2' }} {{ currencySymbol() }} {{ 'EVENT_EXPORT.PER_PERS' | translate }}</strong></span>
       </div>
 
       <!-- Menu Categories -->
       <div class="mb-4" *ngIf="starters().length > 0">
-        <h4 class="h6 fw-bold text-info text-uppercase border-bottom pb-1 mb-2">Entrées</h4>
+        <h4 class="h6 fw-bold text-info text-uppercase border-bottom pb-1 mb-2">{{ 'EVENT_EXPORT.CAT_STARTERS' | translate }}</h4>
         <ul class="list-group list-group-flush mb-2">
           <li class="list-group-item d-flex justify-content-between align-items-start px-0 py-2" *ngFor="let item of starters()">
             <div>
@@ -95,7 +95,7 @@
       </div>
 
       <div class="mb-4" *ngIf="mains().length > 0">
-        <h4 class="h6 fw-bold text-primary text-uppercase border-bottom pb-1 mb-2">Plats Principaux</h4>
+        <h4 class="h6 fw-bold text-primary text-uppercase border-bottom pb-1 mb-2">{{ 'EVENT_EXPORT.CAT_MAINS' | translate }}</h4>
         <ul class="list-group list-group-flush mb-2">
           <li class="list-group-item d-flex justify-content-between align-items-start px-0 py-2" *ngFor="let item of mains()">
             <div>
@@ -109,7 +109,7 @@
       </div>
 
       <div class="mb-4" *ngIf="desserts().length > 0">
-        <h4 class="h6 fw-bold text-warning text-uppercase border-bottom pb-1 mb-2">Desserts</h4>
+        <h4 class="h6 fw-bold text-warning text-uppercase border-bottom pb-1 mb-2">{{ 'EVENT_EXPORT.CAT_DESSERTS' | translate }}</h4>
         <ul class="list-group list-group-flush mb-2">
           <li class="list-group-item d-flex justify-content-between align-items-start px-0 py-2" *ngFor="let item of desserts()">
             <div>
@@ -123,7 +123,7 @@
       </div>
 
       <div class="mb-4" *ngIf="beverages().length > 0">
-        <h4 class="h6 fw-bold text-success text-uppercase border-bottom pb-1 mb-2">Boissons</h4>
+        <h4 class="h6 fw-bold text-success text-uppercase border-bottom pb-1 mb-2">{{ 'EVENT_EXPORT.CAT_BEVERAGES' | translate }}</h4>
         <ul class="list-group list-group-flush mb-2">
           <li class="list-group-item d-flex justify-content-between align-items-start px-0 py-2" *ngFor="let item of beverages()">
             <div>
@@ -137,7 +137,7 @@
       </div>
 
       <div class="mb-4" *ngIf="others().length > 0">
-        <h4 class="h6 fw-bold text-secondary text-uppercase border-bottom pb-1 mb-2">Autres (Buffet, Entrées, etc.)</h4>
+        <h4 class="h6 fw-bold text-secondary text-uppercase border-bottom pb-1 mb-2">{{ 'EVENT_EXPORT.CAT_OTHERS' | translate }}</h4>
         <ul class="list-group list-group-flush mb-2">
           <li class="list-group-item d-flex justify-content-between align-items-start px-0 py-2" *ngFor="let item of others()">
             <div>
@@ -153,31 +153,31 @@
       <!-- Synthesis box for kitchen allergies and counts -->
       <div class="p-3 bg-light rounded border mb-4">
         <h4 class="h6 fw-bold text-danger text-uppercase border-bottom pb-1 mb-3">
-          <i class="fa fa-exclamation-triangle me-1"></i> Synthèse Cuisine (Allergies & Régimes Spéciaux)
+          <i class="fa fa-exclamation-triangle me-1"></i> {{ 'EVENT_EXPORT.KITCHEN_SYNTHESIS' | translate }}
         </h4>
         <div class="row g-2 mb-3">
           <div class="col-4">
             <div class="border rounded p-2 bg-white text-center">
-              <span class="fs-xxs fw-semibold text-muted text-uppercase d-block mb-1">Convives Confirmés</span>
-              <span class="fs-sm fw-extrabold text-dark">{{ confirmedGuestCount() }} invités</span>
+              <span class="fs-xxs fw-semibold text-muted text-uppercase d-block mb-1">{{ 'EVENT_EXPORT.CONFIRMED_GUESTS' | translate }}</span>
+              <span class="fs-sm fw-extrabold text-dark">{{ confirmedGuestCount() }} {{ 'GUESTS.GUEST' | translate }}</span>
             </div>
           </div>
           <div class="col-4">
             <div class="border rounded p-2 bg-white text-center">
-              <span class="fs-xxs fw-semibold text-muted text-uppercase d-block mb-1">Végétariens</span>
+              <span class="fs-xxs fw-semibold text-muted text-uppercase d-block mb-1">{{ 'EVENT_EXPORT.VEGETARIANS' | translate }}</span>
               <span class="fs-sm fw-extrabold text-success">{{ vegetarianCount() }}</span>
             </div>
           </div>
           <div class="col-4">
             <div class="border rounded p-2 bg-white text-center">
-              <span class="fs-xxs fw-semibold text-muted text-uppercase d-block mb-1">Vegans / Végétaliens</span>
+              <span class="fs-xxs fw-semibold text-muted text-uppercase d-block mb-1">{{ 'EVENT_EXPORT.VEGANS' | translate }}</span>
               <span class="fs-sm fw-extrabold text-success">{{ veganCount() }}</span>
             </div>
           </div>
         </div>
 
         <div *ngIf="otherAllergiesList().length > 0">
-          <span class="fs-xxs fw-bold text-muted text-uppercase d-block mb-2">Liste des Allergies Déclarées :</span>
+          <span class="fs-xxs fw-bold text-muted text-uppercase d-block mb-2">{{ 'EVENT_EXPORT.DECLARED_ALLERGIES' | translate }}</span>
           <div class="d-flex flex-wrap gap-1">
             <span class="badge bg-danger-light text-danger fs-xxs py-1.5 px-2 border border-danger" *ngFor="let allergy of otherAllergiesList()">
               {{ allergy }}
@@ -185,7 +185,7 @@
           </div>
         </div>
         <div *ngIf="otherAllergiesList().length === 0" class="text-muted fs-xs">
-          <i class="fa fa-info-circle me-1"></i> Aucune allergie spécifique ou sévère déclarée.
+          <i class="fa fa-info-circle me-1"></i> {{ 'EVENT_EXPORT.NO_ALLERGIES' | translate }}
         </div>
       </div>
 
@@ -198,18 +198,18 @@
           <!-- Volet A: Buffet Libre (Cocktail / Entrées) -->
           <div class="mb-4 p-3 bg-light rounded border border-info-light">
             <h4 class="h6 fw-bold text-info text-uppercase border-bottom pb-2 mb-3">
-              <i class="fa fa-utensils me-2 text-info"></i> Volet A : Buffet Libre (Cocktails & Entrées)
+              <i class="fa fa-utensils me-2 text-info"></i> {{ 'EVENT_EXPORT.PART_A_BUFFET' | translate }}
             </h4>
             <div class="mb-3 fs-xs text-muted">
-              <span class="me-3"><i class="fa fa-users me-1 text-primary"></i> Convives attendus au Buffet : <strong>{{ confirmedGuestCount() }}</strong></span>
-              <span><i class="fa fa-info-circle me-1 text-warning"></i> Libre service, réapprovisionnement à prévoir.</span>
+              <span class="me-3"><i class="fa fa-users me-1 text-primary"></i> {{ 'EVENT_EXPORT.BUFFET_GUESTS' | translate }} <strong>{{ confirmedGuestCount() }}</strong></span>
+              <span><i class="fa fa-info-circle me-1 text-warning"></i> {{ 'EVENT_EXPORT.BUFFET_HINT' | translate }}</span>
             </div>
             
             <table class="table table-bordered table-sm fs-xs mb-0">
               <thead class="table-light">
                 <tr>
-                  <th>Nom de la Station / Entrée</th>
-                  <th style="width: 250px;">Régime / Spécificité</th>
+                  <th>{{ 'EVENT_EXPORT.TH_STATION_NAME' | translate }}</th>
+                  <th style="width: 250px;">{{ 'EVENT_EXPORT.TH_DIET_SPEC' | translate }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -218,7 +218,7 @@
                     <td class="fw-semibold">{{ item.name }}</td>
                     <td>
                       <span class="badge bg-info-light text-info fs-xxs" *ngIf="item.dietaryTag">{{ item.dietaryTag }}</span>
-                      <span class="text-muted fs-xxs" *ngIf="!item.dietaryTag">Standard</span>
+                      <span class="text-muted fs-xxs" *ngIf="!item.dietaryTag">{{ 'EVENT_EXPORT.STANDARD_TAG' | translate }}</span>
                     </td>
                   </tr>
                 </ng-container>
@@ -229,18 +229,18 @@
           <!-- Volet B: Service à Table (Plats assis & Desserts) -->
           <div class="p-3 bg-light rounded border border-primary-light">
             <h4 class="h6 fw-bold text-primary text-uppercase border-bottom pb-2 mb-3">
-              <i class="fa fa-concierge-bell me-2 text-primary"></i> Volet B : Service à Table (Plats assis & Desserts)
+              <i class="fa fa-concierge-bell me-2 text-primary"></i> {{ 'EVENT_EXPORT.PART_B_SEATED' | translate }}
             </h4>
             <div class="mb-3 fs-xs text-muted">
-              <span><i class="fa fa-clipboard-check me-1 text-success"></i> Portions individuelles nominatives par table.</span>
+              <span><i class="fa fa-clipboard-check me-1 text-success"></i> {{ 'EVENT_EXPORT.SEATED_HINT' | translate }}</span>
             </div>
 
             <table class="table table-bordered table-striped table-sm fs-xs align-middle mb-0">
               <thead class="table-light">
                 <tr>
-                  <th>Plat / Boisson</th>
-                  <th class="text-center" style="width: 130px;">Quantité (Portions)</th>
-                  <th>Détail des Convives & Tables</th>
+                  <th>{{ 'EVENT_EXPORT.TH_DISH_BEV' | translate }}</th>
+                  <th class="text-center" style="width: 130px;">{{ 'EVENT_EXPORT.TH_QTY' | translate }}</th>
+                  <th>{{ 'EVENT_EXPORT.TH_GUESTS_TABLES' | translate }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -251,7 +251,7 @@
                     <td>
                       <div class="d-flex flex-wrap gap-1">
                         <span class="badge bg-light text-dark border fs-xxs py-1 px-2" *ngFor="let guest of item.guests">
-                          {{ guest.guestName }} <span class="badge bg-primary-light text-primary ms-1 fs-xxxxs py-0.5 px-1">Table {{ guest.tableNumber }}</span>
+                          {{ guest.guestName }} <span class="badge bg-primary-light text-primary ms-1 fs-xxxxs py-0.5 px-1">{{ 'TABLES.TABLE_LABEL' | translate }} {{ guest.tableNumber }}</span>
                         </span>
                       </div>
                     </td>
@@ -266,15 +266,15 @@
         <!-- Fallback Standard Report -->
         <ng-template #standardChefReport>
           <h4 class="h6 fw-bold text-dark text-uppercase border-bottom pb-1 mb-3">
-            <i class="fa fa-clipboard-list text-primary me-2"></i> Fiche de Production Chef : Quantités de Plats Requises
+            <i class="fa fa-clipboard-list text-primary me-2"></i> {{ 'EVENT_EXPORT.CHEF_PRODUCTION_SHEET' | translate }}
           </h4>
           <div class="table-responsive">
             <table class="table table-bordered table-striped table-sm fs-xs align-middle mb-0">
               <thead class="table-light">
                 <tr>
-                  <th>Plat / Boisson</th>
-                  <th class="text-center" style="width: 130px;">Quantité (Portions)</th>
-                  <th>Détail des Convives & Tables</th>
+                  <th>{{ 'EVENT_EXPORT.TH_DISH_BEV' | translate }}</th>
+                  <th class="text-center" style="width: 130px;">{{ 'EVENT_EXPORT.TH_QTY' | translate }}</th>
+                  <th>{{ 'EVENT_EXPORT.TH_GUESTS_TABLES' | translate }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -284,7 +284,7 @@
                   <td>
                     <div class="d-flex flex-wrap gap-1">
                       <span class="badge bg-light text-dark border fs-xxs py-1 px-2" *ngFor="let guest of item.guests">
-                        {{ guest.guestName }} <span class="badge bg-primary-light text-primary ms-1 fs-xxxxs py-0.5 px-1">Table {{ guest.tableNumber }}</span>
+                        {{ guest.guestName }} <span class="badge bg-primary-light text-primary ms-1 fs-xxxxs py-0.5 px-1">{{ 'TABLES.TABLE_LABEL' | translate }} {{ guest.tableNumber }}</span>
                       </span>
                     </div>
                   </td>
@@ -300,15 +300,15 @@
       <div class="p-3 bg-light rounded border mt-4">
         <div class="row text-center fs-sm">
           <div class="col-4">
-            <div class="text-muted fw-semibold">Invités attendus</div>
+            <div class="text-muted fw-semibold">{{ 'EVENT_EXPORT.EXPECTED_GUESTS' | translate }}</div>
             <div class="fs-5 fw-bold text-dark">{{ event()?.guestCount || 0 }}</div>
           </div>
           <div class="col-4">
-            <div class="text-muted fw-semibold">Prix Menu par Invité</div>
+            <div class="text-muted fw-semibold">{{ 'EVENT_EXPORT.MENU_PRICE_PER_GUEST' | translate }}</div>
             <div class="fs-5 fw-bold text-primary">{{ convert(pricePerPerson()) | number:'1.2-2' }} {{ currencySymbol() }}</div>
           </div>
           <div class="col-4">
-            <div class="text-muted fw-semibold">Budget Traiteur Total (Est.)</div>
+            <div class="text-muted fw-semibold">{{ 'EVENT_EXPORT.TOTAL_BUDGET_EST' | translate }}</div>
             <div class="fs-5 fw-bold text-success">{{ convert(totalCateringBudget()) | number:'1.2-2' }} {{ currencySymbol() }}</div>
           </div>
         </div>
@@ -319,12 +319,12 @@
     <div *ngIf="activeTab() === 'guests'">
       <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center mb-3 gap-2">
         <h3 class="h5 fw-bold text-uppercase tracking-wider text-dark mb-0">
-          <i class="fa fa-users text-primary me-2"></i> Fiche Positionnement & Exigences Alimentaires
+          <i class="fa fa-users text-primary me-2"></i> {{ 'EVENT_EXPORT.GUESTS_SHEET_TITLE' | translate }}
         </h3>
         <div class="d-flex align-items-center gap-2">
-          <span class="fs-sm text-muted text-nowrap">Filtrer par Groupe :</span>
+          <span class="fs-sm text-muted text-nowrap">{{ 'EVENT_EXPORT.FILTER_BY_GROUP' | translate }}</span>
           <select class="form-select form-select-sm border-light fs-xs" style="width: auto;" [ngModel]="selectedGroupFilter()" (ngModelChange)="selectedGroupFilter.set($event)">
-            <option value="ALL">Tous ({{ guests().length }})</option>
+            <option value="ALL">{{ 'EVENT_EXPORT.ALL_GROUPS' | translate }} ({{ guests().length }})</option>
             <option *ngFor="let grp of uniqueGroups()" [value]="grp">{{ grp }}</option>
           </select>
         </div>
@@ -333,12 +333,12 @@
       <table class="table table-bordered table-sm fs-sm align-middle">
         <thead class="table-light">
           <tr>
-            <th>Nom Complet</th>
-            <th>Contact</th>
-            <th>Groupe</th>
-            <th>Statut Présence</th>
-            <th>Position</th>
-            <th>Régime / Remarques Alimentaires</th>
+            <th>{{ 'EVENT_EXPORT.TH_FULLNAME' | translate }}</th>
+            <th>{{ 'EVENT_EXPORT.TH_CONTACT' | translate }}</th>
+            <th>{{ 'EVENT_EXPORT.TH_GROUP' | translate }}</th>
+            <th>{{ 'EVENT_EXPORT.TH_RSVP' | translate }}</th>
+            <th>{{ 'EVENT_EXPORT.TH_SEAT' | translate }}</th>
+            <th>{{ 'EVENT_EXPORT.TH_DIET_REMARKS' | translate }}</th>
           </tr>
         </thead>
         <tbody>
@@ -350,17 +350,17 @@
               <span class="text-muted fs-xs" *ngIf="!g.groupName">-</span>
             </td>
             <td>
-              <span class="badge bg-success-light text-success" *ngIf="g.status === 'CONFIRMED'">Confirmé</span>
-              <span class="badge bg-warning-light text-warning" *ngIf="g.status === 'PENDING'">En attente</span>
-              <span class="badge bg-danger-light text-danger" *ngIf="g.status === 'DECLINED'">Décliné</span>
+              <span class="badge bg-success-light text-success" *ngIf="g.status === 'CONFIRMED'">{{ 'GUESTS.STATUS_CONFIRMED' | translate }}</span>
+              <span class="badge bg-warning-light text-warning" *ngIf="g.status === 'PENDING'">{{ 'GUESTS.STATUS_PENDING' | translate }}</span>
+              <span class="badge bg-danger-light text-danger" *ngIf="g.status === 'DECLINED'">{{ 'GUESTS.STATUS_DECLINED' | translate }}</span>
             </td>
             <td class="fw-bold">
               <span *ngIf="g.tableNumber">{{ g.tableNumber }}</span>
-              <span class="text-muted fs-xs" *ngIf="!g.tableNumber">Non attribuée</span>
+              <span class="text-muted fs-xs" *ngIf="!g.tableNumber">{{ 'EVENT_EXPORT.NOT_ASSIGNED' | translate }}</span>
             </td>
             <td>
               <span class="text-danger fw-semibold" *ngIf="g.dietaryRequirements"><i class="fa fa-exclamation-triangle me-1"></i>{{ g.dietaryRequirements }}</span>
-              <span class="text-muted fs-xs" *ngIf="!g.dietaryRequirements">Aucune restriction</span>
+              <span class="text-muted fs-xs" *ngIf="!g.dietaryRequirements">{{ 'EVENT_EXPORT.NO_RESTRICTION' | translate }}</span>
             </td>
           </tr>
         </tbody>
@@ -371,19 +371,19 @@
     <div *ngIf="activeTab() === 'tasks'">
       <div class="d-flex justify-content-between align-items-center mb-3">
         <h3 class="h5 fw-bold text-uppercase tracking-wider text-dark mb-0">
-          <i class="fa fa-tasks text-primary me-2"></i> Fiche Rétroplanning & Checklist Tâches
+          <i class="fa fa-tasks text-primary me-2"></i> {{ 'EVENT_EXPORT.TASKS_SHEET_TITLE' | translate }}
         </h3>
-        <span class="fs-sm text-muted">Tâches réalisées : <strong>{{ completedTasks().length }}/{{ tasks().length }}</strong></span>
+        <span class="fs-sm text-muted">{{ 'EVENT_EXPORT.COMPLETED_TASKS' | translate }} <strong>{{ completedTasks().length }}/{{ tasks().length }}</strong></span>
       </div>
 
       <table class="table table-bordered table-sm fs-sm align-middle">
         <thead class="table-light">
           <tr>
-            <th style="width: 40px;" class="text-center">State</th>
-            <th>Tâche d'organisation</th>
-            <th>Échéance</th>
-            <th>Priorité</th>
-            <th>Responsable Assigné</th>
+            <th style="width: 40px;" class="text-center">{{ 'EVENT_EXPORT.TH_STATE' | translate }}</th>
+            <th>{{ 'EVENT_EXPORT.TH_TASK_NAME' | translate }}</th>
+            <th>{{ 'EVENT_EXPORT.TH_DEADLINE' | translate }}</th>
+            <th>{{ 'EVENT_EXPORT.TH_PRIORITY' | translate }}</th>
+            <th>{{ 'EVENT_EXPORT.TH_ASSIGNEE' | translate }}</th>
           </tr>
         </thead>
         <tbody>
@@ -398,11 +398,11 @@
             </td>
             <td>{{ t.dueDate ? (t.dueDate | date:'dd/MM/yyyy') : '-' }}</td>
             <td>
-              <span class="badge bg-danger-light text-danger" *ngIf="t.priority === 'HIGH'">Urgente</span>
-              <span class="badge bg-warning-light text-warning" *ngIf="t.priority === 'MEDIUM'">Moyenne</span>
-              <span class="badge bg-info-light text-info" *ngIf="t.priority === 'LOW'">Basse</span>
+              <span class="badge bg-danger-light text-danger" *ngIf="t.priority === 'HIGH'">{{ 'EVENT_EXPORT.PRIORITY_HIGH' | translate }}</span>
+              <span class="badge bg-warning-light text-warning" *ngIf="t.priority === 'MEDIUM'">{{ 'EVENT_EXPORT.PRIORITY_MEDIUM' | translate }}</span>
+              <span class="badge bg-info-light text-info" *ngIf="t.priority === 'LOW'">{{ 'EVENT_EXPORT.PRIORITY_LOW' | translate }}</span>
             </td>
-            <td>{{ t.assignedTo || 'Non assigné' }}</td>
+            <td>{{ t.assignedTo || ('EVENT_EXPORT.NOT_ASSIGNED' | translate) }}</td>
           </tr>
         </tbody>
       </table>
@@ -410,7 +410,7 @@
 
     <!-- Document Footer -->
     <div class="border-top pt-3 mt-4 text-center fs-xs text-muted">
-      EventManager SaaS Organisateur &copy; 2026 — Document généré pour la préparation de l'événement "{{ event()?.title }}"
+      {{ 'EVENT_EXPORT.DOC_FOOTER' | translate }}
     </div>
 
   </div>

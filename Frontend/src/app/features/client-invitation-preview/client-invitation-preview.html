@@ -2,15 +2,15 @@
 <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-2 text-center text-md-start mb-4">
   <div class="flex-grow-1 mb-1 mb-md-0">
     <h1 class="h3 fw-bold mb-2">
-      Modèle d'Invitation
+      {{ 'CLIENT_PORTAL.INVITATION_TEMPLATE' | translate }}
     </h1>
     <h2 class="h6 fw-medium text-muted mb-0" *ngIf="event()">
-      Aperçu en direct de l'invitation pour : <strong class="text-primary">{{ event()?.title }}</strong>
+      {{ 'CLIENT_PORTAL.LIVE_PREVIEW' | translate }} : <strong class="text-primary">{{ event()?.title }}</strong>
     </h2>
   </div>
   <div class="mt-3 mt-md-0 d-flex gap-2 justify-content-center">
     <a [routerLink]="['/client/dashboard']" class="btn btn-alt-secondary">
-      <i class="fa fa-arrow-left me-1"></i> Retour au Tableau de Bord
+      <i class="fa fa-arrow-left me-1"></i> {{ 'CLIENT_PORTAL.BACK_TO_DASHBOARD' | translate }}
     </a>
   </div>
 </div>
@@ -23,7 +23,7 @@
       <!-- Discreet Badge -->
       <div class="position-absolute top-0 start-50 translate-middle-y mt-3 z-3">
         <span class="badge bg-dark bg-opacity-75 text-white px-3 py-2 rounded-pill shadow-sm" style="backdrop-filter: blur(4px);">
-          <i class="fa fa-eye me-1 text-warning"></i> Mode Aperçu
+          <i class="fa fa-eye me-1 text-warning"></i> {{ 'CLIENT_PORTAL.PREVIEW_MODE' | translate }}
         </span>
       </div>
 

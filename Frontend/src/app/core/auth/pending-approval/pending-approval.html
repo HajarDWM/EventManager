@@ -5,18 +5,18 @@
         <div class="block block-rounded block-transparent shadow-lg overflow-hidden mb-0">
           <div class="block-content block-content-full bg-warning-light text-center py-5">
             <i class="fa fa-clock fa-3x text-warning mb-3"></i>
-            <h1 class="h3 fw-bold mb-1">Compte en attente d'approbation</h1>
+            <h1 class="h3 fw-bold mb-1">{{ 'AUTH.PENDING_TITLE' | translate }}</h1>
             <p class="text-muted mb-0">
-              Votre inscription a bien été enregistrée.
+              {{ 'AUTH.PENDING_SUBTITLE' | translate }}
             </p>
           </div>
           <div class="block-content block-content-full bg-white py-4 text-center">
             <p class="fs-sm text-muted">
-              Votre compte est en cours de vérification par notre Super-Administrateur. Vous recevrez un accès complet dès son approbation.
+              {{ 'AUTH.PENDING_DESC' | translate }}
             </p>
             <div class="mt-4">
               <button class="btn btn-alt-secondary" (click)="onLogout()">
-                <i class="fa fa-sign-out-alt me-1"></i> Se déconnecter / Retour à l'accueil
+                <i class="fa fa-sign-out-alt me-1"></i> {{ 'AUTH.LOGOUT_RETURN_HOME' | translate }}
               </button>
             </div>
           </div>

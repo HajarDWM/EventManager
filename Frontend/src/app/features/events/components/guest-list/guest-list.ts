@@ -8,11 +8,12 @@ import { Event } from '../../models/event.model';
 import { forkJoin } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { CatererService } from '../../../../core/services/caterer.service';
+import { TranslatePipe } from '../../../../core/pipes/translate.pipe';
 
 @Component({
   selector: 'app-guest-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, TranslatePipe],
   templateUrl: './guest-list.html'
 })
 export class GuestList implements OnInit {

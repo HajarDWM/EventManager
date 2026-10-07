@@ -5,11 +5,10 @@
         <!-- Sign Up Block -->
         <div class="block block-rounded mb-0 shadow-sm border border-light">
           <div class="block-header block-header-default bg-body-light border-bottom border-light">
-            <h3 class="block-title">Inscription Organisateur</h3>
+            <h3 class="block-title">{{ 'AUTH.REGISTER_TITLE' | translate }}</h3>
             <div class="block-options">
-              <a class="btn-block-option" routerLink="/login" data-bs-toggle="tooltip"
-                 data-bs-placement="left" title="Déjà un compte ?">
-                <i class="fa fa-sign-in-alt"></i> Se connecter
+              <a class="btn-block-option" routerLink="/login" [attr.title]="'AUTH.ALREADY_HAVE_ACCOUNT' | translate">
+                <i class="fa fa-sign-in-alt"></i> {{ 'AUTH.SIGN_IN_BTN' | translate }}
               </a>
             </div>
           </div>
@@ -17,7 +16,7 @@
             <div class="p-sm-3 px-lg-4 py-lg-4">
               <h1 class="h2 mb-1 text-center">Event<span class="text-primary">Manager</span></h1>
               <p class="fw-medium text-muted text-center mb-4">
-                Créez votre compte organisateur pour gérer vos prestations.
+                {{ 'AUTH.REGISTER_SUBTITLE' | translate }}
               </p>
 
               <!-- Success Alert -->
@@ -36,19 +35,19 @@
               <form (ngSubmit)="onSubmit()" *ngIf="!successMessage()">
                 <div class="py-2">
                   <div class="mb-4">
-                    <label class="form-label fs-sm fw-semibold" for="register-business">Nom de l'entreprise (Organisateur)</label>
+                    <label class="form-label fs-sm fw-semibold" for="register-business">{{ 'AUTH.BUSINESS_NAME_LABEL' | translate }}</label>
                     <input type="text" class="form-control form-control-alt form-control-lg fs-sm"
-                           id="register-business" name="register-business" placeholder="Ex: Délices de France"
+                           id="register-business" name="register-business" [placeholder]="'AUTH.BUSINESS_NAME_PH' | translate"
                            [ngModel]="businessName()" (ngModelChange)="businessName.set($event)" required>
                   </div>
                   <div class="mb-4">
-                    <label class="form-label fs-sm fw-semibold" for="register-email">Adresse Email</label>
+                    <label class="form-label fs-sm fw-semibold" for="register-email">{{ 'AUTH.EMAIL_LABEL' | translate }}</label>
                     <input type="email" class="form-control form-control-alt form-control-lg fs-sm"
                            id="register-email" name="register-email" placeholder="caterer@example.com"
                            [ngModel]="email()" (ngModelChange)="email.set($event)" required>
                   </div>
                   <div class="mb-4">
-                    <label class="form-label fs-sm fw-semibold" for="register-password">Mot de passe</label>
+                    <label class="form-label fs-sm fw-semibold" for="register-password">{{ 'AUTH.PASSWORD_LABEL' | translate }}</label>
                     <input type="password" class="form-control form-control-alt form-control-lg fs-sm"
                            id="register-password" name="register-password" placeholder="••••••••"
                            [ngModel]="password()" (ngModelChange)="password.set($event)" required>
@@ -59,10 +58,10 @@
                   <div class="col-12">
                     <button type="submit" class="btn w-100 btn-alt-success py-2" [disabled]="isLoading()">
                       <span *ngIf="!isLoading()">
-                        <i class="fa fa-fw fa-user-plus me-1 opacity-50"></i> S'inscrire
+                        <i class="fa fa-fw fa-user-plus me-1 opacity-50"></i> {{ 'AUTH.SIGN_UP_BTN' | translate }}
                       </span>
                       <span *ngIf="isLoading()">
-                        <i class="fa fa-fw fa-circle-notch fa-spin me-1"></i> Création du compte...
+                        <i class="fa fa-fw fa-circle-notch fa-spin me-1"></i> {{ 'AUTH.CREATING_ACCOUNT' | translate }}
                       </span>
                     </button>
                   </div>

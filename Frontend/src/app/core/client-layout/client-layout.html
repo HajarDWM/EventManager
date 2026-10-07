@@ -1,23 +1,23 @@
 <div class="client-layout-container">
   <nav class="client-sidebar">
     <div class="sidebar-header">
-      <h2>Portail Client</h2>
+      <h2>{{ 'CLIENT_PORTAL.TITLE' | translate }}</h2>
     </div>
     <ul class="nav-links">
       <li>
         <a routerLink="/client/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
-          <i class="fas fa-home"></i> Dashboard
+          <i class="fas fa-home"></i> {{ 'NAV.DASHBOARD' | translate }}
         </a>
       </li>
       <li>
         <a routerLink="/client/profile" routerLinkActive="active">
-          <i class="fas fa-user-circle"></i> Mon Profil
+          <i class="fas fa-user-circle"></i> {{ 'HEADER.PROFILE' | translate }}
         </a>
       </li>
     </ul>
     <div class="sidebar-footer">
       <button class="logout-btn" (click)="logout()">
-        <i class="fas fa-sign-out-alt"></i> Déconnexion
+        <i class="fas fa-sign-out-alt"></i> {{ 'HEADER.LOGOUT' | translate }}
       </button>
     </div>
   </nav>
@@ -25,10 +25,10 @@
   <main class="client-main-content">
     <header class="client-header">
       <div class="header-left">
-        <h1>Bienvenue</h1>
+        <h1>{{ 'CLIENT_PORTAL.WELCOME' | translate }}</h1>
       </div>
-      <div class="header-right">
-        <!-- Any header action buttons go here -->
+      <div class="header-right d-flex align-items-center gap-2">
+        <app-language-switcher></app-language-switcher>
       </div>
     </header>
 

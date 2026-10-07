@@ -45,68 +45,68 @@
           <li class="nav-main-item" *ngIf="!isSuperAdmin()">
             <a class="nav-main-link" routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
               <i class="nav-main-link-icon si si-speedometer"></i>
-              <span class="nav-main-link-name">Tableau de bord</span>
+              <span class="nav-main-link-name">{{ 'NAV.DASHBOARD' | translate }}</span>
             </a>
           </li>
           <li class="nav-main-item" *ngIf="isSuperAdmin()">
             <a class="nav-main-link" routerLink="/admin/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
               <i class="nav-main-link-icon si si-speedometer"></i>
-              <span class="nav-main-link-name">Tableau de bord Admin</span>
+              <span class="nav-main-link-name">{{ 'NAV.ADMIN_DASHBOARD' | translate }}</span>
             </a>
           </li>
           
           <!-- Menu Organisateur standard -->
           <ng-container *ngIf="!isSuperAdmin()">
-            <li class="nav-main-heading">Prestations</li>
+            <li class="nav-main-heading">{{ 'NAV.SERVICES_HEADING' | translate }}</li>
             <li class="nav-main-item">
               <a class="nav-main-link" routerLink="/events" routerLinkActive="active">
                 <i class="nav-main-link-icon si si-calendar"></i>
-                <span class="nav-main-link-name">Événements</span>
+                <span class="nav-main-link-name">{{ 'NAV.EVENTS' | translate }}</span>
               </a>
             </li>
             <li class="nav-main-item">
               <a class="nav-main-link" routerLink="/subscription" routerLinkActive="active">
                 <i class="nav-main-link-icon si si-badge"></i>
-                <span class="nav-main-link-name">Abonnement</span>
+                <span class="nav-main-link-name">{{ 'NAV.SUBSCRIPTION' | translate }}</span>
               </a>
             </li>
           </ng-container>
 
           <!-- Menu Super-Admin -->
           <ng-container *ngIf="isSuperAdmin()">
-            <li class="nav-main-heading">Administration Globale</li>
+            <li class="nav-main-heading">{{ 'NAV.ADMIN_HEADING' | translate }}</li>
             <li class="nav-main-item">
               <a class="nav-main-link" routerLink="/admin/caterers" routerLinkActive="active">
                 <i class="nav-main-link-icon si si-users"></i>
-                <span class="nav-main-link-name">Gestion Organisateurs</span>
+                <span class="nav-main-link-name">{{ 'NAV.ORGANIZERS_MGMT' | translate }}</span>
               </a>
             </li>
             <li class="nav-main-item">
               <a class="nav-main-link" routerLink="/admin/templates" routerLinkActive="active">
                 <i class="nav-main-link-icon si si-picture"></i>
-                <span class="nav-main-link-name">Modèles d'Invitations</span>
+                <span class="nav-main-link-name">{{ 'NAV.INVITATION_TEMPLATES' | translate }}</span>
               </a>
             </li>
             <li class="nav-main-item">
               <a class="nav-main-link" routerLink="/admin/billing" routerLinkActive="active">
                 <i class="nav-main-link-icon si si-credit-card"></i>
-                <span class="nav-main-link-name">Paramètres Facturation</span>
+                <span class="nav-main-link-name">{{ 'NAV.BILLING_SETTINGS' | translate }}</span>
               </a>
             </li>
             <li class="nav-main-item">
               <a class="nav-main-link" routerLink="/admin/transactions" routerLinkActive="active">
                 <i class="nav-main-link-icon si si-wallet"></i>
-                <span class="nav-main-link-name">Audit Financier</span>
+                <span class="nav-main-link-name">{{ 'NAV.FINANCIAL_AUDIT' | translate }}</span>
               </a>
             </li>
           </ng-container>
           
-          <li class="nav-main-heading">Paramètres</li>
+          <li class="nav-main-heading">{{ 'NAV.SETTINGS_HEADING' | translate }}</li>
 
           <li class="nav-main-item">
             <a class="nav-main-link" href="javascript:void(0)" (click)="logout()">
               <i class="nav-main-link-icon si si-logout"></i>
-              <span class="nav-main-link-name">Déconnexion</span>
+              <span class="nav-main-link-name">{{ 'NAV.LOGOUT' | translate }}</span>
             </a>
           </li>
         </ul>
@@ -131,12 +131,15 @@
 
       <!-- Right Section -->
       <div class="d-flex align-items-center gap-2">
+        <!-- Language Switcher -->
+        <app-language-switcher></app-language-switcher>
+
         <!-- User Dropdown -->
         <div class="dropdown d-inline-block" [class.show]="isUserDropdownOpen()">
           <button type="button" class="btn btn-sm btn-alt-secondary d-flex align-items-center gap-2" 
                   id="page-header-user-dropdown" (click)="toggleUserDropdown()">
             <span class="d-none d-sm-inline-block fw-semibold">
-              {{ isSuperAdmin() ? 'Admin' : 'Organisateur' }} : {{ userBusinessName() }}
+              {{ isSuperAdmin() ? ('HEADER.ADMIN' | translate) : ('HEADER.ORGANIZER' | translate) }} : {{ userBusinessName() }}
             </span>
             <i class="fa fa-fw fa-angle-down opacity-50"></i>
           </button>
@@ -149,18 +152,18 @@
               <p class="mt-2 mb-0 fw-semibold">{{ userBusinessName() }}</p>
               <p class="mb-2 text-muted fs-sm">{{ userEmail() }}</p>
               <span class="badge px-3 py-1.5" [ngClass]="isSuperAdmin() ? 'bg-danger-light text-danger' : 'bg-primary-light text-primary'">
-                {{ isSuperAdmin() ? 'Administrateur' : 'Organisateur' }}
+                {{ isSuperAdmin() ? ('HEADER.ADMIN' | translate) : ('HEADER.ORGANIZER' | translate) }}
               </span>
             </div>
             <div class="p-2">
               <a class="dropdown-item d-flex align-items-center justify-content-between" routerLink="/profile" (click)="isUserDropdownOpen.set(false)">
-                <span class="fs-sm fw-medium">Mon Profil</span>
+                <span class="fs-sm fw-medium">{{ 'HEADER.PROFILE' | translate }}</span>
                 <i class="si si-user opacity-50 ms-2"></i>
               </a>
             </div>
             <div class="p-2 border-top">
               <button class="dropdown-item d-flex align-items-center justify-content-between" (click)="logout(); isUserDropdownOpen.set(false)">
-                <span class="fs-sm fw-medium">Se déconnecter</span>
+                <span class="fs-sm fw-medium">{{ 'HEADER.LOGOUT' | translate }}</span>
                 <i class="si si-logout opacity-50 ms-2"></i>
               </button>
             </div>

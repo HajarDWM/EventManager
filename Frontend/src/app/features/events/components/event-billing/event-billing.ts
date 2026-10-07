@@ -5,11 +5,12 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { BillingService, QuoteDTO, QuoteItemDTO, InvoiceDTO, PaymentDTO, EventExpenseDTO } from '../../../../core/services/billing.service';
 import { CurrencyService } from '../../../../core/services/currency.service';
+import { TranslatePipe } from '../../../../core/pipes/translate.pipe';
 
 @Component({
   selector: 'app-event-billing',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, TranslatePipe],
   templateUrl: './event-billing.html'
 })
 export class EventBilling implements OnInit {

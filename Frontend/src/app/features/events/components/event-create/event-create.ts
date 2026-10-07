@@ -5,11 +5,12 @@ import { Router, RouterLink } from '@angular/router';
 import { EventService } from '../../services/event.service';
 import { CatererService } from '../../../../core/services/caterer.service';
 import { TemplateService, DigitalTemplate } from '../../../../core/services/template.service';
+import { TranslatePipe } from '../../../../core/pipes/translate.pipe';
 
 @Component({
   selector: 'app-event-create',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, TranslatePipe],
   templateUrl: './event-create.html'
 })
 export class EventCreate implements OnInit {

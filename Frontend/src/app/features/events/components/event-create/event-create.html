@@ -1,7 +1,7 @@
 <!-- Hero -->
 <div class="d-flex flex-column justify-content-center align-items-center py-4 text-center mt-3">
-  <h1 class="display-6 fw-bolder mb-2 text-dark">Planifier un événement</h1>
-  <p class="fs-sm fw-medium text-muted mb-0">Configurez les détails de votre prestation en quelques étapes.</p>
+  <h1 class="display-6 fw-bolder mb-2 text-dark">{{ 'EVENTS.CREATE_EVENT' | translate }}</h1>
+  <p class="fs-sm fw-medium text-muted mb-0">{{ 'EVENTS.CREATE_SUBTITLE' | translate }}</p>
 </div>
 <!-- END Hero -->
 
@@ -16,7 +16,7 @@
              style="width: 48px; height: 48px; transition: 0.3s;">
           <i class="fa fa-info fa-lg"></i>
         </div>
-        <span class="fs-xs fw-bold text-uppercase" [ngClass]="activeStep() === 1 ? 'text-primary' : 'text-muted'">Général</span>
+        <span class="fs-xs fw-bold text-uppercase" [ngClass]="activeStep() === 1 ? 'text-primary' : 'text-muted'">{{ 'EVENTS.STEP_GENERAL' | translate }}</span>
       </div>
       
       <div class="flex-grow-1 mx-2 mx-md-3" style="height: 3px; background-color: #e2e8f0; border-radius: 3px;">
@@ -29,7 +29,7 @@
              style="width: 48px; height: 48px; transition: 0.3s;">
           <i class="fa fa-map-marker-alt fa-lg"></i>
         </div>
-        <span class="fs-xs fw-bold text-uppercase" [ngClass]="activeStep() === 2 ? 'text-primary' : 'text-muted'">Lieu & Date</span>
+        <span class="fs-xs fw-bold text-uppercase" [ngClass]="activeStep() === 2 ? 'text-primary' : 'text-muted'">{{ 'EVENTS.STEP_LOCATION_DATE' | translate }}</span>
       </div>
 
       <div class="flex-grow-1 mx-2 mx-md-3" style="height: 3px; background-color: #e2e8f0; border-radius: 3px;">
@@ -42,7 +42,7 @@
              style="width: 48px; height: 48px; transition: 0.3s;">
           <i class="fa fa-user fa-lg"></i>
         </div>
-        <span class="fs-xs fw-bold text-uppercase" [ngClass]="activeStep() === 3 ? 'text-primary' : 'text-muted'">Client</span>
+        <span class="fs-xs fw-bold text-uppercase" [ngClass]="activeStep() === 3 ? 'text-primary' : 'text-muted'">{{ 'EVENTS.STEP_CLIENT' | translate }}</span>
       </div>
     </div>
 
@@ -58,7 +58,7 @@
           </div>
           <div *ngIf="isQuotaReached()" class="mt-2">
             <a routerLink="/subscription" class="btn btn-sm btn-alt-danger rounded-pill">
-              <i class="fa fa-arrow-up me-1"></i> Mettre à niveau mon forfait
+              <i class="fa fa-arrow-up me-1"></i> {{ 'EVENTS.UPGRADE_PLAN' | translate }}
             </a>
           </div>
         </div>
@@ -67,24 +67,24 @@
           
           <!-- ================= STEP 1: GENERAL ================= -->
           <div *ngIf="activeStep() === 1" class="animate__animated animate__fadeIn">
-            <h3 class="h4 fw-bold mb-4 text-dark">Informations Générales</h3>
+            <h3 class="h4 fw-bold mb-4 text-dark">{{ 'EVENTS.GENERAL_INFO' | translate }}</h3>
             
             <div class="mb-4">
-              <label class="form-label fs-sm fw-semibold text-muted" for="event-title">Nom de l'événement <span class="text-danger">*</span></label>
+              <label class="form-label fs-sm fw-semibold text-muted" for="event-title">{{ 'EVENTS.NAME' | translate }} <span class="text-danger">*</span></label>
               <input type="text" class="form-control form-control-lg form-control-alt rounded-3 fs-sm"
-                     id="event-title" name="event-title" placeholder="Ex: Yassine & Zineb ou BrainToys"
+                     id="event-title" name="event-title" [placeholder]="'EVENTS.NAME_PLACEHOLDER' | translate"
                      [ngModel]="title()" (ngModelChange)="title.set($event)" required
                      [disabled]="isQuotaReached()">
             </div>
             
             <div class="mb-4 position-relative">
               <label class="form-label fs-sm fw-semibold text-muted" for="event-subtitle">
-                <i class="fa fa-tag text-primary me-1"></i> Type / Nature (Sous-titre)
+                <i class="fa fa-tag text-primary me-1"></i> {{ 'EVENTS.SUBTITLE_NATURE' | translate }}
               </label>
               <input type="text" class="form-control form-control-lg form-control-alt rounded-3 fs-sm"
                      id="event-subtitle" name="event-subtitle"
                      autocomplete="off"
-                     placeholder="Ex: Le Mariage de, Soirée de Gala..."
+                     [placeholder]="'EVENTS.SUBTITLE_PLACEHOLDER' | translate"
                      [ngModel]="invitationSubtitle()" (ngModelChange)="invitationSubtitle.set($event); isSubtitleDropdownOpen.set(true)"
                      (focus)="isSubtitleDropdownOpen.set(true)"
                      (blur)="isSubtitleDropdownOpen.set(false)"
@@ -95,7 +95,7 @@
                    class="position-absolute w-100 bg-white border border-light shadow-sm rounded-3 mt-1 py-1 z-3"
                    style="max-height: 200px; overflow-y: auto; z-index: 1050;">
                 <div *ngIf="filteredSubtitles.length === 0" class="px-3 py-2 text-muted fs-sm">
-                  Utiliser ce texte personnalisé
+                  {{ 'EVENTS.CUSTOM_TEXT_USE' | translate }}
                 </div>
                 <div *ngFor="let s of filteredSubtitles" 
                      class="px-3 py-2 fs-sm text-dark"
@@ -109,9 +109,9 @@
             </div>
 
             <div class="mb-4">
-              <label class="form-label fs-sm fw-semibold text-muted" for="event-guests">Nombre d'invités attendus</label>
+              <label class="form-label fs-sm fw-semibold text-muted" for="event-guests">{{ 'EVENTS.GUEST_COUNT' | translate }}</label>
               <input type="number" class="form-control form-control-lg form-control-alt rounded-3 fs-sm"
-                     id="event-guests" name="event-guests" placeholder="Ex: 150 (facultatif)" min="0"
+                     id="event-guests" name="event-guests" [placeholder]="'EVENTS.GUEST_COUNT_PLACEHOLDER' | translate" min="0"
                      [ngModel]="guestCount()" (ngModelChange)="guestCount.set($event)"
                      [disabled]="isQuotaReached()">
             </div>
@@ -121,9 +121,9 @@
               <div class="d-flex align-items-center justify-content-between mb-2">
                 <div>
                   <label class="form-label fs-sm fw-bold text-dark mb-0">
-                    <i class="fa fa-ticket-alt text-primary me-1"></i> Billetterie / Événement Payant
+                    <i class="fa fa-ticket-alt text-primary me-1"></i> {{ 'EVENTS.TICKETING_TITLE' | translate }}
                   </label>
-                  <div class="fs-xs text-muted">Activez si les invités doivent régler leur participation.</div>
+                  <div class="fs-xs text-muted">{{ 'EVENTS.TICKETING_DESC' | translate }}</div>
                 </div>
                 <div class="form-check form-switch form-check-lg">
                   <input class="form-check-input" type="checkbox" id="isPaidEventSwitch"
@@ -135,7 +135,7 @@
 
               <div *ngIf="isPaidEvent()" class="row g-3 mt-2 pt-3 border-top animate__animated animate__fadeIn">
                 <div class="col-sm-7">
-                  <label class="form-label fs-xs fw-semibold text-muted mb-1">Prix par billet <span class="text-danger">*</span></label>
+                  <label class="form-label fs-xs fw-semibold text-muted mb-1">{{ 'EVENTS.TICKET_PRICE' | translate }} <span class="text-danger">*</span></label>
                   <div class="input-group input-group-lg">
                     <span class="input-group-text border-0 bg-body-light rounded-start-3"><i class="fa fa-coins text-warning"></i></span>
                     <input type="number" class="form-control form-control-alt border-0 bg-body-light rounded-end-3 fs-sm" placeholder="Ex: 350" min="1"
@@ -144,7 +144,7 @@
                   </div>
                 </div>
                 <div class="col-sm-5">
-                  <label class="form-label fs-xs fw-semibold text-muted mb-1">Devise</label>
+                  <label class="form-label fs-xs fw-semibold text-muted mb-1">{{ 'EVENTS.CURRENCY' | translate }}</label>
                   <select class="form-select form-select-lg form-control-alt rounded-3 fs-sm border-0 bg-body-light" [ngModel]="currency()" (ngModelChange)="currency.set($event)" name="currency">
                     <option value="MAD">MAD (Dirham)</option>
                     <option value="EUR">EUR (€)</option>
@@ -157,18 +157,18 @@
 
           <!-- ================= STEP 2: DATE & LOCATION ================= -->
           <div *ngIf="activeStep() === 2" class="animate__animated animate__fadeIn">
-            <h3 class="h4 fw-bold mb-4 text-dark">Date & Lieu</h3>
+            <h3 class="h4 fw-bold mb-4 text-dark">{{ 'EVENTS.STEP_LOCATION_DATE' | translate }}</h3>
             
             <div class="row mb-4 g-3">
               <div class="col-sm-8">
-                <label class="form-label fs-sm fw-semibold text-muted" for="event-date">Date de l'événement <span class="text-danger">*</span></label>
+                <label class="form-label fs-sm fw-semibold text-muted" for="event-date">{{ 'EVENTS.EVENT_DATE' | translate }} <span class="text-danger">*</span></label>
                 <input type="date" class="form-control form-control-lg form-control-alt rounded-3 fs-sm"
                        id="event-date" name="event-date"
                        [ngModel]="eventDateOnly()" (ngModelChange)="eventDateOnly.set($event)" required
                        [disabled]="isQuotaReached()">
               </div>
               <div class="col-sm-4">
-                <label class="form-label fs-sm fw-semibold text-muted" for="event-time">Heure (facultatif)</label>
+                <label class="form-label fs-sm fw-semibold text-muted" for="event-time">{{ 'EVENTS.EVENT_TIME' | translate }}</label>
                 <input type="time" class="form-control form-control-lg form-control-alt rounded-3 fs-sm"
                        id="event-time" name="event-time"
                        [ngModel]="eventTimeOnly()" (ngModelChange)="eventTimeOnly.set($event)"
@@ -177,27 +177,27 @@
             </div>
 
             <div class="mb-4">
-              <label class="form-label fs-sm fw-semibold text-muted" for="event-location">Lieu / Nom de la salle <span class="text-danger">*</span></label>
+              <label class="form-label fs-sm fw-semibold text-muted" for="event-location">{{ 'EVENTS.VENUE_HALL' | translate }} <span class="text-danger">*</span></label>
               <input type="text" class="form-control form-control-lg form-control-alt rounded-3 fs-sm"
-                     id="event-location" name="event-location" placeholder="Ex: Palais des Roses"
+                     id="event-location" name="event-location" [placeholder]="'EVENTS.VENUE_PLACEHOLDER' | translate"
                      [ngModel]="location()" (ngModelChange)="location.set($event)" required
                      [disabled]="isQuotaReached()">
             </div>
 
             <div class="mb-4">
-              <label class="form-label fs-sm fw-semibold text-muted" for="event-map-url">Adresse / Lien Google Maps</label>
+              <label class="form-label fs-sm fw-semibold text-muted" for="event-map-url">{{ 'EVENTS.MAP_URL' | translate }}</label>
               <input type="url" class="form-control form-control-lg form-control-alt rounded-3 fs-sm"
-                     id="event-map-url" name="event-map-url" placeholder="Ex: https://maps.app.goo.gl/..."
+                     id="event-map-url" name="event-map-url" [placeholder]="'EVENTS.MAP_URL_PLACEHOLDER' | translate"
                      [ngModel]="locationMapUrl()" (ngModelChange)="locationMapUrl.set($event)"
                      [disabled]="isQuotaReached()">
             </div>
 
             <div class="mb-4">
               <label class="form-label fs-sm fw-semibold text-muted" for="event-parking">
-                <i class="fa fa-parking text-primary me-1"></i> Lien Parking
+                <i class="fa fa-parking text-primary me-1"></i> {{ 'EVENTS.PARKING_URL' | translate }}
               </label>
               <input type="url" class="form-control form-control-lg form-control-alt rounded-3 fs-sm"
-                     id="event-parking" name="event-parking" placeholder="Ex: https://maps.app.goo.gl/parking..."
+                     id="event-parking" name="event-parking" [placeholder]="'EVENTS.PARKING_URL_PLACEHOLDER' | translate"
                      [ngModel]="parkingLocation()" (ngModelChange)="parkingLocation.set($event)"
                      [disabled]="isQuotaReached()">
             </div>
@@ -209,31 +209,31 @@
                   <i class="fa fa-chair"></i>
                 </div>
                 <div>
-                  <h4 class="fs-sm fw-bold text-dark mb-0">Configuration de la Salle & Tables</h4>
-                  <div class="fs-xs text-muted">Préparez la disposition des tables pour le placement des invités.</div>
+                  <h4 class="fs-sm fw-bold text-dark mb-0">{{ 'EVENTS.TABLE_CONFIG' | translate }}</h4>
+                  <div class="fs-xs text-muted">{{ 'EVENTS.TABLE_CONFIG_SUBTITLE' | translate }}</div>
                 </div>
               </div>
 
               <div class="row g-3">
                 <div class="col-md-6">
-                  <label class="form-label fs-xs fw-semibold text-muted mb-1">Type de tables principal</label>
+                  <label class="form-label fs-xs fw-semibold text-muted mb-1">{{ 'EVENTS.TABLE_SHAPE' | translate }}</label>
                   <select class="form-select form-select-lg form-control-alt rounded-3 fs-sm border-0 bg-body-light"
                           [ngModel]="tableShape()" (ngModelChange)="tableShape.set($event)" name="tableShape">
-                    <option value="ROUND">🔵 Tables Rondes (Standard 8-12 pers.)</option>
-                    <option value="RECTANGULAR">🟦 Tables Rectangulaires / Banquets</option>
-                    <option value="MIXED">👑 Disposition Mixte (Rondes + Table d'Honneur)</option>
+                    <option value="ROUND">🔵 {{ 'EVENTS.TABLE_SHAPE_ROUND' | translate }}</option>
+                    <option value="RECTANGULAR">🟦 {{ 'EVENTS.TABLE_SHAPE_RECT' | translate }}</option>
+                    <option value="MIXED">👑 {{ 'EVENTS.TABLE_SHAPE_MIXED' | translate }}</option>
                   </select>
                 </div>
 
                 <div class="col-sm-6 col-md-3">
-                  <label class="form-label fs-xs fw-semibold text-muted mb-1">Capacité / table</label>
+                  <label class="form-label fs-xs fw-semibold text-muted mb-1">{{ 'EVENTS.TABLE_CAPACITY' | translate }}</label>
                   <input type="number" class="form-control form-control-lg form-control-alt rounded-3 fs-sm border-0 bg-body-light"
                          [ngModel]="tableCapacity()" (ngModelChange)="tableCapacity.set($event)"
                          name="tableCapacity" min="2" max="50" placeholder="Ex: 10">
                 </div>
 
                 <div class="col-sm-6 col-md-3">
-                  <label class="form-label fs-xs fw-semibold text-muted mb-1">Nombre de tables</label>
+                  <label class="form-label fs-xs fw-semibold text-muted mb-1">{{ 'EVENTS.TABLE_COUNT' | translate }}</label>
                   <input type="number" class="form-control form-control-lg form-control-alt rounded-3 fs-sm border-0 bg-body-light"
                          [ngModel]="tablesCount()" (ngModelChange)="tablesCount.set($event)"
                          name="tablesCount" min="1" max="100" placeholder="Ex: 15">
@@ -244,29 +244,29 @@
 
           <!-- ================= STEP 3: CLIENT INFO ================= -->
           <div *ngIf="activeStep() === 3" class="animate__animated animate__fadeIn">
-            <h3 class="h4 fw-bold mb-4 text-dark">Informations du Client</h3>
-            <p class="fs-sm text-muted mb-4">Ces détails permettront à votre client d'accéder à son espace de suivi privé (Portail Client).</p>
+            <h3 class="h4 fw-bold mb-4 text-dark">{{ 'EVENTS.CLIENT_INFO_TITLE' | translate }}</h3>
+            <p class="fs-sm text-muted mb-4">{{ 'EVENTS.CLIENT_INFO_SUBTITLE' | translate }}</p>
 
             <div class="mb-4">
-              <label class="form-label fs-sm fw-semibold text-muted" for="client-name">Nom complet / marié(s) <span class="text-danger">*</span></label>
+              <label class="form-label fs-sm fw-semibold text-muted" for="client-name">{{ 'EVENTS.CLIENT_NAME' | translate }} <span class="text-danger">*</span></label>
               <input type="text" class="form-control form-control-lg form-control-alt rounded-3 fs-sm"
-                     id="client-name" name="client-name" placeholder="Ex: Yassine Berrada"
+                     id="client-name" name="client-name" [placeholder]="'EVENTS.CLIENT_NAME_PLACEHOLDER' | translate"
                      [ngModel]="clientName()" (ngModelChange)="clientName.set($event)"
                      [disabled]="isQuotaReached()" required>
             </div>
             
             <div class="mb-4">
-              <label class="form-label fs-sm fw-semibold text-muted" for="client-phone">Téléphone <span class="text-danger">*</span></label>
+              <label class="form-label fs-sm fw-semibold text-muted" for="client-phone">{{ 'EVENTS.CLIENT_PHONE' | translate }} <span class="text-danger">*</span></label>
               <input type="tel" class="form-control form-control-lg form-control-alt rounded-3 fs-sm"
-                     id="client-phone" name="client-phone" placeholder="Ex: +212 600 000 000"
+                     id="client-phone" name="client-phone" [placeholder]="'EVENTS.CLIENT_PHONE_PLACEHOLDER' | translate"
                      [ngModel]="clientPhone()" (ngModelChange)="clientPhone.set($event)"
                      [disabled]="isQuotaReached()" required>
             </div>
 
             <div class="mb-2">
-              <label class="form-label fs-sm fw-semibold text-muted" for="client-email">Email <span class="text-danger">*</span></label>
+              <label class="form-label fs-sm fw-semibold text-muted" for="client-email">{{ 'EVENTS.CLIENT_EMAIL' | translate }} <span class="text-danger">*</span></label>
               <input type="email" class="form-control form-control-lg form-control-alt rounded-3 fs-sm"
-                     id="client-email" name="client-email" placeholder="Ex: client@email.com"
+                     id="client-email" name="client-email" [placeholder]="'EVENTS.CLIENT_EMAIL_PLACEHOLDER' | translate"
                      [ngModel]="clientEmail()" (ngModelChange)="clientEmail.set($event)"
                      [disabled]="isQuotaReached()" required>
             </div>
@@ -276,20 +276,20 @@
           <div class="d-flex justify-content-between align-items-center mt-5 pt-4 border-top border-light">
             <button type="button" class="btn btn-light btn-lg rounded-pill px-4 px-md-5 fw-medium text-dark shadow-sm" 
                     *ngIf="activeStep() > 1" (click)="prevStep()">
-              <i class="fa fa-arrow-left me-2"></i> Précédent
+              <i class="fa fa-arrow-left me-2"></i> {{ 'COMMON.PREVIOUS' | translate }}
             </button>
             
             <div *ngIf="activeStep() === 1"></div> <!-- Spacer for alignment -->
 
             <button type="button" class="btn btn-primary btn-lg rounded-pill px-4 px-md-5 fw-semibold shadow-sm" 
                     *ngIf="activeStep() < totalSteps" (click)="nextStep()">
-              Suivant <i class="fa fa-arrow-right ms-2"></i>
+              {{ 'COMMON.NEXT' | translate }} <i class="fa fa-arrow-right ms-2"></i>
             </button>
             
             <button type="submit" class="btn btn-primary btn-lg rounded-pill px-4 px-md-5 fw-bold shadow-sm" 
                     *ngIf="activeStep() === totalSteps" [disabled]="isQuotaReached() || isLoading()">
-              <span *ngIf="!isLoading()"><i class="fa fa-check me-2"></i> Terminer</span>
-              <span *ngIf="isLoading()"><i class="fa fa-circle-notch fa-spin me-2"></i> Création...</span>
+              <span *ngIf="!isLoading()"><i class="fa fa-check me-2"></i> {{ 'COMMON.FINISH' | translate }}</span>
+              <span *ngIf="isLoading()"><i class="fa fa-circle-notch fa-spin me-2"></i> {{ 'EVENTS.CREATING' | translate }}</span>
             </button>
           </div>
 

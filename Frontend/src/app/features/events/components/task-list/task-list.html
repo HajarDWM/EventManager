@@ -2,18 +2,18 @@
 <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-2 text-center text-md-start">
   <div class="flex-grow-1 mb-1 mb-md-0">
     <h1 class="h3 fw-bold mb-2">
-      Checklist & Tâches de Préparation
+      {{ 'TASKS.TITLE' | translate }}
     </h1>
     <h2 class="h6 fw-medium text-muted mb-0" *ngIf="event()">
-      Événement : <strong class="text-primary">{{ event()?.title }}</strong> ({{ event()?.eventDate | date:'dd/MM/yyyy' }})
+      {{ 'EVENTS.NAME' | translate }} : <strong class="text-primary">{{ event()?.title }}</strong> ({{ event()?.eventDate | date:'dd/MM/yyyy' }})
     </h2>
   </div>
   <div class="mt-3 mt-md-0 d-flex gap-2 justify-content-center">
     <a [routerLink]="['/events', eventId()]" class="btn btn-alt-secondary">
-      <i class="fa fa-arrow-left me-1"></i> Retour
+      <i class="fa fa-arrow-left me-1"></i> {{ 'COMMON.BACK' | translate }}
     </a>
     <button class="btn btn-primary" (click)="openAddModal()">
-      <i class="fa fa-plus me-1"></i> Nouvelle tâche
+      <i class="fa fa-plus me-1"></i> {{ 'TASKS.ADD_TASK' | translate }}
     </button>
   </div>
 </div>
@@ -23,8 +23,8 @@
 <div class="block block-rounded shadow-sm border border-light mt-3">
   <div class="block-content block-content-full">
     <div class="d-flex justify-content-between align-items-center mb-2">
-      <span class="fs-sm fw-semibold text-uppercase text-muted">Progression du Rétroplanning</span>
-      <span class="fs-sm fw-bold text-primary">{{ progressPercentage() }}% réalisé ({{ completedCount() }}/{{ totalCount() }} tâches)</span>
+      <span class="fs-sm fw-semibold text-uppercase text-muted">{{ 'TASKS.PROGRESS' | translate }}</span>
+      <span class="fs-sm fw-bold text-primary">{{ progressPercentage() }}% ({{ completedCount() }}/{{ totalCount() }})</span>
     </div>
     <div class="progress push" style="height: 12px;">
       <div class="progress-bar bg-success progress-bar-striped progress-bar-animated"
@@ -44,7 +44,7 @@
     <div class="block block-rounded block-link-shadow text-center">
       <div class="block-content block-content-full">
         <div class="fs-2 fw-bold text-primary">{{ totalCount() }}</div>
-        <div class="fs-sm fw-semibold text-muted text-uppercase">Total Tâches</div>
+        <div class="fs-sm fw-semibold text-muted text-uppercase">{{ 'COMMON.TOTAL' | translate }}</div>
       </div>
     </div>
   </div>
@@ -52,7 +52,7 @@
     <div class="block block-rounded block-link-shadow text-center">
       <div class="block-content block-content-full">
         <div class="fs-2 fw-bold text-success">{{ completedCount() }}</div>
-        <div class="fs-sm fw-semibold text-muted text-uppercase">Terminées</div>
+        <div class="fs-sm fw-semibold text-muted text-uppercase">{{ 'TASKS.STATUS_COMPLETED' | translate }}</div>
       </div>
     </div>
   </div>
@@ -60,7 +60,7 @@
     <div class="block block-rounded block-link-shadow text-center">
       <div class="block-content block-content-full">
         <div class="fs-2 fw-bold text-info">{{ inProgressCount() }}</div>
-        <div class="fs-sm fw-semibold text-muted text-uppercase">En cours</div>
+        <div class="fs-sm fw-semibold text-muted text-uppercase">{{ 'TASKS.STATUS_IN_PROGRESS' | translate }}</div>
       </div>
     </div>
   </div>
@@ -68,7 +68,7 @@
     <div class="block block-rounded block-link-shadow text-center">
       <div class="block-content block-content-full">
         <div class="fs-2 fw-bold text-danger">{{ highPriorityCount() }}</div>
-        <div class="fs-sm fw-semibold text-muted text-uppercase">Priorité Haute / Urgentes</div>
+        <div class="fs-sm fw-semibold text-muted text-uppercase">{{ 'TASKS.PRIORITY_HIGH' | translate }}</div>
       </div>
     </div>
   </div>
@@ -89,13 +89,13 @@
 <div class="block block-rounded shadow-sm border border-light mt-3">
   <div class="block-header block-header-default d-flex flex-wrap justify-content-between align-items-center gap-2">
     <h3 class="block-title mb-0">
-      <i class="fa fa-tasks me-1 text-primary"></i> Checklist d'organisation
+      <i class="fa fa-tasks me-1 text-primary"></i> {{ 'TASKS.TITLE' | translate }}
     </h3>
     <div class="btn-group btn-group-sm" role="group">
-      <button type="button" class="btn" [class.btn-primary]="selectedStatus() === 'ALL'" [class.btn-alt-secondary]="selectedStatus() !== 'ALL'" (click)="selectedStatus.set('ALL')">Toutes ({{ totalCount() }})</button>
-      <button type="button" class="btn" [class.btn-primary]="selectedStatus() === 'TODO'" [class.btn-alt-secondary]="selectedStatus() !== 'TODO'" (click)="selectedStatus.set('TODO')">À faire ({{ todoCount() }})</button>
-      <button type="button" class="btn" [class.btn-primary]="selectedStatus() === 'IN_PROGRESS'" [class.btn-alt-secondary]="selectedStatus() !== 'IN_PROGRESS'" (click)="selectedStatus.set('IN_PROGRESS')">En cours ({{ inProgressCount() }})</button>
-      <button type="button" class="btn" [class.btn-primary]="selectedStatus() === 'COMPLETED'" [class.btn-alt-secondary]="selectedStatus() !== 'COMPLETED'" (click)="selectedStatus.set('COMPLETED')">Terminées ({{ completedCount() }})</button>
+      <button type="button" class="btn" [class.btn-primary]="selectedStatus() === 'ALL'" [class.btn-alt-secondary]="selectedStatus() !== 'ALL'" (click)="selectedStatus.set('ALL')">{{ 'COMMON.ALL' | translate }} ({{ totalCount() }})</button>
+      <button type="button" class="btn" [class.btn-primary]="selectedStatus() === 'TODO'" [class.btn-alt-secondary]="selectedStatus() !== 'TODO'" (click)="selectedStatus.set('TODO')">{{ 'TASKS.STATUS_TODO' | translate }} ({{ todoCount() }})</button>
+      <button type="button" class="btn" [class.btn-primary]="selectedStatus() === 'IN_PROGRESS'" [class.btn-alt-secondary]="selectedStatus() !== 'IN_PROGRESS'" (click)="selectedStatus.set('IN_PROGRESS')">{{ 'TASKS.STATUS_IN_PROGRESS' | translate }} ({{ inProgressCount() }})</button>
+      <button type="button" class="btn" [class.btn-primary]="selectedStatus() === 'COMPLETED'" [class.btn-alt-secondary]="selectedStatus() !== 'COMPLETED'" (click)="selectedStatus.set('COMPLETED')">{{ 'TASKS.STATUS_COMPLETED' | translate }} ({{ completedCount() }})</button>
     </div>
   </div>
 
@@ -103,16 +103,16 @@
     <!-- Loading -->
     <div class="text-center py-5" *ngIf="isLoading()">
       <i class="fa fa-circle-notch fa-spin text-primary fs-2"></i>
-      <p class="mt-2 text-muted fs-sm">Chargement de la checklist des tâches...</p>
+      <p class="mt-2 text-muted fs-sm">{{ 'COMMON.LOADING' | translate }}</p>
     </div>
 
     <!-- Empty State -->
     <div class="text-center py-5" *ngIf="!isLoading() && filteredTasks().length === 0">
       <i class="fa fa-clipboard-list text-muted fs-1 mb-3"></i>
-      <h4 class="h5 fw-bold text-muted mb-1">Aucune tâche trouvée</h4>
-      <p class="fs-sm text-muted">Ajoutez votre première tâche pour préparer cet événement.</p>
+      <h4 class="h5 fw-bold text-muted mb-1">{{ 'TASKS.NO_TASKS' | translate }}</h4>
+      <p class="fs-sm text-muted">{{ 'TASKS.NO_TASKS_DESC' | translate }}</p>
       <button class="btn btn-sm btn-alt-primary" (click)="openAddModal()">
-        <i class="fa fa-plus me-1"></i> Créer une tâche
+        <i class="fa fa-plus me-1"></i> {{ 'TASKS.ADD_TASK' | translate }}
       </button>
     </div>
 
@@ -122,12 +122,12 @@
         <thead>
           <tr>
             <th class="text-center" style="width: 50px;">Check</th>
-            <th>Tâche</th>
-            <th>Échéance</th>
-            <th>Priorité</th>
-            <th>Statut</th>
-            <th>Responsable</th>
-            <th class="text-end" style="min-width: 180px;">Actions</th>
+            <th>{{ 'TASKS.TASK_TITLE' | translate }}</th>
+            <th>{{ 'TASKS.DUE_DATE' | translate }}</th>
+            <th>{{ 'TASKS.PRIORITY' | translate }}</th>
+            <th>{{ 'COMMON.STATUS' | translate }}</th>
+            <th>{{ 'TASKS.ASSIGNED_TO' | translate }}</th>
+            <th class="text-end" style="min-width: 180px;">{{ 'COMMON.ACTIONS' | translate }}</th>
           </tr>
         </thead>
         <tbody>
@@ -136,8 +136,7 @@
               <div class="form-check d-inline-block">
                 <input class="form-check-input" type="checkbox"
                        [checked]="t.status === 'COMPLETED'"
-                       (change)="onToggleStatus(t)"
-                       title="Basculer terminé / à faire">
+                       (change)="onToggleStatus(t)">
               </div>
             </td>
             <td>
@@ -150,16 +149,16 @@
               <span *ngIf="t.dueDate">
                 <i class="fa fa-calendar-day text-muted me-1"></i> {{ t.dueDate | date:'dd/MM/yyyy' }}
               </span>
-              <span class="text-muted fs-xs" *ngIf="!t.dueDate">Non définie</span>
+              <span class="text-muted fs-xs" *ngIf="!t.dueDate">-</span>
             </td>
             <td>
               <span class="badge px-3 py-2 rounded-pill fw-bold" [ngClass]="getPriorityBadgeClass(t.priority)">
-                {{ getPriorityLabel(t.priority) }}
+                {{ (t.priority === 'HIGH' ? 'TASKS.PRIORITY_HIGH' : (t.priority === 'MEDIUM' ? 'TASKS.PRIORITY_MEDIUM' : 'TASKS.PRIORITY_LOW')) | translate }}
               </span>
             </td>
             <td>
               <span class="badge px-3 py-2 rounded-pill fw-bold" [ngClass]="getStatusBadgeClass(t.status)">
-                {{ getStatusLabel(t.status) }}
+                {{ (t.status === 'COMPLETED' ? 'TASKS.STATUS_COMPLETED' : (t.status === 'IN_PROGRESS' ? 'TASKS.STATUS_IN_PROGRESS' : 'TASKS.STATUS_TODO')) | translate }}
               </span>
             </td>
             <td class="fs-sm text-muted">
@@ -168,11 +167,11 @@
             </td>
             <td class="text-end">
               <div class="d-flex align-items-center justify-content-end gap-1">
-                <button type="button" class="btn btn-sm btn-alt-primary btn-table-action" (click)="openEditModal(t)" title="Modifier">
-                  <i class="fa fa-pencil-alt me-1"></i> Modifier
+                <button type="button" class="btn btn-sm btn-alt-primary btn-table-action" (click)="openEditModal(t)" [title]="'COMMON.EDIT' | translate">
+                  <i class="fa fa-pencil-alt me-1"></i> {{ 'COMMON.EDIT' | translate }}
                 </button>
-                <button type="button" class="btn btn-sm btn-alt-danger btn-table-action" (click)="onDeleteTask(t)" title="Supprimer">
-                  <i class="fa fa-trash me-1"></i> Supprimer
+                <button type="button" class="btn btn-sm btn-alt-danger btn-table-action" (click)="onDeleteTask(t)" [title]="'COMMON.DELETE' | translate">
+                  <i class="fa fa-trash me-1"></i> {{ 'COMMON.DELETE' | translate }}
                 </button>
               </div>
             </td>
@@ -191,60 +190,60 @@
         <h5 class="modal-title fw-bold">
           <i class="fa fa-tasks text-primary me-1" *ngIf="!isEditing()"></i>
           <i class="fa fa-edit text-primary me-1" *ngIf="isEditing()"></i>
-          {{ isEditing() ? 'Modifier la tâche' : 'Nouvelle tâche' }}
+          {{ (isEditing() ? 'TASKS.EDIT_TASK' : 'TASKS.ADD_TASK') | translate }}
         </h5>
         <button type="button" class="btn-close" (click)="closeModal()"></button>
       </div>
       <form (ngSubmit)="onSaveTask()">
         <div class="modal-body">
           <div class="mb-3">
-            <label class="form-label fs-sm fw-semibold">Titre de la tâche <span class="text-danger">*</span></label>
+            <label class="form-label fs-sm fw-semibold">{{ 'TASKS.TASK_TITLE' | translate }} <span class="text-danger">*</span></label>
             <input type="text" class="form-control form-control-alt fs-sm"
-                   placeholder="Ex: Confirmer le nombre d'invités final" [ngModel]="title()" (ngModelChange)="title.set($event)" name="title" required>
+                   [placeholder]="'TASKS.TASK_TITLE_PLACEHOLDER' | translate" [ngModel]="title()" (ngModelChange)="title.set($event)" name="title" required>
           </div>
           <div class="row mb-3">
             <div class="col-md-6">
-              <label class="form-label fs-sm fw-semibold">Priorité</label>
+              <label class="form-label fs-sm fw-semibold">{{ 'TASKS.PRIORITY' | translate }}</label>
               <select class="form-select form-control-alt fs-sm" [ngModel]="priority()" (ngModelChange)="priority.set($event)" name="priority">
-                <option value="LOW">Basse</option>
-                <option value="MEDIUM">Moyenne</option>
-                <option value="HIGH">Haute / Urgente</option>
+                <option value="LOW">{{ 'TASKS.PRIORITY_LOW' | translate }}</option>
+                <option value="MEDIUM">{{ 'TASKS.PRIORITY_MEDIUM' | translate }}</option>
+                <option value="HIGH">{{ 'TASKS.PRIORITY_HIGH' | translate }}</option>
               </select>
             </div>
             <div class="col-md-6">
-              <label class="form-label fs-sm fw-semibold">Statut</label>
+              <label class="form-label fs-sm fw-semibold">{{ 'COMMON.STATUS' | translate }}</label>
               <select class="form-select form-control-alt fs-sm" [ngModel]="status()" (ngModelChange)="status.set($event)" name="status">
-                <option value="TODO">À faire</option>
-                <option value="IN_PROGRESS">En cours</option>
-                <option value="COMPLETED">Terminée</option>
+                <option value="TODO">{{ 'TASKS.STATUS_TODO' | translate }}</option>
+                <option value="IN_PROGRESS">{{ 'TASKS.STATUS_IN_PROGRESS' | translate }}</option>
+                <option value="COMPLETED">{{ 'TASKS.STATUS_COMPLETED' | translate }}</option>
               </select>
             </div>
           </div>
           <div class="row mb-3">
             <div class="col-md-6">
-              <label class="form-label fs-sm fw-semibold">Date d'échéance</label>
+              <label class="form-label fs-sm fw-semibold">{{ 'TASKS.DUE_DATE' | translate }}</label>
               <input type="date" class="form-control form-control-alt fs-sm"
                      [ngModel]="dueDate()" (ngModelChange)="dueDate.set($event)" name="dueDate">
             </div>
             <div class="col-md-6">
-              <label class="form-label fs-sm fw-semibold">Responsable assigné</label>
+              <label class="form-label fs-sm fw-semibold">{{ 'TASKS.ASSIGNED_TO' | translate }}</label>
               <input type="text" class="form-control form-control-alt fs-sm"
-                     placeholder="Ex: Chef Pierre / Équipe Salle" [ngModel]="assignedTo()" (ngModelChange)="assignedTo.set($event)" name="assignedTo">
+                     [placeholder]="'TASKS.ASSIGNED_PLACEHOLDER' | translate" [ngModel]="assignedTo()" (ngModelChange)="assignedTo.set($event)" name="assignedTo">
             </div>
           </div>
           <div class="mb-3">
             <label class="form-label fs-sm fw-semibold">Description / Notes</label>
             <textarea class="form-control form-control-alt fs-sm" rows="3"
-                      placeholder="Ex: Appeler le maitre d'hôtel pour ajuster l'ordonnancement de la soirée."
+                      placeholder="Notes..."
                       [ngModel]="description()" (ngModelChange)="description.set($event)" name="description"></textarea>
           </div>
         </div>
         <div class="modal-footer bg-body-light">
-          <button type="button" class="btn btn-sm btn-alt-secondary" (click)="closeModal()">Annuler</button>
+          <button type="button" class="btn btn-sm btn-alt-secondary" (click)="closeModal()">{{ 'COMMON.CANCEL' | translate }}</button>
           <button type="submit" class="btn btn-sm btn-primary" [disabled]="isSaving()">
             <i class="fa fa-save me-1" *ngIf="!isSaving()"></i>
             <i class="fa fa-circle-notch fa-spin me-1" *ngIf="isSaving()"></i>
-            Enregistrer
+            {{ 'COMMON.SAVE' | translate }}
           </button>
         </div>
       </form>

@@ -45,9 +45,11 @@ export interface JourneyStep {
   isCurrent: boolean;
   timestamp?: string;
   badgeLabel: string;
+  badgeKey?: string;
   badgeClass: string;
   details?: string;
   channels?: { name: string; icon: string; colorClass: string }[];
+  channelsText?: string;
   page1Title?: string;
   page1Subtitle?: string;
   page1GuestName?: string;
@@ -60,6 +62,7 @@ export interface JourneyStep {
   dishCategoryKey?: string;
   dishImage?: string;
   cateringFormula?: string;
+  cateringFormulaKey?: string;
   cateringTabs?: CateringTab[];
   isBuffetMode?: boolean;
   sampleBuffetDishes?: SampleDish[];
@@ -77,10 +80,12 @@ export interface JourneyStep {
   guestStatus?: string;
 }
 
+import { TranslatePipe } from '../../../../core/pipes/translate.pipe';
+
 @Component({
   selector: 'app-organiser-invitation-setup',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, TranslatePipe],
   templateUrl: './organiser-invitation-setup.html',
   styleUrls: ['./organiser-invitation-setup.scss']
 })
@@ -429,6 +434,7 @@ export class OrganiserInvitationSetup implements OnInit {
   protected getPreferredReminderChannel(guest: Guest | null): {
     type: 'WHATSAPP' | 'EMAIL' | 'SMS' | 'LINK';
     label: string;
+    key?: string;
     actionTitle: string;
     icon: string;
     btnClass: string;
@@ -445,6 +451,7 @@ export class OrganiserInvitationSetup implements OnInit {
       return {
         type: 'EMAIL',
         label: 'Rappeler par E-mail',
+        key: 'INVITATION_SETUP.REMIND_EMAIL',
         actionTitle: 'Ouvrir votre messagerie et envoyer le rappel par E-mail',
         icon: 'far fa-envelope',
         btnClass: 'btn-info text-white',
@@ -458,6 +465,7 @@ export class OrganiserInvitationSetup implements OnInit {
       return {
         type: 'WHATSAPP',
         label: 'Rappeler par WhatsApp',
+        key: 'INVITATION_SETUP.REMIND_WHATSAPP',
         actionTitle: 'Ouvrir WhatsApp et envoyer le rappel personnalisé',
         icon: 'fab fa-whatsapp',
         btnClass: 'btn-success',
@@ -471,6 +479,7 @@ export class OrganiserInvitationSetup implements OnInit {
       return {
         type: 'EMAIL',
         label: 'Rappeler par E-mail',
+        key: 'INVITATION_SETUP.REMIND_EMAIL',
         actionTitle: 'Ouvrir votre messagerie et envoyer le rappel par E-mail',
         icon: 'far fa-envelope',
         btnClass: 'btn-info text-white',
@@ -483,6 +492,7 @@ export class OrganiserInvitationSetup implements OnInit {
     return {
       type: 'LINK',
       label: 'Copier le lien direct',
+      key: 'INVITATION_SETUP.COPY_DIRECT_LINK',
       actionTitle: 'Copier le lien direct de relance',
       icon: 'fa fa-copy',
       btnClass: 'btn-primary',
@@ -495,6 +505,7 @@ export class OrganiserInvitationSetup implements OnInit {
     guest: Guest;
     completionPercentage: number;
     currentStatusLabel: string;
+    currentStatusKey: string;
     currentStatusBadgeClass: string;
     currentActiveStepIndex: number;
     steps: JourneyStep[];
@@ -521,6 +532,7 @@ export class OrganiserInvitationSetup implements OnInit {
     const isPlatedMode = !isMixMode && !isBuffetMode;
 
     let cateringFormulaName = 'Service à Table (Plats Fixes)';
+    let cateringFormulaKey = 'EVENT_DETAILS.FORMULA_PLATED';
     let cateringTabs: CateringTab[] = [
       { key: 'STARTER', label: 'Entrées' },
       { key: 'MAIN', label: 'Plats' },
@@ -529,6 +541,7 @@ export class OrganiserInvitationSetup implements OnInit {
 
     if (isMixMode) {
       cateringFormulaName = 'Formule Mixte (Buffet & Plat Chaud)';
+      cateringFormulaKey = 'EVENT_DETAILS.FORMULA_MIX';
       cateringTabs = [
         { key: 'STARTER', label: 'Buffet Entrées' },
         { key: 'MAIN', label: 'Plat Chaud' },
@@ -536,6 +549,7 @@ export class OrganiserInvitationSetup implements OnInit {
       ];
     } else if (isBuffetMode) {
       cateringFormulaName = 'Formule Buffet Libre-Service';
+      cateringFormulaKey = 'EVENT_DETAILS.FORMULA_BUFFET';
       cateringTabs = [
         { key: 'STARTER', label: 'Entrées Buffet' },
         { key: 'MAIN', label: 'Plats Buffet' },
@@ -726,9 +740,11 @@ export class OrganiserInvitationSetup implements OnInit {
         isCurrent: !isSent,
         timestamp: sentAt,
         badgeLabel: isSent ? "Envoyé" : "En attente",
+        badgeKey: isSent ? 'STATUS_SENT' : 'STATUS_PENDING',
         badgeClass: isSent ? "bg-success text-white" : "bg-warning-light text-black border border-warning-light",
         details: isSent ? `Transmis par ${activeChannels.map(c => c.type).join(' & ') || 'Notification'}` : `En attente du clic d'envoi`,
         channels: activeChannels.map(c => ({ name: c.type, icon: c.icon, colorClass: c.colorClass })),
+        channelsText: activeChannels.map(c => c.type).join(' & ') || 'Notification',
         guestFirstName: guestFirstName,
         primaryChannelType: primaryChannel,
         narrativeMessage: isSent 
@@ -746,6 +762,7 @@ export class OrganiserInvitationSetup implements OnInit {
         isCurrent: isSent && !isOpened,
         timestamp: openedAt,
         badgeLabel: isOpened ? "Consulté" : (isSent ? "En cours" : "En attente"),
+        badgeKey: isOpened ? 'STATUS_VIEWED' : (isSent ? 'STATUS_IN_PROGRESS' : 'STATUS_PENDING'),
         badgeClass: isOpened ? "bg-success text-white" : (isSent && !isOpened ? "bg-warning text-dark fw-bold" : "bg-body-dark text-muted"),
         details: isOpened ? `Programme, date & lieu consultés (${evLocation})` : `Invitation non encore consultée`,
         page1Title: evTitle,
@@ -768,6 +785,7 @@ export class OrganiserInvitationSetup implements OnInit {
         isCompleted: isMenuViewed || isConfirmed,
         isCurrent: isOpened && !isMenuViewed && !hasResponded,
         badgeLabel: isBuffetMode ? "Buffet" : (isMenuViewed ? (isConfirmed ? "Sélectionné" : "En consultation") : (isDeclined ? "Non requis" : "En attente")),
+        badgeKey: isBuffetMode ? 'BUFFET' : (isMenuViewed ? (isConfirmed ? 'STATUS_SELECTED' : 'STATUS_IN_PROGRESS') : (isDeclined ? 'STATUS_DECLINED' : 'STATUS_PENDING')),
         badgeClass: (isBuffetMode || isMenuViewed) ? "bg-success text-white" : (isOpened && !hasResponded ? "bg-warning text-dark fw-bold" : "bg-body-dark text-muted"),
         details: isBuffetMode ? `Formule Buffet : Présentation des plats du chef` : (cleanDishName ? `${dishCategoryLabel} : ${cleanDishName}` : `En attente du choix de menu`),
         dishChoice: cleanDishName,
@@ -775,6 +793,7 @@ export class OrganiserInvitationSetup implements OnInit {
         dishCategoryKey: detectedCat,
         dishImage: dishImg,
         cateringFormula: cateringFormulaName,
+        cateringFormulaKey: cateringFormulaKey,
         cateringTabs: cateringTabs,
         isBuffetMode: isBuffetMode,
         sampleBuffetDishes: sampleBuffetDishes,
@@ -793,6 +812,7 @@ export class OrganiserInvitationSetup implements OnInit {
         isCompleted: isDietViewed || isConfirmed,
         isCurrent: isMenuViewed && !isDietViewed && !hasResponded,
         badgeLabel: dietaryTags.length > 0 ? `${dietaryTags.length} régimes` : (isDietViewed ? (isConfirmed ? "Standard" : "Consulté") : "En attente"),
+        badgeKey: dietaryTags.length > 0 ? 'STATUS_SELECTED' : (isDietViewed ? (isConfirmed ? 'STATUS_STANDARD' : 'STATUS_VIEWED') : 'STATUS_PENDING'),
         badgeClass: isDietViewed ? "bg-success text-white" : (isMenuViewed && !hasResponded ? "bg-warning text-dark fw-bold" : "bg-body-dark text-muted"),
         details: dietaryTags.length > 0 ? `${dietaryList.join(', ')} • Fiche traiteur` : (isDietViewed ? 'Menu classique sans restriction' : 'Préférences alimentaires en attente'),
         dietaryTags: dietaryTags,
@@ -813,6 +833,7 @@ export class OrganiserInvitationSetup implements OnInit {
         isCompleted: hasResponded,
         isCurrent: isDietViewed && !hasResponded,
         badgeLabel: isConfirmed ? "Confirmé" : (isDeclined ? "Décliné" : "En attente"),
+        badgeKey: isConfirmed ? 'STATUS_CONFIRMED' : (isDeclined ? 'STATUS_DECLINED' : 'STATUS_PENDING'),
         badgeClass: isConfirmed ? "bg-success text-white" : (isDeclined ? "bg-danger text-white" : "bg-warning-light text-black border border-warning-light"),
         details: isConfirmed 
           ? (isPaidEvent ? `Présence confirmée • ${isPaid ? 'Billet VIP Réglé' : 'Paiement en attente'}` : `Place réservée (${(guest as any).tableNumber || 'Table d\'Honneur'})`)
@@ -837,24 +858,31 @@ export class OrganiserInvitationSetup implements OnInit {
     else if (isOpened) pct = 40;
     else if (isSent) pct = 20;
 
+    let statusKey = 'STATUS_PENDING';
     let statusLabel = 'En attente d\'envoi';
     let statusBadge = 'bg-body-dark text-black border';
     if (isConfirmed) {
+      statusKey = 'STATUS_CONFIRMED';
       statusLabel = 'Présence Confirmée';
       statusBadge = 'bg-success text-white shadow-sm';
     } else if (isDeclined) {
+      statusKey = 'STATUS_DECLINED';
       statusLabel = 'Invitation Déclinée';
       statusBadge = 'bg-danger text-white shadow-sm';
     } else if (isDietViewed) {
+      statusKey = 'STATUS_DIET_VIEWED';
       statusLabel = 'Régimes & Allergies consultés';
       statusBadge = 'bg-warning text-dark shadow-sm';
     } else if (isMenuViewed) {
+      statusKey = 'STATUS_MENU_VIEWED';
       statusLabel = 'En cours de sélection du Menu';
       statusBadge = 'bg-warning text-dark shadow-sm';
     } else if (isOpened) {
+      statusKey = 'STATUS_OPENED';
       statusLabel = 'Invitation Ouverte';
       statusBadge = 'bg-info text-white shadow-sm';
     } else if (isSent) {
+      statusKey = 'STATUS_SENT';
       statusLabel = 'Invitation Envoyée';
       statusBadge = 'bg-primary text-white shadow-sm';
     }
@@ -863,6 +891,7 @@ export class OrganiserInvitationSetup implements OnInit {
       guest,
       completionPercentage: pct,
       currentStatusLabel: statusLabel,
+      currentStatusKey: statusKey,
       currentStatusBadgeClass: statusBadge,
       currentActiveStepIndex: currentStepNum,
       steps

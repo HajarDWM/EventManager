@@ -5,11 +5,10 @@
         <!-- Sign In Block -->
         <div class="block block-rounded mb-0 shadow-sm border border-light">
           <div class="block-header block-header-default bg-body-light border-bottom border-light">
-            <h3 class="block-title">Connexion</h3>
+            <h3 class="block-title">{{ 'AUTH.LOGIN_TITLE' | translate }}</h3>
             <div class="block-options">
-              <a class="btn-block-option" routerLink="/register" data-bs-toggle="tooltip"
-                 data-bs-placement="left" title="Créer un compte">
-                <i class="fa fa-user-plus"></i> S'inscrire
+              <a class="btn-block-option" routerLink="/register" [attr.title]="'AUTH.CREATE_ACCOUNT_TOOLTIP' | translate">
+                <i class="fa fa-user-plus"></i> {{ 'AUTH.CREATE_ACCOUNT_LINK' | translate }}
               </a>
             </div>
           </div>
@@ -17,7 +16,7 @@
             <div class="p-sm-3 px-lg-4 py-lg-4">
               <h1 class="h2 mb-1 text-center">Event<span class="text-primary">Manager</span></h1>
               <p class="fw-medium text-muted text-center mb-4">
-                Accédez à votre espace organisateur.
+                {{ 'AUTH.ORGANIZER_LOGIN_SUBTITLE' | translate }}
               </p>
 
               <!-- Error Alert -->
@@ -30,13 +29,13 @@
               <form (ngSubmit)="onSubmit()">
                 <div class="py-2">
                   <div class="mb-4">
-                    <label class="form-label fs-sm fw-semibold" for="login-email">Adresse Email</label>
+                    <label class="form-label fs-sm fw-semibold" for="login-email">{{ 'AUTH.EMAIL_LABEL' | translate }}</label>
                     <input type="email" class="form-control form-control-alt form-control-lg fs-sm"
                            id="login-email" name="login-email" placeholder="caterer@example.com"
                            [ngModel]="email()" (ngModelChange)="email.set($event)" required>
                   </div>
                   <div class="mb-4">
-                    <label class="form-label fs-sm fw-semibold" for="login-password">Mot de passe</label>
+                    <label class="form-label fs-sm fw-semibold" for="login-password">{{ 'AUTH.PASSWORD_LABEL' | translate }}</label>
                     <input type="password" class="form-control form-control-alt form-control-lg fs-sm"
                            id="login-password" name="login-password" placeholder="••••••••"
                            [ngModel]="password()" (ngModelChange)="password.set($event)" required>
@@ -47,10 +46,10 @@
                   <div class="col-12">
                     <button type="submit" class="btn w-100 btn-alt-primary py-2" [disabled]="isLoading()">
                       <span *ngIf="!isLoading()">
-                        <i class="fa fa-fw fa-sign-in-alt me-1 opacity-50"></i> Se connecter
+                        <i class="fa fa-fw fa-sign-in-alt me-1 opacity-50"></i> {{ 'AUTH.SIGN_IN_BTN' | translate }}
                       </span>
                       <span *ngIf="isLoading()">
-                        <i class="fa fa-fw fa-circle-notch fa-spin me-1"></i> Connexion...
+                        <i class="fa fa-fw fa-circle-notch fa-spin me-1"></i> {{ 'AUTH.SIGNING_IN' | translate }}
                       </span>
                     </button>
                   </div>

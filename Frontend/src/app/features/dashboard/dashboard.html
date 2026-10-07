@@ -2,16 +2,14 @@
 <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-2 text-center text-md-start">
   <div class="flex-grow-1 mb-1 mb-md-0">
     <h1 class="h3 fw-bold mb-2">
-      Tableau de bord
+      {{ 'DASHBOARD.TITLE' | translate }}
     </h1>
     <h2 class="h6 fw-medium text-muted mb-0">
-      Ravi de vous revoir ! Voici l'état actuel de vos prestations et événements.
+      {{ 'DASHBOARD.SUBTITLE' | translate }}
     </h2>
   </div>
 </div>
 <!-- END Hero -->
-
-
 
 <!-- Stats Cards -->
 <div class="row items-push mt-3">
@@ -22,7 +20,7 @@
         <dl class="mb-0">
           <dt class="fs-3 fw-bold" *ngIf="!isLoading()">{{ eventCount() }}</dt>
           <dt class="fs-3 fw-bold" *ngIf="isLoading()"><i class="fa fa-spinner fa-spin text-primary fs-4"></i></dt>
-          <dd class="fs-sm fw-medium text-muted mb-0">Événements enregistrés</dd>
+          <dd class="fs-sm fw-medium text-muted mb-0">{{ 'DASHBOARD.EVENTS_RECORDED' | translate }}</dd>
         </dl>
         <div class="item item-rounded-lg bg-primary-light text-primary">
           <i class="fa fa-calendar-alt fs-3"></i>
@@ -31,7 +29,7 @@
       <div class="bg-body-light rounded-bottom border-top border-light">
         <a class="block-content block-content-full block-content-sm fs-sm fw-medium d-flex align-items-center justify-content-between text-muted"
            routerLink="/events">
-          <span>Voir tous les événements</span>
+          <span>{{ 'DASHBOARD.VIEW_ALL_EVENTS' | translate }}</span>
           <i class="fa fa-arrow-alt-circle-right ms-1 opacity-50 fs-base"></i>
         </a>
       </div>
@@ -45,7 +43,7 @@
         <dl class="mb-0">
           <dt class="fs-3 fw-bold" *ngIf="!isLoading()">{{ guestCount() }}</dt>
           <dt class="fs-3 fw-bold" *ngIf="isLoading()"><i class="fa fa-spinner fa-spin text-success fs-4"></i></dt>
-          <dd class="fs-sm fw-medium text-muted mb-0">Invités attendus</dd>
+          <dd class="fs-sm fw-medium text-muted mb-0">{{ 'DASHBOARD.GUESTS_EXPECTED' | translate }}</dd>
         </dl>
         <div class="item item-rounded-lg bg-success-light text-success">
           <i class="fa fa-users fs-3"></i>
@@ -54,7 +52,7 @@
       <div class="bg-body-light rounded-bottom border-top border-light">
         <a class="block-content block-content-full block-content-sm fs-sm fw-medium d-flex align-items-center justify-content-between text-muted"
            routerLink="/events">
-          <span>Gérer les prestations</span>
+          <span>{{ 'DASHBOARD.MANAGE_SERVICES' | translate }}</span>
           <i class="fa fa-arrow-alt-circle-right ms-1 opacity-50 fs-base"></i>
         </a>
       </div>
@@ -67,7 +65,7 @@
       <div class="block-content block-content-full flex-grow-1 d-flex justify-content-between align-items-center">
         <dl class="mb-0">
           <dt class="fs-3 fw-bold">{{ messageCount() }}</dt>
-          <dd class="fs-sm fw-medium text-muted mb-0">Demandes de devis</dd>
+          <dd class="fs-sm fw-medium text-muted mb-0">{{ 'DASHBOARD.QUOTE_REQUESTS' | translate }}</dd>
         </dl>
         <div class="item item-rounded-lg bg-warning-light text-warning">
           <i class="fa fa-paper-plane fs-3"></i>
@@ -76,7 +74,7 @@
       <div class="bg-body-light rounded-bottom border-top border-light">
         <a class="block-content block-content-full block-content-sm fs-sm fw-medium d-flex align-items-center justify-content-between text-muted"
            routerLink="/events">
-          <span>Consulter les événements</span>
+          <span>{{ 'DASHBOARD.CONSULT_EVENTS' | translate }}</span>
           <i class="fa fa-arrow-alt-circle-right ms-1 opacity-50 fs-base"></i>
         </a>
       </div>
@@ -89,7 +87,7 @@
       <div class="block-content block-content-full flex-grow-1 d-flex justify-content-between align-items-center">
         <dl class="mb-0">
           <dt class="fs-3 fw-bold text-success">{{ accountStatus() }}</dt>
-          <dd class="fs-sm fw-medium text-muted mb-0">Statut du compte</dd>
+          <dd class="fs-sm fw-medium text-muted mb-0">{{ 'DASHBOARD.ACCOUNT_STATUS' | translate }}</dd>
         </dl>
         <div class="item item-rounded-lg bg-info-light text-info">
           <i class="fa fa-check-circle fs-3"></i>
@@ -98,7 +96,7 @@
       <div class="bg-body-light rounded-bottom border-top border-light">
         <a class="block-content block-content-full block-content-sm fs-sm fw-medium d-flex align-items-center justify-content-between text-muted"
            routerLink="/profile">
-          <span>Mon profil organisateur</span>
+          <span>{{ 'DASHBOARD.ORGANIZER_PROFILE' | translate }}</span>
           <i class="fa fa-arrow-alt-circle-right ms-1 opacity-50 fs-base"></i>
         </a>
       </div>

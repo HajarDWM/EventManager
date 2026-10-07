@@ -5,11 +5,12 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { EventTaskService, EventTask } from '../../../../core/services/event-task.service';
 import { EventService } from '../../services/event.service';
 import { Event } from '../../models/event.model';
+import { TranslatePipe } from '../../../../core/pipes/translate.pipe';
 
 @Component({
   selector: 'app-task-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, TranslatePipe],
   templateUrl: './task-list.html'
 })
 export class TaskList implements OnInit {

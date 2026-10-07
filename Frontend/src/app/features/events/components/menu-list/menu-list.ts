@@ -8,11 +8,13 @@ import { GuestService, Guest } from '../../../../core/services/guest.service';
 import { CatererService } from '../../../../core/services/caterer.service';
 import { CurrencyService } from '../../../../core/services/currency.service';
 import { Event } from '../../models/event.model';
+import { TranslatePipe } from '../../../../core/pipes/translate.pipe';
+import { TranslationService } from '../../../../core/services/translation.service';
 
 @Component({
   selector: 'app-menu-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, TranslatePipe],
   templateUrl: './menu-list.html'
 })
 export class MenuList implements OnInit {
@@ -22,6 +24,7 @@ export class MenuList implements OnInit {
   private readonly guestService = inject(GuestService);
   private readonly catererService = inject(CatererService);
   protected readonly currencyService = inject(CurrencyService);
+  protected readonly translateService = inject(TranslationService);
 
   protected readonly currencySymbol = computed(() => this.currencyService.activeSymbol());
 
@@ -260,11 +263,11 @@ export class MenuList implements OnInit {
 
   protected getMixPart1Title(): string {
     const parts = [];
-    if (this.hasBuffetEntrees()) parts.push('Cocktail & Entrées');
-    if (this.hasBuffetDesserts()) parts.push('Desserts');
-    if (this.hasBuffetBeverages()) parts.push('Boissons');
+    if (this.hasBuffetEntrees()) parts.push(this.translateService.translate('CATERING.COCKTAIL_ENTREES'));
+    if (this.hasBuffetDesserts()) parts.push(this.translateService.translate('CATERING.DESSERTS'));
+    if (this.hasBuffetBeverages()) parts.push(this.translateService.translate('CATERING.BEVERAGES'));
 
-    if (parts.length === 0) return 'Partie 1 : Buffet Libre';
+    if (parts.length === 0) return this.translateService.translate('CATERING.MIX_PART1_DEFAULT');
     
     let joined = parts[0];
     if (parts.length > 1) {
@@ -272,15 +275,15 @@ export class MenuList implements OnInit {
       joined = parts.join(', ') + ' & ' + last;
     }
     
-    return `Partie 1 : Buffet Libre (${joined})`;
+    return `${this.translateService.translate('CATERING.MIX_PART1_TITLE')} (${joined})`;
   }
 
   protected getMixPart2Title(): string {
     const parts = [];
-    if (this.isFormatSelected('PLATS_FIXES')) parts.push('Plat Principal');
-    if (!this.hasBuffetDesserts()) parts.push('Desserts');
+    if (this.isFormatSelected('PLATS_FIXES')) parts.push(this.translateService.translate('CATERING.MAIN_COURSE'));
+    if (!this.hasBuffetDesserts()) parts.push(this.translateService.translate('CATERING.DESSERTS'));
 
-    if (parts.length === 0) return 'Partie 2 : Service à table';
+    if (parts.length === 0) return this.translateService.translate('CATERING.MIX_PART2_DEFAULT');
     
     let joined = parts[0];
     if (parts.length > 1) {
@@ -288,7 +291,7 @@ export class MenuList implements OnInit {
       joined = parts.join(', ') + ' & ' + last;
     }
     
-    return `Partie 2 : Service à table (${joined})`;
+    return `${this.translateService.translate('CATERING.MIX_PART2_TITLE')} (${joined})`;
   }
 
   public ngOnInit(): void {
