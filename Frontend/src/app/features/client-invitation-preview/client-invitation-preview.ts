@@ -37,9 +37,16 @@ export class ClientInvitationPreview implements OnInit {
 
     const allTemplates = this.templates();
     const tpl = allTemplates.find(t => 
-      (ev.digitalTemplateId && t.id === ev.digitalTemplateId) ||
-      (ev.templateId && t.templateKey === ev.templateId)
+      (ev.digitalTemplateId && (t.id === ev.digitalTemplateId || String(t.id) === String(ev.digitalTemplateId))) ||
+      (ev.templateId && (
+        t.templateKey === ev.templateId || 
+        t.templateKey?.toLowerCase() === ev.templateId?.toLowerCase() || 
+        String(t.id) === String(ev.templateId)
+      ))
     ) || allTemplates.find(t => t.templateKey === 'or-et-velours') || (allTemplates.length > 0 ? allTemplates[0] : null);
+
+    const bgUrl = tpl?.backgroundImageUrl || ev.templateBackgroundImageUrl || tpl?.imageUrl || undefined;
+    const bgDesktopUrl = tpl?.backgroundImageDesktopUrl || ev.templateBackgroundImageDesktopUrl || tpl?.backgroundImageUrl || ev.templateBackgroundImageUrl || tpl?.imageUrl || undefined;
 
     return {
       guestId: 0,
@@ -54,20 +61,33 @@ export class ClientInvitationPreview implements OnInit {
       eventDate: ev.eventDate,
       eventLocation: ev.location,
       locationMapUrl: ev.locationMapUrl,
-      digitalTemplateId: ev.digitalTemplateId,
+      digitalTemplateId: ev.digitalTemplateId || (tpl ? tpl.id : undefined),
       templateId: tpl?.templateKey || ev.templateId,
       templateTitle: tpl?.title,
       templateCategory: tpl?.category || 'Mariage',
-      decorativeFrame: tpl?.decorativeFrame,
-      accentColor: tpl?.accentColor,
-      backgroundColor: tpl?.backgroundColor,
-      templateBackgroundImageUrl: tpl?.backgroundImageUrl || ev.templateBackgroundImageUrl,
+      templateSubCategory: tpl?.subCategory || '',
+      decorativeFrame: tpl?.decorativeFrame || 'gold-border',
+      accentColor: tpl?.accentColor || '#d4af37',
+      backgroundColor: tpl?.backgroundColor || '#080808',
+      templateBackgroundImageUrl: bgUrl,
+      templateBackgroundImageDesktopUrl: bgDesktopUrl,
       primaryFont: tpl?.primaryFont,
       primaryFontSize: tpl?.primaryFontSize,
+      primaryFontWeight: tpl?.primaryFontWeight,
+      primaryLetterSpacing: tpl?.primaryLetterSpacing,
       secondaryFont: tpl?.secondaryFont,
       secondaryFontSize: tpl?.secondaryFontSize,
+      secondaryFontWeight: tpl?.secondaryFontWeight,
+      secondaryLetterSpacing: tpl?.secondaryLetterSpacing,
       secondaryFontColor: tpl?.secondaryFontColor,
       templateMusicUrl: tpl?.musicUrl,
+      openingAnimation: tpl?.openingAnimation || 'none',
+      visualParticles: tpl?.visualParticles || 'none',
+      backgroundMotion: tpl?.backgroundMotion || 'ken-burns',
+      contentEntrance: tpl?.contentEntrance || 'staggered-royal',
+      showCountdown: true,
+      showCalendarButton: true,
+      showMapRoute: true,
       invitationTitle: ev.invitationTitle,
       invitationSubtitle: ev.invitationSubtitle,
       invitationDate: ev.invitationDate,
@@ -83,9 +103,7 @@ export class ClientInvitationPreview implements OnInit {
   });
 
   ngOnInit() {
-    if (this.clientAuthService.clientEvents().length === 0) {
-      this.clientAuthService.fetchEvents().subscribe();
-    }
+    this.clientAuthService.fetchEvents().subscribe();
     this.http.get<any[]>('/api/templates').subscribe({
       next: (data) => this.templates.set(data),
       error: (err) => console.error('Failed to load templates in preview', err)

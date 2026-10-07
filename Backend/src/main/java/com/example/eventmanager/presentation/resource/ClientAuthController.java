@@ -27,6 +27,7 @@ public class ClientAuthController {
     private final EventPersistenceMapper eventPersistenceMapper;
     private final EventMapper eventMapper;
     private final com.example.eventmanager.infrastructure.persistence.repository.ClientRepository clientRepository;
+    private final com.example.eventmanager.infrastructure.persistence.repository.DigitalInvitationTemplateRepository templateRepository;
     private final CatererRepository catererRepository;
 
     @PostMapping("/login")
@@ -61,6 +62,27 @@ public class ClientAuthController {
                 .map(eventPersistenceMapper::toDomain)
                 .map(event -> {
                     EventDTO dto = eventMapper.toDTO(event);
+
+                    java.util.Optional<com.example.eventmanager.infrastructure.persistence.entity.DigitalInvitationTemplateEntity> tplOpt = java.util.Optional.empty();
+                    if (event.getDigitalTemplateId() != null) {
+                        tplOpt = templateRepository.findById(event.getDigitalTemplateId());
+                    }
+                    if (tplOpt.isEmpty() && event.getTemplateId() != null && !event.getTemplateId().isBlank()) {
+                        try {
+                            Long tId = Long.parseLong(event.getTemplateId());
+                            tplOpt = templateRepository.findById(tId);
+                        } catch (NumberFormatException ignored) {}
+                        if (tplOpt.isEmpty()) {
+                            tplOpt = templateRepository.findByTemplateKeyIgnoreCase(event.getTemplateId());
+                        }
+                    }
+                    tplOpt.ifPresent(template -> {
+                        dto.setTemplateBackgroundImageUrl(template.getBackgroundImageUrl());
+                        dto.setTemplateBackgroundImageDesktopUrl(template.getBackgroundImageDesktopUrl());
+                        dto.setTemplateId(template.getTemplateKey());
+                        dto.setDigitalTemplateId(template.getId());
+                    });
+
                     if (event.getCatererId() != null) {
                         catererRepository.findById(event.getCatererId())
                                 .ifPresent(caterer -> {

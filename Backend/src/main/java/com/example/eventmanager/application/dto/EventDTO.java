@@ -45,6 +45,7 @@ public class EventDTO {
     private Double depositsPaid;
     private Double balanceDue;
     private String templateBackgroundImageUrl;
+    private String templateBackgroundImageDesktopUrl;
     private String tableShape;
     private Integer tableCapacity;
     private Integer tablesCount;

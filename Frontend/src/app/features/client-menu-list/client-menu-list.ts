@@ -54,18 +54,36 @@ export class ClientMenuList implements OnInit {
     };
   });
 
-  protected getMealTypeLabel(mealType: string | undefined): { label: string, icon: string, desc: string } {
-    if (!mealType) return { label: 'Non défini', icon: 'fa-utensils', desc: '' };
+  protected getMealTypeLabel(mealType: string | undefined): { label: string, labelKey?: string, icon: string, desc: string, descKey?: string } {
+    if (!mealType) return { label: 'Non défini', labelKey: 'COMMON.NONE', icon: 'fa-utensils', desc: '' };
     const modes = mealType.split(',').map(m => m.trim());
     
     if (modes.includes('MIX')) {
-      return { label: 'Formule Combinée', icon: 'fa-blender', desc: 'Buffets & Service assis' };
+      return { 
+        label: 'Formule Combinée', 
+        labelKey: 'CATERING.MIX_FORMULA', 
+        icon: 'fa-blender', 
+        desc: 'Buffet & Service assis', 
+        descKey: 'CATERING.MIX_DESC' 
+      };
     }
     if (modes.includes('PLATS_FIXES')) {
-      return { label: 'Service à l\'assiette', icon: 'fa-concierge-bell', desc: 'Service à table' };
+      return { 
+        label: 'Service à l\'assiette', 
+        labelKey: 'CATERING.PLATS_FIXES_FORMULA', 
+        icon: 'fa-concierge-bell', 
+        desc: 'Service à table', 
+        descKey: 'CATERING.PLATS_FIXES_DESC' 
+      };
     }
     if (modes.includes('BUFFET')) {
-      return { label: 'Formule Buffet', icon: 'fa-cheese', desc: 'Libre-service' };
+      return { 
+        label: 'Formule Buffet', 
+        labelKey: 'CATERING.BUFFET_FORMULA', 
+        icon: 'fa-cheese', 
+        desc: 'Libre-service', 
+        descKey: 'CATERING.BUFFET_DESC' 
+      };
     }
     
     return { label: mealType, icon: 'fa-utensils', desc: '' };

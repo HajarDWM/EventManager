@@ -15,8 +15,8 @@
       <i class="fa" [ngClass]="getMealTypeLabel(event()?.mealType).icon"></i>
     </div>
     <div style="min-width: 0;">
-      <h5 class="fw-bold fs-6 text-dark mb-0 text-truncate">{{ 'CLIENT_PORTAL.CATERING_FORMAT' | translate }} : {{ getMealTypeLabel(event()?.mealType).label }}</h5>
-      <span class="fs-sm text-muted">{{ getMealTypeLabel(event()?.mealType).desc }}</span>
+      <h5 class="fw-bold fs-6 text-dark mb-0 text-truncate">{{ 'CLIENT_PORTAL.CATERING_FORMAT' | translate }} : {{ getMealTypeLabel(event()?.mealType).labelKey ? (getMealTypeLabel(event()?.mealType).labelKey! | translate) : getMealTypeLabel(event()?.mealType).label }}</h5>
+      <span class="fs-sm text-muted">{{ getMealTypeLabel(event()?.mealType).descKey ? (getMealTypeLabel(event()?.mealType).descKey! | translate) : getMealTypeLabel(event()?.mealType).desc }}</span>
     </div>
   </div>
 </div>

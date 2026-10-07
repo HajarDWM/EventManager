@@ -86,10 +86,25 @@ public class ClientEventController {
                     dto.setDepositsPaid(depositsPaid);
                     dto.setBalanceDue(balanceDue);
 
+                    java.util.Optional<com.example.eventmanager.infrastructure.persistence.entity.DigitalInvitationTemplateEntity> tplOpt = java.util.Optional.empty();
                     if (event.getDigitalTemplateId() != null) {
-                        templateRepository.findById(event.getDigitalTemplateId())
-                                .ifPresent(template -> dto.setTemplateBackgroundImageUrl(template.getBackgroundImageUrl()));
+                        tplOpt = templateRepository.findById(event.getDigitalTemplateId());
                     }
+                    if (tplOpt.isEmpty() && event.getTemplateId() != null && !event.getTemplateId().isBlank()) {
+                        try {
+                            Long tId = Long.parseLong(event.getTemplateId());
+                            tplOpt = templateRepository.findById(tId);
+                        } catch (NumberFormatException ignored) {}
+                        if (tplOpt.isEmpty()) {
+                            tplOpt = templateRepository.findByTemplateKeyIgnoreCase(event.getTemplateId());
+                        }
+                    }
+                    tplOpt.ifPresent(template -> {
+                        dto.setTemplateBackgroundImageUrl(template.getBackgroundImageUrl());
+                        dto.setTemplateBackgroundImageDesktopUrl(template.getBackgroundImageDesktopUrl());
+                        dto.setTemplateId(template.getTemplateKey());
+                        dto.setDigitalTemplateId(template.getId());
+                    });
 
                     if (event.getCatererId() != null) {
                         catererRepository.findById(event.getCatererId())
