@@ -44,11 +44,40 @@ export class TemplateService {
   private readonly apiUrl = '/api/admin/templates';
   private readonly sharedUrl = '/api/templates';
   private readonly STORAGE_KEY_CUSTOM_CATEGORIES = 'custom_template_categories';
+  private readonly STORAGE_KEY_TEMPLATES_SESSION = 'event_manager_templates_session';
+
+  public readonly templates = signal<DigitalTemplate[]>(this.loadInitialTemplates());
+  public readonly isLoaded = signal<boolean>(this.loadInitialTemplates().length > 0);
 
   private cachedTemplates$: Observable<DigitalTemplate[]> | null = null;
 
   // Reactive Categories Signal (Built-in + Admin Custom Categories)
   public readonly categories = signal<MainCategoryInfo[]>(this.loadInitialCategories());
+
+  private loadInitialTemplates(): DigitalTemplate[] {
+    if (typeof window === 'undefined' || !window.sessionStorage) return [];
+    try {
+      const stored = sessionStorage.getItem(this.STORAGE_KEY_TEMPLATES_SESSION);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed;
+        }
+      }
+    } catch {
+      // Ignore session storage errors
+    }
+    return [];
+  }
+
+  private saveTemplatesToSession(templates: DigitalTemplate[]): void {
+    if (typeof window === 'undefined' || !window.sessionStorage) return;
+    try {
+      sessionStorage.setItem(this.STORAGE_KEY_TEMPLATES_SESSION, JSON.stringify(templates));
+    } catch {
+      // Safe fallback if quota is exceeded
+    }
+  }
 
   private loadInitialCategories(): MainCategoryInfo[] {
     const list: MainCategoryInfo[] = [...TEMPLATE_TAXONOMY];
@@ -104,6 +133,13 @@ export class TemplateService {
   public getTemplates(forceRefresh = false): Observable<DigitalTemplate[]> {
     if (!this.cachedTemplates$ || forceRefresh) {
       this.cachedTemplates$ = this.http.get<DigitalTemplate[]>(this.sharedUrl).pipe(
+        tap(data => {
+          if (data) {
+            this.templates.set(data);
+            this.isLoaded.set(true);
+            this.saveTemplatesToSession(data);
+          }
+        }),
         shareReplay(1)
       );
     }
@@ -120,19 +156,44 @@ export class TemplateService {
 
   public createTemplate(template: DigitalTemplate): Observable<DigitalTemplate> {
     return this.http.post<DigitalTemplate>(this.apiUrl, template).pipe(
-      tap(() => this.clearCache())
+      tap(created => {
+        if (created) {
+          this.templates.update(list => {
+            const updated = [...list, created];
+            this.saveTemplatesToSession(updated);
+            return updated;
+          });
+        }
+        this.clearCache();
+      })
     );
   }
 
   public updateTemplate(id: number, template: DigitalTemplate): Observable<DigitalTemplate> {
     return this.http.put<DigitalTemplate>(`${this.apiUrl}/${id}`, template).pipe(
-      tap(() => this.clearCache())
+      tap(updated => {
+        if (updated) {
+          this.templates.update(list => {
+            const newList = list.map(t => t.id === updated.id ? { ...t, ...updated } : t);
+            this.saveTemplatesToSession(newList);
+            return newList;
+          });
+        }
+        this.clearCache();
+      })
     );
   }
 
   public deleteTemplate(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
-      tap(() => this.clearCache())
+      tap(() => {
+        this.templates.update(list => {
+          const filtered = list.filter(t => t.id !== id);
+          this.saveTemplatesToSession(filtered);
+          return filtered;
+        });
+        this.clearCache();
+      })
     );
   }
 }

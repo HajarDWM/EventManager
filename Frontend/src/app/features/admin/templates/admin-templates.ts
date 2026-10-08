@@ -22,8 +22,8 @@ export class AdminTemplates implements OnInit {
   private readonly templateService = inject(TemplateService);
   private readonly cdr = inject(ChangeDetectorRef);
 
-  protected readonly templates = signal<DigitalTemplate[]>([]);
-  protected readonly isLoading = signal(false);
+  protected readonly templates = signal<DigitalTemplate[]>(this.templateService.templates());
+  protected readonly isLoading = signal(!this.templateService.isLoaded() && this.templateService.templates().length === 0);
   protected readonly successMessage = signal('');
   protected readonly errorMessage = signal('');
 
@@ -593,7 +593,14 @@ export class AdminTemplates implements OnInit {
   }
 
   protected loadTemplates(): void {
-    this.isLoading.set(true);
+    const cached = this.templateService.templates();
+    if (cached.length > 0) {
+      this.templates.set(cached);
+      this.isLoading.set(false);
+    } else {
+      this.isLoading.set(true);
+    }
+
     this.templateService.getTemplates().subscribe({
       next: (data) => {
         this.templates.set(data);
@@ -601,7 +608,9 @@ export class AdminTemplates implements OnInit {
       },
       error: (err) => {
         console.error(err);
-        this.errorMessage.set('Impossible de charger les modèles d\'invitation.');
+        if (this.templates().length === 0) {
+          this.errorMessage.set('Impossible de charger les modèles d\'invitation.');
+        }
         this.isLoading.set(false);
       }
     });

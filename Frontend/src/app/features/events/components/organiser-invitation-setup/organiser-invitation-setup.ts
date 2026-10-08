@@ -99,7 +99,7 @@ export class OrganiserInvitationSetup implements OnInit {
   private readonly sanitizer = inject(DomSanitizer);
 
   protected readonly event = signal<Event | null>(null);
-  protected readonly templates = signal<DigitalTemplate[]>([]);
+  protected readonly templates = signal<DigitalTemplate[]>(this.templateService.templates());
   protected readonly guests = signal<Guest[]>([]);
 
   protected readonly isSubscriptionExpired = computed(() => {
