@@ -275,52 +275,84 @@ export class AdminTemplates implements OnInit {
   protected isAnimationReplaying = signal<boolean>(false);
   protected cardAnimationClass = signal<string>('animate__fadeIn');
 
-  // Particle sets for live preview
-  protected readonly goldDustParticles = Array.from({ length: 22 }, (_, i) => ({
-    id: i,
-    left: ((i * 17) % 94) + 3 + '%',
-    top: ((i * 23) % 88) + 6 + '%',
-    size: ((i % 3) + 2.5) + 'px',
-    delay: ((i * 0.45) % 5) + 's',
-    duration: ((i % 3) * 2 + 8.5) + 's'
-  }));
+  // Particle sets for live preview:
+  // Mobile (<992px / mobile preview): Framed along lateral sides left <= 15% and right >= 85% to protect text.
+  // Desktop (>=992px / desktop preview): Spread across the entire canvas (3% - 97%).
+  protected readonly goldDustParticles = Array.from({ length: 22 }, (_, i) => {
+    const isLeft = i % 2 === 0;
+    const leftMobile = isLeft ? ((i * 7) % 13) + 2 : 85 + ((i * 7) % 13);
+    const leftDesktop = ((i * 19 + 7) % 94) + 3;
+    return {
+      id: i,
+      left: leftMobile + '%',
+      leftDesktop: leftDesktop + '%',
+      top: ((i * 23) % 88) + 6 + '%',
+      size: ((i % 3) + 2.5) + 'px',
+      delay: ((i * 0.45) % 5) + 's',
+      duration: ((i % 3) * 2 + 8.5) + 's'
+    };
+  });
 
-  protected readonly rosePetals = Array.from({ length: 16 }, (_, i) => ({
-    id: i,
-    left: ((i * 19) % 92) + 4 + '%',
-    delay: ((i * 0.6) % 6) + 's',
-    duration: ((i % 4) * 2.5 + 12) + 's',
-    size: ((i % 4) * 1.5 + 7) + 'px',
-    rotation: ((i * 47) % 360) + 'deg'
-  }));
+  protected readonly rosePetals = Array.from({ length: 16 }, (_, i) => {
+    const isLeft = i % 2 === 0;
+    const leftMobile = isLeft ? ((i * 8) % 14) + 2 : 84 + ((i * 8) % 14);
+    const leftDesktop = ((i * 23 + 5) % 92) + 4;
+    return {
+      id: i,
+      left: leftMobile + '%',
+      leftDesktop: leftDesktop + '%',
+      delay: ((i * 0.6) % 6) + 's',
+      duration: ((i % 4) * 2.5 + 12) + 's',
+      size: ((i % 4) * 1.5 + 7) + 'px',
+      rotation: ((i * 47) % 360) + 'deg'
+    };
+  });
 
-  protected readonly confettiPieces = Array.from({ length: 26 }, (_, i) => ({
-    id: i,
-    left: ((i * 15) % 94) + 3 + '%',
-    delay: ((i * 0.4) % 5) + 's',
-    duration: ((i % 3) * 2 + 9) + 's',
-    color: ['#ffd700', '#f43f5e', '#3b82f6', '#10b981', '#a855f7', '#fbbf24'][i % 6],
-    width: ((i % 2) === 0 ? 4 : 6) + 'px',
-    height: ((i % 2) === 0 ? 6 : 4) + 'px'
-  }));
+  protected readonly confettiPieces = Array.from({ length: 26 }, (_, i) => {
+    const isLeft = i % 2 === 0;
+    const leftMobile = isLeft ? ((i * 6) % 14) + 2 : 84 + ((i * 6) % 14);
+    const leftDesktop = ((i * 17 + 9) % 94) + 3;
+    return {
+      id: i,
+      left: leftMobile + '%',
+      leftDesktop: leftDesktop + '%',
+      delay: ((i * 0.4) % 5) + 's',
+      duration: ((i % 3) * 2 + 9) + 's',
+      color: ['#ffd700', '#f43f5e', '#3b82f6', '#10b981', '#a855f7', '#fbbf24'][i % 6],
+      width: ((i % 2) === 0 ? 4 : 6) + 'px',
+      height: ((i % 2) === 0 ? 6 : 4) + 'px'
+    };
+  });
 
-  protected readonly sparklesStars = Array.from({ length: 16 }, (_, i) => ({
-    id: i,
-    left: ((i * 21) % 90) + 5 + '%',
-    top: ((i * 19) % 85) + 8 + '%',
-    delay: ((i * 0.5) % 4.5) + 's',
-    duration: ((i % 3) * 1.5 + 5.5) + 's',
-    size: ((i % 3) + 12) + 'px'
-  }));
+  protected readonly sparklesStars = Array.from({ length: 16 }, (_, i) => {
+    const isLeft = i % 2 === 0;
+    const leftMobile = isLeft ? ((i * 7) % 14) + 2 : 84 + ((i * 7) % 14);
+    const leftDesktop = ((i * 21 + 11) % 92) + 4;
+    return {
+      id: i,
+      left: leftMobile + '%',
+      leftDesktop: leftDesktop + '%',
+      top: ((i * 19) % 85) + 8 + '%',
+      delay: ((i * 0.5) % 4.5) + 's',
+      duration: ((i % 3) * 1.5 + 5.5) + 's',
+      size: ((i % 3) + 12) + 'px'
+    };
+  });
 
-  protected readonly bokehBubbles = Array.from({ length: 8 }, (_, i) => ({
-    id: i,
-    left: ((i * 27) % 80) + 10 + '%',
-    top: ((i * 31) % 75) + 10 + '%',
-    size: (50 + (i % 4) * 20) + 'px',
-    delay: (i * 0.6) + 's',
-    duration: (6 + (i % 3) * 2) + 's'
-  }));
+  protected readonly bokehBubbles = Array.from({ length: 8 }, (_, i) => {
+    const isLeft = i % 2 === 0;
+    const leftMobile = isLeft ? ((i * 6) % 12) + 1 : 87 + ((i * 6) % 12);
+    const leftDesktop = ((i * 29 + 13) % 90) + 5;
+    return {
+      id: i,
+      left: leftMobile + '%',
+      leftDesktop: leftDesktop + '%',
+      top: ((i * 31) % 75) + 10 + '%',
+      size: (50 + (i % 4) * 20) + 'px',
+      delay: (i * 0.6) + 's',
+      duration: (6 + (i % 3) * 2) + 's'
+    };
+  });
 
   protected isEntranceActive(): boolean {
     const isInteractive = this.openingAnimationField === 'envelope-wax' || 

@@ -1098,7 +1098,8 @@
             <ng-container *ngIf="visualParticlesField === 'gold-dust'">
               <div *ngFor="let p of goldDustParticles"
                    class="particle-gold-dust"
-                   [style.left]="p.left"
+                   [style.--p-left-mobile]="p.left"
+                   [style.--p-left-desktop]="p.leftDesktop"
                    [style.top]="p.top"
                    [style.width]="p.size"
                    [style.height]="p.size"
@@ -1110,7 +1111,8 @@
             <ng-container *ngIf="visualParticlesField === 'rose-petals'">
               <div *ngFor="let p of rosePetals"
                    class="particle-rose-petal"
-                   [style.left]="p.left"
+                   [style.--p-left-mobile]="p.left"
+                   [style.--p-left-desktop]="p.leftDesktop"
                    [style.width]="p.size"
                    [style.height]="p.size"
                    [style.animationDelay]="p.delay"
@@ -1122,7 +1124,8 @@
             <ng-container *ngIf="visualParticlesField === 'confetti'">
               <div *ngFor="let p of confettiPieces"
                    class="particle-confetti-item"
-                   [style.left]="p.left"
+                   [style.--p-left-mobile]="p.left"
+                   [style.--p-left-desktop]="p.leftDesktop"
                    [style.width]="p.width"
                    [style.height]="p.height"
                    [style.backgroundColor]="p.color"
@@ -1134,7 +1137,8 @@
             <ng-container *ngIf="visualParticlesField === 'sparkles-stars'">
               <div *ngFor="let p of sparklesStars"
                    class="particle-sparkle-star"
-                   [style.left]="p.left"
+                   [style.--p-left-mobile]="p.left"
+                   [style.--p-left-desktop]="p.leftDesktop"
                    [style.top]="p.top"
                    [style.fontSize]="p.size"
                    [style.animationDelay]="p.delay"

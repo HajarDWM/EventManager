@@ -1838,6 +1838,28 @@
   z-index: 1 !important;
 }
 
+// Particle Positioning (Mobile Preview: Side margins / Desktop Preview: Full canvas)
+.particle-gold-dust,
+.particle-rose-petal,
+.particle-confetti-item,
+.particle-sparkle-star {
+  left: var(--p-left-mobile, 50%);
+}
+
+.preview-device-is-desktop .particle-gold-dust,
+.preview-device-is-desktop .particle-rose-petal,
+.preview-device-is-desktop .particle-confetti-item,
+.preview-device-is-desktop .particle-sparkle-star {
+  left: var(--p-left-desktop, var(--p-left-mobile, 50%)) !important;
+}
+
+.preview-device-is-mobile .particle-gold-dust,
+.preview-device-is-mobile .particle-rose-petal,
+.preview-device-is-mobile .particle-confetti-item,
+.preview-device-is-mobile .particle-sparkle-star {
+  left: var(--p-left-mobile, 50%) !important;
+}
+
 // Gold Dust
 .particle-gold-dust {
   position: absolute;

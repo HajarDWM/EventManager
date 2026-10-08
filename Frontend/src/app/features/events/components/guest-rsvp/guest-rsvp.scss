@@ -2435,6 +2435,18 @@ textarea.luxury-form-control::placeholder {
   z-index: 1;
 }
 
+// Visual Particles Responsive Positioning (Mobile: Sides only to protect text / Desktop: Full canvas)
+.particle-gold-dust,
+.particle-rose-petal,
+.particle-confetti-item,
+.particle-sparkle-star {
+  left: var(--p-left-mobile, 50%);
+
+  @media (min-width: 992px) {
+    left: var(--p-left-desktop, var(--p-left-mobile, 50%)) !important;
+  }
+}
+
 // 1. Gold Dust (Poussière d'Or Scintillante)
 .particle-gold-dust {
   position: absolute;

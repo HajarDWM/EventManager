@@ -163,52 +163,84 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
   // =========================================================================
   // DYNAMIC VISUAL PARTICLES & SPECIAL EFFECTS (Configured in Admin Template)
   // =========================================================================
-  public readonly goldDustParticles = Array.from({ length: 48 }, (_, i) => ({
-    id: i,
-    left: ((i * 19 + 7) % 96) + 2 + '%',
-    top: ((i * 23 + 11) % 94) + 3 + '%',
-    size: ((i % 4) + 2.5) + 'px',
-    delay: ((i * 0.45) % 6) + 's',
-    duration: ((i % 4) * 1.8 + 8.5) + 's'
-  }));
+  // Mobile (<992px): Particles are positioned strictly on left/right margins (<= 16% and >= 84%) to keep text readable.
+  // Desktop (>=992px): Particles are spread across the entire background canvas (3% - 97%).
+  public readonly goldDustParticles = Array.from({ length: 48 }, (_, i) => {
+    const isLeft = i % 2 === 0;
+    const leftMobile = isLeft ? ((i * 7) % 14) + 2 : 84 + ((i * 7) % 14);
+    const leftDesktop = ((i * 19 + 7) % 94) + 3;
+    return {
+      id: i,
+      left: leftMobile + '%',
+      leftDesktop: leftDesktop + '%',
+      top: ((i * 19 + 5) % 92) + 4 + '%',
+      size: ((i % 4) + 2.5) + 'px',
+      delay: ((i * 0.45) % 6) + 's',
+      duration: ((i % 4) * 1.8 + 8.5) + 's'
+    };
+  });
 
-  public readonly rosePetals = Array.from({ length: 28 }, (_, i) => ({
-    id: i,
-    left: ((i * 17 + 5) % 94) + 3 + '%',
-    top: ((i * 29 + 13) % 92) + 4 + '%',
-    size: ((i % 3) * 2 + 7.5) + 'px',
-    delay: ((i * 0.6) % 8) + 's',
-    duration: ((i % 4) * 2.5 + 12) + 's',
-    rotation: ((i * 47) % 360) + 'deg'
-  }));
+  public readonly rosePetals = Array.from({ length: 28 }, (_, i) => {
+    const isLeft = i % 2 === 0;
+    const leftMobile = isLeft ? ((i * 8) % 15) + 2 : 83 + ((i * 8) % 15);
+    const leftDesktop = ((i * 23 + 5) % 92) + 4;
+    return {
+      id: i,
+      left: leftMobile + '%',
+      leftDesktop: leftDesktop + '%',
+      top: ((i * 23 + 7) % 90) + 5 + '%',
+      size: ((i % 3) * 2 + 7.5) + 'px',
+      delay: ((i * 0.6) % 8) + 's',
+      duration: ((i % 4) * 2.5 + 12) + 's',
+      rotation: ((i * 47) % 360) + 'deg'
+    };
+  });
 
-  public readonly confettiPieces = Array.from({ length: 40 }, (_, i) => ({
-    id: i,
-    left: ((i * 13 + 3) % 96) + 2 + '%',
-    delay: ((i * 0.4) % 6) + 's',
-    duration: ((i % 4) * 2 + 9) + 's',
-    color: ['#ffd700', '#f43f5e', '#3b82f6', '#10b981', '#a855f7', '#fbbf24', '#ec4899'][i % 7],
-    width: ((i % 2) === 0 ? 4.5 : 6.5) + 'px',
-    height: ((i % 2) === 0 ? 6.5 : 4.5) + 'px'
-  }));
+  public readonly confettiPieces = Array.from({ length: 40 }, (_, i) => {
+    const isLeft = i % 2 === 0;
+    const leftMobile = isLeft ? ((i * 6) % 15) + 2 : 83 + ((i * 6) % 15);
+    const leftDesktop = ((i * 17 + 9) % 94) + 3;
+    return {
+      id: i,
+      left: leftMobile + '%',
+      leftDesktop: leftDesktop + '%',
+      delay: ((i * 0.4) % 6) + 's',
+      duration: ((i % 4) * 2 + 9) + 's',
+      color: ['#ffd700', '#f43f5e', '#3b82f6', '#10b981', '#a855f7', '#fbbf24', '#ec4899'][i % 7],
+      width: ((i % 2) === 0 ? 4.5 : 6.5) + 'px',
+      height: ((i % 2) === 0 ? 6.5 : 4.5) + 'px'
+    };
+  });
 
-  public readonly sparklesStars = Array.from({ length: 32 }, (_, i) => ({
-    id: i,
-    left: ((i * 23 + 9) % 92) + 4 + '%',
-    top: ((i * 17 + 13) % 90) + 5 + '%',
-    delay: ((i * 0.5) % 5) + 's',
-    duration: ((i % 3) * 1.5 + 5.5) + 's',
-    size: ((i % 3) + 13) + 'px'
-  }));
+  public readonly sparklesStars = Array.from({ length: 32 }, (_, i) => {
+    const isLeft = i % 2 === 0;
+    const leftMobile = isLeft ? ((i * 7) % 15) + 2 : 83 + ((i * 7) % 15);
+    const leftDesktop = ((i * 21 + 11) % 92) + 4;
+    return {
+      id: i,
+      left: leftMobile + '%',
+      leftDesktop: leftDesktop + '%',
+      top: ((i * 19 + 9) % 88) + 6 + '%',
+      delay: ((i * 0.5) % 5) + 's',
+      duration: ((i % 3) * 1.5 + 5.5) + 's',
+      size: ((i % 3) + 11) + 'px'
+    };
+  });
 
-  public readonly bokehBubbles = Array.from({ length: 14 }, (_, i) => ({
-    id: i,
-    left: ((i * 29 + 11) % 86) + 7 + '%',
-    top: ((i * 31 + 7) % 84) + 8 + '%',
-    size: (55 + (i % 5) * 22) + 'px',
-    delay: (i * 0.5) + 's',
-    duration: (6 + (i % 3) * 2.5) + 's'
-  }));
+  public readonly bokehBubbles = Array.from({ length: 14 }, (_, i) => {
+    const isLeft = i % 2 === 0;
+    const leftMobile = isLeft ? ((i * 6) % 13) + 1 : 86 + ((i * 6) % 13);
+    const leftDesktop = ((i * 29 + 13) % 90) + 5;
+    return {
+      id: i,
+      left: leftMobile + '%',
+      leftDesktop: leftDesktop + '%',
+      top: ((i * 27 + 5) % 86) + 7 + '%',
+      size: (45 + (i % 4) * 18) + 'px',
+      delay: (i * 0.5) + 's',
+      duration: (6 + (i % 3) * 2.5) + 's'
+    };
+  });
 
   public getVisualParticles(): string {
     const vp = this.guest()?.visualParticles;
