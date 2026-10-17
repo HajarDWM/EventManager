@@ -89,8 +89,9 @@ services:
       - "9513:80"
     environment:
       PMA_HOST: event-db
-      PMA_USER: ${DB_USER:-event_user}
-      PMA_PASSWORD: ${DB_PASSWORD:-SecretDbPass2026!}
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 0
+      UPLOAD_LIMIT: 64M
     depends_on:
       - event-db
     networks:
