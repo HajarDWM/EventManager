@@ -1,0 +1,26 @@
+# Multi-stage production build for Spring Boot Backend on Remote Server
+FROM maven:3.9-eclipse-temurin-21-alpine AS builder
+
+WORKDIR /build
+
+# Copy Maven descriptor & sources
+COPY pom.xml ./
+COPY src ./src
+
+# Compile and package JAR
+RUN mvn clean package -DskipTests -B
+
+# Production JRE 21 lightweight runtime
+FROM eclipse-temurin:21-jre-alpine
+
+WORKDIR /app
+
+# Create upload media directories
+RUN mkdir -p /app/uploads/menu /app/uploads/templates
+
+# Copy packaged jar from builder stage
+COPY --from=builder /build/target/EventManager-0.0.1-SNAPSHOT.jar app.jar
+
+EXPOSE 8080
+
+ENTRYPOINT ["java", "-Dfile.encoding=UTF-8", "-Dspring.profiles.active=prod", "-jar", "app.jar"]

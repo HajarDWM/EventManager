@@ -1,0 +1,21 @@
+# Environment & Secrets
+.env
+.env.*
+*.env
+server-config.json
+deploy.config.json
+certbot/
+
+# Build artifacts
+**/target/
+**/dist/
+**/node_modules/
+**/.angular/
+
+# IDE & OS
+.idea/
+.vscode/
+out/
+*.log
+Thumbs.db
+[Dd]esktop.ini

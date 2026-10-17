@@ -1,4 +1,4 @@
-# PowerShell script to reset EventManager showcase demo data
+# PowerShell script to reset EventManager showcase demo data with full UTF-8 encoding support
 Write-Host "===================================================" -ForegroundColor Cyan
 Write-Host "  EventManager - Reinitialisation des Donnees Demo " -ForegroundColor Cyan
 Write-Host "===================================================" -ForegroundColor Cyan
@@ -9,13 +9,15 @@ if (-not (Test-Path $sqlFile)) {
     exit 1
 }
 
-Write-Host "Application du jeu de donnees V31 dans MySQL..." -ForegroundColor Yellow
+Write-Host "Copie du fichier SQL vers le conteneur MySQL..." -ForegroundColor Yellow
+docker cp $sqlFile event-mysql-db:/tmp/v31.sql
 
-$content = Get-Content $sqlFile -Raw
-$content | docker exec -i event-mysql-db mysql -u root -prootpassword event_manager_db
+Write-Host "Application du jeu de donnees V31 avec encodage UTF-8..." -ForegroundColor Yellow
+docker exec -i event-mysql-db mysql -u root -prootpassword --default-character-set=utf8mb4 event_manager_db -e "source /tmp/v31.sql;"
 
 if ($LASTEXITCODE -eq 0) {
-    Write-Host "[SUCCES] Les donnees de demonstration ont ete remises a neuf !" -ForegroundColor Green
+    Write-Host ""
+    Write-Host "[SUCCES] Les donnees de demonstration ont ete remises a neuf avec accents parfaits !" -ForegroundColor Green
     Write-Host "Identifiants Traiteur : demo@eventmanager.com / demo12345" -ForegroundColor White
     Write-Host "Lien d'acces          : http://localhost" -ForegroundColor White
 } else {
