@@ -4,6 +4,7 @@
 *.env
 server-config.json
 deploy.config.json
+PASSWORDS.md
 certbot/
 
 # Build artifacts
