@@ -17,5 +17,7 @@ certbot/
 .vscode/
 out/
 *.log
+*.tar.gz
+deploy_bundle.tar.gz
 Thumbs.db
 [Dd]esktop.ini
