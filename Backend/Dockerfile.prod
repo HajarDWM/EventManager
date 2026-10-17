@@ -3,6 +3,8 @@ FROM maven:3.9-eclipse-temurin-21-alpine AS builder
 
 WORKDIR /build
 
+ENV MAVEN_OPTS="-Djava.net.preferIPv4Stack=true -Xmx1024m"
+
 # Copy Maven descriptor & sources
 COPY pom.xml ./
 COPY src ./src
