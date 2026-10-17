@@ -173,6 +173,67 @@
       .detail-card-bottom-info {
         font-size: 0.7rem !important;
       }
+
+      .location-card-action-pill {
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        width: 100% !important;
+        margin-top: 3px !important;
+        margin-bottom: 2px !important;
+
+        .location-action-badge {
+          display: inline-flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          gap: 3px !important;
+          white-space: nowrap !important;
+          width: auto !important;
+          max-width: fit-content !important;
+          padding: 2px 7px !important;
+          border-radius: 999px !important;
+          font-size: 0.56rem !important;
+          font-weight: 700 !important;
+          line-height: 1 !important;
+          letter-spacing: 0.2px !important;
+          border: 1px solid !important;
+          transition: all 0.25s ease !important;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+
+          i {
+            font-size: 0.48rem !important;
+            line-height: 1 !important;
+          }
+
+          span {
+            white-space: nowrap !important;
+            font-size: 0.56rem !important;
+            line-height: 1 !important;
+          }
+        }
+      }
+    }
+
+    .interactive-location-card {
+      cursor: pointer !important;
+      user-select: none !important;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+
+      &:hover {
+        transform: translateY(-2px) scale(1.015) !important;
+        background: rgba(255, 255, 255, 0.1) !important;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16) !important;
+        border-color: var(--primary-color, #d4af37) !important;
+
+        .location-action-badge {
+          filter: brightness(1.2) !important;
+          transform: scale(1.04) !important;
+        }
+      }
+
+      &:active {
+        transform: translateY(0) scale(0.99) !important;
+      }
     }
 
     .page1-actions-container {
@@ -4409,6 +4470,45 @@ textarea.luxury-form-control::placeholder {
         font-size: 0.92rem;
       }
     }
+
+    .location-card-action-pill {
+      display: flex !important;
+      justify-content: center !important;
+      align-items: center !important;
+      width: 100% !important;
+      margin-top: 3px !important;
+      margin-bottom: 2px !important;
+
+      .location-action-badge {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 3px !important;
+        white-space: nowrap !important;
+        width: auto !important;
+        max-width: fit-content !important;
+        padding: 2px 7px !important;
+        border-radius: 999px !important;
+        font-size: 0.56rem !important;
+        font-weight: 700 !important;
+        line-height: 1 !important;
+        letter-spacing: 0.2px !important;
+        border: 1px solid !important;
+        transition: all 0.25s ease !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+
+        i {
+          font-size: 0.48rem !important;
+          line-height: 1 !important;
+        }
+
+        span {
+          white-space: nowrap !important;
+          font-size: 0.56rem !important;
+          line-height: 1 !important;
+        }
+      }
+    }
   }
 
   .details-gps-link {
@@ -7363,4 +7463,164 @@ textarea.luxury-form-control::placeholder {
     filter: blur(0);
   }
 }
+
+/* ==========================================================================
+   MODAL : PLAN D'ACCÈS, ITINÉRAIRE, PARKING & AGENDA
+   ========================================================================== */
+.location-access-modal-backdrop {
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+}
+
+.location-access-modal-content {
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25) !important;
+
+  .minimal-action-btn {
+    background: #ffffff !important;
+    border: 1px solid rgba(15, 23, 42, 0.12) !important;
+    cursor: pointer !important;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    user-select: none !important;
+
+    .btn-mini-icon {
+      width: 32px !important;
+      height: 32px !important;
+      min-width: 32px !important;
+      font-size: 0.82rem !important;
+      transition: transform 0.2s ease !important;
+    }
+
+    &:hover {
+      transform: translateY(-1.5px) !important;
+      border-color: var(--primary-color, #d4af37) !important;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08) !important;
+
+      .btn-mini-icon {
+        transform: scale(1.08) !important;
+      }
+    }
+
+    &:active {
+      transform: translateY(0) !important;
+    }
+  }
+}
+
+/* ==========================================================================
+   COMPACT ACTION BADGES (Date: + Agenda & Location: Plan & Accès)
+   ========================================================================== */
+.location-card-action-pill {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  width: 100% !important;
+  margin: 3px auto 1px !important;
+
+  .location-action-badge {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 4px !important;
+    white-space: nowrap !important;
+    width: auto !important;
+    max-width: fit-content !important;
+    font-size: 0.58rem !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    padding: 2.5px 7px !important;
+    border-radius: 999px !important;
+    border: 1px solid !important;
+    letter-spacing: 0.2px !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
+    transition: all 0.25s ease !important;
+
+    i {
+      font-size: 0.5rem !important;
+      line-height: 1 !important;
+      display: inline-block !important;
+    }
+
+    span {
+      white-space: nowrap !important;
+      font-size: 0.58rem !important;
+      line-height: 1 !important;
+      display: inline-block !important;
+    }
+  }
+}
+
+/* ==========================================================================
+   BANQUET / MENU INDICATIF - CARTE COMPLÈTE SUR UNE SEULE PAGE
+   ========================================================================== */
+.banquet-full-menu-wrapper {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+
+  @media (min-width: 768px) {
+    max-width: 600px;
+  }
+}
+
+.banquet-full-menu-stack {
+  display: flex !important;
+  flex-direction: column !important;
+  width: 100% !important;
+  max-width: 480px !important;
+  max-height: 290px !important;
+  overflow-y: scroll !important;
+  overflow-x: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+  padding: 4px 18px 4px 4px !important;
+  box-sizing: border-box !important;
+
+  /* On masque la barre brute du navigateur afin de laisser la belle barre dorée permanente */
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+
+  &::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+  }
+
+  @media (min-width: 768px) {
+    max-width: 600px !important;
+    max-height: 350px !important;
+    padding-right: 20px !important;
+  }
+}
+
+.banquet-course-section {
+  width: 100%;
+  margin-bottom: 4px;
+
+  .banquet-section-header {
+    margin-bottom: 5px;
+
+    .banquet-section-title {
+      font-size: 0.62rem !important;
+      font-weight: 600 !important;
+      letter-spacing: 1.2px !important;
+      text-transform: uppercase !important;
+      line-height: 1.2 !important;
+      white-space: nowrap !important;
+      user-select: none !important;
+      opacity: 0.82 !important;
+    }
+  }
+
+  .banquet-dishes-grid {
+    width: 100%;
+  }
+
+  @media (min-width: 768px) {
+    .banquet-dishes-grid {
+      display: grid !important;
+      grid-template-columns: repeat(2, 1fr) !important;
+      gap: 8px !important;
+    }
+  }
+}
+
 

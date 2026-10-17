@@ -518,8 +518,13 @@
           <!-- Artistic Dynamic Date, Time & Venue Details (Symmetrical Twin Cards) -->
           <div class="artistic-invitation-details mb-3 stage-item stage-details">
             
-            <!-- 1. CARD DATE & HEURE -->
-            <div class="artistic-detail-card artistic-date-block text-center d-flex flex-column justify-content-between align-items-center">
+            <!-- 1. CARD DATE & HEURE (Avec bouton Google Calendar) -->
+            <div class="artistic-detail-card artistic-date-block text-center d-flex flex-column justify-content-between align-items-center interactive-location-card"
+              role="button"
+              tabindex="0"
+              (click)="handleCalendarAction($event)"
+              (keydown.enter)="handleCalendarAction($event)"
+              title="Ajouter cet événement à Google Calendar">
               <div class="w-100 d-flex flex-column align-items-center">
                 <!-- Circular Icon Badge (Calendar) -->
                 <div class="detail-card-icon-circle mb-1.5 mx-auto"
@@ -551,8 +556,21 @@
                 </div>
               </div>
 
+              <!-- Interactive Action Pill : Google Calendar -->
+              <div class="location-card-action-pill">
+                <span class="location-action-badge d-inline-flex align-items-center justify-content-center gap-1 rounded-pill px-2 py-0.5 border text-nowrap"
+                  [style.borderColor]="getPrimaryColor() ? (getPrimaryColor() + '45') : 'rgba(212, 175, 55, 0.45)'"
+                  [style.backgroundColor]="getPrimaryColor() ? (getPrimaryColor() + '18') : 'rgba(212, 175, 55, 0.15)'"
+                  [style.color]="getPrimaryColor()"
+                  [style.fontFamily]="getSecondaryFont()">
+                  <i class="far fa-calendar-plus"></i>
+                  <span>+ Agenda</span>
+                  <i class="fa fa-chevron-right"></i>
+                </span>
+              </div>
+
               <!-- Bottom Extra Info: Heure -->
-              <div class="detail-card-bottom-info mt-1.5"
+              <div class="detail-card-bottom-info mt-1"
                 [style.fontFamily]="getSecondaryFont()"
                 [style.color]="getPrimaryColor()">
                 <i class="far fa-clock me-1" [style.color]="getPrimaryColor()"></i>
@@ -560,11 +578,16 @@
               </div>
             </div>
 
-            <!-- 2. CARD LIEU DE LA RÉCEPTION -->
-            <div class="artistic-detail-card artistic-location-block text-center d-flex flex-column justify-content-between align-items-center">
+            <!-- 2. CARD LIEU DE LA RÉCEPTION (Cliquable avec Popup Itinéraire, Parking & Google Calendar) -->
+            <div class="artistic-detail-card artistic-location-block text-center d-flex flex-column justify-content-between align-items-center interactive-location-card"
+              role="button"
+              tabindex="0"
+              (click)="openLocationModal()"
+              (keydown.enter)="openLocationModal()"
+              title="Cliquez pour afficher le plan, l'itinéraire, le parking et l'agenda">
               <div class="w-100 d-flex flex-column align-items-center">
                 <!-- Circular Icon Badge (Map Marker) -->
-                <div class="detail-card-icon-circle mb-2 mx-auto"
+                <div class="detail-card-icon-circle mb-1.5 mx-auto"
                   [style.color]="getPrimaryColor()"
                   [style.borderColor]="getPrimaryColor()"
                   [style.backgroundColor]="getPrimaryColor() + '15'">
@@ -587,8 +610,21 @@
                 </div>
               </div>
 
+              <!-- Interactive Action Pill : Indique clairement que c'est un bouton d'action -->
+              <div class="location-card-action-pill">
+                <span class="location-action-badge d-inline-flex align-items-center justify-content-center gap-1 rounded-pill px-2 py-0.5 border text-nowrap"
+                  [style.borderColor]="getPrimaryColor() ? (getPrimaryColor() + '45') : 'rgba(212, 175, 55, 0.45)'"
+                  [style.backgroundColor]="getPrimaryColor() ? (getPrimaryColor() + '18') : 'rgba(212, 175, 55, 0.15)'"
+                  [style.color]="getPrimaryColor()"
+                  [style.fontFamily]="getSecondaryFont()">
+                  <i class="fa fa-location-arrow"></i>
+                  <span>Plan & Accès</span>
+                  <i class="fa fa-chevron-right"></i>
+                </span>
+              </div>
+
               <!-- Bottom Extra Info: Ticket Price if paid event, or subtle decorative dot/indicator -->
-              <div class="detail-card-bottom-info mt-2" *ngIf="guest()?.isPaidEvent">
+              <div class="detail-card-bottom-info mt-1" *ngIf="guest()?.isPaidEvent">
                 <span class="fs-xxs fw-medium"
                   [style.fontFamily]="getSecondaryFont()"
                   [style.color]="getSecondaryFontColor()">
@@ -675,59 +711,59 @@
               </button>
             </div>
 
-            <!-- Stepper Formule PLATS_FIXES (4 Onglets : Entrées, Plats, Desserts, Boissons) -->
+            <!-- Stepper Formule PLATS_FIXES STANDARD (4 Onglets : Entrées, Plats, Desserts, Boissons) -->
             <div class="stepper-interactive-tabs d-flex justify-content-center align-items-center flex-nowrap"
-              *ngIf="isPlatedMode() && (currentRsvpStep() <= 3 || isDiscoveryMode())">
+              *ngIf="isPlatedMode() && !isIndicativeMenu() && (currentRsvpStep() <= 3 || isDiscoveryMode())">
               <!-- 1. Entrées -->
-              <button type="button" class="btn btn-sm stepper-tab-btn rounded-pill fw-bold shadow-2xs"
+              <button *ngIf="hasStartersCourse()" type="button" class="btn btn-sm stepper-tab-btn rounded-pill fw-bold shadow-2xs"
                 [class.active-tab]="currentRsvpStep() === 0"
-                [class.has-selection]="!isDiscoveryMode() && starterChoice"
-                [style.background]="getStepperTabBg(currentRsvpStep() === 0, !isDiscoveryMode() && !!starterChoice)"
+                [class.has-selection]="!isDiscoveryMode() && !isIndicativeMenu() && starterChoice"
+                [style.background]="getStepperTabBg(currentRsvpStep() === 0, !isDiscoveryMode() && !isIndicativeMenu() && !!starterChoice)"
                 [style.color]="getStepperTabTextColor(currentRsvpStep() === 0)"
-                [style.borderColor]="getStepperTabBorder(currentRsvpStep() === 0, !isDiscoveryMode() && !!starterChoice)"
+                [style.borderColor]="getStepperTabBorder(currentRsvpStep() === 0, !isDiscoveryMode() && !isIndicativeMenu() && !!starterChoice)"
                 (click)="goToStep(0)"
                 title="Aller directement aux Entrées">
-                <i class="fa fa-check text-success me-1 fs-3xs" *ngIf="!isDiscoveryMode() && starterChoice && currentRsvpStep() !== 0"></i>
-                <i class="fa fa-leaf me-1" *ngIf="!(!isDiscoveryMode() && starterChoice && currentRsvpStep() !== 0)"></i> Entrées
+                <i class="fa fa-check text-success me-1 fs-3xs" *ngIf="!isDiscoveryMode() && !isIndicativeMenu() && starterChoice && currentRsvpStep() !== 0"></i>
+                <i class="fa fa-leaf me-1" *ngIf="!(!isDiscoveryMode() && !isIndicativeMenu() && starterChoice && currentRsvpStep() !== 0)"></i> Entrées
               </button>
 
               <!-- 2. Plats -->
-              <button type="button" class="btn btn-sm stepper-tab-btn rounded-pill fw-bold shadow-2xs"
+              <button *ngIf="hasMainsCourse()" type="button" class="btn btn-sm stepper-tab-btn rounded-pill fw-bold shadow-2xs"
                 [class.active-tab]="currentRsvpStep() === 1"
-                [class.has-selection]="!isDiscoveryMode() && mealChoice"
-                [style.background]="getStepperTabBg(currentRsvpStep() === 1, !isDiscoveryMode() && !!mealChoice)"
+                [class.has-selection]="!isDiscoveryMode() && !isIndicativeMenu() && mealChoice"
+                [style.background]="getStepperTabBg(currentRsvpStep() === 1, !isDiscoveryMode() && !isIndicativeMenu() && !!mealChoice)"
                 [style.color]="getStepperTabTextColor(currentRsvpStep() === 1)"
-                [style.borderColor]="getStepperTabBorder(currentRsvpStep() === 1, !isDiscoveryMode() && !!mealChoice)"
+                [style.borderColor]="getStepperTabBorder(currentRsvpStep() === 1, !isDiscoveryMode() && !isIndicativeMenu() && !!mealChoice)"
                 (click)="goToStep(1)"
                 title="Aller directement aux Plats">
-                <i class="fa fa-check text-success me-1 fs-3xs" *ngIf="!isDiscoveryMode() && mealChoice && currentRsvpStep() !== 1"></i>
-                <i class="fa fa-drumstick-bite me-1" *ngIf="!(!isDiscoveryMode() && mealChoice && currentRsvpStep() !== 1)"></i> Plats
+                <i class="fa fa-check text-success me-1 fs-3xs" *ngIf="!isDiscoveryMode() && !isIndicativeMenu() && mealChoice && currentRsvpStep() !== 1"></i>
+                <i class="fa fa-drumstick-bite me-1" *ngIf="!(!isDiscoveryMode() && !isIndicativeMenu() && mealChoice && currentRsvpStep() !== 1)"></i> Plats
               </button>
 
               <!-- 3. Desserts -->
-              <button type="button" class="btn btn-sm stepper-tab-btn rounded-pill fw-bold shadow-2xs"
+              <button *ngIf="hasDessertsCourse()" type="button" class="btn btn-sm stepper-tab-btn rounded-pill fw-bold shadow-2xs"
                 [class.active-tab]="currentRsvpStep() === 2"
-                [class.has-selection]="!isDiscoveryMode() && dessertChoice"
-                [style.background]="getStepperTabBg(currentRsvpStep() === 2, !isDiscoveryMode() && !!dessertChoice)"
+                [class.has-selection]="!isDiscoveryMode() && !isIndicativeMenu() && dessertChoice"
+                [style.background]="getStepperTabBg(currentRsvpStep() === 2, !isDiscoveryMode() && !isIndicativeMenu() && !!dessertChoice)"
                 [style.color]="getStepperTabTextColor(currentRsvpStep() === 2)"
-                [style.borderColor]="getStepperTabBorder(currentRsvpStep() === 2, !isDiscoveryMode() && !!dessertChoice)"
+                [style.borderColor]="getStepperTabBorder(currentRsvpStep() === 2, !isDiscoveryMode() && !isIndicativeMenu() && !!dessertChoice)"
                 (click)="goToStep(2)"
                 title="Aller directement aux Desserts">
-                <i class="fa fa-check text-success me-1 fs-3xs" *ngIf="!isDiscoveryMode() && dessertChoice && currentRsvpStep() !== 2"></i>
-                <i class="fa fa-birthday-cake me-1" *ngIf="!(!isDiscoveryMode() && dessertChoice && currentRsvpStep() !== 2)"></i> Desserts
+                <i class="fa fa-check text-success me-1 fs-3xs" *ngIf="!isDiscoveryMode() && !isIndicativeMenu() && dessertChoice && currentRsvpStep() !== 2"></i>
+                <i class="fa fa-birthday-cake me-1" *ngIf="!(!isDiscoveryMode() && !isIndicativeMenu() && dessertChoice && currentRsvpStep() !== 2)"></i> Desserts
               </button>
 
               <!-- 4. Boissons -->
-              <button type="button" class="btn btn-sm stepper-tab-btn rounded-pill fw-bold shadow-2xs"
+              <button *ngIf="hasBeveragesCourse()" type="button" class="btn btn-sm stepper-tab-btn rounded-pill fw-bold shadow-2xs"
                 [class.active-tab]="currentRsvpStep() === 3"
-                [class.has-selection]="!isDiscoveryMode() && beverageChoice"
-                [style.background]="getStepperTabBg(currentRsvpStep() === 3, !isDiscoveryMode() && !!beverageChoice)"
+                [class.has-selection]="!isDiscoveryMode() && !isIndicativeMenu() && beverageChoice"
+                [style.background]="getStepperTabBg(currentRsvpStep() === 3, !isDiscoveryMode() && !isIndicativeMenu() && !!beverageChoice)"
                 [style.color]="getStepperTabTextColor(currentRsvpStep() === 3)"
-                [style.borderColor]="getStepperTabBorder(currentRsvpStep() === 3, !isDiscoveryMode() && !!beverageChoice)"
+                [style.borderColor]="getStepperTabBorder(currentRsvpStep() === 3, !isDiscoveryMode() && !isIndicativeMenu() && !!beverageChoice)"
                 (click)="goToStep(3)"
                 title="Aller directement aux Boissons">
-                <i class="fa fa-check text-success me-1 fs-3xs" *ngIf="!isDiscoveryMode() && beverageChoice && currentRsvpStep() !== 3"></i>
-                <i class="fa fa-glass-cheers me-1" *ngIf="!(!isDiscoveryMode() && beverageChoice && currentRsvpStep() !== 3)"></i> Boissons
+                <i class="fa fa-check text-success me-1 fs-3xs" *ngIf="!isDiscoveryMode() && !isIndicativeMenu() && beverageChoice && currentRsvpStep() !== 3"></i>
+                <i class="fa fa-glass-cheers me-1" *ngIf="!(!isDiscoveryMode() && !isIndicativeMenu() && beverageChoice && currentRsvpStep() !== 3)"></i> Boissons
               </button>
             </div>
           </ng-template>
@@ -897,8 +933,210 @@
                 </div>
               </ng-container>
 
-              <!-- CAS 3 : FORMULE PLATS_FIXES (SÉLECTION INDIVIDUELLE DE L'ENTRÉE) -->
-              <ng-container *ngIf="isPlatedMode()">
+              <!-- CAS 3-A : MENU INDICATIF / BANQUET (CARTE COMPLÈTE SUR UNE SEULE PAGE) -->
+              <ng-container *ngIf="isPlatedMode() && isIndicativeMenu()">
+                <!-- En-tête Carte du Banquet (Ultra épuré & compact) -->
+                <div class="spotlight-title-wrapper mb-2 text-center">
+                  <span class="luxury-subtitle d-block mb-0.5"
+                    [style.fontFamily]="getPrimaryFont()"
+                    [style.color]="getPrimaryColor()"
+                    style="font-size: 1.25rem !important; line-height: 1.2 !important;">
+                    Menu d'Honneur
+                  </span>
+                  <h3 class="page2-menu-title text-uppercase fw-bold m-0"
+                    [style.fontFamily]="getSecondaryFont()"
+                    [style.color]="getSecondaryFontColor()"
+                    style="font-size: 0.88rem !important; line-height: 1.2 !important; letter-spacing: 1px !important;">
+                    Carte du Banquet
+                  </h3>
+                  <p class="fs-3xs mt-1 mb-0 font-serif" [style.color]="getMenuMutedTextColor()">
+                    <i class="fa fa-utensils me-1" [style.color]="getPrimaryColor()"></i>
+                    Servis à table pour l'ensemble des convives
+                  </p>
+                </div>
+
+                <!-- Carte Complète Déroulante avec toutes les catégories réunies -->
+                <div class="dishes-scroll-wrapper position-relative mx-auto mb-2 banquet-full-menu-wrapper"
+                  style="max-width: 480px; width: 100%;">
+                  <div class="dish-horizontal-cards-stack banquet-full-menu-stack has-many-dishes d-flex flex-column gap-2"
+                    #platedBanquetStack
+                    (scroll)="onDishesScroll($event)">
+                    
+                    <!-- 1. ENTRÉES -->
+                    <div class="banquet-course-section" *ngIf="hasStartersCourse() && availableStarters().length > 0">
+                      <div class="banquet-section-header d-flex align-items-center gap-2 mb-1.5 px-1">
+                        <span class="banquet-section-title text-uppercase fw-semibold"
+                          [style.color]="getSecondaryFontColor()">
+                          Entrées
+                        </span>
+                        <div class="flex-grow-1 border-bottom" [style.borderColor]="getPrimaryColor() + '35'"></div>
+                      </div>
+                      <div class="banquet-dishes-grid d-flex flex-column gap-1.5">
+                        <div class="dish-horizontal-card d-flex align-items-center p-1.5 px-2 rounded-3 border position-relative text-start shadow-2xs"
+                          *ngFor="let dish of availableStarters()"
+                          [style.borderColor]="getDishCardBorder(false)"
+                          [style.backgroundColor]="getDishCardBg(false)">
+                          <div class="dish-card-thumb-wrapper flex-shrink-0 me-2.5">
+                            <img [src]="dish.imageUrl" [alt]="dish.name" class="dish-card-thumb rounded-2 object-fit-cover shadow-2xs"
+                              style="width: 46px; height: 46px;">
+                          </div>
+                          <div class="dish-card-body flex-grow-1 pe-1">
+                            <h4 class="dish-card-title m-0 fw-bold font-serif"
+                              [style.fontFamily]="getSecondaryFont()"
+                              [style.color]="getDishTitleColor(false)"
+                              style="font-size: 0.83rem; line-height: 1.25;">
+                              {{ dish.name }}
+                            </h4>
+                          </div>
+                          <div class="dish-card-badge flex-shrink-0 ms-auto">
+                            <span class="badge rounded-pill px-2 py-0.5 fs-4xs fw-semibold"
+                              [style.backgroundColor]="getPrimaryColor() + '18'"
+                              [style.color]="getPrimaryColor()">
+                              <i class="fa fa-utensils me-0.5"></i> Servi
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- 2. PLATS PRINCIPAUX -->
+                    <div class="banquet-course-section" *ngIf="hasMainsCourse() && availableMains().length > 0">
+                      <div class="banquet-section-header d-flex align-items-center gap-2 mb-1.5 px-1 mt-2">
+                        <span class="banquet-section-title text-uppercase fw-semibold"
+                          [style.color]="getSecondaryFontColor()">
+                          Plats Principaux
+                        </span>
+                        <div class="flex-grow-1 border-bottom" [style.borderColor]="getPrimaryColor() + '35'"></div>
+                      </div>
+                      <div class="banquet-dishes-grid d-flex flex-column gap-1.5">
+                        <div class="dish-horizontal-card d-flex align-items-center p-1.5 px-2 rounded-3 border position-relative text-start shadow-2xs"
+                          *ngFor="let dish of availableMains()"
+                          [style.borderColor]="getDishCardBorder(false)"
+                          [style.backgroundColor]="getDishCardBg(false)">
+                          <div class="dish-card-thumb-wrapper flex-shrink-0 me-2.5">
+                            <img [src]="dish.imageUrl" [alt]="dish.name" class="dish-card-thumb rounded-2 object-fit-cover shadow-2xs"
+                              style="width: 46px; height: 46px;">
+                          </div>
+                          <div class="dish-card-body flex-grow-1 pe-1">
+                            <h4 class="dish-card-title m-0 fw-bold font-serif"
+                              [style.fontFamily]="getSecondaryFont()"
+                              [style.color]="getDishTitleColor(false)"
+                              style="font-size: 0.83rem; line-height: 1.25;">
+                              {{ dish.name }}
+                            </h4>
+                          </div>
+                          <div class="dish-card-badge flex-shrink-0 ms-auto">
+                            <span class="badge rounded-pill px-2 py-0.5 fs-4xs fw-semibold"
+                              [style.backgroundColor]="getPrimaryColor() + '18'"
+                              [style.color]="getPrimaryColor()">
+                              <i class="fa fa-utensils me-0.5"></i> Servi
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- 3. DOUCEURS & DESSERTS -->
+                    <div class="banquet-course-section" *ngIf="hasDessertsCourse() && availableDesserts().length > 0">
+                      <div class="banquet-section-header d-flex align-items-center gap-2 mb-1.5 px-1 mt-2">
+                        <span class="banquet-section-title text-uppercase fw-semibold"
+                          [style.color]="getSecondaryFontColor()">
+                          Douceurs & Desserts
+                        </span>
+                        <div class="flex-grow-1 border-bottom" [style.borderColor]="getPrimaryColor() + '35'"></div>
+                      </div>
+                      <div class="banquet-dishes-grid d-flex flex-column gap-1.5">
+                        <div class="dish-horizontal-card d-flex align-items-center p-1.5 px-2 rounded-3 border position-relative text-start shadow-2xs"
+                          *ngFor="let dish of availableDesserts()"
+                          [style.borderColor]="getDishCardBorder(false)"
+                          [style.backgroundColor]="getDishCardBg(false)">
+                          <div class="dish-card-thumb-wrapper flex-shrink-0 me-2.5">
+                            <img [src]="dish.imageUrl" [alt]="dish.name" class="dish-card-thumb rounded-2 object-fit-cover shadow-2xs"
+                              style="width: 46px; height: 46px;">
+                          </div>
+                          <div class="dish-card-body flex-grow-1 pe-1">
+                            <h4 class="dish-card-title m-0 fw-bold font-serif"
+                              [style.fontFamily]="getSecondaryFont()"
+                              [style.color]="getDishTitleColor(false)"
+                              style="font-size: 0.83rem; line-height: 1.25;">
+                              {{ dish.name }}
+                            </h4>
+                          </div>
+                          <div class="dish-card-badge flex-shrink-0 ms-auto">
+                            <span class="badge rounded-pill px-2 py-0.5 fs-4xs fw-semibold"
+                              [style.backgroundColor]="getPrimaryColor() + '18'"
+                              [style.color]="getPrimaryColor()">
+                              <i class="fa fa-utensils me-0.5"></i> Servi
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- 4. BOISSONS & RAFRAÎCHISSEMENTS -->
+                    <div class="banquet-course-section" *ngIf="hasBeveragesCourse() && availableBeverages().length > 0">
+                      <div class="banquet-section-header d-flex align-items-center gap-2 mb-1.5 px-1 mt-2">
+                        <span class="banquet-section-title text-uppercase fw-semibold"
+                          [style.color]="getSecondaryFontColor()">
+                          Boissons & Rafraîchissements
+                        </span>
+                        <div class="flex-grow-1 border-bottom" [style.borderColor]="getPrimaryColor() + '35'"></div>
+                      </div>
+                      <div class="banquet-dishes-grid d-flex flex-column gap-1.5">
+                        <div class="dish-horizontal-card d-flex align-items-center p-1.5 px-2 rounded-3 border position-relative text-start shadow-2xs"
+                          *ngFor="let dish of availableBeverages()"
+                          [style.borderColor]="getDishCardBorder(false)"
+                          [style.backgroundColor]="getDishCardBg(false)">
+                          <div class="dish-card-thumb-wrapper flex-shrink-0 me-2.5">
+                            <img [src]="dish.imageUrl" [alt]="dish.name" class="dish-card-thumb rounded-2 object-fit-cover shadow-2xs"
+                              style="width: 46px; height: 46px;">
+                          </div>
+                          <div class="dish-card-body flex-grow-1 pe-1">
+                            <h4 class="dish-card-title m-0 fw-bold font-serif"
+                              [style.fontFamily]="getSecondaryFont()"
+                              [style.color]="getDishTitleColor(false)"
+                              style="font-size: 0.83rem; line-height: 1.25;">
+                              {{ dish.name }}
+                            </h4>
+                          </div>
+                          <div class="dish-card-badge flex-shrink-0 ms-auto">
+                            <span class="badge rounded-pill px-2 py-0.5 fs-4xs fw-semibold"
+                              [style.backgroundColor]="getPrimaryColor() + '18'"
+                              [style.color]="getPrimaryColor()">
+                              <i class="fa fa-utensils me-0.5"></i> Servi
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+
+                  <!-- Barre de défilement dorée luxueuse & TOUJOURS visible en permanence -->
+                  <div class="luxury-gold-scrollbar-rail"
+                    (pointerdown)="onRailPointerDown($event, platedBanquetStack)"
+                    (pointermove)="onRailPointerMove($event, platedBanquetStack)"
+                    (pointerup)="onRailPointerUp($event)"
+                    (click)="onRailClick($event, platedBanquetStack)">
+                    <div class="luxury-gold-scrollbar-thumb"></div>
+                  </div>
+                </div>
+
+                <!-- Actions de Navigation en Bas : Retour (page invitation 1) + Continuer -->
+                <div class="step-bottom-actions-wrapper step-optout-wrapper d-flex align-items-center justify-content-center flex-nowrap gap-2 mt-1.5 pt-0 mb-1" *ngIf="!isDiscoveryMode()">
+                  <button type="button" class="btn btn-sm btn-step-back rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
+                    (click)="closeMenuAndRsvp()">
+                    <i class="fa fa-arrow-left me-1"></i> Retour
+                  </button>
+                  <button type="button" class="btn btn-sm btn-opt-out rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
+                    (click)="goToNextStep()">
+                    Continuer <i class="fa fa-arrow-right ms-1"></i>
+                  </button>
+                </div>
+              </ng-container>
+
+              <!-- CAS 3-B : FORMULE PLATS_FIXES STANDARD (SÉLECTION INDIVIDUELLE DE L'ENTRÉE) -->
+              <ng-container *ngIf="isPlatedMode() && !isIndicativeMenu()">
                 <!-- En-tête de catégorie -->
                 <div class="spotlight-title-wrapper mb-3 text-center">
                   <span class="luxury-subtitle d-block mb-1.5"
@@ -941,7 +1179,7 @@
                       [class.cursor-pointer]="!isDiscoveryMode()"
                       [style.borderColor]="getDishCardBorder(!isDiscoveryMode() && isDishSelected('STARTER', dish.name))"
                       [style.backgroundColor]="getDishCardBg(!isDiscoveryMode() && isDishSelected('STARTER', dish.name))"
-                      (click)="selectCourseAndAdvance('STARTER', dish.name)">
+                      (click)="selectCourseAndAdvance('STARTER', dish.name, dish.imageUrl)">
                       
                       <!-- Miniature carrée à gauche -->
                       <div class="dish-card-thumb-wrapper flex-shrink-0 me-3">
@@ -959,7 +1197,7 @@
                         </h4>
                       </div>
 
-                      <!-- Retour visuel immédiat (✓) (Uniquement en mode décisionnel) -->
+                      <!-- Retour visuel immédiat (✓) (Uniquement en mode décisionnel avec choix) -->
                       <div class="dish-card-check flex-shrink-0 ms-auto" *ngIf="!isDiscoveryMode() && isDishSelected('STARTER', dish.name)">
                         <span class="badge-check-icon d-inline-flex align-items-center justify-content-center rounded-circle shadow-xs"
                           [style.background]="getPrimaryColor()"
@@ -998,7 +1236,7 @@
             </div>
 
             <!-- ÉTAPE 1 : PLAT PRINCIPAL (OU PLAT CHAUD POUR FORMULE MIX) -->
-            <div *ngIf="currentRsvpStep() === 1 && (isMixMode() || isPlatedMode())" class="course-step-container animate__animated animate__fadeIn my-auto w-100 py-1">
+            <div *ngIf="currentRsvpStep() === 1 && !isIndicativeMenu() && (isMixMode() || isPlatedMode())" class="course-step-container animate__animated animate__fadeIn my-auto w-100 py-1">
               <!-- En-tête de catégorie -->
               <div class="spotlight-title-wrapper mb-3 text-center">
                 <span class="luxury-subtitle d-block mb-1.5"
@@ -1011,16 +1249,20 @@
                   [style.fontFamily]="getSecondaryFont()"
                   [style.color]="getSecondaryFontColor()"
                   style="font-size: 0.95rem !important; line-height: 1.35 !important; letter-spacing: 1.2px !important;">
-                  {{ isDiscoveryMode() ? 'Aperçu des Plats' : (isMixMode() ? 'Choisissez votre Plat Chaud' : 'Sélectionnez votre Plat') }}
+                  {{ isIndicativeMenu() ? (availableMains().length > 1 ? 'Les Plats Principaux' : 'Le Plat Principal') : (isDiscoveryMode() ? 'Aperçu des Plats' : (isMixMode() ? 'Choisissez votre Plat Chaud' : 'Sélectionnez votre Plat')) }}
                 </h3>
                 <div class="spotlight-underline mx-auto mt-1"
                   [style.backgroundColor]="getPrimaryColor()"
                   style="width: 40px; height: 1.5px; opacity: 0.65;"></div>
-                <p class="fs-xxs mt-1 mb-0 font-serif" [style.color]="getMenuMutedTextColor()" *ngIf="!isDiscoveryMode()">
+                <p class="fs-xxs mt-1 mb-0 font-serif" [style.color]="getMenuMutedTextColor()" *ngIf="isIndicativeMenu()">
+                  <i class="fa fa-drumstick-bite me-1" [style.color]="getPrimaryColor()"></i>
+                  Mets d'honneur servis à table pour ravir vos papilles
+                </p>
+                <p class="fs-xxs mt-1 mb-0 font-serif" [style.color]="getMenuMutedTextColor()" *ngIf="!isIndicativeMenu() && !isDiscoveryMode()">
                   <i class="fa fa-info-circle me-1" [style.color]="getPrimaryColor()"></i>
                   Choix obligatoire • Servi chaud à table selon votre préférence
                 </p>
-                <p class="fs-xxs mt-1 mb-0 font-serif" [style.color]="getMenuMutedTextColor()" *ngIf="isDiscoveryMode()">
+                <p class="fs-xxs mt-1 mb-0 font-serif" [style.color]="getMenuMutedTextColor()" *ngIf="!isIndicativeMenu() && isDiscoveryMode()">
                   Servi chaud à table selon la sélection des convives
                 </p>
               </div>
@@ -1036,12 +1278,12 @@
                   (scroll)="onDishesScroll($event)">
                   <div class="dish-horizontal-card d-flex align-items-center p-2 rounded-3 border position-relative text-start"
                     *ngFor="let dish of availableMains()"
-                    [class.is-selected]="!isDiscoveryMode() && isDishSelected('MAIN', dish.name)"
-                    [class.is-feedback-active]="!isDiscoveryMode() && selectedItemTransition()?.category === 'MAIN' && selectedItemTransition()?.dishName === dish.name"
-                    [class.cursor-pointer]="!isDiscoveryMode()"
-                    [style.borderColor]="getDishCardBorder(!isDiscoveryMode() && isDishSelected('MAIN', dish.name))"
-                    [style.backgroundColor]="getDishCardBg(!isDiscoveryMode() && isDishSelected('MAIN', dish.name))"
-                    (click)="selectCourseAndAdvance('MAIN', dish.name)">
+                    [class.is-selected]="!isDiscoveryMode() && !isIndicativeMenu() && isDishSelected('MAIN', dish.name)"
+                    [class.is-feedback-active]="!isDiscoveryMode() && !isIndicativeMenu() && selectedItemTransition()?.category === 'MAIN' && selectedItemTransition()?.dishName === dish.name"
+                    [class.cursor-pointer]="!isDiscoveryMode() && !isIndicativeMenu()"
+                    [style.borderColor]="getDishCardBorder(!isDiscoveryMode() && !isIndicativeMenu() && isDishSelected('MAIN', dish.name))"
+                    [style.backgroundColor]="getDishCardBg(!isDiscoveryMode() && !isIndicativeMenu() && isDishSelected('MAIN', dish.name))"
+                    (click)="selectCourseAndAdvance('MAIN', dish.name, dish.imageUrl)">
                     
                     <!-- Miniature carrée à gauche -->
                     <div class="dish-card-thumb-wrapper flex-shrink-0 me-3">
@@ -1053,14 +1295,14 @@
                     <div class="dish-card-body flex-grow-1 pe-2">
                       <h4 class="dish-card-title m-0 fw-bold font-serif"
                         [style.fontFamily]="getSecondaryFont()"
-                        [style.color]="getDishTitleColor(!isDiscoveryMode() && isDishSelected('MAIN', dish.name))"
+                        [style.color]="getDishTitleColor(!isDiscoveryMode() && !isIndicativeMenu() && isDishSelected('MAIN', dish.name))"
                         style="font-size: 0.86rem; line-height: 1.3;">
                         {{ dish.name }}
                       </h4>
                     </div>
 
-                    <!-- Retour visuel immédiat (✓) -->
-                    <div class="dish-card-check flex-shrink-0 ms-auto" *ngIf="!isDiscoveryMode() && isDishSelected('MAIN', dish.name)">
+                    <!-- Retour visuel immédiat (✓) (Uniquement en mode décisionnel avec choix) -->
+                    <div class="dish-card-check flex-shrink-0 ms-auto" *ngIf="!isDiscoveryMode() && !isIndicativeMenu() && isDishSelected('MAIN', dish.name)">
                       <span class="badge-check-icon d-inline-flex align-items-center justify-content-center rounded-circle shadow-xs"
                         [style.background]="getPrimaryColor()"
                         [style.color]="isDarkBg(getPrimaryColor()) ? '#ffffff' : '#0c0c0c'"
@@ -1081,14 +1323,14 @@
               </div>
 
 
-              <!-- Actions de Navigation en Bas : Retour (étape précédente) + Continuer (si plat déjà sélectionné) -->
+              <!-- Actions de Navigation en Bas : Retour (étape précédente) + Continuer (si plat déjà sélectionné ou menu indicatif) -->
               <div class="step-bottom-actions-wrapper step-optout-wrapper d-flex align-items-center justify-content-center flex-nowrap gap-2 mt-1.5 pt-0 mb-1" *ngIf="!isDiscoveryMode()">
                 <button type="button" class="btn btn-sm btn-step-back rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
                   (click)="goToPrevStep()">
                   <i class="fa fa-arrow-left me-1"></i> Retour
                 </button>
                 <button type="button" class="btn btn-sm btn-opt-out rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
-                  *ngIf="mealChoice"
+                  *ngIf="isIndicativeMenu() || mealChoice || availableMains().length === 0"
                   (click)="goToNextStep()">
                   Continuer <i class="fa fa-arrow-right ms-1"></i>
                 </button>
@@ -1096,7 +1338,7 @@
             </div>
 
             <!-- ÉTAPE 2 : DESSERT (OU BUFFET DESSERTS & BAR POUR FORMULE MIX) -->
-            <div *ngIf="currentRsvpStep() === 2 && (isMixMode() || isPlatedMode())" class="course-step-container animate__animated animate__fadeIn my-auto w-100 py-1">
+            <div *ngIf="currentRsvpStep() === 2 && !isIndicativeMenu() && (isMixMode() || isPlatedMode())" class="course-step-container animate__animated animate__fadeIn my-auto w-100 py-1">
               
               <!-- CAS 1 : FORMULE MIX (BUFFET SUCRÉ & BAR EN LIBRE-SERVICE) -->
               <ng-container *ngIf="isMixMode()">
@@ -1218,16 +1460,20 @@
                     [style.fontFamily]="getSecondaryFont()"
                     [style.color]="getSecondaryFontColor()"
                     style="font-size: 0.95rem !important; line-height: 1.35 !important; letter-spacing: 1.2px !important;">
-                    {{ isDiscoveryMode() ? 'Aperçu des Desserts' : 'Sélectionnez votre Dessert' }}
+                    {{ isIndicativeMenu() ? (availableDesserts().length > 1 ? 'Douceurs & Desserts' : 'Le Dessert') : (isDiscoveryMode() ? 'Aperçu des Desserts' : 'Sélectionnez votre Dessert') }}
                   </h3>
                   <div class="spotlight-underline mx-auto mt-1"
                     [style.backgroundColor]="getPrimaryColor()"
                     style="width: 40px; height: 1.5px; opacity: 0.65;"></div>
-                  <p class="fs-xxs mt-1 mb-0 font-serif" [style.color]="getMenuMutedTextColor()" *ngIf="!isDiscoveryMode() && availableDesserts().length > 0">
+                  <p class="fs-xxs mt-1 mb-0 font-serif" [style.color]="getMenuMutedTextColor()" *ngIf="isIndicativeMenu()">
+                    <i class="fa fa-birthday-cake me-1" [style.color]="getPrimaryColor()"></i>
+                    Notes sucrées et rafraîchissantes servies à table pour clôturer le banquet
+                  </p>
+                  <p class="fs-xxs mt-1 mb-0 font-serif" [style.color]="getMenuMutedTextColor()" *ngIf="!isIndicativeMenu() && !isDiscoveryMode() && availableDesserts().length > 0">
                     <i class="fa fa-info-circle me-1" [style.color]="getPrimaryColor()"></i>
                     Choix obligatoire • Servi à table selon votre préférence
                   </p>
-                  <p class="fs-xxs mt-1 mb-0 font-serif" [style.color]="getMenuMutedTextColor()" *ngIf="isDiscoveryMode()">
+                  <p class="fs-xxs mt-1 mb-0 font-serif" [style.color]="getMenuMutedTextColor()" *ngIf="!isIndicativeMenu() && isDiscoveryMode()">
                     Servi à table selon la sélection des convives
                   </p>
                 </div>
@@ -1243,12 +1489,12 @@
                     (scroll)="onDishesScroll($event)">
                     <div class="dish-horizontal-card d-flex align-items-center p-2 rounded-3 border position-relative text-start"
                       *ngFor="let dish of availableDesserts()"
-                      [class.is-selected]="!isDiscoveryMode() && isDishSelected('DESSERT', dish.name)"
-                      [class.is-feedback-active]="!isDiscoveryMode() && selectedItemTransition()?.category === 'DESSERT' && selectedItemTransition()?.dishName === dish.name"
-                      [class.cursor-pointer]="!isDiscoveryMode()"
-                      [style.borderColor]="getDishCardBorder(!isDiscoveryMode() && isDishSelected('DESSERT', dish.name))"
-                      [style.backgroundColor]="getDishCardBg(!isDiscoveryMode() && isDishSelected('DESSERT', dish.name))"
-                      (click)="selectCourseAndAdvance('DESSERT', dish.name)">
+                      [class.is-selected]="!isDiscoveryMode() && !isIndicativeMenu() && isDishSelected('DESSERT', dish.name)"
+                      [class.is-feedback-active]="!isDiscoveryMode() && !isIndicativeMenu() && selectedItemTransition()?.category === 'DESSERT' && selectedItemTransition()?.dishName === dish.name"
+                      [class.cursor-pointer]="!isDiscoveryMode() && !isIndicativeMenu()"
+                      [style.borderColor]="getDishCardBorder(!isDiscoveryMode() && !isIndicativeMenu() && isDishSelected('DESSERT', dish.name))"
+                      [style.backgroundColor]="getDishCardBg(!isDiscoveryMode() && !isIndicativeMenu() && isDishSelected('DESSERT', dish.name))"
+                      (click)="selectCourseAndAdvance('DESSERT', dish.name, dish.imageUrl)">
                       
                       <!-- Miniature carrée à gauche -->
                       <div class="dish-card-thumb-wrapper flex-shrink-0 me-3">
@@ -1260,14 +1506,14 @@
                       <div class="dish-card-body flex-grow-1 pe-2">
                         <h4 class="dish-card-title m-0 fw-bold font-serif"
                           [style.fontFamily]="getSecondaryFont()"
-                          [style.color]="getDishTitleColor(!isDiscoveryMode() && isDishSelected('DESSERT', dish.name))"
+                          [style.color]="getDishTitleColor(!isDiscoveryMode() && !isIndicativeMenu() && isDishSelected('DESSERT', dish.name))"
                           style="font-size: 0.86rem; line-height: 1.3;">
                           {{ dish.name }}
                         </h4>
                       </div>
 
-                      <!-- Retour visuel immédiat (✓) -->
-                      <div class="dish-card-check flex-shrink-0 ms-auto" *ngIf="!isDiscoveryMode() && isDishSelected('DESSERT', dish.name)">
+                      <!-- Retour visuel immédiat (✓) (Uniquement en mode décisionnel avec choix) -->
+                      <div class="dish-card-check flex-shrink-0 ms-auto" *ngIf="!isDiscoveryMode() && !isIndicativeMenu() && isDishSelected('DESSERT', dish.name)">
                         <span class="badge-check-icon d-inline-flex align-items-center justify-content-center rounded-circle shadow-xs"
                           [style.background]="getPrimaryColor()"
                           [style.color]="isDarkBg(getPrimaryColor()) ? '#ffffff' : '#0c0c0c'"
@@ -1295,7 +1541,7 @@
                     <i class="fa fa-arrow-left me-1"></i> Retour
                   </button>
                   <button type="button" class="btn btn-sm btn-opt-out rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
-                    *ngIf="dessertChoice || availableDesserts().length === 0"
+                    *ngIf="isIndicativeMenu() || dessertChoice || availableDesserts().length === 0"
                     (click)="goToNextStep()">
                     Continuer <i class="fa fa-arrow-right ms-1"></i>
                   </button>
@@ -1305,7 +1551,7 @@
             </div>
 
             <!-- ÉTAPE 3 : BOISSON (4/4 - Uniquement en Formule PLATS_FIXES) -->
-            <div *ngIf="currentRsvpStep() === 3 && isPlatedMode()" class="course-step-container animate__animated animate__fadeIn my-auto w-100 py-1">
+            <div *ngIf="currentRsvpStep() === 3 && !isIndicativeMenu() && isPlatedMode()" class="course-step-container animate__animated animate__fadeIn my-auto w-100 py-1">
               <!-- En-tête de catégorie -->
               <div class="spotlight-title-wrapper mb-3 text-center">
                 <span class="luxury-subtitle d-block mb-1.5"
@@ -1318,11 +1564,22 @@
                   [style.fontFamily]="getSecondaryFont()"
                   [style.color]="getSecondaryFontColor()"
                   style="font-size: 0.95rem !important; line-height: 1.35 !important; letter-spacing: 1.2px !important;">
-                  {{ isDiscoveryMode() ? 'Aperçu des Boissons' : 'Sélectionnez votre Boisson' }}
+                  {{ isIndicativeMenu() ? 'Sélection de Boissons & Rafraîchissements' : (isDiscoveryMode() ? 'Aperçu des Boissons' : 'Sélectionnez votre Boisson') }}
                 </h3>
                 <div class="spotlight-underline mx-auto mt-1"
                   [style.backgroundColor]="getPrimaryColor()"
                   style="width: 40px; height: 1.5px; opacity: 0.65;"></div>
+                <p class="fs-xxs mt-1 mb-0 font-serif" [style.color]="getMenuMutedTextColor()" *ngIf="isIndicativeMenu()">
+                  <i class="fa fa-glass-cheers me-1" [style.color]="getPrimaryColor()"></i>
+                  Rafraîchissements servis tout au long de la réception
+                </p>
+                <p class="fs-xxs mt-1 mb-0 font-serif" [style.color]="getMenuMutedTextColor()" *ngIf="!isIndicativeMenu() && !isDiscoveryMode() && availableBeverages().length > 0">
+                  <i class="fa fa-info-circle me-1" [style.color]="getPrimaryColor()"></i>
+                  Sélectionnez vos boissons préférées pour le repas
+                </p>
+                <p class="fs-xxs mt-1 mb-0 font-serif" [style.color]="getMenuMutedTextColor()" *ngIf="!isIndicativeMenu() && isDiscoveryMode()">
+                  Rafraîchissements à disposition
+                </p>
               </div>
 
               <!-- Onglets de services placés DIRECTEMENT au-dessus des plats -->
@@ -1336,12 +1593,12 @@
                   (scroll)="onDishesScroll($event)">
                   <div class="dish-horizontal-card d-flex align-items-center p-2 rounded-3 border position-relative text-start"
                     *ngFor="let dish of availableBeverages()"
-                    [class.is-selected]="!isDiscoveryMode() && isDishSelected('BEVERAGE', dish.name)"
-                    [class.is-feedback-active]="!isDiscoveryMode() && selectedItemTransition()?.category === 'BEVERAGE' && selectedItemTransition()?.dishName === dish.name"
-                    [class.cursor-pointer]="!isDiscoveryMode()"
-                    [style.borderColor]="getDishCardBorder(!isDiscoveryMode() && isDishSelected('BEVERAGE', dish.name))"
-                    [style.backgroundColor]="getDishCardBg(!isDiscoveryMode() && isDishSelected('BEVERAGE', dish.name))"
-                    (click)="selectCourseAndAdvance('BEVERAGE', dish.name)">
+                    [class.is-selected]="!isDiscoveryMode() && !isIndicativeMenu() && isDishSelected('BEVERAGE', dish.name)"
+                    [class.is-feedback-active]="!isDiscoveryMode() && !isIndicativeMenu() && selectedItemTransition()?.category === 'BEVERAGE' && selectedItemTransition()?.dishName === dish.name"
+                    [class.cursor-pointer]="!isDiscoveryMode() && !isIndicativeMenu()"
+                    [style.borderColor]="getDishCardBorder(!isDiscoveryMode() && !isIndicativeMenu() && isDishSelected('BEVERAGE', dish.name))"
+                    [style.backgroundColor]="getDishCardBg(!isDiscoveryMode() && !isIndicativeMenu() && isDishSelected('BEVERAGE', dish.name))"
+                    (click)="selectCourseAndAdvance('BEVERAGE', dish.name, dish.imageUrl)">
                     
                     <!-- Miniature carrée à gauche -->
                     <div class="dish-card-thumb-wrapper flex-shrink-0 me-3">
@@ -1353,14 +1610,14 @@
                     <div class="dish-card-body flex-grow-1 pe-2">
                       <h4 class="dish-card-title m-0 fw-bold font-serif"
                         [style.fontFamily]="getSecondaryFont()"
-                        [style.color]="getDishTitleColor(!isDiscoveryMode() && isDishSelected('BEVERAGE', dish.name))"
+                        [style.color]="getDishTitleColor(!isDiscoveryMode() && !isIndicativeMenu() && isDishSelected('BEVERAGE', dish.name))"
                         style="font-size: 0.86rem; line-height: 1.3;">
                         {{ dish.name }}
                       </h4>
                     </div>
 
-                    <!-- Retour visuel immédiat (✓) -->
-                    <div class="dish-card-check flex-shrink-0 ms-auto" *ngIf="!isDiscoveryMode() && isDishSelected('BEVERAGE', dish.name)">
+                    <!-- Retour visuel immédiat (✓) (Uniquement en mode décisionnel avec choix) -->
+                    <div class="dish-card-check flex-shrink-0 ms-auto" *ngIf="!isDiscoveryMode() && !isIndicativeMenu() && isDishSelected('BEVERAGE', dish.name)">
                       <span class="badge-check-icon d-inline-flex align-items-center justify-content-center rounded-circle shadow-xs"
                         [style.background]="getPrimaryColor()"
                         [style.color]="isDarkBg(getPrimaryColor()) ? '#ffffff' : '#0c0c0c'"
@@ -1389,7 +1646,7 @@
                 </button>
                 <button type="button" class="btn btn-sm btn-opt-out rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
                   (click)="skipCurrentCourse()">
-                  Passer <i class="fa fa-arrow-right ms-1"></i>
+                  {{ isIndicativeMenu() ? 'Continuer' : 'Passer' }} <i class="fa fa-arrow-right ms-1"></i>
                 </button>
               </div>
             </div>
@@ -1564,14 +1821,58 @@
                       <div class="d-flex align-items-center gap-1.5">
                         <i class="fa fa-utensils" [style.color]="getSummaryCourseColor()" style="font-size: 0.8rem;"></i>
                         <span class="fw-bold text-uppercase" [style.color]="getSummaryCourseColor()" style="font-size: 0.76rem; letter-spacing: 1px;">
-                          {{ isBuffetMode() ? 'Formule & Préférences' : 'Mes Choix' }}
+                          {{ isIndicativeMenu() ? 'Menu d\'Honneur' : (isBuffetMode() ? 'Formule & Préférences' : 'Mes Choix') }}
                         </span>
                       </div>
                       <button type="button" class="btn btn-sm btn-modify-compact rounded-pill shadow-2xs d-inline-flex align-items-center gap-1"
-                        (click)="goToStep(isBuffetMode() ? 4 : (isMixMode() ? 1 : 0))"
-                        title="Modifier mes choix">
-                        <i class="fa fa-pencil-alt" style="font-size: 0.65rem;"></i> Modifier
+                        (click)="goToStep(isIndicativeMenu() ? 4 : (isBuffetMode() ? 4 : (isMixMode() ? 1 : 0)))"
+                        title="Modifier">
+                        <i class="fa fa-pencil-alt" style="font-size: 0.65rem;"></i> {{ isIndicativeMenu() ? 'Préférences' : 'Modifier' }}
                       </button>
+                    </div>
+
+                    <!-- CAS 4 : FORMULE MENU INDICATIF / MENU UNIQUE (Mariage, Banquet, Dîner Royal) -->
+                    <div *ngIf="isIndicativeMenu()" class="mb-2 text-start">
+                      <div class="buffet-recap-box p-2 rounded-3 mb-2 border shadow-2xs"
+                        [style.borderColor]="getPrimaryColor() + '30'"
+                        [style.backgroundColor]="getPrimaryColor() + '12'">
+                        <div class="d-flex align-items-center gap-1.5 mb-1">
+                          <i class="fa fa-crown text-warning" style="font-size: 0.85rem;"></i>
+                          <span class="fw-bold fs-xs text-uppercase" [style.color]="getSummaryCourseColor()">
+                            Menu de Réception & Festivités
+                          </span>
+                        </div>
+                        <p class="fs-xxs m-0" [style.color]="getSummaryValueColor()" style="opacity: 0.95; line-height: 1.35;">
+                          Menu servi à table pour tous les convives :
+                        </p>
+                      </div>
+
+                      <div class="summary-dishes-grid mb-2 text-start">
+                        <div class="summary-dish-item" *ngIf="hasStartersCourse() && availableStarters().length > 0" [style.borderColor]="getPrimaryColor() + '20'">
+                          <span class="dish-course-num text-uppercase fw-bold" [style.color]="getSummaryCourseColor()">Entrées</span>
+                          <span class="dish-course-val fw-semibold" [style.color]="getSummaryValueColor()">
+                            {{ getDishesSummaryNames(availableStarters()) }}
+                          </span>
+                        </div>
+                        <div class="summary-dish-item" *ngIf="hasMainsCourse() && availableMains().length > 0" [style.borderColor]="getPrimaryColor() + '20'">
+                          <span class="dish-course-num text-uppercase fw-bold" [style.color]="getSummaryCourseColor()">Plats Principaux</span>
+                          <span class="dish-course-val fw-bold" [style.color]="getSummaryValueColor()">
+                            {{ getDishesSummaryNames(availableMains()) }}
+                          </span>
+                        </div>
+                        <div class="summary-dish-item" *ngIf="hasDessertsCourse() && availableDesserts().length > 0" [style.borderColor]="getPrimaryColor() + '20'">
+                          <span class="dish-course-num text-uppercase fw-bold" [style.color]="getSummaryCourseColor()">Desserts</span>
+                          <span class="dish-course-val fw-semibold" [style.color]="getSummaryValueColor()">
+                            {{ getDishesSummaryNames(availableDesserts()) }}
+                          </span>
+                        </div>
+                        <div class="summary-dish-item" *ngIf="hasBeveragesCourse() && availableBeverages().length > 0" [style.borderColor]="getPrimaryColor() + '20'">
+                          <span class="dish-course-num text-uppercase fw-bold" [style.color]="getSummaryCourseColor()">Boissons</span>
+                          <span class="dish-course-val fw-semibold" [style.color]="getSummaryValueColor()">
+                            {{ getDishesSummaryNames(availableBeverages()) }}
+                          </span>
+                        </div>
+                      </div>
                     </div>
 
                     <!-- CAS 1 : FORMULE GRAND BUFFET 100% LIBRE-SERVICE -->
@@ -1590,7 +1891,7 @@
                     </div>
 
                     <!-- CAS 2 : FORMULE MIX (Buffet Entrées + Choix Plat Chaud + Buffet Desserts & Bar) -->
-                    <div *ngIf="isMixMode()" class="summary-dishes-grid mb-2 text-start">
+                    <div *ngIf="isMixMode() && !isIndicativeMenu()" class="summary-dishes-grid mb-2 text-start">
                       <div class="summary-dish-item" [style.borderColor]="getPrimaryColor() + '20'">
                         <span class="dish-course-num text-uppercase fw-bold" [style.color]="getSummaryCourseColor()">1. Entrées</span>
                         <span class="dish-course-val fw-semibold text-truncate" [style.color]="getSummaryValueColor()">
@@ -1611,8 +1912,8 @@
                       </div>
                     </div>
 
-                    <!-- CAS 3 : FORMULE PLATS_FIXES (Grille 4 services individuels) -->
-                    <div *ngIf="isPlatedMode()" class="summary-dishes-grid mb-2 text-start">
+                    <!-- CAS 3 : FORMULE PLATS_FIXES STANDARD (Grille 4 services individuels avec choix) -->
+                    <div *ngIf="isPlatedMode() && !isIndicativeMenu()" class="summary-dishes-grid mb-2 text-start">
                       <div class="summary-dish-item" [style.borderColor]="getPrimaryColor() + '20'">
                         <span class="dish-course-num text-uppercase fw-bold" [style.color]="getSummaryCourseColor()">1. Entrée</span>
                         <span class="dish-course-val fw-semibold text-truncate" [style.color]="getSummaryValueColor()">
@@ -1926,10 +2227,20 @@
                 [style.fontFamily]="getSecondaryFont()"
                 [style.color]="getSecondaryFontColor()"
                 style="letter-spacing: 1.8px; opacity: 0.95; font-size: 0.78rem;">
-                — Choix du Menu —
+                — {{ isIndicativeMenu() ? 'Menu de Réception' : 'Choix du Menu' }} —
               </div>
 
-              <div class="d-flex flex-column gap-2">
+              <!-- Indicative Banquet Service Note -->
+              <div class="p-2 rounded-2 border text-center mb-1" *ngIf="isIndicativeMenu()"
+                [style.borderColor]="getPrimaryColor() + '25'"
+                [style.backgroundColor]="getPrimaryColor() + '08'">
+                <span class="fs-3xs fw-semibold font-serif" [style.color]="getSecondaryFontColor()">
+                  <i class="fa fa-crown text-warning me-1"></i>
+                  Menu gastronomique d'honneur servi à table pour tous les convives
+                </span>
+              </div>
+
+              <div class="d-flex flex-column gap-2" *ngIf="!isIndicativeMenu()">
                 <div class="d-flex justify-content-between align-items-baseline py-1.5 border-bottom" [style.borderColor]="getPrimaryColor() + '25'" *ngIf="starterChoice">
                   <span class="text-uppercase fw-bold" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="letter-spacing: 0.8px; font-size: 0.74rem; opacity: 0.85;">Entrée</span>
                   <span class="fw-semibold text-end font-serif" [style.fontFamily]="getSecondaryFont()" [style.color]="getSecondaryFontColor()" style="font-size: 0.95rem;">{{ starterChoice }}</span>
@@ -2064,7 +2375,9 @@
             <div class="access-buttons-row d-flex gap-1.5 justify-content-center align-items-center flex-nowrap w-100">
               <!-- 1. Bouton Map -->
               <a *ngIf="guest()?.showMapRoute !== false"
-                [href]="getEventMapUrl()" target="_blank" rel="noopener noreferrer"
+                [href]="getEventMapUrl()"
+                (click)="openExternalUrl(getEventMapUrl(), $event)"
+                target="_blank" rel="noopener noreferrer"
                 class="btn-confirmation-action text-decoration-none"
                 title="Ouvrir l'itinéraire Google Maps">
                 <i class="fa fa-map-marker-alt" [style.color]="getPrimaryColor()"></i>
@@ -2073,7 +2386,9 @@
               </a>
 
               <!-- 2. Bouton Parking -->
-              <a [href]="getParkingMapUrl()" target="_blank" rel="noopener noreferrer"
+              <a [href]="getParkingMapUrl()"
+                (click)="openExternalUrl(getParkingMapUrl(), $event)"
+                target="_blank" rel="noopener noreferrer"
                 class="btn-confirmation-action text-decoration-none"
                 title="Consulter l'accès au parking">
                 <i class="fa fa-square-parking" [style.color]="getPrimaryColor()"></i>
@@ -2083,7 +2398,9 @@
 
               <!-- 3. Bouton Google Agenda -->
               <a *ngIf="guest()?.showCalendarButton !== false"
-                [href]="getGoogleCalendarUrl()" target="_blank" rel="noopener noreferrer"
+                [href]="getGoogleCalendarUrl()"
+                (click)="openExternalUrl(getGoogleCalendarUrl(), $event)"
+                target="_blank" rel="noopener noreferrer"
                 class="btn-confirmation-action text-decoration-none"
                 title="Ajouter l'événement à Google Calendar">
                 <i class="far fa-calendar-plus" [style.color]="getPrimaryColor()"></i>
@@ -2109,6 +2426,149 @@
     <!-- END invitation-stage-wrapper -->
   </div>
   <!-- END rsvp-luxury-wrapper -->
+
+  <!-- MODAL: LIEU, ITINÉRAIRE & ACCÈS (Minimalist Luxury) -->
+  <div class="modal d-block bg-dark bg-opacity-75 animate__animated animate__fadeIn location-access-modal-backdrop"
+    tabindex="-1"
+    *ngIf="isLocationModalOpen()"
+    style="backdrop-filter: blur(8px); z-index: 1070;"
+    (click)="closeLocationModal()">
+    <div class="modal-dialog modal-dialog-centered mx-auto px-3"
+      style="max-width: 360px;"
+      (click)="$event.stopPropagation()">
+      <div class="modal-content border-0 shadow-2xl position-relative rounded-4 overflow-hidden location-access-modal-content"
+        [style.borderColor]="getPrimaryColor() ? (getPrimaryColor() + '45') : 'rgba(212, 175, 55, 0.45)'"
+        style="background: #ffffff; border-width: 1.5px !important; border-style: solid !important;">
+
+        <!-- Header épuré -->
+        <div class="p-3 px-3.5 d-flex align-items-center justify-content-between border-bottom"
+          style="background: #faf7f2;">
+          <div class="d-flex align-items-center gap-2">
+            <i class="fa fa-map-location-dot" [style.color]="getPrimaryColor() || '#d4af37'"></i>
+            <span class="fw-bold text-dark fs-xs text-uppercase tracking-wider" [style.fontFamily]="getSecondaryFont()">
+              Plan & Accès
+            </span>
+          </div>
+          <button type="button" class="btn-close shadow-none fs-3xs" aria-label="Fermer" (click)="closeLocationModal()"></button>
+        </div>
+
+        <!-- Body épuré -->
+        <div class="modal-body p-3.5" style="background: #ffffff;">
+
+          <!-- Venue & Location (1-2 lignes claires sans surcharge) -->
+          <div class="text-center mb-3">
+            <h6 class="fw-bold text-dark fs-sm mb-1" [style.fontFamily]="getSecondaryFont()">
+              {{ guest()?.eventLocation || guest()?.invitationLocation || 'Lieu de la réception' }}
+            </h6>
+            <div class="fs-3xs text-muted" *ngIf="guest()?.parkingLocation && !guest()?.parkingLocation?.startsWith('http')">
+              <i class="fa fa-square-parking me-1" [style.color]="getPrimaryColor() || '#d4af37'"></i>
+              <span>{{ guest()?.parkingLocation }}</span>
+            </div>
+          </div>
+
+          <!-- The 3 Action Buttons (Minimalist, sleek, direct) -->
+          <div class="d-flex flex-column gap-2">
+
+            <!-- 1. Google Maps -->
+            <a *ngIf="guest()?.showMapRoute !== false"
+              [href]="getEventMapUrl()"
+              (click)="openExternalUrl(getEventMapUrl(), $event)"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="minimal-action-btn d-flex align-items-center justify-content-between p-2.5 px-3 rounded-3 text-decoration-none shadow-xs transition-all"
+              [style.borderColor]="getPrimaryColor() ? (getPrimaryColor() + '35') : 'rgba(212, 175, 55, 0.3)'">
+              <div class="d-flex align-items-center gap-2.5">
+                <div class="btn-mini-icon rounded-circle d-flex align-items-center justify-content-center"
+                  [style.backgroundColor]="getPrimaryColor() ? (getPrimaryColor() + '15') : 'rgba(212, 175, 55, 0.12)'"
+                  [style.color]="getPrimaryColor() || '#d4af37'">
+                  <i class="fa fa-map-marker-alt fs-xs"></i>
+                </div>
+                <span class="fw-bold text-dark fs-xs" [style.fontFamily]="getSecondaryFont()">
+                  Itinéraire Google Maps
+                </span>
+              </div>
+              <i class="fa fa-arrow-up-right-from-square fs-3xs text-muted"></i>
+            </a>
+
+            <!-- 2. Parking -->
+            <a [href]="getParkingMapUrl()"
+              (click)="openExternalUrl(getParkingMapUrl(), $event)"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="minimal-action-btn d-flex align-items-center justify-content-between p-2.5 px-3 rounded-3 text-decoration-none shadow-xs transition-all"
+              [style.borderColor]="getPrimaryColor() ? (getPrimaryColor() + '35') : 'rgba(212, 175, 55, 0.3)'">
+              <div class="d-flex align-items-center gap-2.5">
+                <div class="btn-mini-icon rounded-circle d-flex align-items-center justify-content-center"
+                  [style.backgroundColor]="getPrimaryColor() ? (getPrimaryColor() + '15') : 'rgba(212, 175, 55, 0.12)'"
+                  [style.color]="getPrimaryColor() || '#d4af37'">
+                  <i class="fa fa-square-parking fs-xs"></i>
+                </div>
+                <span class="fw-bold text-dark fs-xs" [style.fontFamily]="getSecondaryFont()">
+                  Accès Parking
+                </span>
+              </div>
+              <i class="fa fa-arrow-up-right-from-square fs-3xs text-muted"></i>
+            </a>
+
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: CONFIRMATION REQUISE POUR AJOUTER AU CALENDRIER -->
+  <div class="modal d-block bg-dark bg-opacity-75 animate__animated animate__fadeIn"
+    tabindex="-1"
+    *ngIf="isCalendarAcceptNoticeOpen()"
+    style="backdrop-filter: blur(8px); z-index: 1075;"
+    (click)="closeCalendarAcceptNotice()">
+    <div class="modal-dialog modal-dialog-centered mx-auto px-3"
+      style="max-width: 350px;"
+      (click)="$event.stopPropagation()">
+      <div class="modal-content border-0 shadow-2xl position-relative rounded-4 overflow-hidden text-center p-3.5 p-sm-4"
+        [style.borderColor]="getPrimaryColor() ? (getPrimaryColor() + '45') : 'rgba(212, 175, 55, 0.45)'"
+        style="background: #ffffff; border-width: 1.5px !important; border-style: solid !important;">
+
+        <button type="button" class="btn-close position-absolute top-0 end-0 m-3 shadow-none fs-3xs"
+          (click)="closeCalendarAcceptNotice()" aria-label="Fermer"></button>
+
+        <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-2 mx-auto"
+          [style.backgroundColor]="getPrimaryColor() ? (getPrimaryColor() + '18') : 'rgba(212, 175, 55, 0.15)'"
+          [style.color]="getPrimaryColor() || '#d4af37'"
+          style="width: 44px; height: 44px;">
+          <i class="far fa-calendar-check fs-5"></i>
+        </div>
+
+        <h5 class="fw-bold text-dark fs-sm mb-1.5" [style.fontFamily]="getSecondaryFont()">
+          Ajouter à votre agenda
+        </h5>
+
+        <p class="text-muted fs-xs mb-3" style="line-height: 1.45;">
+          Pour synchroniser cette date dans votre Google Calendar, veuillez d'abord confirmer votre présence à l'événement.
+        </p>
+
+        <div class="d-flex flex-column gap-2">
+          <button type="button"
+            class="btn btn-sm rounded-pill py-2 fs-xs fw-bold shadow-sm d-flex align-items-center justify-content-center gap-2"
+            [style.background]="getPrimaryColor() || '#d4af37'"
+            [style.borderColor]="getPrimaryColor() || '#d4af37'"
+            [style.color]="isDarkBg(getPrimaryColor()) ? '#ffffff' : '#0c0c0c'"
+            (click)="confirmAttendanceFromCalendarNotice()">
+            <i class="fa fa-check"></i>
+            <span>Confirmer ma présence</span>
+          </button>
+
+          <button type="button" class="btn btn-sm btn-alt-secondary rounded-pill py-1.5 fs-xs fw-semibold"
+            (click)="closeCalendarAcceptNotice()">
+            Plus tard
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
 
   <!-- MODAL: FRICTIONLESS DECLINE MODAL (Message facultatif + Confirmation de refus) -->
   <div class="modal d-block bg-dark bg-opacity-75 animate__animated animate__fadeIn" tabindex="-1" *ngIf="isDeclineModalOpen()"

@@ -8,6 +8,7 @@ import { EventService } from '../../services/event.service';
 import { TemplateService, DigitalTemplate } from '../../../../core/services/template.service';
 import { GuestService, Guest } from '../../../../core/services/guest.service';
 import { CatererService } from '../../../../core/services/caterer.service';
+import { TranslationService } from '../../../../core/services/translation.service';
 import { Event } from '../../models/event.model';
 import { 
   TEMPLATE_TAXONOMY, 
@@ -26,6 +27,7 @@ export interface DietaryTag {
 export interface CateringTab {
   key: string;
   label: string;
+  labelKey?: string;
 }
 
 export interface SampleDish {
@@ -65,7 +67,10 @@ export interface JourneyStep {
   cateringFormulaKey?: string;
   cateringTabs?: CateringTab[];
   isBuffetMode?: boolean;
+  isIndicatifMode?: boolean;
   sampleBuffetDishes?: SampleDish[];
+  sampleBanquetDishes?: SampleDish[];
+  otherCourses?: { category: string; name: string; icon: string }[];
   dietaryTags?: DietaryTag[];
   hasDietaryRestrictions?: boolean;
   dietarySummary?: string;
@@ -97,6 +102,35 @@ export class OrganiserInvitationSetup implements OnInit {
   private readonly guestService = inject(GuestService);
   private readonly catererService = inject(CatererService);
   private readonly sanitizer = inject(DomSanitizer);
+  protected readonly translationService = inject(TranslationService);
+
+  public getTranslatedTemplateTitle(title?: string | null): string {
+    if (!title) return '';
+    const key = 'TAXONOMY.TITLE_' + title;
+    const translated = this.translationService.translate(key);
+    return (translated && translated !== key) ? translated : title;
+  }
+
+  public getTranslatedSubCategory(sub?: string | null): string {
+    if (!sub) return '';
+    const key = 'TAXONOMY.SUB_' + sub;
+    const translated = this.translationService.translate(key);
+    return (translated && translated !== key) ? translated : sub;
+  }
+
+  public getTranslatedCategoryName(id?: string | null, fallback?: string): string {
+    if (!id) return fallback || '';
+    const key = 'TAXONOMY.CAT_' + id;
+    const translated = this.translationService.translate(key);
+    return (translated && translated !== key) ? translated : (fallback || id);
+  }
+
+  public getTranslatedCategorySummary(id?: string | null, fallback?: string): string {
+    if (!id) return fallback || '';
+    const key = 'TAXONOMY.SUMMARY_' + id;
+    const translated = this.translationService.translate(key);
+    return (translated && translated !== key) ? translated : (fallback || '');
+  }
 
   protected readonly event = signal<Event | null>(null);
   protected readonly templates = signal<DigitalTemplate[]>(this.templateService.templates());
@@ -531,32 +565,6 @@ export class OrganiserInvitationSetup implements OnInit {
     const isBuffetMode = !isMixMode && rawMealType.includes('BUFFET');
     const isPlatedMode = !isMixMode && !isBuffetMode;
 
-    let cateringFormulaName = 'Service à Table (Plats Fixes)';
-    let cateringFormulaKey = 'EVENT_DETAILS.FORMULA_PLATED';
-    let cateringTabs: CateringTab[] = [
-      { key: 'STARTER', label: 'Entrées' },
-      { key: 'MAIN', label: 'Plats' },
-      { key: 'DESSERT', label: 'Desserts' }
-    ];
-
-    if (isMixMode) {
-      cateringFormulaName = 'Formule Mixte (Buffet & Plat Chaud)';
-      cateringFormulaKey = 'EVENT_DETAILS.FORMULA_MIX';
-      cateringTabs = [
-        { key: 'STARTER', label: 'Buffet Entrées' },
-        { key: 'MAIN', label: 'Plat Chaud' },
-        { key: 'DESSERT', label: 'Buffet Desserts' }
-      ];
-    } else if (isBuffetMode) {
-      cateringFormulaName = 'Formule Buffet Libre-Service';
-      cateringFormulaKey = 'EVENT_DETAILS.FORMULA_BUFFET';
-      cateringTabs = [
-        { key: 'STARTER', label: 'Entrées Buffet' },
-        { key: 'MAIN', label: 'Plats Buffet' },
-        { key: 'DESSERT', label: 'Desserts Buffet' }
-      ];
-    }
-
     // Parse dietary requirements & allergies (e.g. Vegan, Sans gluten, Sans lactose, Halal, Custom notes)
     const rawDietStr = (guest.dietaryRequirements || '').trim();
     const rawLocalAllergies = localStorage.getItem(`guest_${gid}_allergies`);
@@ -569,18 +577,24 @@ export class OrganiserInvitationSetup implements OnInit {
 
     const rawParts = rawDietStr.split(',').map(p => p.trim()).filter(Boolean);
     const dietaryList: string[] = [...localAllergiesList];
-    let extractedDish = '';
+    let extractedMain = '';
+    let extractedStarter = '';
+    let extractedDessert = '';
+    let extractedBeverage = '';
+    let isIndicatifFromDiet = false;
 
     rawParts.forEach(part => {
       const lower = part.toLowerCase();
       if (lower.startsWith('plat:') || lower.startsWith('main:')) {
-        extractedDish = part.replace(/^(plat|main):\s*/i, '').trim();
-      } else if (lower.startsWith('entrée:') || lower.startsWith('starter:')) {
-        if (!extractedDish) extractedDish = part.replace(/^(entrée|starter):\s*/i, '').trim();
+        extractedMain = part.replace(/^(plat|main):\s*/i, '').trim();
+      } else if (lower.startsWith('entrée:') || lower.startsWith('entree:') || lower.startsWith('starter:')) {
+        extractedStarter = part.replace(/^(entrée|entree|starter):\s*/i, '').trim();
       } else if (lower.startsWith('dessert:')) {
-        if (!extractedDish) extractedDish = part.replace(/^dessert:\s*/i, '').trim();
+        extractedDessert = part.replace(/^dessert:\s*/i, '').trim();
       } else if (lower.startsWith('boisson:') || lower.startsWith('beverage:')) {
-        if (!extractedDish) extractedDish = part.replace(/^(boisson|beverage):\s*/i, '').trim();
+        extractedBeverage = part.replace(/^(boisson|beverage):\s*/i, '').trim();
+      } else if (lower.includes("menu d'honneur") || lower.includes("banquet")) {
+        isIndicatifFromDiet = true;
       } else if (!lower.startsWith('message:')) {
         if (!dietaryList.includes(part)) {
           dietaryList.push(part);
@@ -588,44 +602,93 @@ export class OrganiserInvitationSetup implements OnInit {
       }
     });
 
-    const localDish = localStorage.getItem(`guest_${gid}_last_selected_dish`);
-    let cleanDishName = extractedDish || (localDish ? localDish.trim() : '');
-    let detectedCat = localStorage.getItem(`guest_${gid}_last_selected_cat`) || 'MAIN';
+    const isIndicatif = rawMealType.includes('MENU_INDICATIF') || isIndicatifFromDiet;
+    let cateringFormulaName = isIndicatif ? 'Menu Unique (Mariage & Banquet)' : 'Service à l\'assiette';
+    let cateringFormulaKey = isIndicatif ? 'EVENT_DETAILS.FORMULA_INDICATIF' : 'EVENT_DETAILS.FORMULA_PLATED';
+    let cateringTabs: CateringTab[] | undefined = undefined;
 
-    // Remove any raw enum prefix like 'MAIN: ', 'STARTER: ', 'DESSERT: ', 'Plat: '
-    if (cleanDishName.startsWith('MAIN:')) {
-      cleanDishName = cleanDishName.replace(/^MAIN:\s*/i, '').trim();
-      detectedCat = 'MAIN';
-    } else if (cleanDishName.startsWith('STARTER:')) {
-      cleanDishName = cleanDishName.replace(/^STARTER:\s*/i, '').trim();
-      detectedCat = 'STARTER';
-    } else if (cleanDishName.startsWith('DESSERT:')) {
-      cleanDishName = cleanDishName.replace(/^DESSERT:\s*/i, '').trim();
-      detectedCat = 'DESSERT';
-    } else if (cleanDishName.startsWith('Plat:')) {
-      cleanDishName = cleanDishName.replace(/^Plat:\s*/i, '').trim();
-      detectedCat = 'MAIN';
-    } else if (cleanDishName.startsWith('Entrée:')) {
-      cleanDishName = cleanDishName.replace(/^Entrée:\s*/i, '').trim();
-      detectedCat = 'STARTER';
-    } else if (cleanDishName.startsWith('Dessert:')) {
-      cleanDishName = cleanDishName.replace(/^Dessert:\s*/i, '').trim();
-      detectedCat = 'DESSERT';
+    if (isMixMode) {
+      cateringFormulaName = 'Formule Mixte (Buffet & Plat Chaud)';
+      cateringFormulaKey = 'EVENT_DETAILS.FORMULA_MIX';
+      cateringTabs = [
+        { key: 'STARTER', label: 'Entrées en Buffet', labelKey: 'CATERING.STARTERS_IN_BUFFET' },
+        { key: 'MAIN', label: 'Plat Principal servi à table', labelKey: 'CATERING.MAIN_SERVED_TABLE' },
+        { key: 'DESSERT', label: 'Desserts en Buffet', labelKey: 'CATERING.DESSERTS_IN_BUFFET' }
+      ];
+    } else if (isBuffetMode) {
+      cateringFormulaName = 'Formule Buffet Libre-Service';
+      cateringFormulaKey = 'EVENT_DETAILS.FORMULA_BUFFET';
+      cateringTabs = undefined;
+    } else {
+      // Formule Service à Table / Service à l'assiette (Plats Fixes)
+      cateringFormulaName = isIndicatif ? 'Menu Unique (Mariage & Banquet)' : 'Service à l\'assiette';
+      cateringFormulaKey = isIndicatif ? 'EVENT_DETAILS.FORMULA_INDICATIF' : 'EVENT_DETAILS.FORMULA_PLATED';
+      cateringTabs = undefined;
     }
 
-    if (!cleanDishName && isMenuViewed) {
-      cleanDishName = isMixMode ? 'Dos de cabillaud sauce vierge' : 'Sélection des plats du menu';
+    const localMain = localStorage.getItem(`guest_${gid}_selected_main`) || localStorage.getItem(`guest_${gid}_mealChoice`);
+    const localStarter = localStorage.getItem(`guest_${gid}_selected_starter`) || localStorage.getItem(`guest_${gid}_starterChoice`);
+    const localDessert = localStorage.getItem(`guest_${gid}_selected_dessert`) || localStorage.getItem(`guest_${gid}_dessertChoice`);
+    const localBeverage = localStorage.getItem(`guest_${gid}_selected_beverage`) || localStorage.getItem(`guest_${gid}_beverageChoice`);
+    const localDish = localStorage.getItem(`guest_${gid}_last_selected_dish`);
+    const localCat = localStorage.getItem(`guest_${gid}_last_selected_cat`);
+    const localMainImg = localStorage.getItem(`guest_${gid}_selected_main_image`);
+
+    const filterAction = (s?: string | null) => {
+      if (!s) return '';
+      const l = s.toLowerCase();
+      if (l.includes('découverte') || l.includes('navigation') || l.includes('sélection') || 
+          l.includes('validation') || l.includes('menu d\'honneur') || l.includes('consultation') || l.includes('étape')) {
+        return '';
+      }
+      return s.trim();
+    };
+
+    let chosenMain = filterAction(extractedMain || (localMain ? localMain.trim() : ''));
+    if (!chosenMain && localDish && localCat === 'MAIN') {
+      chosenMain = filterAction(localDish);
+    }
+    if (chosenMain) {
+      chosenMain = chosenMain.replace(/^(plat|main):\s*/i, '').trim();
+    }
+
+    let chosenStarter = filterAction(extractedStarter || (localStarter ? localStarter.trim() : '')).replace(/^(entrée|entree|starter):\s*/i, '').trim();
+    let chosenDessert = filterAction(extractedDessert || (localDessert ? localDessert.trim() : '')).replace(/^dessert:\s*/i, '').trim();
+    let chosenBeverage = filterAction(extractedBeverage || (localBeverage ? localBeverage.trim() : '')).replace(/^(boisson|beverage):\s*/i, '').trim();
+
+    const otherCourses: { category: string; name: string; icon: string }[] = [];
+    if (chosenStarter) otherCourses.push({ category: 'Entrée', name: chosenStarter, icon: 'fa-utensils' });
+    if (chosenDessert) otherCourses.push({ category: 'Dessert', name: chosenDessert, icon: 'fa-cake-candles' });
+    if (chosenBeverage) otherCourses.push({ category: 'Boisson', name: chosenBeverage, icon: 'fa-wine-glass' });
+
+    let cleanDishName = chosenMain;
+    let detectedCat = 'MAIN';
+
+    // If no main dish is chosen yet, but a starter or dessert was selected
+    if (!cleanDishName) {
+      if (chosenStarter) {
+        cleanDishName = chosenStarter;
+        detectedCat = 'STARTER';
+      } else if (chosenDessert) {
+        cleanDishName = chosenDessert;
+        detectedCat = 'DESSERT';
+      } else if (chosenBeverage) {
+        cleanDishName = chosenBeverage;
+        detectedCat = 'BEVERAGE';
+      }
     }
 
     let dishCategoryLabel = isMixMode ? 'Plat Chaud' : (isBuffetMode ? 'Plat Buffet' : 'Plat Principal');
     if (detectedCat === 'STARTER') dishCategoryLabel = isMixMode ? 'Buffet Entrées' : (isBuffetMode ? 'Entrée Buffet' : 'Entrée');
     else if (detectedCat === 'MAIN') dishCategoryLabel = isMixMode ? 'Plat Chaud' : (isBuffetMode ? 'Plat Buffet' : 'Plat Principal');
     else if (detectedCat === 'DESSERT') dishCategoryLabel = isMixMode ? 'Buffet Desserts' : (isBuffetMode ? 'Dessert Buffet' : 'Dessert');
-    else if (detectedCat === 'BEVERAGE') dishCategoryLabel = 'Boisson & Bar';
+    else if (detectedCat === 'BEVERAGE') dishCategoryLabel = 'Boisson';
 
-    const dishImg = localStorage.getItem(`guest_${gid}_last_selected_image`) || 
-      (detectedCat === 'DESSERT' ? '/assets/images/menu_dessert.png' : 
-      (detectedCat === 'STARTER' ? '/assets/images/menu_starter.png' : '/assets/images/menu_main.png'));
+    const dishImg = (detectedCat === 'MAIN')
+      ? (localMainImg || '/assets/images/menu_main.png')
+      : (localStorage.getItem(`guest_${gid}_last_selected_image`) || 
+        (detectedCat === 'DESSERT' ? '/assets/images/menu_dessert.png' : 
+        (detectedCat === 'STARTER' ? '/assets/images/menu_starter.png' : '/assets/images/menu_starter.png')));
 
     const dietaryTags = dietaryList.map(tag => {
       const lower = tag.toLowerCase();
@@ -691,6 +754,19 @@ export class OrganiserInvitationSetup implements OnInit {
       {
         name: 'Tajine d\'Agneau M\'rouzia & Pruneaux',
         category: 'Buffet • Plat Signature',
+        image: '/assets/images/menu_main.png'
+      }
+    ];
+
+    const sampleBanquetDishes: SampleDish[] = [
+      {
+        name: 'Salade Royale & Verrines de Crevettes',
+        category: 'Banquet • Entrée d\'Honneur',
+        image: '/assets/images/menu_starter.png'
+      },
+      {
+        name: 'Tajine de Viande aux Pruneaux & Fruits Secs',
+        category: 'Banquet • Plat Principal',
         image: '/assets/images/menu_main.png'
       }
     ];
@@ -777,18 +853,32 @@ export class OrganiserInvitationSetup implements OnInit {
         stepNumber: 3,
         title: "Écran 3 : Sélection Menu & Formule",
         shortTitle: "3. Choix Menu",
-        subtitle: isBuffetMode 
-          ? `Formule Buffet : ${guestFirstName} a découvert le menu` 
-          : (cleanDishName ? `${guestFirstName} a choisi : ${cleanDishName}` : (isMenuViewed ? "Plats en cours de découverte" : (isDeclined ? "Non requis" : "En attente"))),
-        icon: "fa-utensils",
+        subtitle: isIndicatif
+          ? `Menu Unique : ${guestFirstName} a pris connaissance du banquet`
+          : (isBuffetMode 
+            ? `Formule Buffet : ${guestFirstName} a découvert le menu` 
+            : (cleanDishName ? `${guestFirstName} a choisi : ${cleanDishName}` : (isOpened && !hasResponded ? `${guestFirstName} consulte le menu` : (isDeclined ? "Non requis" : "En attente")))),
+        icon: isIndicatif ? "fa-crown" : "fa-utensils",
         screenType: 'MENU_CHOICE' as const,
-        isCompleted: isMenuViewed || isConfirmed,
-        isCurrent: isOpened && !isMenuViewed && !hasResponded,
-        badgeLabel: isBuffetMode ? "Buffet" : (isMenuViewed ? (isConfirmed ? "Sélectionné" : "En consultation") : (isDeclined ? "Non requis" : "En attente")),
-        badgeKey: isBuffetMode ? 'BUFFET' : (isMenuViewed ? (isConfirmed ? 'STATUS_SELECTED' : 'STATUS_IN_PROGRESS') : (isDeclined ? 'STATUS_DECLINED' : 'STATUS_PENDING')),
-        badgeClass: (isBuffetMode || isMenuViewed) ? "bg-success text-white" : (isOpened && !hasResponded ? "bg-warning text-dark fw-bold" : "bg-body-dark text-muted"),
-        details: isBuffetMode ? `Formule Buffet : Présentation des plats du chef` : (cleanDishName ? `${dishCategoryLabel} : ${cleanDishName}` : `En attente du choix de menu`),
-        dishChoice: cleanDishName,
+        isCompleted: isIndicatif 
+          ? (isOpened || isConfirmed || hasResponded) 
+          : (isBuffetMode ? (isOpened || isConfirmed) : (isConfirmed || cleanDishName.length > 0)),
+        isCurrent: isIndicatif 
+          ? false 
+          : (isBuffetMode ? false : (isOpened && !cleanDishName && !hasResponded)),
+        badgeLabel: isIndicatif 
+          ? "Menu Unique" 
+          : (isBuffetMode ? "Buffet" : (cleanDishName ? "Sélectionné" : (isOpened && !hasResponded ? "En cours" : (isDeclined ? "Non requis" : "En attente")))),
+        badgeKey: isIndicatif 
+          ? 'MENU_UNIQUE' 
+          : (isBuffetMode ? 'BUFFET' : (cleanDishName ? 'STATUS_SELECTED' : (isOpened && !hasResponded ? 'STATUS_IN_PROGRESS' : (isDeclined ? 'STATUS_DECLINED' : 'STATUS_PENDING')))),
+        badgeClass: isIndicatif 
+          ? ((isOpened || isConfirmed || hasResponded) ? "bg-success text-white" : "bg-body-dark text-muted")
+          : ((isBuffetMode || cleanDishName) ? "bg-success text-white" : (isOpened && !hasResponded ? "bg-warning text-dark fw-bold" : "bg-body-dark text-muted")),
+        details: isIndicatif 
+          ? `Menu d'Honneur (Banquet) servi à table pour tous les convives`
+          : (isBuffetMode ? `Formule Buffet : Présentation des plats du chef` : (cleanDishName ? `${dishCategoryLabel} : ${cleanDishName}` : `En attente du choix de menu`)),
+        dishChoice: isIndicatif ? '' : cleanDishName,
         dishCategory: dishCategoryLabel,
         dishCategoryKey: detectedCat,
         dishImage: dishImg,
@@ -796,11 +886,20 @@ export class OrganiserInvitationSetup implements OnInit {
         cateringFormulaKey: cateringFormulaKey,
         cateringTabs: cateringTabs,
         isBuffetMode: isBuffetMode,
+        isIndicatifMode: isIndicatif,
         sampleBuffetDishes: sampleBuffetDishes,
+        sampleBanquetDishes: sampleBanquetDishes,
+        otherCourses: otherCourses,
         guestFirstName: guestFirstName,
-        narrativeMessage: isBuffetMode 
-          ? `${guestFirstName} a pris connaissance de la Formule Buffet Libre-Service` 
-          : (cleanDishName ? `${guestFirstName} a sélectionné son plat : ${cleanDishName}` : (isMenuViewed ? `${guestFirstName} consulte actuellement le menu` : `En attente du choix de menu par ${guestFirstName}`))
+        narrativeMessage: isIndicatif
+          ? ((isOpened || isConfirmed || hasResponded) 
+              ? `${guestFirstName} a pris connaissance du Menu d'Honneur du Banquet` 
+              : `Menu d'Honneur servi à table pour tous les convives`)
+          : (isBuffetMode 
+              ? `${guestFirstName} a pris connaissance de la Formule Buffet Libre-Service` 
+              : (cleanDishName 
+                  ? `${guestFirstName} a sélectionné son plat : ${cleanDishName}` 
+                  : (isMenuViewed ? `${guestFirstName} consulte actuellement le menu` : `En attente du choix de plat par ${guestFirstName}`)))
       },
       {
         stepNumber: 4,
@@ -874,9 +973,9 @@ export class OrganiserInvitationSetup implements OnInit {
       statusLabel = 'Régimes & Allergies consultés';
       statusBadge = 'bg-warning text-dark shadow-sm';
     } else if (isMenuViewed) {
-      statusKey = 'STATUS_MENU_VIEWED';
-      statusLabel = 'En cours de sélection du Menu';
-      statusBadge = 'bg-warning text-dark shadow-sm';
+      statusKey = isIndicatif ? 'STATUS_VIEWED' : 'STATUS_MENU_VIEWED';
+      statusLabel = isIndicatif ? 'Menu d\'Honneur consulté' : 'En cours de sélection du Menu';
+      statusBadge = isIndicatif ? 'bg-success text-white shadow-sm' : 'bg-warning text-dark shadow-sm';
     } else if (isOpened) {
       statusKey = 'STATUS_OPENED';
       statusLabel = 'Invitation Ouverte';

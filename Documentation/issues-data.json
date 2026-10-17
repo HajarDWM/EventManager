@@ -1,0 +1,332 @@
+[
+  {
+    "title": "[DONE-AUTH-01] Architecture Multi-Tenant et Isolation de Base de Données par Traiteur",
+    "state": "closed",
+    "labels": ["status:done", "scope:backend", "feature:auth"],
+    "body": "## 📌 Réalisation\n- Cloisonnement strict des données au niveau JPA et Spring Data par identifiant d'organisation Traiteur.\n- Prévention absolue de fuites de données inter-organisations.\n- Adaptateurs d'infrastructure sécurisés et migrations Flyway multi-locataires.\n\n### 💻 Fichiers Clés :\n- `Caterer.java`, `CatererEntity.java`, `db/migration`"
+  },
+  {
+    "title": "[DONE-AUTH-02] Système de Contrôle d'Accès par Rôles (RBAC : SuperAdmin, Caterer, Staff, Client)",
+    "state": "closed",
+    "labels": ["status:done", "scope:backend", "scope:frontend", "feature:auth"],
+    "body": "## 📌 Réalisation\n- Implémentation des rôles `SUPER_ADMIN`, `CATERER_ADMIN`, `STAFF`, et `CLIENT`.\n- Guards de routage Angular et filtres Spring Security adaptés pour chaque type d'utilisateur.\n- Écrans dédiés et restrictions de visibilité selon les prérogatives."
+  },
+  {
+    "title": "[DONE-AUTH-03] Pipeline d'Authentification Stateless JWT avec Refresh Tokens",
+    "state": "closed",
+    "labels": ["status:done", "scope:backend", "feature:auth"],
+    "body": "## 📌 Réalisation\n- Authentification stateless JWT sécurisée avec durée de vie courte et renouvellement automatique par refresh tokens.\n- Hachage sécurisé des mots de passe avec l'algorithme BCrypt.\n- Filtre `JwtAuthenticationFilter` et endpoints `/api/auth/login`, `/api/auth/register`."
+  },
+  {
+    "title": "[DONE-AUTH-04] Authentification Directe Client Hôte par Token Sécurisé / Magic Link",
+    "state": "closed",
+    "labels": ["status:done", "scope:backend", "scope:frontend", "feature:auth", "feature:client"],
+    "body": "## 📌 Réalisation\n- Authentification sans mot de passe complexe pour les clients finaux (mariés / entreprises) via `ClientAuthController`.\n- Génération de tokens d'accès direct et sécurisation du portail `/client-dashboard`."
+  },
+  {
+    "title": "[DONE-AUTH-05] Intercepteur et Guard de Vérification d'Abonnement Actif Traiteur",
+    "state": "closed",
+    "labels": ["status:done", "scope:backend", "scope:frontend", "feature:auth", "feature:saas"],
+    "body": "## 📌 Réalisation\n- Middleware bloquant l'accès aux fonctionnalités d'organisation lorsque l'abonnement du traiteur est expiré.\n- Exception pour le rôle `SUPER_ADMIN`.\n- Redirection fluide vers la page de réabonnement Stripe."
+  },
+  {
+    "title": "[DONE-EVT-01] Assistant Multi-Étapes de Création d'Événements avec Validation",
+    "state": "closed",
+    "labels": ["status:done", "scope:frontend", "scope:backend", "feature:event"],
+    "body": "## 📌 Réalisation\n- Formulaire multi-étapes réactif OneUI 5.12 (Informations générales, date, lieu, type de prestation, nombre d'invités estimés).\n- Validation stricte des données et liaison directe avec l'API `EventResource`."
+  },
+  {
+    "title": "[DONE-EVT-02] Tableau de Bord Maître des Détails de l'Événement & KPI en Direct",
+    "state": "closed",
+    "labels": ["status:done", "scope:frontend", "feature:event"],
+    "body": "## 📌 Réalisation\n- Page centrale de pilotage `EventDetailsComponent` regroupant les métriques clés (invités confirmés, budget, compte à rebours).\n- Onglets de navigation fluide vers les invités, le menu, la facturation, les tâches et les exports."
+  },
+  {
+    "title": "[DONE-EVT-03] Moteur de Statuts d'Événements (Brouillon, Confirmé, Terminé, Annulé)",
+    "state": "closed",
+    "labels": ["status:done", "scope:backend", "scope:frontend", "feature:event"],
+    "body": "## 📌 Réalisation\n- Machine à états régissant le cycle de vie de l'événement (`DRAFT` -> `CONFIRMED` -> `COMPLETED` / `CANCELLED`).\n- Badges visuels et transitions contrôlées selon l'avancement de la prestation."
+  },
+  {
+    "title": "[DONE-EVT-04] Duplication d'Événements et Clonage Rapide de Prestations",
+    "state": "closed",
+    "labels": ["status:done", "scope:backend", "scope:frontend", "feature:event"],
+    "body": "## 📌 Réalisation\n- Fonctionnalité permettant de dupliquer un événement existant (menus, configuration de modèles, checklists de préparation) pour accélérer la création de nouvelles prestations récurrentes."
+  },
+  {
+    "title": "[DONE-EVT-05] Checklist des Tâches de Préparation et Compte à Rebours d'Échéances",
+    "state": "closed",
+    "labels": ["status:done", "scope:backend", "scope:frontend", "feature:event"],
+    "body": "## 📌 Réalisation\n- Module `EventTaskResource` et `EventTaskListComponent` pour créer, assigner et cocher les étapes clés de préparation.\n- Calcul de la barre de progression et rappels de délais."
+  },
+  {
+    "title": "[DONE-TPL-01] Catalogue Admin et Studio d'Édition de Modèles d'Invitations Digitales",
+    "state": "closed",
+    "labels": ["status:done", "scope:frontend", "scope:backend", "feature:template"],
+    "body": "## 📌 Réalisation\n- Studio complet `AdminTemplatesComponent` avec gestion CRUD des modèles.\n- Catégorisation par types d'événements : Mariage, Fiançailles, Corporate, Anniversaire, Gala d'exception."
+  },
+  {
+    "title": "[DONE-TPL-02] Personnalisation des Palettes de Couleurs et Arrière-plans de Prestige",
+    "state": "closed",
+    "labels": ["status:done", "scope:frontend", "feature:template"],
+    "body": "## 📌 Réalisation\n- Sélecteurs de couleur primaire dorée/cuivrée, couleur secondaire de texte et couleur de fond personnalisée.\n- Gestion des thèmes sombres et clairs avec calcul automatique des contrastes de lisibilité."
+  },
+  {
+    "title": "[DONE-TPL-03] Chargeur Dynamique de Typographies de Luxe Google Fonts",
+    "state": "closed",
+    "labels": ["status:done", "scope:frontend", "feature:template"],
+    "body": "## 📌 Réalisation\n- Utilitaire runtime d'injection automatique des Google Fonts (*Alex Brush, Cinzel, Playfair Display, Great Vibes, Montserrat, Cormorant Garamond*).\n- Contrôles de taille, graisse (`fontWeight`) et espacement des lettres (`letterSpacing`)."
+  },
+  {
+    "title": "[DONE-TPL-04] Cadres Décoratifs Filigranes (Floral, Bordure Dorée, Géométrique, Minimaliste)",
+    "state": "closed",
+    "labels": ["status:done", "scope:frontend", "feature:template"],
+    "body": "## 📌 Réalisation\n- 4 couches de cadres ornementaux haute définition habillant la carte d'invitation avec superposition CSS élégante."
+  },
+  {
+    "title": "[DONE-TPL-05] Moteur de Particules d'Ambiance Visuelles (Or, Pétales, Confettis, Étoiles, Bokeh)",
+    "state": "closed",
+    "labels": ["status:done", "scope:frontend", "feature:template"],
+    "body": "## 📌 Réalisation\n- 5 systèmes de particules animées : Poussière d'or flottante, Chute de pétales de roses, Confettis festifs, Étoiles scintillantes et Orbes Bokeh.\n- Animation CSS pure GPU-accélérée sans perte de performances."
+  },
+  {
+    "title": "[DONE-TPL-06] Cadrage Responsive des Particules : Marges Latérales sur Mobile vs Plein Écran Desktop",
+    "state": "closed",
+    "labels": ["status:done", "scope:frontend", "feature:template"],
+    "body": "## 📌 Réalisation\n- Sur Mobile (< 992px) : Particules strictement confinées aux marges gauche/droite (<= 16% et >= 84%) pour protéger la lisibilité du texte central.\n- Sur Desktop (>= 992px) : Dispersion harmonieuse sur l'ensemble du fond d'écran (3% à 97%)."
+  },
+  {
+    "title": "[DONE-TPL-07] 5 Expériences d'Ouverture Interactives de Prestige",
+    "state": "closed",
+    "labels": ["status:done", "scope:frontend", "feature:template"],
+    "body": "## 📌 Réalisation\n- Animations immersives d'ouverture : Sceau de cire royal, Découpe de ruban de soie, Dévoilement de rideau, Portes battantes de palace et Badge hologramme VIP."
+  },
+  {
+    "title": "[DONE-TPL-08] Widget Lecteur Audio Flottant avec Vinyle Rotatif et Égaliseur d'Ondes",
+    "state": "closed",
+    "labels": ["status:done", "scope:frontend", "feature:template"],
+    "body": "## 📌 Réalisation\n- Lecteur audio d'ambiance avec disque vinyle tournant, barres animées d'égaliseur et lancement automatique au premier geste interactif de l'invité."
+  },
+  {
+    "title": "[DONE-TPL-09] Sélecteur de Rendu d'Aperçu en Direct Double-Écran (Mobile & Desktop)",
+    "state": "closed",
+    "labels": ["status:done", "scope:frontend", "feature:template"],
+    "body": "## 📌 Réalisation\n- Commutateur de prévisualisation dans le studio Admin permettant de tester instantanément le rendu sur châssis iPhone / Smartphone et sur écran large Desktop."
+  },
+  {
+    "title": "[DONE-TPL-10] Hydratation Instantanée 0ms via sessionStorage contre les Latences F5",
+    "state": "closed",
+    "labels": ["status:done", "scope:frontend", "feature:template"],
+    "body": "## 📌 Réalisation\n- Mise en cache intelligente et réhydratation synchrone 0ms dans `TemplateService`.\n- Élimination complète des spinners de chargement au rafraîchissement F5 et lors de la navigation."
+  },
+  {
+    "title": "[DONE-RSVP-01] Portail Public d'Invitation RSVP Sécurisé par Jeton Individuel",
+    "state": "closed",
+    "labels": ["status:done", "scope:frontend", "scope:backend", "feature:rsvp"],
+    "body": "## 📌 Réalisation\n- Route publique `/rsvp/:id` résolue via `PublicRsvpController` sans création de compte requise pour l'invité.\n- Rendu personnalisé avec le prénom et nom de l'invité."
+  },
+  {
+    "title": "[DONE-RSVP-02] Parcours Gastronomique Pas-à-Pas de Sélection des Plats",
+    "state": "closed",
+    "labels": ["status:done", "scope:frontend", "feature:rsvp", "feature:catering"],
+    "body": "## 📌 Réalisation\n- Stepper interactif de sélection gastronomique : Entrées -> Plats Principaux -> Desserts -> Boissons avec photos et descriptions détaillées."
+  },
+  {
+    "title": "[DONE-RSVP-03] Moteur Multi-Formules Traiteur (Plats Fixes, Buffet, Formule Mixte)",
+    "state": "closed",
+    "labels": ["status:done", "scope:frontend", "scope:backend", "feature:rsvp", "feature:catering"],
+    "body": "## 📌 Réalisation\n- Support dynamique des formats de restauration : `PLATS_FIXES`, `BUFFET` (catalogue interactif avec badges) et `MIX` (plats chauds servis + buffets d'entrées/douceurs)."
+  },
+  {
+    "title": "[DONE-RSVP-04] Gestion des Régimes Spéciaux et Tags d'Allergènes Alimentaires",
+    "state": "closed",
+    "labels": ["status:done", "scope:frontend", "scope:backend", "feature:rsvp", "feature:catering"],
+    "body": "## 📌 Réalisation\n- Sélection multi-critères des intolérances (Gluten, Lactose, Arachides...) et régimes (Halal, Casher, Végan, Végétarien) enregistrés dans `GuestEntity`."
+  },
+  {
+    "title": "[DONE-RSVP-05] Enregistrement Dynamique des Accompagnants (+1 et Famille)",
+    "state": "closed",
+    "labels": ["status:done", "scope:frontend", "scope:backend", "feature:rsvp"],
+    "body": "## 📌 Réalisation\n- Déclaration du nombre et de l'identité des accompagnants avec choix de repas individuels associés."
+  },
+  {
+    "title": "[DONE-RSVP-06] Parcours de Déclinaison avec Messages de Vœux et Regrets aux Hôtes",
+    "state": "closed",
+    "labels": ["status:done", "scope:frontend", "scope:backend", "feature:rsvp"],
+    "body": "## 📌 Réalisation\n- Modal bienveillant permettant aux invités absents de laisser un mot personnalisé d'excuses ou de félicitations transmis directement aux organisateurs."
+  },
+  {
+    "title": "[DONE-RSVP-07] Export Calendrier .ics en 1 Clic et Guidage GPS Google Maps / Parking",
+    "state": "closed",
+    "labels": ["status:done", "scope:frontend", "feature:rsvp"],
+    "body": "## 📌 Réalisation\n- Génération de fichier calendrier `.ics` / Google Calendar.\n- Boutons d'itinéraire direct Google Maps pour la salle de réception et l'accès parking dédié."
+  },
+  {
+    "title": "[DONE-CLNT-01] Tableau de Bord Client Privé avec Statistiques de Réponses en Direct",
+    "state": "closed",
+    "labels": ["status:done", "scope:frontend", "scope:backend", "feature:client"],
+    "body": "## 📌 Réalisation\n- Dashboard client responsive affichant les indicateurs clés : Confirmés, En Attente, Déclinés, Taux de réponse et compte à rebours."
+  },
+  {
+    "title": "[DONE-CLNT-02] Gestion Collaborative de la Liste des Invités et Groupes Dynamiques",
+    "state": "closed",
+    "labels": ["status:done", "scope:frontend", "scope:backend", "feature:client"],
+    "body": "## 📌 Réalisation\n- Ajout, modification, suppression et recherche instantanée d'invités par les mariés/organisateurs.\n- Gestion des groupes (Famille, Amis, VIP, Collègues) avec validation scopée par événement."
+  },
+  {
+    "title": "[DONE-CLNT-03] Synthèse des Choix de Menus et Régimes Alimentaires Côté Client",
+    "state": "closed",
+    "labels": ["status:done", "scope:frontend", "feature:client", "feature:catering"],
+    "body": "## 📌 Réalisation\n- Vue consolidée des plats choisis par les convives permettant aux hôtes de suivre les préférences de leurs invités."
+  },
+  {
+    "title": "[DONE-CLNT-04] Composant d'Aperçu Live de l'Invitation Digitale dans le Portail Client",
+    "state": "closed",
+    "labels": ["status:done", "scope:frontend", "feature:client", "feature:template"],
+    "body": "## 📌 Réalisation\n- Intégration de `ClientInvitationPreviewComponent` avec synchronisation des fonds d'écran desktop/mobile."
+  },
+  {
+    "title": "[DONE-CAT-01] Catalogue des Plats et Cartes Gastronomiques du Traiteur",
+    "state": "closed",
+    "labels": ["status:done", "scope:backend", "scope:frontend", "feature:catering"],
+    "body": "## 📌 Réalisation\n- Gestion des entrées, plats de résistance, desserts et boissons avec prix unitaire, allergènes et descriptions."
+  },
+  {
+    "title": "[DONE-CAT-02] Contrôleur d'Upload et Distribution des Photos de Plats (Multipart)",
+    "state": "closed",
+    "labels": ["status:done", "scope:backend", "feature:catering"],
+    "body": "## 📌 Réalisation\n- `MenuItemImageController` gérant le téléversement multipart des visuels de plats et leur mise à disposition optimisée."
+  },
+  {
+    "title": "[DONE-CAT-03] Tableau de Bord Récapitulatif de Production pour la Brigade Cuisine",
+    "state": "closed",
+    "labels": ["status:done", "scope:backend", "scope:frontend", "feature:catering"],
+    "body": "## 📌 Réalisation\n- Calcul agrégé automatique du nombre exact de portions par plat et par régime pour le chef cuisinier."
+  },
+  {
+    "title": "[DONE-FIN-01] Échéancier des Paiements Clients, Suivi des Acomptes et Reste à Payer",
+    "state": "closed",
+    "labels": ["status:done", "scope:backend", "scope:frontend", "feature:finance"],
+    "body": "## 📌 Réalisation\n- Enregistrement des règlements clients (Acomptes, Solde), calcul de la barre de paiement et suivi du solde restant dû."
+  },
+  {
+    "title": "[DONE-FIN-02] Journal Détaillé des Dépenses et Charges de l'Événement",
+    "state": "closed",
+    "labels": ["status:done", "scope:backend", "scope:frontend", "feature:finance"],
+    "body": "## 📌 Réalisation\n- Table `event_expenses` (Flyway V15), `EventExpenseResource` et gestion des catégories de coûts (Ingrédients, Personnel, Location, Transport)."
+  },
+  {
+    "title": "[DONE-FIN-03] Calcul en Temps Réel de la Marge et du Bénéfice Net par Événement",
+    "state": "closed",
+    "labels": ["status:done", "scope:frontend", "feature:finance"],
+    "body": "## 📌 Réalisation\n- Calcul instantané par Angular Signals : Bénéfice Net = Budget Client Facturé - Total des Dépenses Réelles."
+  },
+  {
+    "title": "[DONE-FIN-04] Génération et Impression PDF des Reçus de Paiement et Bons de Décaissement",
+    "state": "closed",
+    "labels": ["status:done", "scope:frontend", "feature:finance"],
+    "body": "## 📌 Réalisation\n- Boutons d'impression instantanée générant des reçus officiels clients (vert/bleu) et des bons de dépense internes (rouge)."
+  },
+  {
+    "title": "[DONE-COMM-01] Centre d'Expédition Multi-Canal des Invitations (WhatsApp, Email, SMS)",
+    "state": "closed",
+    "labels": ["status:done", "scope:frontend", "scope:backend", "feature:rsvp"],
+    "body": "## 📌 Réalisation\n- `OrganiserInvitationSetup` permettant la sélection des invités et l'envoi direct par WhatsApp Web, Email et SMS."
+  },
+  {
+    "title": "[DONE-DATA-01] Pipeline d'Importation Serveur Excel (.xlsx) et CSV avec Détection de Séparateurs",
+    "state": "closed",
+    "labels": ["status:done", "scope:backend", "feature:data"],
+    "body": "## 📌 Réalisation\n- Parsing haute performance de fichiers `.xlsx` et CSV côté serveur avec validation des colonnes et gestion des groupes personnalisés."
+  },
+  {
+    "title": "[DONE-DATA-02] Moteur d'Exportation de Données en 1 Clic vers Excel et CSV",
+    "state": "closed",
+    "labels": ["status:done", "scope:backend", "scope:frontend", "feature:data"],
+    "body": "## 📌 Réalisation\n- Export instantané des listes d'invités, feuilles de production cuisine et bilans financiers."
+  },
+  {
+    "title": "[DONE-I18N-01] Internationalisation Complète de l'Application (Français, Anglais, Arabe)",
+    "state": "closed",
+    "labels": ["status:done", "scope:frontend", "feature:i18n"],
+    "body": "## 📌 Réalisation\n- Fichiers i18n JSON (`fr.json`, `en.json`, `ar.json`) et `TranslationService` pour basculer la langue instantanément."
+  },
+  {
+    "title": "[DONE-CURR-01] Moteur Multi-Devises avec Formatage Dynamique (MAD, EUR, USD, GBP, CAD)",
+    "state": "closed",
+    "labels": ["status:done", "scope:frontend", "feature:i18n"],
+    "body": "## 📌 Réalisation\n- `CurrencyService` supportant le formatage automatique des prix selon la devise choisie par le traiteur."
+  },
+  {
+    "title": "[DONE-SAAS-01] Monétisation SaaS Traiteur par Stripe Checkout et Webhooks d'Abonnement",
+    "state": "closed",
+    "labels": ["status:done", "scope:backend", "feature:saas"],
+    "body": "## 📌 Réalisation\n- `SubscriptionCheckoutResource` et `StripeWebhookResource` pour gérer la souscription, le renouvellement et l'annulation des forfaits."
+  },
+  {
+    "title": "[TODO-LOG-01] Concepteur Visuel de Plan de Salle Interactif (Canvas 2D / Grille)",
+    "state": "open",
+    "labels": ["status:todo", "priority:critical", "scope:frontend", "scope:backend"],
+    "body": "## 🎯 Objectif\nOutil visuel interactif pour positionner les tables de réception (rondes, rectangulaires, ovales, table d'honneur).\n\n### 📋 Spécifications :\n- [ ] Canvas interactif de positionnement de tables (coordonnées X/Y).\n- [ ] Définition de la capacité maximale par table.\n\n*Cible : Q4 2026 | Priorité : 🔴 Critique*"
+  },
+  {
+    "title": "[TODO-LOG-02] Placement des Invités par Glisser-Déposer (Drag & Drop) et Alertes de Capacité",
+    "state": "open",
+    "labels": ["status:todo", "priority:critical", "scope:frontend", "scope:backend"],
+    "body": "## 🎯 Objectif\nAssignation des invités confirmés aux chaises par Drag & Drop avec alertes de surcapacité.\n\n*Cible : Q4 2026 | Priorité : 🔴 Critique*"
+  },
+  {
+    "title": "[TODO-LOG-03] Export Haute Définition du Plan de Table et des Chevalets en PDF",
+    "state": "open",
+    "labels": ["status:todo", "priority:high", "scope:frontend", "scope:backend"],
+    "body": "## 🎯 Objectif\nGénération PDF haute résolution du plan de table global et des listes d'accueil par table.\n\n*Cible : Q4 2026 | Priorité : 🟠 Haute*"
+  },
+  {
+    "title": "[TODO-OPS-01] Chronogramme Déroulé Heure par Heure du Jour J avec Assignation d'Équipe",
+    "state": "open",
+    "labels": ["status:todo", "priority:high", "scope:frontend", "scope:backend"],
+    "body": "## 🎯 Objectif\nPlanning minute-par-minute de la journée partagé entre cuisine, salle, DJ et organisateurs.\n\n*Cible : Q4 2026 | Priorité : 🟠 Haute*"
+  },
+  {
+    "title": "[TODO-OPS-02] Vue Mobile Live pour Équipes Terrain (Serveurs et Maître d'Hôtel)",
+    "state": "open",
+    "labels": ["status:todo", "priority:medium", "scope:frontend"],
+    "body": "## 🎯 Objectif\nInterface smartphone pour cocher l'avancement des étapes du Jour J en direct.\n\n*Cible : Q4 2026 | Priorité : 🟡 Moyenne*"
+  },
+  {
+    "title": "[TODO-HR-01] Gestion du Roster et Plannings des Équipes de Service et Extras",
+    "state": "open",
+    "labels": ["status:todo", "priority:medium", "scope:backend", "scope:frontend"],
+    "body": "## 🎯 Objectif\nFiches des serveurs et extras avec planification des horaires d'embauche.\n\n*Cible : Q1 2027 | Priorité : 🟡 Moyenne*"
+  },
+  {
+    "title": "[TODO-HR-02] Calcul Automatique des Salaires et Intégration aux Dépenses de l'Événement",
+    "state": "open",
+    "labels": ["status:todo", "priority:medium", "scope:backend", "scope:frontend"],
+    "body": "## 🎯 Objectif\nCalcul automatique des coûts salariaux injectés dans le registre des dépenses.\n\n*Cible : Q1 2027 | Priorité : 🟡 Moyenne*"
+  },
+  {
+    "title": "[TODO-MEDIA-01] Galerie Souvenir Partagée avec Téléversement par QR Code de Table",
+    "state": "open",
+    "labels": ["status:todo", "priority:medium", "scope:frontend", "scope:backend"],
+    "body": "## 🎯 Objectif\nTéléversement mobile direct de photos souvenirs via QR code de table avec modération hôte.\n\n*Cible : Q1 2027 | Priorité : 🟢 Moyenne*"
+  },
+  {
+    "title": "[TODO-COMM-01] Intégration de l'API Meta WhatsApp Cloud et Relances Automatisées",
+    "state": "open",
+    "labels": ["status:todo", "priority:medium", "scope:backend"],
+    "body": "## 🎯 Objectif\nEnvoi officiel en masse sur WhatsApp et relances automatiques programmées à J-7 et J-2.\n\n*Cible : Q2 2027 | Priorité : 🟢 Moyenne*"
+  },
+  {
+    "title": "[TODO-AI-01] Assistant IA de Proposition de Menus et Calcul Prédictif des Matières Premières",
+    "state": "open",
+    "labels": ["status:todo", "priority:medium", "scope:backend", "scope:frontend"],
+    "body": "## 🎯 Objectif\nSuggestions IA de menus et calcul exact des grammages d'ingrédients bruts selon les réponses RSVP.\n\n*Cible : Q2 2027 | Priorité : 🔵 Innovation*"
+  },
+  {
+    "title": "[TODO-PWA-01] Application PWA Hors-Ligne et Scanner QR Code de Contrôle d'Accès",
+    "state": "open",
+    "labels": ["status:todo", "priority:medium", "scope:frontend"],
+    "body": "## 🎯 Objectif\nApplication PWA hors-ligne pour le scan rapide des invitations à l'entrée de la salle.\n\n*Cible : Q2 2027 | Priorité : ⚪ Amélioration*"
+  }
+]

@@ -367,16 +367,31 @@ export class MenuList implements OnInit {
 
   protected isFormatSelected(value: string): boolean {
     const current = this.mealType() || '';
-    return current.split(',').map(s => s.trim()).includes(value);
+    const list = current.split(',').map(s => s.trim());
+    if (value === 'COURSE_STARTER' || value === 'COURSE_ENTREE') {
+      return list.includes('COURSE_STARTER') || list.includes('COURSE_ENTREE');
+    }
+    return list.includes(value);
   }
 
   protected toggleFormat(value: string): void {
     const currentList = (this.mealType() || '').split(',').map(s => s.trim()).filter(Boolean);
-    const index = currentList.indexOf(value);
-    if (index > -1) {
-      currentList.splice(index, 1);
+    if (value === 'COURSE_STARTER' || value === 'COURSE_ENTREE') {
+      const hasStarter = currentList.includes('COURSE_STARTER') || currentList.includes('COURSE_ENTREE');
+      if (hasStarter) {
+        const filtered = currentList.filter(s => s !== 'COURSE_STARTER' && s !== 'COURSE_ENTREE');
+        this.saveMealType(filtered.join(','));
+        return;
+      } else {
+        currentList.push('COURSE_STARTER');
+      }
     } else {
-      currentList.push(value);
+      const index = currentList.indexOf(value);
+      if (index > -1) {
+        currentList.splice(index, 1);
+      } else {
+        currentList.push(value);
+      }
     }
     const newMealType = currentList.join(',');
     this.saveMealType(newMealType);

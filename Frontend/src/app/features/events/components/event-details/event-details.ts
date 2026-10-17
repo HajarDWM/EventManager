@@ -194,13 +194,14 @@ export class EventDetails implements OnInit {
       if (mainCount > 0) parts.push({ label: 'Plats Principaux', count: mainCount, icon: 'fa-drumstick-bite' });
       if (dessertCount > 0) parts.push({ label: 'Desserts', count: dessertCount, icon: 'fa-birthday-cake' });
       if (beverageCount > 0) parts.push({ label: 'Boissons', count: beverageCount, icon: 'fa-glass-cheers' });
+      const isIndicatif = mealType.includes('MENU_INDICATIF');
       return {
-        titleKey: 'EVENT_DETAILS.FORMULA_PLATED',
-        title: 'Service à l\'assiette',
-        badgeClass: 'bg-warning text-dark',
-        icon: 'fa-utensils',
+        titleKey: isIndicatif ? 'EVENT_DETAILS.FORMULA_INDICATIF' : 'EVENT_DETAILS.FORMULA_PLATED',
+        title: isIndicatif ? 'Menu Unique (Mariage & Banquet)' : 'Service à l\'assiette',
+        badgeClass: isIndicatif ? 'bg-dark text-white' : 'bg-warning text-dark',
+        icon: isIndicatif ? 'fa-crown' : 'fa-utensils',
         parts,
-        description: parts.map(p => `${p.label} (${p.count})`).join(' • ') || 'Service traditionnel des plats à table'
+        description: isIndicatif ? 'Menu d\'Honneur servi à table sans sélection individuelle' : (parts.map(p => `${p.label} (${p.count})`).join(' • ') || 'Service traditionnel des plats à table')
       };
     }
   });

@@ -172,6 +172,28 @@
             </label>
           </div>
         </div>
+
+        <!-- Mode de sélection des invités : Menu au choix vs Menu Indicatif / Unique -->
+        <div class="mt-2.5 pt-2 border-top d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2 bg-white rounded p-2 border">
+          <div class="d-flex align-items-center gap-2">
+            <div class="form-check form-switch mb-0">
+              <input class="form-check-input" type="checkbox" role="switch" id="menu_indicatif_toggle"
+                     [checked]="isFormatSelected('MENU_INDICATIF')"
+                     (change)="toggleFormat('MENU_INDICATIF')" style="cursor: pointer;">
+              <label class="form-check-label fs-xs fw-bold text-dark cursor-pointer ms-1" for="menu_indicatif_toggle">
+                <i class="fa fa-crown text-warning me-1"></i> Menu Indicatif / Banquet
+              </label>
+            </div>
+            <span class="badge rounded-pill" [ngClass]="isFormatSelected('MENU_INDICATIF') ? 'bg-primary text-white' : 'bg-body-secondary text-muted'" style="font-size: 0.68rem;">
+              {{ isFormatSelected('MENU_INDICATIF') ? 'Sans sélection' : 'Choix actif' }}
+            </span>
+          </div>
+          <div class="fs-3xs text-muted">
+            {{ isFormatSelected('MENU_INDICATIF') 
+                ? 'Tous les plats seront servis à table (sans sélection).' 
+                : 'L\'invité choisit ses plats lors de la confirmation.' }}
+          </div>
+        </div>
       </div>
 
       <!-- SUB-OPTIONS FOR MIX -->
@@ -204,6 +226,25 @@
             <label class="form-check-label fs-xs fw-semibold text-dark" for="mix_buffet_beverages" style="cursor: pointer;">
               Boissons en Buffet
             </label>
+          </div>
+        </div>
+
+        <!-- Mode de sélection des invités pour MIX -->
+        <div class="mt-2.5 pt-2 border-top d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2 bg-white rounded p-2 border">
+          <div class="d-flex align-items-center gap-2">
+            <div class="form-check form-switch mb-0">
+              <input class="form-check-input" type="checkbox" role="switch" id="mix_indicatif_toggle"
+                     [checked]="isFormatSelected('MENU_INDICATIF')"
+                     (change)="toggleFormat('MENU_INDICATIF')" style="cursor: pointer;">
+              <label class="form-check-label fs-xs fw-bold text-dark cursor-pointer ms-1" for="mix_indicatif_toggle">
+                <i class="fa fa-crown text-warning me-1"></i> Plat chaud fixe (sans choix)
+              </label>
+            </div>
+          </div>
+          <div class="fs-3xs text-muted">
+            {{ isFormatSelected('MENU_INDICATIF') 
+                ? 'Le plat chaud à table sera identique pour tous les convives.' 
+                : 'L\'invité sélectionne son plat chaud personnalisé lors du RSVP.' }}
           </div>
         </div>
       </div>
@@ -259,7 +300,7 @@
 
       <!-- Plated/Course Categories -->
       <ng-container *ngIf="masterCateringMode() === 'PLATS_FIXES'">
-        <button *ngIf="isFormatSelected('COURSE_ENTREE')" type="button" class="btn" [class.btn-primary]="selectedCategory() === 'STARTER'"
+        <button *ngIf="isFormatSelected('COURSE_STARTER')" type="button" class="btn" [class.btn-primary]="selectedCategory() === 'STARTER'"
           [class.btn-alt-secondary]="selectedCategory() !== 'STARTER'"
           (click)="selectedCategory.set('STARTER')">Entrées</button>
         <button *ngIf="isFormatSelected('COURSE_MAIN')" type="button" class="btn" [class.btn-primary]="selectedCategory() === 'MAIN'"

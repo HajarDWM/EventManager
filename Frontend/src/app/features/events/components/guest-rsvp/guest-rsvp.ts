@@ -84,6 +84,8 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
   protected readonly isFullMenuModalOpen = signal(false);
   protected readonly isMenuRsvpOpen = signal(false);
   public readonly currentRsvpStep = signal<number>(0);
+  public readonly isLocationModalOpen = signal(false);
+  public readonly isCalendarAcceptNoticeOpen = signal(false);
   protected readonly isDeclineModalOpen = signal(false);
   public declineMessage = '';
   protected readonly isPaymentModalOpen = signal(false);
@@ -303,6 +305,39 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
     this.isDeclineModalOpen.set(false);
   }
 
+  public openLocationModal(): void {
+    this.isLocationModalOpen.set(true);
+  }
+
+  public closeLocationModal(): void {
+    this.isLocationModalOpen.set(false);
+  }
+
+  public isGuestConfirmed(): boolean {
+    return this.status() === 'CONFIRMED' || this.guest()?.guestStatus === 'CONFIRMED' || this.selectedAttendanceChoice() === 'CONFIRMED';
+  }
+
+  public handleCalendarAction(event?: Event): void {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    if (this.isGuestConfirmed()) {
+      this.openExternalUrl(this.getGoogleCalendarUrl());
+    } else {
+      this.isCalendarAcceptNoticeOpen.set(true);
+    }
+  }
+
+  public closeCalendarAcceptNotice(): void {
+    this.isCalendarAcceptNoticeOpen.set(false);
+  }
+
+  public confirmAttendanceFromCalendarNotice(): void {
+    this.isCalendarAcceptNoticeOpen.set(false);
+    this.startAcceptWorkflow();
+  }
+
   public getEventHostLabel(): string {
     const cat = this.guest()?.templateCategory?.toLowerCase() || '';
     if (cat.includes('mariage') || cat.includes('wedding')) return 'aux mariés';
@@ -343,9 +378,21 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
     localStorage.setItem(`guest_${gid}_menu_viewed`, 'true');
     localStorage.setItem(`guest_${gid}_menu_viewed_at`, now);
     if (dishName) {
+      if (categoryOrDetail === 'MAIN') {
+        localStorage.setItem(`guest_${gid}_selected_main`, dishName);
+        localStorage.setItem(`guest_${gid}_mealChoice`, dishName);
+        if (imageUrl) localStorage.setItem(`guest_${gid}_selected_main_image`, imageUrl);
+      } else if (categoryOrDetail === 'STARTER') {
+        localStorage.setItem(`guest_${gid}_selected_starter`, dishName);
+        localStorage.setItem(`guest_${gid}_starterChoice`, dishName);
+      } else if (categoryOrDetail === 'DESSERT') {
+        localStorage.setItem(`guest_${gid}_selected_dessert`, dishName);
+        localStorage.setItem(`guest_${gid}_dessertChoice`, dishName);
+      } else if (categoryOrDetail === 'BEVERAGE') {
+        localStorage.setItem(`guest_${gid}_selected_beverage`, dishName);
+        localStorage.setItem(`guest_${gid}_beverageChoice`, dishName);
+      }
       localStorage.setItem(`guest_${gid}_last_selected_dish`, dishName);
-    } else if (categoryOrDetail && !['STARTER', 'MAIN', 'DESSERT', 'BEVERAGE'].includes(categoryOrDetail)) {
-      localStorage.setItem(`guest_${gid}_last_selected_dish`, categoryOrDetail);
     }
     if (categoryOrDetail && ['STARTER', 'MAIN', 'DESSERT', 'BEVERAGE'].includes(categoryOrDetail)) {
       localStorage.setItem(`guest_${gid}_last_selected_cat`, categoryOrDetail);
@@ -359,7 +406,7 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
     this.isDiscoveryMode.set(true);
     this.selectedAttendanceChoice.set(null);
     this.attendanceStatus = null;
-    this.currentRsvpStep.set(0);
+    this.currentRsvpStep.set(this.getFirstCourseStep());
     this.isMenuRsvpOpen.set(true);
     this.recordMenuStep('Navigation vers le menu gastronomique');
     this.saveCurrentRsvpProgress();
@@ -370,9 +417,12 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
     this.attendanceStatus = true;
     this.status.set('CONFIRMED');
     this.selectedAttendanceChoice.set('CONFIRMED');
-    this.currentRsvpStep.set(0);
-    this.isMenuRsvpOpen.set(true);
+    this.hasConfirmedMenuChoice.set(true);
+    if (this.isIndicativeMenu()) {
+      this.currentRsvpStep.set(4);
+    }
     this.recordMenuStep('Validation présence & menu');
+    this.isMenuRsvpOpen.set(true);
     this.saveCurrentRsvpProgress();
   }
 
@@ -381,10 +431,11 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
     this.attendanceStatus = true;
     this.status.set('CONFIRMED');
     this.selectedAttendanceChoice.set('CONFIRMED');
-    this.hasConfirmedMenuChoice.set(!!(this.starterChoice || this.mealChoice || this.dessertChoice || this.beverageChoice));
-    this.currentRsvpStep.set(0);
+    this.hasConfirmedMenuChoice.set(this.isIndicativeMenu() || !!(this.starterChoice || this.mealChoice || this.dessertChoice || this.beverageChoice));
+    const firstStep = this.getFirstCourseStep();
+    this.currentRsvpStep.set(firstStep);
+    this.recordMenuStep(this.isIndicativeMenu() ? 'Découverte du menu d\'honneur' : 'Sélection des plats du menu');
     this.isMenuRsvpOpen.set(true);
-    this.recordMenuStep('Sélection des plats du menu');
     this.saveCurrentRsvpProgress();
   }
 
@@ -394,7 +445,8 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
     this.status.set('CONFIRMED');
     this.attendanceStatus = true;
     this.selectedAttendanceChoice.set('CONFIRMED');
-    this.currentRsvpStep.set(0);
+    this.hasConfirmedMenuChoice.set(this.isIndicativeMenu() || !!(this.starterChoice || this.mealChoice || this.dessertChoice || this.beverageChoice));
+    this.currentRsvpStep.set(this.getFirstCourseStep());
     this.isMenuRsvpOpen.set(true);
     this.saveCurrentRsvpProgress();
   }
@@ -454,6 +506,7 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
   });
 
   public readonly hasManyDishesInCurrentStep = computed<boolean>(() => {
+    if (this.isIndicativeMenu()) return true;
     const mode = this.cateringMode();
     const step = this.currentRsvpStep();
     if (mode === 'BUFFET' && step === 0) return this.allBuffetItems().length > 3;
@@ -542,9 +595,62 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
   public readonly isMixMode = computed(() => this.cateringMode() === 'MIX');
   public readonly isPlatedMode = computed(() => this.cateringMode() === 'PLATS_FIXES');
 
-  protected readonly isMix = this.isMixMode;
-  protected readonly isBuffet = this.isBuffetMode;
-  protected readonly isPlated = this.isPlatedMode;
+  public readonly isPlated = this.isPlatedMode;
+  public readonly isMix = this.isMixMode;
+  public readonly isBuffet = this.isBuffetMode;
+  public readonly isIndicativeMenu = computed<boolean>(() => this.hasFormat('MENU_INDICATIF'));
+
+  public readonly hasStartersCourse = computed<boolean>(() => {
+    if (!this.isPlatedMode()) return false;
+    const m = (this.guest()?.mealType || '').toUpperCase();
+    if (m.includes('COURSE_')) {
+      return m.includes('COURSE_STARTER') || m.includes('COURSE_ENTREE');
+    }
+    return false;
+  });
+
+  public readonly hasMainsCourse = computed<boolean>(() => {
+    if (!this.isPlatedMode()) return false;
+    const m = (this.guest()?.mealType || '').toUpperCase();
+    if (m.includes('COURSE_')) {
+      return m.includes('COURSE_MAIN') || m.includes('PLATS_FIXES');
+    }
+    return true;
+  });
+
+  public readonly hasDessertsCourse = computed<boolean>(() => {
+    if (!this.isPlatedMode()) return false;
+    const m = (this.guest()?.mealType || '').toUpperCase();
+    if (m.includes('COURSE_')) {
+      return m.includes('COURSE_DESSERT');
+    }
+    return false;
+  });
+
+  public readonly hasBeveragesCourse = computed<boolean>(() => {
+    if (!this.isPlatedMode()) return false;
+    const m = (this.guest()?.mealType || '').toUpperCase();
+    if (m.includes('COURSE_')) {
+      return m.includes('COURSE_BEVERAGE');
+    }
+    return false;
+  });
+
+  public getFirstCourseStep(): number {
+    if (this.isIndicativeMenu()) return 0;
+    const mode = this.cateringMode();
+    if (mode === 'BUFFET' || mode === 'MIX') return 0;
+    if (this.hasStartersCourse()) return 0;
+    if (this.hasMainsCourse()) return 1;
+    if (this.hasDessertsCourse()) return 2;
+    if (this.hasBeveragesCourse()) return 3;
+    return 4;
+  }
+
+  public getDishesSummaryNames(dishes: any[]): string {
+    if (!dishes || dishes.length === 0) return 'Selon le menu d\'honneur';
+    return dishes.map(d => d.name).join(' • ');
+  }
 
   public readonly allBuffetItems = computed<any[]>(() => {
     const data = this.guest();
@@ -672,9 +778,32 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
     return '#d4af37';
   }
 
+  public normalizeExternalUrl(rawUrl?: string): string {
+    if (!rawUrl || !rawUrl.trim()) return 'https://maps.google.com';
+    let url = rawUrl.trim();
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return url;
+    }
+    // If it looks like a web link (contains domain/path)
+    if (url.includes('google.') || url.includes('maps.') || url.includes('goo.gl') || url.includes('.com') || url.includes('.ma') || url.includes('www.') || url.includes('/')) {
+      return 'https://' + url.replace(/^(http:\/\/|https:\/\/)?/, '');
+    }
+    // If it is a textual location name/address (e.g. "Hôtel Fourteen" or "1 Bd de la Grande Ceinture")
+    return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(url)}`;
+  }
+
+  public openExternalUrl(url: string, event?: Event): void {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    const safeUrl = this.normalizeExternalUrl(url);
+    window.open(safeUrl, '_blank', 'noopener,noreferrer');
+  }
+
   public getDirectionsUrl(destination?: string, exactUrl?: string): string {
     if (exactUrl && exactUrl.trim()) {
-      return exactUrl.trim();
+      return this.normalizeExternalUrl(exactUrl);
     }
     if (!destination || !destination.trim()) {
       return 'https://maps.google.com';
@@ -685,7 +814,7 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
   public getEventMapUrl(): string {
     const directUrl = this.guest()?.locationMapUrl;
     if (directUrl && directUrl.trim()) {
-      return directUrl.trim();
+      return this.normalizeExternalUrl(directUrl);
     }
     const loc = this.guest()?.invitationLocation || this.guest()?.eventLocation;
     return this.getDirectionsUrl(loc);
@@ -695,8 +824,8 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
     const parking = this.guest()?.parkingLocation?.trim();
     const loc = this.guest()?.invitationLocation || this.guest()?.eventLocation || '';
     if (parking) {
-      if (parking.startsWith('http://') || parking.startsWith('https://')) {
-        return parking;
+      if (parking.startsWith('http://') || parking.startsWith('https://') || parking.includes('google.') || parking.includes('goo.gl') || parking.includes('maps.')) {
+        return this.normalizeExternalUrl(parking);
       }
       return this.getDirectionsUrl(`${parking} ${loc}`);
     }
@@ -1012,9 +1141,9 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
     return false;
   }
 
-  public selectCourseAndAdvance(category: 'STARTER' | 'MAIN' | 'DESSERT' | 'BEVERAGE', dishName: string): void {
-    if (this.isDiscoveryMode()) {
-      // In discovery/catalog preview mode: purely informative, no auto-advance or definitive choice registration
+  public selectCourseAndAdvance(category: 'STARTER' | 'MAIN' | 'DESSERT' | 'BEVERAGE', dishName: string, imageUrl?: string): void {
+    if (this.isDiscoveryMode() || this.isIndicativeMenu()) {
+      // In discovery/catalog preview mode or indicative menu: purely informative, no auto-advance or individual dish registration
       return;
     }
 
@@ -1031,7 +1160,7 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
     }
 
     // Clean dish name without prefix
-    this.recordMenuStep(category, dishName);
+    this.recordMenuStep(category, dishName, imageUrl);
     this.hasConfirmedMenuChoice.set(true);
     this.selectedItemTransition.set({ category, dishName });
     this.isAdvancing.set(true);
@@ -1056,7 +1185,7 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
   }
 
   public autoSelectSingleChoices(): void {
-    if (!this.isPlatedMode()) return;
+    if (!this.isPlatedMode() || this.isIndicativeMenu()) return;
     if (this.availableStarters().length === 1 && !this.starterChoice) {
       this.starterChoice = this.availableStarters()[0].name;
     }
@@ -1076,18 +1205,18 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
 
     const step = this.currentRsvpStep();
     if (step === 0) {
-      if (this.isPlatedMode() && this.availableStarters().length > 0) {
+      if (this.isPlatedMode() && !this.isIndicativeMenu() && this.availableStarters().length > 0) {
         return;
       }
       this.starterChoice = '';
     } else if (step === 1) {
       // Plat principal / Plat chaud is mandatory in MIX and PLATS_FIXES
-      if ((this.isMixMode() || this.isPlatedMode()) && this.availableMains().length > 0) {
+      if ((this.isMixMode() || this.isPlatedMode()) && !this.isIndicativeMenu() && this.availableMains().length > 0) {
         return;
       }
       this.mealChoice = '';
     } else if (step === 2) {
-      if (this.isPlatedMode() && this.availableDesserts().length > 0) {
+      if (this.isPlatedMode() && !this.isIndicativeMenu() && this.availableDesserts().length > 0) {
         return;
       }
       this.dessertChoice = '';
@@ -1107,7 +1236,7 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
     this.isAdvancing.set(false);
 
     // If attempting to jump ahead without selecting mandatory courses in PLATS_FIXES mode
-    if (!this.isDiscoveryMode()) {
+    if (!this.isDiscoveryMode() && !this.isIndicativeMenu()) {
       if (this.isPlatedMode()) {
         if (stepIndex > 0 && this.availableStarters().length > 0 && !this.starterChoice) {
           this.currentRsvpStep.set(0);
@@ -1141,7 +1270,7 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
     this.saveCurrentRsvpProgress();
   }
 
-  public selectDishFromModal(category: 'STARTER' | 'MAIN' | 'DESSERT' | 'BEVERAGE', dishName: string): void {
+  public selectDishFromModal(category: 'STARTER' | 'MAIN' | 'DESSERT' | 'BEVERAGE', dishName: string, imageUrl?: string): void {
     if (category === 'STARTER') {
       this.starterChoice = this.starterChoice === dishName ? '' : dishName;
     } else if (category === 'MAIN') {
@@ -1151,6 +1280,9 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
     } else if (category === 'BEVERAGE') {
       this.beverageChoice = this.beverageChoice === dishName ? '' : dishName;
     }
+    const currentChoice = category === 'STARTER' ? this.starterChoice : (category === 'MAIN' ? this.mealChoice : (category === 'DESSERT' ? this.dessertChoice : this.beverageChoice));
+    this.recordMenuStep(category, currentChoice, imageUrl);
+    this.saveCurrentRsvpProgress();
   }
 
   public confirmMenuModal(): void {
@@ -1573,22 +1705,32 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
     const step = this.currentRsvpStep();
 
     // Guard: Step 0 requires an Entrée choice in PLATS_FIXES if starters exist
-    if (step === 0 && this.isPlatedMode() && this.availableStarters().length > 0 && !this.starterChoice) {
+    if (step === 0 && this.isPlatedMode() && !this.isIndicativeMenu() && this.availableStarters().length > 0 && !this.starterChoice) {
       return;
     }
 
     // Guard: Step 1 requires a Main dish choice in MIX and PLATS_FIXES
-    if (step === 1 && (mode === 'MIX' || mode === 'PLATS_FIXES') && this.availableMains().length > 0 && !this.mealChoice) {
+    if (step === 1 && (mode === 'MIX' || mode === 'PLATS_FIXES') && !this.isIndicativeMenu() && this.availableMains().length > 0 && !this.mealChoice) {
       return;
     }
 
     // Guard: Step 2 requires a Dessert choice in PLATS_FIXES if desserts exist
-    if (step === 2 && this.isPlatedMode() && this.availableDesserts().length > 0 && !this.dessertChoice) {
+    if (step === 2 && this.isPlatedMode() && !this.isIndicativeMenu() && this.availableDesserts().length > 0 && !this.dessertChoice) {
       return;
     }
 
     if (step === 4 || this.hasAnyDietOrAllergySelected()) {
       this.syncDietaryToStorage();
+    }
+
+    if (this.isIndicativeMenu()) {
+      if (step === 0) {
+        this.currentRsvpStep.set(4);
+      } else if (step === 4) {
+        this.currentRsvpStep.set(5);
+      }
+      this.saveCurrentRsvpProgress();
+      return;
     }
 
     if (mode === 'BUFFET') {
@@ -1615,9 +1757,35 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
       return;
     }
 
-    // Standard PLATS_FIXES: 0 -> 1 -> 2 -> 3 -> 4 -> 5
-    if (step < 5) {
-      this.currentRsvpStep.set(step + 1);
+    // PLATS_FIXES (Standard & Indicative Menu: step-by-step discovery of active courses)
+    if (step === 0) {
+      if (this.hasMainsCourse()) {
+        this.currentRsvpStep.set(1);
+      } else if (this.hasDessertsCourse()) {
+        this.currentRsvpStep.set(2);
+      } else if (this.hasBeveragesCourse()) {
+        this.currentRsvpStep.set(3);
+      } else {
+        this.currentRsvpStep.set(4);
+      }
+    } else if (step === 1) {
+      if (this.hasDessertsCourse()) {
+        this.currentRsvpStep.set(2);
+      } else if (this.hasBeveragesCourse()) {
+        this.currentRsvpStep.set(3);
+      } else {
+        this.currentRsvpStep.set(4);
+      }
+    } else if (step === 2) {
+      if (this.hasBeveragesCourse()) {
+        this.currentRsvpStep.set(3);
+      } else {
+        this.currentRsvpStep.set(4);
+      }
+    } else if (step === 3) {
+      this.currentRsvpStep.set(4);
+    } else if (step === 4) {
+      this.currentRsvpStep.set(5);
     }
     this.saveCurrentRsvpProgress();
   }
@@ -1630,13 +1798,27 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
     this.isAdvancing.set(false);
 
     if (this.isDiscoveryMode()) {
-      // Mode Aperçu (Preview) : Le clic sur Retour redirige immédiatement vers la page de démarrage (Page 1)
-      this.closeMenuAndRsvp();
-      return;
+      const firstCourse = this.getFirstCourseStep();
+      if (this.currentRsvpStep() <= firstCourse) {
+        this.closeMenuAndRsvp();
+        return;
+      }
     }
 
     const mode = this.cateringMode();
     const step = this.currentRsvpStep();
+
+    if (this.isIndicativeMenu()) {
+      if (step === 5) {
+        this.currentRsvpStep.set(4);
+      } else if (step === 4) {
+        this.currentRsvpStep.set(0);
+      } else {
+        this.closeMenuAndRsvp();
+      }
+      this.saveCurrentRsvpProgress();
+      return;
+    }
 
     if (mode === 'BUFFET') {
       if (step === 5) {
@@ -1666,13 +1848,45 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
       return;
     }
 
-    // Standard PLATS_FIXES
+    // PLATS_FIXES:
     if (step === 5) {
       this.currentRsvpStep.set(4);
     } else if (step === 4) {
-      this.currentRsvpStep.set(3);
-    } else if (step > 0) {
-      this.currentRsvpStep.set(step - 1);
+      if (this.hasBeveragesCourse()) {
+        this.currentRsvpStep.set(3);
+      } else if (this.hasDessertsCourse()) {
+        this.currentRsvpStep.set(2);
+      } else if (this.hasMainsCourse()) {
+        this.currentRsvpStep.set(1);
+      } else if (this.hasStartersCourse()) {
+        this.currentRsvpStep.set(0);
+      } else {
+        this.closeMenuAndRsvp();
+      }
+    } else if (step === 3) {
+      if (this.hasDessertsCourse()) {
+        this.currentRsvpStep.set(2);
+      } else if (this.hasMainsCourse()) {
+        this.currentRsvpStep.set(1);
+      } else if (this.hasStartersCourse()) {
+        this.currentRsvpStep.set(0);
+      } else {
+        this.closeMenuAndRsvp();
+      }
+    } else if (step === 2) {
+      if (this.hasMainsCourse()) {
+        this.currentRsvpStep.set(1);
+      } else if (this.hasStartersCourse()) {
+        this.currentRsvpStep.set(0);
+      } else {
+        this.closeMenuAndRsvp();
+      }
+    } else if (step === 1) {
+      if (this.hasStartersCourse()) {
+        this.currentRsvpStep.set(0);
+      } else {
+        this.closeMenuAndRsvp();
+      }
     } else {
       this.closeMenuAndRsvp();
     }
@@ -1801,7 +2015,7 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
     this.attendanceStatus = (choice === 'CONFIRMED');
 
     // In PLATS_FIXES / MIX mode, ensure all required courses are chosen
-    if (this.attendanceStatus) {
+    if (this.attendanceStatus && !this.isIndicativeMenu()) {
       if (this.isPlatedMode()) {
         if (this.availableStarters().length > 0 && !this.starterChoice) {
           this.currentRsvpStep.set(0);
@@ -1879,17 +2093,21 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
 
     // Add specific dish selections only if CONFIRMED and PLATS_FIXES is selected
     if (this.attendanceStatus === true && (this.hasFormat('PLATS_FIXES') || this.isMix())) {
-      if (this.starterChoice && !this.isMix()) {
-        activeDiets.push(`Entrée: ${this.starterChoice}`);
-      }
-      if (this.mealChoice) {
-        activeDiets.push(`Plat: ${this.mealChoice}`);
-      }
-      if (this.dessertChoice && !this.isMix()) {
-        activeDiets.push(`Dessert: ${this.dessertChoice}`);
-      }
-      if (this.beverageChoice && !this.isMix()) {
-        activeDiets.push(`Boisson: ${this.beverageChoice}`);
+      if (this.isIndicativeMenu()) {
+        activeDiets.push("Menu d'Honneur");
+      } else {
+        if (this.starterChoice && !this.isMix()) {
+          activeDiets.push(`Entrée: ${this.starterChoice}`);
+        }
+        if (this.mealChoice) {
+          activeDiets.push(`Plat: ${this.mealChoice}`);
+        }
+        if (this.dessertChoice && !this.isMix()) {
+          activeDiets.push(`Dessert: ${this.dessertChoice}`);
+        }
+        if (this.beverageChoice && !this.isMix()) {
+          activeDiets.push(`Boisson: ${this.beverageChoice}`);
+        }
       }
     }
 

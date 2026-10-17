@@ -550,6 +550,9 @@
     max-width: 210px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     font-size: 0.72rem;
+    overflow: hidden;
+    word-break: break-word;
+    overflow-wrap: anywhere;
   }
 
   .mockup-email-card {
@@ -563,6 +566,9 @@
     display: flex;
     flex-direction: column;
     gap: 3px;
+    overflow: hidden;
+    word-break: break-word;
+    overflow-wrap: anywhere;
   }
 
   .mockup-invitation-page1 {
@@ -685,15 +691,19 @@
         background: #f8fafc;
         border: 1px solid #f1f5f9;
         border-radius: 6px;
-        padding: 3px 5px;
+        padding: 4px 6px;
 
-        img {
-          width: 24px;
-          height: 24px;
-          border-radius: 4px;
-          object-fit: cover;
-          border: 1px solid #e2e8f0;
+        .buffet-dish-icon {
+          width: 22px;
+          height: 22px;
+          border-radius: 5px;
+          background: #fef3c7;
+          color: #b45309;
+          display: flex;
+          align-items: center;
+          justify-content: center;
           flex-shrink: 0;
+          font-size: 0.55rem;
         }
 
         .buffet-dish-info {
@@ -702,10 +712,10 @@
           min-width: 0;
 
           .buffet-dish-name {
-            font-size: 0.56rem;
+            font-size: 0.58rem;
             font-weight: 700;
             color: #1e293b;
-            line-height: 1.1;
+            line-height: 1.15;
           }
 
           .buffet-dish-cat {
@@ -716,10 +726,91 @@
       }
     }
 
+    .banquet-dishes-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+
+      .banquet-dish-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: #fffdf5;
+        border: 1px solid #fef3c7;
+        border-radius: 6px;
+        padding: 4px 6px;
+
+        .banquet-dish-icon {
+          width: 22px;
+          height: 22px;
+          border-radius: 5px;
+          background: #fef3c7;
+          color: #d97706;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+          font-size: 0.55rem;
+        }
+
+        .banquet-dish-info {
+          display: flex;
+          flex-direction: column;
+          min-width: 0;
+
+          .banquet-dish-name {
+            font-size: 0.58rem;
+            font-weight: 700;
+            color: #78350f;
+            line-height: 1.15;
+          }
+
+          .banquet-dish-cat {
+            font-size: 0.46rem;
+            color: #b45309;
+          }
+        }
+      }
+    }
+
     .plated-dish-container {
       display: flex;
       flex-direction: column;
       gap: 4px;
+
+      .selected-courses-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+
+        .course-selection-pill {
+          display: flex;
+          align-items: center;
+          gap: 5px;
+          border-radius: 5px;
+          transition: all 0.15s ease;
+
+          &.main-course {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            padding: 3px 6px;
+          }
+
+          &.secondary-course {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 2px 6px;
+          }
+
+          .pill-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 14px;
+            font-size: 0.52rem;
+          }
+        }
+      }
     }
 
     .menu-mini-tabs {
@@ -748,6 +839,21 @@
       }
     }
 
+    .service-table-subheading {
+      background: #f1f5f9;
+      border: 1px dashed #cbd5e1;
+      border-radius: 4px;
+      padding: 1px 5px;
+    }
+
+    .dish-pending-box {
+      background: #fafaf9;
+      border: 1px dashed #cbd5e1;
+      border-radius: 6px;
+      padding: 5px 4px;
+      transition: all 0.2s ease;
+    }
+
     .dish-preview-row {
       display: flex;
       align-items: center;
@@ -755,11 +861,11 @@
       background: #f8fafc;
       border: 1px solid #e2e8f0;
       border-radius: 6px;
-      padding: 3px 5px;
+      padding: 4px 6px;
 
       img {
-        width: 26px;
-        height: 26px;
+        width: 28px;
+        height: 28px;
         border-radius: 5px;
         object-fit: cover;
         border: 1px solid #cbd5e1;
