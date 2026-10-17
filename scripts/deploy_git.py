@@ -100,6 +100,8 @@ def main():
 
         # 4. Build and start containers
         print("\n[5/6] Launching/updating containers with Docker Compose...")
+        # Remove any container running without compose labels if any
+        run_ssh_stream(ssh, "docker rm -f event-phpmyadmin 2>/dev/null || true")
         build_cmd = f"cd {remote_dir} && docker compose -f docker-compose.prod.yml up -d --remove-orphans"
         status = run_ssh_stream(ssh, build_cmd)
         if status != 0:
