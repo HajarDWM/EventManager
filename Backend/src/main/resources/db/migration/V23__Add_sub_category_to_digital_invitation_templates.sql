@@ -1,5 +1,71 @@
--- Migration V23: Add sub_category to digital_invitation_templates and initialize hierarchical taxonomy
-ALTER TABLE digital_invitation_templates ADD COLUMN sub_category VARCHAR(100) NULL;
+-- Migration V23: Add sub_category and typography/motion columns to digital_invitation_templates
+SET @exist := (SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = 'digital_invitation_templates' AND column_name = 'sub_category');
+SET @sqlstmt := IF(@exist = 0, 'ALTER TABLE digital_invitation_templates ADD COLUMN sub_category VARCHAR(100) NULL', 'SELECT 1');
+PREPARE stmt FROM @sqlstmt; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+SET @exist := (SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = 'digital_invitation_templates' AND column_name = 'primary_font');
+SET @sqlstmt := IF(@exist = 0, 'ALTER TABLE digital_invitation_templates ADD COLUMN primary_font VARCHAR(100) NULL', 'SELECT 1');
+PREPARE stmt FROM @sqlstmt; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+SET @exist := (SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = 'digital_invitation_templates' AND column_name = 'secondary_font');
+SET @sqlstmt := IF(@exist = 0, 'ALTER TABLE digital_invitation_templates ADD COLUMN secondary_font VARCHAR(100) NULL', 'SELECT 1');
+PREPARE stmt FROM @sqlstmt; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+SET @exist := (SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = 'digital_invitation_templates' AND column_name = 'secondary_font_color');
+SET @sqlstmt := IF(@exist = 0, 'ALTER TABLE digital_invitation_templates ADD COLUMN secondary_font_color VARCHAR(50) NULL', 'SELECT 1');
+PREPARE stmt FROM @sqlstmt; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+SET @exist := (SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = 'digital_invitation_templates' AND column_name = 'primary_font_weight');
+SET @sqlstmt := IF(@exist = 0, 'ALTER TABLE digital_invitation_templates ADD COLUMN primary_font_weight VARCHAR(30) NULL', 'SELECT 1');
+PREPARE stmt FROM @sqlstmt; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+SET @exist := (SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = 'digital_invitation_templates' AND column_name = 'primary_letter_spacing');
+SET @sqlstmt := IF(@exist = 0, 'ALTER TABLE digital_invitation_templates ADD COLUMN primary_letter_spacing VARCHAR(30) NULL', 'SELECT 1');
+PREPARE stmt FROM @sqlstmt; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+SET @exist := (SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = 'digital_invitation_templates' AND column_name = 'secondary_font_weight');
+SET @sqlstmt := IF(@exist = 0, 'ALTER TABLE digital_invitation_templates ADD COLUMN secondary_font_weight VARCHAR(30) NULL', 'SELECT 1');
+PREPARE stmt FROM @sqlstmt; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+SET @exist := (SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = 'digital_invitation_templates' AND column_name = 'secondary_letter_spacing');
+SET @sqlstmt := IF(@exist = 0, 'ALTER TABLE digital_invitation_templates ADD COLUMN secondary_letter_spacing VARCHAR(30) NULL', 'SELECT 1');
+PREPARE stmt FROM @sqlstmt; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+SET @exist := (SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = 'digital_invitation_templates' AND column_name = 'background_image_desktop_url');
+SET @sqlstmt := IF(@exist = 0, 'ALTER TABLE digital_invitation_templates ADD COLUMN background_image_desktop_url LONGTEXT NULL', 'SELECT 1');
+PREPARE stmt FROM @sqlstmt; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+SET @exist := (SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = 'digital_invitation_templates' AND column_name = 'music_url');
+SET @sqlstmt := IF(@exist = 0, 'ALTER TABLE digital_invitation_templates ADD COLUMN music_url LONGTEXT NULL', 'SELECT 1');
+PREPARE stmt FROM @sqlstmt; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+SET @exist := (SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = 'digital_invitation_templates' AND column_name = 'opening_animation');
+SET @sqlstmt := IF(@exist = 0, 'ALTER TABLE digital_invitation_templates ADD COLUMN opening_animation VARCHAR(50) NULL', 'SELECT 1');
+PREPARE stmt FROM @sqlstmt; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+SET @exist := (SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = 'digital_invitation_templates' AND column_name = 'visual_particles');
+SET @sqlstmt := IF(@exist = 0, 'ALTER TABLE digital_invitation_templates ADD COLUMN visual_particles VARCHAR(50) NULL', 'SELECT 1');
+PREPARE stmt FROM @sqlstmt; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+SET @exist := (SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = 'digital_invitation_templates' AND column_name = 'background_motion');
+SET @sqlstmt := IF(@exist = 0, 'ALTER TABLE digital_invitation_templates ADD COLUMN background_motion VARCHAR(50) NULL', 'SELECT 1');
+PREPARE stmt FROM @sqlstmt; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+SET @exist := (SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = 'digital_invitation_templates' AND column_name = 'content_entrance');
+SET @sqlstmt := IF(@exist = 0, 'ALTER TABLE digital_invitation_templates ADD COLUMN content_entrance VARCHAR(50) NULL', 'SELECT 1');
+PREPARE stmt FROM @sqlstmt; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+SET @exist := (SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = 'digital_invitation_templates' AND column_name = 'show_countdown');
+SET @sqlstmt := IF(@exist = 0, 'ALTER TABLE digital_invitation_templates ADD COLUMN show_countdown BOOLEAN DEFAULT TRUE', 'SELECT 1');
+PREPARE stmt FROM @sqlstmt; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+SET @exist := (SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = 'digital_invitation_templates' AND column_name = 'show_calendar_button');
+SET @sqlstmt := IF(@exist = 0, 'ALTER TABLE digital_invitation_templates ADD COLUMN show_calendar_button BOOLEAN DEFAULT TRUE', 'SELECT 1');
+PREPARE stmt FROM @sqlstmt; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+SET @exist := (SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = 'digital_invitation_templates' AND column_name = 'show_map_route');
+SET @sqlstmt := IF(@exist = 0, 'ALTER TABLE digital_invitation_templates ADD COLUMN show_map_route BOOLEAN DEFAULT TRUE', 'SELECT 1');
+PREPARE stmt FROM @sqlstmt; EXECUTE stmt; DEALLOCATE PREPARE stmt;
 
 -- 1. Update Existing Default Templates with exact Main Category and Subcategory
 UPDATE digital_invitation_templates 
@@ -21,6 +87,10 @@ UPDATE digital_invitation_templates
 SET category = 'Événements Corporate & Professionnels',
     sub_category = 'Dîner d\'Affaires'
 WHERE title LIKE '%Élégance Minimaliste%';
+
+-- 2. Clean up any previous partial inserts to avoid duplicates
+DELETE FROM digital_invitation_templates 
+WHERE template_key IN ('fiancailles-royales', 'tahara-emeraude', 'douceur-pastel', 'prestige-diplome', 'lancement-innovation', 'gala-reveillon', 'gala-bienfaisance');
 
 -- 2. Insert Complete Showcase Templates for All Categories & Subcategories
 INSERT INTO digital_invitation_templates 
