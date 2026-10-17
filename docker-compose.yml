@@ -1,4 +1,5 @@
 services:
+  # 1. Base de données MySQL 8.0
   event-db:
     image: mysql:8.0
     container_name: event-mysql-db
@@ -7,10 +8,57 @@ services:
       MYSQL_DATABASE: event_manager_db
       MYSQL_ROOT_PASSWORD: rootpassword
     ports:
-      - "3307:3306" # استعملنا 3307 باش ما يوقعش تعارض
+      - "3307:3306" # Port 3307 exposé sur la machine hôte pour éviter tout conflit
     volumes:
       - db_data:/var/lib/mysql
+    networks:
+      - event-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpassword"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
 
+  # 2. Backend Spring Boot (API & Métier)
+  event-backend:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile
+    container_name: event-backend
+    restart: unless-stopped
+    environment:
+      DB_HOST: event-db
+      DB_PORT: 3306
+      DB_NAME: event_manager_db
+      DB_USER: root
+      DB_PASSWORD: rootpassword
+      SPRING_PROFILES_ACTIVE: docker
+    depends_on:
+      event-db:
+        condition: service_healthy
+    volumes:
+      - uploads_data:/app/uploads
+    ports:
+      - "8080:8080"
+    networks:
+      - event-network
+
+  # 3. Frontend Angular 21 & Nginx Reverse Proxy (Port unifié 80)
+  event-frontend:
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile
+    container_name: event-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80" # Point d'accès unique de démonstration pour les clients
+    depends_on:
+      - event-backend
+    networks:
+      - event-network
+
+  # 4. Interface phpMyAdmin (Outil d'inspection optionnel)
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     container_name: event-phpmyadmin
@@ -20,6 +68,16 @@ services:
     environment:
       PMA_HOST: event-db
       MYSQL_ROOT_PASSWORD: rootpassword
+    depends_on:
+      event-db:
+        condition: service_healthy
+    networks:
+      - event-network
 
 volumes:
   db_data:
+  uploads_data:
+
+networks:
+  event-network:
+    driver: bridge

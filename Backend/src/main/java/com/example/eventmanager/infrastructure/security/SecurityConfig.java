@@ -38,6 +38,8 @@ public class SecurityConfig {
                 .requestMatchers("/api/v1/client/auth/**").permitAll()
                 .requestMatchers("/api/webhooks/**").permitAll()
                 .requestMatchers("/api/public/rsvp/**").permitAll()
+                .requestMatchers("/uploads/**").permitAll()
+                .requestMatchers("/actuator/**").permitAll()
                 .requestMatchers("/api/admin/**").hasRole("SUPER_ADMIN")
                 .anyRequest().authenticated()
             )
