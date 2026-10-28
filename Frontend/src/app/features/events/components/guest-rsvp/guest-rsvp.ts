@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { loadGoogleFont } from '../../../../core/utils/font-loader';
+import { TranslatePipe } from '../../../../core/pipes/translate.pipe';
+import { TranslationService } from '../../../../core/services/translation.service';
 
 export interface PublicRsvpDetail {
   guestId: number;
@@ -61,16 +63,147 @@ export interface PublicRsvpDetail {
   paymentDate?: string;
 }
 
+const SUBTITLE_TRANSLATION_MAP: Record<string, { fr: string; en: string }> = {
+  // Mariage & Tradition
+  'le mariage de': { fr: 'Le Mariage de', en: 'The Wedding of' },
+  'mariage de': { fr: 'Mariage de', en: 'The Wedding of' },
+  'the wedding of': { fr: 'Le Mariage de', en: 'The Wedding of' },
+  'les fiançailles de': { fr: 'Les Fiançailles de', en: 'The Engagement of' },
+  'les fiancailles de': { fr: 'Les Fiançailles de', en: 'The Engagement of' },
+  'fiançailles de': { fr: 'Fiançailles de', en: 'The Engagement of' },
+  'fiancailles de': { fr: 'Fiançailles de', en: 'The Engagement of' },
+  'the engagement of': { fr: 'Les Fiançailles de', en: 'The Engagement of' },
+  'soirée henné de': { fr: 'Soirée Henné de', en: 'The Henna Night of' },
+  'soiree henne de': { fr: 'Soirée Henné de', en: 'The Henna Night of' },
+  'henné de': { fr: 'Henné de', en: 'The Henna of' },
+  'the henna night of': { fr: 'Soirée Henné de', en: 'The Henna Night of' },
+  'henna night of': { fr: 'Soirée Henné de', en: 'The Henna Night of' },
+  'la célébration de circoncision de': { fr: 'La Célébration de Circoncision de', en: 'The Circumcision Celebration of' },
+  'la circoncision de': { fr: 'La Circoncision de', en: 'The Circumcision Celebration of' },
+  'circoncision de': { fr: 'Circoncision de', en: 'The Circumcision Celebration of' },
+  'the circumcision celebration of': { fr: 'La Célébration de Circoncision de', en: 'The Circumcision Celebration of' },
+
+  // Famille & Naissance
+  'baby shower de': { fr: 'Baby Shower de', en: 'The Baby Shower of' },
+  'the baby shower of': { fr: 'Baby Shower de', en: 'The Baby Shower of' },
+  'la célébration de naissance de': { fr: 'La Célébration de Naissance de', en: 'The Birth Celebration of' },
+  'the birth celebration of': { fr: 'La Célébration de Naissance de', en: 'The Birth Celebration of' },
+  "l'aqiqah de": { fr: "L'Aqiqah de", en: 'The Aqiqah Celebration of' },
+  'the aqiqah of': { fr: "L'Aqiqah de", en: 'The Aqiqah Celebration of' },
+  'the aqiqah celebration of': { fr: "L'Aqiqah de", en: 'The Aqiqah Celebration of' },
+  "l'anniversaire de": { fr: "L'Anniversaire de", en: 'The Birthday of' },
+  'anniversaire de': { fr: 'Anniversaire de', en: 'The Birthday of' },
+  'the birthday of': { fr: "L'Anniversaire de", en: 'The Birthday of' },
+  'célébration de diplôme de': { fr: 'Célébration de Diplôme de', en: 'The Graduation Celebration of' },
+  'cérémonie de remise de diplôme de': { fr: 'Cérémonie de Remise de Diplôme de', en: 'The Graduation Ceremony of' },
+  'the graduation celebration of': { fr: 'Célébration de Diplôme de', en: 'The Graduation Celebration of' },
+  'the graduation ceremony of': { fr: 'Cérémonie de Remise de Diplôme de', en: 'The Graduation Ceremony of' },
+  'réunion de famille de': { fr: 'Réunion de Famille de', en: 'The Family Gathering of' },
+  'the family gathering of': { fr: 'Réunion de Famille de', en: 'The Family Gathering of' },
+
+  // Corporate & Gala
+  'soirée de gala': { fr: 'Soirée de Gala', en: 'Gala Evening' },
+  'soiree de gala': { fr: 'Soirée de Gala', en: 'Gala Evening' },
+  'gala evening': { fr: 'Soirée de Gala', en: 'Gala Evening' },
+  "dîner d'affaires": { fr: "Dîner d'Affaires", en: 'Business Dinner' },
+  "diner d'affaires": { fr: "Dîner d'Affaires", en: 'Business Dinner' },
+  'business dinner': { fr: "Dîner d'Affaires", en: 'Business Dinner' },
+  "événement d'entreprise": { fr: "Événement d'Entreprise", en: 'Corporate Event' },
+  "evenement d'entreprise": { fr: "Événement d'Entreprise", en: 'Corporate Event' },
+  'corporate event': { fr: "Événement d'Entreprise", en: 'Corporate Event' },
+  'lancement de produit': { fr: 'Lancement de Produit', en: 'Product Launch' },
+  'lancement officiel de': { fr: 'Lancement Officiel de', en: 'Official Product Launch of' },
+  'official product launch of': { fr: 'Lancement Officiel de', en: 'Official Product Launch of' },
+  'product launch': { fr: 'Lancement de Produit', en: 'Product Launch' },
+  'conférence & réception': { fr: 'Conférence & Réception', en: 'Conference & Reception' },
+  'conference & reception': { fr: 'Conférence & Réception', en: 'Conference & Reception' },
+  'conférence & séminaire': { fr: 'Conférence & Séminaire', en: 'Conference & Seminar' },
+  'conference & seminaire': { fr: 'Conférence & Séminaire', en: 'Conference & Seminar' },
+  'conference & seminar': { fr: 'Conférence & Séminaire', en: 'Conference & Seminar' },
+
+  // Saisonnier & Écoles
+  'soirée de réveillon du nouvel an': { fr: 'Soirée de Réveillon du Nouvel An', en: "New Year's Eve Gala" },
+  "new year's eve gala": { fr: 'Soirée de Réveillon du Nouvel An', en: "New Year's Eve Gala" },
+  'gala de bienfaisance & solidarité': { fr: 'Gala de Bienfaisance & Solidarité', en: 'Charity & Solidarity Gala' },
+  'charity & solidarity gala': { fr: 'Gala de Bienfaisance & Solidarité', en: 'Charity & Solidarity Gala' },
+  "cocktail & réception d'exception": { fr: "Cocktail & Réception d'Exception", en: 'Exclusive Cocktail & Reception' },
+  'exclusive cocktail & reception': { fr: "Cocktail & Réception d'Exception", en: 'Exclusive Cocktail & Reception' },
+  "grande fête de fin d'année": { fr: "Grande Fête de Fin d'Année", en: 'End of Year Celebration' },
+  'end of year celebration': { fr: "Grande Fête de Fin d'Année", en: 'End of Year Celebration' },
+  'bal de promo annuel de': { fr: 'Bal de Promo Annuel de', en: 'Annual Prom Ball of' },
+  'annual prom ball of': { fr: 'Bal de Promo Annuel de', en: 'Annual Prom Ball of' },
+  'retrouvailles & soirée des alumni': { fr: 'Retrouvailles & Soirée des Alumni', en: 'Alumni Reunion Evening' },
+  'alumni reunion evening': { fr: 'Retrouvailles & Soirée des Alumni', en: 'Alumni Reunion Evening' },
+  "invitation d'exception": { fr: "Invitation d'Exception", en: 'Exclusive Invitation' },
+  'exclusive invitation': { fr: "Invitation d'Exception", en: 'Exclusive Invitation' },
+  'invitation officielle': { fr: 'Invitation Officielle', en: 'Official Invitation' },
+  'official invitation': { fr: 'Invitation Officielle', en: 'Official Invitation' }
+};
+
+const CATEGORY_TRANSLATION_MAP: Record<string, { fr: string; en: string }> = {
+  'mariage': { fr: 'Mariage', en: 'Wedding' },
+  'wedding': { fr: 'Mariage', en: 'Wedding' },
+  'fiançailles': { fr: 'Fiançailles', en: 'Engagement' },
+  'fiancailles': { fr: 'Fiançailles', en: 'Engagement' },
+  'engagement': { fr: 'Fiançailles', en: 'Engagement' },
+  'circoncision': { fr: 'Circoncision', en: 'Circumcision' },
+  'circumcision': { fr: 'Circoncision', en: 'Circumcision' },
+  'henné & coutumes': { fr: 'Henné & Coutumes', en: 'Henna & Customs' },
+  'henne & coutumes': { fr: 'Henné & Coutumes', en: 'Henna & Customs' },
+  'henna & customs': { fr: 'Henné & Coutumes', en: 'Henna & Customs' },
+  'baby shower & naissance': { fr: 'Baby Shower & Naissance', en: 'Baby Shower & Birth' },
+  'baby shower': { fr: 'Baby Shower', en: 'Baby Shower' },
+  'anniversaire': { fr: 'Anniversaire', en: 'Birthday' },
+  'birthday': { fr: 'Anniversaire', en: 'Birthday' },
+  'remise de diplôme': { fr: 'Remise de Diplôme', en: 'Graduation' },
+  'remise de diplome': { fr: 'Remise de Diplôme', en: 'Graduation' },
+  'graduation': { fr: 'Remise de Diplôme', en: 'Graduation' },
+  'fête de famille': { fr: 'Fête de Famille', en: 'Family Gathering' },
+  'fete de famille': { fr: 'Fête de Famille', en: 'Family Gathering' },
+  'family gathering': { fr: 'Fête de Famille', en: 'Family Gathering' },
+  "dîner d'affaires": { fr: "Dîner d'Affaires", en: 'Business Dinner' },
+  "diner d'affaires": { fr: "Dîner d'Affaires", en: 'Business Dinner' },
+  'business dinner': { fr: "Dîner d'Affaires", en: 'Business Dinner' },
+  'lancement de produit': { fr: 'Lancement de Produit', en: 'Product Launch' },
+  'product launch': { fr: 'Lancement de Produit', en: 'Product Launch' },
+  'conférence & séminaire': { fr: 'Conférence & Séminaire', en: 'Conference & Seminar' },
+  'conference & seminaire': { fr: 'Conférence & Séminaire', en: 'Conference & Seminar' },
+  'conference & seminar': { fr: 'Conférence & Séminaire', en: 'Conference & Seminar' },
+  'soirée de gala': { fr: 'Soirée de Gala', en: 'Gala Evening' },
+  'soiree de gala': { fr: 'Soirée de Gala', en: 'Gala Evening' },
+  'gala evening': { fr: 'Soirée de Gala', en: 'Gala Evening' },
+  'réveillon & nouvel an': { fr: 'Réveillon & Nouvel An', en: "New Year's Eve" },
+  'reveillon & nouvel an': { fr: 'Réveillon & Nouvel An', en: "New Year's Eve" },
+  "new year's eve": { fr: 'Réveillon & Nouvel An', en: "New Year's Eve" },
+  'événement caritatif': { fr: 'Événement Caritatif', en: 'Charity Event' },
+  'evenement caritatif': { fr: 'Événement Caritatif', en: 'Charity Event' },
+  'charity event': { fr: 'Événement Caritatif', en: 'Charity Event' },
+  'réception sociale': { fr: 'Réception Sociale', en: 'Social Reception' },
+  'reception sociale': { fr: 'Réception Sociale', en: 'Social Reception' },
+  'social reception': { fr: 'Réception Sociale', en: 'Social Reception' },
+  "fête d'école & kermesse": { fr: "Fête d'école & Kermesse", en: 'School Fair & Celebration' },
+  'bal de promo / gala': { fr: 'Bal de Promo / Gala', en: 'Prom Ball / Gala' },
+  "gala d'anciens élèves": { fr: "Gala d'Anciens Élèves", en: 'Alumni Gala' },
+  'corporate': { fr: 'Corporate', en: 'Corporate' },
+  'traditional': { fr: 'Traditionnel', en: 'Traditional' }
+};
+
 @Component({
   selector: 'app-guest-rsvp',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslatePipe],
   templateUrl: './guest-rsvp.html',
   styleUrls: ['./guest-rsvp.scss']
 })
 export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
   private readonly route = inject(ActivatedRoute);
   private readonly http = inject(HttpClient);
+  public readonly translationService = inject(TranslationService);
+  public readonly currentLang = computed(() => this.translationService.currentLang());
+
+  public switchLanguage(lang: 'fr' | 'en'): void {
+    this.translationService.setLanguage(lang);
+  }
 
   @Input() previewMode: boolean = false;
   @Input() cardOnlyMode: boolean = false;
@@ -339,11 +472,12 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
   }
 
   public getEventHostLabel(): string {
+    const isEn = this.currentLang() === 'en';
     const cat = this.guest()?.templateCategory?.toLowerCase() || '';
-    if (cat.includes('mariage') || cat.includes('wedding')) return 'aux mariés';
-    if (cat.includes('corporate') || cat.includes('entreprise') || cat.includes('pro')) return 'aux organisateurs';
-    if (cat.includes('anniversaire')) return 'à la personne célébrée';
-    return 'aux hôtes';
+    if (cat.includes('mariage') || cat.includes('wedding')) return isEn ? 'to the bride & groom' : 'aux mariés';
+    if (cat.includes('corporate') || cat.includes('entreprise') || cat.includes('pro')) return isEn ? 'to the organizers' : 'aux organisateurs';
+    if (cat.includes('anniversaire') || cat.includes('birthday')) return isEn ? 'to the guest of honor' : 'à la personne célébrée';
+    return isEn ? 'to the hosts' : 'aux hôtes';
   }
 
   public getSavedDeclineMessage(): string {
@@ -598,7 +732,17 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
   public readonly isPlated = this.isPlatedMode;
   public readonly isMix = this.isMixMode;
   public readonly isBuffet = this.isBuffetMode;
-  public readonly isIndicativeMenu = computed<boolean>(() => this.hasFormat('MENU_INDICATIF'));
+  public readonly isGuestChoiceActive = computed<boolean>(() => {
+    const m = (this.guest()?.mealType || '').toUpperCase();
+    if (!m) return false;
+    if (m.includes('MENU_INDICATIF')) return false;
+    return m.includes('GUEST_CHOICE') || m.includes('CHOICE_');
+  });
+
+  public readonly isIndicativeMenu = computed<boolean>(() => {
+    if (this.isBuffetMode()) return false;
+    return !this.isGuestChoiceActive();
+  });
 
   public readonly hasStartersCourse = computed<boolean>(() => {
     if (!this.isPlatedMode()) return false;
@@ -636,10 +780,51 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
     return false;
   });
 
+  public readonly hasStartersChoice = computed<boolean>(() => {
+    if (!this.isGuestChoiceActive() || !this.isPlatedMode()) return false;
+    const m = (this.guest()?.mealType || '').toUpperCase();
+    const hasAnySpecificChoice = m.includes('CHOICE_');
+    if (!hasAnySpecificChoice) return this.hasStartersCourse();
+    return (m.includes('CHOICE_STARTER') || m.includes('CHOICE_ENTREE')) && this.hasStartersCourse();
+  });
+
+  public readonly hasMainsChoice = computed<boolean>(() => {
+    if (!this.isGuestChoiceActive()) return false;
+    const m = (this.guest()?.mealType || '').toUpperCase();
+    if (this.isMixMode()) {
+      return m.includes('CHOICE_MAIN') || m.includes('GUEST_CHOICE');
+    }
+    if (this.isPlatedMode()) {
+      if (m.includes('CHOICE_')) {
+        return m.includes('CHOICE_MAIN') && this.hasMainsCourse();
+      }
+      return this.hasMainsCourse();
+    }
+    return false;
+  });
+
+  public readonly hasDessertsChoice = computed<boolean>(() => {
+    if (!this.isGuestChoiceActive() || !this.isPlatedMode()) return false;
+    const m = (this.guest()?.mealType || '').toUpperCase();
+    const hasAnySpecificChoice = m.includes('CHOICE_');
+    if (!hasAnySpecificChoice) return this.hasDessertsCourse();
+    return m.includes('CHOICE_DESSERT') && this.hasDessertsCourse();
+  });
+
+  public readonly hasBeveragesChoice = computed<boolean>(() => {
+    if (!this.isGuestChoiceActive() || !this.isPlatedMode()) return false;
+    const m = (this.guest()?.mealType || '').toUpperCase();
+    const hasAnySpecificChoice = m.includes('CHOICE_');
+    if (!hasAnySpecificChoice) return this.hasBeveragesCourse();
+    return m.includes('CHOICE_BEVERAGE') && this.hasBeveragesCourse();
+  });
+
   public getFirstCourseStep(): number {
-    if (this.isIndicativeMenu()) return 0;
     const mode = this.cateringMode();
-    if (mode === 'BUFFET' || mode === 'MIX') return 0;
+    if (mode === 'BUFFET') return 0;
+    if (mode === 'MIX') {
+      return 0;
+    }
     if (this.hasStartersCourse()) return 0;
     if (this.hasMainsCourse()) return 1;
     if (this.hasDessertsCourse()) return 2;
@@ -671,7 +856,7 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
     return [...starters, ...mains, ...desserts, ...beverages];
   });
 
-  public getInvitationSubtitle(): string {
+  public getRawSubtitle(): string {
     const subtitle = this.guest()?.invitationSubtitle;
     if (subtitle && subtitle.trim()) {
       return subtitle.trim();
@@ -684,31 +869,152 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
     if (subCat.includes('fiançailles') || subCat.includes('fiancailles')) {
       return 'Les Fiançailles de';
     }
-    if (cat.includes('corporate') || subCat.includes('séminaire') || subCat.includes('conférence')) {
-      return 'Événement d\'Entreprise';
+    if (subCat.includes('henné') || subCat.includes('henne')) {
+      return 'Soirée Henné de';
     }
-    return 'Invitation d\'Exception';
+    if (subCat.includes('circoncision')) {
+      return 'La Célébration de Circoncision de';
+    }
+    if (subCat.includes('gala')) {
+      return 'Soirée de Gala';
+    }
+    if (cat.includes('corporate') || subCat.includes('séminaire') || subCat.includes('conférence')) {
+      return "Événement d'Entreprise";
+    }
+    return "Invitation d'Exception";
+  }
+
+  public translateSubtitle(subtitle: string): string {
+    if (!subtitle || !subtitle.trim()) return '';
+    const trimmed = subtitle.trim();
+    const lang = this.currentLang();
+    const normalized = trimmed.toLowerCase();
+
+    // 1. Direct dictionary match
+    const entry = SUBTITLE_TRANSLATION_MAP[normalized];
+    if (entry) {
+      return lang === 'en' ? entry.en : entry.fr;
+    }
+
+    // 2. Pattern matching for dynamic or custom subtitles
+    if (lang === 'en') {
+      if (/^soirée\s+henn[ée]\s+de/i.test(trimmed)) return 'The Henna Night of';
+      if (/^soirée\s+de\s+gala/i.test(trimmed)) {
+        return trimmed.length > 15 ? 'Gala Evening of' : 'Gala Evening';
+      }
+      if (/^le\s+mariage\s+de/i.test(trimmed) || /^mariage\s+de/i.test(trimmed)) return 'The Wedding of';
+      if (/^les\s+fian[çc]ailles\s+de/i.test(trimmed) || /^fian[çc]ailles\s+de/i.test(trimmed)) return 'The Engagement of';
+      if (/^la\s+célébration\s+de\s+naissance\s+de/i.test(trimmed)) return 'The Birth Celebration of';
+      if (/^la\s+circoncision\s+de/i.test(trimmed) || /^circoncision\s+de/i.test(trimmed)) return 'The Circumcision Celebration of';
+      if (/^l['’]anniversaire\s+de/i.test(trimmed) || /^anniversaire\s+de/i.test(trimmed)) return 'The Birthday of';
+      if (/^d[îi]ner\s+d['’]affaires/i.test(trimmed)) return 'Business Dinner';
+      if (/^événement\s+d['’]entreprise/i.test(trimmed) || /^evenement\s+d['’]entreprise/i.test(trimmed)) return 'Corporate Event';
+      if (/^lancement\s+de\s+produit/i.test(trimmed) || /^lancement\s+officiel\s+de/i.test(trimmed)) return 'Product Launch';
+      if (/^invitation\s+d['’]exception/i.test(trimmed)) return 'Exclusive Invitation';
+      if (/^invitation\s+officielle/i.test(trimmed)) return 'Official Invitation';
+    } else {
+      if (/^the\s+wedding\s+of/i.test(trimmed)) return 'Le Mariage de';
+      if (/^the\s+engagement\s+of/i.test(trimmed)) return 'Les Fiançailles de';
+      if (/^the\s+henna\s+night\s+of/i.test(trimmed) || /^henna\s+night\s+of/i.test(trimmed)) return 'Soirée Henné de';
+      if (/^gala\s+evening/i.test(trimmed)) return 'Soirée de Gala';
+      if (/^the\s+circumcision\s+celebration\s+of/i.test(trimmed)) return 'La Célébration de Circoncision de';
+      if (/^the\s+birthday\s+of/i.test(trimmed)) return "L'Anniversaire de";
+      if (/^business\s+dinner/i.test(trimmed)) return "Dîner d'Affaires";
+      if (/^corporate\s+event/i.test(trimmed)) return "Événement d'Entreprise";
+      if (/^exclusive\s+invitation/i.test(trimmed)) return "Invitation d'Exception";
+      if (/^official\s+invitation/i.test(trimmed)) return 'Invitation Officielle';
+    }
+
+    return trimmed;
+  }
+
+  public getInvitationSubtitle(): string {
+    return this.translateSubtitle(this.getRawSubtitle());
+  }
+
+  public translateTitleIfKnown(title: string): string {
+    if (!title || !title.trim()) return '';
+    const trimmed = title.trim();
+    const lang = this.currentLang();
+    const normalized = trimmed.toLowerCase();
+
+    const subMatch = SUBTITLE_TRANSLATION_MAP[normalized];
+    if (subMatch) {
+      return lang === 'en' ? subMatch.en : subMatch.fr;
+    }
+    const catMatch = CATEGORY_TRANSLATION_MAP[normalized];
+    if (catMatch) {
+      return lang === 'en' ? catMatch.en : catMatch.fr;
+    }
+
+    return trimmed;
   }
 
   public getDisplayTitle(): string {
     const invTitle = this.guest()?.invitationTitle?.trim();
     const evTitle = this.guest()?.eventTitle?.trim();
-    const sub = this.getInvitationSubtitle()?.trim();
+    const rawSub = this.getRawSubtitle()?.trim();
+    const translatedSub = this.getInvitationSubtitle()?.trim();
     const rawTitle = invTitle || evTitle || 'Artila Web';
 
-    if (sub && rawTitle.toLowerCase().startsWith(sub.toLowerCase())) {
-      const clean = rawTitle.substring(sub.length).trim().replace(/^de\s+/i, '').trim();
-      if (clean) return clean;
-    }
+    const prefixes = new Set<string>();
+    if (rawSub) prefixes.add(rawSub.toLowerCase());
+    if (translatedSub) prefixes.add(translatedSub.toLowerCase());
 
-    if (invTitle && sub && invTitle.toLowerCase() === sub.toLowerCase()) {
-      if (evTitle && evTitle.toLowerCase() !== sub.toLowerCase()) {
-        return evTitle;
+    [
+      'le mariage de', 'mariage de', 'the wedding of',
+      'les fiançailles de', 'fiançailles de', 'les fiancailles de', 'fiancailles de', 'the engagement of',
+      'soirée henné de', 'soiree henne de', 'henné de', 'the henna night of', 'henna night of',
+      'la célébration de circoncision de', 'la circoncision de', 'circoncision de', 'the circumcision celebration of',
+      'baby shower de', 'the baby shower of',
+      'la célébration de naissance de', 'the birth celebration of',
+      "l'aqiqah de", 'the aqiqah of', 'the aqiqah celebration of',
+      "l'anniversaire de", 'anniversaire de', 'the birthday of',
+      'célébration de diplôme de', 'cérémonie de remise de diplôme de', 'the graduation celebration of', 'the graduation ceremony of',
+      'réunion de famille de', 'the family gathering of',
+      'lancement officiel de', 'official product launch of',
+      'bal de promo annuel de', 'annual prom ball of',
+      'retrouvailles & soirée des alumni', 'alumni reunion evening'
+    ].forEach(p => prefixes.add(p));
+
+    const lowerTitle = rawTitle.toLowerCase();
+    for (const prefix of prefixes) {
+      if (lowerTitle.startsWith(prefix) && rawTitle.length > prefix.length) {
+        let clean = rawTitle.substring(prefix.length).trim();
+        clean = clean.replace(/^(de\s+|d['’]|of\s+)/i, '').trim();
+        if (clean) {
+          return clean;
+        }
       }
-      return 'Artila Web';
     }
 
-    return rawTitle;
+    if (invTitle && rawSub && (invTitle.toLowerCase() === rawSub.toLowerCase() || invTitle.toLowerCase() === translatedSub?.toLowerCase())) {
+      if (evTitle && evTitle.toLowerCase() !== rawSub.toLowerCase() && evTitle.toLowerCase() !== translatedSub?.toLowerCase()) {
+        return this.translateTitleIfKnown(evTitle);
+      }
+      return this.translateTitleIfKnown(invTitle);
+    }
+
+    return this.translateTitleIfKnown(rawTitle);
+  }
+
+  public getDisplaySubCategory(): string {
+    const subCat = this.guest()?.templateSubCategory?.trim();
+    if (!subCat) {
+      return this.translationService.translate('RSVP.ENVELOPE_OFFICIAL');
+    }
+    const lang = this.currentLang();
+    const entry = CATEGORY_TRANSLATION_MAP[subCat.toLowerCase()] || SUBTITLE_TRANSLATION_MAP[subCat.toLowerCase()];
+    if (entry) {
+      return (lang === 'en' ? entry.en : entry.fr).toUpperCase();
+    }
+    return subCat.toUpperCase();
+  }
+
+  public getDisplayEventTitle(): string {
+    const evTitle = this.guest()?.eventTitle?.trim();
+    if (!evTitle) return '';
+    return this.translateTitleIfKnown(evTitle);
   }
 
   public getPrimaryFont(): string {
@@ -1186,16 +1492,16 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
 
   public autoSelectSingleChoices(): void {
     if (!this.isPlatedMode() || this.isIndicativeMenu()) return;
-    if (this.availableStarters().length === 1 && !this.starterChoice) {
+    if (this.hasStartersChoice() && this.availableStarters().length === 1 && !this.starterChoice) {
       this.starterChoice = this.availableStarters()[0].name;
     }
-    if (this.availableMains().length === 1 && !this.mealChoice) {
+    if (this.hasMainsChoice() && this.availableMains().length === 1 && !this.mealChoice) {
       this.mealChoice = this.availableMains()[0].name;
     }
-    if (this.availableDesserts().length === 1 && !this.dessertChoice) {
+    if (this.hasDessertsChoice() && this.availableDesserts().length === 1 && !this.dessertChoice) {
       this.dessertChoice = this.availableDesserts()[0].name;
     }
-    if (this.availableBeverages().length === 1 && !this.beverageChoice) {
+    if (this.hasBeveragesChoice() && this.availableBeverages().length === 1 && !this.beverageChoice) {
       this.beverageChoice = this.availableBeverages()[0].name;
     }
   }
@@ -1205,18 +1511,18 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
 
     const step = this.currentRsvpStep();
     if (step === 0) {
-      if (this.isPlatedMode() && !this.isIndicativeMenu() && this.availableStarters().length > 0) {
+      if (this.isPlatedMode() && !this.isIndicativeMenu() && this.hasStartersChoice() && this.availableStarters().length > 0) {
         return;
       }
       this.starterChoice = '';
     } else if (step === 1) {
-      // Plat principal / Plat chaud is mandatory in MIX and PLATS_FIXES
-      if ((this.isMixMode() || this.isPlatedMode()) && !this.isIndicativeMenu() && this.availableMains().length > 0) {
+      // Plat principal / Plat chaud is mandatory only if choice is enabled
+      if ((this.isMixMode() || this.isPlatedMode()) && !this.isIndicativeMenu() && this.hasMainsChoice() && this.availableMains().length > 0) {
         return;
       }
       this.mealChoice = '';
     } else if (step === 2) {
-      if (this.isPlatedMode() && !this.isIndicativeMenu() && this.availableDesserts().length > 0) {
+      if (this.isPlatedMode() && !this.isIndicativeMenu() && this.hasDessertsChoice() && this.availableDesserts().length > 0) {
         return;
       }
       this.dessertChoice = '';
@@ -1236,25 +1542,30 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
     this.isAdvancing.set(false);
 
     // If attempting to jump ahead without selecting mandatory courses in PLATS_FIXES mode
-    if (!this.isDiscoveryMode() && !this.isIndicativeMenu()) {
+    if (!this.isDiscoveryMode() && this.isGuestChoiceActive()) {
       if (this.isPlatedMode()) {
-        if (stepIndex > 0 && this.availableStarters().length > 0 && !this.starterChoice) {
+        if (stepIndex > 0 && this.hasStartersChoice() && this.availableStarters().length > 0 && !this.starterChoice) {
           this.currentRsvpStep.set(0);
           this.saveCurrentRsvpProgress();
           return;
         }
-        if (stepIndex > 1 && this.availableMains().length > 0 && !this.mealChoice) {
+        if (stepIndex > 1 && this.hasMainsChoice() && this.availableMains().length > 0 && !this.mealChoice) {
           this.currentRsvpStep.set(1);
           this.saveCurrentRsvpProgress();
           return;
         }
-        if (stepIndex > 2 && this.availableDesserts().length > 0 && !this.dessertChoice) {
+        if (stepIndex > 2 && this.hasDessertsChoice() && this.availableDesserts().length > 0 && !this.dessertChoice) {
           this.currentRsvpStep.set(2);
           this.saveCurrentRsvpProgress();
           return;
         }
+        if (stepIndex > 3 && this.hasBeveragesChoice() && this.availableBeverages().length > 0 && !this.beverageChoice) {
+          this.currentRsvpStep.set(3);
+          this.saveCurrentRsvpProgress();
+          return;
+        }
       } else if (this.isMixMode()) {
-        if (stepIndex > 1 && this.availableMains().length > 0 && !this.mealChoice) {
+        if (stepIndex > 1 && this.hasMainsChoice() && this.availableMains().length > 0 && !this.mealChoice) {
           this.currentRsvpStep.set(1);
           this.saveCurrentRsvpProgress();
           return;
@@ -1302,38 +1613,45 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
     this.otherAllergies = '';
   }
 
+  private get currentLocale(): string {
+    return this.currentLang() === 'en' ? 'en-US' : 'fr-FR';
+  }
+
   public get eventDayName(): string {
     const dateStr = this.guest()?.invitationDate || this.guest()?.eventDate;
     if (!dateStr) return '';
     const date = new Date(dateStr);
-    return date.toLocaleDateString('fr-FR', { weekday: 'long' });
+    return date.toLocaleDateString(this.currentLocale, { weekday: 'long' });
   }
 
   public get eventDayNum(): string {
     const dateStr = this.guest()?.invitationDate || this.guest()?.eventDate;
     if (!dateStr) return '';
     const date = new Date(dateStr);
-    return date.toLocaleDateString('fr-FR', { day: 'numeric' });
+    return date.toLocaleDateString(this.currentLocale, { day: 'numeric' });
   }
 
   public get eventMonth(): string {
     const dateStr = this.guest()?.invitationDate || this.guest()?.eventDate;
     if (!dateStr) return '';
     const date = new Date(dateStr);
-    return date.toLocaleDateString('fr-FR', { month: 'long' });
+    return date.toLocaleDateString(this.currentLocale, { month: 'long' });
   }
 
   public get eventYear(): string {
     const dateStr = this.guest()?.invitationDate || this.guest()?.eventDate;
     if (!dateStr) return '';
     const date = new Date(dateStr);
-    return date.toLocaleDateString('fr-FR', { year: 'numeric' });
+    return date.toLocaleDateString(this.currentLocale, { year: 'numeric' });
   }
 
   public get eventTime(): string {
     const dateStr = this.guest()?.invitationDate || this.guest()?.eventDate;
     if (!dateStr) return '';
     const date = new Date(dateStr);
+    if (this.currentLang() === 'en') {
+      return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+    }
     return date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }).replace(':', 'h');
   }
 
@@ -1464,6 +1782,11 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
   }
 
   public ngOnInit(): void {
+    const urlLang = this.route.snapshot.queryParamMap.get('lang')?.toLowerCase();
+    if (urlLang === 'en' || urlLang === 'fr') {
+      this.translationService.setLanguage(urlLang);
+    }
+
     if (this.previewMode && this.previewData) {
       console.log('Running in Preview Mode', this.previewData);
       this.guest.set(this.previewData);
@@ -1704,18 +2027,23 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
     const mode = this.cateringMode();
     const step = this.currentRsvpStep();
 
-    // Guard: Step 0 requires an Entrée choice in PLATS_FIXES if starters exist
-    if (step === 0 && this.isPlatedMode() && !this.isIndicativeMenu() && this.availableStarters().length > 0 && !this.starterChoice) {
+    // Guard: Step 0 requires an Entrée choice ONLY if starters choice is active
+    if (step === 0 && this.isPlatedMode() && this.hasStartersChoice() && this.availableStarters().length > 0 && !this.starterChoice) {
       return;
     }
 
-    // Guard: Step 1 requires a Main dish choice in MIX and PLATS_FIXES
-    if (step === 1 && (mode === 'MIX' || mode === 'PLATS_FIXES') && !this.isIndicativeMenu() && this.availableMains().length > 0 && !this.mealChoice) {
+    // Guard: Step 1 requires a Main dish choice ONLY if main choice is active
+    if (step === 1 && (mode === 'MIX' || mode === 'PLATS_FIXES') && this.hasMainsChoice() && this.availableMains().length > 0 && !this.mealChoice) {
       return;
     }
 
-    // Guard: Step 2 requires a Dessert choice in PLATS_FIXES if desserts exist
-    if (step === 2 && this.isPlatedMode() && !this.isIndicativeMenu() && this.availableDesserts().length > 0 && !this.dessertChoice) {
+    // Guard: Step 2 requires a Dessert choice ONLY if dessert choice is active
+    if (step === 2 && this.isPlatedMode() && this.hasDessertsChoice() && this.availableDesserts().length > 0 && !this.dessertChoice) {
+      return;
+    }
+
+    // Guard: Step 3 requires a Beverage choice ONLY if beverage choice is active
+    if (step === 3 && this.isPlatedMode() && this.hasBeveragesChoice() && this.availableBeverages().length > 0 && !this.beverageChoice) {
       return;
     }
 
@@ -1757,7 +2085,7 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
       return;
     }
 
-    // PLATS_FIXES (Standard & Indicative Menu: step-by-step discovery of active courses)
+    // PLATS_FIXES : navigate through active meal courses
     if (step === 0) {
       if (this.hasMainsCourse()) {
         this.currentRsvpStep.set(1);
@@ -1848,7 +2176,7 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
       return;
     }
 
-    // PLATS_FIXES:
+    // PLATS_FIXES : navigate back through active meal courses
     if (step === 5) {
       this.currentRsvpStep.set(4);
     } else if (step === 4) {
@@ -2014,23 +2342,27 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
     this.status.set(choice);
     this.attendanceStatus = (choice === 'CONFIRMED');
 
-    // In PLATS_FIXES / MIX mode, ensure all required courses are chosen
-    if (this.attendanceStatus && !this.isIndicativeMenu()) {
+    // In PLATS_FIXES / MIX mode, ensure all required courses are chosen ONLY if guest choice is active
+    if (this.attendanceStatus && this.isGuestChoiceActive()) {
       if (this.isPlatedMode()) {
-        if (this.availableStarters().length > 0 && !this.starterChoice) {
+        if (this.hasStartersChoice() && this.availableStarters().length > 0 && !this.starterChoice) {
           this.currentRsvpStep.set(0);
           return;
         }
-        if (this.availableMains().length > 0 && !this.mealChoice) {
+        if (this.hasMainsChoice() && this.availableMains().length > 0 && !this.mealChoice) {
           this.currentRsvpStep.set(1);
           return;
         }
-        if (this.availableDesserts().length > 0 && !this.dessertChoice) {
+        if (this.hasDessertsChoice() && this.availableDesserts().length > 0 && !this.dessertChoice) {
           this.currentRsvpStep.set(2);
           return;
         }
+        if (this.hasBeveragesChoice() && this.availableBeverages().length > 0 && !this.beverageChoice) {
+          this.currentRsvpStep.set(3);
+          return;
+        }
       } else if (this.isMixMode()) {
-        if (this.availableMains().length > 0 && !this.mealChoice) {
+        if (this.hasMainsChoice() && this.availableMains().length > 0 && !this.mealChoice) {
           this.currentRsvpStep.set(1);
           return;
         }
@@ -2063,15 +2395,16 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
   }
 
   public getSelectedDietsArray(): string[] {
+    const isEn = this.currentLang() === 'en';
     const list: string[] = [];
-    if (this.hasVegetarien) list.push('Végétarien');
-    if (this.hasVegan) list.push('Vegan');
-    if (this.hasGlutenFree) list.push('Sans gluten');
-    if (this.hasLactoseFree) list.push('Sans lactose');
-    if (this.hasArachidesFree) list.push('Sans arachides');
-    if (this.hasHalal) list.push('Halal');
-    if (this.hasFruitsDeMerFree) list.push('Sans fruits de mer');
-    if (this.hasSucreFree) list.push('Sans sucre');
+    if (this.hasVegetarien) list.push(isEn ? 'Vegetarian' : 'Végétarien');
+    if (this.hasVegan) list.push(isEn ? 'Vegan' : 'Vegan');
+    if (this.hasGlutenFree) list.push(isEn ? 'Gluten free' : 'Sans gluten');
+    if (this.hasLactoseFree) list.push(isEn ? 'Lactose free' : 'Sans lactose');
+    if (this.hasArachidesFree) list.push(isEn ? 'Peanut free' : 'Sans arachides');
+    if (this.hasHalal) list.push(isEn ? 'Halal' : 'Halal');
+    if (this.hasFruitsDeMerFree) list.push(isEn ? 'No seafood' : 'Sans fruits de mer');
+    if (this.hasSucreFree) list.push(isEn ? 'Sugar free' : 'Sans sucre');
     return list;
   }
 
@@ -2093,7 +2426,7 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
 
     // Add specific dish selections only if CONFIRMED and PLATS_FIXES is selected
     if (this.attendanceStatus === true && (this.hasFormat('PLATS_FIXES') || this.isMix())) {
-      if (this.isIndicativeMenu()) {
+      if (!this.isGuestChoiceActive()) {
         activeDiets.push("Menu d'Honneur");
       } else {
         if (this.starterChoice && !this.isMix()) {
@@ -2396,9 +2729,11 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
   }
 
   public getGoogleCalendarUrl(): string {
-    const title = encodeURIComponent(this.guest()?.invitationTitle || this.guest()?.eventTitle || 'Invitation Événement');
+    const rawTitle = this.guest()?.invitationTitle || this.guest()?.eventTitle;
+    const titleText = rawTitle ? this.translateTitleIfKnown(rawTitle) : (this.currentLang() === 'en' ? 'Event Invitation' : 'Invitation Événement');
+    const title = encodeURIComponent(titleText);
     const location = encodeURIComponent(this.guest()?.eventLocation || this.guest()?.invitationLocation || '');
-    const details = encodeURIComponent(this.guest()?.invitationSubtitle || 'Confirmation de présence');
+    const details = encodeURIComponent(this.getInvitationSubtitle() || (this.currentLang() === 'en' ? 'Attendance confirmation' : 'Confirmation de présence'));
     let datesParam = '';
     const dateStr = this.guest()?.invitationDate || this.guest()?.eventDate;
     if (dateStr) {

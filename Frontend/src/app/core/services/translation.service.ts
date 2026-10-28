@@ -10,8 +10,8 @@ export type SupportedLanguage = 'fr' | 'en';
 export class TranslationService {
   private readonly http = inject(HttpClient);
 
-  // Active language signal initialized from localStorage or browser default
-  private readonly initialLang: SupportedLanguage = (localStorage.getItem('app_lang') as SupportedLanguage) || 'fr';
+  // Active language signal initialized from URL param, localStorage, or browser default
+  private readonly initialLang: SupportedLanguage = this.detectInitialLanguage();
   public readonly currentLang = signal<SupportedLanguage>(this.initialLang);
 
   // Dictionary signal holding current language key-value pairs
@@ -20,6 +20,42 @@ export class TranslationService {
 
   constructor() {
     this.loadLanguage(this.initialLang).subscribe();
+  }
+
+  /**
+   * Intelligently detects initial language:
+   * 1. URL search param (?lang=en or ?lang=fr)
+   * 2. Saved user preference in localStorage
+   * 3. Browser locale (navigator.language)
+   * 4. Default fallback: 'fr'
+   */
+  private detectInitialLanguage(): SupportedLanguage {
+    try {
+      if (typeof window !== 'undefined' && window.location && window.location.search) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlLang = urlParams.get('lang')?.toLowerCase();
+        if (urlLang === 'en' || urlLang === 'fr') {
+          return urlLang;
+        }
+      }
+
+      if (typeof localStorage !== 'undefined') {
+        const saved = localStorage.getItem('app_lang') as SupportedLanguage;
+        if (saved === 'en' || saved === 'fr') {
+          return saved;
+        }
+      }
+
+      if (typeof navigator !== 'undefined') {
+        const browserLang = (navigator.language || (navigator as any).userLanguage || '').toLowerCase();
+        if (browserLang.startsWith('en')) {
+          return 'en';
+        }
+      }
+    } catch (e) {
+      console.warn('Error during language detection, falling back to fr', e);
+    }
+    return 'fr';
   }
 
   /**
@@ -82,5 +118,12 @@ export class TranslationService {
     }
 
     return value;
+  }
+
+  /**
+   * Alias for translate() for ngx-translate style syntax
+   */
+  public instant(key: string, params?: Record<string, any>): string {
+    return this.translate(key, params);
   }
 }

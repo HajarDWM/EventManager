@@ -24,6 +24,8 @@ spring:
         order_updates: true
   flyway:
     enabled: true
+    baseline-on-migrate: true
+    validate-on-migrate: false
     ignore-missing-migrations: true
     ignore-migration-patterns: "*:missing"
   servlet:

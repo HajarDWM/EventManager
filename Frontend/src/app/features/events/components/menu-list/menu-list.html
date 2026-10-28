@@ -142,57 +142,101 @@
 
       <!-- SUB-OPTIONS FOR PLATS_FIXES -->
       <div *ngIf="masterCateringMode() === 'PLATS_FIXES'" class="animate__animated animate__fadeIn">
-        <div class="d-flex flex-wrap gap-3">
-          <div class="form-check form-check-inline mb-0">
-            <input class="form-check-input" type="checkbox" id="course_starter"
-                   [checked]="isFormatSelected('COURSE_STARTER')" (change)="toggleFormat('COURSE_STARTER')">
-            <label class="form-check-label fs-xs fw-semibold text-dark" for="course_starter" style="cursor: pointer;">
-              Entrée
-            </label>
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2.5 py-1">
+          <!-- 1. Services Inclus -->
+          <div class="d-flex flex-wrap align-items-center gap-3">
+            <span class="fs-2xs fw-bold text-uppercase text-muted letter-spacing-1">Services du menu :</span>
+            <div class="form-check form-check-inline mb-0">
+              <input class="form-check-input cursor-pointer" type="checkbox" id="course_starter"
+                     [checked]="isFormatSelected('COURSE_STARTER')" (change)="toggleFormat('COURSE_STARTER')">
+              <label class="form-check-label fs-xs fw-semibold text-dark cursor-pointer" for="course_starter">
+                Entrée
+              </label>
+            </div>
+            <div class="form-check form-check-inline mb-0">
+              <input class="form-check-input cursor-pointer" type="checkbox" id="course_main"
+                     [checked]="isFormatSelected('COURSE_MAIN') || isFormatSelected('PLATS_FIXES')" (change)="toggleFormat('COURSE_MAIN')">
+              <label class="form-check-label fs-xs fw-semibold text-dark cursor-pointer" for="course_main">
+                Plat Principal
+              </label>
+            </div>
+            <div class="form-check form-check-inline mb-0">
+              <input class="form-check-input cursor-pointer" type="checkbox" id="course_dessert"
+                     [checked]="isFormatSelected('COURSE_DESSERT')" (change)="toggleFormat('COURSE_DESSERT')">
+              <label class="form-check-label fs-xs fw-semibold text-dark cursor-pointer" for="course_dessert">
+                Dessert
+              </label>
+            </div>
+            <div class="form-check form-check-inline mb-0">
+              <input class="form-check-input cursor-pointer" type="checkbox" id="course_beverage"
+                     [checked]="isFormatSelected('COURSE_BEVERAGE')" (change)="toggleFormat('COURSE_BEVERAGE')">
+              <label class="form-check-label fs-xs fw-semibold text-dark cursor-pointer" for="course_beverage">
+                Boisson
+              </label>
+            </div>
           </div>
-          <div class="form-check form-check-inline mb-0">
-            <input class="form-check-input" type="checkbox" id="course_main"
-                   [checked]="isFormatSelected('COURSE_MAIN') || isFormatSelected('PLATS_FIXES')" (change)="toggleFormat('COURSE_MAIN')">
-            <label class="form-check-label fs-xs fw-semibold text-dark" for="course_main" style="cursor: pointer;">
-              Plat Principal
-            </label>
-          </div>
-          <div class="form-check form-check-inline mb-0">
-            <input class="form-check-input" type="checkbox" id="course_dessert"
-                   [checked]="isFormatSelected('COURSE_DESSERT')" (change)="toggleFormat('COURSE_DESSERT')">
-            <label class="form-check-label fs-xs fw-semibold text-dark" for="course_dessert" style="cursor: pointer;">
-              Dessert
-            </label>
-          </div>
-          <div class="form-check form-check-inline mb-0">
-            <input class="form-check-input" type="checkbox" id="course_beverage"
-                   [checked]="isFormatSelected('COURSE_BEVERAGE')" (change)="toggleFormat('COURSE_BEVERAGE')">
-            <label class="form-check-label fs-xs fw-semibold text-dark" for="course_beverage" style="cursor: pointer;">
-              Boisson
-            </label>
+
+          <!-- 2. Switch Personnalisation convives -->
+          <div class="d-flex align-items-center gap-2">
+            <div class="form-check form-switch mb-0 d-flex align-items-center">
+              <input class="form-check-input cursor-pointer me-2" type="checkbox" role="switch" id="guest_choice_toggle"
+                     [checked]="isGuestChoiceEnabled()"
+                     (change)="toggleGuestChoice(!isGuestChoiceEnabled())">
+              <label class="form-check-label fs-xs fw-bold text-dark cursor-pointer mb-0" for="guest_choice_toggle">
+                Choix des convives
+              </label>
+            </div>
+            <span class="badge rounded-pill" [ngClass]="isGuestChoiceEnabled() ? 'bg-primary-subtle text-primary border border-primary-subtle' : 'bg-body-secondary text-muted'" style="font-size: 0.68rem;">
+              {{ isGuestChoiceEnabled() ? 'Actif' : 'Menu fixe servi à table' }}
+            </span>
           </div>
         </div>
 
-        <!-- Mode de sélection des invités : Menu au choix vs Menu Indicatif / Unique -->
-        <div class="mt-2.5 pt-2 border-top d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2 bg-white rounded p-2 border">
-          <div class="d-flex align-items-center gap-2">
-            <div class="form-check form-switch mb-0">
-              <input class="form-check-input" type="checkbox" role="switch" id="menu_indicatif_toggle"
-                     [checked]="isFormatSelected('MENU_INDICATIF')"
-                     (change)="toggleFormat('MENU_INDICATIF')" style="cursor: pointer;">
-              <label class="form-check-label fs-xs fw-bold text-dark cursor-pointer ms-1" for="menu_indicatif_toggle">
-                <i class="fa fa-crown text-warning me-1"></i> Menu Indicatif / Banquet
-              </label>
-            </div>
-            <span class="badge rounded-pill" [ngClass]="isFormatSelected('MENU_INDICATIF') ? 'bg-primary text-white' : 'bg-body-secondary text-muted'" style="font-size: 0.68rem;">
-              {{ isFormatSelected('MENU_INDICATIF') ? 'Sans sélection' : 'Choix actif' }}
-            </span>
-          </div>
-          <div class="fs-3xs text-muted">
-            {{ isFormatSelected('MENU_INDICATIF') 
-                ? 'Tous les plats seront servis à table (sans sélection).' 
-                : 'L\'invité choisit ses plats lors de la confirmation.' }}
-          </div>
+        <!-- 3. Granular choice pills (compact single line, only visible when Choix des convives is active) -->
+        <div *ngIf="isGuestChoiceEnabled()" class="d-flex flex-wrap align-items-center gap-2 pt-2 border-top animate__animated animate__fadeIn">
+          <span class="fs-xs fw-medium text-muted">
+            <i class="fa fa-hand-pointer text-primary me-1"></i> Plats personnalisables :
+          </span>
+
+          <!-- Entrée Pill -->
+          <button type="button" *ngIf="isFormatSelected('COURSE_STARTER')"
+                  (click)="toggleChoiceFormat('CHOICE_STARTER')"
+                  class="btn btn-sm rounded-pill px-2.5 py-0.5 fs-xs fw-semibold transition-all"
+                  [ngClass]="isFormatSelected('CHOICE_STARTER') ? 'btn-primary shadow-2xs' : 'btn-outline-secondary border-dashed text-secondary opacity-75'">
+            <i class="fa me-1" [ngClass]="isFormatSelected('CHOICE_STARTER') ? 'fa-check' : 'fa-leaf'"></i>
+            Entrée {{ isFormatSelected('CHOICE_STARTER') ? 'au choix' : '(servie)' }}
+          </button>
+
+          <!-- Plat Principal Pill -->
+          <button type="button" *ngIf="isFormatSelected('COURSE_MAIN') || isFormatSelected('PLATS_FIXES')"
+                  (click)="toggleChoiceFormat('CHOICE_MAIN')"
+                  class="btn btn-sm rounded-pill px-2.5 py-0.5 fs-xs fw-semibold transition-all"
+                  [ngClass]="isFormatSelected('CHOICE_MAIN') ? 'btn-primary shadow-2xs' : 'btn-outline-secondary border-dashed text-secondary opacity-75'">
+            <i class="fa me-1" [ngClass]="isFormatSelected('CHOICE_MAIN') ? 'fa-check' : 'fa-drumstick-bite'"></i>
+            Plat Principal {{ isFormatSelected('CHOICE_MAIN') ? 'au choix' : '(servi)' }}
+          </button>
+
+          <!-- Dessert Pill -->
+          <button type="button" *ngIf="isFormatSelected('COURSE_DESSERT')"
+                  (click)="toggleChoiceFormat('CHOICE_DESSERT')"
+                  class="btn btn-sm rounded-pill px-2.5 py-0.5 fs-xs fw-semibold transition-all"
+                  [ngClass]="isFormatSelected('CHOICE_DESSERT') ? 'btn-primary shadow-2xs' : 'btn-outline-secondary border-dashed text-secondary opacity-75'">
+            <i class="fa me-1" [ngClass]="isFormatSelected('CHOICE_DESSERT') ? 'fa-check' : 'fa-birthday-cake'"></i>
+            Dessert {{ isFormatSelected('CHOICE_DESSERT') ? 'au choix' : '(servi)' }}
+          </button>
+
+          <!-- Boisson Pill -->
+          <button type="button" *ngIf="isFormatSelected('COURSE_BEVERAGE')"
+                  (click)="toggleChoiceFormat('CHOICE_BEVERAGE')"
+                  class="btn btn-sm rounded-pill px-2.5 py-0.5 fs-xs fw-semibold transition-all"
+                  [ngClass]="isFormatSelected('CHOICE_BEVERAGE') ? 'btn-primary shadow-2xs' : 'btn-outline-secondary border-dashed text-secondary opacity-75'">
+            <i class="fa me-1" [ngClass]="isFormatSelected('CHOICE_BEVERAGE') ? 'fa-check' : 'fa-glass-cheers'"></i>
+            Boisson {{ isFormatSelected('CHOICE_BEVERAGE') ? 'au choix' : '(servie)' }}
+          </button>
+
+          <span class="fs-4xs text-muted ms-auto fst-italic d-none d-md-inline">
+            <i class="fa fa-info-circle me-1"></i> Les plats non cochés seront servis d'office à table à tous les convives.
+          </span>
         </div>
       </div>
 
@@ -230,21 +274,24 @@
         </div>
 
         <!-- Mode de sélection des invités pour MIX -->
-        <div class="mt-2.5 pt-2 border-top d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2 bg-white rounded p-2 border">
+        <div class="mt-2.5 pt-2 border-top d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2 bg-white rounded p-2.5 border shadow-2xs">
           <div class="d-flex align-items-center gap-2">
             <div class="form-check form-switch mb-0">
-              <input class="form-check-input" type="checkbox" role="switch" id="mix_indicatif_toggle"
-                     [checked]="isFormatSelected('MENU_INDICATIF')"
-                     (change)="toggleFormat('MENU_INDICATIF')" style="cursor: pointer;">
-              <label class="form-check-label fs-xs fw-bold text-dark cursor-pointer ms-1" for="mix_indicatif_toggle">
-                <i class="fa fa-crown text-warning me-1"></i> Plat chaud fixe (sans choix)
+              <input class="form-check-input" type="checkbox" role="switch" id="mix_choice_toggle"
+                     [checked]="isGuestChoiceEnabled()"
+                     (change)="toggleGuestChoice(!isGuestChoiceEnabled())" style="cursor: pointer;">
+              <label class="form-check-label fs-xs fw-bold text-dark cursor-pointer ms-1" for="mix_choice_toggle">
+                <i class="fa fa-user-check text-primary me-1"></i> Permettre aux invités de choisir leur plat chaud
               </label>
             </div>
+            <span class="badge rounded-pill" [ngClass]="isGuestChoiceEnabled() ? 'bg-primary text-white' : 'bg-body-secondary text-muted'" style="font-size: 0.68rem;">
+              {{ isGuestChoiceEnabled() ? 'Plat au choix' : 'Plat unique servi à table (Par défaut)' }}
+            </span>
           </div>
           <div class="fs-3xs text-muted">
-            {{ isFormatSelected('MENU_INDICATIF') 
-                ? 'Le plat chaud à table sera identique pour tous les convives.' 
-                : 'L\'invité sélectionne son plat chaud personnalisé lors du RSVP.' }}
+            {{ isGuestChoiceEnabled() 
+                ? 'L\'invité sélectionne son plat chaud personnalisé lors du RSVP.' 
+                : 'Le plat chaud à table sera identique pour tous les convives (sans sélection).' }}
           </div>
         </div>
       </div>

@@ -36,7 +36,7 @@ export class MenuList implements OnInit {
   protected readonly event = signal<Event | null>(null);
   protected readonly guests = signal<Guest[]>([]);
   protected readonly menuItems = signal<MenuItem[]>([]);
-  protected readonly mealType = signal<string>('PLATS_FIXES');
+  protected readonly mealType = signal<string>('PLATS_FIXES,COURSE_STARTER,COURSE_MAIN,COURSE_DESSERT,COURSE_BEVERAGE,MENU_INDICATIF');
   protected readonly masterCateringMode = signal<'BUFFET' | 'PLATS_FIXES' | 'MIX'>('PLATS_FIXES');
 
   protected readonly confirmedGuestsCount = computed(() => 
@@ -349,13 +349,59 @@ export class MenuList implements OnInit {
     this.selectedCategory.set('ALL');
     let defaultType = '';
     if (mode === 'BUFFET') {
-      defaultType = 'BUFFET_STANDARD,BUFFET_VEG,BUFFET_HALAL,BUFFET_SUCRE_FREE,BUFFET_BEVERAGES';
+      defaultType = 'BUFFET_STANDARD,BUFFET_VEG,BUFFET_HALAL,BUFFET_SUCRE_FREE,BUFFET_BEVERAGES,MENU_INDICATIF';
     } else if (mode === 'PLATS_FIXES') {
-      defaultType = 'PLATS_FIXES,COURSE_ENTREE,COURSE_MAIN,COURSE_DESSERT,COURSE_BEVERAGE';
+      defaultType = 'PLATS_FIXES,COURSE_STARTER,COURSE_MAIN,COURSE_DESSERT,COURSE_BEVERAGE,MENU_INDICATIF';
     } else if (mode === 'MIX') {
-      defaultType = 'BUFFET_ENTREES,PLATS_FIXES,BUFFET_DESSERTS,BUFFET_BEVERAGES';
+      defaultType = 'BUFFET_ENTREES,PLATS_FIXES,BUFFET_DESSERTS,BUFFET_BEVERAGES,MENU_INDICATIF';
     }
     this.saveMealType(defaultType);
+  }
+
+  protected isGuestChoiceEnabled(): boolean {
+    const current = (this.mealType() || '').toUpperCase();
+    if (current.includes('MENU_INDICATIF')) return false;
+    return current.includes('GUEST_CHOICE') || current.includes('CHOICE_');
+  }
+
+  protected toggleGuestChoice(enable: boolean): void {
+    let currentList = (this.mealType() || '').split(',').map(s => s.trim()).filter(Boolean);
+    if (enable) {
+      currentList = currentList.filter(s => s !== 'MENU_INDICATIF');
+      if (!currentList.includes('GUEST_CHOICE')) {
+        currentList.push('GUEST_CHOICE');
+      }
+      const hasAnyChoice = currentList.some(s => s.startsWith('CHOICE_'));
+      if (!hasAnyChoice) {
+        currentList.push('CHOICE_MAIN');
+      }
+    } else {
+      currentList = currentList.filter(s => s !== 'GUEST_CHOICE' && !s.startsWith('CHOICE_'));
+      if (!currentList.includes('MENU_INDICATIF')) {
+        currentList.push('MENU_INDICATIF');
+      }
+    }
+    this.saveMealType(currentList.join(','));
+  }
+
+  protected toggleChoiceFormat(format: string): void {
+    let currentList = (this.mealType() || '').split(',').map(s => s.trim()).filter(Boolean);
+    const index = currentList.indexOf(format);
+    if (index > -1) {
+      currentList.splice(index, 1);
+      const hasRemainingChoice = currentList.some(s => s.startsWith('CHOICE_'));
+      if (!hasRemainingChoice) {
+        this.toggleGuestChoice(false);
+        return;
+      }
+    } else {
+      currentList.push(format);
+      currentList = currentList.filter(s => s !== 'MENU_INDICATIF');
+      if (!currentList.includes('GUEST_CHOICE')) {
+        currentList.push('GUEST_CHOICE');
+      }
+    }
+    this.saveMealType(currentList.join(','));
   }
 
   protected readonly availableFormats = [

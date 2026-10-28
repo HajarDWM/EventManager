@@ -167,7 +167,7 @@ export class EventCreate implements OnInit {
       status: this.status(),
       digitalTemplateId: chosenTemplate?.id || undefined,
       templateId: chosenTemplate?.templateKey || (chosenTemplate?.category === 'Mariage' ? 'fleurs-de-coton' : 'corporate-professional'),
-      mealType: 'PLATS_FIXES', // Default to PLATS_FIXES on creation, can be changed in Restaurations dashboard
+      mealType: 'PLATS_FIXES,COURSE_STARTER,COURSE_MAIN,COURSE_DESSERT,COURSE_BEVERAGE,MENU_INDICATIF', // Par défaut : Menu servi à table pour tous (sans sélection)
       isPaidEvent: this.isPaidEvent(),
       ticketPrice: this.isPaidEvent() ? this.ticketPrice() : 0,
       currency: this.currency(),

@@ -2241,6 +2241,106 @@ textarea.luxury-form-control::placeholder {
 }
 
 /* ==========================================================================
+   Floating Luxury Language Switcher Widget (Minimalist, Discreet & Elegant)
+   ========================================================================== */
+
+.floating-lang-widget {
+  position: absolute;
+  top: -54px;
+  right: 12px;
+  z-index: 1055;
+  display: inline-flex;
+  align-items: center;
+  user-select: none;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  @media (max-width: 576px) {
+    top: -50px;
+    right: 8px;
+  }
+
+  .lang-pill-btn {
+    height: 38px;
+    padding: 0 13px;
+    border-radius: 20px;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    background: rgba(255, 255, 255, 0.90);
+    border: 1px solid rgba(212, 175, 55, 0.45);
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08), 0 0 10px rgba(212, 175, 55, 0.15);
+    transition: all 0.25s ease;
+    color: #1e293b;
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+
+    .lang-globe-icon {
+      font-size: 0.88rem;
+      color: var(--primary-color, #d4af37);
+      transition: transform 0.4s ease;
+    }
+
+    .lang-opt {
+      opacity: 0.5;
+      transition: all 0.25s ease;
+
+      &.active-lang {
+        opacity: 1;
+        color: var(--primary-color, #92400e);
+        font-weight: 800;
+        text-shadow: 0 0 8px rgba(212, 175, 55, 0.25);
+      }
+    }
+
+    .lang-sep {
+      opacity: 0.3;
+      font-weight: 400;
+      font-size: 0.68rem;
+    }
+
+    &:hover {
+      background: #ffffff;
+      border-color: var(--primary-color, #d4af37);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12), 0 0 14px rgba(212, 175, 55, 0.25);
+
+      .lang-globe-icon {
+        transform: rotate(30deg);
+      }
+    }
+
+    &:active {
+      transform: translateY(0) scale(0.97);
+    }
+  }
+}
+
+.or-et-velours-theme,
+.corporate-professional-theme,
+.luxury-minimal-theme {
+  .floating-lang-widget .lang-pill-btn {
+    background: rgba(15, 23, 42, 0.78);
+    border-color: rgba(212, 175, 55, 0.5);
+    color: #f1f5f9;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35), 0 0 12px rgba(212, 175, 55, 0.2);
+
+    .lang-opt.active-lang {
+      color: #ffd700;
+      text-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
+    }
+
+    &:hover {
+      background: rgba(15, 23, 42, 0.94);
+      border-color: #ffd700;
+    }
+  }
+}
+
+/* ==========================================================================
    Floating Luxury Background Music Widget & Ambient Animations
    ========================================================================== */
 
@@ -7554,11 +7654,15 @@ textarea.luxury-form-control::placeholder {
    ========================================================================== */
 .banquet-full-menu-wrapper {
   width: 100%;
-  max-width: 480px;
+  max-width: 440px;
   margin: 0 auto;
 
   @media (min-width: 768px) {
-    max-width: 600px;
+    max-width: 660px !important;
+  }
+
+  @media (min-width: 1200px) {
+    max-width: 700px !important;
   }
 }
 
@@ -7566,12 +7670,12 @@ textarea.luxury-form-control::placeholder {
   display: flex !important;
   flex-direction: column !important;
   width: 100% !important;
-  max-width: 480px !important;
+  max-width: 100% !important;
   max-height: 290px !important;
   overflow-y: scroll !important;
   overflow-x: hidden !important;
   -webkit-overflow-scrolling: touch !important;
-  padding: 4px 18px 4px 4px !important;
+  padding: 4px 18px 8px 4px !important;
   box-sizing: border-box !important;
 
   /* On masque la barre brute du navigateur afin de laisser la belle barre dorée permanente */
@@ -7585,40 +7689,74 @@ textarea.luxury-form-control::placeholder {
   }
 
   @media (min-width: 768px) {
-    max-width: 600px !important;
-    max-height: 350px !important;
-    padding-right: 20px !important;
+    max-height: 340px !important;
+    padding-right: 22px !important;
+  }
+
+  @media (min-width: 1200px) {
+    max-height: 375px !important;
   }
 }
 
 .banquet-course-section {
   width: 100%;
-  margin-bottom: 4px;
+  margin-bottom: 8px;
 
   .banquet-section-header {
-    margin-bottom: 5px;
+    margin-bottom: 6px;
 
     .banquet-section-title {
-      font-size: 0.62rem !important;
-      font-weight: 600 !important;
-      letter-spacing: 1.2px !important;
+      font-size: 0.70rem !important;
+      font-weight: 700 !important;
+      letter-spacing: 1.4px !important;
       text-transform: uppercase !important;
       line-height: 1.2 !important;
       white-space: nowrap !important;
       user-select: none !important;
-      opacity: 0.82 !important;
+      opacity: 0.88 !important;
     }
   }
 
   .banquet-dishes-grid {
     width: 100%;
-  }
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 
-  @media (min-width: 768px) {
-    .banquet-dishes-grid {
+    @media (min-width: 768px) {
       display: grid !important;
-      grid-template-columns: repeat(2, 1fr) !important;
-      gap: 8px !important;
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      gap: 10px 14px !important;
+    }
+
+    .dish-horizontal-card {
+      width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+
+      .dish-card-thumb-wrapper {
+        flex-shrink: 0;
+      }
+
+      .dish-card-body {
+        flex: 1 1 auto;
+        min-width: 0;
+        overflow: hidden;
+
+        .dish-card-title {
+          font-size: 0.85rem !important;
+          font-weight: 600 !important;
+          line-height: 1.25 !important;
+          margin: 0 !important;
+          word-break: break-word;
+          overflow-wrap: break-word;
+        }
+      }
+
+      .dish-card-badge {
+        flex-shrink: 0;
+        white-space: nowrap;
+      }
     }
   }
 }
