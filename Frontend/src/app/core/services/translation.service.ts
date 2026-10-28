@@ -2,7 +2,7 @@ import { Injectable, inject, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap, of, catchError } from 'rxjs';
 
-export type SupportedLanguage = 'fr' | 'en';
+export type SupportedLanguage = 'fr' | 'en' | 'ar';
 
 @Injectable({
   providedIn: 'root'
@@ -13,6 +13,7 @@ export class TranslationService {
   // Active language signal initialized from URL param, localStorage, or browser default
   private readonly initialLang: SupportedLanguage = this.detectInitialLanguage();
   public readonly currentLang = signal<SupportedLanguage>(this.initialLang);
+  public readonly isRtl = computed(() => this.currentLang() === 'ar');
 
   // Dictionary signal holding current language key-value pairs
   private readonly translationsMap = signal<Record<string, any>>({});
@@ -24,7 +25,7 @@ export class TranslationService {
 
   /**
    * Intelligently detects initial language:
-   * 1. URL search param (?lang=en or ?lang=fr)
+   * 1. URL search param (?lang=ar, ?lang=en or ?lang=fr)
    * 2. Saved user preference in localStorage
    * 3. Browser locale (navigator.language)
    * 4. Default fallback: 'fr'
@@ -34,20 +35,23 @@ export class TranslationService {
       if (typeof window !== 'undefined' && window.location && window.location.search) {
         const urlParams = new URLSearchParams(window.location.search);
         const urlLang = urlParams.get('lang')?.toLowerCase();
-        if (urlLang === 'en' || urlLang === 'fr') {
+        if (urlLang === 'en' || urlLang === 'fr' || urlLang === 'ar') {
           return urlLang;
         }
       }
 
       if (typeof localStorage !== 'undefined') {
         const saved = localStorage.getItem('app_lang') as SupportedLanguage;
-        if (saved === 'en' || saved === 'fr') {
+        if (saved === 'en' || saved === 'fr' || saved === 'ar') {
           return saved;
         }
       }
 
       if (typeof navigator !== 'undefined') {
         const browserLang = (navigator.language || (navigator as any).userLanguage || '').toLowerCase();
+        if (browserLang.startsWith('ar')) {
+          return 'ar';
+        }
         if (browserLang.startsWith('en')) {
           return 'en';
         }
@@ -68,7 +72,10 @@ export class TranslationService {
         this.currentLang.set(lang);
         this.isLoaded.set(true);
         localStorage.setItem('app_lang', lang);
-        document.documentElement.lang = lang;
+        if (typeof document !== 'undefined') {
+          document.documentElement.lang = lang;
+          document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+        }
       }),
       catchError((err) => {
         console.error(`Failed to load translation file for ${lang}`, err);

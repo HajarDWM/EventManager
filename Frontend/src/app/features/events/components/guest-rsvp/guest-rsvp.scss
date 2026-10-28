@@ -2285,8 +2285,15 @@ textarea.luxury-form-control::placeholder {
     }
 
     .lang-opt {
-      opacity: 0.5;
-      transition: all 0.25s ease;
+      opacity: 0.55;
+      cursor: pointer;
+      padding: 1px 4px;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+
+      &:hover {
+        opacity: 0.85;
+      }
 
       &.active-lang {
         opacity: 1;
@@ -5710,6 +5717,7 @@ textarea.luxury-form-control::placeholder {
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
+    gap: 8px !important;
     transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
     cursor: pointer !important;
@@ -5717,12 +5725,11 @@ textarea.luxury-form-control::placeholder {
     text-decoration: none !important;
     flex-shrink: 0 !important;
 
-    i.fa-arrow-left {
-      transition: transform 0.2s ease;
-    }
-
-    i.fa-arrow-right {
-      transition: transform 0.2s ease;
+    i {
+      margin: 0 !important;
+      display: inline-block !important;
+      line-height: 1 !important;
+      transition: transform 0.2s ease !important;
     }
 
     &:hover {
@@ -5734,11 +5741,11 @@ textarea.luxury-form-control::placeholder {
       box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12) !important;
 
       i.fa-arrow-left {
-        transform: translateX(-3px);
+        transform: translateX(-3px) !important;
       }
 
       i.fa-arrow-right {
-        transform: translateX(3px);
+        transform: translateX(3px) !important;
       }
     }
 
@@ -5783,6 +5790,7 @@ textarea.luxury-form-control::placeholder {
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
+    gap: 8px !important;
     transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
     cursor: pointer !important;
@@ -5790,7 +5798,10 @@ textarea.luxury-form-control::placeholder {
     text-decoration: none !important;
 
     i {
-      transition: transform 0.2s ease;
+      margin: 0 !important;
+      display: inline-block !important;
+      line-height: 1 !important;
+      transition: transform 0.2s ease !important;
     }
 
     &:hover {
@@ -5800,8 +5811,12 @@ textarea.luxury-form-control::placeholder {
       transform: translateY(-2px) !important;
       box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12) !important;
 
-      i {
-        transform: translateX(-3px);
+      i.fa-arrow-left {
+        transform: translateX(-3px) !important;
+      }
+
+      i.fa-arrow-right {
+        transform: translateX(3px) !important;
       }
     }
 
@@ -7760,5 +7775,71 @@ textarea.luxury-form-control::placeholder {
     }
   }
 }
+
+/* ==========================================================================
+   ARABIC & RTL (RIGHT-TO-LEFT) COMPLETE LUXURY ENHANCEMENTS
+   ========================================================================== */
+[dir="rtl"] {
+  direction: rtl;
+  text-align: right;
+
+  .floating-lang-widget {
+    right: auto !important;
+    left: 12px !important;
+
+    @media (max-width: 576px) {
+      right: auto !important;
+      left: 8px !important;
+    }
+  }
+
+  .floating-music-widget {
+    left: auto !important;
+    right: 12px !important;
+
+    @media (max-width: 576px) {
+      left: auto !important;
+      right: 8px !important;
+    }
+  }
+
+  /* Flip horizontal navigational chevron icons */
+  .fa-chevron-right,
+  .fa-chevron-left {
+    transform: scaleX(-1);
+  }
+
+  /* Stepper lines */
+  .rsvp-step-bar-fill {
+    transform-origin: right center;
+  }
+
+  /* Arabic text typography refinements (clean cursive ligatures) */
+  .luxury-subtitle,
+  .invitation-main-title,
+  .salutation-honorific,
+  .salutation-guest-name,
+  .salutation-invitation-message,
+  .envelope-brand-crest span,
+  .envelope-honor-guest span {
+    letter-spacing: 0 !important;
+  }
+
+  /* Modal close buttons align left */
+  .modal-header .btn-close {
+    margin-right: auto;
+    margin-left: 0;
+  }
+
+  /* Text alignments */
+  .text-end {
+    text-align: left !important;
+  }
+
+  .text-start {
+    text-align: right !important;
+  }
+}
+
 
 

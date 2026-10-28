@@ -63,129 +63,157 @@ export interface PublicRsvpDetail {
   paymentDate?: string;
 }
 
-const SUBTITLE_TRANSLATION_MAP: Record<string, { fr: string; en: string }> = {
+const SUBTITLE_TRANSLATION_MAP: Record<string, { fr: string; en: string; ar: string }> = {
   // Mariage & Tradition
-  'le mariage de': { fr: 'Le Mariage de', en: 'The Wedding of' },
-  'mariage de': { fr: 'Mariage de', en: 'The Wedding of' },
-  'the wedding of': { fr: 'Le Mariage de', en: 'The Wedding of' },
-  'les fiançailles de': { fr: 'Les Fiançailles de', en: 'The Engagement of' },
-  'les fiancailles de': { fr: 'Les Fiançailles de', en: 'The Engagement of' },
-  'fiançailles de': { fr: 'Fiançailles de', en: 'The Engagement of' },
-  'fiancailles de': { fr: 'Fiançailles de', en: 'The Engagement of' },
-  'the engagement of': { fr: 'Les Fiançailles de', en: 'The Engagement of' },
-  'soirée henné de': { fr: 'Soirée Henné de', en: 'The Henna Night of' },
-  'soiree henne de': { fr: 'Soirée Henné de', en: 'The Henna Night of' },
-  'henné de': { fr: 'Henné de', en: 'The Henna of' },
-  'the henna night of': { fr: 'Soirée Henné de', en: 'The Henna Night of' },
-  'henna night of': { fr: 'Soirée Henné de', en: 'The Henna Night of' },
-  'la célébration de circoncision de': { fr: 'La Célébration de Circoncision de', en: 'The Circumcision Celebration of' },
-  'la circoncision de': { fr: 'La Circoncision de', en: 'The Circumcision Celebration of' },
-  'circoncision de': { fr: 'Circoncision de', en: 'The Circumcision Celebration of' },
-  'the circumcision celebration of': { fr: 'La Célébration de Circoncision de', en: 'The Circumcision Celebration of' },
+  'le mariage de': { fr: 'Le Mariage de', en: 'The Wedding of', ar: 'حفل زفاف' },
+  'mariage de': { fr: 'Mariage de', en: 'The Wedding of', ar: 'حفل زفاف' },
+  'the wedding of': { fr: 'Le Mariage de', en: 'The Wedding of', ar: 'حفل زفاف' },
+  'حفل زفاف': { fr: 'Le Mariage de', en: 'The Wedding of', ar: 'حفل زفاف' },
+  'زفاف': { fr: 'Le Mariage de', en: 'The Wedding of', ar: 'حفل زفاف' },
+
+  'les fiançailles de': { fr: 'Les Fiançailles de', en: 'The Engagement of', ar: 'حفل خطوبة' },
+  'les fiancailles de': { fr: 'Les Fiançailles de', en: 'The Engagement of', ar: 'حفل خطوبة' },
+  'fiançailles de': { fr: 'Fiançailles de', en: 'The Engagement of', ar: 'حفل خطوبة' },
+  'fiancailles de': { fr: 'Fiançailles de', en: 'The Engagement of', ar: 'حفل خطوبة' },
+  'the engagement of': { fr: 'Les Fiançailles de', en: 'The Engagement of', ar: 'حفل خطوبة' },
+  'حفل خطوبة': { fr: 'Les Fiançailles de', en: 'The Engagement of', ar: 'حفل خطوبة' },
+  'خطوبة': { fr: 'Les Fiançailles de', en: 'The Engagement of', ar: 'حفل خطوبة' },
+
+  'soirée henné de': { fr: 'Soirée Henné de', en: 'The Henna Night of', ar: 'ليلة حناء' },
+  'soiree henne de': { fr: 'Soirée Henné de', en: 'The Henna Night of', ar: 'ليلة حناء' },
+  'henné de': { fr: 'Henné de', en: 'The Henna of', ar: 'ليلة حناء' },
+  'the henna night of': { fr: 'Soirée Henné de', en: 'The Henna Night of', ar: 'ليلة حناء' },
+  'henna night of': { fr: 'Soirée Henné de', en: 'The Henna Night of', ar: 'ليلة حناء' },
+  'ليلة حناء': { fr: 'Soirée Henné de', en: 'The Henna Night of', ar: 'ليلة حناء' },
+  'حناء': { fr: 'Soirée Henné de', en: 'The Henna Night of', ar: 'ليلة حناء' },
+
+  'la célébration de circoncision de': { fr: 'La Célébration de Circoncision de', en: 'The Circumcision Celebration of', ar: 'حفل ختان مبارك' },
+  'la circoncision de': { fr: 'La Circoncision de', en: 'The Circumcision Celebration of', ar: 'حفل ختان مبارك' },
+  'circoncision de': { fr: 'Circoncision de', en: 'The Circumcision Celebration of', ar: 'حفل ختان مبارك' },
+  'the circumcision celebration of': { fr: 'La Célébration de Circoncision de', en: 'The Circumcision Celebration of', ar: 'حفل ختان مبارك' },
+  'حفل ختان مبارك': { fr: 'La Célébration de Circoncision de', en: 'The Circumcision Celebration of', ar: 'حفل ختان مبارك' },
+  'حفل ختان': { fr: 'La Célébration de Circoncision de', en: 'The Circumcision Celebration of', ar: 'حفل ختان مبارك' },
+  'ختان': { fr: 'La Célébration de Circoncision de', en: 'The Circumcision Celebration of', ar: 'حفل ختان مبارك' },
 
   // Famille & Naissance
-  'baby shower de': { fr: 'Baby Shower de', en: 'The Baby Shower of' },
-  'the baby shower of': { fr: 'Baby Shower de', en: 'The Baby Shower of' },
-  'la célébration de naissance de': { fr: 'La Célébration de Naissance de', en: 'The Birth Celebration of' },
-  'the birth celebration of': { fr: 'La Célébration de Naissance de', en: 'The Birth Celebration of' },
-  "l'aqiqah de": { fr: "L'Aqiqah de", en: 'The Aqiqah Celebration of' },
-  'the aqiqah of': { fr: "L'Aqiqah de", en: 'The Aqiqah Celebration of' },
-  'the aqiqah celebration of': { fr: "L'Aqiqah de", en: 'The Aqiqah Celebration of' },
-  "l'anniversaire de": { fr: "L'Anniversaire de", en: 'The Birthday of' },
-  'anniversaire de': { fr: 'Anniversaire de', en: 'The Birthday of' },
-  'the birthday of': { fr: "L'Anniversaire de", en: 'The Birthday of' },
-  'célébration de diplôme de': { fr: 'Célébration de Diplôme de', en: 'The Graduation Celebration of' },
-  'cérémonie de remise de diplôme de': { fr: 'Cérémonie de Remise de Diplôme de', en: 'The Graduation Ceremony of' },
-  'the graduation celebration of': { fr: 'Célébration de Diplôme de', en: 'The Graduation Celebration of' },
-  'the graduation ceremony of': { fr: 'Cérémonie de Remise de Diplôme de', en: 'The Graduation Ceremony of' },
-  'réunion de famille de': { fr: 'Réunion de Famille de', en: 'The Family Gathering of' },
-  'the family gathering of': { fr: 'Réunion de Famille de', en: 'The Family Gathering of' },
+  'baby shower de': { fr: 'Baby Shower de', en: 'The Baby Shower of', ar: 'حفل استقبال مولود' },
+  'the baby shower of': { fr: 'Baby Shower de', en: 'The Baby Shower of', ar: 'حفل استقبال مولود' },
+  'حفل استقبال مولود': { fr: 'Baby Shower de', en: 'The Baby Shower of', ar: 'حفل استقبال مولود' },
+  'la célébration de naissance de': { fr: 'La Célébration de Naissance de', en: 'The Birth Celebration of', ar: 'حفل عقيقة ومولود مبارك' },
+  'the birth celebration of': { fr: 'La Célébration de Naissance de', en: 'The Birth Celebration of', ar: 'حفل عقيقة ومولود مبارك' },
+  "l'aqiqah de": { fr: "L'Aqiqah de", en: 'The Aqiqah of', ar: 'حفل عقيقة مبارك' },
+  'the aqiqah of': { fr: "L'Aqiqah de", en: 'The Aqiqah of', ar: 'حفل عقيقة مبارك' },
+  'the aqiqah celebration of': { fr: "L'Aqiqah de", en: 'The Aqiqah Celebration of', ar: 'حفل عقيقة مبارك' },
+  'حفل عقيقة': { fr: "L'Aqiqah de", en: 'The Aqiqah of', ar: 'حفل عقيقة مبارك' },
+  'عقيقة': { fr: "L'Aqiqah de", en: 'The Aqiqah of', ar: 'حفل عقيقة مبارك' },
+
+  "l'anniversaire de": { fr: "L'Anniversaire de", en: 'The Birthday of', ar: 'عيد ميلاد سعيد' },
+  'anniversaire de': { fr: 'Anniversaire de', en: 'The Birthday of', ar: 'عيد ميلاد سعيد' },
+  'the birthday of': { fr: "L'Anniversaire de", en: 'The Birthday of', ar: 'عيد ميلاد سعيد' },
+  'عيد ميلاد': { fr: "L'Anniversaire de", en: 'The Birthday of', ar: 'عيد ميلاد سعيد' },
+
+  'célébration de diplôme de': { fr: 'Célébration de Diplôme de', en: 'The Graduation Celebration of', ar: 'حفل تخرج واحتفاء بالنجاح' },
+  'cérémonie de remise de diplôme de': { fr: 'Cérémonie de Remise de Diplôme de', en: 'The Graduation Ceremony of', ar: 'حفل تخرج واحتفاء بالنجاح' },
+  'the graduation celebration of': { fr: 'Célébration de Diplôme de', en: 'The Graduation Celebration of', ar: 'حفل تخرج واحتفاء بالنجاح' },
+  'the graduation ceremony of': { fr: 'Cérémonie de Remise de Diplôme de', en: 'The Graduation Ceremony of', ar: 'حفل تخرج واحتفاء بالنجاح' },
+  'حفل تخرج': { fr: 'Célébration de Diplôme de', en: 'The Graduation Celebration of', ar: 'حفل تخرج واحتفاء بالنجاح' },
+
+  'réunion de famille de': { fr: 'Réunion de Famille de', en: 'The Family Gathering of', ar: 'لقاء عائلي بهيج' },
+  'the family gathering of': { fr: 'Réunion de Famille de', en: 'The Family Gathering of', ar: 'لقاء عائلي بهيج' },
+  'لقاء عائلي': { fr: 'Réunion de Famille de', en: 'The Family Gathering of', ar: 'لقاء عائلي بهيج' },
 
   // Corporate & Gala
-  'soirée de gala': { fr: 'Soirée de Gala', en: 'Gala Evening' },
-  'soiree de gala': { fr: 'Soirée de Gala', en: 'Gala Evening' },
-  'gala evening': { fr: 'Soirée de Gala', en: 'Gala Evening' },
-  "dîner d'affaires": { fr: "Dîner d'Affaires", en: 'Business Dinner' },
-  "diner d'affaires": { fr: "Dîner d'Affaires", en: 'Business Dinner' },
-  'business dinner': { fr: "Dîner d'Affaires", en: 'Business Dinner' },
-  "événement d'entreprise": { fr: "Événement d'Entreprise", en: 'Corporate Event' },
-  "evenement d'entreprise": { fr: "Événement d'Entreprise", en: 'Corporate Event' },
-  'corporate event': { fr: "Événement d'Entreprise", en: 'Corporate Event' },
-  'lancement de produit': { fr: 'Lancement de Produit', en: 'Product Launch' },
-  'lancement officiel de': { fr: 'Lancement Officiel de', en: 'Official Product Launch of' },
-  'official product launch of': { fr: 'Lancement Officiel de', en: 'Official Product Launch of' },
-  'product launch': { fr: 'Lancement de Produit', en: 'Product Launch' },
-  'conférence & réception': { fr: 'Conférence & Réception', en: 'Conference & Reception' },
-  'conference & reception': { fr: 'Conférence & Réception', en: 'Conference & Reception' },
-  'conférence & séminaire': { fr: 'Conférence & Séminaire', en: 'Conference & Seminar' },
-  'conference & seminaire': { fr: 'Conférence & Séminaire', en: 'Conference & Seminar' },
-  'conference & seminar': { fr: 'Conférence & Séminaire', en: 'Conference & Seminar' },
+  'soirée de gala': { fr: 'Soirée de Gala', en: 'Gala Evening', ar: 'أمسية غالا الفاخرة' },
+  'soiree de gala': { fr: 'Soirée de Gala', en: 'Gala Evening', ar: 'أمسية غالا الفاخرة' },
+  'gala evening': { fr: 'Soirée de Gala', en: 'Gala Evening', ar: 'أمسية غالا الفاخرة' },
+  'أمسية غالا': { fr: 'Soirée de Gala', en: 'Gala Evening', ar: 'أمسية غالا الفاخرة' },
+  'غالا': { fr: 'Soirée de Gala', en: 'Gala Evening', ar: 'أمسية غالا الفاخرة' },
+
+  "dîner d'affaires": { fr: "Dîner d'Affaires", en: 'Business Dinner', ar: 'عشاء عمل رسمي' },
+  "diner d'affaires": { fr: "Dîner d'Affaires", en: 'Business Dinner', ar: 'عشاء عمل رسمي' },
+  'business dinner': { fr: "Dîner d'Affaires", en: 'Business Dinner', ar: 'عشاء عمل رسمي' },
+  'عشاء عمل': { fr: "Dîner d'Affaires", en: 'Business Dinner', ar: 'عشاء عمل رسمي' },
+
+  "événement d'entreprise": { fr: "Événement d'Entreprise", en: 'Corporate Event', ar: 'ملتقى مهني خاص' },
+  "evenement d'entreprise": { fr: "Événement d'Entreprise", en: 'Corporate Event', ar: 'ملتقى مهني خاص' },
+  'corporate event': { fr: "Événement d'Entreprise", en: 'Corporate Event', ar: 'ملتقى مهني خاص' },
+
+  'lancement de produit': { fr: 'Lancement de Produit', en: 'Product Launch', ar: 'حفل إطلاق رسمي' },
+  'lancement officiel de': { fr: 'Lancement Officiel de', en: 'Official Product Launch of', ar: 'حفل إطلاق رسمي' },
+  'official product launch of': { fr: 'Lancement Officiel de', en: 'Official Product Launch of', ar: 'حفل إطلاق رسمي' },
+  'product launch': { fr: 'Lancement de Produit', en: 'Product Launch', ar: 'حفل إطلاق رسمي' },
+
+  'conférence & réception': { fr: 'Conférence & Réception', en: 'Conference & Reception', ar: 'مؤتمر وحفل استقبال' },
+  'conference & reception': { fr: 'Conférence & Réception', en: 'Conference & Reception', ar: 'مؤتمر وحفل استقبال' },
+  'conférence & séminaire': { fr: 'Conférence & Séminaire', en: 'Conference & Seminar', ar: 'مؤتمر وندوة خاصة' },
+  'conference & seminaire': { fr: 'Conférence & Séminaire', en: 'Conference & Seminar', ar: 'مؤتمر وندوة خاصة' },
+  'conference & seminar': { fr: 'Conférence & Séminaire', en: 'Conference & Seminar', ar: 'مؤتمر وندوة خاصة' },
 
   // Saisonnier & Écoles
-  'soirée de réveillon du nouvel an': { fr: 'Soirée de Réveillon du Nouvel An', en: "New Year's Eve Gala" },
-  "new year's eve gala": { fr: 'Soirée de Réveillon du Nouvel An', en: "New Year's Eve Gala" },
-  'gala de bienfaisance & solidarité': { fr: 'Gala de Bienfaisance & Solidarité', en: 'Charity & Solidarity Gala' },
-  'charity & solidarity gala': { fr: 'Gala de Bienfaisance & Solidarité', en: 'Charity & Solidarity Gala' },
-  "cocktail & réception d'exception": { fr: "Cocktail & Réception d'Exception", en: 'Exclusive Cocktail & Reception' },
-  'exclusive cocktail & reception': { fr: "Cocktail & Réception d'Exception", en: 'Exclusive Cocktail & Reception' },
-  "grande fête de fin d'année": { fr: "Grande Fête de Fin d'Année", en: 'End of Year Celebration' },
-  'end of year celebration': { fr: "Grande Fête de Fin d'Année", en: 'End of Year Celebration' },
-  'bal de promo annuel de': { fr: 'Bal de Promo Annuel de', en: 'Annual Prom Ball of' },
-  'annual prom ball of': { fr: 'Bal de Promo Annuel de', en: 'Annual Prom Ball of' },
-  'retrouvailles & soirée des alumni': { fr: 'Retrouvailles & Soirée des Alumni', en: 'Alumni Reunion Evening' },
-  'alumni reunion evening': { fr: 'Retrouvailles & Soirée des Alumni', en: 'Alumni Reunion Evening' },
-  "invitation d'exception": { fr: "Invitation d'Exception", en: 'Exclusive Invitation' },
-  'exclusive invitation': { fr: "Invitation d'Exception", en: 'Exclusive Invitation' },
-  'invitation officielle': { fr: 'Invitation Officielle', en: 'Official Invitation' },
-  'official invitation': { fr: 'Invitation Officielle', en: 'Official Invitation' }
+  'soirée de réveillon du nouvel an': { fr: 'Soirée de Réveillon du Nouvel An', en: "New Year's Eve Gala", ar: 'سهرة رأس السنة' },
+  "new year's eve gala": { fr: 'Soirée de Réveillon du Nouvel An', en: "New Year's Eve Gala", ar: 'سهرة رأس السنة' },
+  'gala de bienfaisance & solidarité': { fr: 'Gala de Bienfaisance & Solidarité', en: 'Charity & Solidarity Gala', ar: 'حفل خيري وتضامني' },
+  'charity & solidarity gala': { fr: 'Gala de Bienfaisance & Solidarité', en: 'Charity & Solidarity Gala', ar: 'حفل خيري وتضامني' },
+  "cocktail & réception d'exception": { fr: "Cocktail & Réception d'Exception", en: 'Exclusive Cocktail & Reception', ar: 'حفل استقبال وكوكتيل فاخر' },
+  'exclusive cocktail & reception': { fr: "Cocktail & Réception d'Exception", en: 'Exclusive Cocktail & Reception', ar: 'حفل استقبال وكوكتيل فاخر' },
+  "grande fête de fin d'année": { fr: "Grande Fête de Fin d'Année", en: 'End of Year Celebration', ar: 'احتفالية نهاية السنة' },
+  'end of year celebration': { fr: "Grande Fête de Fin d'Année", en: 'End of Year Celebration', ar: 'احتفالية نهاية السنة' },
+  'bal de promo annuel de': { fr: 'Bal de Promo Annuel de', en: 'Annual Prom Ball of', ar: 'حفل التخرج السنوي' },
+  'annual prom ball of': { fr: 'Bal de Promo Annuel de', en: 'Annual Prom Ball of', ar: 'حفل التخرج السنوي' },
+  'retrouvailles & soirée des alumni': { fr: 'Retrouvailles & Soirée des Alumni', en: 'Alumni Reunion Evening', ar: 'ملتقى خريجي المعهد' },
+  'alumni reunion evening': { fr: 'Retrouvailles & Soirée des Alumni', en: 'Alumni Reunion Evening', ar: 'ملتقى خريجي المعهد' },
+  "invitation d'exception": { fr: "Invitation d'Exception", en: 'Exclusive Invitation', ar: 'دعوة استثنائية خاصة' },
+  'exclusive invitation': { fr: "Invitation d'Exception", en: 'Exclusive Invitation', ar: 'دعوة استثنائية خاصة' },
+  'invitation officielle': { fr: 'Invitation Officielle', en: 'Official Invitation', ar: 'دعوة رسمية' },
+  'official invitation': { fr: 'Invitation Officielle', en: 'Official Invitation', ar: 'دعوة رسمية' }
 };
 
-const CATEGORY_TRANSLATION_MAP: Record<string, { fr: string; en: string }> = {
-  'mariage': { fr: 'Mariage', en: 'Wedding' },
-  'wedding': { fr: 'Mariage', en: 'Wedding' },
-  'fiançailles': { fr: 'Fiançailles', en: 'Engagement' },
-  'fiancailles': { fr: 'Fiançailles', en: 'Engagement' },
-  'engagement': { fr: 'Fiançailles', en: 'Engagement' },
-  'circoncision': { fr: 'Circoncision', en: 'Circumcision' },
-  'circumcision': { fr: 'Circoncision', en: 'Circumcision' },
-  'henné & coutumes': { fr: 'Henné & Coutumes', en: 'Henna & Customs' },
-  'henne & coutumes': { fr: 'Henné & Coutumes', en: 'Henna & Customs' },
-  'henna & customs': { fr: 'Henné & Coutumes', en: 'Henna & Customs' },
-  'baby shower & naissance': { fr: 'Baby Shower & Naissance', en: 'Baby Shower & Birth' },
-  'baby shower': { fr: 'Baby Shower', en: 'Baby Shower' },
-  'anniversaire': { fr: 'Anniversaire', en: 'Birthday' },
-  'birthday': { fr: 'Anniversaire', en: 'Birthday' },
-  'remise de diplôme': { fr: 'Remise de Diplôme', en: 'Graduation' },
-  'remise de diplome': { fr: 'Remise de Diplôme', en: 'Graduation' },
-  'graduation': { fr: 'Remise de Diplôme', en: 'Graduation' },
-  'fête de famille': { fr: 'Fête de Famille', en: 'Family Gathering' },
-  'fete de famille': { fr: 'Fête de Famille', en: 'Family Gathering' },
-  'family gathering': { fr: 'Fête de Famille', en: 'Family Gathering' },
-  "dîner d'affaires": { fr: "Dîner d'Affaires", en: 'Business Dinner' },
-  "diner d'affaires": { fr: "Dîner d'Affaires", en: 'Business Dinner' },
-  'business dinner': { fr: "Dîner d'Affaires", en: 'Business Dinner' },
-  'lancement de produit': { fr: 'Lancement de Produit', en: 'Product Launch' },
-  'product launch': { fr: 'Lancement de Produit', en: 'Product Launch' },
-  'conférence & séminaire': { fr: 'Conférence & Séminaire', en: 'Conference & Seminar' },
-  'conference & seminaire': { fr: 'Conférence & Séminaire', en: 'Conference & Seminar' },
-  'conference & seminar': { fr: 'Conférence & Séminaire', en: 'Conference & Seminar' },
-  'soirée de gala': { fr: 'Soirée de Gala', en: 'Gala Evening' },
-  'soiree de gala': { fr: 'Soirée de Gala', en: 'Gala Evening' },
-  'gala evening': { fr: 'Soirée de Gala', en: 'Gala Evening' },
-  'réveillon & nouvel an': { fr: 'Réveillon & Nouvel An', en: "New Year's Eve" },
-  'reveillon & nouvel an': { fr: 'Réveillon & Nouvel An', en: "New Year's Eve" },
-  "new year's eve": { fr: 'Réveillon & Nouvel An', en: "New Year's Eve" },
-  'événement caritatif': { fr: 'Événement Caritatif', en: 'Charity Event' },
-  'evenement caritatif': { fr: 'Événement Caritatif', en: 'Charity Event' },
-  'charity event': { fr: 'Événement Caritatif', en: 'Charity Event' },
-  'réception sociale': { fr: 'Réception Sociale', en: 'Social Reception' },
-  'reception sociale': { fr: 'Réception Sociale', en: 'Social Reception' },
-  'social reception': { fr: 'Réception Sociale', en: 'Social Reception' },
-  "fête d'école & kermesse": { fr: "Fête d'école & Kermesse", en: 'School Fair & Celebration' },
-  'bal de promo / gala': { fr: 'Bal de Promo / Gala', en: 'Prom Ball / Gala' },
-  "gala d'anciens élèves": { fr: "Gala d'Anciens Élèves", en: 'Alumni Gala' },
-  'corporate': { fr: 'Corporate', en: 'Corporate' },
-  'traditional': { fr: 'Traditionnel', en: 'Traditional' }
+const CATEGORY_TRANSLATION_MAP: Record<string, { fr: string; en: string; ar: string }> = {
+  'mariage': { fr: 'Mariage', en: 'Wedding', ar: 'حفل زفاف' },
+  'wedding': { fr: 'Mariage', en: 'Wedding', ar: 'حفل زفاف' },
+  'fiançailles': { fr: 'Fiançailles', en: 'Engagement', ar: 'حفل خطوبة' },
+  'fiancailles': { fr: 'Fiançailles', en: 'Engagement', ar: 'حفل خطوبة' },
+  'engagement': { fr: 'Fiançailles', en: 'Engagement', ar: 'حفل خطوبة' },
+  'circoncision': { fr: 'Circoncision', en: 'Circumcision', ar: 'حفل ختان' },
+  'circumcision': { fr: 'Circoncision', en: 'Circumcision', ar: 'حفل ختان' },
+  'henné & coutumes': { fr: 'Henné & Coutumes', en: 'Henna & Customs', ar: 'ليلة الحناء والتقاليد' },
+  'henne & coutumes': { fr: 'Henné & Coutumes', en: 'Henna & Customs', ar: 'ليلة الحناء والتقاليد' },
+  'henna & customs': { fr: 'Henné & Coutumes', en: 'Henna & Customs', ar: 'ليلة الحناء والتقاليد' },
+  'baby shower & naissance': { fr: 'Baby Shower & Naissance', en: 'Baby Shower & Birth', ar: 'استقبال المولود' },
+  'baby shower': { fr: 'Baby Shower', en: 'Baby Shower', ar: 'استقبال المولود' },
+  'anniversaire': { fr: 'Anniversaire', en: 'Birthday', ar: 'عيد ميلاد' },
+  'birthday': { fr: 'Anniversaire', en: 'Birthday', ar: 'عيد ميلاد' },
+  'remise de diplôme': { fr: 'Remise de Diplôme', en: 'Graduation', ar: 'حفل تخرج' },
+  'remise de diplome': { fr: 'Remise de Diplôme', en: 'Graduation', ar: 'حفل تخرج' },
+  'graduation': { fr: 'Remise de Diplôme', en: 'Graduation', ar: 'حفل تخرج' },
+  'fête de famille': { fr: 'Fête de Famille', en: 'Family Gathering', ar: 'حفل عائلي' },
+  'fete de famille': { fr: 'Fête de Famille', en: 'Family Gathering', ar: 'حفل عائلي' },
+  'family gathering': { fr: 'Fête de Famille', en: 'Family Gathering', ar: 'حفل عائلي' },
+  "dîner d'affaires": { fr: "Dîner d'Affaires", en: 'Business Dinner', ar: 'عشاء عمل' },
+  "diner d'affaires": { fr: "Dîner d'Affaires", en: 'Business Dinner', ar: 'عشاء عمل' },
+  'business dinner': { fr: "Dîner d'Affaires", en: 'Business Dinner', ar: 'عشاء عمل' },
+  'lancement de produit': { fr: 'Lancement de Produit', en: 'Product Launch', ar: 'إطلاق منتج' },
+  'product launch': { fr: 'Lancement de Produit', en: 'Product Launch', ar: 'إطلاق منتج' },
+  'conférence & séminaire': { fr: 'Conférence & Séminaire', en: 'Conference & Seminar', ar: 'مؤتمر وندوة' },
+  'conference & seminaire': { fr: 'Conférence & Séminaire', en: 'Conference & Seminar', ar: 'مؤتمر وندوة' },
+  'conference & seminar': { fr: 'Conférence & Séminaire', en: 'Conference & Seminar', ar: 'مؤتمر وندوة' },
+  'soirée de gala': { fr: 'Soirée de Gala', en: 'Gala Evening', ar: 'أمسية غالا' },
+  'soiree de gala': { fr: 'Soirée de Gala', en: 'Gala Evening', ar: 'أمسية غالا' },
+  'gala evening': { fr: 'Soirée de Gala', en: 'Gala Evening', ar: 'أمسية غالا' },
+  'réveillon & nouvel an': { fr: 'Réveillon & Nouvel An', en: "New Year's Eve", ar: 'رأس السنة' },
+  'reveillon & nouvel an': { fr: 'Réveillon & Nouvel An', en: "New Year's Eve", ar: 'رأس السنة' },
+  "new year's eve": { fr: 'Réveillon & Nouvel An', en: "New Year's Eve", ar: 'رأس السنة' },
+  'événement caritatif': { fr: 'Événement Caritatif', en: 'Charity Event', ar: 'حفل خيري' },
+  'evenement caritatif': { fr: 'Événement Caritatif', en: 'Charity Event', ar: 'حفل خيري' },
+  'charity event': { fr: 'Événement Caritatif', en: 'Charity Event', ar: 'حفل خيري' },
+  'réception sociale': { fr: 'Réception Sociale', en: 'Social Reception', ar: 'حفل استقبال' },
+  'reception sociale': { fr: 'Réception Sociale', en: 'Social Reception', ar: 'حفل استقبال' },
+  'social reception': { fr: 'Réception Sociale', en: 'Social Reception', ar: 'حفل استقبال' },
+  "fête d'école & kermesse": { fr: "Fête d'école & Kermesse", en: 'School Fair & Celebration', ar: 'حفل مدرسي' },
+  'bal de promo / gala': { fr: 'Bal de Promo / Gala', en: 'Prom Ball / Gala', ar: 'حفل التخرج السنوي' },
+  "gala d'anciens élèves": { fr: "Gala d'Anciens Élèves", en: 'Alumni Gala', ar: 'ملتقى الخريجين' },
+  'corporate': { fr: 'Corporate', en: 'Corporate', ar: 'مناسبات مهنية' },
+  'traditional': { fr: 'Traditionnel', en: 'Traditional', ar: 'مناسبات تقليدية' }
 };
 
 @Component({
@@ -200,8 +228,9 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
   private readonly http = inject(HttpClient);
   public readonly translationService = inject(TranslationService);
   public readonly currentLang = computed(() => this.translationService.currentLang());
+  public readonly isRtl = computed(() => this.translationService.isRtl());
 
-  public switchLanguage(lang: 'fr' | 'en'): void {
+  public switchLanguage(lang: 'fr' | 'en' | 'ar'): void {
     this.translationService.setLanguage(lang);
   }
 
@@ -472,12 +501,26 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
   }
 
   public getEventHostLabel(): string {
-    const isEn = this.currentLang() === 'en';
+    const lang = this.currentLang();
     const cat = this.guest()?.templateCategory?.toLowerCase() || '';
-    if (cat.includes('mariage') || cat.includes('wedding')) return isEn ? 'to the bride & groom' : 'aux mariés';
-    if (cat.includes('corporate') || cat.includes('entreprise') || cat.includes('pro')) return isEn ? 'to the organizers' : 'aux organisateurs';
-    if (cat.includes('anniversaire') || cat.includes('birthday')) return isEn ? 'to the guest of honor' : 'à la personne célébrée';
-    return isEn ? 'to the hosts' : 'aux hôtes';
+    if (cat.includes('mariage') || cat.includes('wedding')) {
+      if (lang === 'ar') return 'للعروسين';
+      if (lang === 'en') return 'to the bride & groom';
+      return 'aux mariés';
+    }
+    if (cat.includes('corporate') || cat.includes('entreprise') || cat.includes('pro')) {
+      if (lang === 'ar') return 'للمنظمين';
+      if (lang === 'en') return 'to the organizers';
+      return 'aux organisateurs';
+    }
+    if (cat.includes('anniversaire') || cat.includes('birthday')) {
+      if (lang === 'ar') return 'لصاحب المناسبة';
+      if (lang === 'en') return 'to the guest of honor';
+      return 'à la personne célébrée';
+    }
+    if (lang === 'ar') return 'لأصحاب الحفل';
+    if (lang === 'en') return 'to the hosts';
+    return 'aux hôtes';
   }
 
   public getSavedDeclineMessage(): string {
@@ -893,11 +936,26 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
     // 1. Direct dictionary match
     const entry = SUBTITLE_TRANSLATION_MAP[normalized];
     if (entry) {
-      return lang === 'en' ? entry.en : entry.fr;
+      if (lang === 'ar') return entry.ar;
+      if (lang === 'en') return entry.en;
+      return entry.fr;
     }
 
     // 2. Pattern matching for dynamic or custom subtitles
-    if (lang === 'en') {
+    if (lang === 'ar') {
+      if (/^soirée\s+henn[ée]\s+de/i.test(trimmed) || /henna/i.test(trimmed)) return 'ليلة حناء';
+      if (/^soirée\s+de\s+gala/i.test(trimmed) || /gala/i.test(trimmed)) return 'أمسية غالا الفاخرة';
+      if (/mariage/i.test(trimmed) || /wedding/i.test(trimmed)) return 'حفل زفاف';
+      if (/fian[çc]ailles/i.test(trimmed) || /engagement/i.test(trimmed)) return 'حفل خطوبة';
+      if (/naissance/i.test(trimmed) || /birth/i.test(trimmed) || /baby\s+shower/i.test(trimmed)) return 'حفل استقبال مولود';
+      if (/circoncision/i.test(trimmed) || /circumcision/i.test(trimmed)) return 'حفل ختان مبارك';
+      if (/anniversaire/i.test(trimmed) || /birthday/i.test(trimmed)) return 'عيد ميلاد سعيد';
+      if (/d[îi]ner\s+d['’]affaires/i.test(trimmed) || /business\s+dinner/i.test(trimmed)) return 'عشاء عمل رسمي';
+      if (/entreprise/i.test(trimmed) || /corporate/i.test(trimmed)) return 'ملتقى مهني خاص';
+      if (/produit/i.test(trimmed) || /product/i.test(trimmed)) return 'حفل إطلاق رسمي';
+      if (/exception/i.test(trimmed) || /exclusive/i.test(trimmed)) return 'دعوة استثنائية خاصة';
+      if (/officielle/i.test(trimmed) || /official/i.test(trimmed)) return 'دعوة رسمية';
+    } else if (lang === 'en') {
       if (/^soirée\s+henn[ée]\s+de/i.test(trimmed)) return 'The Henna Night of';
       if (/^soirée\s+de\s+gala/i.test(trimmed)) {
         return trimmed.length > 15 ? 'Gala Evening of' : 'Gala Evening';
@@ -940,11 +998,15 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
 
     const subMatch = SUBTITLE_TRANSLATION_MAP[normalized];
     if (subMatch) {
-      return lang === 'en' ? subMatch.en : subMatch.fr;
+      if (lang === 'ar') return subMatch.ar;
+      if (lang === 'en') return subMatch.en;
+      return subMatch.fr;
     }
     const catMatch = CATEGORY_TRANSLATION_MAP[normalized];
     if (catMatch) {
-      return lang === 'en' ? catMatch.en : catMatch.fr;
+      if (lang === 'ar') return catMatch.ar;
+      if (lang === 'en') return catMatch.en;
+      return catMatch.fr;
     }
 
     return trimmed;
@@ -963,25 +1025,34 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
 
     [
       'le mariage de', 'mariage de', 'the wedding of',
+      'حفل زفاف', 'زفاف',
       'les fiançailles de', 'fiançailles de', 'les fiancailles de', 'fiancailles de', 'the engagement of',
+      'حفل خطوبة', 'خطوبة',
       'soirée henné de', 'soiree henne de', 'henné de', 'the henna night of', 'henna night of',
+      'ليلة حناء', 'حناء',
       'la célébration de circoncision de', 'la circoncision de', 'circoncision de', 'the circumcision celebration of',
-      'baby shower de', 'the baby shower of',
+      'حفل ختان مبارك', 'حفل ختان', 'ختان',
+      'baby shower de', 'the baby shower of', 'حفل استقبال مولود',
       'la célébration de naissance de', 'the birth celebration of',
-      "l'aqiqah de", 'the aqiqah of', 'the aqiqah celebration of',
-      "l'anniversaire de", 'anniversaire de', 'the birthday of',
-      'célébration de diplôme de', 'cérémonie de remise de diplôme de', 'the graduation celebration of', 'the graduation ceremony of',
-      'réunion de famille de', 'the family gathering of',
-      'lancement officiel de', 'official product launch of',
-      'bal de promo annuel de', 'annual prom ball of',
-      'retrouvailles & soirée des alumni', 'alumni reunion evening'
+      "l'aqiqah de", 'the aqiqah of', 'the aqiqah celebration of', 'حفل عقيقة مبارك', 'حفل عقيقة', 'عقيقة',
+      "l'anniversaire de", 'anniversaire de', 'the birthday of', 'عيد ميلاد سعيد', 'عيد ميلاد',
+      'célébration de diplôme de', 'cérémonie de remise de diplôme de', 'the graduation celebration of', 'the graduation ceremony of', 'حفل تخرج',
+      'réunion de famille de', 'the family gathering of', 'لقاء عائلي بهيج', 'لقاء عائلي',
+      'soirée de gala', 'gala evening', 'أمسية غالا الفاخرة', 'أمسية غالا', 'غالا',
+      "dîner d'affaires", 'business dinner', 'عشاء عمل رسمي', 'عشاء عمل',
+      "événement d'entreprise", 'corporate event', 'ملتقى مهني خاص',
+      'lancement officiel de', 'official product launch of', 'حفل إطلاق رسمي',
+      'bal de promo annuel de', 'annual prom ball of', 'حفل التخرج السنوي',
+      'retrouvailles & soirée des alumni', 'alumni reunion evening', 'ملتقى خريجي المعهد',
+      "invitation d'exception", 'exclusive invitation', 'دعوة استثنائية خاصة',
+      'invitation officielle', 'official invitation', 'دعوة رسمية'
     ].forEach(p => prefixes.add(p));
 
     const lowerTitle = rawTitle.toLowerCase();
     for (const prefix of prefixes) {
       if (lowerTitle.startsWith(prefix) && rawTitle.length > prefix.length) {
         let clean = rawTitle.substring(prefix.length).trim();
-        clean = clean.replace(/^(de\s+|d['’]|of\s+)/i, '').trim();
+        clean = clean.replace(/^(de\s+|d['’]|of\s+|لـ|ل\s+)/i, '').trim();
         if (clean) {
           return clean;
         }
@@ -1006,7 +1077,8 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
     const lang = this.currentLang();
     const entry = CATEGORY_TRANSLATION_MAP[subCat.toLowerCase()] || SUBTITLE_TRANSLATION_MAP[subCat.toLowerCase()];
     if (entry) {
-      return (lang === 'en' ? entry.en : entry.fr).toUpperCase();
+      const val = lang === 'ar' ? entry.ar : (lang === 'en' ? entry.en : entry.fr);
+      return val.toUpperCase();
     }
     return subCat.toUpperCase();
   }
@@ -1018,6 +1090,10 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
   }
 
   public getPrimaryFont(): string {
+    if (this.currentLang() === 'ar') {
+      loadGoogleFont('Amiri');
+      return "'Amiri', 'Traditional Arabic', serif";
+    }
     const f = this.guest()?.primaryFont;
     if (f && f.trim()) {
       loadGoogleFont(f.trim());
@@ -1032,6 +1108,7 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
   public getPrimaryFontSize(): string {
     const s = this.guest()?.primaryFontSize;
     if (s && s.trim()) return s.trim();
+    if (this.currentLang() === 'ar') return '40px';
     return '36px';
   }
 
@@ -1042,12 +1119,17 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
   }
 
   public getPrimaryLetterSpacing(): string {
+    if (this.currentLang() === 'ar') return 'normal';
     const ls = this.guest()?.primaryLetterSpacing;
     if (ls && ls.trim()) return ls.trim();
     return 'normal';
   }
 
   public getSecondaryFont(): string {
+    if (this.currentLang() === 'ar') {
+      loadGoogleFont('Cairo');
+      return "'Cairo', 'Tajawal', sans-serif";
+    }
     const f = this.guest()?.secondaryFont;
     if (f && f.trim()) {
       loadGoogleFont(f.trim());
@@ -1072,6 +1154,7 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
   }
 
   public getSecondaryLetterSpacing(): string {
+    if (this.currentLang() === 'ar') return 'normal';
     const ls = this.guest()?.secondaryLetterSpacing;
     if (ls && ls.trim()) return ls.trim();
     return 'normal';
@@ -1614,7 +1697,10 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
   }
 
   private get currentLocale(): string {
-    return this.currentLang() === 'en' ? 'en-US' : 'fr-FR';
+    const lang = this.currentLang();
+    if (lang === 'ar') return 'ar-MA';
+    if (lang === 'en') return 'en-US';
+    return 'fr-FR';
   }
 
   public get eventDayName(): string {
@@ -1649,6 +1735,9 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
     const dateStr = this.guest()?.invitationDate || this.guest()?.eventDate;
     if (!dateStr) return '';
     const date = new Date(dateStr);
+    if (this.currentLang() === 'ar') {
+      return date.toLocaleTimeString('ar-MA', { hour: '2-digit', minute: '2-digit' });
+    }
     if (this.currentLang() === 'en') {
       return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
     }
@@ -2395,16 +2484,16 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
   }
 
   public getSelectedDietsArray(): string[] {
-    const isEn = this.currentLang() === 'en';
+    const lang = this.currentLang();
     const list: string[] = [];
-    if (this.hasVegetarien) list.push(isEn ? 'Vegetarian' : 'Végétarien');
-    if (this.hasVegan) list.push(isEn ? 'Vegan' : 'Vegan');
-    if (this.hasGlutenFree) list.push(isEn ? 'Gluten free' : 'Sans gluten');
-    if (this.hasLactoseFree) list.push(isEn ? 'Lactose free' : 'Sans lactose');
-    if (this.hasArachidesFree) list.push(isEn ? 'Peanut free' : 'Sans arachides');
-    if (this.hasHalal) list.push(isEn ? 'Halal' : 'Halal');
-    if (this.hasFruitsDeMerFree) list.push(isEn ? 'No seafood' : 'Sans fruits de mer');
-    if (this.hasSucreFree) list.push(isEn ? 'Sugar free' : 'Sans sucre');
+    if (this.hasVegetarien) list.push(lang === 'ar' ? 'نباتي' : (lang === 'en' ? 'Vegetarian' : 'Végétarien'));
+    if (this.hasVegan) list.push(lang === 'ar' ? 'نباتي صرف (فيغان)' : (lang === 'en' ? 'Vegan' : 'Vegan'));
+    if (this.hasGlutenFree) list.push(lang === 'ar' ? 'خالٍ من الغلوتين' : (lang === 'en' ? 'Gluten free' : 'Sans gluten'));
+    if (this.hasLactoseFree) list.push(lang === 'ar' ? 'خالٍ من اللاكتوز' : (lang === 'en' ? 'Lactose free' : 'Sans lactose'));
+    if (this.hasArachidesFree) list.push(lang === 'ar' ? 'خالٍ من الفول السوداني' : (lang === 'en' ? 'Peanut free' : 'Sans arachides'));
+    if (this.hasHalal) list.push(lang === 'ar' ? 'حلال' : (lang === 'en' ? 'Halal' : 'Halal'));
+    if (this.hasFruitsDeMerFree) list.push(lang === 'ar' ? 'خالٍ من المأكولات البحرية' : (lang === 'en' ? 'No seafood' : 'Sans fruits de mer'));
+    if (this.hasSucreFree) list.push(lang === 'ar' ? 'خالٍ من السكر' : (lang === 'en' ? 'Sugar free' : 'Sans sucre'));
     return list;
   }
 

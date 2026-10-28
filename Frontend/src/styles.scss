@@ -211,3 +211,17 @@
   background-color: rgba(15, 23, 42, 0.65) !important;
 }
 
+/* RTL Navigation Buttons & Icons */
+[dir="rtl"] {
+  .btn-step-back,
+  .btn-opt-out,
+  .btn-dietary-smart-action {
+    gap: 8px !important;
+    i {
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+    }
+  }
+}
+
+

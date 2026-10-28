@@ -1,4 +1,5 @@
 <div class="rsvp-luxury-wrapper py-5 px-3 d-flex align-items-center justify-content-center position-relative"
+  [attr.dir]="isRtl() ? 'rtl' : 'ltr'"
   [class.card-only-mobile-mode]="cardOnlyMode"
   [class.fleurs-de-coton-theme]="resolvedTemplateId === 'fleurs-de-coton'"
   [class.or-et-velours-theme]="resolvedTemplateId === 'or-et-velours'"
@@ -97,18 +98,16 @@
 
   <div class="invitation-outer-container w-100 position-relative">
 
-    <!-- Luxury Floating Language Switcher Widget (Top-Right of Invitation) -->
+    <!-- Luxury Floating Language Switcher Widget (Top-Right / Top-Start of Invitation) -->
     <div class="floating-lang-widget animate__animated animate__fadeIn">
-      <button type="button" 
-              class="lang-pill-btn shadow-xs" 
-              (click)="switchLanguage(currentLang() === 'fr' ? 'en' : 'fr')"
-              [attr.aria-label]="currentLang() === 'fr' ? ('RSVP.SWITCH_LANG_TO_EN' | translate) : ('RSVP.SWITCH_LANG_TO_FR' | translate)"
-              [title]="currentLang() === 'fr' ? 'Switch to English' : 'Passer en Français'">
+      <div class="lang-pill-btn shadow-xs">
         <i class="fa fa-globe lang-globe-icon"></i>
-        <span class="lang-opt" [class.active-lang]="currentLang() === 'fr'">FR</span>
+        <span class="lang-opt" [class.active-lang]="currentLang() === 'fr'" (click)="switchLanguage('fr')" title="Passer en Français">FR</span>
         <span class="lang-sep">|</span>
-        <span class="lang-opt" [class.active-lang]="currentLang() === 'en'">EN</span>
-      </button>
+        <span class="lang-opt" [class.active-lang]="currentLang() === 'en'" (click)="switchLanguage('en')" title="Switch to English">EN</span>
+        <span class="lang-sep">|</span>
+        <span class="lang-opt" [class.active-lang]="currentLang() === 'ar'" (click)="switchLanguage('ar')" title="التبديل إلى العربية">العربية</span>
+      </div>
     </div>
 
     <!-- Floating Audio Player Widget (Positioned directly above the card) -->
@@ -677,7 +676,7 @@
                 (click)="startDiscoveryWorkflow()">
                 <i class="fa fa-utensils me-1.5" [style.color]="getPrimaryColor()"></i>
                 {{ 'RSVP.DISCOVER_MENU_FIRST' | translate }}
-                <i class="fa fa-arrow-right ms-1" style="font-size: 0.72rem;"></i>
+                <i class="fa" [class.fa-arrow-right]="!isRtl()" [class.fa-arrow-left]="isRtl()" style="font-size: 0.72rem;"></i>
               </button>
             </div>
           </div>
@@ -876,11 +875,13 @@
                 <div class="step-bottom-actions-wrapper step-optout-wrapper d-flex align-items-center justify-content-center flex-nowrap gap-2 mt-1.5 pt-0 mb-1" *ngIf="!isDiscoveryMode()">
                   <button type="button" class="btn btn-sm btn-step-back rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
                     (click)="closeMenuAndRsvp()">
-                    <i class="fa fa-arrow-left me-1"></i> {{ 'RSVP.BTN_BACK' | translate }}
+                    <i class="fa" [class.fa-arrow-left]="!isRtl()" [class.fa-arrow-right]="isRtl()"></i>
+                    <span>{{ 'RSVP.BTN_BACK' | translate }}</span>
                   </button>
                   <button type="button" class="btn btn-sm btn-opt-out rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
                     (click)="goToNextStep()">
-                    {{ 'RSVP.BTN_PASS' | translate }} <i class="fa fa-arrow-right ms-1"></i>
+                    <span>{{ 'RSVP.BTN_PASS' | translate }}</span>
+                    <i class="fa" [class.fa-arrow-right]="!isRtl()" [class.fa-arrow-left]="isRtl()"></i>
                   </button>
                 </div>
               </ng-container>
@@ -947,11 +948,13 @@
                 <div class="step-bottom-actions-wrapper step-optout-wrapper d-flex align-items-center justify-content-center flex-nowrap gap-2 mt-1.5 pt-0 mb-1" *ngIf="!isDiscoveryMode()">
                   <button type="button" class="btn btn-sm btn-step-back rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
                     (click)="closeMenuAndRsvp()">
-                    <i class="fa fa-arrow-left me-1"></i> {{ 'RSVP.BTN_BACK' | translate }}
+                    <i class="fa" [class.fa-arrow-left]="!isRtl()" [class.fa-arrow-right]="isRtl()"></i>
+                    <span>{{ 'RSVP.BTN_BACK' | translate }}</span>
                   </button>
                   <button type="button" class="btn btn-sm btn-opt-out rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
                     (click)="goToNextStep()">
-                    {{ 'RSVP.BTN_PASS' | translate }} <i class="fa fa-arrow-right ms-1"></i>
+                    <span>{{ 'RSVP.BTN_PASS' | translate }}</span>
+                    <i class="fa" [class.fa-arrow-right]="!isRtl()" [class.fa-arrow-left]="isRtl()"></i>
                   </button>
                 </div>
               </ng-container>
@@ -1148,11 +1151,13 @@
                 <div class="step-bottom-actions-wrapper step-optout-wrapper d-flex align-items-center justify-content-center flex-nowrap gap-2 mt-1.5 pt-0 mb-1" *ngIf="!isDiscoveryMode()">
                   <button type="button" class="btn btn-sm btn-step-back rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
                     (click)="closeMenuAndRsvp()">
-                    <i class="fa fa-arrow-left me-1"></i> {{ 'RSVP.BTN_BACK' | translate }}
+                    <i class="fa" [class.fa-arrow-left]="!isRtl()" [class.fa-arrow-right]="isRtl()"></i>
+                    <span>{{ 'RSVP.BTN_BACK' | translate }}</span>
                   </button>
                   <button type="button" class="btn btn-sm btn-opt-out rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
                     (click)="goToNextStep()">
-                    {{ 'RSVP.BTN_CONTINUE' | translate }} <i class="fa fa-arrow-right ms-1"></i>
+                    <span>{{ 'RSVP.BTN_CONTINUE' | translate }}</span>
+                    <i class="fa" [class.fa-arrow-right]="!isRtl()" [class.fa-arrow-left]="isRtl()"></i>
                   </button>
                 </div>
               </ng-container>
@@ -1165,27 +1170,27 @@
                     [style.fontFamily]="getPrimaryFont()"
                     [style.color]="getPrimaryColor()"
                     style="font-size: 1.35rem !important; line-height: 1.35 !important; padding-bottom: 2px;">
-                    Entrée
+                    {{ 'RSVP.STARTER_TITLE' | translate }}
                   </span>
                   <h3 class="page2-menu-title text-uppercase fw-bold m-0 pt-1"
                     [style.fontFamily]="getSecondaryFont()"
                     [style.color]="getSecondaryFontColor()"
                     style="font-size: 0.95rem !important; line-height: 1.35 !important; letter-spacing: 1.2px !important;">
-                    {{ isDiscoveryMode() ? 'Aperçu des Entrées' : (hasStartersChoice() ? 'Sélectionnez votre Entrée' : 'L\'Entrée d\'Honneur') }}
+                    {{ isDiscoveryMode() ? ('RSVP.OVERVIEW_STARTERS' | translate) : (hasStartersChoice() ? ('RSVP.SELECT_STARTER' | translate) : ('RSVP.HONOR_STARTER' | translate)) }}
                   </h3>
                   <div class="spotlight-underline mx-auto mt-1"
                     [style.backgroundColor]="getPrimaryColor()"
                     style="width: 40px; height: 1.5px; opacity: 0.65;"></div>
                   <p class="fs-xxs mt-1 mb-0 font-serif" [style.color]="getMenuMutedTextColor()" *ngIf="!isDiscoveryMode() && hasStartersChoice() && availableStarters().length > 0">
                     <i class="fa fa-info-circle me-1" [style.color]="getPrimaryColor()"></i>
-                    Choix obligatoire • Servi frais à table selon votre préférence
+                    {{ 'RSVP.STARTER_MANDATORY_NOTE' | translate }}
                   </p>
                   <p class="fs-xxs mt-1 mb-0 font-serif" [style.color]="getMenuMutedTextColor()" *ngIf="!isDiscoveryMode() && !hasStartersChoice() && availableStarters().length > 0">
                     <i class="fa fa-utensils me-1" [style.color]="getPrimaryColor()"></i>
-                    Servi frais d'office à table pour l'ensemble des convives
+                    {{ 'RSVP.STARTER_SERVED_NOTE' | translate }}
                   </p>
                   <p class="fs-xxs mt-1 mb-0 font-serif" [style.color]="getMenuMutedTextColor()" *ngIf="isDiscoveryMode()">
-                    Servi frais à table selon la sélection des convives
+                    {{ 'RSVP.STARTER_DISCOVERY_NOTE' | translate }}
                   </p>
                 </div>
 
@@ -1258,12 +1263,14 @@
                 <div class="step-bottom-actions-wrapper step-optout-wrapper d-flex align-items-center justify-content-center flex-nowrap gap-2 mt-1.5 pt-0 mb-1" *ngIf="!isDiscoveryMode()">
                   <button type="button" class="btn btn-sm btn-step-back rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
                     (click)="closeMenuAndRsvp()">
-                    <i class="fa fa-arrow-left me-1"></i> {{ 'RSVP.BTN_BACK' | translate }}
+                    <i class="fa" [class.fa-arrow-left]="!isRtl()" [class.fa-arrow-right]="isRtl()"></i>
+                    <span>{{ 'RSVP.BTN_BACK' | translate }}</span>
                   </button>
                   <button type="button" class="btn btn-sm btn-opt-out rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
                     *ngIf="!hasStartersChoice() || starterChoice || availableStarters().length === 0"
                     (click)="goToNextStep()">
-                    {{ 'RSVP.BTN_CONTINUE' | translate }} <i class="fa fa-arrow-right ms-1"></i>
+                    <span>{{ 'RSVP.BTN_CONTINUE' | translate }}</span>
+                    <i class="fa" [class.fa-arrow-right]="!isRtl()" [class.fa-arrow-left]="isRtl()"></i>
                   </button>
                 </div>
               </ng-container>
@@ -1375,12 +1382,14 @@
               <div class="step-bottom-actions-wrapper step-optout-wrapper d-flex align-items-center justify-content-center flex-nowrap gap-2 mt-1.5 pt-0 mb-1" *ngIf="!isDiscoveryMode()">
                 <button type="button" class="btn btn-sm btn-step-back rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
                   (click)="goToPrevStep()">
-                  <i class="fa fa-arrow-left me-1"></i> {{ 'RSVP.BTN_BACK' | translate }}
+                  <i class="fa" [class.fa-arrow-left]="!isRtl()" [class.fa-arrow-right]="isRtl()"></i>
+                  <span>{{ 'RSVP.BTN_BACK' | translate }}</span>
                 </button>
                 <button type="button" class="btn btn-sm btn-opt-out rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
                   *ngIf="isIndicativeMenu() || !hasMainsChoice() || mealChoice || availableMains().length === 0"
                   (click)="goToNextStep()">
-                  {{ 'RSVP.BTN_CONTINUE' | translate }} <i class="fa fa-arrow-right ms-1"></i>
+                  <span>{{ 'RSVP.BTN_CONTINUE' | translate }}</span>
+                  <i class="fa" [class.fa-arrow-right]="!isRtl()" [class.fa-arrow-left]="isRtl()"></i>
                 </button>
               </div>
             </div>
@@ -1485,11 +1494,13 @@
                 <div class="step-bottom-actions-wrapper step-optout-wrapper d-flex align-items-center justify-content-center flex-nowrap gap-2 mt-1.5 pt-0 mb-1" *ngIf="!isDiscoveryMode()">
                   <button type="button" class="btn btn-sm btn-step-back rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
                     (click)="goToPrevStep()">
-                    <i class="fa fa-arrow-left me-1"></i> {{ 'RSVP.BTN_BACK' | translate }}
+                    <i class="fa" [class.fa-arrow-left]="!isRtl()" [class.fa-arrow-right]="isRtl()"></i>
+                    <span>{{ 'RSVP.BTN_BACK' | translate }}</span>
                   </button>
                   <button type="button" class="btn btn-sm btn-opt-out rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
                     (click)="goToNextStep()">
-                    {{ 'RSVP.BTN_PASS' | translate }} <i class="fa fa-arrow-right ms-1"></i>
+                    <span>{{ 'RSVP.BTN_PASS' | translate }}</span>
+                    <i class="fa" [class.fa-arrow-right]="!isRtl()" [class.fa-arrow-left]="isRtl()"></i>
                   </button>
                 </div>
               </ng-container>
@@ -1502,13 +1513,13 @@
                     [style.fontFamily]="getPrimaryFont()"
                     [style.color]="getPrimaryColor()"
                     style="font-size: 1.35rem !important; line-height: 1.35 !important; padding-bottom: 2px;">
-                    {{ 'RSVP.TAB_DESSERTS' | translate }}
+                    {{ 'RSVP.DESSERT_TITLE' | translate }}
                   </span>
                   <h3 class="page2-menu-title text-uppercase fw-bold m-0 pt-1"
                     [style.fontFamily]="getSecondaryFont()"
                     [style.color]="getSecondaryFontColor()"
                     style="font-size: 0.95rem !important; line-height: 1.35 !important; letter-spacing: 1.2px !important;">
-                    {{ isIndicativeMenu() ? ('RSVP.TAB_DESSERTS' | translate) : (isDiscoveryMode() ? ('RSVP.OVERVIEW_DISHES' | translate) : (hasDessertsChoice() ? ('RSVP.SELECT_YOUR_DISH' | translate) : ('RSVP.HONOR_DISH' | translate))) }}
+                    {{ isIndicativeMenu() ? ('RSVP.TAB_DESSERTS' | translate) : (isDiscoveryMode() ? ('RSVP.OVERVIEW_DESSERTS' | translate) : (hasDessertsChoice() ? ('RSVP.SELECT_DESSERT' | translate) : ('RSVP.HONOR_DESSERT' | translate))) }}
                   </h3>
                   <div class="spotlight-underline mx-auto mt-1"
                     [style.backgroundColor]="getPrimaryColor()"
@@ -1519,14 +1530,14 @@
                   </p>
                   <p class="fs-xxs mt-1 mb-0 font-serif" [style.color]="getMenuMutedTextColor()" *ngIf="!isIndicativeMenu() && !isDiscoveryMode() && hasDessertsChoice() && availableDesserts().length > 0">
                     <i class="fa fa-info-circle me-1" [style.color]="getPrimaryColor()"></i>
-                    {{ 'RSVP.DISH_MANDATORY_NOTE' | translate }}
+                    {{ 'RSVP.DESSERT_MANDATORY_NOTE' | translate }}
                   </p>
                   <p class="fs-xxs mt-1 mb-0 font-serif" [style.color]="getMenuMutedTextColor()" *ngIf="!isIndicativeMenu() && !isDiscoveryMode() && !hasDessertsChoice() && availableDesserts().length > 0">
                     <i class="fa fa-utensils me-1" [style.color]="getPrimaryColor()"></i>
-                    {{ 'RSVP.DISH_SERVED_NOTE' | translate }}
+                    {{ 'RSVP.DESSERT_SERVED_NOTE' | translate }}
                   </p>
                   <p class="fs-xxs mt-1 mb-0 font-serif" [style.color]="getMenuMutedTextColor()" *ngIf="!isIndicativeMenu() && isDiscoveryMode()">
-                    {{ 'RSVP.DISH_DISCOVERY_NOTE' | translate }}
+                    {{ 'RSVP.DESSERT_DISCOVERY_NOTE' | translate }}
                   </p>
                 </div>
 
@@ -1599,12 +1610,14 @@
                 <div class="step-bottom-actions-wrapper step-optout-wrapper d-flex align-items-center justify-content-center flex-nowrap gap-2 mt-1.5 pt-0 mb-1" *ngIf="!isDiscoveryMode()">
                   <button type="button" class="btn btn-sm btn-step-back rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
                     (click)="goToPrevStep()">
-                    <i class="fa fa-arrow-left me-1"></i> {{ 'RSVP.BTN_BACK' | translate }}
+                    <i class="fa" [class.fa-arrow-left]="!isRtl()" [class.fa-arrow-right]="isRtl()"></i>
+                    <span>{{ 'RSVP.BTN_BACK' | translate }}</span>
                   </button>
                   <button type="button" class="btn btn-sm btn-opt-out rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
                     *ngIf="isIndicativeMenu() || !hasDessertsChoice() || dessertChoice || availableDesserts().length === 0"
                     (click)="goToNextStep()">
-                    {{ 'RSVP.BTN_CONTINUE' | translate }} <i class="fa fa-arrow-right ms-1"></i>
+                    <span>{{ 'RSVP.BTN_CONTINUE' | translate }}</span>
+                    <i class="fa" [class.fa-arrow-right]="!isRtl()" [class.fa-arrow-left]="isRtl()"></i>
                   </button>
                 </div>
               </ng-container>
@@ -1716,11 +1729,13 @@
               <div class="step-bottom-actions-wrapper step-optout-wrapper d-flex align-items-center justify-content-center flex-nowrap gap-2 mt-1.5 pt-0 mb-1" *ngIf="!isDiscoveryMode()">
                 <button type="button" class="btn btn-sm btn-step-back rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
                   (click)="goToPrevStep()">
-                  <i class="fa fa-arrow-left me-1"></i> {{ 'RSVP.BTN_BACK' | translate }}
+                  <i class="fa" [class.fa-arrow-left]="!isRtl()" [class.fa-arrow-right]="isRtl()"></i>
+                  <span>{{ 'RSVP.BTN_BACK' | translate }}</span>
                 </button>
                 <button type="button" class="btn btn-sm btn-opt-out rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
                   (click)="goToNextStep()">
-                  {{ 'RSVP.BTN_CONTINUE' | translate }} <i class="fa fa-arrow-right ms-1"></i>
+                  <span>{{ 'RSVP.BTN_CONTINUE' | translate }}</span>
+                  <i class="fa" [class.fa-arrow-right]="!isRtl()" [class.fa-arrow-left]="isRtl()"></i>
                 </button>
               </div>
             </div>
@@ -1838,7 +1853,8 @@
               <div class="dietary-smart-action-wrapper d-flex align-items-center justify-content-center flex-nowrap gap-2 mt-3 pt-1 mb-2 animate__animated animate__fadeIn">
                 <button type="button" class="btn btn-sm btn-step-back rounded-pill px-3.5 py-2 fs-xs fw-semibold shadow-2xs"
                   (click)="handleTopNavPrev()">
-                  <i class="fa fa-arrow-left me-1"></i> {{ 'RSVP.BTN_BACK' | translate }}
+                  <i class="fa" [class.fa-arrow-left]="!isRtl()" [class.fa-arrow-right]="isRtl()"></i>
+                  <span>{{ 'RSVP.BTN_BACK' | translate }}</span>
                 </button>
                 <button type="button" class="btn btn-sm btn-dietary-smart-action rounded-pill px-4 py-2 fs-xs fw-bold shadow-sm transition-all"
                   [style.background]="hasAnyDietOrAllergySelected() ? getPrimaryColor() : '#ffffff'"
@@ -1846,11 +1862,12 @@
                   [style.color]="hasAnyDietOrAllergySelected() ? (isDarkBg(getPrimaryColor()) ? '#ffffff' : '#0c0c0c') : '#1e293b'"
                   (click)="goToNextStep()">
                   <ng-container *ngIf="hasAnyDietOrAllergySelected()">
-                    <i class="fa fa-check me-1.5"></i> {{ 'RSVP.BTN_VALIDATE' | translate }} <i class="fa fa-arrow-right ms-1"></i>
+                    <i class="fa fa-check me-1.5"></i> <span>{{ 'RSVP.BTN_VALIDATE' | translate }}</span>
                   </ng-container>
                   <ng-container *ngIf="!hasAnyDietOrAllergySelected()">
-                    {{ 'RSVP.BTN_PASS' | translate }} <i class="fa fa-arrow-right ms-1"></i>
+                    <span>{{ 'RSVP.BTN_PASS' | translate }}</span>
                   </ng-container>
+                  <i class="fa" [class.fa-arrow-right]="!isRtl()" [class.fa-arrow-left]="isRtl()"></i>
                 </button>
               </div>
 
@@ -2119,7 +2136,8 @@
             <!-- 0. Retour à l'invitation (Bouton Pilule Lisible et proportionné) -->
             <button type="button" class="btn btn-sm btn-step-back rounded-pill fs-xs fw-semibold shadow-2xs"
               (click)="handleTopNavPrev()">
-              <i class="fa fa-arrow-left me-1"></i> {{ 'RSVP.BTN_INVITATION' | translate }}
+              <i class="fa" [class.fa-arrow-left]="!isRtl()" [class.fa-arrow-right]="isRtl()"></i>
+              <span>{{ 'RSVP.BTN_INVITATION' | translate }}</span>
             </button>
 
             <!-- 1. Accepter (Bouton Principal teinté avec la couleur du modèle) -->
@@ -2688,7 +2706,8 @@
           <div class="d-flex gap-2 justify-content-center pt-2">
             <button type="button" class="btn btn-sm btn-alt-secondary rounded-pill px-3 py-2 fs-xs fw-semibold flex-fill"
               (click)="closeDeclineModal()">
-              <i class="fa fa-arrow-left me-1"></i> {{ 'RSVP.MODAL_DECLINE_CANCEL' | translate }}
+              <i class="fa" [class.fa-arrow-left]="!isRtl()" [class.fa-arrow-right]="isRtl()"></i>
+              <span>{{ 'RSVP.MODAL_DECLINE_CANCEL' | translate }}</span>
             </button>
 
             <button type="button" class="btn btn-sm btn-outline-danger rounded-pill px-3 py-2 fs-xs fw-bold flex-fill"
