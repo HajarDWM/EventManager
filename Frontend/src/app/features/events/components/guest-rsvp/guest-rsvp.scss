@@ -5031,13 +5031,11 @@ textarea.luxury-form-control::placeholder {
   }
 
   .summary-subcard {
-    flex: 1 1 0;
-    min-width: 0;
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif !important;
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     border-radius: 14px;
-    padding: 12px 14px;
+    padding: 14px 16px;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
@@ -5046,7 +5044,7 @@ textarea.luxury-form-control::placeholder {
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
 
     @media (min-width: 768px) {
-      padding: 20px 18px;
+      padding: 18px 20px;
       border-radius: 20px;
     }
 
@@ -5059,11 +5057,46 @@ textarea.luxury-form-control::placeholder {
   .card-choices-box {
     border-width: 1.5px !important;
     border-style: solid !important;
+
+    @media (min-width: 768px) {
+      flex: 1.15 1 0% !important;
+      min-width: 0 !important;
+    }
   }
 
   .card-payment-box {
     border-width: 1.5px !important;
     border-style: solid !important;
+
+    @media (min-width: 768px) {
+      flex: 1 1 0% !important;
+      min-width: 290px !important;
+    }
+
+    .summary-payment-details {
+      .d-flex {
+        gap: 12px;
+        min-width: 0;
+
+        span:first-child {
+          flex-shrink: 0;
+          white-space: nowrap;
+        }
+
+        span.text-end,
+        div.text-end {
+          min-width: 0;
+          word-break: break-word;
+          overflow-wrap: break-word;
+        }
+      }
+    }
+
+    .btn-luxury-submit {
+      min-width: 160px !important;
+      white-space: nowrap !important;
+      padding: 7px 22px !important;
+    }
   }
 
   /* Bouton Modifier dans l'en-tête (Style identique aux boutons Passer / Retour) */

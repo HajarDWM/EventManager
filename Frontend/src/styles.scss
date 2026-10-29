@@ -224,4 +224,18 @@
   }
 }
 
+/* Summary Cards Grid Balance & Payment Box Min Width */
+.summary-cards-grid {
+  @media (min-width: 768px) {
+    .card-payment-box {
+      min-width: 290px !important;
+      flex: 1 1 0% !important;
+    }
+    .card-choices-box {
+      flex: 1.15 1 0% !important;
+    }
+  }
+}
+
+
 
