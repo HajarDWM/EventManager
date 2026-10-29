@@ -3,10 +3,10 @@
   class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-2 text-center text-md-start border-bottom border-light pb-3">
   <div class="flex-grow-1 mb-1 mb-md-0">
     <h1 class="h3 fw-bold mb-2">
-      Tableau de Bord Financier & Audit
+      {{ 'ADMIN.TRANSACTIONS.HERO_TITLE' | translate }}
     </h1>
     <h2 class="h6 fw-medium text-muted mb-0">
-      Suivez les revenus d'abonnements, déclarez les dépenses de la plateforme et auditez le bénéfice net.
+      {{ 'ADMIN.TRANSACTIONS.HERO_SUBTITLE' | translate }}
     </h2>
   </div>
   <div class="mt-2 mt-md-0 ms-md-3 d-flex align-items-center gap-2">
@@ -28,7 +28,7 @@
       [disabled]="isExporting()">
       <i class="fa fa-download me-1" *ngIf="!isExporting()"></i>
       <i class="fa fa-spinner fa-spin me-1" *ngIf="isExporting()"></i>
-      Exporter le rapport CSV
+      {{ 'ADMIN.TRANSACTIONS.EXPORT_CSV' | translate }}
     </button>
   </div>
 </div>
@@ -48,20 +48,20 @@
 <!-- Period Filters -->
 <div class="d-flex justify-content-between align-items-center mb-3 mt-3.5">
   <div class="d-flex align-items-center gap-2">
-    <span class="fs-xs fw-bold text-uppercase text-muted me-2">Analyse de la Période :</span>
+    <span class="fs-xs fw-bold text-uppercase text-muted me-2">{{ 'ADMIN.TRANSACTIONS.PERIOD_ANALYSIS' | translate }}</span>
     <button class="btn btn-sm px-3 rounded-pill fw-semibold"
       [ngClass]="selectedPeriod() === '1_MONTH' ? 'btn-primary' : 'btn-alt-secondary'"
       (click)="changePeriod('1_MONTH')">
-      1 Mois
+      {{ 'ADMIN.TRANSACTIONS.PERIOD_1_MONTH' | translate }}
     </button>
     <button class="btn btn-sm px-3 rounded-pill fw-semibold"
       [ngClass]="selectedPeriod() === '3_MONTHS' ? 'btn-primary' : 'btn-alt-secondary'"
       (click)="changePeriod('3_MONTHS')">
-      3 Mois
+      {{ 'ADMIN.TRANSACTIONS.PERIOD_3_MONTHS' | translate }}
     </button>
     <button class="btn btn-sm px-3 rounded-pill fw-semibold"
       [ngClass]="selectedPeriod() === '1_YEAR' ? 'btn-primary' : 'btn-alt-secondary'" (click)="changePeriod('1_YEAR')">
-      1 An
+      {{ 'ADMIN.TRANSACTIONS.PERIOD_1_YEAR' | translate }}
     </button>
   </div>
 </div>
@@ -74,10 +74,10 @@
       <div class="block-content block-content-full d-flex align-items-center justify-content-between p-3">
         <div>
           <span class="fs-xs fw-semibold text-uppercase text-muted d-block mb-1">
-            Revenu
-            <span *ngIf="selectedPeriod() === '1_MONTH'">(Mois En Cours)</span>
-            <span *ngIf="selectedPeriod() === '3_MONTHS'">(3 Derniers Mois)</span>
-            <span *ngIf="selectedPeriod() === '1_YEAR'">(Dernière Année)</span>
+            {{ 'ADMIN.TRANSACTIONS.REVENUE' | translate }}
+            <span *ngIf="selectedPeriod() === '1_MONTH'">({{ 'ADMIN.TRANSACTIONS.PERIOD_1_MONTH' | translate }})</span>
+            <span *ngIf="selectedPeriod() === '3_MONTHS'">({{ 'ADMIN.TRANSACTIONS.PERIOD_3_MONTHS' | translate }})</span>
+            <span *ngIf="selectedPeriod() === '1_YEAR'">({{ 'ADMIN.TRANSACTIONS.PERIOD_1_YEAR' | translate }})</span>
           </span>
           <h3 class="fw-extrabold text-dark mb-0">
             {{ kpiStats().selectedPeriodRevenue | number:'1.2-2' }} {{ currencySymbol() }}
@@ -99,10 +99,10 @@
       <div class="block-content block-content-full d-flex align-items-center justify-content-between p-3">
         <div>
           <span class="fs-xs fw-semibold text-uppercase text-muted d-block mb-1">
-            Bénéfice Net
-            <span *ngIf="selectedPeriod() === '1_MONTH'">(1 Mois)</span>
-            <span *ngIf="selectedPeriod() === '3_MONTHS'">(3 Mois)</span>
-            <span *ngIf="selectedPeriod() === '1_YEAR'">(1 An)</span>
+            {{ 'ADMIN.TRANSACTIONS.NET_PROFIT' | translate }}
+            <span *ngIf="selectedPeriod() === '1_MONTH'">({{ 'ADMIN.TRANSACTIONS.PERIOD_1_MONTH' | translate }})</span>
+            <span *ngIf="selectedPeriod() === '3_MONTHS'">({{ 'ADMIN.TRANSACTIONS.PERIOD_3_MONTHS' | translate }})</span>
+            <span *ngIf="selectedPeriod() === '1_YEAR'">({{ 'ADMIN.TRANSACTIONS.PERIOD_1_YEAR' | translate }})</span>
           </span>
           <h3 class="fw-extrabold mb-0"
             [ngClass]="kpiStats().netProfitSelectedPeriod >= 0 ? 'text-success' : 'text-danger'">
@@ -123,14 +123,14 @@
 <div class="block block-rounded bg-white shadow-sm border border-light mt-4">
   <div
     class="block-header block-header-default border-bottom bg-body-light d-flex justify-content-between align-items-center">
-    <h3 class="block-title fw-bold">Journal des Transactions</h3>
+    <h3 class="block-title fw-bold">{{ 'ADMIN.TRANSACTIONS.TRANSACTIONS_LOG' | translate }}</h3>
     <div class="d-flex align-items-center gap-2">
       <div class="input-group input-group-sm" style="width: 320px;">
         <span class="input-group-text bg-white border-end-0 text-muted"><i class="fa fa-search"></i></span>
-        <input type="text" class="form-control border-start-0 ps-0" placeholder="Rechercher par Organisateur..."
+        <input type="text" class="form-control border-start-0 ps-0" [placeholder]="'COMMON.SEARCH' | translate"
           [value]="searchInput()" (input)="onSearchInput($event)">
         <button type="button" class="btn btn-alt-secondary" *ngIf="searchInput()" (click)="clearSearch()"
-          title="Effacer la recherche">
+          [title]="'COMMON.RESET' | translate">
           <i class="fa fa-times text-muted"></i>
         </button>
       </div>
@@ -141,7 +141,7 @@
     <!-- Loading State -->
     <div class="text-center py-5" *ngIf="isLoading()">
       <i class="fa fa-fw fa-circle-notch fa-spin text-primary fs-2"></i>
-      <p class="mt-2 text-muted fs-sm">Chargement des transactions financières...</p>
+      <p class="mt-2 text-muted fs-sm">{{ 'COMMON.LOADING' | translate }}</p>
     </div>
 
     <!-- Empty State -->
@@ -149,8 +149,7 @@
       <div class="mb-3">
         <i class="fa fa-receipt text-muted fs-1"></i>
       </div>
-      <h4 class="fw-bold text-dark">Aucune transaction trouvée</h4>
-      <p class="text-muted fs-sm">Aucun historique de paiement ne correspond à vos critères de filtrage actuels.</p>
+      <h4 class="fw-bold text-dark">{{ 'COMMON.NO' | translate }}</h4>
     </div>
 
     <!-- Consolidated Transactions Table (1 Row per Organizer) -->
@@ -158,12 +157,12 @@
       <table class="table table-bordered table-striped table-vcenter fs-sm">
         <thead class="table-light">
           <tr>
-            <th>Organisateur</th>
-            <th style="width: 150px;">Dernier Forfait</th>
-            <th style="width: 150px;" class="text-center">Renouvellements</th>
-            <th style="width: 200px;" class="text-end">Total Recettes Encaissées (HT)</th>
-            <th style="width: 170px;">Dernier Règlement</th>
-            <th style="width: 120px;" class="text-center">Statut</th>
+            <th>{{ 'HEADER.ORGANIZER' | translate }}</th>
+            <th style="width: 150px;">{{ 'ADMIN.CATERERS.TH_PLAN' | translate }}</th>
+            <th style="width: 150px;" class="text-center">{{ 'ADMIN.CATERERS.TH_TOTAL_EVENTS' | translate }}</th>
+            <th style="width: 200px;" class="text-end">{{ 'ADMIN.TRANSACTIONS.REVENUE' | translate }} (HT)</th>
+            <th style="width: 170px;">{{ 'ADMIN.TRANSACTIONS.TH_DATE' | translate }}</th>
+            <th style="width: 120px;" class="text-center">{{ 'COMMON.STATUS' | translate }}</th>
           </tr>
         </thead>
         <tbody>
@@ -195,7 +194,7 @@
         </tbody>
         <tfoot class="table-light fw-bold" *ngIf="consolidatedOrganizers().length > 0">
           <tr>
-            <td colspan="3" class="text-end text-uppercase text-muted fs-xs">Total Recettes Encaissées (HT) :</td>
+            <td colspan="3" class="text-end text-uppercase text-muted fs-xs">{{ 'COMMON.TOTAL' | translate }} (HT) :</td>
             <td class="text-end text-success fs-base fw-bold">
               {{ getTotalRevenuesHt() | number:'1.2-2' }} {{ currencySymbol() }}
             </td>
@@ -209,8 +208,7 @@
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 border-top border-light py-3 mt-2"
       *ngIf="!isLoading() && totalPages() > 1">
       <div class="fs-sm text-muted">
-        Affichage de <strong>{{ transactions().length }}</strong> transactions sur <strong>{{ totalElements()
-          }}</strong> au total.
+        {{ totalElements() }} {{ 'COMMON.TOTAL' | translate | lowercase }}
       </div>
       <nav aria-label="Page navigation">
         <ul class="pagination pagination-sm mb-0">
@@ -238,10 +236,10 @@
 <div class="block block-rounded bg-white shadow-sm border border-light mt-4">
   <div
     class="block-header block-header-default border-bottom bg-body-light d-flex justify-content-between align-items-center">
-    <h3 class="block-title fw-bold">Gestion des Dépenses Plateforme</h3>
+    <h3 class="block-title fw-bold">{{ 'ADMIN.TRANSACTIONS.OPERATING_EXPENSES' | translate }}</h3>
     <div>
       <button class="btn btn-sm btn-danger rounded-pill px-3 fw-semibold" (click)="openExpenseModal()">
-        <i class="fa fa-plus me-1"></i> Déclarer une Dépense
+        <i class="fa fa-plus me-1"></i> {{ 'ADMIN.TRANSACTIONS.LOG_EXPENSE_BTN' | translate }}
       </button>
     </div>
   </div>
@@ -252,8 +250,7 @@
       <div class="mb-2">
         <i class="fa fa-file-invoice-dollar text-muted fs-2"></i>
       </div>
-      <h5 class="fw-semibold text-dark">Aucune dépense déclarée</h5>
-      <p class="text-muted fs-xs mb-0">Ajoutez des frais de fonctionnement pour déduire le bénéfice net réel.</p>
+      <h5 class="fw-semibold text-dark">{{ 'COMMON.NO' | translate }}</h5>
     </div>
 
     <!-- Expenses Table -->
@@ -262,10 +259,10 @@
         <thead class="table-light">
           <tr>
             <th>Description</th>
-            <th style="width: 150px;">Catégorie</th>
-            <th style="width: 140px;" class="text-end">Montant</th>
-            <th style="width: 160px;">Date d'effet</th>
-            <th style="width: 80px;" class="text-center">Action</th>
+            <th style="width: 150px;">{{ 'EVENTS.STEP_GENERAL' | translate }}</th>
+            <th style="width: 140px;" class="text-end">{{ 'BILLING.AMOUNT' | translate }}</th>
+            <th style="width: 160px;">{{ 'ADMIN.TRANSACTIONS.TH_DATE' | translate }}</th>
+            <th style="width: 80px;" class="text-center">{{ 'COMMON.ACTIONS' | translate }}</th>
           </tr>
         </thead>
         <tbody>
@@ -277,17 +274,17 @@
               </span>
             </td>
             <td class="text-end fw-semibold text-danger">
-              -{{ exp.amount | number:'1.2-2' }} DH
+              -{{ exp.amount | number:'1.2-2' }} {{ currencySymbol() }}
             </td>
             <td>{{ exp.expenseDate | date:'dd/MM/yyyy HH:mm' }}</td>
             <td class="text-center">
               <div class="d-flex align-items-center justify-content-center gap-2">
                 <button type="button" class="btn btn-sm btn-alt-primary border-0 p-1"
-                  (click)="openEditExpenseModal(exp)" title="Modifier la dépense">
+                  (click)="openEditExpenseModal(exp)" [title]="'COMMON.EDIT' | translate">
                   <i class="fa fa-pencil-alt text-primary"></i>
                 </button>
                 <button type="button" class="btn btn-sm btn-alt-danger border-0 p-1" (click)="deleteExpense(exp.id!)"
-                  title="Supprimer la dépense">
+                  [title]="'COMMON.DELETE' | translate">
                   <i class="fa fa-trash-alt text-danger"></i>
                 </button>
               </div>
@@ -296,9 +293,9 @@
         </tbody>
         <tfoot class="table-light fw-bold" *ngIf="expenses().length > 0">
           <tr>
-            <td colspan="2" class="text-end text-uppercase text-muted fs-xs">Total Dépenses Plateforme :</td>
+            <td colspan="2" class="text-end text-uppercase text-muted fs-xs">{{ 'COMMON.TOTAL' | translate }} :</td>
             <td class="text-end text-danger fs-base fw-bold">
-              -{{ getTotalExpenses() | number:'1.2-2' }} DH
+              -{{ getTotalExpenses() | number:'1.2-2' }} {{ currencySymbol() }}
             </td>
             <td colspan="2"></td>
           </tr>
@@ -318,7 +315,7 @@
           class="block-header block-header-default bg-body-light border-bottom border-light d-flex justify-content-between align-items-center p-3">
           <h3 class="block-title fw-bold text-dark mb-0">
             <i class="fa text-danger me-2" [ngClass]="isEditingExpense() ? 'fa-edit' : 'fa-plus-circle'"></i>
-            {{ isEditingExpense() ? 'Modifier la Dépense Plateforme' : 'Déclarer une Dépense Plateforme' }}
+            {{ (isEditingExpense() ? 'COMMON.EDIT' : 'ADMIN.TRANSACTIONS.LOG_EXPENSE_BTN') | translate }}
           </h3>
           <button type="button" class="btn btn-sm btn-alt-secondary" (click)="showExpenseModal.set(false)"
             style="border: none; background: transparent;">
@@ -329,15 +326,15 @@
           <form (ngSubmit)="addExpense()">
             <!-- Description -->
             <div class="mb-3">
-              <label class="form-label fs-sm fw-semibold text-dark">Libellé / Description</label>
+              <label class="form-label fs-sm fw-semibold text-dark">Description</label>
               <input type="text" class="form-control border-light fs-sm"
-                placeholder="ex: Serveur Cloud AWS, Licence Datadog..." [(ngModel)]="newExpenseDescription" name="desc"
+                placeholder="ex: AWS Cloud, License..." [(ngModel)]="newExpenseDescription" name="desc"
                 required>
             </div>
 
             <!-- Amount & Currency Input Group -->
             <div class="mb-3">
-              <label class="form-label fs-sm fw-semibold text-dark">Montant & Devise de Paiement</label>
+              <label class="form-label fs-sm fw-semibold text-dark">{{ 'BILLING.AMOUNT' | translate }}</label>
               <div class="input-group">
                 <input type="number" step="0.01" class="form-control border-light fs-sm" placeholder="ex: 120.00"
                   [(ngModel)]="newExpenseAmount" name="amount" required>
@@ -350,26 +347,22 @@
                   <option value="CHF">CHF (CHF)</option>
                 </select>
               </div>
-              <div class="form-text fs-xs text-muted mt-1" *ngIf="newExpenseCurrency !== 'MAD' && newExpenseAmount">
-                <i class="fa fa-info-circle me-1 text-primary"></i>
-                Sera automatiquement converti à environ <strong>{{ currencyService.convertToMAD(newExpenseAmount, newExpenseCurrency) | number:'1.2-2' }} DH</strong> dans la comptabilité.
-              </div>
             </div>
 
             <!-- Category -->
             <div class="mb-3">
-              <label class="form-label fs-sm fw-semibold text-dark">Catégorie de frais</label>
+              <label class="form-label fs-sm fw-semibold text-dark">{{ 'EVENTS.STEP_GENERAL' | translate }}</label>
               <select class="form-select border-light fs-sm" [(ngModel)]="newExpenseCategory" name="cat" required>
-                <option value="SERVER">Serveur / Cloud</option>
-                <option value="TOOL">Outil / Licence API</option>
-                <option value="MARKETING">Marketing & Pub</option>
-                <option value="OTHER">Autre Dépense</option>
+                <option value="SERVER">Server / Cloud</option>
+                <option value="TOOL">API / Tool</option>
+                <option value="MARKETING">Marketing & Ads</option>
+                <option value="OTHER">{{ 'CATERING.OPT_OTHER' | translate }}</option>
               </select>
             </div>
 
             <!-- Date -->
             <div class="mb-4">
-              <label class="form-label fs-sm fw-semibold text-dark">Date d'effet</label>
+              <label class="form-label fs-sm fw-semibold text-dark">{{ 'COMMON.DATE' | translate }}</label>
               <input type="datetime-local" class="form-control border-light fs-sm" [(ngModel)]="newExpenseDate"
                 name="date">
             </div>
@@ -377,15 +370,15 @@
             <!-- Actions -->
             <div class="d-flex gap-2 justify-content-end border-top border-light pt-3">
               <button type="button" class="btn btn-alt-secondary fs-sm" (click)="showExpenseModal.set(false)">
-                Annuler
+                {{ 'COMMON.CANCEL' | translate }}
               </button>
               <button type="submit" class="btn btn-danger fs-sm" [disabled]="isAddingExpense()">
                 <span *ngIf="!isAddingExpense()">
                   <i class="fa fa-check me-1"></i>
-                  {{ isEditingExpense() ? 'Enregistrer les modifications' : 'Ajouter la dépense' }}
+                  {{ 'COMMON.SAVE' | translate }}
                 </span>
                 <span *ngIf="isAddingExpense()">
-                  <i class="fa fa-spinner fa-spin me-1"></i> Enregistrement...
+                  <i class="fa fa-spinner fa-spin me-1"></i> {{ 'COMMON.LOADING' | translate }}
                 </span>
               </button>
             </div>

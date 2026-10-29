@@ -110,16 +110,16 @@
         <div class="financial-widget">
           <div class="finance-item">
             <span class="finance-label">{{ 'CLIENT_PORTAL.TOTAL_AMOUNT' | translate }}</span>
-            <span class="finance-value text-dark">{{ (events()[0].totalContractAmount || 0) | number:'1.2-2' }} DH</span>
+            <span class="finance-value text-dark">{{ (events()[0].totalContractAmount || 0) | number:'1.2-2' }} {{ events()[0]?.currency || currencySymbol() }}</span>
           </div>
           <div class="finance-item">
             <span class="finance-label">{{ 'CLIENT_PORTAL.DEPOSITS_PAID' | translate }}</span>
-            <span class="finance-value text-success">{{ (events()[0].depositsPaid || 0) | number:'1.2-2' }} DH</span>
+            <span class="finance-value text-success">{{ (events()[0].depositsPaid || 0) | number:'1.2-2' }} {{ events()[0]?.currency || currencySymbol() }}</span>
           </div>
           <div class="finance-divider"></div>
           <div class="finance-item highlight">
             <span class="finance-label fw-bold">{{ 'CLIENT_PORTAL.BALANCE_DUE' | translate }}</span>
-            <span class="finance-value text-danger fw-bold fs-5">{{ (events()[0].balanceDue || 0) | number:'1.2-2' }} DH</span>
+            <span class="finance-value text-danger fw-bold fs-5">{{ (events()[0].balanceDue || 0) | number:'1.2-2' }} {{ events()[0]?.currency || currencySymbol() }}</span>
           </div>
         </div>
       </div>

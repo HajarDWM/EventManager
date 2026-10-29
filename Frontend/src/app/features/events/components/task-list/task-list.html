@@ -121,7 +121,7 @@
       <table class="table table-striped table-vcenter">
         <thead>
           <tr>
-            <th class="text-center" style="width: 50px;">Check</th>
+            <th class="text-center" style="width: 50px;"><i class="fa fa-check text-muted" [title]="'TASKS.CHECK' | translate"></i></th>
             <th>{{ 'TASKS.TASK_TITLE' | translate }}</th>
             <th>{{ 'TASKS.DUE_DATE' | translate }}</th>
             <th>{{ 'TASKS.PRIORITY' | translate }}</th>
@@ -232,9 +232,9 @@
             </div>
           </div>
           <div class="mb-3">
-            <label class="form-label fs-sm fw-semibold">Description / Notes</label>
+            <label class="form-label fs-sm fw-semibold">{{ 'TASKS.DESCRIPTION_NOTES' | translate }}</label>
             <textarea class="form-control form-control-alt fs-sm" rows="3"
-                      placeholder="Notes..."
+                      [placeholder]="'TASKS.NOTES_PLACEHOLDER' | translate"
                       [ngModel]="description()" (ngModelChange)="description.set($event)" name="description"></textarea>
           </div>
         </div>

@@ -1872,7 +1872,7 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
 
   public ngOnInit(): void {
     const urlLang = this.route.snapshot.queryParamMap.get('lang')?.toLowerCase();
-    if (urlLang === 'en' || urlLang === 'fr') {
+    if (urlLang === 'en' || urlLang === 'fr' || urlLang === 'ar') {
       this.translationService.setLanguage(urlLang);
     }
 
@@ -2815,6 +2815,13 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
       clearTimeout(this.advanceTimeout);
     }
     this.stopAllAudio();
+    if (typeof document !== 'undefined') {
+      document.documentElement.dir = 'ltr';
+    }
+    if (this.translationService.currentLang() === 'ar') {
+      const savedAdmin = this.translationService.getSavedAdminLanguage();
+      this.translationService.setLanguage(savedAdmin);
+    }
   }
 
   public getGoogleCalendarUrl(): string {

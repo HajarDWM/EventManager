@@ -36,7 +36,12 @@
     "NEXT": "التالي",
     "FINISH": "إنهاء",
     "TOTAL": "المجموع",
-    "VIEW_ALL": "عرض الكل"
+    "VIEW_ALL": "عرض الكل",
+    "NOT_SPECIFIED": "غير محدد",
+    "PAGE_OF": "صفحة {{ current }} من {{ total }}",
+    "LINK": "رابط",
+    "PREVIEW": "معاينة",
+    "DESCRIPTION": "الوصف"
   },
   "NAV": {
     "DASHBOARD": "لوحة القيادة",
@@ -207,7 +212,7 @@
     "CONFIRMED": "مؤكد",
     "DECLINED": "معتذر",
     "PENDING": "في الانتظار",
-    "TABLE": "الطاولة",
+    "TABLE": "طاولة",
     "SEAT": "المقعد",
     "GUEST_NAME": "اسم المدعو",
     "PHONE": "الهاتف",
@@ -217,7 +222,15 @@
     "QR_CODE": "رمز QR",
     "SEND_INVITATION": "إرسال الدعوة",
     "INVITATION_LINK": "رابط الدعوة",
-    "COPY_LINK": "نسخ الرابط"
+    "COPY_LINK": "نسخ الرابط",
+    "GUEST": "ضيف",
+    "STATUS_CONFIRMED": "مؤكد",
+    "STATUS_PENDING": "قيد الانتظار",
+    "STATUS_DECLINED": "معتذر",
+    "TICKETING_COL_TITLE": "الدفع / التذكرة",
+    "TICKETING_PAID": "مدفوع",
+    "TICKETING_UNPAID": "غير مدفوع",
+    "FULL_NAME_PH": "مثال: مريم العلمي"
   },
   "CATERING": {
     "TITLE": "خدمات الطعام والتموين",
@@ -228,7 +241,26 @@
     "ADD_DISH": "إضافة طبق",
     "DISH_NAME": "اسم الطبق",
     "PRICE": "السعر",
-    "CATEGORY": "التصنيف"
+    "CATEGORY": "التصنيف",
+    "SERVICE_1_STARTERS": "الخدمة 1: المقبلات",
+    "SERVICE_2_MAINS": "الخدمة 2: الأطباق الرئيسية",
+    "SERVICE_3_DESSERTS": "الخدمة 3: الحلويات",
+    "SERVICE_4_BEVERAGES": "الخدمة 4: المشروبات",
+    "SERVICE_OTHERS_TITLE": "خدمات أخرى وبوفيهات إضافية",
+    "OPTIONS_COUNT": "{{ count }} خيار(ات)",
+    "CHOICES_COUNT": "{{ count }} اختيار",
+    "GUESTS_CHOICE_TITLE": "عدد الضيوف الذين اختاروا هذا الطبق",
+    "NO_PHOTO_FALLBACK": "بدون صورة (خلفية افتراضية)",
+    "CATEGORY_LABEL": "الصنف",
+    "DIET_ALLERGENS": "الحمية / مسببات الحساسية",
+    "DIET_STANDARD": "عادي",
+    "BUFFET": "بوفيه",
+    "SEATED": "خدمة الطاولة",
+    "CAT_WELCOME_DRINKS": "مشروبات الترحيب",
+    "CAT_APPETIZERS": "مقبلات الكوكتيل",
+    "CAT_SALAD_BAR": "بوفيه السلطات",
+    "CAT_MAINS": "الأطباق الرئيسية",
+    "CAT_DESSERT_STATION_BUFFET": "محطة الحلويات (بوفيه)"
   },
   "TAXONOMY": {
     "TRADITIONAL": "احتفالات تقليدية وثقافية",
@@ -245,21 +277,39 @@
     "BACKGROUND": "خلفية الدعوة",
     "MUSIC": "الموسيقى الترحيبية",
     "EFFECTS": "التأثيرات الحركية",
-    "SAVE_CONFIG": "حفظ الإعدادات"
+    "SAVE_CONFIG": "حفظ الإعدادات",
+    "LINK_CHANNEL": "رابط",
+    "CLICK_TO_VIEW_JOURNEY": "انقر لعرض مسار وشاشات هذا الضيف",
+    "WHATSAPP_POSSIBLE": "واتساب متاح",
+    "EMAIL_POSSIBLE": "البريد الإلكتروني متاح",
+    "SMS_POSSIBLE": "الرسائل القصيرة متاحة",
+    "FORMAT_SMARTPHONE": "تنسيق الهاتف الذكي (95% من الضيوف)",
+    "FORMAT_DESKTOP": "تنسيق شاشة الكمبيوتر",
+    "OTHER_REMINDER_CHANNELS": "قنوات تذكير أخرى",
+    "OTHER_CHANNELS": "قنوات أخرى"
   },
   "BILLING": {
     "TITLE": "الفواتير والمدفوعات",
     "INVOICES": "الفواتير",
     "PAYMENT_STATUS": "حالة الدفع",
     "TOTAL_PAID": "إجمالي المدفوع",
-    "REMAINING": "المتبقي"
+    "REMAINING": "المتبقي",
+    "INITIAL_BUDGET_HT": "المبلغ بدون احتساب الرسوم",
+    "AMOUNT": "المبلغ",
+    "LINES_COUNT": "سطر/أسطر",
+    "ADD_AVENANT_TITLE": "إضافة ملحق أو تخفيض للميزانية",
+    "RECORD_PAYMENT_TITLE_BTN": "تسجيل دفعة أو تسبيق العميل",
+    "RECORD_EXPENSE_TITLE_BTN": "تسجيل نفقة أو تكلفة للحدث"
   },
   "TASKS": {
     "TITLE": "قائمة المهام",
     "ADD_TASK": "إضافة مهمة",
     "COMPLETED": "مكتملة",
     "IN_PROGRESS": "قيد الإنجاز",
-    "TODO": "للقيام بها"
+    "TODO": "للقيام بها",
+    "CHECK": "تحديد",
+    "DESCRIPTION_NOTES": "الوصف / ملاحظات",
+    "NOTES_PLACEHOLDER": "ملاحظات..."
   },
   "CLIENT_PORTAL": {
     "WELCOME": "مرحباً بكم في بوابتكم الخاصة",
@@ -271,7 +321,10 @@
     "TITLE": "باقة الاشتراك",
     "CURRENT_PLAN": "باقتك الحالية",
     "UPGRADE": "ترقية الباقة",
-    "FEATURES": "المميزات المتاحة"
+    "FEATURES": "المميزات المتاحة",
+    "STANDARD_DESC": "مثالي للممونين ومنظمي الحفلات في طور النمو.",
+    "PREMIUM_DESC": "للهياكل الكبرى والفعاليات غير المحدودة.",
+    "PERIOD": "فترة الصلاحية"
   },
   "PRICING": {
     "TITLE": "الباقات والأسعار",
@@ -284,7 +337,9 @@
     "PHONE": "رقم الهاتف",
     "EMAIL": "البريد الإلكتروني",
     "ADDRESS": "العنوان",
-    "SAVE_CHANGES": "حفظ التغييرات"
+    "SAVE_CHANGES": "حفظ التغييرات",
+    "BUSINESS_NAME_LABEL": "اسم المؤسسة (المنظم)",
+    "BUSINESS_NAME_PH": "مثال: مؤسسة الحفلات الراقية"
   },
   "EVENT_EXPORT": {
     "TITLE": "تصدير بيانات المناسبة",
@@ -510,6 +565,10 @@
     "SUBTITLE_PROM": "حفل التخرج السنوي",
     "SUBTITLE_ALUMNI": "ملتقى خريجي المعهد",
     "SUBTITLE_EXCLUSIVE": "دعوة استثنائية خاصة",
-    "SUBTITLE_OFFICIAL": "دعوة رسمية"
+    "SUBTITLE_OFFICIAL": "دعوة رسمية",
+    "SERVICE_STARTER": "المقبلات"
+  },
+  "TABLES": {
+    "TABLE_LABEL": "طاولة"
   }
 }

@@ -2,10 +2,10 @@
 <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-2 text-center text-md-start">
   <div class="flex-grow-1 mb-1 mb-md-0">
     <h1 class="h3 fw-bold mb-2">
-      Paramètres de Facturation Globale
+      {{ 'ADMIN.BILLING.HERO_TITLE' | translate }}
     </h1>
     <h2 class="h6 fw-medium text-muted mb-0">
-      Configurez les tarifs d'abonnements, les taxes système et l'email de support facturation.
+      {{ 'ADMIN.BILLING.HERO_SUBTITLE' | translate }}
     </h2>
   </div>
 </div>
@@ -29,25 +29,25 @@
   <div class="col-xl-8">
     <div class="block block-rounded bg-white shadow-sm border border-light">
       <div class="block-header block-header-default border-bottom bg-body-light p-3">
-        <h3 class="block-title fw-bold">Paramètres Système</h3>
+        <h3 class="block-title fw-bold">{{ 'ADMIN.BILLING.SYSTEM_SETTINGS' | translate }}</h3>
       </div>
       
       <div class="block-content p-4">
         <form (ngSubmit)="saveSettings()">
           <!-- Section Taxes & Devise -->
-          <h5 class="fw-bold text-dark border-bottom pb-2 mb-3"><i class="fa fa-percent me-2 text-primary"></i> Taxes & Devise</h5>
+          <h5 class="fw-bold text-dark border-bottom pb-2 mb-3"><i class="fa fa-percent me-2 text-primary"></i> {{ 'ADMIN.BILLING.TAXES_CURRENCY' | translate }}</h5>
           <div class="row mb-4">
             <div class="col-md-6 mb-3 mb-md-0">
-              <label class="form-label fw-semibold text-muted">Taux de TVA (%)</label>
+              <label class="form-label fw-semibold text-muted">{{ 'ADMIN.BILLING.VAT_RATE' | translate }}</label>
               <div class="input-group">
                 <input type="number" step="0.1" class="form-control border-light shadow-sm bg-body-light" [ngModel]="vatRate()" (ngModelChange)="vatRate.set($event)" name="vatRate">
                 <span class="input-group-text border-light bg-light">%</span>
               </div>
-              <div class="form-text fs-xs text-muted">Appliqué par défaut sur toutes les prestations générées.</div>
+              <div class="form-text fs-xs text-muted">{{ 'ADMIN.BILLING.VAT_HINT' | translate }}</div>
             </div>
             
             <div class="col-md-6">
-              <label class="form-label fw-semibold text-muted">Devise Système</label>
+              <label class="form-label fw-semibold text-muted">{{ 'ADMIN.BILLING.SYSTEM_CURRENCY' | translate }}</label>
               <select class="form-select border-light shadow-sm bg-body-light" [ngModel]="currency()" (ngModelChange)="onCurrencyChange($event)" name="currency">
                 <option value="CAD">CAD - Dollar Canadien ($)</option>
                 <option value="MAD">MAD - Dirham Marocain (DH)</option>
@@ -56,60 +56,60 @@
                 <option value="GBP">GBP - Livre Sterling (£)</option>
                 <option value="CHF">CHF - Franc Suisse (CHF)</option>
               </select>
-              <div class="form-text fs-xs text-muted">Devise par défaut de la plateforme.</div>
+              <div class="form-text fs-xs text-muted">{{ 'ADMIN.BILLING.CURRENCY_HINT' | translate }}</div>
             </div>
           </div>
           
           <!-- Section Tarification Abonnements -->
-          <h5 class="fw-bold text-dark border-bottom pb-2 mb-3 mt-4"><i class="fa fa-tags me-2 text-success"></i> Tarification des abonnements SaaS</h5>
+          <h5 class="fw-bold text-dark border-bottom pb-2 mb-3 mt-4"><i class="fa fa-tags me-2 text-success"></i> {{ 'ADMIN.BILLING.PLANS_PRICING' | translate }}</h5>
           <div class="row mb-4">
             <div class="col-md-6 mb-3 mb-md-0">
-              <label class="form-label fw-semibold text-muted">Abonnement STANDARD ({{ currencySymbol() }}/mois)</label>
+              <label class="form-label fw-semibold text-muted">{{ 'ADMIN.BILLING.STANDARD_PLAN_PRICE' | translate }} ({{ currencySymbol() }}/{{ 'SUBSCRIPTION.PER_MONTH' | translate }})</label>
               <div class="input-group">
                 <input type="number" step="0.01" class="form-control border-light shadow-sm bg-body-light" [ngModel]="subscriptionPriceStandard()" (ngModelChange)="subscriptionPriceStandard.set($event)" name="priceStandard">
                 <span class="input-group-text border-light bg-light">{{ currencySymbol() }}</span>
               </div>
-              <div class="form-text fs-xs text-muted">Prix mensuel pour le niveau intermédiaire.</div>
+              <div class="form-text fs-xs text-muted">{{ 'SUBSCRIPTION.STANDARD_DESC' | translate }}</div>
             </div>
             
             <div class="col-md-6">
-              <label class="form-label fw-semibold text-muted">Abonnement PREMIUM ({{ currencySymbol() }}/mois)</label>
+              <label class="form-label fw-semibold text-muted">{{ 'ADMIN.BILLING.PREMIUM_PLAN_PRICE' | translate }} ({{ currencySymbol() }}/{{ 'SUBSCRIPTION.PER_MONTH' | translate }})</label>
               <div class="input-group">
                 <input type="number" step="0.01" class="form-control border-light shadow-sm bg-body-light" [ngModel]="subscriptionPricePremium()" (ngModelChange)="subscriptionPricePremium.set($event)" name="pricePremium">
                 <span class="input-group-text border-light bg-light">{{ currencySymbol() }}</span>
               </div>
-              <div class="form-text fs-xs text-muted">Prix mensuel pour le niveau entreprise / illimité.</div>
+              <div class="form-text fs-xs text-muted">{{ 'SUBSCRIPTION.PREMIUM_DESC' | translate }}</div>
             </div>
           </div>
           
           <!-- Section Période de Grâce & Suspension -->
-          <h5 class="fw-bold text-dark border-bottom pb-2 mb-3 mt-4"><i class="fa fa-clock me-2 text-info"></i> Période de Grâce & Suspension</h5>
+          <h5 class="fw-bold text-dark border-bottom pb-2 mb-3 mt-4"><i class="fa fa-clock me-2 text-info"></i> {{ 'ADMIN.BILLING.SUPPORT_SECTION' | translate }}</h5>
           <div class="row mb-4">
             <div class="col-md-12">
-              <label class="form-label fw-semibold text-muted">Durée de la Période de Grâce après échéance de facturation (Jours)</label>
+              <label class="form-label fw-semibold text-muted">{{ 'ADMIN.BILLING.GRACE_PERIOD_DAYS' | translate }}</label>
               <div class="input-group">
                 <input type="number" min="1" max="30" class="form-control border-light shadow-sm bg-body-light" [ngModel]="gracePeriodDays()" (ngModelChange)="gracePeriodDays.set($event)" name="gracePeriodDays">
-                <span class="input-group-text border-light bg-light">Jours (Max 10 jours recommandé)</span>
+                <span class="input-group-text border-light bg-light">{{ 'ADMIN.CATERERS.DAYS_LEFT' | translate }}</span>
               </div>
-              <div class="form-text fs-xs text-muted">Durant cette période après le dépassement de la date de facturation, le compte de l'organisateur reste actif normalement avec des notifications de rappel amicales avant suspension effective.</div>
+              <div class="form-text fs-xs text-muted">{{ 'ADMIN.BILLING.GRACE_PERIOD_HINT' | translate }}</div>
             </div>
           </div>
 
           <!-- Section Support Facturation -->
-          <h5 class="fw-bold text-dark border-bottom pb-2 mb-3 mt-4"><i class="fa fa-envelope me-2 text-warning"></i> Contact Facturation</h5>
+          <h5 class="fw-bold text-dark border-bottom pb-2 mb-3 mt-4"><i class="fa fa-envelope me-2 text-warning"></i> {{ 'ADMIN.BILLING.SUPPORT_EMAIL' | translate }}</h5>
           <div class="row mb-4">
             <div class="col-md-12">
-              <label class="form-label fw-semibold text-muted">Adresse Email du support de facturation</label>
-              <input type="email" class="form-control border-light shadow-sm bg-body-light" placeholder="Ex: billing@eventmanager.com" [ngModel]="billingContactEmail()" (ngModelChange)="billingContactEmail.set($event)" name="billingContactEmail">
-              <div class="form-text fs-xs text-muted">Cette adresse est affichée aux organisateurs pour toute demande concernant leurs abonnements.</div>
+              <label class="form-label fw-semibold text-muted">{{ 'ADMIN.BILLING.SUPPORT_EMAIL' | translate }}</label>
+              <input type="email" class="form-control border-light shadow-sm bg-body-light" placeholder="billing@eventmanager.com" [ngModel]="billingContactEmail()" (ngModelChange)="billingContactEmail.set($event)" name="billingContactEmail">
+              <div class="form-text fs-xs text-muted">{{ 'ADMIN.BILLING.SUPPORT_EMAIL_HINT' | translate }}</div>
             </div>
           </div>
           
           <!-- Submit Button -->
           <div class="d-flex justify-content-end border-top pt-3 mt-4">
             <button type="submit" class="btn btn-primary" [disabled]="isSaving()">
-              <span *ngIf="isSaving()"><i class="fa fa-spinner fa-spin me-1"></i> Sauvegarde...</span>
-              <span *ngIf="!isSaving()"><i class="fa fa-save me-1"></i> Enregistrer les modifications</span>
+              <span *ngIf="isSaving()"><i class="fa fa-spinner fa-spin me-1"></i> {{ 'COMMON.LOADING' | translate }}</span>
+              <span *ngIf="!isSaving()"><i class="fa fa-save me-1"></i> {{ 'ADMIN.BILLING.SAVE_SETTINGS' | translate }}</span>
             </button>
           </div>
         </form>
@@ -122,26 +122,22 @@
     <div class="block block-rounded bg-white shadow-sm border border-light h-100 d-flex flex-column">
       <div class="block-header block-header-default border-bottom bg-body-light p-3">
         <h3 class="block-title fw-bold">
-          <i class="fa fa-file-invoice-dollar text-info me-2"></i>Aperçu de Facture Type
+          <i class="fa fa-file-invoice-dollar text-info me-2"></i>{{ 'SUBSCRIPTION.TITLE' | translate }}
         </h3>
       </div>
       <div class="block-content p-4 flex-grow-1">
-        <p class="text-muted fs-xs mb-3">
-          Visualisez en temps réel l'impact de vos tarifs, devise et taux de TVA sur la facturation finale d'un organisateur.
-        </p>
-
         <!-- Toggle Plan -->
-        <label class="form-label fw-semibold text-muted mb-2">Plan d'abonnement :</label>
+        <label class="form-label fw-semibold text-muted mb-2">{{ 'ADMIN.CATERERS.TH_PLAN' | translate }} :</label>
         <div class="btn-group w-100 mb-4" role="group" aria-label="Toggle preview plan">
           <button type="button" class="btn btn-sm py-2 fw-semibold" 
                   [ngClass]="previewPlan() === 'standard' ? 'btn-primary' : 'btn-alt-secondary'"
                   (click)="previewPlan.set('standard')">
-            Plan Standard
+            Standard
           </button>
           <button type="button" class="btn btn-sm py-2 fw-semibold" 
                   [ngClass]="previewPlan() === 'premium' ? 'btn-primary' : 'btn-alt-secondary'"
                   (click)="previewPlan.set('premium')">
-            Plan Premium
+            Premium
           </button>
         </div>
 
@@ -149,18 +145,18 @@
         <div class="border border-light rounded-3 bg-body-light p-3 shadow-xs">
           <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2 border-light-dark">
             <div>
-              <span class="fs-xs text-muted text-uppercase d-block">Organisateur</span>
-              <span class="fw-bold text-dark fs-sm">Traiteur Gourmet</span>
+              <span class="fs-xs text-muted text-uppercase d-block">{{ 'HEADER.ORGANIZER' | translate }}</span>
+              <span class="fw-bold text-dark fs-sm">Gourmet Catering</span>
             </div>
             <div class="text-end">
-              <span class="fs-xs text-muted text-uppercase d-block">Statut</span>
-              <span class="badge bg-warning-light text-warning-dark rounded-pill px-2">Brouillon</span>
+              <span class="fs-xs text-muted text-uppercase d-block">{{ 'COMMON.STATUS' | translate }}</span>
+              <span class="badge bg-warning-light text-warning-dark rounded-pill px-2">{{ 'EVENTS.STATUS_DRAFT' | translate }}</span>
             </div>
           </div>
 
           <div class="d-flex flex-column gap-2">
             <div class="d-flex justify-content-between fs-sm text-muted">
-              <span>Prix de base (HT) :</span>
+              <span>{{ 'BILLING.INITIAL_BUDGET_HT' | translate }} :</span>
               <span class="fw-semibold text-dark">{{ formatPrice(previewPlanPrice()) }}</span>
             </div>
             <div class="d-flex justify-content-between fs-sm text-muted">
@@ -169,15 +165,10 @@
             </div>
             <hr class="my-2 border-light-dark">
             <div class="d-flex justify-content-between align-items-center fw-bold text-dark fs-base">
-              <span>Montant Total (TTC) :</span>
+              <span>{{ 'COMMON.TOTAL' | translate }} (TTC) :</span>
               <span class="text-primary fs-5">{{ formatPrice(previewTotalAmount()) }}</span>
             </div>
           </div>
-        </div>
-        
-        <div class="alert alert-info py-2 px-3 fs-xs mt-4 mb-0 border-info-light">
-          <h6 class="alert-heading fw-bold mb-1"><i class="fa fa-info-circle me-1"></i> Renseignement</h6>
-          <p class="mb-0">Les prix des abonnements sont affichés et facturés aux organisateurs selon cette configuration globale.</p>
         </div>
       </div>
     </div>
@@ -186,5 +177,5 @@
 
 <div class="text-center py-5" *ngIf="isLoading()">
   <i class="fa fa-spinner fa-spin text-primary fs-2"></i>
-  <p class="mt-2 text-muted">Chargement des paramètres de facturation...</p>
+  <p class="mt-2 text-muted">{{ 'COMMON.LOADING' | translate }}</p>
 </div>

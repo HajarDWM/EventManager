@@ -1,12 +1,11 @@
 <!-- Hero -->
-<div
-  class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-2 text-center text-md-start">
+<div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-2 text-center text-md-start">
   <div class="flex-grow-1 mb-1 mb-md-0">
     <h1 class="h3 fw-bold mb-2">
-      Gestion des Comptes Organisateurs
+      {{ 'ADMIN.CATERERS.HERO_TITLE' | translate }}
     </h1>
     <h2 class="h6 fw-medium text-muted mb-0">
-      Supervisez les abonnements, activez ou suspendez les accès de vos organisateurs.
+      {{ 'ADMIN.CATERERS.HERO_SUBTITLE' | translate }}
     </h2>
   </div>
 </div>
@@ -27,24 +26,23 @@
 
 <!-- Main Table Block -->
 <div class="block block-rounded bg-white shadow-sm border border-light mt-4">
-  <div
-    class="block-header block-header-default border-bottom bg-body-light d-flex justify-content-between align-items-center">
-    <h3 class="block-title fw-bold">Liste des organisateurs</h3>
+  <div class="block-header block-header-default border-bottom bg-body-light d-flex justify-content-between align-items-center">
+    <h3 class="block-title fw-bold">{{ 'ADMIN.CATERERS.LIST_TITLE' | translate }}</h3>
     <div class="d-flex align-items-center gap-2">
       <!-- Status Filter Dropdown -->
       <select class="form-select form-select-sm" [ngModel]="selectedStatusFilter()"
         (ngModelChange)="onStatusFilterChange($event)" style="width: 210px;" name="statusFilter">
-        <option value="">Tous les statuts</option>
-        <option value="PENDING">En attente d'approbation</option>
-        <option value="APPROVED">Approuvés</option>
-        <option value="SUSPENDED">Suspendus</option>
+        <option value="">{{ 'ADMIN.CATERERS.FILTER_ALL' | translate }}</option>
+        <option value="PENDING">{{ 'ADMIN.CATERERS.FILTER_PENDING' | translate }}</option>
+        <option value="APPROVED">{{ 'ADMIN.CATERERS.FILTER_APPROVED' | translate }}</option>
+        <option value="SUSPENDED">{{ 'ADMIN.CATERERS.FILTER_SUSPENDED' | translate }}</option>
       </select>
 
       <button class="btn btn-sm btn-primary" (click)="openAddModal()">
-        <i class="fa fa-plus me-1"></i> Ajouter un Organisateur
+        <i class="fa fa-plus me-1"></i> {{ 'ADMIN.CATERERS.ADD_ORGANIZER' | translate }}
       </button>
       <button class="btn btn-sm btn-alt-secondary" (click)="loadCaterers()" [disabled]="isLoading()">
-        <i class="fa fa-sync-alt" [class.fa-spin]="isLoading()"></i> Actualiser
+        <i class="fa fa-sync-alt" [class.fa-spin]="isLoading()"></i> {{ 'ADMIN.CATERERS.REFRESH' | translate }}
       </button>
     </div>
   </div>
@@ -54,14 +52,14 @@
       <table class="table table-bordered table-striped table-vcenter fs-sm">
         <thead class="table-light">
           <tr>
-            <th>Nom de l'entreprise</th>
-            <th>Adresse Email</th>
-            <th style="width: 110px;">Abonnement</th>
-            <th style="width: 140px;" class="text-center">Total Événements</th>
-            <th style="width: 140px;" class="text-center">Quota (Cumulé)</th>
-            <th style="width: 140px;">Jours Restants</th>
-            <th style="width: 170px;" class="text-center">État du Compte</th>
-            <th style="width: 110px;" class="text-center">Actions</th>
+            <th>{{ 'ADMIN.CATERERS.TH_BUSINESS' | translate }}</th>
+            <th>{{ 'ADMIN.CATERERS.TH_EMAIL' | translate }}</th>
+            <th style="width: 110px;">{{ 'ADMIN.CATERERS.TH_PLAN' | translate }}</th>
+            <th style="width: 140px;" class="text-center">{{ 'ADMIN.CATERERS.TH_TOTAL_EVENTS' | translate }}</th>
+            <th style="width: 140px;" class="text-center">{{ 'ADMIN.CATERERS.TH_QUOTA' | translate }}</th>
+            <th style="width: 140px;">{{ 'ADMIN.CATERERS.TH_DAYS_LEFT' | translate }}</th>
+            <th style="width: 170px;" class="text-center">{{ 'ADMIN.CATERERS.TH_STATUS' | translate }}</th>
+            <th style="width: 110px;" class="text-center">{{ 'ADMIN.CATERERS.TH_ACTIONS' | translate }}</th>
           </tr>
         </thead>
         <tbody>
@@ -93,13 +91,13 @@
               <span
                 *ngIf="(caterer.subscriptionRemainingDays || 0) < 0 || caterer.subscriptionStatus === 'EXPIRED' || (caterer.subscriptionRemainingDays || 0) < 3"
                 class="badge bg-danger text-white fw-bold">
-                {{ (caterer.subscriptionRemainingDays || 0) < 0 || caterer.subscriptionStatus==='EXPIRED' ? 'Expiré' :
-                  caterer.subscriptionRemainingDays + ' jours restants' }} </span>
-                  <span
-                    *ngIf="(caterer.subscriptionRemainingDays || 0) >= 3 && caterer.subscriptionStatus !== 'EXPIRED'"
-                    class="text-dark fw-semibold">
-                    {{ caterer.subscriptionRemainingDays }} jours restants
-                  </span>
+                {{ (caterer.subscriptionRemainingDays || 0) < 0 || caterer.subscriptionStatus==='EXPIRED' ? ('ADMIN.CATERERS.EXPIRED' | translate) :
+                  (caterer.subscriptionRemainingDays + ' ' + ('ADMIN.CATERERS.DAYS_LEFT' | translate)) }} </span>
+              <span
+                *ngIf="(caterer.subscriptionRemainingDays || 0) >= 3 && caterer.subscriptionStatus !== 'EXPIRED'"
+                class="text-dark fw-semibold">
+                {{ caterer.subscriptionRemainingDays }} {{ 'ADMIN.CATERERS.DAYS_LEFT' | translate }}
+              </span>
             </td>
             <td class="text-center">
               <span class="badge" [ngClass]="{
@@ -107,9 +105,9 @@
                 'badge-custom-pending': caterer.accountStatus === 'PENDING',
                 'badge-custom-suspended': caterer.accountStatus === 'SUSPENDED'
               }">
-                <span *ngIf="caterer.accountStatus === 'APPROVED' || caterer.accountStatus === 'ACTIVE'">Approuvé</span>
-                <span *ngIf="caterer.accountStatus === 'PENDING'">En attente d'approbation</span>
-                <span *ngIf="caterer.accountStatus === 'SUSPENDED'">Suspendu</span>
+                <span *ngIf="caterer.accountStatus === 'APPROVED' || caterer.accountStatus === 'ACTIVE'">{{ 'ADMIN.CATERERS.STATUS_APPROVED' | translate }}</span>
+                <span *ngIf="caterer.accountStatus === 'PENDING'">{{ 'ADMIN.CATERERS.STATUS_PENDING' | translate }}</span>
+                <span *ngIf="caterer.accountStatus === 'SUSPENDED'">{{ 'ADMIN.CATERERS.STATUS_SUSPENDED' | translate }}</span>
               </span>
             </td>
             <td class="text-center">
@@ -117,20 +115,20 @@
                 <!-- Quick Approve button for PENDING or SUSPENDED -->
                 <button type="button" class="btn btn-sm text-success bg-transparent border-0 shadow-none p-1" 
                         *ngIf="caterer.accountStatus === 'PENDING' || caterer.accountStatus === 'SUSPENDED'"
-                        (click)="approveCaterer(caterer)" title="Approuver">
+                        (click)="approveCaterer(caterer)" [title]="'ADMIN.CATERERS.ACTION_APPROVE' | translate">
                   <i class="fa fa-fw fa-check"></i>
                 </button>
 
                 <!-- Quick Suspend button for PENDING or APPROVED/ACTIVE -->
                 <button type="button" class="btn btn-sm text-danger bg-transparent border-0 shadow-none p-1" 
                         *ngIf="caterer.accountStatus === 'PENDING' || caterer.accountStatus === 'APPROVED' || caterer.accountStatus === 'ACTIVE'"
-                        (click)="suspendCaterer(caterer)" title="Suspendre">
+                        (click)="suspendCaterer(caterer)" [title]="'ADMIN.CATERERS.ACTION_SUSPEND' | translate">
                   <i class="fa fa-fw fa-ban"></i>
                 </button>
 
                 <!-- Edit Subscription button -->
                 <button type="button" class="btn btn-sm text-secondary bg-transparent border-0 shadow-none p-1" 
-                        (click)="openEditModal(caterer)" title="Modifier Abonnement">
+                        (click)="openEditModal(caterer)" [title]="'ADMIN.CATERERS.ACTION_CHANGE_PLAN' | translate">
                   <i class="fa fa-fw fa-credit-card"></i>
                 </button>
               </div>
@@ -138,7 +136,7 @@
           </tr>
           <tr *ngIf="caterers().length === 0 && !isLoading()">
             <td colspan="8" class="text-center py-4 text-muted">
-              Aucun organisateur enregistré sur la plateforme.
+              {{ 'COMMON.NO' | translate }}
             </td>
           </tr>
         </tbody>
@@ -155,7 +153,7 @@
       <div class="block block-rounded block-transparent mb-0">
         <div class="block-header block-header-default">
           <h3 class="block-title fw-bold text-dark">
-            Abonnement : {{ selectedCaterer()?.businessName }}
+            {{ 'ADMIN.CATERERS.MODAL_PLAN_TITLE' | translate }} : {{ selectedCaterer()?.businessName }}
           </h3>
           <div class="block-options">
             <button type="button" class="btn-block-option" (click)="closeEditModal()">
@@ -166,7 +164,7 @@
 
         <div class="block-content fs-sm py-3">
           <div class="mb-3">
-            <label class="form-label fw-semibold text-muted">Plan d'abonnement</label>
+            <label class="form-label fw-semibold text-muted">{{ 'ADMIN.CATERERS.TH_PLAN' | translate }}</label>
             <select class="form-select border-light shadow-sm bg-body-light" [(ngModel)]="editPlan">
               <option value="FREE">FREE</option>
               <option value="STANDARD">STANDARD</option>
@@ -175,21 +173,21 @@
           </div>
 
           <div class="mb-3">
-            <label class="form-label fw-semibold text-muted">État de l'abonnement</label>
+            <label class="form-label fw-semibold text-muted">{{ 'ADMIN.CATERERS.TH_STATUS' | translate }}</label>
             <select class="form-select border-light shadow-sm bg-body-light" [(ngModel)]="editSubStatus">
               <option value="ACTIVE">ACTIVE</option>
-              <option value="TRIAL">TRIAL (Essai)</option>
-              <option value="EXPIRED">EXPIRED (Expiré)</option>
+              <option value="TRIAL">TRIAL</option>
+              <option value="EXPIRED">EXPIRED</option>
             </select>
           </div>
 
           <div class="row">
             <div class="col-6 mb-3">
-              <label class="form-label fw-semibold text-muted">Date de début</label>
+              <label class="form-label fw-semibold text-muted">{{ 'ADMIN.CATERER_DETAIL.REGISTRATION_DATE' | translate }}</label>
               <input type="date" class="form-control border-light shadow-sm bg-body-light" [(ngModel)]="editStartDate">
             </div>
             <div class="col-6 mb-3">
-              <label class="form-label fw-semibold text-muted">Date d'expiration</label>
+              <label class="form-label fw-semibold text-muted">{{ 'ADMIN.CATERER_DETAIL.SUBSCRIPTION_END' | translate }}</label>
               <input type="date" class="form-control border-light shadow-sm bg-body-light" [(ngModel)]="editEndDate">
             </div>
           </div>
@@ -197,10 +195,10 @@
 
         <div class="block-content block-content-full text-end bg-body py-3">
           <button type="button" class="btn btn-sm btn-alt-secondary me-1" (click)="closeEditModal()">
-            Fermer
+            {{ 'COMMON.CLOSE' | translate }}
           </button>
           <button type="button" class="btn btn-sm btn-primary" (click)="saveSubscription()">
-            Sauvegarder
+            {{ 'COMMON.SAVE' | translate }}
           </button>
         </div>
       </div>
@@ -216,7 +214,7 @@
       <div class="block block-rounded block-transparent mb-0">
         <div class="block-header block-header-default">
           <h3 class="block-title fw-bold text-dark">
-            <i class="fa fa-user-plus text-primary me-2"></i> Ajouter un nouvel Organisateur
+            <i class="fa fa-user-plus text-primary me-2"></i> {{ 'ADMIN.CATERERS.MODAL_ADD_TITLE' | translate }}
           </h3>
           <div class="block-options">
             <button type="button" class="btn-block-option" (click)="closeAddModal()">
@@ -227,40 +225,40 @@
 
         <div class="block-content fs-sm py-3">
           <div class="mb-3">
-            <label class="form-label fw-semibold text-muted">Nom de l'entreprise <span
+            <label class="form-label fw-semibold text-muted">{{ 'ADMIN.CATERERS.TH_BUSINESS' | translate }} <span
                 class="text-danger">*</span></label>
             <input type="text" class="form-control border-light shadow-sm bg-body-light"
-              placeholder="Ex: Délices du Palais" [(ngModel)]="newBusinessName">
+              [placeholder]="'PROFILE.BUSINESS_NAME_PH' | translate" [(ngModel)]="newBusinessName">
           </div>
 
           <div class="mb-3">
-            <label class="form-label fw-semibold text-muted">Adresse Email <span class="text-danger">*</span></label>
+            <label class="form-label fw-semibold text-muted">{{ 'ADMIN.CATERERS.TH_EMAIL' | translate }} <span class="text-danger">*</span></label>
             <input type="email" class="form-control border-light shadow-sm bg-body-light"
-              placeholder="email@exemple.com" [(ngModel)]="newEmail">
+              placeholder="email@example.com" [(ngModel)]="newEmail">
           </div>
 
           <div class="mb-3">
-            <label class="form-label fw-semibold text-muted">Mot de passe <span class="text-danger">*</span></label>
+            <label class="form-label fw-semibold text-muted">{{ 'AUTH.PASSWORD_LABEL' | translate }} <span class="text-danger">*</span></label>
             <input type="password" class="form-control border-light shadow-sm bg-body-light" placeholder="••••••••"
               [(ngModel)]="newPassword">
           </div>
 
           <div class="mb-3">
-            <label class="form-label fw-semibold text-muted">Plan d'abonnement</label>
+            <label class="form-label fw-semibold text-muted">{{ 'ADMIN.CATERERS.TH_PLAN' | translate }}</label>
             <select class="form-select border-light shadow-sm bg-body-light" [(ngModel)]="newPlan">
-              <option value="FREE">FREE (Max 2 événements)</option>
-              <option value="STANDARD">STANDARD (Max 5 événements)</option>
-              <option value="PREMIUM">PREMIUM (Max 15 événements)</option>
+              <option value="FREE">FREE (Max 2 {{ 'NAV.EVENTS' | translate | lowercase }})</option>
+              <option value="STANDARD">STANDARD (Max 5 {{ 'NAV.EVENTS' | translate | lowercase }})</option>
+              <option value="PREMIUM">PREMIUM (Max 15 {{ 'NAV.EVENTS' | translate | lowercase }})</option>
             </select>
           </div>
 
           <div class="row">
             <div class="col-6 mb-3">
-              <label class="form-label fw-semibold text-muted">Date de début</label>
+              <label class="form-label fw-semibold text-muted">{{ 'ADMIN.CATERER_DETAIL.REGISTRATION_DATE' | translate }}</label>
               <input type="date" class="form-control border-light shadow-sm bg-body-light" [(ngModel)]="newStartDate">
             </div>
             <div class="col-6 mb-3">
-              <label class="form-label fw-semibold text-muted">Date d'expiration</label>
+              <label class="form-label fw-semibold text-muted">{{ 'ADMIN.CATERER_DETAIL.SUBSCRIPTION_END' | translate }}</label>
               <input type="date" class="form-control border-light shadow-sm bg-body-light" [(ngModel)]="newEndDate">
             </div>
           </div>
@@ -268,10 +266,10 @@
 
         <div class="block-content block-content-full text-end bg-body py-3">
           <button type="button" class="btn btn-sm btn-alt-secondary me-1" (click)="closeAddModal()">
-            Annuler
+            {{ 'COMMON.CANCEL' | translate }}
           </button>
           <button type="button" class="btn btn-sm btn-primary" (click)="createCaterer()">
-            Créer le compte
+            {{ 'COMMON.SAVE' | translate }}
           </button>
         </div>
       </div>

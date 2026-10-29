@@ -6,21 +6,21 @@
   <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-2 text-center text-md-start">
     <div class="flex-grow-1 mb-1 mb-md-0">
       <h1 class="h3 fw-bold mb-2">
-        Modèles & Thèmes d'Invitations Digitales
+        {{ 'ADMIN.TEMPLATES.HERO_TITLE' | translate }}
       </h1>
       <h2 class="h6 fw-medium text-muted mb-0">
-        Configurez les thèmes visuels, calques décoratifs et styles d'invitations interactives pour les événements.
+        {{ 'ADMIN.TEMPLATES.HERO_SUBTITLE' | translate }}
       </h2>
     </div>
     <div class="mt-2 mt-md-0 d-flex align-items-center gap-2.5">
       <button type="button" 
               class="btn btn-outline-primary bg-white d-inline-flex align-items-center gap-2 shadow-xs rounded-pill px-3.5 py-2 border border-primary-subtle fw-semibold text-primary hover-shadow" 
               (click)="openCategoryModal()"
-              title="Gérer et personnaliser les thématiques et groupes d'invitations">
+              [title]="'ADMIN.TEMPLATES.MANAGE_CATEGORIES' | translate">
         <div class="p-1 bg-primary-subtle text-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 24px; height: 24px;">
           <i class="fa fa-tags fs-3xs"></i>
         </div>
-        <span>Gérer les Catégories</span>
+        <span>{{ 'ADMIN.TEMPLATES.MANAGE_CATEGORIES' | translate }}</span>
         <span class="badge bg-primary text-white rounded-pill px-2 py-0.5 fs-3xs ms-0.5">{{ taxonomy().length }}</span>
       </button>
 
@@ -28,7 +28,7 @@
               class="btn btn-primary d-inline-flex align-items-center gap-2 shadow-sm rounded-pill px-4 py-2 fw-semibold" 
               (click)="openAddModal()">
         <i class="fa fa-plus-circle fs-sm"></i>
-        <span>Nouveau Modèle</span>
+        <span>{{ 'ADMIN.TEMPLATES.NEW_TEMPLATE' | translate }}</span>
       </button>
     </div>
   </div>
@@ -54,7 +54,7 @@
               [class.active]="activeCategoryFilter() === 'ALL'"
               (click)="setCategoryFilter('ALL')">
         <i class="fa fa-layer-group tab-icon"></i>
-        <span>Tous les modèles</span>
+        <span>{{ 'ADMIN.TEMPLATES.ALL_TEMPLATES' | translate }}</span>
         <span class="tab-count">{{ templates().length }}</span>
       </button>
 
@@ -83,7 +83,7 @@
               [class.active]="activeSubCategoryFilter() === 'ALL'"
               (click)="setSubCategoryFilter('ALL')">
         <i class="fa fa-asterisk"></i>
-        <span>Toutes</span>
+        <span>{{ 'COMMON.ALL' | translate }}</span>
       </button>
 
       <button type="button" class="subcategory-chip"
@@ -174,10 +174,10 @@
 
         <div class="bg-body-light rounded-bottom border-top border-light p-2 d-flex justify-content-end gap-2">
           <button type="button" class="btn btn-sm btn-alt-primary" (click)="openEditModal(template)">
-            <i class="fa fa-pencil-alt me-1"></i> Modifier
+            <i class="fa fa-pencil-alt me-1"></i> {{ 'COMMON.EDIT' | translate }}
           </button>
           <button type="button" class="btn btn-sm btn-alt-danger" (click)="deleteTemplate(template.id!)">
-            <i class="fa fa-trash-alt me-1"></i> Supprimer
+            <i class="fa fa-trash-alt me-1"></i> {{ 'COMMON.DELETE' | translate }}
           </button>
         </div>
       </div>

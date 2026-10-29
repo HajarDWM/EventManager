@@ -310,7 +310,7 @@
                     [class.table-active]="guest.id ? selectedGuestIds()[guest.id] : false"
                     style="cursor: pointer;"
                     (click)="openGuestJourney(guest)"
-                    title="Cliquer pour voir le parcours et les écrans de cet invité">
+                    [title]="'INVITATION_SETUP.CLICK_TO_VIEW_JOURNEY' | translate">
                   <td (click)="$event.stopPropagation()">
                     <input type="checkbox" class="form-check-input cursor-pointer" 
                            [checked]="guest.id ? selectedGuestIds()[guest.id] : false" 
@@ -318,7 +318,7 @@
                   </td>
                   <td>
                     <div class="fw-semibold text-dark">{{ guest.fullName }}</div>
-                    <span class="fs-xxs text-muted" *ngIf="guest.tableNumber">Table : {{ guest.tableNumber }}</span>
+                    <span class="fs-xxs text-muted" *ngIf="guest.tableNumber">{{ 'GUESTS.TABLE' | translate }} : {{ guest.tableNumber }}</span>
                   </td>
                   <td>
                     <div class="fs-xs text-muted" *ngIf="guest.email"><i class="far fa-envelope me-1"></i>{{ guest.email }}</div>
@@ -340,9 +340,9 @@
                   </td>
                   <td class="text-center">
                     <div class="d-flex justify-content-center gap-1.5">
-                      <i class="fab fa-whatsapp text-success fs-xs" *ngIf="guest.phone" title="WhatsApp possible"></i>
-                      <i class="far fa-envelope text-info fs-xs" *ngIf="guest.email" title="E-mail possible"></i>
-                      <i class="fa fa-comment-sms text-warning fs-xs" *ngIf="guest.phone" title="SMS possible"></i>
+                      <i class="fab fa-whatsapp text-success fs-xs" *ngIf="guest.phone" [title]="'INVITATION_SETUP.WHATSAPP_POSSIBLE' | translate"></i>
+                      <i class="far fa-envelope text-info fs-xs" *ngIf="guest.email" [title]="'INVITATION_SETUP.EMAIL_POSSIBLE' | translate"></i>
+                      <i class="fa fa-comment-sms text-warning fs-xs" *ngIf="guest.phone" [title]="'INVITATION_SETUP.SMS_POSSIBLE' | translate"></i>
                     </div>
                   </td>
                   <td class="text-center" (click)="$event.stopPropagation()">
@@ -575,7 +575,7 @@
                     class="btn btn-xs rounded-pill px-3 py-1 d-flex align-items-center gap-1.5 transition" 
                     [ngClass]="previewDevice() === 'MOBILE' ? 'btn-primary text-white shadow-2xs fw-bold' : 'text-muted border-0 bg-transparent'"
                     (click)="setPreviewDevice('MOBILE')"
-                    title="Format Smartphone (95% des invités)">
+                    [title]="'INVITATION_SETUP.FORMAT_SMARTPHONE' | translate">
               <i class="fa fa-mobile-screen fs-xs"></i>
               <span class="fs-3xs fw-semibold">{{ 'INVITATION_SETUP.DEVICE_MOBILE' | translate }}</span>
             </button>
@@ -583,7 +583,7 @@
                     class="btn btn-xs rounded-pill px-3 py-1 d-flex align-items-center gap-1.5 transition" 
                     [ngClass]="previewDevice() === 'DESKTOP' ? 'btn-primary text-white shadow-2xs fw-bold' : 'text-muted border-0 bg-transparent'"
                     (click)="setPreviewDevice('DESKTOP')"
-                    title="Format Ordinateur & Grand Écran">
+                    [title]="'INVITATION_SETUP.FORMAT_DESKTOP' | translate">
               <i class="fa fa-laptop fs-xs"></i>
               <span class="fs-3xs fw-semibold">{{ 'INVITATION_SETUP.DEVICE_PC' | translate }}</span>
             </button>
@@ -1120,8 +1120,8 @@
                     [ngClass]="primaryChannel.btnClass"
                     data-bs-toggle="dropdown" 
                     aria-expanded="false"
-                    title="Autres canaux de relance">
-              <span class="visually-hidden">Autres canaux</span>
+                    [title]="'INVITATION_SETUP.OTHER_REMINDER_CHANNELS' | translate">
+              <span class="visually-hidden">{{ 'INVITATION_SETUP.OTHER_CHANNELS' | translate }}</span>
             </button>
             <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-3 p-1.5 fs-xs">
               <li *ngIf="selectedJourneyGuest()?.phone && primaryChannel.type !== 'WHATSAPP'">

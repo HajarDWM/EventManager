@@ -151,7 +151,7 @@
             <th>{{ 'GUESTS.CONTACT' | translate }}</th>
             <th>{{ 'GUESTS.GROUP' | translate }}</th>
             <th>{{ 'GUESTS.STATUS_PRESENCE' | translate }}</th>
-            <th *ngIf="event()?.isPaidEvent">Paiement / Billet</th>
+            <th *ngIf="event()?.isPaidEvent">{{ 'GUESTS.TICKETING_COL_TITLE' | translate }}</th>
             <th>{{ 'GUESTS.POSITION_TABLE' | translate }}</th>
             <th>{{ 'GUESTS.DIETARY' | translate }}</th>
             <th class="text-end" style="min-width: 180px;">{{ 'COMMON.ACTIONS' | translate }}</th>
@@ -181,10 +181,10 @@
             </td>
             <td *ngIf="event()?.isPaidEvent">
               <span class="badge bg-success text-white px-2.5 py-1.5 rounded-pill fw-bold" *ngIf="g.paymentStatus === 'PAID'">
-                <i class="fa fa-check-circle me-1"></i> Payé ({{ g.paidAmount || event()?.ticketPrice }} {{ event()?.currency || 'MAD' }})
+                <i class="fa fa-check-circle me-1"></i> {{ 'GUESTS.TICKETING_PAID' | translate }} ({{ g.paidAmount || event()?.ticketPrice }} {{ event()?.currency || 'MAD' }})
               </span>
               <span class="badge bg-warning text-dark px-2.5 py-1.5 rounded-pill fw-bold" *ngIf="g.paymentStatus === 'UNPAID' || (g.status === 'CONFIRMED' && g.paymentStatus !== 'PAID')">
-                <i class="fa fa-clock me-1"></i> Non réglé ({{ event()?.ticketPrice }} {{ event()?.currency || 'MAD' }})
+                <i class="fa fa-clock me-1"></i> {{ 'GUESTS.TICKETING_UNPAID' | translate }} ({{ event()?.ticketPrice }} {{ event()?.currency || 'MAD' }})
               </span>
               <span class="badge bg-secondary-light text-secondary px-2.5 py-1.5 rounded-pill" *ngIf="g.paymentStatus !== 'PAID' && g.paymentStatus !== 'UNPAID' && g.status !== 'CONFIRMED'">
                 {{ 'GUESTS.PENDING' | translate }}
@@ -272,7 +272,7 @@
               <div class="input-group luxury-input-group">
                 <span class="input-group-text input-icon-box"><i class="fa fa-user"></i></span>
                 <input type="text" class="form-control"
-                       placeholder="Ex: Marie Dupont" [ngModel]="fullName()" (ngModelChange)="fullName.set($event)" name="fullName" required>
+                       [placeholder]="'GUESTS.FULL_NAME_PH' | translate" [ngModel]="fullName()" (ngModelChange)="fullName.set($event)" name="fullName" required>
               </div>
             </div>
 

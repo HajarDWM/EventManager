@@ -33,6 +33,9 @@ export class Layout implements OnInit {
   protected readonly isSubscriptionExpired = signal(false);
 
   public ngOnInit(): void {
+    if (typeof document !== 'undefined') {
+      document.documentElement.dir = 'ltr';
+    }
     this.loadCatererProfile();
   }
 

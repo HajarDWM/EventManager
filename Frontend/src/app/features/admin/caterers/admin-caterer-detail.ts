@@ -4,11 +4,12 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AdminService } from '../../../core/services/admin.service';
 import { CurrencyService } from '../../../core/services/currency.service';
 import { EventService } from '../../events/services/event.service';
+import { TranslatePipe } from '../../../core/pipes/translate.pipe';
 
 @Component({
   selector: 'app-admin-caterer-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, TranslatePipe],
   templateUrl: './admin-caterer-detail.html'
 })
 export class AdminCatererDetail implements OnInit {

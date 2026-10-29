@@ -10,11 +10,12 @@ import {
   getCategoryTaxonomy, 
   getAllSubcategoriesForCategory 
 } from '../../../core/constants/template-taxonomy.constants';
+import { TranslatePipe } from '../../../core/pipes/translate.pipe';
 
 @Component({
   selector: 'app-admin-templates',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslatePipe],
   templateUrl: './admin-templates.html',
   styleUrls: ['./admin-templates.scss']
 })

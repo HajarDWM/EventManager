@@ -243,7 +243,7 @@
 
               <!-- Mini Pagination -->
               <div class="d-flex justify-content-between align-items-center mt-2" *ngIf="dashboardFilteredGuests().length > dashboardPageSize">
-                <span class="fs-xxs text-muted">Page {{ dashboardCurrentPage() }} / {{ dashboardTotalPages() }}</span>
+                <span class="fs-xxs text-muted">{{ 'COMMON.PAGE_OF' | translate:{ current: dashboardCurrentPage(), total: dashboardTotalPages() } }}</span>
                 <div class="d-flex gap-1">
                   <button class="btn btn-xs btn-alt-secondary rounded-pill px-2" (click)="dashboardPrevPage()" [disabled]="dashboardCurrentPage() === 1">
                     <i class="fa fa-angle-left"></i>
@@ -339,7 +339,7 @@
 
                 <!-- Mini Pagination Footer -->
                 <div class="d-flex justify-content-between align-items-center mt-2" *ngIf="mealTableItems().length > mealPageSize">
-                  <span class="fs-xxs text-muted">Page {{ mealCurrentPage() }} / {{ mealTotalPages() }}</span>
+                  <span class="fs-xxs text-muted">{{ 'COMMON.PAGE_OF' | translate:{ current: mealCurrentPage(), total: mealTotalPages() } }}</span>
                   <div class="d-flex gap-1">
                     <button class="btn btn-xs btn-alt-secondary rounded-pill px-2" (click)="mealPrevPage()" [disabled]="mealCurrentPage() === 1">
                       <i class="fa fa-angle-left"></i>
@@ -475,7 +475,7 @@
                             <i *ngFor="let c of getGuestChannels(g)" [class]="c.icon" [ngClass]="c.colorClass" style="font-size: 0.95rem;" [title]="c.title"></i>
                           </div>
                           <ng-template #noChannel>
-                            <span class="text-muted fs-3xs fst-italic">Lien</span>
+                            <span class="text-muted fs-3xs fst-italic">{{ 'INVITATION_SETUP.LINK_CHANNEL' | translate }}</span>
                           </ng-template>
                         </td>
                         <td class="text-center py-1">
@@ -501,7 +501,7 @@
 
                 <!-- 5. Mini Pagination -->
                 <div class="d-flex justify-content-between align-items-center mt-2" *ngIf="invitationFilteredGuests().length > invitationPageSize">
-                  <span class="fs-xxs text-muted">Page {{ invitationCurrentPage() }} / {{ invitationTotalPages() }}</span>
+                  <span class="fs-xxs text-muted">{{ 'COMMON.PAGE_OF' | translate:{ current: invitationCurrentPage(), total: invitationTotalPages() } }}</span>
                   <div class="d-flex gap-1">
                     <button class="btn btn-xs btn-alt-secondary rounded-pill px-2" (click)="invitationPrevPage()" [disabled]="invitationCurrentPage() === 1">
                       <i class="fa fa-angle-left"></i>

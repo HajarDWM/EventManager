@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AdminService } from '../../../core/services/admin.service';
 import { CurrencyService } from '../../../core/services/currency.service';
+import { TranslatePipe } from '../../../core/pipes/translate.pipe';
 
 export interface Transaction {
   id: string;
@@ -38,7 +39,7 @@ export interface Expense {
 @Component({
   selector: 'app-admin-transactions',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, TranslatePipe],
   templateUrl: './admin-transactions.html'
 })
 export class AdminTransactions implements OnInit {

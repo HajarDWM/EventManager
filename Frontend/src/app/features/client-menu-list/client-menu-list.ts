@@ -71,10 +71,10 @@ export class ClientMenuList implements OnInit {
       const isIndicatif = modes.includes('MENU_INDICATIF');
       return { 
         label: isIndicatif ? 'Menu Unique (Mariage & Banquet)' : 'Service à l\'assiette', 
-        labelKey: isIndicatif ? undefined : 'CATERING.PLATS_FIXES_FORMULA', 
+        labelKey: isIndicatif ? 'CATERING.INDICATIF_FORMULA' : 'CATERING.PLATS_FIXES_FORMULA', 
         icon: isIndicatif ? 'fa-crown' : 'fa-concierge-bell', 
         desc: isIndicatif ? 'Menu Indicatif d\'Honneur servi à table (sans sélection individuelle)' : 'Service à table avec choix individuel', 
-        descKey: isIndicatif ? undefined : 'CATERING.PLATS_FIXES_DESC' 
+        descKey: isIndicatif ? 'CATERING.INDICATIF_DESC' : 'CATERING.PLATS_FIXES_DESC' 
       };
     }
     if (modes.includes('BUFFET')) {

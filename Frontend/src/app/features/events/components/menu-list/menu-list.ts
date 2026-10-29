@@ -802,24 +802,24 @@ export class MenuList implements OnInit {
   protected getCategoryLabel(cat: string): string {
     if (this.masterCateringMode() === 'MIX') {
       switch (cat) {
-        case 'BEVERAGE': return "Boissons d'accueil";
-        case 'BUFFET_STARTER': return 'Pièces cocktail';
-        case 'STARTER': return 'Salad Bar';
-        case 'MAIN': return 'Plats';
-        case 'DESSERT': return 'Desserts';
-        case 'BUFFET_DESSERT': return 'Station Desserts (Buffet)';
+        case 'BEVERAGE': return this.translateService.translate('CATERING.CAT_WELCOME_DRINKS');
+        case 'BUFFET_STARTER': return this.translateService.translate('CATERING.CAT_APPETIZERS');
+        case 'STARTER': return this.translateService.translate('CATERING.CAT_SALAD_BAR');
+        case 'MAIN': return this.translateService.translate('CATERING.CAT_MAINS');
+        case 'DESSERT': return this.translateService.translate('CATERING.DESSERTS');
+        case 'BUFFET_DESSERT': return this.translateService.translate('CATERING.CAT_DESSERT_STATION_BUFFET');
         default: return cat;
       }
     }
     switch (cat) {
-      case 'STARTER': return 'Entrées';
-      case 'MAIN': return 'Plats';
-      case 'DESSERT': return 'Desserts';
-      case 'BEVERAGE': return 'Boissons';
-      case 'OTHER': return 'Autres';
-      case 'BUFFET_STARTER': return 'Pièces cocktail';
-      case 'BUFFET_MAIN': return 'Plats Chauds';
-      case 'BUFFET_DESSERT': return 'Station Desserts';
+      case 'STARTER': return this.translateService.translate('CATERING.OPT_STARTER');
+      case 'MAIN': return this.translateService.translate('CATERING.OPT_MAIN');
+      case 'DESSERT': return this.translateService.translate('CATERING.OPT_DESSERT');
+      case 'BEVERAGE': return this.translateService.translate('CATERING.OPT_BEVERAGE');
+      case 'OTHER': return this.translateService.translate('CATERING.OPT_OTHER');
+      case 'BUFFET_STARTER': return this.translateService.translate('CATERING.CAT_APPETIZERS');
+      case 'BUFFET_MAIN': return this.translateService.translate('CATERING.CAT_HOT_DISHES');
+      case 'BUFFET_DESSERT': return this.translateService.translate('CATERING.CAT_DESSERT_STATION');
       default: return cat;
     }
   }

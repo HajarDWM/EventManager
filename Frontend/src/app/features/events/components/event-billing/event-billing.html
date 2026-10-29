@@ -76,10 +76,10 @@
           <i class="fa fa-hand-holding-usd text-primary me-2"></i>{{ 'BILLING.SECTION_CLIENT_PAYMENTS' | translate }}
         </h3>
         <div class="d-flex align-items-center gap-2 flex-wrap">
-          <button type="button" *ngIf="activeQuote" class="btn btn-sm btn-alt-primary rounded-pill px-3 fw-semibold d-inline-flex align-items-center gap-1.5 shadow-sm" (click)="openAvenantModal()" title="Ajouter un avenant ou une réduction au budget">
+          <button type="button" *ngIf="activeQuote" class="btn btn-sm btn-alt-primary rounded-pill px-3 fw-semibold d-inline-flex align-items-center gap-1.5 shadow-sm" (click)="openAvenantModal()" [title]="'BILLING.ADD_AVENANT_TITLE' | translate">
             <i class="fa fa-file-circle-plus"></i> {{ 'BILLING.ADD_AVENANT' | translate }}
           </button>
-          <button type="button" class="btn btn-sm btn-success rounded-pill px-3 fw-semibold d-inline-flex align-items-center gap-1.5 shadow-sm" [disabled]="eventTotalPrice() <= 0" (click)="openPaymentModal()" title="Enregistrer un acompte ou versement client">
+          <button type="button" class="btn btn-sm btn-success rounded-pill px-3 fw-semibold d-inline-flex align-items-center gap-1.5 shadow-sm" [disabled]="eventTotalPrice() <= 0" (click)="openPaymentModal()" [title]="'BILLING.RECORD_PAYMENT_TITLE_BTN' | translate">
             <i class="fa fa-money-bill-wave"></i> {{ 'BILLING.RECORD_PAYMENT' | translate }}
           </button>
         </div>
@@ -136,7 +136,7 @@
                   <i class="fa fa-cogs text-primary me-2"></i>{{ 'BILLING.PRICING_CONFIG' | translate }}
                 </h5>
                 <span class="badge bg-primary-light text-primary rounded-pill px-3 py-1.5 fs-xs fw-bold" *ngIf="activeQuote">
-                  {{ activeQuote.items.length }} ligne(s)
+                  {{ activeQuote.items.length }} {{ 'BILLING.LINES_COUNT' | translate }}
                 </span>
               </div>              <div class="block-content p-3">
                 <!-- If no active quote, show budget initial input -->
@@ -251,7 +251,7 @@
         <h3 class="block-title fw-bold text-dark mb-0">
           <i class="fa fa-receipt text-primary me-2"></i>{{ 'BILLING.SECTION_EXPENSES' | translate }}
         </h3>
-        <button type="button" class="btn btn-sm btn-danger rounded-pill px-3 fw-semibold d-inline-flex align-items-center gap-1.5 shadow-sm" (click)="openExpenseModal()" title="Enregistrer une dépense ou coût pour l'événement">
+        <button type="button" class="btn btn-sm btn-danger rounded-pill px-3 fw-semibold d-inline-flex align-items-center gap-1.5 shadow-sm" (click)="openExpenseModal()" [title]="'BILLING.RECORD_EXPENSE_TITLE_BTN' | translate">
           <i class="fa fa-plus-circle"></i> {{ 'BILLING.RECORD_EXPENSE' | translate }}
         </button>
       </div>

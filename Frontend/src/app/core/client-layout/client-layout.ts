@@ -17,6 +17,9 @@ export class ClientLayout implements OnInit {
   public events = this.clientAuthService.clientEvents;
 
   ngOnInit() {
+    if (typeof document !== 'undefined') {
+      document.documentElement.dir = 'ltr';
+    }
     if (this.events().length === 0) {
       this.clientAuthService.fetchEvents().subscribe();
     }

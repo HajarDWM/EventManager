@@ -2,15 +2,15 @@
 <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-2 text-center text-md-start">
   <div class="flex-grow-1 mb-1 mb-md-0">
     <h1 class="h3 fw-bold mb-2">
-      Détails de l'Organisateur
+      {{ 'ADMIN.CATERER_DETAIL.HERO_TITLE' | translate }}
     </h1>
     <h2 class="h6 fw-medium text-muted mb-0">
-      Visualisez le profil et les événements de cet organisateur.
+      {{ 'ADMIN.CATERER_DETAIL.HERO_SUBTITLE' | translate }}
     </h2>
   </div>
   <div class="mt-2 mt-md-0">
     <button type="button" class="btn btn-alt-secondary rounded-pill px-3" (click)="goBack()">
-      <i class="fa fa-arrow-left me-1"></i> Retour
+      <i class="fa fa-arrow-left me-1"></i> {{ 'COMMON.BACK' | translate }}
     </button>
   </div>
 </div>
@@ -19,7 +19,7 @@
 <!-- Loading Spinner -->
 <div *ngIf="isLoading()" class="text-center py-5">
   <div class="spinner-border text-primary" role="status">
-    <span class="visually-hidden">Chargement...</span>
+    <span class="visually-hidden">{{ 'COMMON.LOADING' | translate }}</span>
   </div>
 </div>
 
@@ -35,7 +35,7 @@
   <div class="col-md-4">
     <div class="block block-rounded bg-white shadow-sm border border-light">
       <div class="block-header block-header-default border-bottom bg-body-light">
-        <h3 class="block-title fw-bold">Profil Organisateur</h3>
+        <h3 class="block-title fw-bold">{{ 'ADMIN.CATERER_DETAIL.PROFILE_TITLE' | translate }}</h3>
       </div>
       <div class="block-content p-4">
         <div class="text-center mb-4">
@@ -48,17 +48,17 @@
             'bg-warning text-dark': caterer().accountStatus === 'PENDING',
             'bg-danger': caterer().accountStatus === 'SUSPENDED'
           }">
-            {{ caterer().accountStatus === 'APPROVED' || caterer().accountStatus === 'ACTIVE' ? 'Approuvé' : (caterer().accountStatus === 'PENDING' ? 'En attente' : 'Suspendu') }}
+            {{ caterer().accountStatus === 'APPROVED' || caterer().accountStatus === 'ACTIVE' ? ('ADMIN.CATERERS.STATUS_APPROVED' | translate) : (caterer().accountStatus === 'PENDING' ? ('ADMIN.CATERERS.STATUS_PENDING' | translate) : ('ADMIN.CATERERS.STATUS_SUSPENDED' | translate)) }}
           </span>
         </div>
 
         <ul class="list-group list-group-flush fs-sm">
           <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2 border-0 border-bottom border-light">
-            <span class="text-muted">Adresse Email</span>
+            <span class="text-muted">{{ 'ADMIN.CATERERS.TH_EMAIL' | translate }}</span>
             <span class="fw-semibold text-dark">{{ caterer().email }}</span>
           </li>
           <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2 border-0 border-bottom border-light">
-            <span class="text-muted">Forfait</span>
+            <span class="text-muted">{{ 'ADMIN.CATERERS.TH_PLAN' | translate }}</span>
             <span class="badge" [ngClass]="{
               'bg-success': caterer().subscriptionPlan === 'PREMIUM',
               'bg-primary': caterer().subscriptionPlan === 'STANDARD',
@@ -66,21 +66,21 @@
             }">{{ caterer().subscriptionPlan }}</span>
           </li>
           <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2 border-0 border-bottom border-light">
-            <span class="text-muted">État Abonnement</span>
+            <span class="text-muted">{{ 'ADMIN.CATERERS.TH_STATUS' | translate }}</span>
             <span class="fw-semibold" [ngClass]="caterer().subscriptionStatus === 'ACTIVE' ? 'text-success' : 'text-danger'">
-              {{ caterer().subscriptionStatus === 'ACTIVE' ? 'Actif' : 'Expiré' }}
+              {{ caterer().subscriptionStatus === 'ACTIVE' ? ('ADMIN.DASHBOARD.ACTIVE_ACCOUNTS' | translate) : ('ADMIN.CATERERS.EXPIRED' | translate) }}
             </span>
           </li>
           <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2 border-0 border-bottom border-light">
-            <span class="text-muted">Total Événements</span>
+            <span class="text-muted">{{ 'ADMIN.CATERERS.TH_TOTAL_EVENTS' | translate }}</span>
             <span class="fw-bold text-primary">{{ caterer().totalEventsCount != null ? caterer().totalEventsCount : events().length }}</span>
           </li>
           <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2 border-0 border-bottom border-light">
-            <span class="text-muted">Début contrat</span>
+            <span class="text-muted">{{ 'ADMIN.CATERER_DETAIL.REGISTRATION_DATE' | translate }}</span>
             <span class="fw-semibold text-dark">{{ caterer().subscriptionStartDate ? (caterer().subscriptionStartDate | date:'dd/MM/yyyy') : '-' }}</span>
           </li>
           <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2 border-0">
-            <span class="text-muted">Fin contrat</span>
+            <span class="text-muted">{{ 'ADMIN.CATERER_DETAIL.SUBSCRIPTION_END' | translate }}</span>
             <span class="fw-semibold text-dark">{{ caterer().subscriptionEndDate ? (caterer().subscriptionEndDate | date:'dd/MM/yyyy') : '-' }}</span>
           </li>
         </ul>
@@ -92,17 +92,17 @@
   <div class="col-md-8">
     <div class="block block-rounded bg-white shadow-sm border border-light h-100">
       <div class="block-header block-header-default border-bottom bg-body-light d-flex justify-content-between align-items-center">
-        <h3 class="block-title fw-bold">Liste des Événements ({{ events().length }})</h3>
+        <h3 class="block-title fw-bold">{{ 'ADMIN.CATERER_DETAIL.EVENTS_LIST_TITLE' | translate }} ({{ events().length }})</h3>
       </div>
       <div class="block-content">
         <div class="table-responsive">
           <table class="table table-bordered table-striped table-vcenter fs-sm">
             <thead class="table-light">
               <tr>
-                <th>Titre</th>
-                <th>Date & Heure</th>
-                <th>Lieu</th>
-                <th class="text-center" style="width: 150px;">Statut</th>
+                <th>{{ 'EVENTS.NAME' | translate }}</th>
+                <th>{{ 'EVENTS.DATE_TIME' | translate }}</th>
+                <th>{{ 'COMMON.LOCATION' | translate }}</th>
+                <th class="text-center" style="width: 150px;">{{ 'COMMON.STATUS' | translate }}</th>
               </tr>
             </thead>
             <tbody>
@@ -124,7 +124,7 @@
               </tr>
               <tr *ngIf="events().length === 0">
                 <td colspan="4" class="text-center py-4 text-muted">
-                  Aucun événement créé par cet organisateur.
+                  {{ 'ADMIN.CATERER_DETAIL.NO_EVENTS' | translate }}
                 </td>
               </tr>
             </tbody>
@@ -139,10 +139,10 @@
     <div class="block block-rounded bg-white shadow-sm border border-light">
       <div class="block-header block-header-default border-bottom bg-body-light d-flex justify-content-between align-items-center">
         <h3 class="block-title fw-bold">
-          <i class="fa fa-history text-primary me-2"></i>Historique des Abonnements & Transactions ({{ transactions().length }})
+          <i class="fa fa-history text-primary me-2"></i>{{ 'SUBSCRIPTION.HISTORY_TITLE' | translate }} ({{ transactions().length }})
         </h3>
         <span class="badge bg-success-light text-success fs-xs fw-bold px-3 py-1.5 rounded-pill">
-          Total Cumulé HT : {{ getTotalCumulativeHt() | number:'1.2-2' }} {{ currencySymbol() }}
+          {{ 'COMMON.TOTAL' | translate }} : {{ getTotalCumulativeHt() | number:'1.2-2' }} {{ currencySymbol() }}
         </span>
       </div>
       <div class="block-content p-3">
@@ -150,11 +150,11 @@
           <table class="table table-bordered table-striped table-vcenter fs-sm mb-0">
             <thead class="table-light">
               <tr>
-                <th>Forfait Souscrit</th>
-                <th style="width: 150px;" class="text-end">Montant Payé (HT)</th>
+                <th>{{ 'ADMIN.CATERERS.TH_PLAN' | translate }}</th>
+                <th style="width: 150px;" class="text-end">{{ 'BILLING.AMOUNT' | translate }}</th>
                 <th style="width: 90px;" class="text-center">TVA (%)</th>
-                <th style="width: 320px;" class="text-center">Période de Validité</th>
-                <th style="width: 130px;" class="text-center">Statut Forfait</th>
+                <th style="width: 320px;" class="text-center">{{ 'SUBSCRIPTION.PERIOD' | translate }}</th>
+                <th style="width: 130px;" class="text-center">{{ 'COMMON.STATUS' | translate }}</th>
               </tr>
             </thead>
             <tbody>
@@ -191,7 +191,7 @@
               <tr *ngIf="transactions().length === 0">
                 <td colspan="5" class="text-center py-4 text-muted">
                   <i class="fa fa-receipt text-muted fs-3 mb-2 d-block opacity-50"></i>
-                  Aucune transaction ou renouvellement d'abonnement n'a encore été enregistré pour cet organisateur.
+                  {{ 'COMMON.NO' | translate }}
                 </td>
               </tr>
             </tbody>
