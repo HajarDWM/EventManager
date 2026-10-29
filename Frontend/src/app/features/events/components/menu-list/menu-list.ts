@@ -353,9 +353,70 @@ export class MenuList implements OnInit {
     } else if (mode === 'PLATS_FIXES') {
       defaultType = 'PLATS_FIXES,COURSE_STARTER,COURSE_MAIN,COURSE_DESSERT,COURSE_BEVERAGE,MENU_INDICATIF';
     } else if (mode === 'MIX') {
-      defaultType = 'BUFFET_ENTREES,PLATS_FIXES,BUFFET_DESSERTS,BUFFET_BEVERAGES,MENU_INDICATIF';
+      defaultType = 'MIX,BUFFET_ENTREES,PLATS_FIXES,COURSE_MAIN,BUFFET_DESSERTS,BUFFET_BEVERAGES,MENU_INDICATIF';
     }
     this.saveMealType(defaultType);
+  }
+
+  protected getMixCourseFormat(course: 'STARTER' | 'MAIN' | 'DESSERT' | 'BEVERAGE'): 'BUFFET' | 'TABLE' {
+    const list = (this.mealType() || '').split(',').map(s => s.trim().toUpperCase());
+    if (course === 'STARTER') {
+      return list.includes('BUFFET_ENTREES') ? 'BUFFET' : 'TABLE';
+    }
+    if (course === 'MAIN') {
+      return list.includes('BUFFET_MAINS') ? 'BUFFET' : 'TABLE';
+    }
+    if (course === 'DESSERT') {
+      return list.includes('BUFFET_DESSERTS') ? 'BUFFET' : 'TABLE';
+    }
+    if (course === 'BEVERAGE') {
+      return list.includes('BUFFET_BEVERAGES') ? 'BUFFET' : 'TABLE';
+    }
+    return 'TABLE';
+  }
+
+  protected setMixCourseFormat(course: 'STARTER' | 'MAIN' | 'DESSERT' | 'BEVERAGE', format: 'BUFFET' | 'TABLE'): void {
+    let list = (this.mealType() || '').split(',').map(s => s.trim()).filter(Boolean);
+    if (!list.includes('MIX')) {
+      list.unshift('MIX');
+    }
+
+    if (course === 'STARTER') {
+      list = list.filter(s => s !== 'BUFFET_ENTREES' && s !== 'COURSE_STARTER' && s !== 'COURSE_ENTREE');
+      if (format === 'BUFFET') {
+        list.push('BUFFET_ENTREES');
+        list = list.filter(s => s !== 'CHOICE_STARTER' && s !== 'CHOICE_ENTREE');
+      } else {
+        list.push('COURSE_STARTER');
+      }
+    } else if (course === 'MAIN') {
+      list = list.filter(s => s !== 'BUFFET_MAINS' && s !== 'PLATS_FIXES' && s !== 'COURSE_MAIN');
+      if (format === 'BUFFET') {
+        list.push('BUFFET_MAINS');
+        list = list.filter(s => s !== 'CHOICE_MAIN');
+      } else {
+        list.push('PLATS_FIXES');
+        list.push('COURSE_MAIN');
+      }
+    } else if (course === 'DESSERT') {
+      list = list.filter(s => s !== 'BUFFET_DESSERTS' && s !== 'COURSE_DESSERT');
+      if (format === 'BUFFET') {
+        list.push('BUFFET_DESSERTS');
+        list = list.filter(s => s !== 'CHOICE_DESSERT');
+      } else {
+        list.push('COURSE_DESSERT');
+      }
+    } else if (course === 'BEVERAGE') {
+      list = list.filter(s => s !== 'BUFFET_BEVERAGES' && s !== 'COURSE_BEVERAGE');
+      if (format === 'BUFFET') {
+        list.push('BUFFET_BEVERAGES');
+        list = list.filter(s => s !== 'CHOICE_BEVERAGE');
+      } else {
+        list.push('COURSE_BEVERAGE');
+      }
+    }
+
+    this.saveMealType(list.join(','));
   }
 
   protected isGuestChoiceEnabled(): boolean {

@@ -240,57 +240,156 @@
         </div>
       </div>
 
-      <!-- SUB-OPTIONS FOR MIX -->
+      <!-- SUB-OPTIONS FOR MIX (Customizable Course by Course) -->
       <div *ngIf="masterCateringMode() === 'MIX'" class="animate__animated animate__fadeIn">
-        <div class="d-flex flex-wrap gap-3">
-          <div class="form-check form-check-inline mb-0">
-            <input class="form-check-input" type="checkbox" id="mix_buffet_entrees"
-                   [checked]="isFormatSelected('BUFFET_ENTREES')" (change)="toggleFormat('BUFFET_ENTREES')">
-            <label class="form-check-label fs-xs fw-semibold text-dark" for="mix_buffet_entrees" style="cursor: pointer;">
-              {{ 'CATERING.BUFFET_ENTREES' | translate }}
-            </label>
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2.5 py-1">
+          <!-- 1. Formats des services (Entrée, Plat, Dessert, Boisson) en micro-pills horizontaux -->
+          <div class="d-flex flex-wrap align-items-center gap-2">
+            <span class="fs-2xs fw-bold text-uppercase text-muted letter-spacing-1">{{ 'CATERING.MENU_SERVICES_HEADING' | translate }}</span>
+
+            <!-- 1. Entrée capsule -->
+            <div class="d-inline-flex align-items-center bg-body-secondary border rounded-pill px-2 py-0.5 gap-1.5">
+              <span class="fs-xs fw-semibold text-dark d-flex align-items-center">
+                <i class="fa fa-leaf text-success me-1"></i> {{ 'CATERING.COURSE_STARTER_LBL' | translate }}
+              </span>
+              <div class="btn-group btn-group-xs" role="group">
+                <button type="button" class="btn btn-xs rounded-pill px-2 py-0.5 fs-3xs fw-bold transition-all"
+                        [ngClass]="getMixCourseFormat('STARTER') === 'BUFFET' ? 'btn-primary text-white shadow-2xs' : 'btn-light text-muted border-0'"
+                        (click)="setMixCourseFormat('STARTER', 'BUFFET')">
+                  {{ 'CATERING.OPTION_BUFFET' | translate }}
+                </button>
+                <button type="button" class="btn btn-xs rounded-pill px-2 py-0.5 fs-3xs fw-bold transition-all"
+                        [ngClass]="getMixCourseFormat('STARTER') === 'TABLE' ? 'btn-primary text-white shadow-2xs' : 'btn-light text-muted border-0'"
+                        (click)="setMixCourseFormat('STARTER', 'TABLE')">
+                  {{ 'CATERING.OPTION_TABLE' | translate }}
+                </button>
+              </div>
+            </div>
+
+            <!-- 2. Plat Principal capsule -->
+            <div class="d-inline-flex align-items-center bg-body-secondary border rounded-pill px-2 py-0.5 gap-1.5">
+              <span class="fs-xs fw-semibold text-dark d-flex align-items-center">
+                <i class="fa fa-drumstick-bite text-warning me-1"></i> {{ 'CATERING.COURSE_MAIN_LBL' | translate }}
+              </span>
+              <div class="btn-group btn-group-xs" role="group">
+                <button type="button" class="btn btn-xs rounded-pill px-2 py-0.5 fs-3xs fw-bold transition-all"
+                        [ngClass]="getMixCourseFormat('MAIN') === 'BUFFET' ? 'btn-primary text-white shadow-2xs' : 'btn-light text-muted border-0'"
+                        (click)="setMixCourseFormat('MAIN', 'BUFFET')">
+                  {{ 'CATERING.OPTION_BUFFET' | translate }}
+                </button>
+                <button type="button" class="btn btn-xs rounded-pill px-2 py-0.5 fs-3xs fw-bold transition-all"
+                        [ngClass]="getMixCourseFormat('MAIN') === 'TABLE' ? 'btn-primary text-white shadow-2xs' : 'btn-light text-muted border-0'"
+                        (click)="setMixCourseFormat('MAIN', 'TABLE')">
+                  {{ 'CATERING.OPTION_TABLE' | translate }}
+                </button>
+              </div>
+            </div>
+
+            <!-- 3. Dessert capsule -->
+            <div class="d-inline-flex align-items-center bg-body-secondary border rounded-pill px-2 py-0.5 gap-1.5">
+              <span class="fs-xs fw-semibold text-dark d-flex align-items-center">
+                <i class="fa fa-birthday-cake text-danger me-1"></i> {{ 'CATERING.COURSE_DESSERT_LBL' | translate }}
+              </span>
+              <div class="btn-group btn-group-xs" role="group">
+                <button type="button" class="btn btn-xs rounded-pill px-2 py-0.5 fs-3xs fw-bold transition-all"
+                        [ngClass]="getMixCourseFormat('DESSERT') === 'BUFFET' ? 'btn-primary text-white shadow-2xs' : 'btn-light text-muted border-0'"
+                        (click)="setMixCourseFormat('DESSERT', 'BUFFET')">
+                  {{ 'CATERING.OPTION_BUFFET' | translate }}
+                </button>
+                <button type="button" class="btn btn-xs rounded-pill px-2 py-0.5 fs-3xs fw-bold transition-all"
+                        [ngClass]="getMixCourseFormat('DESSERT') === 'TABLE' ? 'btn-primary text-white shadow-2xs' : 'btn-light text-muted border-0'"
+                        (click)="setMixCourseFormat('DESSERT', 'TABLE')">
+                  {{ 'CATERING.OPTION_TABLE' | translate }}
+                </button>
+              </div>
+            </div>
+
+            <!-- 4. Boisson capsule -->
+            <div class="d-inline-flex align-items-center bg-body-secondary border rounded-pill px-2 py-0.5 gap-1.5">
+              <span class="fs-xs fw-semibold text-dark d-flex align-items-center">
+                <i class="fa fa-glass-cheers text-primary me-1"></i> {{ 'CATERING.COURSE_BEVERAGE_LBL' | translate }}
+              </span>
+              <div class="btn-group btn-group-xs" role="group">
+                <button type="button" class="btn btn-xs rounded-pill px-2 py-0.5 fs-3xs fw-bold transition-all"
+                        [ngClass]="getMixCourseFormat('BEVERAGE') === 'BUFFET' ? 'btn-primary text-white shadow-2xs' : 'btn-light text-muted border-0'"
+                        (click)="setMixCourseFormat('BEVERAGE', 'BUFFET')">
+                  {{ 'CATERING.OPTION_BUFFET' | translate }}
+                </button>
+                <button type="button" class="btn btn-xs rounded-pill px-2 py-0.5 fs-3xs fw-bold transition-all"
+                        [ngClass]="getMixCourseFormat('BEVERAGE') === 'TABLE' ? 'btn-primary text-white shadow-2xs' : 'btn-light text-muted border-0'"
+                        (click)="setMixCourseFormat('BEVERAGE', 'TABLE')">
+                  {{ 'CATERING.OPTION_TABLE' | translate }}
+                </button>
+              </div>
+            </div>
           </div>
-          <div class="form-check form-check-inline mb-0">
-            <input class="form-check-input" type="checkbox" id="mix_plated_main"
-                   [checked]="isFormatSelected('PLATS_FIXES')" (change)="toggleFormat('PLATS_FIXES')">
-            <label class="form-check-label fs-xs fw-semibold text-dark" for="mix_plated_main" style="cursor: pointer;">
-              {{ 'CATERING.PLATED_MAIN' | translate }}
-            </label>
-          </div>
-          <div class="form-check form-check-inline mb-0">
-            <input class="form-check-input" type="checkbox" id="mix_buffet_desserts"
-                   [checked]="isFormatSelected('BUFFET_DESSERTS')" (change)="toggleFormat('BUFFET_DESSERTS')">
-            <label class="form-check-label fs-xs fw-semibold text-dark" for="mix_buffet_desserts" style="cursor: pointer;">
-              {{ 'CATERING.BUFFET_DESSERTS' | translate }}
-            </label>
-          </div>
-          <div class="form-check form-check-inline mb-0">
-            <input class="form-check-input" type="checkbox" id="mix_buffet_beverages"
-                   [checked]="isFormatSelected('BUFFET_BEVERAGES')" (change)="toggleFormat('BUFFET_BEVERAGES')">
-            <label class="form-check-label fs-xs fw-semibold text-dark" for="mix_buffet_beverages" style="cursor: pointer;">
-              {{ 'CATERING.BUFFET_BEVERAGES' | translate }}
-            </label>
+
+          <!-- 2. Switch Personnalisation convives (EXACT SAME COMPONENT AS PLATS_FIXES) -->
+          <div class="d-flex align-items-center gap-2">
+            <div class="form-check form-switch mb-0 d-flex align-items-center">
+              <input class="form-check-input cursor-pointer me-2" type="checkbox" role="switch" id="mix_guest_choice_toggle"
+                     [checked]="isGuestChoiceEnabled()"
+                     (change)="toggleGuestChoice(!isGuestChoiceEnabled())">
+              <label class="form-check-label fs-xs fw-bold text-dark cursor-pointer mb-0" for="mix_guest_choice_toggle">
+                {{ 'CATERING.GUEST_CHOICE_SWITCH' | translate }}
+              </label>
+            </div>
+            <span class="badge rounded-pill" [ngClass]="isGuestChoiceEnabled() ? 'bg-primary-subtle text-primary border border-primary-subtle' : 'bg-body-secondary text-muted'" style="font-size: 0.68rem;">
+              {{ (isGuestChoiceEnabled() ? 'CATERING.GUEST_CHOICE_ACTIVE' : 'CATERING.GUEST_CHOICE_INACTIVE') | translate }}
+            </span>
           </div>
         </div>
 
-        <!-- Mode de sélection des invités pour MIX -->
-        <div class="mt-2.5 pt-2 border-top d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2 bg-white rounded p-2.5 border shadow-2xs">
-          <div class="d-flex align-items-center gap-2">
-            <div class="form-check form-switch mb-0">
-              <input class="form-check-input" type="checkbox" role="switch" id="mix_choice_toggle"
-                     [checked]="isGuestChoiceEnabled()"
-                     (change)="toggleGuestChoice(!isGuestChoiceEnabled())" style="cursor: pointer;">
-              <label class="form-check-label fs-xs fw-bold text-dark cursor-pointer ms-1" for="mix_choice_toggle">
-                <i class="fa fa-user-check text-primary me-1"></i> {{ 'CATERING.ALLOW_GUEST_MAIN_CHOICE' | translate }}
-              </label>
-            </div>
-            <span class="badge rounded-pill" [ngClass]="isGuestChoiceEnabled() ? 'bg-primary text-white' : 'bg-body-secondary text-muted'" style="font-size: 0.68rem;">
-              {{ (isGuestChoiceEnabled() ? 'CATERING.MIX_HOT_CHOICE_ACTIVE' : 'CATERING.MIX_HOT_CHOICE_INACTIVE') | translate }}
-            </span>
-          </div>
-          <div class="fs-3xs text-muted">
-            {{ (isGuestChoiceEnabled() ? 'CATERING.MIX_CHOICE_EXPLANATION_ACTIVE' : 'CATERING.MIX_CHOICE_EXPLANATION_INACTIVE') | translate }}
-          </div>
+        <!-- 3. Granular choice pills for table courses in MIX (EXACT SAME COMPONENT AS PLATS_FIXES) -->
+        <div *ngIf="isGuestChoiceEnabled()" class="d-flex flex-wrap align-items-center gap-2 pt-2 border-top mt-1 animate__animated animate__fadeIn">
+          <span class="fs-xs fw-medium text-muted">
+            <i class="fa fa-hand-pointer text-primary me-1"></i> {{ 'CATERING.CUSTOMIZABLE_DISHES' | translate }}
+          </span>
+
+          <!-- Entrée Pill (if served à table) -->
+          <button type="button" *ngIf="getMixCourseFormat('STARTER') === 'TABLE'"
+                  (click)="toggleChoiceFormat('CHOICE_STARTER')"
+                  class="btn btn-sm rounded-pill px-2.5 py-0.5 fs-xs fw-semibold transition-all"
+                  [ngClass]="isFormatSelected('CHOICE_STARTER') ? 'btn-primary shadow-2xs' : 'btn-outline-secondary border-dashed text-secondary opacity-75'">
+            <i class="fa me-1" [ngClass]="isFormatSelected('CHOICE_STARTER') ? 'fa-check' : 'fa-leaf'"></i>
+            {{ 'CATERING.COURSE_STARTER_LBL' | translate }} ({{ (isFormatSelected('CHOICE_STARTER') ? 'CATERING.CHOICE_OPT_SELECT' : 'CATERING.CHOICE_OPT_SERVED') | translate }})
+          </button>
+
+          <!-- Plat Principal Pill (if served à table) -->
+          <button type="button" *ngIf="getMixCourseFormat('MAIN') === 'TABLE'"
+                  (click)="toggleChoiceFormat('CHOICE_MAIN')"
+                  class="btn btn-sm rounded-pill px-2.5 py-0.5 fs-xs fw-semibold transition-all"
+                  [ngClass]="isFormatSelected('CHOICE_MAIN') ? 'btn-primary shadow-2xs' : 'btn-outline-secondary border-dashed text-secondary opacity-75'">
+            <i class="fa me-1" [ngClass]="isFormatSelected('CHOICE_MAIN') ? 'fa-check' : 'fa-drumstick-bite'"></i>
+            {{ 'CATERING.COURSE_MAIN_LBL' | translate }} ({{ (isFormatSelected('CHOICE_MAIN') ? 'CATERING.CHOICE_OPT_SELECT' : 'CATERING.CHOICE_OPT_SERVED') | translate }})
+          </button>
+
+          <!-- Dessert Pill (if served à table) -->
+          <button type="button" *ngIf="getMixCourseFormat('DESSERT') === 'TABLE'"
+                  (click)="toggleChoiceFormat('CHOICE_DESSERT')"
+                  class="btn btn-sm rounded-pill px-2.5 py-0.5 fs-xs fw-semibold transition-all"
+                  [ngClass]="isFormatSelected('CHOICE_DESSERT') ? 'btn-primary shadow-2xs' : 'btn-outline-secondary border-dashed text-secondary opacity-75'">
+            <i class="fa me-1" [ngClass]="isFormatSelected('CHOICE_DESSERT') ? 'fa-check' : 'fa-birthday-cake'"></i>
+            {{ 'CATERING.COURSE_DESSERT_LBL' | translate }} ({{ (isFormatSelected('CHOICE_DESSERT') ? 'CATERING.CHOICE_OPT_SELECT' : 'CATERING.CHOICE_OPT_SERVED') | translate }})
+          </button>
+
+          <!-- Boisson Pill (if served à table) -->
+          <button type="button" *ngIf="getMixCourseFormat('BEVERAGE') === 'TABLE'"
+                  (click)="toggleChoiceFormat('CHOICE_BEVERAGE')"
+                  class="btn btn-sm rounded-pill px-2.5 py-0.5 fs-xs fw-semibold transition-all"
+                  [ngClass]="isFormatSelected('CHOICE_BEVERAGE') ? 'btn-primary shadow-2xs' : 'btn-outline-secondary border-dashed text-secondary opacity-75'">
+            <i class="fa me-1" [ngClass]="isFormatSelected('CHOICE_BEVERAGE') ? 'fa-check' : 'fa-glass-cheers'"></i>
+            {{ 'CATERING.COURSE_BEVERAGE_LBL' | translate }} ({{ (isFormatSelected('CHOICE_BEVERAGE') ? 'CATERING.CHOICE_OPT_SELECT' : 'CATERING.CHOICE_OPT_SERVED') | translate }})
+          </button>
+
+          <!-- If all courses are on buffet -->
+          <span class="fs-4xs text-muted fst-italic" *ngIf="getMixCourseFormat('STARTER') === 'BUFFET' && getMixCourseFormat('MAIN') === 'BUFFET' && getMixCourseFormat('DESSERT') === 'BUFFET' && getMixCourseFormat('BEVERAGE') === 'BUFFET'">
+            {{ 'CATERING.MIX_ALL_BUFFET_HINT' | translate }}
+          </span>
+
+          <span class="fs-4xs text-muted ms-auto fst-italic d-none d-md-inline" *ngIf="getMixCourseFormat('STARTER') === 'TABLE' || getMixCourseFormat('MAIN') === 'TABLE' || getMixCourseFormat('DESSERT') === 'TABLE' || getMixCourseFormat('BEVERAGE') === 'TABLE'">
+            <i class="fa fa-info-circle me-1"></i> {{ 'CATERING.UNCHECKED_DISHES_HINT' | translate }}
+          </span>
         </div>
       </div>
 

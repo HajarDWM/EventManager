@@ -693,18 +693,24 @@
 
           <!-- Template des Boutons/Onglets de Catégories (Affichés DIRECTEMENT au-dessus des plats) -->
           <ng-template #stepperTabsTpl>
-            <!-- Stepper Formule MIX (3 Onglets : Buffet Entrées, Plat Chaud, Buffet Desserts) -->
+            <!-- Stepper Formule MIX (Groupement Unifié : Grand Buffet Libre-Service & Plats à Table) -->
             <div class="stepper-interactive-tabs d-flex justify-content-center align-items-center flex-nowrap"
-              *ngIf="isMixMode() && !isIndicativeMenu() && (currentRsvpStep() <= 2 || isDiscoveryMode())">
-              <button type="button" class="btn btn-sm stepper-tab-btn rounded-pill fw-bold shadow-2xs"
+              *ngIf="isMixMode() && !isIndicativeMenu() && (currentRsvpStep() <= 3 || isDiscoveryMode())">
+              
+              <!-- 1. Le Grand Buffet Libre-Service (Page 1) -->
+              <button *ngIf="hasBuffetInMix()" type="button" class="btn btn-sm stepper-tab-btn rounded-pill fw-bold shadow-2xs"
                 [class.active-tab]="currentRsvpStep() === 0"
-                [style.background]="getStepperTabBg(currentRsvpStep() === 0)"
+                [class.has-selection]="true"
+                [style.background]="getStepperTabBg(currentRsvpStep() === 0, true)"
                 [style.color]="getStepperTabTextColor(currentRsvpStep() === 0)"
-                [style.borderColor]="getStepperTabBorder(currentRsvpStep() === 0)"
+                [style.borderColor]="getStepperTabBorder(currentRsvpStep() === 0, true)"
                 (click)="goToStep(0)">
-                <i class="fa fa-utensils me-1"></i> {{ 'RSVP.TAB_STARTERS_BUFFET' | translate }}
+                <i class="fa fa-concierge-bell me-1 fs-3xs" style="opacity: 0.85;"></i>
+                {{ 'RSVP.TAB_BUFFET_MIX' | translate }}
               </button>
-              <button type="button" class="btn btn-sm stepper-tab-btn rounded-pill fw-bold shadow-2xs"
+
+              <!-- 2. Plat Chaud Principal servi à table (Page 2) -->
+              <button *ngIf="hasMainsCourse() && !isMainBuffet()" type="button" class="btn btn-sm stepper-tab-btn rounded-pill fw-bold shadow-2xs"
                 [class.active-tab]="currentRsvpStep() === 1"
                 [class.has-selection]="!isDiscoveryMode() && (!hasMainsChoice() || !!mealChoice)"
                 [style.background]="getStepperTabBg(currentRsvpStep() === 1, !isDiscoveryMode() && (!hasMainsChoice() || !!mealChoice))"
@@ -713,15 +719,21 @@
                 (click)="goToStep(1)">
                 <i class="fa fa-check text-success me-1 fs-3xs" *ngIf="!isDiscoveryMode() && hasMainsChoice() && mealChoice && currentRsvpStep() !== 1"></i>
                 <i class="fa fa-utensils me-1 fs-3xs" *ngIf="!isDiscoveryMode() && !hasMainsChoice() && currentRsvpStep() !== 1" style="opacity: 0.75;"></i>
-                <i class="fa fa-drumstick-bite me-1" *ngIf="currentRsvpStep() === 1 || (hasMainsChoice() && !mealChoice)"></i> {{ 'RSVP.TAB_HOT_DISH' | translate }}
+                <i class="fa fa-drumstick-bite me-1" *ngIf="currentRsvpStep() === 1 || (hasMainsChoice() && !mealChoice)"></i>
+                {{ 'RSVP.TAB_HOT_DISH' | translate }}
               </button>
-              <button type="button" class="btn btn-sm stepper-tab-btn rounded-pill fw-bold shadow-2xs"
+
+              <!-- 3. Dessert servi à table (si le dessert est servi à table et non au buffet) -->
+              <button *ngIf="hasDessertsCourse() && !isDessertBuffet()" type="button" class="btn btn-sm stepper-tab-btn rounded-pill fw-bold shadow-2xs"
                 [class.active-tab]="currentRsvpStep() === 2"
-                [style.background]="getStepperTabBg(currentRsvpStep() === 2)"
+                [class.has-selection]="!isDiscoveryMode() && (!hasDessertsChoice() || !!dessertChoice)"
+                [style.background]="getStepperTabBg(currentRsvpStep() === 2, !isDiscoveryMode() && (!hasDessertsChoice() || !!dessertChoice))"
                 [style.color]="getStepperTabTextColor(currentRsvpStep() === 2)"
-                [style.borderColor]="getStepperTabBorder(currentRsvpStep() === 2)"
+                [style.borderColor]="getStepperTabBorder(currentRsvpStep() === 2, !isDiscoveryMode() && (!hasDessertsChoice() || !!dessertChoice))"
                 (click)="goToStep(2)">
-                <i class="fa fa-birthday-cake me-1"></i> {{ 'RSVP.TAB_DESSERTS_BUFFET' | translate }}
+                <i class="fa fa-check text-success me-1 fs-3xs" *ngIf="!isDiscoveryMode() && hasDessertsChoice() && dessertChoice && currentRsvpStep() !== 2"></i>
+                <i class="fa fa-birthday-cake me-1" *ngIf="currentRsvpStep() === 2 || !hasDessertsChoice() || !dessertChoice"></i>
+                {{ 'RSVP.TAB_DESSERTS' | translate }}
               </button>
             </div>
 
@@ -774,7 +786,7 @@
               </button>
 
               <!-- 4. Boissons -->
-              <button *ngIf="hasBeveragesCourse()" type="button" class="btn btn-sm stepper-tab-btn rounded-pill fw-bold shadow-2xs"
+              <button *ngIf="hasBeveragesCourse() || availableBeverages().length > 0" type="button" class="btn btn-sm stepper-tab-btn rounded-pill fw-bold shadow-2xs"
                 [class.active-tab]="currentRsvpStep() === 3"
                 [class.has-selection]="!isDiscoveryMode() && (!hasBeveragesChoice() || !!beverageChoice)"
                 [style.background]="getStepperTabBg(currentRsvpStep() === 3, !isDiscoveryMode() && (!hasBeveragesChoice() || !!beverageChoice))"
@@ -886,65 +898,231 @@
                 </div>
               </ng-container>
 
-              <!-- CAS 2 : FORMULE MIX (BUFFET D'ACCUEIL / ENTRÉES AVEC CHOIX ACTIF) -->
-              <ng-container *ngIf="isMixMode() && !isIndicativeMenu()">
+              <!-- CAS 2 : FORMULE MIX (PAGE 1 : LE GRAND BUFFET LIBRE-SERVICE UNIFIÉ) -->
+              <ng-container *ngIf="isMixMode() && !isIndicativeMenu() && hasBuffetInMix()">
                 <div class="spotlight-title-wrapper mb-2 mb-md-3 text-center">
                   <span class="luxury-subtitle d-block mb-1.5"
                     [style.fontFamily]="getPrimaryFont()"
                     [style.color]="getPrimaryColor()"
                     style="font-size: 1.35rem !important; line-height: 1.35 !important; padding-bottom: 2px;">
-                    {{ 'RSVP.MIX_STARTERS_SUBTITLE' | translate }}
+                    {{ 'RSVP.BUFFET_MIX_SUBTITLE' | translate }}
                   </span>
                   <h3 class="page2-menu-title text-uppercase fw-bold m-0 pt-1"
                     [style.fontFamily]="getSecondaryFont()"
                     [style.color]="getSecondaryFontColor()"
                     style="font-size: 0.95rem !important; line-height: 1.35 !important; letter-spacing: 1.2px !important;">
-                    {{ 'RSVP.MIX_STARTERS_TITLE' | translate }}
+                    {{ 'RSVP.BUFFET_MIX_TITLE' | translate }}
                   </h3>
                   <div class="spotlight-underline mx-auto mt-1"
                     [style.backgroundColor]="getPrimaryColor()"
                     style="width: 40px; height: 1.5px; opacity: 0.65;"></div>
-                  <p class="fs-xxs mt-1 mb-0 font-serif" [style.color]="getMenuMutedTextColor()">{{ 'RSVP.MIX_STARTERS_DESC' | translate }}</p>
+                  <p class="fs-xxs mt-1 mb-0 font-serif" [style.color]="getMenuMutedTextColor()">{{ 'RSVP.BUFFET_MIX_DESC' | translate }}</p>
                 </div>
 
                 <!-- Onglets de services placés DIRECTEMENT au-dessus des plats -->
                 <ng-container *ngTemplateOutlet="stepperTabsTpl"></ng-container>
 
-                <div class="dishes-scroll-wrapper position-relative mx-auto mb-2">
-                  <div class="dish-horizontal-cards-stack d-flex flex-column gap-2"
-                    #mixStartersStack
-                    [class.has-many-dishes]="availableStarters().length > 3"
+                <!-- Badge Buffet direct au-dessus des délices -->
+                <div class="buffet-count-badge text-center mb-2" *ngIf="mixBuffetItems().length > 0">
+                  <span class="badge rounded-pill px-3 py-1 fs-3xs fw-bold border shadow-2xs"
+                    [style.borderColor]="getPrimaryColor() + '40'"
+                    [style.backgroundColor]="getPrimaryColor() + '14'"
+                    [style.color]="getPrimaryColor()">
+                    <i class="fa fa-concierge-bell me-1"></i> {{ 'RSVP.BUFFET_MIX_COUNT' | translate:{ count: mixBuffetItems().length } }} <i class="fa fa-arrow-down ms-1"></i>
+                  </span>
+                </div>
+
+                <!-- Showcase Unifié du Grand Buffet (Entrées + Desserts + Boissons regroupés) -->
+                <div class="dishes-scroll-wrapper position-relative mx-auto mb-2 banquet-full-menu-wrapper">
+                  <div class="banquet-full-menu-stack d-flex flex-column gap-2"
+                    #mixUnifiedBuffetStep0Stack
+                    [class.has-many-dishes]="mixBuffetItems().length > 3"
                     (scroll)="onDishesScroll($event)">
-                    <div class="dish-horizontal-card d-flex align-items-center p-2 rounded-3 border position-relative text-start"
-                      *ngFor="let dish of availableStarters()"
-                      [style.borderColor]="getDishCardBorder(false)"
-                      [style.backgroundColor]="getDishCardBg(false)">
-                      <div class="dish-card-thumb-wrapper flex-shrink-0 me-3">
-                        <img [src]="dish.imageUrl" [alt]="dish.name" class="dish-card-thumb rounded-2 object-fit-cover shadow-2xs"
-                          style="width: 50px; height: 50px;">
+                    
+                    <!-- 1. ENTRÉES & COCKTAIL (si format buffet) -->
+                    <div class="banquet-course-section" *ngIf="isStarterBuffet() && availableStarters().length > 0">
+                      <div class="banquet-section-header d-flex align-items-center gap-2 mb-1 px-1">
+                        <span class="banquet-section-title text-uppercase fw-semibold"
+                          [style.color]="getSecondaryFontColor()">
+                          <i class="fa fa-leaf me-1" [style.color]="getPrimaryColor()"></i>
+                          {{ 'RSVP.MIX_STARTERS_SECTION' | translate }}
+                        </span>
+                        <span class="badge rounded-pill fs-4xs fw-bold ms-auto"
+                          [style.backgroundColor]="getPrimaryColor() + '18'"
+                          [style.color]="getPrimaryColor()">
+                          {{ availableStarters().length }}
+                        </span>
+                        <div class="flex-grow-1 border-bottom" [style.borderColor]="getPrimaryColor() + '35'"></div>
                       </div>
-                      <div class="dish-card-body flex-grow-1 pe-2">
-                        <h4 class="dish-card-title m-0 fw-bold font-serif"
-                          [style.fontFamily]="getSecondaryFont()"
-                          [style.color]="getDishTitleColor(false)"
-                          style="font-size: 0.86rem; line-height: 1.3;">
-                          {{ dish.name }}
-                        </h4>
+                      <div class="banquet-dishes-grid d-flex flex-column gap-1.5 mb-1.5">
+                        <div class="dish-horizontal-card d-flex align-items-center p-2 rounded-3 border position-relative text-start shadow-2xs"
+                          *ngFor="let dish of availableStarters()"
+                          [style.borderColor]="getDishCardBorder(false)"
+                          [style.backgroundColor]="getDishCardBg(false)">
+                          <div class="dish-card-thumb-wrapper flex-shrink-0 me-3">
+                            <img [src]="dish.imageUrl" [alt]="dish.name" class="dish-card-thumb rounded-2 object-fit-cover shadow-2xs"
+                              style="width: 48px; height: 48px;">
+                          </div>
+                          <div class="dish-card-body flex-grow-1 pe-2">
+                            <div class="d-flex align-items-center gap-1.5 mb-0.5">
+                              <span class="badge rounded-pill fs-4xs fw-bold text-uppercase px-2 py-0.5"
+                                [style.backgroundColor]="getPrimaryColor() + '18'"
+                                [style.color]="getPrimaryColor()">
+                                {{ 'RSVP.BUFFET_FREE_SERVICE' | translate }}
+                              </span>
+                            </div>
+                            <h4 class="dish-card-title m-0 fw-bold font-serif"
+                              [style.fontFamily]="getSecondaryFont()"
+                              [style.color]="getDishTitleColor(false)"
+                              style="font-size: 0.85rem; line-height: 1.3;">
+                              {{ dish.name }}
+                            </h4>
+                          </div>
+                        </div>
                       </div>
                     </div>
+
+                    <!-- 2. PLATS CHAUDS AU BUFFET (si format buffet) -->
+                    <div class="banquet-course-section" *ngIf="isMainBuffet() && availableMains().length > 0">
+                      <div class="banquet-section-header d-flex align-items-center gap-2 mb-1 px-1">
+                        <span class="banquet-section-title text-uppercase fw-semibold"
+                          [style.color]="getSecondaryFontColor()">
+                          <i class="fa fa-drumstick-bite me-1" [style.color]="getPrimaryColor()"></i>
+                          {{ 'RSVP.MIX_MAINS_SECTION' | translate }}
+                        </span>
+                        <span class="badge rounded-pill fs-4xs fw-bold ms-auto"
+                          [style.backgroundColor]="getPrimaryColor() + '18'"
+                          [style.color]="getPrimaryColor()">
+                          {{ availableMains().length }}
+                        </span>
+                        <div class="flex-grow-1 border-bottom" [style.borderColor]="getPrimaryColor() + '35'"></div>
+                      </div>
+                      <div class="banquet-dishes-grid d-flex flex-column gap-1.5 mb-1.5">
+                        <div class="dish-horizontal-card d-flex align-items-center p-2 rounded-3 border position-relative text-start shadow-2xs"
+                          *ngFor="let dish of availableMains()"
+                          [style.borderColor]="getDishCardBorder(false)"
+                          [style.backgroundColor]="getDishCardBg(false)">
+                          <div class="dish-card-thumb-wrapper flex-shrink-0 me-3">
+                            <img [src]="dish.imageUrl" [alt]="dish.name" class="dish-card-thumb rounded-2 object-fit-cover shadow-2xs"
+                              style="width: 48px; height: 48px;">
+                          </div>
+                          <div class="dish-card-body flex-grow-1 pe-2">
+                            <div class="d-flex align-items-center gap-1.5 mb-0.5">
+                              <span class="badge rounded-pill fs-4xs fw-bold text-uppercase px-2 py-0.5"
+                                [style.backgroundColor]="getPrimaryColor() + '18'"
+                                [style.color]="getPrimaryColor()">
+                                {{ 'RSVP.BUFFET_FREE_SERVICE' | translate }}
+                              </span>
+                            </div>
+                            <h4 class="dish-card-title m-0 fw-bold font-serif"
+                              [style.fontFamily]="getSecondaryFont()"
+                              [style.color]="getDishTitleColor(false)"
+                              style="font-size: 0.85rem; line-height: 1.3;">
+                              {{ dish.name }}
+                            </h4>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- 3. DOUCEURS & DESSERTS (si format buffet) -->
+                    <div class="banquet-course-section" *ngIf="isDessertBuffet() && availableDesserts().length > 0">
+                      <div class="banquet-section-header d-flex align-items-center gap-2 mb-1 px-1">
+                        <span class="banquet-section-title text-uppercase fw-semibold"
+                          [style.color]="getSecondaryFontColor()">
+                          <i class="fa fa-birthday-cake me-1" [style.color]="getPrimaryColor()"></i>
+                          {{ 'RSVP.MIX_DESSERTS_SECTION' | translate }}
+                        </span>
+                        <span class="badge rounded-pill fs-4xs fw-bold ms-auto"
+                          [style.backgroundColor]="getPrimaryColor() + '18'"
+                          [style.color]="getPrimaryColor()">
+                          {{ availableDesserts().length }}
+                        </span>
+                        <div class="flex-grow-1 border-bottom" [style.borderColor]="getPrimaryColor() + '35'"></div>
+                      </div>
+                      <div class="banquet-dishes-grid d-flex flex-column gap-1.5 mb-1.5">
+                        <div class="dish-horizontal-card d-flex align-items-center p-2 rounded-3 border position-relative text-start shadow-2xs"
+                          *ngFor="let dish of availableDesserts()"
+                          [style.borderColor]="getDishCardBorder(false)"
+                          [style.backgroundColor]="getDishCardBg(false)">
+                          <div class="dish-card-thumb-wrapper flex-shrink-0 me-3">
+                            <img [src]="dish.imageUrl" [alt]="dish.name" class="dish-card-thumb rounded-2 object-fit-cover shadow-2xs"
+                              style="width: 48px; height: 48px;">
+                          </div>
+                          <div class="dish-card-body flex-grow-1 pe-2">
+                            <div class="d-flex align-items-center gap-1.5 mb-0.5">
+                              <span class="badge rounded-pill fs-4xs fw-bold text-uppercase px-2 py-0.5"
+                                [style.backgroundColor]="getPrimaryColor() + '18'"
+                                [style.color]="getPrimaryColor()">
+                                {{ 'RSVP.BUFFET_FREE_SERVICE' | translate }}
+                              </span>
+                            </div>
+                            <h4 class="dish-card-title m-0 fw-bold font-serif"
+                              [style.fontFamily]="getSecondaryFont()"
+                              [style.color]="getDishTitleColor(false)"
+                              style="font-size: 0.85rem; line-height: 1.3;">
+                              {{ dish.name }}
+                            </h4>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- 4. BAR & RAFRAÎCHISSEMENTS (si format buffet) -->
+                    <div class="banquet-course-section" *ngIf="isBeverageBuffet() && availableBeverages().length > 0">
+                      <div class="banquet-section-header d-flex align-items-center gap-2 mb-1 px-1">
+                        <span class="banquet-section-title text-uppercase fw-semibold"
+                          [style.color]="getSecondaryFontColor()">
+                          <i class="fa fa-glass-cheers me-1" [style.color]="getPrimaryColor()"></i>
+                          {{ 'RSVP.MIX_BEVERAGES_SECTION' | translate }}
+                        </span>
+                        <span class="badge rounded-pill fs-4xs fw-bold ms-auto"
+                          [style.backgroundColor]="getPrimaryColor() + '18'"
+                          [style.color]="getPrimaryColor()">
+                          {{ availableBeverages().length }}
+                        </span>
+                        <div class="flex-grow-1 border-bottom" [style.borderColor]="getPrimaryColor() + '35'"></div>
+                      </div>
+                      <div class="banquet-dishes-grid d-flex flex-column gap-1.5 mb-1.5">
+                        <div class="dish-horizontal-card d-flex align-items-center p-2 rounded-3 border position-relative text-start shadow-2xs"
+                          *ngFor="let dish of availableBeverages()"
+                          [style.borderColor]="getDishCardBorder(false)"
+                          [style.backgroundColor]="getDishCardBg(false)">
+                          <div class="dish-card-thumb-wrapper flex-shrink-0 me-3">
+                            <img [src]="dish.imageUrl" [alt]="dish.name" class="dish-card-thumb rounded-2 object-fit-cover shadow-2xs"
+                              style="width: 48px; height: 48px;">
+                          </div>
+                          <div class="dish-card-body flex-grow-1 pe-2">
+                            <div class="d-flex align-items-center gap-1.5 mb-0.5">
+                              <span class="badge rounded-pill fs-4xs fw-bold text-uppercase px-2 py-0.5"
+                                [style.backgroundColor]="getPrimaryColor() + '18'"
+                                [style.color]="getPrimaryColor()">
+                                {{ 'RSVP.BUFFET_FREE_SERVICE' | translate }}
+                              </span>
+                            </div>
+                            <h4 class="dish-card-title m-0 fw-bold font-serif"
+                              [style.fontFamily]="getSecondaryFont()"
+                              [style.color]="getDishTitleColor(false)"
+                              style="font-size: 0.85rem; line-height: 1.3;">
+                              {{ dish.name }}
+                            </h4>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
                   </div>
                   <!-- Barre de défilement dorée luxueuse & TOUJOURS visible en permanence -->
-                  <div class="luxury-gold-scrollbar-rail" *ngIf="availableStarters().length > 3"
-                    (pointerdown)="onRailPointerDown($event, mixStartersStack)"
-                    (pointermove)="onRailPointerMove($event, mixStartersStack)"
+                  <div class="luxury-gold-scrollbar-rail" *ngIf="mixBuffetItems().length > 3"
+                    (pointerdown)="onRailPointerDown($event, mixUnifiedBuffetStep0Stack)"
+                    (pointermove)="onRailPointerMove($event, mixUnifiedBuffetStep0Stack)"
                     (pointerup)="onRailPointerUp($event)"
-                    (click)="onRailClick($event, mixStartersStack)">
+                    (click)="onRailClick($event, mixUnifiedBuffetStep0Stack)">
                     <div class="luxury-gold-scrollbar-thumb"></div>
                   </div>
                 </div>
 
-
-                <!-- Actions MIX Étape 0 : Retour vers l'invitation + Passer (Image 1) -->
+                <!-- Actions de navigation MIX Étape 0 : Retour à l'invitation + Continuer vers Plat Chaud -->
                 <div class="step-bottom-actions-wrapper step-optout-wrapper d-flex align-items-center justify-content-center flex-nowrap gap-2 mt-1.5 pt-0 mb-1" *ngIf="!isDiscoveryMode()">
                   <button type="button" class="btn btn-sm btn-step-back rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
                     (click)="closeMenuAndRsvp()">
@@ -953,7 +1131,7 @@
                   </button>
                   <button type="button" class="btn btn-sm btn-opt-out rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
                     (click)="goToNextStep()">
-                    <span>{{ 'RSVP.BTN_PASS' | translate }}</span>
+                    <span>{{ (hasMainsCourse() && !isMainBuffet()) ? ('RSVP.CONTINUE_TO_HOT_DISH' | translate) : ((hasDessertsCourse() && !isDessertBuffet()) ? ('RSVP.CONTINUE_TO_DESSERT' | translate) : ('RSVP.CONTINUE_TO_DIET' | translate)) }}</span>
                     <i class="fa" [class.fa-arrow-right]="!isRtl()" [class.fa-arrow-left]="isRtl()"></i>
                   </button>
                 </div>
@@ -1099,7 +1277,7 @@
                     </div>
 
                     <!-- 4. BOISSONS & RAFRAÎCHISSEMENTS -->
-                    <div class="banquet-course-section" *ngIf="(hasBeveragesCourse() || isMixMode()) && availableBeverages().length > 0">
+                    <div class="banquet-course-section" *ngIf="availableBeverages().length > 0">
                       <div class="banquet-section-header d-flex align-items-center gap-2 mb-1.5 px-1 mt-2">
                         <span class="banquet-section-title text-uppercase fw-semibold"
                           [style.color]="getSecondaryFontColor()">
@@ -1162,8 +1340,8 @@
                 </div>
               </ng-container>
 
-              <!-- CAS 3-B : FORMULE PLATS_FIXES STANDARD (ENTRÉE AU CHOIX OU SERVIE D'OFFICE) -->
-              <ng-container *ngIf="isPlatedMode() && !isIndicativeMenu()">
+              <!-- CAS 3-B : FORMULE PLATS_FIXES STANDARD & MIX TABLE (ENTRÉE AU CHOIX OU SERVIE D'OFFICE) -->
+              <ng-container *ngIf="(isPlatedMode() || (isMixMode() && !hasBuffetInMix())) && !isIndicativeMenu()">
                 <!-- En-tête de catégorie -->
                 <div class="spotlight-title-wrapper mb-3 text-center">
                   <span class="luxury-subtitle d-block mb-1.5"
@@ -1176,12 +1354,16 @@
                     [style.fontFamily]="getSecondaryFont()"
                     [style.color]="getSecondaryFontColor()"
                     style="font-size: 0.95rem !important; line-height: 1.35 !important; letter-spacing: 1.2px !important;">
-                    {{ isDiscoveryMode() ? ('RSVP.OVERVIEW_STARTERS' | translate) : (hasStartersChoice() ? ('RSVP.SELECT_STARTER' | translate) : ('RSVP.HONOR_STARTER' | translate)) }}
+                    {{ isDiscoveryMode() ? ('RSVP.OVERVIEW_STARTERS' | translate) : (hasStartersChoice() ? (availableStarters().length === 1 ? ('RSVP.HONOR_STARTER_SINGLE' | translate) : ('RSVP.SELECT_STARTER' | translate)) : ('RSVP.HONOR_STARTER' | translate)) }}
                   </h3>
                   <div class="spotlight-underline mx-auto mt-1"
                     [style.backgroundColor]="getPrimaryColor()"
                     style="width: 40px; height: 1.5px; opacity: 0.65;"></div>
-                  <p class="fs-xxs mt-1 mb-0 font-serif" [style.color]="getMenuMutedTextColor()" *ngIf="!isDiscoveryMode() && hasStartersChoice() && availableStarters().length > 0">
+                  <p class="fs-xxs mt-1 mb-0 font-serif" [style.color]="getMenuMutedTextColor()" *ngIf="!isDiscoveryMode() && hasStartersChoice() && availableStarters().length === 1">
+                    <i class="fa fa-check-circle me-1" [style.color]="getPrimaryColor()"></i>
+                    {{ 'RSVP.SINGLE_DISH_AUTO_SELECTED' | translate }}
+                  </p>
+                  <p class="fs-xxs mt-1 mb-0 font-serif" [style.color]="getMenuMutedTextColor()" *ngIf="!isDiscoveryMode() && hasStartersChoice() && availableStarters().length > 1">
                     <i class="fa fa-info-circle me-1" [style.color]="getPrimaryColor()"></i>
                     {{ 'RSVP.STARTER_MANDATORY_NOTE' | translate }}
                   </p>
@@ -1269,7 +1451,8 @@
                   <button type="button" class="btn btn-sm btn-opt-out rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
                     *ngIf="!hasStartersChoice() || starterChoice || availableStarters().length === 0"
                     (click)="goToNextStep()">
-                    <span>{{ 'RSVP.BTN_CONTINUE' | translate }}</span>
+                    <span *ngIf="hasStartersChoice() && availableStarters().length === 1">{{ (hasMainsCourse() || isMainBuffet()) ? ('RSVP.CONTINUE_TO_MAIN' | translate) : ('RSVP.CONTINUE_TO_DIET' | translate) }}</span>
+                    <span *ngIf="!(hasStartersChoice() && availableStarters().length === 1)">{{ 'RSVP.BTN_CONTINUE' | translate }}</span>
                     <i class="fa" [class.fa-arrow-right]="!isRtl()" [class.fa-arrow-left]="isRtl()"></i>
                   </button>
                 </div>
@@ -1291,7 +1474,7 @@
                   [style.fontFamily]="getSecondaryFont()"
                   [style.color]="getSecondaryFontColor()"
                   style="font-size: 0.95rem !important; line-height: 1.35 !important; letter-spacing: 1.2px !important;">
-                  {{ isIndicativeMenu() ? (availableMains().length > 1 ? ('RSVP.TAB_MAINS' | translate) : ('RSVP.MAIN_DISH' | translate)) : (isDiscoveryMode() ? ('RSVP.OVERVIEW_DISHES' | translate) : (hasMainsChoice() ? (isMixMode() ? ('RSVP.SELECT_HOT_DISH' | translate) : ('RSVP.SELECT_YOUR_DISH' | translate)) : ('RSVP.HONOR_DISH' | translate))) }}
+                  {{ isIndicativeMenu() ? (availableMains().length > 1 ? ('RSVP.TAB_MAINS' | translate) : ('RSVP.MAIN_DISH' | translate)) : (isDiscoveryMode() ? ('RSVP.OVERVIEW_DISHES' | translate) : (hasMainsChoice() ? (availableMains().length === 1 ? ('RSVP.HONOR_MAIN_SINGLE' | translate) : (isMixMode() ? ('RSVP.SELECT_HOT_DISH' | translate) : ('RSVP.SELECT_YOUR_DISH' | translate))) : ('RSVP.HONOR_DISH' | translate))) }}
                 </h3>
                 <div class="spotlight-underline mx-auto mt-1"
                   [style.backgroundColor]="getPrimaryColor()"
@@ -1300,7 +1483,11 @@
                   <i class="fa fa-drumstick-bite me-1" [style.color]="getPrimaryColor()"></i>
                   {{ 'RSVP.BANQUET_SERVED_NOTE' | translate }}
                 </p>
-                <p class="fs-xxs mt-1 mb-0 font-serif" [style.color]="getMenuMutedTextColor()" *ngIf="!isIndicativeMenu() && !isDiscoveryMode() && hasMainsChoice() && availableMains().length > 0">
+                <p class="fs-xxs mt-1 mb-0 font-serif" [style.color]="getMenuMutedTextColor()" *ngIf="!isIndicativeMenu() && !isDiscoveryMode() && hasMainsChoice() && availableMains().length === 1">
+                  <i class="fa fa-check-circle me-1" [style.color]="getPrimaryColor()"></i>
+                  {{ 'RSVP.SINGLE_DISH_AUTO_SELECTED' | translate }}
+                </p>
+                <p class="fs-xxs mt-1 mb-0 font-serif" [style.color]="getMenuMutedTextColor()" *ngIf="!isIndicativeMenu() && !isDiscoveryMode() && hasMainsChoice() && availableMains().length > 1">
                   <i class="fa fa-info-circle me-1" [style.color]="getPrimaryColor()"></i>
                   {{ 'RSVP.DISH_MANDATORY_NOTE' | translate }}
                 </p>
@@ -1383,130 +1570,21 @@
                 <button type="button" class="btn btn-sm btn-step-back rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
                   (click)="goToPrevStep()">
                   <i class="fa" [class.fa-arrow-left]="!isRtl()" [class.fa-arrow-right]="isRtl()"></i>
-                  <span>{{ 'RSVP.BTN_BACK' | translate }}</span>
+                  <span>{{ (isMixMode() && hasBuffetInMix()) ? ('RSVP.BTN_BACK_BUFFET' | translate) : ('RSVP.BTN_BACK' | translate) }}</span>
                 </button>
                 <button type="button" class="btn btn-sm btn-opt-out rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
                   *ngIf="isIndicativeMenu() || !hasMainsChoice() || mealChoice || availableMains().length === 0"
                   (click)="goToNextStep()">
-                  <span>{{ 'RSVP.BTN_CONTINUE' | translate }}</span>
+                  <span *ngIf="isMixMode()">{{ (hasDessertsCourse() && !isDessertBuffet()) ? ('RSVP.CONTINUE_TO_DESSERT' | translate) : ('RSVP.CONTINUE_TO_DIET' | translate) }}</span>
+                  <span *ngIf="!isMixMode() && hasMainsChoice() && availableMains().length === 1">{{ hasDessertsCourse() ? ('RSVP.CONTINUE_TO_DESSERT' | translate) : ('RSVP.CONTINUE_TO_DIET' | translate) }}</span>
+                  <span *ngIf="!isMixMode() && !(hasMainsChoice() && availableMains().length === 1)">{{ 'RSVP.BTN_CONTINUE' | translate }}</span>
                   <i class="fa" [class.fa-arrow-right]="!isRtl()" [class.fa-arrow-left]="isRtl()"></i>
                 </button>
               </div>
             </div>
 
-            <!-- ÉTAPE 2 : DESSERT (OU BUFFET DESSERTS & BAR POUR FORMULE MIX) -->
-            <div *ngIf="currentRsvpStep() === 2 && !isIndicativeMenu() && (isMixMode() || isPlatedMode())" class="course-step-container animate__animated animate__fadeIn my-auto w-100 py-1">
-              
-              <!-- CAS 1 : FORMULE MIX (BUFFET SUCRÉ & BAR EN LIBRE-SERVICE) -->
-              <ng-container *ngIf="isMixMode()">
-                <div class="spotlight-title-wrapper mb-2 mb-md-3 text-center">
-                  <span class="luxury-subtitle d-block mb-1.5"
-                    [style.fontFamily]="getPrimaryFont()"
-                    [style.color]="getPrimaryColor()"
-                    style="font-size: 1.35rem !important; line-height: 1.35 !important; padding-bottom: 2px;">
-                    {{ 'RSVP.SWEET_BUFFET_AND_BAR' | translate }}
-                  </span>
-                  <h3 class="page2-menu-title text-uppercase fw-bold m-0 pt-1"
-                    [style.fontFamily]="getSecondaryFont()"
-                    [style.color]="getSecondaryFontColor()"
-                    style="font-size: 0.95rem !important; line-height: 1.35 !important; letter-spacing: 1.2px !important;">
-                    {{ 'RSVP.DESSERTS_AND_DRINKS_SELF' | translate }}
-                  </h3>
-                  <div class="spotlight-underline mx-auto mt-1"
-                    [style.backgroundColor]="getPrimaryColor()"
-                    style="width: 40px; height: 1.5px; opacity: 0.65;"></div>
-                  <p class="fs-xxs mt-1 mb-0 font-serif" [style.color]="getMenuMutedTextColor()">{{ 'RSVP.DESSERTS_AND_DRINKS_DESC' | translate }}</p>
-                </div>
-
-                <!-- Onglets de services placés DIRECTEMENT au-dessus des plats -->
-                <ng-container *ngTemplateOutlet="stepperTabsTpl"></ng-container>
-
-                <!-- Cartes horizontales en showcase (sans sélection obligatoire) -->
-                <div class="dishes-scroll-wrapper position-relative mx-auto mb-2">
-                  <div class="dish-horizontal-cards-stack d-flex flex-column gap-2"
-                    #mixDessertsStack
-                    [class.has-many-dishes]="(availableDesserts().length + availableBeverages().length) > 3"
-                    (scroll)="onDishesScroll($event)">
-                    
-                    <div class="dish-horizontal-card d-flex align-items-center p-2 rounded-3 border position-relative text-start"
-                      *ngFor="let dish of availableDesserts()"
-                      [style.borderColor]="getDishCardBorder(false)"
-                      [style.backgroundColor]="getDishCardBg(false)">
-                      <div class="dish-card-thumb-wrapper flex-shrink-0 me-3">
-                        <img [src]="dish.imageUrl" [alt]="dish.name" class="dish-card-thumb rounded-2 object-fit-cover shadow-2xs"
-                          style="width: 50px; height: 50px;">
-                      </div>
-                      <div class="dish-card-body flex-grow-1 pe-2">
-                        <div class="d-flex align-items-center gap-1.5 mb-0.5" *ngIf="availableBeverages().length > 0">
-                          <span class="badge rounded-pill fs-4xs fw-bold text-uppercase px-2 py-0.5"
-                            [style.backgroundColor]="getPrimaryColor() + '18'"
-                            [style.color]="getPrimaryColor()">
-                            {{ 'RSVP.DESSERT_TAG' | translate }}
-                          </span>
-                        </div>
-                        <h4 class="dish-card-title m-0 fw-bold font-serif"
-                          [style.fontFamily]="getSecondaryFont()"
-                          [style.color]="getDishTitleColor(false)"
-                          style="font-size: 0.86rem; line-height: 1.3;">
-                          {{ dish.name }}
-                        </h4>
-                      </div>
-                    </div>
-
-                    <div class="dish-horizontal-card d-flex align-items-center p-2 rounded-3 border position-relative text-start"
-                      *ngFor="let drink of availableBeverages()"
-                      [style.borderColor]="getDishCardBorder(false)"
-                      [style.backgroundColor]="getDishCardBg(false)">
-                      <div class="dish-card-thumb-wrapper flex-shrink-0 me-3">
-                        <img [src]="drink.imageUrl" [alt]="drink.name" class="dish-card-thumb rounded-2 object-fit-cover shadow-2xs"
-                          style="width: 50px; height: 50px;">
-                      </div>
-                      <div class="dish-card-body flex-grow-1 pe-2">
-                        <div class="d-flex align-items-center gap-1.5 mb-0.5">
-                          <span class="badge rounded-pill fs-4xs fw-bold text-uppercase px-2 py-0.5"
-                            [style.backgroundColor]="getPrimaryColor() + '18'"
-                            [style.color]="getPrimaryColor()">
-                            {{ 'RSVP.BAR_DRINK_TAG' | translate }}
-                          </span>
-                        </div>
-                        <h4 class="dish-card-title m-0 fw-bold font-serif"
-                          [style.fontFamily]="getSecondaryFont()"
-                          [style.color]="getDishTitleColor(false)"
-                          style="font-size: 0.86rem; line-height: 1.3;">
-                          {{ drink.name }}
-                        </h4>
-                      </div>
-                    </div>
-
-                  </div>
-                  <!-- Barre de défilement dorée luxueuse & TOUJOURS visible en permanence -->
-                  <div class="luxury-gold-scrollbar-rail" *ngIf="(availableDesserts().length + availableBeverages().length) > 3"
-                    (pointerdown)="onRailPointerDown($event, mixDessertsStack)"
-                    (pointermove)="onRailPointerMove($event, mixDessertsStack)"
-                    (pointerup)="onRailPointerUp($event)"
-                    (click)="onRailClick($event, mixDessertsStack)">
-                    <div class="luxury-gold-scrollbar-thumb"></div>
-                  </div>
-                </div>
-
-
-                <!-- Actions de navigation MIX : Retour + Passer -->
-                <div class="step-bottom-actions-wrapper step-optout-wrapper d-flex align-items-center justify-content-center flex-nowrap gap-2 mt-1.5 pt-0 mb-1" *ngIf="!isDiscoveryMode()">
-                  <button type="button" class="btn btn-sm btn-step-back rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
-                    (click)="goToPrevStep()">
-                    <i class="fa" [class.fa-arrow-left]="!isRtl()" [class.fa-arrow-right]="isRtl()"></i>
-                    <span>{{ 'RSVP.BTN_BACK' | translate }}</span>
-                  </button>
-                  <button type="button" class="btn btn-sm btn-opt-out rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
-                    (click)="goToNextStep()">
-                    <span>{{ 'RSVP.BTN_PASS' | translate }}</span>
-                    <i class="fa" [class.fa-arrow-right]="!isRtl()" [class.fa-arrow-left]="isRtl()"></i>
-                  </button>
-                </div>
-              </ng-container>
-
-              <!-- CAS 2 : FORMULE PLATS_FIXES (DESSERT AU CHOIX OU SERVI D'OFFICE) -->
-              <ng-container *ngIf="isPlatedMode()">
+            <!-- ÉTAPE 2 : DESSERT (SERVI À TABLE) -->
+            <div *ngIf="currentRsvpStep() === 2 && !isIndicativeMenu() && (isPlatedMode() || (isMixMode() && !isDessertBuffet()))" class="course-step-container animate__animated animate__fadeIn my-auto w-100 py-1">
                 <!-- En-tête de catégorie -->
                 <div class="spotlight-title-wrapper mb-3 text-center">
                   <span class="luxury-subtitle d-block mb-1.5"
@@ -1519,7 +1597,7 @@
                     [style.fontFamily]="getSecondaryFont()"
                     [style.color]="getSecondaryFontColor()"
                     style="font-size: 0.95rem !important; line-height: 1.35 !important; letter-spacing: 1.2px !important;">
-                    {{ isIndicativeMenu() ? ('RSVP.TAB_DESSERTS' | translate) : (isDiscoveryMode() ? ('RSVP.OVERVIEW_DESSERTS' | translate) : (hasDessertsChoice() ? ('RSVP.SELECT_DESSERT' | translate) : ('RSVP.HONOR_DESSERT' | translate))) }}
+                    {{ isIndicativeMenu() ? ('RSVP.TAB_DESSERTS' | translate) : (isDiscoveryMode() ? ('RSVP.OVERVIEW_DESSERTS' | translate) : (hasDessertsChoice() ? (availableDesserts().length === 1 ? ('RSVP.HONOR_DESSERT_SINGLE' | translate) : ('RSVP.SELECT_DESSERT' | translate)) : ('RSVP.HONOR_DESSERT' | translate))) }}
                   </h3>
                   <div class="spotlight-underline mx-auto mt-1"
                     [style.backgroundColor]="getPrimaryColor()"
@@ -1528,7 +1606,11 @@
                     <i class="fa fa-birthday-cake me-1" [style.color]="getPrimaryColor()"></i>
                     {{ 'RSVP.BANQUET_SERVED_NOTE' | translate }}
                   </p>
-                  <p class="fs-xxs mt-1 mb-0 font-serif" [style.color]="getMenuMutedTextColor()" *ngIf="!isIndicativeMenu() && !isDiscoveryMode() && hasDessertsChoice() && availableDesserts().length > 0">
+                  <p class="fs-xxs mt-1 mb-0 font-serif" [style.color]="getMenuMutedTextColor()" *ngIf="!isIndicativeMenu() && !isDiscoveryMode() && hasDessertsChoice() && availableDesserts().length === 1">
+                    <i class="fa fa-check-circle me-1" [style.color]="getPrimaryColor()"></i>
+                    {{ 'RSVP.SINGLE_DISH_AUTO_SELECTED' | translate }}
+                  </p>
+                  <p class="fs-xxs mt-1 mb-0 font-serif" [style.color]="getMenuMutedTextColor()" *ngIf="!isIndicativeMenu() && !isDiscoveryMode() && hasDessertsChoice() && availableDesserts().length > 1">
                     <i class="fa fa-info-circle me-1" [style.color]="getPrimaryColor()"></i>
                     {{ 'RSVP.DESSERT_MANDATORY_NOTE' | translate }}
                   </p>
@@ -1611,51 +1693,60 @@
                   <button type="button" class="btn btn-sm btn-step-back rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
                     (click)="goToPrevStep()">
                     <i class="fa" [class.fa-arrow-left]="!isRtl()" [class.fa-arrow-right]="isRtl()"></i>
-                    <span>{{ 'RSVP.BTN_BACK' | translate }}</span>
+                    <span>{{ (isMixMode() && hasMainsCourse() && !isMainBuffet()) ? ('RSVP.BTN_BACK_HOT_DISH' | translate) : ((isMixMode() && hasBuffetInMix()) ? ('RSVP.BTN_BACK_BUFFET' | translate) : ('RSVP.BTN_BACK' | translate)) }}</span>
                   </button>
                   <button type="button" class="btn btn-sm btn-opt-out rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
                     *ngIf="isIndicativeMenu() || !hasDessertsChoice() || dessertChoice || availableDesserts().length === 0"
                     (click)="goToNextStep()">
-                    <span>{{ 'RSVP.BTN_CONTINUE' | translate }}</span>
+                    <span *ngIf="isMixMode()">{{ 'RSVP.CONTINUE_TO_DIET' | translate }}</span>
+                    <span *ngIf="!isMixMode() && hasDessertsChoice() && availableDesserts().length === 1">{{ hasBeveragesCourse() ? ('RSVP.CONTINUE_TO_BEVERAGE' | translate) : ('RSVP.CONTINUE_TO_DIET' | translate) }}</span>
+                    <span *ngIf="!isMixMode() && !(hasDessertsChoice() && availableDesserts().length === 1)">{{ 'RSVP.BTN_CONTINUE' | translate }}</span>
                     <i class="fa" [class.fa-arrow-right]="!isRtl()" [class.fa-arrow-left]="isRtl()"></i>
                   </button>
                 </div>
-              </ng-container>
 
             </div>
 
-            <!-- ÉTAPE 3 : BOISSON (4/4 - Uniquement en Formule PLATS_FIXES) -->
-            <div *ngIf="currentRsvpStep() === 3 && !isIndicativeMenu() && isPlatedMode()" class="course-step-container animate__animated animate__fadeIn my-auto w-100 py-1">
+            <!-- ÉTAPE 3 : BOISSON (Formule PLATS_FIXES ou MIX avec boisson à table) -->
+            <div *ngIf="currentRsvpStep() === 3 && !isIndicativeMenu() && (!isMixMode() || (!isBeverageBuffet() && hasBeveragesCourse())) && (hasBeveragesCourse() || isBeverageBuffet() || availableBeverages().length > 0)" class="course-step-container animate__animated animate__fadeIn my-auto w-100 py-1">
               <!-- En-tête de catégorie -->
               <div class="spotlight-title-wrapper mb-3 text-center">
                 <span class="luxury-subtitle d-block mb-1.5"
                   [style.fontFamily]="getPrimaryFont()"
                   [style.color]="getPrimaryColor()"
                   style="font-size: 1.35rem !important; line-height: 1.35 !important; padding-bottom: 2px;">
-                  {{ 'RSVP.BEVERAGE_TITLE' | translate }}
+                  {{ isBeverageBuffet() ? ('RSVP.BEVERAGES_BUFFET_TITLE' | translate) : ('RSVP.BEVERAGE_TITLE' | translate) }}
                 </span>
                 <h3 class="page2-menu-title text-uppercase fw-bold m-0 pt-1"
                   [style.fontFamily]="getSecondaryFont()"
                   [style.color]="getSecondaryFontColor()"
                   style="font-size: 0.95rem !important; line-height: 1.35 !important; letter-spacing: 1.2px !important;">
-                  {{ isIndicativeMenu() ? ('RSVP.BEVERAGE_SUBTITLE' | translate) : (isDiscoveryMode() ? ('RSVP.OVERVIEW_DISHES' | translate) : (hasBeveragesChoice() ? ('RSVP.SELECT_BEVERAGE' | translate) : ('RSVP.BEVERAGE_SUBTITLE' | translate))) }}
+                  {{ isBeverageBuffet() ? ('RSVP.BEVERAGES_BUFFET_SUBTITLE' | translate) : (isDiscoveryMode() ? ('RSVP.OVERVIEW_DISHES' | translate) : (hasBeveragesChoice() ? ('RSVP.SELECT_BEVERAGE' | translate) : ('RSVP.BEVERAGE_SUBTITLE' | translate))) }}
                 </h3>
                 <div class="spotlight-underline mx-auto mt-1"
                   [style.backgroundColor]="getPrimaryColor()"
                   style="width: 40px; height: 1.5px; opacity: 0.65;"></div>
-                <p class="fs-xxs mt-1 mb-0 font-serif" [style.color]="getMenuMutedTextColor()" *ngIf="isIndicativeMenu()">
+                <p class="fs-xxs mt-1 mb-0 font-serif" [style.color]="getMenuMutedTextColor()" *ngIf="isBeverageBuffet()">
+                  <i class="fa fa-glass-cheers me-1" [style.color]="getPrimaryColor()"></i>
+                  {{ 'RSVP.BEVERAGES_BUFFET_NOTE' | translate }}
+                </p>
+                <p class="fs-xxs mt-1 mb-0 font-serif" [style.color]="getMenuMutedTextColor()" *ngIf="!isBeverageBuffet() && isIndicativeMenu()">
                   <i class="fa fa-glass-cheers me-1" [style.color]="getPrimaryColor()"></i>
                   {{ 'RSVP.BEVERAGE_SERVED_NOTE' | translate }}
                 </p>
-                <p class="fs-xxs mt-1 mb-0 font-serif" [style.color]="getMenuMutedTextColor()" *ngIf="!isIndicativeMenu() && !isDiscoveryMode() && hasBeveragesChoice() && availableBeverages().length > 0">
+                <p class="fs-xxs mt-1 mb-0 font-serif" [style.color]="getMenuMutedTextColor()" *ngIf="!isBeverageBuffet() && !isIndicativeMenu() && !isDiscoveryMode() && hasBeveragesChoice() && availableBeverages().length === 1">
+                  <i class="fa fa-check-circle me-1" [style.color]="getPrimaryColor()"></i>
+                  {{ 'RSVP.SINGLE_DISH_AUTO_SELECTED' | translate }}
+                </p>
+                <p class="fs-xxs mt-1 mb-0 font-serif" [style.color]="getMenuMutedTextColor()" *ngIf="!isBeverageBuffet() && !isIndicativeMenu() && !isDiscoveryMode() && hasBeveragesChoice() && availableBeverages().length > 1">
                   <i class="fa fa-info-circle me-1" [style.color]="getPrimaryColor()"></i>
                   {{ 'RSVP.BEVERAGE_DISCOVERY_NOTE' | translate }}
                 </p>
-                <p class="fs-xxs mt-1 mb-0 font-serif" [style.color]="getMenuMutedTextColor()" *ngIf="!isIndicativeMenu() && !isDiscoveryMode() && !hasBeveragesChoice() && availableBeverages().length > 0">
+                <p class="fs-xxs mt-1 mb-0 font-serif" [style.color]="getMenuMutedTextColor()" *ngIf="!isBeverageBuffet() && !isIndicativeMenu() && !isDiscoveryMode() && !hasBeveragesChoice() && availableBeverages().length > 0">
                   <i class="fa fa-utensils me-1" [style.color]="getPrimaryColor()"></i>
                   {{ 'RSVP.BEVERAGE_SERVED_NOTE' | translate }}
                 </p>
-                <p class="fs-xxs mt-1 mb-0 font-serif" [style.color]="getMenuMutedTextColor()" *ngIf="!isIndicativeMenu() && isDiscoveryMode()">
+                <p class="fs-xxs mt-1 mb-0 font-serif" [style.color]="getMenuMutedTextColor()" *ngIf="!isBeverageBuffet() && !isIndicativeMenu() && isDiscoveryMode()">
                   {{ 'RSVP.BEVERAGE_DISCOVERY_NOTE' | translate }}
                 </p>
               </div>
@@ -1704,8 +1795,17 @@
                       </span>
                     </div>
 
-                    <!-- Badge Servi à table quand pas de choix individuel requis -->
-                    <div class="dish-card-badge flex-shrink-0 ms-auto" *ngIf="!isDiscoveryMode() && !isIndicativeMenu() && !hasBeveragesChoice()">
+                    <!-- Badge Libre-service / Bar quand en buffet -->
+                    <div class="dish-card-badge flex-shrink-0 ms-auto" *ngIf="!isDiscoveryMode() && !isIndicativeMenu() && isBeverageBuffet()">
+                      <span class="badge rounded-pill px-2 py-0.5 fs-4xs fw-semibold"
+                        [style.backgroundColor]="getPrimaryColor() + '18'"
+                        [style.color]="getPrimaryColor()">
+                        <i class="fa fa-cocktail me-0.5"></i> {{ 'RSVP.BAR_DRINK_TAG' | translate }}
+                      </span>
+                    </div>
+
+                    <!-- Badge Servi à table quand pas de choix individuel requis et pas buffet -->
+                    <div class="dish-card-badge flex-shrink-0 ms-auto" *ngIf="!isDiscoveryMode() && !isIndicativeMenu() && !isBeverageBuffet() && !hasBeveragesChoice()">
                       <span class="badge rounded-pill px-2 py-0.5 fs-4xs fw-semibold"
                         [style.backgroundColor]="getPrimaryColor() + '18'"
                         [style.color]="getPrimaryColor()">
@@ -1734,7 +1834,7 @@
                 </button>
                 <button type="button" class="btn btn-sm btn-opt-out rounded-pill px-3.5 py-1.5 fs-xs fw-semibold shadow-2xs"
                   (click)="goToNextStep()">
-                  <span>{{ 'RSVP.BTN_CONTINUE' | translate }}</span>
+                  <span>{{ 'RSVP.CONTINUE_TO_DIET' | translate }}</span>
                   <i class="fa" [class.fa-arrow-right]="!isRtl()" [class.fa-arrow-left]="isRtl()"></i>
                 </button>
               </div>
@@ -1981,24 +2081,30 @@
                       </p>
                     </div>
 
-                    <!-- CAS 2 : FORMULE MIX (Buffet Entrées + Choix Plat Chaud + Buffet Desserts & Bar) -->
+                    <!-- CAS 2 : FORMULE MIX (Plat Chaud Servi à Table + Grand Buffet Libre-Service) -->
                     <div *ngIf="isMixMode() && !isIndicativeMenu()" class="summary-dishes-grid mb-2 text-start">
-                      <div class="summary-dish-item" [style.borderColor]="getPrimaryColor() + '20'">
+                      <div class="summary-dish-item" *ngIf="hasStartersCourse() && !isStarterBuffet()" [style.borderColor]="getPrimaryColor() + '20'">
                         <span class="dish-course-num text-uppercase fw-bold" [style.color]="getSummaryCourseColor()">1. {{ 'RSVP.TAB_STARTERS' | translate }}</span>
                         <span class="dish-course-val fw-semibold text-truncate" [style.color]="getSummaryValueColor()">
-                          {{ 'RSVP.MIX_RECAP_ENTREES' | translate }}
+                          {{ hasStartersChoice() ? (starterChoice || ('RSVP.NO_SELECTION' | translate)) : (getDishesSummaryNames(availableStarters()) + ' ' + ('RSVP.SERVED_AT_TABLE_NOTE' | translate)) }}
                         </span>
                       </div>
-                      <div class="summary-dish-item" [style.borderColor]="getPrimaryColor() + '20'">
-                        <span class="dish-course-num text-uppercase fw-bold" [style.color]="getSummaryCourseColor()">2. {{ 'RSVP.TAB_HOT_DISH' | translate }}</span>
+                      <div class="summary-dish-item" *ngIf="hasMainsCourse() && !isMainBuffet()" [style.borderColor]="getPrimaryColor() + '20'">
+                        <span class="dish-course-num text-uppercase fw-bold" [style.color]="getSummaryCourseColor()">{{ (hasStartersCourse() && !isStarterBuffet()) ? '2.' : '1.' }} {{ 'RSVP.TAB_HOT_DISH' | translate }}</span>
                         <span class="dish-course-val fw-bold text-truncate" [style.color]="getSummaryValueColor()">
                           {{ mealChoice || ('RSVP.ACCORDING_CHEF_SUGGESTION' | translate) }}
                         </span>
                       </div>
-                      <div class="summary-dish-item" [style.borderColor]="getPrimaryColor() + '20'">
-                        <span class="dish-course-num text-uppercase fw-bold" [style.color]="getSummaryCourseColor()">3. {{ 'RSVP.TAB_DESSERTS' | translate }}</span>
+                      <div class="summary-dish-item" *ngIf="hasDessertsCourse() && !isDessertBuffet()" [style.borderColor]="getPrimaryColor() + '20'">
+                        <span class="dish-course-num text-uppercase fw-bold" [style.color]="getSummaryCourseColor()">{{ 'RSVP.TAB_DESSERTS' | translate }}</span>
                         <span class="dish-course-val fw-semibold text-truncate" [style.color]="getSummaryValueColor()">
-                          {{ 'RSVP.MIX_RECAP_DESSERTS' | translate }}
+                          {{ hasDessertsChoice() ? (dessertChoice || ('RSVP.NO_SELECTION' | translate)) : (getDishesSummaryNames(availableDesserts()) + ' ' + ('RSVP.SERVED_AT_TABLE_NOTE' | translate)) }}
+                        </span>
+                      </div>
+                      <div class="summary-dish-item" *ngIf="hasBuffetInMix()" [style.borderColor]="getPrimaryColor() + '20'">
+                        <span class="dish-course-num text-uppercase fw-bold" [style.color]="getSummaryCourseColor()"><i class="fa fa-concierge-bell me-1"></i> {{ 'RSVP.TAB_BUFFET_MIX' | translate }}</span>
+                        <span class="dish-course-val fw-semibold text-truncate" [style.color]="getSummaryValueColor()">
+                          {{ 'RSVP.BUFFET_MIX_TITLE' | translate }} ({{ 'RSVP.BUFFET_FREE_SERVICE' | translate }})
                         </span>
                       </div>
                     </div>

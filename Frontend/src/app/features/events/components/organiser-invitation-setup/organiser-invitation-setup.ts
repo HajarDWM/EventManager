@@ -608,13 +608,38 @@ export class OrganiserInvitationSetup implements OnInit {
     let cateringTabs: CateringTab[] | undefined = undefined;
 
     if (isMixMode) {
-      cateringFormulaName = 'Formule Mixte (Buffet & Plat Chaud)';
+      cateringFormulaName = 'Formule Mixte (Buffet & Table)';
       cateringFormulaKey = 'EVENT_DETAILS.FORMULA_MIX';
+      const isStarterBuffet = rawMealType.includes('BUFFET_ENTREES');
+      const isMainBuffet = rawMealType.includes('BUFFET_MAINS');
+      const isDessertBuffet = rawMealType.includes('BUFFET_DESSERTS');
+      const isBeverageBuffet = rawMealType.includes('BUFFET_BEVERAGES');
+
       cateringTabs = [
-        { key: 'STARTER', label: 'Entrées en Buffet', labelKey: 'CATERING.STARTERS_IN_BUFFET' },
-        { key: 'MAIN', label: 'Plat Principal servi à table', labelKey: 'CATERING.MAIN_SERVED_TABLE' },
-        { key: 'DESSERT', label: 'Desserts en Buffet', labelKey: 'CATERING.DESSERTS_IN_BUFFET' }
+        {
+          key: 'STARTER',
+          label: isStarterBuffet ? 'Entrées en Buffet' : 'Entrée servie à table',
+          labelKey: isStarterBuffet ? 'CATERING.STARTERS_IN_BUFFET' : 'CATERING.STARTERS_SERVED_TABLE'
+        },
+        {
+          key: 'MAIN',
+          label: isMainBuffet ? 'Plats en Buffet' : 'Plat Principal servi à table',
+          labelKey: isMainBuffet ? 'CATERING.MAINS_IN_BUFFET' : 'CATERING.MAIN_SERVED_TABLE'
+        },
+        {
+          key: 'DESSERT',
+          label: isDessertBuffet ? 'Desserts en Buffet' : 'Dessert servi à table',
+          labelKey: isDessertBuffet ? 'CATERING.DESSERTS_IN_BUFFET' : 'CATERING.DESSERTS_SERVED_TABLE'
+        }
       ];
+
+      if (rawMealType.includes('COURSE_BEVERAGE') || isBeverageBuffet) {
+        cateringTabs.push({
+          key: 'BEVERAGE',
+          label: isBeverageBuffet ? 'Boissons en Buffet' : 'Boissons servies à table',
+          labelKey: isBeverageBuffet ? 'CATERING.BEVERAGES_IN_BUFFET' : 'CATERING.BEVERAGES_SERVED_TABLE'
+        });
+      }
     } else if (isBuffetMode) {
       cateringFormulaName = 'Formule Buffet Libre-Service';
       cateringFormulaKey = 'EVENT_DETAILS.FORMULA_BUFFET';
@@ -733,8 +758,11 @@ export class OrganiserInvitationSetup implements OnInit {
 
     const activeChannels = this.getGuestChannels(guest);
 
-    const rawStep = localStorage.getItem('guest_rsvp_current_step') || localStorage.getItem(`guest_${gid}_rsvp_step`);
+    const rawStep = localStorage.getItem(`guest_${gid}_last_rsvp_step`) || 
+                    localStorage.getItem(`guest_${gid}_rsvp_step`) || 
+                    localStorage.getItem('guest_rsvp_current_step');
     const lastRsvpStep = rawStep ? parseInt(rawStep, 10) : 0;
+    const isRsvpOpen = localStorage.getItem(`guest_${gid}_is_rsvp_open`) === 'true';
 
     // Analyse des 3 Formules Catering & du droit du convive à choisir son menu:
     // 1. Formule BUFFET (isBuffetMode): Libre-service, les invités ne choisissent pas de plats individuels à table.
@@ -743,34 +771,35 @@ export class OrganiserInvitationSetup implements OnInit {
     const hasGuestMenuChoice = !isBuffetMode && !rawMealType.includes('MENU_INDICATIF') &&
       (rawMealType.includes('GUEST_CHOICE') || rawMealType.includes('CHOICE_') || cleanDishName.length > 0);
 
+    // Écran 4 : Statut de complétion des Régimes & Allergies
+    const isDietExplicitlyCompleted = localStorage.getItem(`guest_${gid}_diet_completed`) === 'true';
+    const isDietCompleted = isConfirmed || hasResponded || (lastRsvpStep >= 5) || 
+      (isDietExplicitlyCompleted && (lastRsvpStep >= 4 || dietaryList.length > 0));
+
     // Écran 3 : Statut de complétion du choix Menu selon la formule
     let isMenuStepCompleted = false;
-    if (!hasGuestMenuChoice) {
-      // Pour Buffet & Menu Unique: L'étape menu est une simple découverte, considérée complétée dès ouverture ou réponse
-      isMenuStepCompleted = isOpened || isConfirmed || hasResponded;
+    if (hasResponded || isConfirmed || isDietCompleted || lastRsvpStep >= 4) {
+      isMenuStepCompleted = true;
+    } else if (hasGuestMenuChoice && cleanDishName.length > 0) {
+      isMenuStepCompleted = true;
     } else {
-      // Pour les formules avec choix convive: complété si le convive a déjà sélectionné son plat ou confirmé
-      isMenuStepCompleted = isConfirmed || hasResponded || cleanDishName.length > 0;
+      isMenuStepCompleted = false;
     }
-
-    // Écran 4 : Statut de complétion des Régimes & Allergies
-    const isDietCompleted = isConfirmed || hasResponded || (dietaryList.length > 0) || 
-      (localStorage.getItem(`guest_${gid}_diet_viewed`) === 'true') || 
-      (localStorage.getItem(`guest_${gid}_allergies`) !== null) || 
-      (lastRsvpStep >= 5);
 
     // Détermination dynamique de l'Écran Actuel (1 à 5) pour le Lien Direct Intelligent:
     let currentStepNum = 1;
     if (hasResponded) {
       currentStepNum = 5;
-    } else if (isDietCompleted) {
+    } else if (lastRsvpStep >= 5 || isDietCompleted) {
       currentStepNum = 5; // A finalisé régimes/menu -> étape finale RSVP
-    } else if (isMenuStepCompleted) {
-      currentStepNum = 4; // A choisi son plat (ou formule sans choix déjà découverte) -> étape Régimes & Allergies
-    } else if (isOpened) {
-      currentStepNum = hasGuestMenuChoice ? 3 : 4; // Si ouvert: Écran 3 si choix requis, sinon Écran 4
+    } else if (lastRsvpStep === 4) {
+      currentStepNum = 4; // Écran 4 : En train de renseigner Régimes & Allergies
+    } else if (isRsvpOpen || (lastRsvpStep >= 0 && lastRsvpStep <= 3 && isOpened)) {
+      currentStepNum = 3; // Écran 3 : En train de consulter / choisir le Menu
+    } else if (isOpened || isDetailsViewed) {
+      currentStepNum = 2; // Écran 2 : A ouvert la carte/détails mais n'est pas encore entré dans le menu
     } else if (isSent) {
-      currentStepNum = 2; // Envoyé mais non encore ouvert -> Découverte enveloppe
+      currentStepNum = 1; // Écran 1 : Notification expédiée
     }
 
     const sampleBuffetDishes: SampleDish[] = [
@@ -979,11 +1008,19 @@ export class OrganiserInvitationSetup implements OnInit {
     ];
 
     let pct = 0;
-    if (isConfirmed || isDeclined) pct = 100;
-    else if (isDietCompleted) pct = 80;
-    else if (isMenuStepCompleted) pct = 60;
-    else if (isOpened) pct = 40;
-    else if (isSent) pct = 20;
+    if (isConfirmed || isDeclined) {
+      pct = 100;
+    } else if (currentStepNum === 5 || lastRsvpStep >= 5) {
+      pct = 80;
+    } else if (currentStepNum === 4 || lastRsvpStep === 4) {
+      pct = 60;
+    } else if (currentStepNum === 3 || isMenuStepCompleted) {
+      pct = 40;
+    } else if (currentStepNum === 2 || isOpened) {
+      pct = 20;
+    } else if (isSent) {
+      pct = 10;
+    }
 
     let statusKey = 'STATUS_PENDING';
     let statusLabel = 'En attente d\'envoi';
@@ -996,34 +1033,36 @@ export class OrganiserInvitationSetup implements OnInit {
       statusKey = 'STATUS_DECLINED';
       statusLabel = 'Invitation Déclinée';
       statusBadge = 'bg-danger text-white shadow-sm';
-    } else if (isDietCompleted) {
+    } else if (currentStepNum === 5 || lastRsvpStep >= 5) {
       statusKey = 'STATUS_DIET_VIEWED';
       statusLabel = 'Régimes & Allergies validés • En attente RSVP';
       statusBadge = 'bg-warning text-dark shadow-sm';
-    } else if (isMenuStepCompleted) {
-      if (hasGuestMenuChoice) {
+    } else if (currentStepNum === 4 || lastRsvpStep === 4) {
+      statusKey = 'STATUS_DIET_IN_PROGRESS';
+      statusLabel = 'Régimes & Allergies en cours de saisie';
+      statusBadge = 'bg-warning text-dark shadow-sm';
+    } else if (currentStepNum === 3) {
+      if (hasGuestMenuChoice && cleanDishName.length > 0) {
         statusKey = 'STATUS_SELECTED';
-        statusLabel = 'Plat sélectionné • En attente régimes';
-        statusBadge = 'bg-success text-white shadow-sm';
+        statusLabel = `Plat choisi (${cleanDishName}) • En cours`;
+        statusBadge = 'bg-primary-subtle text-primary border border-primary';
       } else if (isIndicatif) {
         statusKey = 'STATUS_VIEWED';
-        statusLabel = 'Menu Unique consulté • En attente régimes';
-        statusBadge = 'bg-success text-white shadow-sm';
-      } else {
+        statusLabel = 'Menu d\'Honneur en consultation';
+        statusBadge = 'bg-primary-subtle text-primary border border-primary';
+      } else if (isBuffetMode) {
         statusKey = 'STATUS_VIEWED';
-        statusLabel = 'Buffet découvert • En attente régimes';
-        statusBadge = 'bg-success text-white shadow-sm';
-      }
-    } else if (isOpened) {
-      if (hasGuestMenuChoice) {
-        statusKey = 'STATUS_MENU_VIEWED';
-        statusLabel = 'En cours de sélection du Menu';
-        statusBadge = 'bg-warning text-dark shadow-sm';
+        statusLabel = 'Buffet en cours de découverte';
+        statusBadge = 'bg-primary-subtle text-primary border border-primary';
       } else {
-        statusKey = 'STATUS_OPENED';
-        statusLabel = 'Invitation Ouverte';
-        statusBadge = 'bg-info text-white shadow-sm';
+        statusKey = 'STATUS_IN_PROGRESS';
+        statusLabel = 'Choix du menu en cours';
+        statusBadge = 'bg-primary-subtle text-primary border border-primary';
       }
+    } else if (isOpened || currentStepNum === 2) {
+      statusKey = 'STATUS_OPENED';
+      statusLabel = 'Invitation Découverte';
+      statusBadge = 'bg-info-subtle text-info border border-info';
     } else if (isSent) {
       statusKey = 'STATUS_SENT';
       statusLabel = 'Invitation Envoyée';

@@ -156,6 +156,27 @@
                 <i class="fa fa-tag me-1 text-muted opacity-75 fs-xs"></i>
                 <span>{{ event.invitationSubtitle }}</span>
               </div>
+              <!-- Catering Formula & Guest Choice Badges (Special Helper Chips for Testing) -->
+              <div class="d-flex flex-wrap align-items-center gap-1 mt-1">
+                <!-- Formula Badge -->
+                <span class="badge px-2 py-1 fs-xs fw-semibold rounded-pill" [ngClass]="getMealFormulaBadge(event.mealType).class">
+                  <i class="fa me-1" [ngClass]="getMealFormulaBadge(event.mealType).icon"></i>
+                  {{ getMealFormulaBadge(event.mealType).label }}
+                </span>
+
+                <!-- Guest Choice Status -->
+                <span *ngIf="isGuestChoiceActive(event.mealType)" class="badge px-2 py-1 fs-xs fw-semibold bg-success-light text-success rounded-pill">
+                  <i class="fa fa-check-circle me-1"></i> Choix convives actif
+                </span>
+                <span *ngIf="!isGuestChoiceActive(event.mealType) && getMealFormulaBadge(event.mealType).label !== 'Buffet Libre'" class="badge px-2 py-1 fs-xs fw-normal bg-body-dark text-muted rounded-pill">
+                  <i class="fa fa-lock me-1"></i> Menu fixe
+                </span>
+
+                <!-- Mixte Breakdown -->
+                <span *ngIf="getCourseBreakdown(event.mealType) as breakdown" class="badge px-2 py-1 fs-xs fw-normal bg-secondary-light text-secondary rounded-pill">
+                  <i class="fa fa-layer-group me-1"></i> {{ breakdown }}
+                </span>
+              </div>
             </td>
             <td>
               {{ event.eventDate | date:'dd/MM/yyyy HH:mm' }}

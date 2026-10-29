@@ -166,6 +166,34 @@ export class EventList implements OnInit {
     }
   }
 
+  public getMealFormulaBadge(mealType: string | undefined): { label: string; class: string; icon: string } {
+    const m = (mealType || 'PLATS_FIXES').toUpperCase();
+    if (m.includes('MIX') || (m.includes('BUFFET_ENTREES') && m.includes('PLATS_FIXES'))) {
+      return { label: 'Formule Mixte', class: 'bg-warning-light text-warning', icon: 'fa-blender-phone' };
+    }
+    if (m.includes('BUFFET') && !m.includes('PLATS_FIXES')) {
+      return { label: 'Buffet Libre', class: 'bg-info-light text-info', icon: 'fa-utensils' };
+    }
+    return { label: 'Service à Table', class: 'bg-primary-light text-primary', icon: 'fa-concierge-bell' };
+  }
+
+  public isGuestChoiceActive(mealType: string | undefined): boolean {
+    const m = (mealType || '').toUpperCase();
+    if (!m || m.includes('MENU_INDICATIF')) return false;
+    return m.includes('GUEST_CHOICE') || m.includes('CHOICE_');
+  }
+
+  public getCourseBreakdown(mealType: string | undefined): string | null {
+    const m = (mealType || '').toUpperCase();
+    if (!m.includes('MIX') && !(m.includes('BUFFET_ENTREES') && m.includes('PLATS_FIXES'))) {
+      return null;
+    }
+    const starter = m.includes('BUFFET_ENTREES') ? 'Entrée: Buffet' : 'Entrée: Table';
+    const main = m.includes('BUFFET_MAINS') ? 'Plat: Buffet' : 'Plat: Table';
+    const dessert = m.includes('BUFFET_DESSERTS') ? 'Dessert: Buffet' : 'Dessert: Table';
+    return `${starter} • ${main} • ${dessert}`;
+  }
+
   protected deleteEvent(id: number): void {
     if (confirm('Êtes-vous sûr de vouloir supprimer cet événement ?')) {
       this.eventService.deleteEvent(id).subscribe({
