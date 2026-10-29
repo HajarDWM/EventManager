@@ -2081,19 +2081,19 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
               this.status.set('CONFIRMED');
               this.selectedAttendanceChoice.set('CONFIRMED');
               this.isMenuRsvpOpen.set(true);
-              this.currentRsvpStep.set(0);
+              this.currentRsvpStep.set(this.getFirstCourseStep());
             } else if (stepQuery === 'dietary') {
               this.attendanceStatus = true;
               this.status.set('CONFIRMED');
               this.selectedAttendanceChoice.set('CONFIRMED');
               this.isMenuRsvpOpen.set(true);
-              this.currentRsvpStep.set(this.isPlatedMode() ? 3 : 2);
+              this.currentRsvpStep.set(4);
             } else if (stepQuery === 'rsvp') {
               this.attendanceStatus = true;
               this.status.set('CONFIRMED');
               this.selectedAttendanceChoice.set('CONFIRMED');
               this.isMenuRsvpOpen.set(true);
-              this.currentRsvpStep.set(this.isPlatedMode() ? 4 : 3);
+              this.currentRsvpStep.set(5);
             }
           }
         }
