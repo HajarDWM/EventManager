@@ -10,7 +10,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.example.eventmanager.infrastructure.persistence.repository.QuoteRepository;
 import com.example.eventmanager.infrastructure.persistence.repository.InvoiceRepository;
@@ -128,5 +131,26 @@ public class ClientEventController {
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(eventDTOs);
+    }
+
+    @PutMapping("/{eventId}/guest-privacy")
+    @Transactional
+    public ResponseEntity<?> updateGuestPrivacy(
+            @PathVariable Long eventId,
+            @RequestParam boolean maskGuestLastName,
+            @AuthenticationPrincipal ClientUserDetails clientDetails) {
+        if (clientDetails == null) {
+            return ResponseEntity.status(401).build();
+        }
+
+        EventEntity event = eventRepository.findById(eventId).orElse(null);
+        if (event == null || !clientDetails.getClientId().equals(event.getClientId())) {
+            return ResponseEntity.status(403).body("Accès non autorisé à cet événement");
+        }
+
+        event.setMaskGuestLastName(maskGuestLastName);
+        eventRepository.save(event);
+
+        return ResponseEntity.ok(java.util.Map.of("eventId", eventId, "maskGuestLastName", maskGuestLastName));
     }
 }

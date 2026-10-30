@@ -32,6 +32,14 @@ public class EventResource {
         return ResponseEntity.ok(updatedEvent);
     }
 
+    @PutMapping("/{id}/guest-privacy")
+    public ResponseEntity<EventDTO> updateGuestPrivacy(@PathVariable Long id, @RequestParam boolean maskGuestLastName) {
+        EventDTO existing = getEventUseCase.getEventById(id);
+        existing.setMaskGuestLastName(maskGuestLastName);
+        EventDTO updated = updateEventUseCase.updateEvent(id, existing);
+        return ResponseEntity.ok(updated);
+    }
+
     @PostMapping("/{id}/regenerate-client-token")
     public ResponseEntity<EventDTO> regenerateClientToken(@PathVariable Long id) {
         EventDTO updatedEvent = updateEventUseCase.regenerateClientToken(id);

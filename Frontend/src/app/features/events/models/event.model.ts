@@ -35,4 +35,5 @@ export interface Event {
   tableShape?: 'ROUND' | 'RECTANGULAR' | 'MIXED' | string;
   tableCapacity?: number;
   tablesCount?: number;
+  maskGuestLastName?: boolean;
 }

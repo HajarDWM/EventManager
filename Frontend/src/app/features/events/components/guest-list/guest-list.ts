@@ -9,11 +9,12 @@ import { forkJoin } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { CatererService } from '../../../../core/services/caterer.service';
 import { TranslatePipe } from '../../../../core/pipes/translate.pipe';
+import { GUEST_PRIVACY_PIPES } from '../../../../core/pipes/format-guest-name.pipe';
 
 @Component({
   selector: 'app-guest-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, TranslatePipe],
+  imports: [CommonModule, FormsModule, RouterLink, TranslatePipe, ...GUEST_PRIVACY_PIPES],
   templateUrl: './guest-list.html'
 })
 export class GuestList implements OnInit {
@@ -27,6 +28,13 @@ export class GuestList implements OnInit {
   protected readonly eventId = signal<number | null>(null);
   protected readonly event = signal<Event | null>(null);
   protected readonly guests = signal<Guest[]>([]);
+  protected readonly maskGuestLastName = computed(() => {
+    const id = this.eventId();
+    if (id && localStorage.getItem(`guest_privacy_${id}`) !== null) {
+      return localStorage.getItem(`guest_privacy_${id}`) === 'true';
+    }
+    return !!this.event()?.maskGuestLastName;
+  });
 
   protected readonly isLoading = signal(true);
   protected readonly errorMessage = signal('');
@@ -387,7 +395,7 @@ export class GuestList implements OnInit {
   }
 
   protected getConfirmedCountForGroup(groupName: string): number {
-    return this.guests().filter(g => g.groupName === groupName && g.status === 'CONFIRMED').length;
+    return this.guests().filter((g: Guest) => g.groupName === groupName && g.status === 'CONFIRMED').length;
   }
 
   protected readonly isTableDropdownOpen = signal<boolean>(false);
@@ -404,7 +412,7 @@ export class GuestList implements OnInit {
     for (let i = 1; i <= estimatedCount; i++) {
       customTableNames.add(`Table ${i}`);
     }
-    this.guests().forEach(g => {
+    this.guests().forEach((g: Guest) => {
       if (g.tableNumber && g.tableNumber.trim()) {
         customTableNames.add(g.tableNumber.trim());
       }
@@ -413,21 +421,21 @@ export class GuestList implements OnInit {
     const currentSelectedGroup = this.groupName()?.trim().toLowerCase() || '';
 
     return Array.from(customTableNames).map(name => {
-      const seatedGuests = this.guests().filter(g => g.tableNumber && g.tableNumber.trim().toLowerCase() === name.toLowerCase());
-      const confirmedSeated = seatedGuests.filter(g => g.status === 'CONFIRMED');
+      const seatedGuests: Guest[] = this.guests().filter((g: Guest) => g.tableNumber && g.tableNumber.trim().toLowerCase() === name.toLowerCase());
+      const confirmedSeated: Guest[] = seatedGuests.filter((g: Guest) => g.status === 'CONFIRMED');
       const occupied = confirmedSeated.length;
       
       const capacity = name.toLowerCase().includes('honneur') ? Math.max(defaultCapacity, 12) : defaultCapacity;
       const isFull = occupied >= capacity;
 
       const groupCounts = new Map<string, number>();
-      seatedGuests.forEach(g => {
+      seatedGuests.forEach((g: Guest) => {
         const grp = g.groupName?.trim() || 'Sans groupe';
         groupCounts.set(grp, (groupCounts.get(grp) || 0) + 1);
       });
 
       const groupsInTable = Array.from(groupCounts.keys()).filter(k => k !== 'Sans groupe');
-      const isRecommended = currentSelectedGroup ? groupsInTable.some(g => g.toLowerCase() === currentSelectedGroup) && !isFull : false;
+      const isRecommended = currentSelectedGroup ? groupsInTable.some((grp: string) => grp.toLowerCase() === currentSelectedGroup) && !isFull : false;
 
       let groupSummary = '';
       if (occupied === 0) {

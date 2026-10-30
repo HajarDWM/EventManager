@@ -343,8 +343,8 @@
         </thead>
         <tbody>
           <tr *ngFor="let g of filteredGuests()">
-            <td class="fw-semibold">{{ g.fullName }}</td>
-            <td class="fs-xs">{{ g.email || g.phone || '-' }}</td>
+            <td class="fw-semibold">{{ g.fullName | formatGuestName: isGuestPrivacyActive() }}</td>
+            <td class="fs-xs">{{ (g.email ? (g.email | maskEmail: isGuestPrivacyActive()) : (g.phone | maskPhone: isGuestPrivacyActive())) || '-' }}</td>
             <td class="fs-xs">
               <span class="badge bg-primary-light text-primary fw-semibold" *ngIf="g.groupName">{{ g.groupName }}</span>
               <span class="text-muted fs-xs" *ngIf="!g.groupName">-</span>

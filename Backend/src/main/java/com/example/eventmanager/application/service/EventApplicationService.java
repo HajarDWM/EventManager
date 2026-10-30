@@ -171,6 +171,9 @@ public class EventApplicationService implements CreateEventUseCase, GetEventUseC
         if (eventDTO.getTablesCount() != null) {
             existingEvent.setTablesCount(eventDTO.getTablesCount());
         }
+        if (eventDTO.getMaskGuestLastName() != null) {
+            existingEvent.setMaskGuestLastName(eventDTO.getMaskGuestLastName());
+        }
 
         // Update Client Entity if fields provided
         if (existingEvent.getClientId() != null) {

@@ -10,10 +10,12 @@ import { Event } from '../../models/event.model';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '../../../../core/pipes/translate.pipe';
 
+import { GUEST_PRIVACY_PIPES } from '../../../../core/pipes/format-guest-name.pipe';
+
 @Component({
   selector: 'app-event-export',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule, TranslatePipe],
+  imports: [CommonModule, RouterLink, FormsModule, TranslatePipe, ...GUEST_PRIVACY_PIPES],
   templateUrl: './event-export.html',
   styleUrls: ['./event-export.scss']
 })
@@ -56,6 +58,14 @@ export class EventExport implements OnInit {
     if (filter === 'ALL') return list;
     return list.filter(g => g.groupName === filter);
   });
+
+  protected isGuestPrivacyActive(): boolean {
+    const id = this.eventId() || this.event()?.id;
+    if (id && localStorage.getItem(`guest_privacy_${id}`) !== null) {
+      return localStorage.getItem(`guest_privacy_${id}`) === 'true';
+    }
+    return !!this.event()?.maskGuestLastName;
+  }
   protected readonly menuItems = computed<MenuItem[]>(() => this.exportData()?.menuItems || []);
   protected readonly tasks = computed<EventTask[]>(() => this.exportData()?.tasks || []);
 

@@ -37,7 +37,8 @@ public class EventMapper {
                 .currency(dto.getCurrency() != null ? dto.getCurrency() : "MAD")
                 .tableShape(dto.getTableShape() != null ? dto.getTableShape() : "ROUND")
                 .tableCapacity(dto.getTableCapacity() != null ? dto.getTableCapacity() : 10)
-                .tablesCount(dto.getTablesCount());
+                .tablesCount(dto.getTablesCount())
+                .maskGuestLastName(dto.getMaskGuestLastName() != null ? dto.getMaskGuestLastName() : false);
 
         if (dto.getStatus() != null) {
             builder.status(EventStatus.valueOf(dto.getStatus()));
@@ -77,6 +78,7 @@ public class EventMapper {
                 .tableShape(event.getTableShape() != null ? event.getTableShape() : "ROUND")
                 .tableCapacity(event.getTableCapacity() != null ? event.getTableCapacity() : 10)
                 .tablesCount(event.getTablesCount())
+                .maskGuestLastName(event.isMaskGuestLastName())
                 .build();
     }
 }

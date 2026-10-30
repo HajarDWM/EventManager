@@ -39,4 +39,10 @@ export class ClientGuestService {
       }
     });
   }
+
+  public updateGuestPrivacy(eventId: number, maskGuestLastName: boolean): Observable<any> {
+    return this.http.put(`${this.apiUrl}/events/${eventId}/guest-privacy`, null, {
+      params: { maskGuestLastName }
+    });
+  }
 }

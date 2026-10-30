@@ -40,6 +40,7 @@ public class EventPersistenceMapper {
                 .tableShape(entity.getTableShape() != null ? entity.getTableShape() : "ROUND")
                 .tableCapacity(entity.getTableCapacity() != null ? entity.getTableCapacity() : 10)
                 .tablesCount(entity.getTablesCount())
+                .maskGuestLastName(entity.isMaskGuestLastName())
                 .build();
     }
 
@@ -75,6 +76,7 @@ public class EventPersistenceMapper {
                 .tableShape(domain.getTableShape() != null ? domain.getTableShape() : "ROUND")
                 .tableCapacity(domain.getTableCapacity() != null ? domain.getTableCapacity() : 10)
                 .tablesCount(domain.getTablesCount())
+                .maskGuestLastName(domain.isMaskGuestLastName())
                 .build();
     }
 }

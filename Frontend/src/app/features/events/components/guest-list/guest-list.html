@@ -97,6 +97,15 @@
         </button>
       </div>
 
+      <!-- Privacy Status Badge (Controlled by Client) -->
+      <div class="col-12 col-sm-auto d-flex align-items-center" *ngIf="event()?.maskGuestLastName">
+        <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-2 rounded-pill fs-xs fw-semibold d-flex align-items-center gap-1.5 shadow-2xs"
+              [title]="'GUESTS.CLIENT_CONTROL_PRIVACY_DESC' | translate">
+          <i class="fa fa-user-shield text-primary"></i>
+          {{ 'GUESTS.CLIENT_PRIVACY_ACTIVE' | translate }}
+        </span>
+      </div>
+
       <!-- Group Filter -->
       <div class="col-12 col-sm-6 col-md-4 ms-md-auto">
         <div class="input-group input-group-sm">
@@ -159,10 +168,10 @@
         </thead>
         <tbody>
           <tr *ngFor="let g of paginatedGuests()">
-            <td class="fw-semibold">{{ g.fullName }}</td>
+            <td class="fw-semibold">{{ g.fullName | formatGuestName: maskGuestLastName() }}</td>
             <td class="fs-sm">
-              <div *ngIf="g.email"><i class="fa fa-envelope text-muted me-1"></i> {{ g.email }}</div>
-              <div *ngIf="g.phone"><i class="fa fa-phone text-muted me-1"></i> {{ g.phone }}</div>
+              <div *ngIf="g.email"><i class="fa fa-envelope text-muted me-1"></i> {{ g.email | maskEmail: maskGuestLastName() }}</div>
+              <div *ngIf="g.phone"><i class="fa fa-phone text-muted me-1"></i> {{ g.phone | maskPhone: maskGuestLastName() }}</div>
             </td>
             <td class="fs-sm">
               <span class="badge bg-info-light text-info border border-info-light fw-semibold" *ngIf="g.groupName">{{ g.groupName }}</span>

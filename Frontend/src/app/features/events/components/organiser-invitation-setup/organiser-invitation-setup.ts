@@ -86,11 +86,12 @@ export interface JourneyStep {
 }
 
 import { TranslatePipe } from '../../../../core/pipes/translate.pipe';
+import { GUEST_PRIVACY_PIPES } from '../../../../core/pipes/format-guest-name.pipe';
 
 @Component({
   selector: 'app-organiser-invitation-setup',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, TranslatePipe],
+  imports: [CommonModule, FormsModule, RouterLink, TranslatePipe, ...GUEST_PRIVACY_PIPES],
   templateUrl: './organiser-invitation-setup.html',
   styleUrls: ['./organiser-invitation-setup.scss']
 })
@@ -133,6 +134,14 @@ export class OrganiserInvitationSetup implements OnInit {
   }
 
   protected readonly event = signal<Event | null>(null);
+  protected readonly isGuestPrivacyActive = computed(() => {
+    const evt = this.event();
+    const id = evt?.id;
+    if (id && localStorage.getItem(`guest_privacy_${id}`) !== null) {
+      return localStorage.getItem(`guest_privacy_${id}`) === 'true';
+    }
+    return !!evt?.maskGuestLastName;
+  });
   protected readonly templates = signal<DigitalTemplate[]>(this.templateService.templates());
   protected readonly guests = signal<Guest[]>([]);
 

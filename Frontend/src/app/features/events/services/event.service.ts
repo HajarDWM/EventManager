@@ -41,4 +41,10 @@ export class EventService {
   public regenerateClientToken(eventId: number): Observable<Event> {
     return this.http.post<Event>(`${this.apiUrl}/${eventId}/regenerate-client-token`, {});
   }
+
+  public updateGuestPrivacy(eventId: number, maskGuestLastName: boolean): Observable<Event> {
+    return this.http.put<Event>(`${this.apiUrl}/${eventId}/guest-privacy`, null, {
+      params: { maskGuestLastName }
+    });
+  }
 }

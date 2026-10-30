@@ -133,10 +133,18 @@
               <h3 class="block-title fw-bold fs-sm mb-0">
                 <i class="fa fa-users text-primary me-2"></i>{{ 'GUESTS.TITLE' | translate }}
               </h3>
-              <a class="btn btn-xs btn-alt-primary rounded-pill px-2.5"
-                [routerLink]="['/events', event()?.id, 'guests']">
-                {{ 'COMMON.VIEW_ALL' | translate }}
-              </a>
+              <div class="d-flex align-items-center gap-2">
+                <span *ngIf="isGuestPrivacyActive()"
+                      class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill fs-3xs px-2 py-1 d-flex align-items-center gap-1"
+                      [title]="'GUESTS.CLIENT_CONTROL_PRIVACY_DESC' | translate">
+                  <i class="fa fa-user-shield text-primary"></i>
+                  {{ 'GUESTS.PRIVACY_SHIELD_BADGE' | translate }}
+                </span>
+                <a class="btn btn-xs btn-alt-primary rounded-pill px-2.5"
+                  [routerLink]="['/events', event()?.id, 'guests']">
+                  {{ 'COMMON.VIEW_ALL' | translate }}
+                </a>
+              </div>
             </div>
             <div class="block-content p-3">
               <!-- Clickable Stats = Filter Buttons -->
@@ -220,8 +228,8 @@
                   </thead>
                   <tbody>
                     <tr *ngFor="let g of dashboardPagedGuests()">
-                      <td class="fw-semibold text-dark">{{ g.fullName }}</td>
-                      <td class="text-muted">{{ g.email || '-' }}</td>
+                      <td class="fw-semibold text-dark">{{ g.fullName | formatGuestName: isGuestPrivacyActive() }}</td>
+                      <td class="text-muted">{{ (g.email | maskEmail: isGuestPrivacyActive()) || '-' }}</td>
                       <td>
                         <span class="badge bg-body-dark text-black border">
                           {{ getGuestPosition(g) }}
@@ -469,7 +477,7 @@
                     </thead>
                     <tbody>
                       <tr *ngFor="let g of invitationPagedGuests()">
-                        <td class="py-1 fw-semibold text-dark">{{ g.fullName }}</td>
+                        <td class="py-1 fw-semibold text-dark">{{ g.fullName | formatGuestName: isGuestPrivacyActive() }}</td>
                         <td class="py-1">
                           <div class="d-inline-flex align-items-center gap-2" *ngIf="getGuestChannels(g).length > 0; else noChannel">
                             <i *ngFor="let c of getGuestChannels(g)" [class]="c.icon" [ngClass]="c.colorClass" style="font-size: 0.95rem;" [title]="c.title"></i>

@@ -74,6 +74,17 @@
       <option *ngFor="let grp of uniqueGroups()" [value]="grp">{{ grp }}</option>
     </select>
   </div>
+
+  <!-- Client Guest Privacy Toggle (Controls hiding from Organizer) -->
+  <div class="form-check form-switch d-inline-flex align-items-center gap-2 m-0 px-3 py-2 bg-white rounded-3 border shadow-xs" [title]="'GUESTS.CLIENT_CONTROL_PRIVACY_DESC' | translate">
+    <input class="form-check-input ms-0 cursor-pointer" type="checkbox" id="clientMaskGuestLastNameToggle"
+           [checked]="maskGuestLastName()"
+           (change)="onTogglePrivacy($any($event.target).checked)">
+    <label class="form-check-label fs-xs fw-bold text-dark cursor-pointer d-flex align-items-center gap-1.5 mb-0" for="clientMaskGuestLastNameToggle">
+      <i class="fas fa-user-shield text-primary"></i>
+      {{ 'GUESTS.CLIENT_CONTROL_PRIVACY_LABEL' | translate }}
+    </label>
+  </div>
 </div>
 
 <!-- Batch Assignment Bar when filtering by group -->
@@ -145,11 +156,11 @@
     </thead>
     <tbody>
       <tr *ngFor="let guest of filteredGuests()">
-        <td class="fw-semibold text-dark">{{ guest.fullName }}</td>
+        <td class="fw-semibold text-dark">{{ guest.fullName | formatGuestName: maskGuestLastName() }}</td>
         <td>
           <div class="contact-info">
-            <div *ngIf="guest.email" class="text-truncate" style="max-width: 180px;"><i class="fas fa-envelope me-1 text-muted"></i>{{ guest.email }}</div>
-            <div *ngIf="guest.phone"><i class="fas fa-phone me-1 text-muted"></i>{{ guest.phone }}</div>
+            <div *ngIf="guest.email" class="text-truncate" style="max-width: 180px;"><i class="fas fa-envelope me-1 text-muted"></i>{{ guest.email | maskEmail: maskGuestLastName() }}</div>
+            <div *ngIf="guest.phone"><i class="fas fa-phone me-1 text-muted"></i>{{ guest.phone | maskPhone: maskGuestLastName() }}</div>
             <span *ngIf="!guest.email && !guest.phone" class="text-muted fst-italic fs-xs">-</span>
           </div>
         </td>

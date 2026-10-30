@@ -41,6 +41,8 @@ public class Event {
     @Builder.Default
     private Integer tableCapacity = 10;
     private Integer tablesCount;
+    @Builder.Default
+    private boolean maskGuestLastName = false;
 
     public void setupInvitation(Long templateId, String templateIdStr, String token, String title, LocalDateTime date, String location) {
         setupInvitation(templateId, templateIdStr, token, title, this.invitationSubtitle, date, location, this.parkingLocation);

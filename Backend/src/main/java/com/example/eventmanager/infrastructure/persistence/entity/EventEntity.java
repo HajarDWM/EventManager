@@ -106,5 +106,9 @@ public class EventEntity {
 
     @Column(name = "tables_count")
     private Integer tablesCount;
+
+    @Column(name = "mask_guest_last_name", nullable = false)
+    @Builder.Default
+    private boolean maskGuestLastName = false;
 }
 

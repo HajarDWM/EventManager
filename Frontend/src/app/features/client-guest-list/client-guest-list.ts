@@ -5,12 +5,14 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ClientGuestService } from '../../core/services/client-guest.service';
 import { Guest, GuestStatus } from '../../core/services/guest.service';
 import { ClientAuthService } from '../../core/auth/services/client-auth.service';
+import { Event } from '../events/models/event.model';
 import { TranslatePipe } from '../../core/pipes/translate.pipe';
+import { GUEST_PRIVACY_PIPES } from '../../core/pipes/format-guest-name.pipe';
 
 @Component({
   selector: 'app-client-guest-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, TranslatePipe],
+  imports: [CommonModule, FormsModule, RouterLink, TranslatePipe, ...GUEST_PRIVACY_PIPES],
   templateUrl: './client-guest-list.html',
   styleUrls: ['./client-guest-list.scss']
 })
@@ -24,6 +26,7 @@ export class ClientGuestList implements OnInit {
   protected readonly isLoading = signal(true);
   protected readonly errorMessage = signal('');
   protected readonly successMessage = signal('');
+  protected readonly maskGuestLastName = signal<boolean>(false);
 
   // Modal / Form state
   protected readonly isModalOpen = signal(false);
@@ -126,14 +129,50 @@ export class ClientGuestList implements OnInit {
     if (idParam) {
       const parsedId = Number(idParam);
       this.eventId.set(parsedId);
-      this.loadGuests(parsedId);
-      if (this.clientAuthService.clientEvents().length === 0) {
-        this.clientAuthService.fetchEvents().subscribe();
+
+      // 1. Instant recovery from localStorage so F5 NEVER resets the toggle
+      const cachedPrivacy = localStorage.getItem(`guest_privacy_${parsedId}`);
+      if (cachedPrivacy !== null) {
+        this.maskGuestLastName.set(cachedPrivacy === 'true');
       }
+
+      this.loadGuests(parsedId);
+
+      // 2. Sync with backend data
+      this.clientAuthService.fetchEvents().subscribe({
+        next: (evs: Event[]) => {
+          const ev = evs?.find((e: Event) => e.id === parsedId);
+          if (ev && ev.maskGuestLastName !== undefined) {
+            this.maskGuestLastName.set(!!ev.maskGuestLastName);
+            localStorage.setItem(`guest_privacy_${parsedId}`, String(!!ev.maskGuestLastName));
+          }
+        }
+      });
     } else {
       this.errorMessage.set('Identifiant d\'événement invalide.');
       this.isLoading.set(false);
     }
+  }
+
+  protected onTogglePrivacy(checked: boolean): void {
+    this.maskGuestLastName.set(checked);
+    const currentEventId = this.eventId();
+    if (!currentEventId) return;
+
+    // Save immediately so F5 keeps the button ON
+    localStorage.setItem(`guest_privacy_${currentEventId}`, String(checked));
+
+    this.clientGuestService.updateGuestPrivacy(currentEventId, checked).subscribe({
+      next: () => {
+        const updated: Event[] = this.clientAuthService.clientEvents().map((ev: Event) =>
+          ev.id === currentEventId ? { ...ev, maskGuestLastName: checked } : ev
+        );
+        this.clientAuthService.clientEvents.set(updated);
+      },
+      error: (err) => {
+        console.error('Erreur mise à jour confidentialité:', err);
+      }
+    });
   }
 
   private loadGuests(eventId: number): void {
@@ -320,7 +359,7 @@ export class ClientGuestList implements OnInit {
     for (let i = 1; i <= estimatedCount; i++) {
       customTableNames.add(`Table ${i}`);
     }
-    this.guests().forEach(g => {
+    this.guests().forEach((g: Guest) => {
       if (g.tableNumber && g.tableNumber.trim()) {
         customTableNames.add(g.tableNumber.trim());
       }
@@ -329,21 +368,21 @@ export class ClientGuestList implements OnInit {
     const currentSelectedGroup = this.groupName()?.trim().toLowerCase() || '';
 
     return Array.from(customTableNames).map(name => {
-      const seatedGuests = this.guests().filter(g => g.tableNumber && g.tableNumber.trim().toLowerCase() === name.toLowerCase());
-      const confirmedSeated = seatedGuests.filter(g => g.status === 'CONFIRMED');
+      const seatedGuests: Guest[] = this.guests().filter((g: Guest) => g.tableNumber && g.tableNumber.trim().toLowerCase() === name.toLowerCase());
+      const confirmedSeated: Guest[] = seatedGuests.filter((g: Guest) => g.status === 'CONFIRMED');
       const occupied = confirmedSeated.length;
       
       const capacity = name.toLowerCase().includes('honneur') ? Math.max(defaultCapacity, 12) : defaultCapacity;
       const isFull = occupied >= capacity;
 
       const groupCounts = new Map<string, number>();
-      seatedGuests.forEach(g => {
+      seatedGuests.forEach((g: Guest) => {
         const grp = g.groupName?.trim() || 'Sans groupe';
         groupCounts.set(grp, (groupCounts.get(grp) || 0) + 1);
       });
 
       const groupsInTable = Array.from(groupCounts.keys()).filter(k => k !== 'Sans groupe');
-      const isRecommended = currentSelectedGroup ? groupsInTable.some(g => g.toLowerCase() === currentSelectedGroup) && !isFull : false;
+      const isRecommended = currentSelectedGroup ? groupsInTable.some((grp: string) => grp.toLowerCase() === currentSelectedGroup) && !isFull : false;
 
       let groupSummary = '';
       if (occupied === 0) {

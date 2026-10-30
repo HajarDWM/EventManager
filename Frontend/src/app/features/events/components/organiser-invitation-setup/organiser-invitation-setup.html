@@ -287,9 +287,14 @@
               </label>
             </div>
             
-            <span class="badge bg-white text-dark border shadow-2xs rounded-pill px-2.5 py-1 fs-3xs fw-semibold">
-              <i class="fa fa-users text-primary me-1"></i> {{ getSelectedCount() }} / {{ guests().length }} {{ 'INVITATION_SETUP.SELECTED' | translate }}
-            </span>
+            <div class="d-flex align-items-center gap-2">
+              <span *ngIf="isGuestPrivacyActive()" class="badge bg-success-light text-black border border-success-light rounded-pill px-2.5 py-1 fs-3xs fw-semibold">
+                <i class="fa fa-shield-halved text-success me-1"></i> {{ 'GUESTS.CLIENT_PRIVACY_ACTIVE' | translate }}
+              </span>
+              <span class="badge bg-white text-dark border shadow-2xs rounded-pill px-2.5 py-1 fs-3xs fw-semibold">
+                <i class="fa fa-users text-primary me-1"></i> {{ getSelectedCount() }} / {{ guests().length }} {{ 'INVITATION_SETUP.SELECTED' | translate }}
+              </span>
+            </div>
           </div>
 
           <div class="table-responsive flex-grow-1" style="max-height: 320px; overflow-y: auto;">
@@ -317,12 +322,12 @@
                            (change)="guest.id && toggleGuest(guest.id)">
                   </td>
                   <td>
-                    <div class="fw-semibold text-dark">{{ guest.fullName }}</div>
+                    <div class="fw-semibold text-dark">{{ guest.fullName | formatGuestName:isGuestPrivacyActive() }}</div>
                     <span class="fs-xxs text-muted" *ngIf="guest.tableNumber">{{ 'GUESTS.TABLE' | translate }} : {{ guest.tableNumber }}</span>
                   </td>
                   <td>
-                    <div class="fs-xs text-muted" *ngIf="guest.email"><i class="far fa-envelope me-1"></i>{{ guest.email }}</div>
-                    <div class="fs-xs text-muted" *ngIf="guest.phone"><i class="fa fa-phone me-1"></i>{{ guest.phone }}</div>
+                    <div class="fs-xs text-muted" *ngIf="guest.email"><i class="far fa-envelope me-1"></i>{{ guest.email | maskEmail:isGuestPrivacyActive() }}</div>
+                    <div class="fs-xs text-muted" *ngIf="guest.phone"><i class="fa fa-phone me-1"></i>{{ guest.phone | maskPhone:isGuestPrivacyActive() }}</div>
                     <span class="fs-xxs text-danger" *ngIf="!guest.email && !guest.phone">{{ 'INVITATION_SETUP.MISSING_CONTACT' | translate }}</span>
                   </td>
                   <td class="text-center">
@@ -651,14 +656,14 @@
             </div>
             <div>
               <div class="d-flex align-items-center gap-2 flex-wrap">
-                <h4 class="mb-0 fw-bold fs-base text-white">{{ selectedJourneyGuest()?.fullName }}</h4>
+                <h4 class="mb-0 fw-bold fs-base text-white">{{ selectedJourneyGuest()?.fullName | formatGuestName:isGuestPrivacyActive() }}</h4>
                 <span class="badge rounded-pill px-2.5 py-1 fs-3xs fw-bold" [ngClass]="journey.currentStatusBadgeClass">
                   {{ ('INVITATION_SETUP.' + journey.currentStatusKey) | translate }}
                 </span>
               </div>
               <div class="d-flex align-items-center gap-3 mt-1 text-slate-300 fs-xs flex-wrap">
-                <span *ngIf="selectedJourneyGuest()?.phone"><i class="fa fa-phone me-1 text-info"></i> {{ selectedJourneyGuest()?.phone }}</span>
-                <span *ngIf="selectedJourneyGuest()?.email"><i class="far fa-envelope me-1 text-warning"></i> {{ selectedJourneyGuest()?.email }}</span>
+                <span *ngIf="selectedJourneyGuest()?.phone"><i class="fa fa-phone me-1 text-info"></i> {{ selectedJourneyGuest()?.phone | maskPhone:isGuestPrivacyActive() }}</span>
+                <span *ngIf="selectedJourneyGuest()?.email"><i class="far fa-envelope me-1 text-warning"></i> {{ selectedJourneyGuest()?.email | maskEmail:isGuestPrivacyActive() }}</span>
               </div>
             </div>
           </div>
@@ -717,7 +722,7 @@
                   ✉️ {{ event()?.title || ('INVITATION_SETUP.OFFICIAL_INVITATION' | translate) }}
                 </div>
                 <div class="text-muted" style="font-size: 0.55rem; line-height: 1.25; word-break: break-word; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
-                  "{{ 'INVITATION_SETUP.GREETING_EMAIL' | translate:{ name: (selectedJourneyGuest()?.fullName || 'Invité') } }}"
+                  "{{ 'INVITATION_SETUP.GREETING_EMAIL' | translate:{ name: ((selectedJourneyGuest()?.fullName | formatGuestName:isGuestPrivacyActive()) || 'Invité') } }}"
                 </div>
                 <div class="text-primary fw-semibold mt-0.5 text-truncate" style="font-size: 0.56rem;">
                   🔗 {{ 'INVITATION_SETUP.VIEW_INVITATION_RSVP' | translate }}
@@ -731,7 +736,7 @@
                   <span>{{ journey.steps[0].primaryChannelType === 'SMS' ? ('INVITATION_SETUP.OFFICIAL_SMS' | translate) : ('INVITATION_SETUP.WHATSAPP_MSG' | translate) }}</span>
                 </div>
                 <div class="text-dark mb-1" style="font-size: 0.62rem; line-height: 1.25; word-break: break-word; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
-                  "{{ 'INVITATION_SETUP.GREETING_SMS' | translate:{ name: (selectedJourneyGuest()?.fullName || 'Invité') } }}"
+                  "{{ 'INVITATION_SETUP.GREETING_SMS' | translate:{ name: ((selectedJourneyGuest()?.fullName | formatGuestName:isGuestPrivacyActive()) || 'Invité') } }}"
                 </div>
                 <div class="text-primary text-truncate fw-semibold" style="font-size: 0.60rem;" [title]="'rsvp/' + (selectedJourneyGuest()?.invitationToken || selectedJourneyGuest()?.id)">
                   🔗 rsvp/{{ selectedJourneyGuest()?.invitationToken || selectedJourneyGuest()?.id }}
@@ -782,7 +787,7 @@
                   </div>
                   <div class="page1-guest-badge">
                     <i class="fa fa-user me-1 text-warning"></i>
-                    <span>{{ journey.steps[1].page1GuestName }}</span>
+                    <span>{{ journey.steps[1].page1GuestName | formatGuestName:isGuestPrivacyActive() }}</span>
                   </div>
                   <div class="page1-meta-row">
                     <span><i class="fa fa-calendar-day me-0.5 text-warning"></i> {{ journey.steps[1].page1Date }}</span>

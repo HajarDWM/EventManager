@@ -49,4 +49,5 @@ public class EventDTO {
     private String tableShape;
     private Integer tableCapacity;
     private Integer tablesCount;
+    private Boolean maskGuestLastName;
 }

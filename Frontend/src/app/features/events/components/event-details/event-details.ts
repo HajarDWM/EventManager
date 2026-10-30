@@ -11,11 +11,12 @@ import { CatererService } from '../../../../core/services/caterer.service';
 import { CurrencyService } from '../../../../core/services/currency.service';
 import { TemplateService } from '../../../../core/services/template.service';
 import { TranslatePipe } from '../../../../core/pipes/translate.pipe';
+import { GUEST_PRIVACY_PIPES, MaskEmailPipe, MaskPhonePipe } from '../../../../core/pipes/format-guest-name.pipe';
 
 @Component({
   selector: 'app-event-details',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, TranslatePipe],
+  imports: [CommonModule, FormsModule, RouterLink, TranslatePipe, ...GUEST_PRIVACY_PIPES],
   templateUrl: './event-details.html'
 })
 export class EventDetails implements OnInit {
@@ -930,19 +931,30 @@ export class EventDetails implements OnInit {
     });
   }
 
+  protected isGuestPrivacyActive(): boolean {
+    const id = this.event()?.id;
+    if (id && localStorage.getItem(`guest_privacy_${id}`) !== null) {
+      return localStorage.getItem(`guest_privacy_${id}`) === 'true';
+    }
+    return !!this.event()?.maskGuestLastName;
+  }
+
   protected getGuestChannels(g: Guest): { type: string; icon: string; colorClass: string; title: string }[] {
     const channels: { type: string; icon: string; colorClass: string; title: string }[] = [];
+    const isMasked = this.isGuestPrivacyActive();
+    const phoneDisplay = isMasked ? MaskPhonePipe.format(g.phone, true) : (g.phone || '');
+    const emailDisplay = isMasked ? MaskEmailPipe.format(g.email, true) : (g.email || '');
     
     // If guest has recorded sent channels, display ONLY those sent channels
     if (g.sentChannels && g.sentChannels.length > 0) {
       if (g.sentChannels.includes('WhatsApp')) {
-        channels.push({ type: 'WhatsApp', icon: 'fab fa-whatsapp', colorClass: 'text-success', title: `Envoyé via WhatsApp: ${g.phone || ''}` });
+        channels.push({ type: 'WhatsApp', icon: 'fab fa-whatsapp', colorClass: 'text-success', title: `Envoyé via WhatsApp: ${phoneDisplay}` });
       }
       if (g.sentChannels.includes('SMS')) {
-        channels.push({ type: 'SMS', icon: 'fa fa-comment-sms', colorClass: 'text-warning', title: `Envoyé via SMS: ${g.phone || ''}` });
+        channels.push({ type: 'SMS', icon: 'fa fa-comment-sms', colorClass: 'text-warning', title: `Envoyé via SMS: ${phoneDisplay}` });
       }
       if (g.sentChannels.includes('E-mail')) {
-        channels.push({ type: 'E-mail', icon: 'fa fa-envelope', colorClass: 'text-primary', title: `Envoyé via E-mail: ${g.email || ''}` });
+        channels.push({ type: 'E-mail', icon: 'fa fa-envelope', colorClass: 'text-primary', title: `Envoyé via E-mail: ${emailDisplay}` });
       }
       if (g.sentChannels.includes('Papier')) {
         channels.push({ type: 'Papier', icon: 'fa fa-envelope-open-text', colorClass: 'text-secondary', title: 'Format Papier / En main propre' });
@@ -952,11 +964,11 @@ export class EventDetails implements OnInit {
 
     // Otherwise (pending / not sent yet), show available channels based on provided contact details
     if (g.phone && g.phone.trim().length > 0) {
-      channels.push({ type: 'WhatsApp', icon: 'fab fa-whatsapp', colorClass: 'text-success', title: `WhatsApp: ${g.phone}` });
-      channels.push({ type: 'SMS', icon: 'fa fa-comment-sms', colorClass: 'text-warning', title: `SMS: ${g.phone}` });
+      channels.push({ type: 'WhatsApp', icon: 'fab fa-whatsapp', colorClass: 'text-success', title: `WhatsApp: ${phoneDisplay}` });
+      channels.push({ type: 'SMS', icon: 'fa fa-comment-sms', colorClass: 'text-warning', title: `SMS: ${phoneDisplay}` });
     }
     if (g.email && g.email.trim().length > 0) {
-      channels.push({ type: 'E-mail', icon: 'fa fa-envelope', colorClass: 'text-primary', title: `E-mail: ${g.email}` });
+      channels.push({ type: 'E-mail', icon: 'fa fa-envelope', colorClass: 'text-primary', title: `E-mail: ${emailDisplay}` });
     }
 
     return channels;
