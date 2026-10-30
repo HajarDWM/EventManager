@@ -487,20 +487,20 @@
         <div class="invitation-dynamic-text-overlay text-center mx-auto" *ngIf="!isMenuRsvpOpen() && !isSuccess()">
 
           <!-- Dynamic Subtitle / Intro Header -->
-          <div class="invitation-header-tag mb-1 stage-item stage-header" style="overflow: visible; padding-top: 4px;">
+          <div class="invitation-header-tag mb-1 stage-item stage-header" style="overflow: visible; padding-top: 2px;">
             <span class="luxury-subtitle"
               [style.fontFamily]="getSecondaryFont()"
               [style.fontSize]="getSecondaryFontSize()"
               [style.fontWeight]="getSecondaryFontWeight()"
               [style.letterSpacing]="getSecondaryLetterSpacing()"
               [style.color]="getSecondaryFontColor()"
-              style="text-shadow: none !important; opacity: 1 !important; display: inline-block; line-height: 1.4; -webkit-font-smoothing: antialiased;">
+              style="text-shadow: none !important; opacity: 1 !important; display: inline-block; line-height: 1.3; -webkit-font-smoothing: antialiased;">
               {{ getInvitationSubtitle() }}
             </span>
           </div>
 
           <!-- Dynamic Main Couple / Event Title -->
-          <h1 class="invitation-main-title mb-3 stage-item stage-title"
+          <h1 class="invitation-main-title mb-2 stage-item stage-title"
             [style.fontFamily]="getPrimaryFont()"
             [style.fontSize]="getPrimaryFontSize()"
             [style.fontWeight]="getPrimaryFontWeight()"
@@ -511,7 +511,7 @@
           </h1>
 
           <!-- Personalized Dynamic Guest Salutation (Affichage textuel sobre sans forme de bouton) -->
-          <div class="invitation-guest-salutation mb-3 text-center stage-item stage-salutation">
+          <div class="invitation-guest-salutation mb-2 text-center stage-item stage-salutation">
             <div class="salutation-guest-text">
               <span class="salutation-honorific me-1"
                 [style.fontFamily]="getSecondaryFont()"
@@ -529,7 +529,7 @@
           </div>
 
           <!-- Artistic Dynamic Date, Time & Venue Details (Symmetrical Twin Cards) -->
-          <div class="artistic-invitation-details mb-3 stage-item stage-details">
+          <div class="artistic-invitation-details mb-2 stage-item stage-details">
             
             <!-- 1. CARD DATE & HEURE (Avec bouton Google Calendar) -->
             <div class="artistic-detail-card artistic-date-block text-center d-flex flex-column justify-content-between align-items-center interactive-location-card"
@@ -650,7 +650,7 @@
           </div>
 
           <!-- ACTIONS PAGE 1 : Décision immédiate (Accepter / Décliner) + Découvrir le menu d'abord -->
-          <div class="page1-actions-container mt-2 pt-0 mb-1 text-center stage-item stage-actions">
+          <div class="page1-actions-container mt-1 pt-0 mb-0 text-center stage-item stage-actions">
             <!-- Boutons de décision immédiate -->
             <div class="page1-decision-buttons d-flex align-items-center justify-content-center gap-2 gap-sm-3 flex-nowrap">
               <!-- 1. Accepter (Bouton Principal teinté avec la couleur du modèle) -->
@@ -670,7 +670,7 @@
             </div>
 
             <!-- 3. Bouton secondaire discret : Découvrir le menu d'abord -->
-            <div class="mt-3 pt-1">
+            <div class="mt-2 pt-0">
               <button type="button" class="btn btn-link btn-discover-first text-decoration-none"
                 [style.color]="getSecondaryFontColor()"
                 (click)="startDiscoveryWorkflow()">

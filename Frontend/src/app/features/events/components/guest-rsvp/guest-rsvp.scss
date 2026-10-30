@@ -2246,7 +2246,7 @@ textarea.luxury-form-control::placeholder {
 
 .floating-lang-widget {
   position: absolute;
-  top: -54px;
+  top: -46px;
   right: 12px;
   z-index: 1055;
   display: inline-flex;
@@ -2255,7 +2255,7 @@ textarea.luxury-form-control::placeholder {
   transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 
   @media (max-width: 576px) {
-    top: -50px;
+    top: -42px;
     right: 8px;
   }
 
@@ -2353,7 +2353,7 @@ textarea.luxury-form-control::placeholder {
 
 .floating-music-widget {
   position: absolute;
-  top: -54px;
+  top: -46px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 1050;
@@ -2365,7 +2365,7 @@ textarea.luxury-form-control::placeholder {
   transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 
   @media (max-width: 576px) {
-    top: -50px;
+    top: -42px;
   }
 
   .music-toggle-btn {
@@ -3614,14 +3614,16 @@ textarea.luxury-form-control::placeholder {
 
   /* Dynamic Subtitle / Intro Header */
   .invitation-header-tag {
+    margin-bottom: 4px;
+    padding-top: 2px;
     .luxury-subtitle {
       font-family: 'Alex Brush', 'Great Vibes', 'Pinyon Script', cursive;
-      font-size: clamp(1.8rem, 5.5vw, 2.6rem);
+      font-size: clamp(0.95rem, 2.2vw, 1.35rem);
       color: #c59b27;
       letter-spacing: 0.5px;
       font-weight: 400;
       display: inline-block;
-      line-height: 1.15;
+      line-height: 1.25;
       text-shadow: 0 1px 2px rgba(255, 255, 255, 0.95), 0 2px 8px rgba(184, 134, 11, 0.25);
     }
   }
@@ -3629,15 +3631,17 @@ textarea.luxury-form-control::placeholder {
   /* Dynamic Main Couple / Event Title */
   .invitation-main-title {
     font-family: 'Cinzel', 'Playfair Display', 'Cormorant Garamond', serif;
-    font-size: clamp(2rem, 6.5vw, 3.2rem);
+    font-size: var(--primary-font-size, clamp(1.3rem, 3.5vw, 2.1rem));
     font-weight: 700;
     color: #b8860b;
     line-height: 1.2;
-    letter-spacing: clamp(1.5px, 0.5vw, 2.5px);
+    letter-spacing: clamp(1px, 0.35vw, 2px);
     text-transform: uppercase;
     text-shadow: 0 1px 3px rgba(255, 255, 255, 0.95), 0 2px 10px rgba(184, 134, 11, 0.25);
     margin-left: auto;
     margin-right: auto;
+    max-width: 94%;
+    word-break: break-word;
   }
 
   /* Personalized Dynamic Guest Salutation */
@@ -3879,18 +3883,18 @@ textarea.luxury-form-control::placeholder {
   }
 
   /* Mobile: Hauteur et ratio portrait 9:16 stables */
-  min-height: 540px !important;
+  min-height: 480px !important;
 
   @media (max-width: 767.98px) {
     aspect-ratio: 9 / 16;
-    max-height: calc(100dvh - 55px) !important;
-    min-height: 500px !important;
+    max-height: calc(100dvh - 50px) !important;
+    min-height: 460px !important;
   }
 
   /* Tablette (768px - 991px) */
   @media (min-width: 768px) {
     border-radius: 28px !important;
-    min-height: 540px !important;
+    min-height: 520px !important;
     max-height: calc(100vh - 60px) !important;
   }
 
@@ -3900,8 +3904,8 @@ textarea.luxury-form-control::placeholder {
     border: 1px solid var(--primary-color, rgba(212, 175, 55, 0.35));
     border-radius: 32px !important;
     aspect-ratio: 16 / 9 !important;
-    min-height: 560px !important;
-    max-height: calc(100vh - 70px) !important;
+    min-height: 520px !important;
+    max-height: min(88vh, 760px) !important;
     backdrop-filter: blur(15px) !important;
     -webkit-backdrop-filter: blur(15px) !important;
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08) !important;
@@ -3917,21 +3921,26 @@ textarea.luxury-form-control::placeholder {
     transition: padding 0.35s ease, margin 0.35s ease;
     display: flex !important;
     flex-direction: column !important;
-    justify-content: center !important;
+    justify-content: safe center !important;
     align-items: center !important;
     width: 100% !important;
     height: 100% !important;
     flex: 1 1 auto !important;
     min-height: 0 !important;
-    overflow: hidden !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    scrollbar-width: none !important;
+    &::-webkit-scrollbar {
+      display: none !important;
+    }
 
     /* Mobile */
     margin: 0 !important;
-    padding: 16px 10px 12px !important;
+    padding: 12px 10px 8px !important;
 
     @media (min-width: 576px) {
       margin: 0 !important;
-      padding: 22px 16px 18px !important;
+      padding: 16px 14px 12px !important;
       width: 100% !important;
       height: 100% !important;
     }
@@ -3939,7 +3948,7 @@ textarea.luxury-form-control::placeholder {
     /* Tablette */
     @media (min-width: 768px) {
       margin: 0 !important;
-      padding: 26px 20px 20px !important;
+      padding: 20px 18px 14px !important;
       width: 100% !important;
       height: 100% !important;
     }
@@ -3947,7 +3956,7 @@ textarea.luxury-form-control::placeholder {
     /* Desktop / PC (>= 992px) - Optimisation Format Panoramique 16:9 */
     @media (min-width: 992px) {
       margin: 0 !important;
-      padding: 26px 36px 22px !important;
+      padding: 20px 28px 16px !important;
       width: 100% !important;
       height: 100% !important;
     }
@@ -3955,7 +3964,7 @@ textarea.luxury-form-control::placeholder {
     /* Grand écran PC (>= 1200px) - Format Panoramique 16:9 */
     @media (min-width: 1200px) {
       margin: 0 !important;
-      padding: 30px 44px 24px !important;
+      padding: 24px 36px 18px !important;
       width: 100% !important;
       height: 100% !important;
     }
@@ -4320,14 +4329,14 @@ textarea.luxury-form-control::placeholder {
 
   .invitation-main-title {
     font-weight: 800;
-    line-height: 1.22;
-    letter-spacing: clamp(1px, 0.5vw, 3px);
-    margin-bottom: clamp(14px, 2vw, 24px);
+    line-height: 1.2;
+    letter-spacing: clamp(0.5px, 0.3vw, 2px);
+    margin-bottom: clamp(6px, 1.2vw, 10px);
     word-break: break-word;
     text-shadow: none;
 
     @media (min-width: 992px) {
-      margin-bottom: 14px;
+      margin-bottom: 8px;
     }
   }
 
@@ -4335,9 +4344,9 @@ textarea.luxury-form-control::placeholder {
   .invitation-guest-salutation {
     background: transparent;
     border: 1px solid var(--primary-color, rgba(160, 160, 160, 0.25));
-    border-radius: 16px;
-    padding: 12px 10px;
-    margin: 0 auto 18px;
+    border-radius: 14px;
+    padding: 8px 12px;
+    margin: 0 auto 8px;
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
@@ -4345,22 +4354,22 @@ textarea.luxury-form-control::placeholder {
     overflow: hidden;
 
     @media (min-width: 768px) {
-      max-width: 720px;
-      padding: 22px 36px;
-      border-radius: 22px;
-      margin-bottom: 24px;
+      max-width: 680px;
+      padding: 12px 24px;
+      border-radius: 18px;
+      margin-bottom: 10px;
     }
 
     @media (min-width: 992px) {
-      max-width: 860px;
-      padding: 14px 36px;
-      margin-bottom: 14px;
+      max-width: 780px;
+      padding: 10px 28px;
+      margin-bottom: 8px;
     }
 
     @media (min-width: 1200px) {
-      max-width: 960px;
-      padding: 16px 44px;
-      margin-bottom: 16px;
+      max-width: 860px;
+      padding: 12px 32px;
+      margin-bottom: 10px;
     }
   }
 
@@ -4411,65 +4420,65 @@ textarea.luxury-form-control::placeholder {
 
   .salutation-invitation-message {
     font-style: normal;
-    font-size: clamp(0.88rem, 2.8vw, 1.15rem);
-    line-height: 1.58;
+    font-size: clamp(0.85rem, 2.6vw, 1.1rem);
+    line-height: 1.42;
     font-weight: 500;
-    margin-top: 10px;
+    margin-top: 6px;
     margin-bottom: 0;
     padding: 0 4px;
 
     @media (min-width: 768px) {
-      font-size: 1.22rem;
-      line-height: 1.72;
-      margin-top: 12px;
+      font-size: 1.12rem;
+      line-height: 1.5;
+      margin-top: 6px;
     }
 
     @media (min-width: 992px) {
-      font-size: 1.15rem;
-      line-height: 1.52;
-      margin-top: 6px;
+      font-size: 1.05rem;
+      line-height: 1.4;
+      margin-top: 4px;
     }
   }
 
   /* 4 & 5. Disposition Adaptative : 1 colonne (Mobile) vs 2 colonnes équilibrées (Tablette & PC) */
   .artistic-invitation-details {
     width: 100%;
-    margin: 14px auto 18px;
+    margin: 8px auto 10px;
     display: grid !important;
     grid-template-columns: repeat(2, 1fr) !important;
-    gap: 12px !important;
+    gap: 10px !important;
     align-items: stretch !important;
     box-sizing: border-box !important;
 
     @media (min-width: 576px) {
-      gap: 16px !important;
+      gap: 12px !important;
     }
 
     @media (min-width: 768px) {
-      gap: 20px !important;
-      max-width: 740px !important;
-      margin: 20px auto 26px !important;
+      gap: 16px !important;
+      max-width: 680px !important;
+      margin: 10px auto 12px !important;
     }
 
     @media (min-width: 992px) {
-      gap: 24px !important;
-      max-width: 860px !important;
-      margin: 14px auto 18px !important;
+      gap: 18px !important;
+      max-width: 780px !important;
+      margin: 8px auto 10px !important;
     }
 
     @media (min-width: 1200px) {
-      gap: 28px !important;
-      max-width: 960px !important;
-      margin: 16px auto 20px !important;
+      gap: 20px !important;
+      max-width: 860px !important;
+      margin: 10px auto 12px !important;
     }
   }
 
   /* Cartes jumelles Date & Lieu (Hauteur & largeur 100% égales, design symétrique parfait) */
   .artistic-detail-card {
     height: 100% !important;
-    min-height: 145px !important;
-    padding: 16px 10px !important;
-    border-radius: 18px !important;
+    min-height: 110px !important;
+    padding: 10px 8px !important;
+    border-radius: 16px !important;
     border: 1px solid var(--primary-color, rgba(160, 160, 160, 0.25)) !important;
     background: rgba(255, 255, 255, 0.04) !important;
     backdrop-filter: blur(8px) !important;
@@ -4479,24 +4488,25 @@ textarea.luxury-form-control::placeholder {
     margin: 0 !important;
 
     @media (min-width: 576px) {
-      padding: 18px 14px !important;
+      padding: 12px 10px !important;
     }
 
     @media (min-width: 768px) {
-      padding: 22px 18px !important;
-      border-radius: 20px !important;
+      padding: 14px 14px !important;
+      border-radius: 18px !important;
+      min-height: 120px !important;
     }
 
     @media (min-width: 992px) {
-      padding: 18px 20px !important;
-      min-height: 135px !important;
-      border-radius: 20px !important;
+      padding: 12px 16px !important;
+      min-height: 115px !important;
+      border-radius: 18px !important;
     }
 
     @media (min-width: 1200px) {
-      padding: 20px 24px !important;
-      min-height: 140px !important;
-      border-radius: 22px !important;
+      padding: 14px 18px !important;
+      min-height: 120px !important;
+      border-radius: 20px !important;
     }
 
     .detail-card-icon-circle {
@@ -4643,14 +4653,14 @@ textarea.luxury-form-control::placeholder {
   /* 6. Boutons d'action Page 1: Décision Immédiate & Exploration */
   .page1-actions-container {
     width: 100%;
-    margin-top: 16px !important;
+    margin-top: 8px !important;
 
     @media (min-width: 768px) {
-      margin-top: 22px !important;
+      margin-top: 12px !important;
     }
 
     @media (min-width: 992px) {
-      margin-top: 18px !important;
+      margin-top: 10px !important;
     }
   }
 

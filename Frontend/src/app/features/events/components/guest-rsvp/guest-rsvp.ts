@@ -701,22 +701,28 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
   });
 
   protected readonly carouselItems = computed<any[]>(() => {
+    const lang = this.currentLang();
+    const starterLabel = lang === 'ar' ? 'مقبلات' : (lang === 'en' ? 'Starter' : 'Entrée');
+    const mainLabel = lang === 'ar' ? 'طبق رئيسي' : (lang === 'en' ? 'Main Course' : 'Plat Principal');
+    const dessertLabel = lang === 'ar' ? 'حلويات' : (lang === 'en' ? 'Dessert' : 'Dessert');
+    const beverageLabel = lang === 'ar' ? 'مشروبات' : (lang === 'en' ? 'Drink' : 'Boisson');
+
     const data = this.guest();
     if (!data || !data.menuItems || data.menuItems.length === 0) {
       return [
         {
           name: "Duo de Saint-Jacques dorées, émulsion d'agrumes",
-          categoryLabel: "Entrée",
+          categoryLabel: starterLabel,
           image: "/assets/images/menu_starter.png"
         },
         {
           name: "Filet de bœuf rôti, purée fine truffée",
-          categoryLabel: "Plat Principal",
+          categoryLabel: mainLabel,
           image: "/assets/images/menu_main.png"
         },
         {
           name: "Dôme au chocolat intense, éclat de feuille d'or",
-          categoryLabel: "Dessert",
+          categoryLabel: dessertLabel,
           image: "/assets/images/menu_dessert.png"
         }
       ];
@@ -742,21 +748,21 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
     const orderedItems = [...starters, ...mains, ...desserts, ...beverages];
 
     return orderedItems.map(item => {
-      let catLabel = 'Plat';
+      let catLabel = mainLabel;
       let img = item.imageUrl || '/assets/images/menu_main.png';
 
       const cat = (item.category || '').toUpperCase();
       if (cat.includes('STARTER') || cat.includes('ENTREE') || cat.includes('ENTRÉE')) {
-        catLabel = 'Entrée';
+        catLabel = starterLabel;
         img = item.imageUrl || '/assets/images/menu_starter.png';
       } else if (cat.includes('MAIN') || cat.includes('PLAT')) {
-        catLabel = 'Plat Principal';
+        catLabel = mainLabel;
         img = item.imageUrl || '/assets/images/menu_main.png';
       } else if (cat.includes('DESSERT')) {
-        catLabel = 'Dessert';
+        catLabel = dessertLabel;
         img = item.imageUrl || '/assets/images/menu_dessert.png';
       } else if (cat.includes('BEVERAGE') || cat.includes('BOISSON') || cat.includes('DRINK')) {
-        catLabel = 'Boisson';
+        catLabel = beverageLabel;
         img = item.imageUrl || '/assets/images/menu_starter.png';
       }
 
@@ -942,21 +948,32 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
   }
 
   public readonly allBuffetItems = computed<any[]>(() => {
+    const lang = this.currentLang();
+    const starterLabel = lang === 'ar' ? 'مقبلات / مملحات' : (lang === 'en' ? 'Starter / Savory' : 'Entrée / Salé');
+    const mainLabel = lang === 'ar' ? 'طبق ساخن' : (lang === 'en' ? 'Hot Dish' : 'Plat Chaud');
+    const dessertLabel = lang === 'ar' ? 'حلويات' : (lang === 'en' ? 'Dessert' : 'Dessert');
+    const beverageLabel = lang === 'ar' ? 'مشروبات' : (lang === 'en' ? 'Drink' : 'Boisson');
+
     const data = this.guest();
     if (data?.menuItems && data.menuItems.length > 0) {
-      return data.menuItems.map(item => ({
-        ...item,
-        imageUrl: item.imageUrl || '/assets/images/menu_starter.png',
-        categoryLabel: (item.category || '').toUpperCase().includes('STARTER') ? 'Entrée / Salé'
-          : (item.category || '').toUpperCase().includes('MAIN') ? 'Plat Chaud'
-          : (item.category || '').toUpperCase().includes('DESSERT') ? 'Douceur'
-          : 'Boisson'
-      }));
+      return data.menuItems.map(item => {
+        const cat = (item.category || '').toUpperCase();
+        const lbl = cat.includes('STARTER') || cat.includes('ENTREE') || cat.includes('ENTRÉE') ? starterLabel
+          : cat.includes('MAIN') || cat.includes('PLAT') ? mainLabel
+          : cat.includes('DESSERT') ? dessertLabel
+          : cat.includes('BEVERAGE') || cat.includes('BOISSON') || cat.includes('DRINK') ? beverageLabel
+          : starterLabel;
+        return {
+          ...item,
+          imageUrl: item.imageUrl || '/assets/images/menu_starter.png',
+          categoryLabel: lbl
+        };
+      });
     }
-    const starters = this.availableStarters().map(d => ({ ...d, categoryLabel: 'Entrée / Salé' }));
-    const mains = this.availableMains().map(d => ({ ...d, categoryLabel: 'Plat Chaud' }));
-    const desserts = this.availableDesserts().map(d => ({ ...d, categoryLabel: 'Douceur' }));
-    const beverages = this.availableBeverages().map(d => ({ ...d, categoryLabel: 'Boisson' }));
+    const starters = this.availableStarters().map(d => ({ ...d, categoryLabel: starterLabel }));
+    const mains = this.availableMains().map(d => ({ ...d, categoryLabel: mainLabel }));
+    const desserts = this.availableDesserts().map(d => ({ ...d, categoryLabel: dessertLabel }));
+    const beverages = this.availableBeverages().map(d => ({ ...d, categoryLabel: beverageLabel }));
     return [...starters, ...mains, ...desserts, ...beverages];
   });
 
@@ -966,33 +983,34 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
 
   public readonly mixBuffetItems = computed<any[]>(() => {
     if (!this.isMixMode()) return [];
+    const lang = this.currentLang();
     const items: any[] = [];
     if (this.isStarterBuffet()) {
       items.push(...this.availableStarters().map(d => ({
         ...d,
         sectionType: 'STARTER',
-        categoryLabel: this.currentLang() === 'ar' ? 'مقبلات ومملحات' : (this.currentLang() === 'en' ? 'Starters & Savories' : 'Entrées & Salés')
+        categoryLabel: lang === 'ar' ? 'مقبلات ومملحات' : (lang === 'en' ? 'Starters & Savories' : 'Entrées & Salés')
       })));
     }
     if (this.isMainBuffet()) {
       items.push(...this.availableMains().map(d => ({
         ...d,
         sectionType: 'MAIN',
-        categoryLabel: this.currentLang() === 'ar' ? 'أطباق ساخنة' : (this.currentLang() === 'en' ? 'Hot Dishes' : 'Plats Chauds')
+        categoryLabel: lang === 'ar' ? 'أطباق ساخنة' : (lang === 'en' ? 'Hot Dishes' : 'Plats Chauds')
       })));
     }
     if (this.isDessertBuffet()) {
       items.push(...this.availableDesserts().map(d => ({
         ...d,
         sectionType: 'DESSERT',
-        categoryLabel: this.currentLang() === 'ar' ? 'حلويات وفواكه' : (this.currentLang() === 'en' ? 'Desserts & Sweets' : 'Douceurs & Desserts')
+        categoryLabel: lang === 'ar' ? 'حلويات وفواكه' : (lang === 'en' ? 'Desserts & Sweets' : 'Desserts & Pâtisseries')
       })));
     }
     if (this.isBeverageBuffet()) {
       items.push(...this.availableBeverages().map(d => ({
         ...d,
         sectionType: 'BEVERAGE',
-        categoryLabel: this.currentLang() === 'ar' ? 'مشروبات وعصائر' : (this.currentLang() === 'en' ? 'Bar & Refreshments' : 'Bar & Rafraîchissements')
+        categoryLabel: lang === 'ar' ? 'مشروبات وعصائر' : (lang === 'en' ? 'Bar & Refreshments' : 'Bar & Rafraîchissements')
       })));
     }
     return items;
@@ -1205,10 +1223,24 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
   }
 
   public getPrimaryFontSize(): string {
-    const s = this.guest()?.primaryFontSize;
-    if (s && s.trim()) return s.trim();
-    if (this.currentLang() === 'ar') return '40px';
-    return '36px';
+    const title = this.getDisplayTitle() || '';
+    const len = title.length;
+    const isAr = this.currentLang() === 'ar';
+    const custom = this.guest()?.primaryFontSize?.trim();
+
+    // Titres très longs (ex: libellé de test avec formule et détails > 45 caractères)
+    if (len > 45) {
+      return isAr ? 'clamp(1.15rem, 2.6vw, 1.5rem)' : 'clamp(1.05rem, 2.4vw, 1.4rem)';
+    }
+    // Titres moyennement longs (> 25 caractères)
+    if (len > 25) {
+      return isAr ? 'clamp(1.32rem, 3.2vw, 1.8rem)' : 'clamp(1.22rem, 2.8vw, 1.7rem)';
+    }
+
+    // Titres standards (<= 25 caractères) : respect du choix custom s'il existe
+    if (custom) return custom;
+    if (isAr) return 'clamp(1.7rem, 4vw, 2.2rem)';
+    return 'clamp(1.5rem, 3.6vw, 2.05rem)';
   }
 
   public getPrimaryFontWeight(): string {
