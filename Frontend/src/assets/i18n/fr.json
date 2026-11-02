@@ -1083,7 +1083,6 @@
     "CONTINUE_TO_MAIN": "Continuer vers le Plat Principal",
     "CONTINUE_TO_DESSERT": "Continuer vers le Dessert",
     "CONTINUE_TO_BEVERAGE": "Continuer vers les Boissons",
-    "CONTINUE_TO_DIET": "Continuer vers Régimes & Allergies",
     "PREFERENCES_TITLE": "Vos Préférences",
     "DIETARY_RESTRICTIONS": "Régimes & Allergies",
     "DIETARY_RESTRICTIONS_DESC": "Indiquez vos régimes particuliers ou allergies pour une expérience sur-mesure",
@@ -1356,7 +1355,10 @@
       "REVENUE_TYPE": "Revenu Abonnement",
       "EXPENSE_TYPE": "Dépense Plateforme",
       "STATUS_CONFIRMED": "Encaissé",
-      "STATUS_LOGGED": "Comptabilisé"
+      "STATUS_LOGGED": "Comptabilisé",
+      "STATUS_SUCCESS": "Réussite",
+      "STATUS_PENDING": "En attente",
+      "STATUS_FAILED": "Échec"
     }
   }
 }

@@ -118,7 +118,7 @@
                 </td>
                 <td class="text-center">
                   <span class="badge px-3 py-2 rounded-pill" [ngClass]="getStatusBadgeClass(event.status)">
-                    {{ getStatusLabel(event.status) }}
+                    {{ ('EVENTS.STATUS_' + event.status) | translate }}
                   </span>
                 </td>
               </tr>

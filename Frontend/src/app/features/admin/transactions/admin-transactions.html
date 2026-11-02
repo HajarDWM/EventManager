@@ -187,7 +187,7 @@
             </td>
             <td class="text-center">
               <span class="badge" [ngClass]="getStatusBadgeClass(org.paymentStatus)">
-                {{ getStatusLabel(org.paymentStatus) }}
+                {{ ('ADMIN.TRANSACTIONS.STATUS_' + org.paymentStatus) | translate }}
               </span>
             </td>
           </tr>

@@ -1006,7 +1006,7 @@
     "BUFFET_MIX_SUBTITLE": "The Grand Self-Service Buffet",
     "BUFFET_MIX_DESC": "All these delicacies and refreshments will be at your disposal at the buffet throughout the reception",
     "CONTINUE_TO_BUFFET": "Continue to Buffet",
-    "CONTINUE_TO_DIET": "Continue to Dietary Preferences",
+    "CONTINUE_TO_DIET": "Continue to Dietary & Allergies",
     "BTN_BACK_HOT_DISH": "Back to Hot Dish",
     "CONTINUE_TO_HOT_DISH": "Continue to Hot Dish",
     "BTN_BACK_BUFFET": "Back to Buffet",
@@ -1083,7 +1083,6 @@
     "CONTINUE_TO_MAIN": "Continue to Main Course",
     "CONTINUE_TO_DESSERT": "Continue to Dessert",
     "CONTINUE_TO_BEVERAGE": "Continue to Beverages",
-    "CONTINUE_TO_DIET": "Continue to Dietary & Allergies",
     "PREFERENCES_TITLE": "Your Preferences",
     "DIETARY_RESTRICTIONS": "Dietary & Allergies",
     "DIETARY_RESTRICTIONS_DESC": "Indicate your specific diet or allergies for a tailored experience",
@@ -1356,7 +1355,10 @@
       "REVENUE_TYPE": "Subscription Revenue",
       "EXPENSE_TYPE": "Platform Expense",
       "STATUS_CONFIRMED": "Collected",
-      "STATUS_LOGGED": "Logged"
+      "STATUS_LOGGED": "Logged",
+      "STATUS_SUCCESS": "Success",
+      "STATUS_PENDING": "Pending",
+      "STATUS_FAILED": "Failed"
     }
   }
 }
