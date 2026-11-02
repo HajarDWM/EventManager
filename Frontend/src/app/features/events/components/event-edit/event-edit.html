@@ -161,6 +161,7 @@
               [ngModel]="status()" (ngModelChange)="status.set($event)">
               <option value="PLANNED">{{ 'EVENTS.STATUS_PLANNED' | translate }}</option>
               <option value="DRAFT">{{ 'EVENTS.STATUS_DRAFT' | translate }}</option>
+              <option value="AWAITING_PAYMENT">{{ 'EVENTS.STATUS_AWAITING_PAYMENT' | translate }}</option>
               <option value="COMPLETED">{{ 'EVENTS.STATUS_COMPLETED' | translate }}</option>
               <option value="CANCELLED">{{ 'EVENTS.STATUS_CANCELLED' | translate }}</option>
             </select>

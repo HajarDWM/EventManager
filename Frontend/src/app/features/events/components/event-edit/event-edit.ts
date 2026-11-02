@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { EventService } from '../../services/event.service';
+import { EventStatus } from '../../models/event.model';
 import { TemplateService, DigitalTemplate } from '../../../../core/services/template.service';
 import { TranslatePipe } from '../../../../core/pipes/translate.pipe';
 
@@ -36,7 +37,7 @@ export class EventEdit implements OnInit {
   protected readonly tableShape = signal<string>('ROUND');
   protected readonly tableCapacity = signal<number>(10);
   protected readonly tablesCount = signal<number | null>(null);
-  protected readonly status = signal<'DRAFT' | 'PLANNED' | 'COMPLETED' | 'CANCELLED'>('PLANNED');
+  protected readonly status = signal<EventStatus>('PLANNED');
   protected readonly selectedTemplateId = signal<number | null>(null);
   protected readonly templates = signal<DigitalTemplate[]>([]);
   

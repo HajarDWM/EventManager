@@ -1,3 +1,5 @@
+export type EventStatus = 'DRAFT' | 'PLANNED' | 'AWAITING_PAYMENT' | 'COMPLETED' | 'CANCELLED';
+
 export interface Event {
   id?: number;
   title: string;
@@ -5,7 +7,7 @@ export interface Event {
   location: string;
   locationMapUrl?: string;
   guestCount?: number | null;
-  status?: 'DRAFT' | 'PLANNED' | 'AWAITING_PAYMENT' | 'COMPLETED' | 'CANCELLED';
+  status?: EventStatus;
   catererId?: number;
   catererName?: string;
   catererEmail?: string;

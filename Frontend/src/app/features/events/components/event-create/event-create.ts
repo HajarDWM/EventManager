@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { EventService } from '../../services/event.service';
+import { EventStatus } from '../../models/event.model';
 import { CatererService } from '../../../../core/services/caterer.service';
 import { TemplateService, DigitalTemplate } from '../../../../core/services/template.service';
 import { TranslatePipe } from '../../../../core/pipes/translate.pipe';
@@ -36,7 +37,7 @@ export class EventCreate implements OnInit {
   protected readonly tableShape = signal<string>('ROUND');
   protected readonly tableCapacity = signal<number>(10);
   protected readonly tablesCount = signal<number | null>(null);
-  protected readonly status = signal<'DRAFT' | 'PLANNED' | 'COMPLETED' | 'CANCELLED'>('DRAFT');
+  protected readonly status = signal<EventStatus>('DRAFT');
   protected readonly selectedTemplateId = signal<number | null>(null);
   protected readonly templates = signal<DigitalTemplate[]>([]);
   protected readonly errorMessage = signal('');
