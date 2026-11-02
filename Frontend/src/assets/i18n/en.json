@@ -711,6 +711,8 @@
     "PROFILE": "My Profile",
     "LOGOUT": "Logout",
     "YOUR_EVENT": "Your Event",
+    "SELECT_EVENT": "Select an event",
+    "EVENTS_AVAILABLE": "event(s) available",
     "ORGANIZED_BY": "Organized by",
     "GUESTS_DESC": "Manage your guest list, send invitations, and track confirmations in real time.",
     "ACCESS_LIST": "Access Guest List",

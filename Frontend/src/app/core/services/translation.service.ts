@@ -219,10 +219,10 @@ export class TranslationService {
       return key;
     }
 
-    // Replace dynamic parameters e.g. {count}
+    // Replace dynamic parameters e.g. {count}, {{count}}, or {{ count }}
     if (params) {
       return Object.keys(params).reduce((str, paramKey) => {
-        return str.replace(new RegExp(`\\{${paramKey}\\}`, 'g'), String(params[paramKey]));
+        return str.replace(new RegExp(`\\{{1,2}\\s*${paramKey}\\s*\\}{1,2}`, 'g'), String(params[paramKey]));
       }, value);
     }
 

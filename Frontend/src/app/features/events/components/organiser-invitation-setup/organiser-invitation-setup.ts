@@ -136,7 +136,7 @@ export class OrganiserInvitationSetup implements OnInit {
   protected readonly event = signal<Event | null>(null);
   protected readonly isGuestPrivacyActive = computed(() => {
     const evt = this.event();
-    const id = evt?.id;
+    const id = evt?.id || Number(this.route.snapshot.paramMap.get('id'));
     if (id && localStorage.getItem(`guest_privacy_${id}`) !== null) {
       return localStorage.getItem(`guest_privacy_${id}`) === 'true';
     }

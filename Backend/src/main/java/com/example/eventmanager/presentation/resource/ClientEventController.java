@@ -144,8 +144,16 @@ public class ClientEventController {
         }
 
         EventEntity event = eventRepository.findById(eventId).orElse(null);
-        if (event == null || !clientDetails.getClientId().equals(event.getClientId())) {
+        if (event == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        if (event.getClientId() != null && !clientDetails.getClientId().equals(event.getClientId())) {
             return ResponseEntity.status(403).body("Accès non autorisé à cet événement");
+        }
+
+        if (event.getClientId() == null) {
+            event.setClientId(clientDetails.getClientId());
         }
 
         event.setMaskGuestLastName(maskGuestLastName);

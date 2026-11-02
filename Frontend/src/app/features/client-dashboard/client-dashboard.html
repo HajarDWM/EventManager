@@ -1,13 +1,39 @@
-<div *ngIf="events().length > 0; else emptyState">
+<div *ngIf="activeEvent() as currentEvent; else emptyState">
+  
+  <!-- Event Switcher Banner (if client has multiple events) -->
+  <div class="card border-0 shadow-sm rounded-4 mb-4 bg-white overflow-hidden" *ngIf="events().length > 1">
+    <div class="card-body p-3 d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 bg-gradient bg-light">
+      <div class="d-flex align-items-center gap-3">
+        <div class="rounded-circle bg-primary-subtle text-primary p-2.5 d-flex align-items-center justify-content-center shadow-2xs" style="width: 42px; height: 42px;">
+          <i class="fas fa-calendar-check fs-5"></i>
+        </div>
+        <div>
+          <div class="fs-xs fw-bold text-dark text-uppercase letter-spacing-sm">{{ 'CLIENT_PORTAL.SELECT_EVENT' | translate }}</div>
+          <div class="fs-xxs text-muted">{{ events().length }} {{ 'CLIENT_PORTAL.EVENTS_AVAILABLE' | translate }}</div>
+        </div>
+      </div>
+      <div class="d-flex align-items-center gap-2">
+        <select class="form-select form-select-sm fw-bold border-primary shadow-xs px-3 py-1.5 rounded-pill" 
+                style="min-width: 280px; cursor: pointer;"
+                [ngModel]="currentEvent.id" 
+                (ngModelChange)="selectEvent($event)">
+          <option *ngFor="let ev of events()" [value]="ev.id">
+            {{ ev.title }} ({{ ev.guestCount || 0 }} {{ 'DASHBOARD.GUESTS' | translate }})
+          </option>
+        </select>
+      </div>
+    </div>
+  </div>
+
   <!-- Top Hero Header -->
   <div class="dashboard-hero">
     <div class="hero-content">
       <div class="hero-badge">{{ 'CLIENT_PORTAL.YOUR_EVENT' | translate }}</div>
-      <h2>{{ events()[0].title }}</h2>
-      <p class="hero-subtitle mt-2 mb-0" *ngIf="events()[0].catererName || events()[0].clientName">
-        <span *ngIf="events()[0].clientName"><i class="fas fa-user-circle me-1"></i> {{ events()[0].clientName }}</span>
-        <span *ngIf="events()[0].clientName && events()[0].catererName" class="mx-2 opacity-50">|</span>
-        <span *ngIf="events()[0].catererName"><i class="fas fa-building me-1"></i> {{ 'CLIENT_PORTAL.ORGANIZED_BY' | translate }} : <strong>{{ events()[0].catererName }}</strong></span>
+      <h2>{{ currentEvent.title }}</h2>
+      <p class="hero-subtitle mt-2 mb-0" *ngIf="currentEvent.catererName || currentEvent.clientName">
+        <span *ngIf="currentEvent.clientName"><i class="fas fa-user-circle me-1"></i> {{ currentEvent.clientName }}</span>
+        <span *ngIf="currentEvent.clientName && currentEvent.catererName" class="mx-2 opacity-50">|</span>
+        <span *ngIf="currentEvent.catererName"><i class="fas fa-building me-1"></i> {{ 'CLIENT_PORTAL.ORGANIZED_BY' | translate }} : <strong>{{ currentEvent.catererName }}</strong></span>
       </p>
     </div>
   </div>
@@ -22,15 +48,15 @@
       <div class="card-content">
         <h3>{{ 'GUESTS.TITLE' | translate }}</h3>
         <p>{{ 'CLIENT_PORTAL.GUESTS_DESC' | translate }}</p>
-        <div class="stats-row" *ngIf="(events()[0].guestCount || 0) > 0">
+        <div class="stats-row" *ngIf="(currentEvent.guestCount || 0) > 0">
           <div class="stat-box">
-            <span class="stat-value">{{ events()[0].guestCount }}</span>
+            <span class="stat-value">{{ currentEvent.guestCount }}</span>
             <span class="stat-label">{{ 'DASHBOARD.GUESTS_EXPECTED' | translate }}</span>
           </div>
         </div>
       </div>
       <div class="card-action">
-        <a [routerLink]="['/client/events', events()[0].id, 'guests']" class="btn btn-primary w-100 btn-luxury">
+        <a [routerLink]="['/client/events', currentEvent.id, 'guests']" class="btn btn-primary w-100 btn-luxury">
           {{ 'CLIENT_PORTAL.ACCESS_LIST' | translate }} <i class="fas fa-arrow-right ms-2"></i>
         </a>
       </div>
@@ -70,7 +96,7 @@
         </div>
       </div>
       <div class="card-action">
-        <a [routerLink]="['/client/events', events()[0].id, 'menu']" class="btn btn-outline-primary w-100 btn-luxury-outline">
+        <a [routerLink]="['/client/events', currentEvent.id, 'menu']" class="btn btn-outline-primary w-100 btn-luxury-outline">
           {{ 'CLIENT_PORTAL.VIEW_MENU' | translate }} <i class="fas fa-arrow-right ms-2"></i>
         </a>
       </div>
@@ -92,7 +118,7 @@
         </div>
       </div>
       <div class="card-action">
-        <a [routerLink]="['/client/events', events()[0].id, 'invitation-preview']" class="btn btn-alt-warning w-100 btn-luxury-outline" style="border-color: #fcd34d; color: #b45309;">
+        <a [routerLink]="['/client/events', currentEvent.id, 'invitation-preview']" class="btn btn-alt-warning w-100 btn-luxury-outline" style="border-color: #fcd34d; color: #b45309;">
           {{ 'CLIENT_PORTAL.PREVIEW_INVITATION' | translate }} <i class="fas fa-arrow-right ms-2"></i>
         </a>
       </div>
@@ -110,16 +136,16 @@
         <div class="financial-widget">
           <div class="finance-item">
             <span class="finance-label">{{ 'CLIENT_PORTAL.TOTAL_AMOUNT' | translate }}</span>
-            <span class="finance-value text-dark">{{ (events()[0].totalContractAmount || 0) | number:'1.2-2' }} {{ events()[0]?.currency || currencySymbol() }}</span>
+            <span class="finance-value text-dark">{{ (currentEvent.totalContractAmount || 0) | number:'1.2-2' }} {{ currentEvent?.currency || currencySymbol() }}</span>
           </div>
           <div class="finance-item">
             <span class="finance-label">{{ 'CLIENT_PORTAL.DEPOSITS_PAID' | translate }}</span>
-            <span class="finance-value text-success">{{ (events()[0].depositsPaid || 0) | number:'1.2-2' }} {{ events()[0]?.currency || currencySymbol() }}</span>
+            <span class="finance-value text-success">{{ (currentEvent.depositsPaid || 0) | number:'1.2-2' }} {{ currentEvent?.currency || currencySymbol() }}</span>
           </div>
           <div class="finance-divider"></div>
           <div class="finance-item highlight">
             <span class="finance-label fw-bold">{{ 'CLIENT_PORTAL.BALANCE_DUE' | translate }}</span>
-            <span class="finance-value text-danger fw-bold fs-5">{{ (events()[0].balanceDue || 0) | number:'1.2-2' }} {{ events()[0]?.currency || currencySymbol() }}</span>
+            <span class="finance-value text-danger fw-bold fs-5">{{ (currentEvent.balanceDue || 0) | number:'1.2-2' }} {{ currentEvent?.currency || currencySymbol() }}</span>
           </div>
         </div>
       </div>

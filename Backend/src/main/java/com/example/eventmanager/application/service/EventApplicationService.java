@@ -44,6 +44,7 @@ public class EventApplicationService implements CreateEventUseCase, GetEventUseC
     private final SecurityContextPort securityContextPort;
     private final com.example.eventmanager.infrastructure.persistence.repository.ClientRepository clientRepository;
     private final com.example.eventmanager.infrastructure.persistence.mapper.ClientPersistenceMapper clientPersistenceMapper;
+    private final com.example.eventmanager.infrastructure.persistence.repository.EventRepository eventJpaRepository;
 
     @Override
     @Transactional
@@ -220,18 +221,50 @@ public class EventApplicationService implements CreateEventUseCase, GetEventUseC
             throw new UnauthorizedAccessException("Vous n'êtes pas autorisé à modifier cet événement.");
         }
 
-        if (existingEvent.getClientId() != null) {
-            clientRepository.findById(existingEvent.getClientId()).ifPresent(clientEntity -> {
-                clientEntity.setAccessLinkToken(java.util.UUID.randomUUID().toString().replace("-", ""));
-                java.time.LocalDateTime expiresAt = existingEvent.getEventDate() != null
-                        ? existingEvent.getEventDate().plusDays(7)
-                        : java.time.LocalDateTime.now().plusDays(7);
-                clientEntity.setAccessLinkExpiresAt(expiresAt);
-                clientRepository.save(clientEntity);
-            });
-        }
+        com.example.eventmanager.infrastructure.persistence.entity.ClientEntity clientEntity = ensureDedicatedClientForEvent(existingEvent);
+        clientEntity.setAccessLinkToken(java.util.UUID.randomUUID().toString().replace("-", ""));
+        java.time.LocalDateTime expiresAt = existingEvent.getEventDate() != null
+                ? existingEvent.getEventDate().plusDays(7)
+                : java.time.LocalDateTime.now().plusDays(7);
+        clientEntity.setAccessLinkExpiresAt(expiresAt);
+        clientRepository.save(clientEntity);
 
         return getEventById(id);
+    }
+
+    private com.example.eventmanager.infrastructure.persistence.entity.ClientEntity ensureDedicatedClientForEvent(Event event) {
+        com.example.eventmanager.infrastructure.persistence.entity.ClientEntity clientEntity = null;
+        if (event.getClientId() != null) {
+            clientEntity = clientRepository.findById(event.getClientId()).orElse(null);
+            if (clientEntity != null) {
+                long count = eventJpaRepository.countByClientId(event.getClientId());
+                if (count > 1) {
+                    // Shared client with another event! Decouple so this event has its own dedicated client
+                    clientEntity = null;
+                }
+            }
+        }
+
+        java.time.LocalDateTime expiresAt = event.getEventDate() != null
+                ? event.getEventDate().plusDays(7)
+                : java.time.LocalDateTime.now().plusMonths(1);
+
+        if (clientEntity == null) {
+            clientEntity = new com.example.eventmanager.infrastructure.persistence.entity.ClientEntity();
+            clientEntity.setName("Client pour " + event.getTitle());
+            clientEntity.setAccessLinkToken(java.util.UUID.randomUUID().toString().replace("-", ""));
+            clientEntity.setAccessLinkExpiresAt(expiresAt);
+            clientEntity = clientRepository.save(clientEntity);
+
+            event.setClientId(clientEntity.getId());
+            eventRepositoryPort.save(event);
+        } else if (clientEntity.getAccessLinkToken() == null || clientEntity.getAccessLinkToken().isBlank()) {
+            clientEntity.setAccessLinkToken(java.util.UUID.randomUUID().toString().replace("-", ""));
+            clientEntity.setAccessLinkExpiresAt(expiresAt);
+            clientEntity = clientRepository.save(clientEntity);
+        }
+
+        return clientEntity;
     }
 
     @Override
@@ -254,7 +287,7 @@ public class EventApplicationService implements CreateEventUseCase, GetEventUseC
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public EventDTO getEventById(Long id) {
         Long currentCatererId = securityContextPort.getCurrentCatererId();
         
@@ -269,16 +302,14 @@ public class EventApplicationService implements CreateEventUseCase, GetEventUseC
             throw new UnauthorizedAccessException("Vous n'êtes pas autorisé à accéder à cet événement.");
         }
         
+        com.example.eventmanager.infrastructure.persistence.entity.ClientEntity clientEntity = ensureDedicatedClientForEvent(event);
+
         EventDTO eventDTO = eventMapper.toDTO(event);
-        if (event.getClientId() != null) {
-            clientRepository.findById(event.getClientId()).ifPresent(clientEntity -> {
-                eventDTO.setAccessLinkToken(clientEntity.getAccessLinkToken());
-                eventDTO.setAccessLinkExpiresAt(clientEntity.getAccessLinkExpiresAt());
-                eventDTO.setClientName(clientEntity.getName());
-                eventDTO.setClientEmail(clientEntity.getEmail());
-                eventDTO.setClientPhone(clientEntity.getPhone());
-            });
-        }
+        eventDTO.setAccessLinkToken(clientEntity.getAccessLinkToken());
+        eventDTO.setAccessLinkExpiresAt(clientEntity.getAccessLinkExpiresAt());
+        eventDTO.setClientName(clientEntity.getName());
+        eventDTO.setClientEmail(clientEntity.getEmail());
+        eventDTO.setClientPhone(clientEntity.getPhone());
         return eventDTO;
     }
     

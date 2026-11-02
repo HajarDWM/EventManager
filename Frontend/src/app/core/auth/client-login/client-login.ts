@@ -21,10 +21,15 @@ export class ClientLogin {
   public isLoading = signal(false);
   public errorMessage = signal('');
   public isExpired = signal(false);
+  private readonly targetEventId = signal<number | null>(null);
 
   constructor() {
     this.route.queryParams.subscribe(params => {
       const token = params['token'];
+      const evId = params['eventId'];
+      if (evId) {
+        this.targetEventId.set(Number(evId));
+      }
       if (token) {
         this.accessLinkToken.set(token);
         this.login(); // Auto-login if token is in URL
@@ -45,7 +50,16 @@ export class ClientLogin {
     this.clientAuthService.login(this.accessLinkToken()).subscribe({
       next: (res) => {
         this.isLoading.set(false);
-        this.router.navigate(['/client/dashboard']);
+        const targetId = this.targetEventId();
+        if (targetId) {
+          localStorage.setItem('active_client_event_id', String(targetId));
+          this.router.navigate(['/client/dashboard'], { queryParams: { eventId: targetId } });
+        } else if (res && res.events && res.events.length > 0) {
+          localStorage.setItem('active_client_event_id', String(res.events[0].id));
+          this.router.navigate(['/client/dashboard'], { queryParams: { eventId: res.events[0].id } });
+        } else {
+          this.router.navigate(['/client/dashboard']);
+        }
       },
       error: (err) => {
         this.isLoading.set(false);

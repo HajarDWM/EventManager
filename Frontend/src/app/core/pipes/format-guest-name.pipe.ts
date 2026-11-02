@@ -12,7 +12,8 @@ import { Pipe, PipeTransform } from '@angular/core';
  */
 @Pipe({
   name: 'formatGuestName',
-  standalone: true
+  standalone: true,
+  pure: false
 })
 export class FormatGuestNamePipe implements PipeTransform {
   public transform(fullName: string | null | undefined, maskEnabled: boolean = false): string {
@@ -56,7 +57,8 @@ export class FormatGuestNamePipe implements PipeTransform {
  */
 @Pipe({
   name: 'maskEmail',
-  standalone: true
+  standalone: true,
+  pure: false
 })
 export class MaskEmailPipe implements PipeTransform {
   public transform(email: string | null | undefined, maskEnabled: boolean = false): string {
@@ -104,7 +106,8 @@ export class MaskEmailPipe implements PipeTransform {
  */
 @Pipe({
   name: 'maskPhone',
-  standalone: true
+  standalone: true,
+  pure: false
 })
 export class MaskPhonePipe implements PipeTransform {
   public transform(phone: string | null | undefined, maskEnabled: boolean = false): string {

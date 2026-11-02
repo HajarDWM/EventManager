@@ -932,7 +932,7 @@ export class EventDetails implements OnInit {
   }
 
   protected isGuestPrivacyActive(): boolean {
-    const id = this.event()?.id;
+    const id = this.event()?.id || Number(this.route.snapshot.paramMap.get('id'));
     if (id && localStorage.getItem(`guest_privacy_${id}`) !== null) {
       return localStorage.getItem(`guest_privacy_${id}`) === 'true';
     }
@@ -1139,7 +1139,7 @@ export class EventDetails implements OnInit {
   protected clientPortalUrl(): string {
     const e = this.event();
     if (e && e.accessLinkToken) {
-      return `${window.location.origin}/client/login?token=${e.accessLinkToken}`;
+      return `${window.location.origin}/client/login?token=${e.accessLinkToken}&eventId=${e.id}`;
     }
     return 'Lien non disponible';
   }
