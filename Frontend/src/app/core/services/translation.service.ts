@@ -146,7 +146,8 @@ export class TranslationService {
       targetLang = this.getSavedAdminLanguage();
     }
 
-    return this.http.get<Record<string, any>>(`/assets/i18n/${targetLang}.json`).pipe(
+    const cacheBuster = Date.now();
+    return this.http.get<Record<string, any>>(`/assets/i18n/${targetLang}.json?v=${cacheBuster}`).pipe(
       tap((data) => {
         this.translationsMap.set(data);
         this.currentLang.set(targetLang);
