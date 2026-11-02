@@ -50,4 +50,5 @@ public class EventDTO {
     private Integer tableCapacity;
     private Integer tablesCount;
     private Boolean maskGuestLastName;
+    private Integer clientPortalValidityDays;
 }

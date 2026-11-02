@@ -110,5 +110,9 @@ public class EventEntity {
     @Column(name = "mask_guest_last_name", nullable = false)
     @Builder.Default
     private boolean maskGuestLastName = false;
+
+    @Column(name = "client_portal_validity_days")
+    @Builder.Default
+    private Integer clientPortalValidityDays = 7;
 }
 

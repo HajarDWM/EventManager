@@ -1175,5 +1175,134 @@ export class EventDetails implements OnInit {
     const body = `Bonjour, voici le lien d'accès à votre événement: ${url}`;
     return `sms:?&body=${encodeURIComponent(body)}`;
   }
+
+  // Client Portal Validity Configuration Modal
+  protected readonly isValidityModalOpen = signal(false);
+  protected readonly validityMode = signal<'DAYS' | 'DATE'>('DAYS');
+  protected readonly selectedPresetDays = signal<number>(7);
+  protected readonly customDaysInput = signal<number>(7);
+  protected readonly customExpiresAtDate = signal<string>('');
+  protected readonly isSavingValidity = signal(false);
+  protected readonly validitySuccessMessage = signal<string>('');
+
+  protected readonly currentValidityDays = computed(() => {
+    return this.event()?.clientPortalValidityDays || 7;
+  });
+
+  protected readonly minExpiryDate = computed(() => {
+    const e = this.event();
+    if (e?.eventDate) {
+      return new Date(e.eventDate).toISOString().substring(0, 10);
+    }
+    return new Date().toISOString().substring(0, 10);
+  });
+
+  protected readonly previewExpirationDate = computed(() => {
+    const e = this.event();
+    const mode = this.validityMode();
+    if (mode === 'DATE') {
+      const d = this.customExpiresAtDate();
+      if (d) return new Date(`${d}T23:59:59`);
+    }
+
+    let days = this.selectedPresetDays();
+    if (days === -1) {
+      days = Math.max(1, this.customDaysInput() || 7);
+    }
+    const baseDate = e?.eventDate ? new Date(e.eventDate) : new Date();
+    const result = new Date(baseDate);
+    result.setDate(result.getDate() + days);
+    result.setHours(23, 59, 59, 999);
+    return result;
+  });
+
+  protected openValidityModal(): void {
+    const e = this.event();
+    const defaultDays = e?.clientPortalValidityDays || 7;
+    const presets = [7, 15, 30, 60, 90];
+    if (presets.includes(defaultDays)) {
+      this.selectedPresetDays.set(defaultDays);
+      this.customDaysInput.set(defaultDays);
+    } else {
+      this.selectedPresetDays.set(-1);
+      this.customDaysInput.set(defaultDays);
+    }
+    if (e?.accessLinkExpiresAt) {
+      const dt = new Date(e.accessLinkExpiresAt);
+      this.customExpiresAtDate.set(dt.toISOString().substring(0, 10));
+    } else {
+      const d = e?.eventDate ? new Date(e.eventDate) : new Date();
+      d.setDate(d.getDate() + defaultDays);
+      this.customExpiresAtDate.set(d.toISOString().substring(0, 10));
+    }
+    this.validityMode.set('DAYS');
+    this.validitySuccessMessage.set('');
+    this.isValidityModalOpen.set(true);
+  }
+
+  protected closeValidityModal(): void {
+    this.isValidityModalOpen.set(false);
+  }
+
+  protected selectPreset(days: number): void {
+    this.selectedPresetDays.set(days);
+    if (days !== -1) {
+      this.customDaysInput.set(days);
+      const e = this.event();
+      const baseDate = e?.eventDate ? new Date(e.eventDate) : new Date();
+      const res = new Date(baseDate);
+      res.setDate(res.getDate() + days);
+      this.customExpiresAtDate.set(res.toISOString().substring(0, 10));
+    }
+  }
+
+  protected onCustomDaysChange(val: any): void {
+    const num = Number(val);
+    this.customDaysInput.set(num);
+    const e = this.event();
+    const baseDate = e?.eventDate ? new Date(e.eventDate) : new Date();
+    const res = new Date(baseDate);
+    res.setDate(res.getDate() + Math.max(1, num || 1));
+    this.customExpiresAtDate.set(res.toISOString().substring(0, 10));
+  }
+
+  protected saveValidity(): void {
+    const eventId = this.event()?.id;
+    if (!eventId) return;
+
+    this.isSavingValidity.set(true);
+    const mode = this.validityMode();
+    let payload: { validityDays?: number; customExpiresAt?: string } = {};
+
+    if (mode === 'DATE') {
+      const dateStr = this.customExpiresAtDate();
+      if (!dateStr) {
+        this.isSavingValidity.set(false);
+        return;
+      }
+      payload = { customExpiresAt: `${dateStr}T23:59:59` };
+    } else {
+      let days = this.selectedPresetDays();
+      if (days === -1) {
+        days = Math.max(1, this.customDaysInput() || 7);
+      }
+      payload = { validityDays: days };
+    }
+
+    this.eventService.updateClientLinkValidity(eventId, payload).subscribe({
+      next: (updatedEvent) => {
+        this.isSavingValidity.set(false);
+        this.event.set(updatedEvent);
+        this.validitySuccessMessage.set('La validité a été mise à jour avec succès.');
+        setTimeout(() => {
+          this.closeValidityModal();
+        }, 1000);
+      },
+      error: (err) => {
+        this.isSavingValidity.set(false);
+        console.error('Erreur lors de la mise à jour de la validité:', err);
+      }
+    });
+  }
 }
 

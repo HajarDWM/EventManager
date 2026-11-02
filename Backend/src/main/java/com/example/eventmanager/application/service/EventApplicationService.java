@@ -85,8 +85,13 @@ public class EventApplicationService implements CreateEventUseCase, GetEventUseC
                 ? eventDTO.getClientName() 
                 : "Client pour " + eventToSave.getTitle();
                 
+        int validityDays = (eventDTO.getClientPortalValidityDays() != null && eventDTO.getClientPortalValidityDays() > 0)
+                ? eventDTO.getClientPortalValidityDays()
+                : 7;
+        eventToSave.setClientPortalValidityDays(validityDays);
+
         java.time.LocalDateTime expiresAt = eventToSave.getEventDate() != null
-                ? eventToSave.getEventDate().plusDays(7)
+                ? eventToSave.getEventDate().plusDays(validityDays)
                 : java.time.LocalDateTime.now().plusMonths(1);
 
         com.example.eventmanager.domain.model.Client client = com.example.eventmanager.domain.model.Client.builder()
@@ -193,7 +198,8 @@ public class EventApplicationService implements CreateEventUseCase, GetEventUseC
                     clientUpdated = true;
                 }
                 if (eventDTO.getEventDate() != null) {
-                    clientEntity.setAccessLinkExpiresAt(eventDTO.getEventDate().plusDays(7));
+                    int valDays = existingEvent.getClientPortalValidityDays() != null ? existingEvent.getClientPortalValidityDays() : 7;
+                    clientEntity.setAccessLinkExpiresAt(eventDTO.getEventDate().plusDays(valDays));
                     clientUpdated = true;
                 }
                 if (clientUpdated) {
@@ -204,6 +210,50 @@ public class EventApplicationService implements CreateEventUseCase, GetEventUseC
 
         Event updatedEvent = eventRepositoryPort.save(existingEvent);
         return getEventById(updatedEvent.getId());
+    }
+
+    @Override
+    @Transactional
+    public EventDTO updateClientLinkValidity(Long id, Integer validityDays, java.time.LocalDateTime customExpiresAt) {
+        Long currentCatererId = securityContextPort.getCurrentCatererId();
+        
+        Event existingEvent = eventRepositoryPort.findById(id)
+                .orElseThrow(() -> new EventNotFoundException(id));
+                
+        com.example.eventmanager.domain.model.Caterer caterer = catererRepositoryPort.findById(currentCatererId).orElse(null);
+        boolean isSuperAdmin = caterer != null && "SUPER_ADMIN".equals(caterer.getRole().name());
+
+        if (!isSuperAdmin && existingEvent.getCatererId() != null && !existingEvent.getCatererId().equals(currentCatererId)) {
+            throw new UnauthorizedAccessException("Vous n'êtes pas autorisé à modifier cet événement.");
+        }
+
+        com.example.eventmanager.infrastructure.persistence.entity.ClientEntity clientEntity = ensureDedicatedClientForEvent(existingEvent);
+
+        java.time.LocalDateTime expiresAt;
+        if (customExpiresAt != null) {
+            expiresAt = customExpiresAt;
+            if (existingEvent.getEventDate() != null) {
+                long days = java.time.Duration.between(existingEvent.getEventDate(), customExpiresAt).toDays();
+                existingEvent.setClientPortalValidityDays((int) Math.max(1, days));
+            }
+        } else if (validityDays != null && validityDays > 0) {
+            existingEvent.setClientPortalValidityDays(validityDays);
+            expiresAt = existingEvent.getEventDate() != null
+                    ? existingEvent.getEventDate().plusDays(validityDays)
+                    : java.time.LocalDateTime.now().plusDays(validityDays);
+        } else {
+            int days = existingEvent.getClientPortalValidityDays() != null ? existingEvent.getClientPortalValidityDays() : 7;
+            expiresAt = existingEvent.getEventDate() != null
+                    ? existingEvent.getEventDate().plusDays(days)
+                    : java.time.LocalDateTime.now().plusDays(days);
+        }
+
+        clientEntity.setAccessLinkExpiresAt(expiresAt);
+        clientRepository.save(clientEntity);
+
+        eventRepositoryPort.save(existingEvent);
+
+        return getEventById(id);
     }
 
     @Override
@@ -223,9 +273,10 @@ public class EventApplicationService implements CreateEventUseCase, GetEventUseC
 
         com.example.eventmanager.infrastructure.persistence.entity.ClientEntity clientEntity = ensureDedicatedClientForEvent(existingEvent);
         clientEntity.setAccessLinkToken(java.util.UUID.randomUUID().toString().replace("-", ""));
+        int valDays = existingEvent.getClientPortalValidityDays() != null ? existingEvent.getClientPortalValidityDays() : 7;
         java.time.LocalDateTime expiresAt = existingEvent.getEventDate() != null
-                ? existingEvent.getEventDate().plusDays(7)
-                : java.time.LocalDateTime.now().plusDays(7);
+                ? existingEvent.getEventDate().plusDays(valDays)
+                : java.time.LocalDateTime.now().plusDays(valDays);
         clientEntity.setAccessLinkExpiresAt(expiresAt);
         clientRepository.save(clientEntity);
 
@@ -245,8 +296,9 @@ public class EventApplicationService implements CreateEventUseCase, GetEventUseC
             }
         }
 
+        int valDays = event.getClientPortalValidityDays() != null ? event.getClientPortalValidityDays() : 7;
         java.time.LocalDateTime expiresAt = event.getEventDate() != null
-                ? event.getEventDate().plusDays(7)
+                ? event.getEventDate().plusDays(valDays)
                 : java.time.LocalDateTime.now().plusMonths(1);
 
         if (clientEntity == null) {

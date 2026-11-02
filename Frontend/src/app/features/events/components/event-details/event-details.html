@@ -82,14 +82,22 @@
             <div>
               <div class="d-flex align-items-center gap-2 flex-wrap">
                 <h3 class="fs-sm fw-bold text-dark mb-0">{{ 'EVENT_DETAILS.PORTAL_TITLE' | translate }}</h3>
-                <!-- Token Status Badge -->
+                <!-- Token Status Badge (Clickable to edit validity) -->
                 <span *ngIf="event()?.accessLinkExpiresAt && !isClientTokenExpired()" 
-                      class="badge bg-success-light text-success border border-success-subtle rounded-pill px-2 py-0.5 fs-4xs fw-bold">
+                      (click)="openValidityModal()"
+                      class="badge bg-success-light text-success border border-success-subtle rounded-pill px-2 py-0.5 fs-4xs fw-bold shadow-2xs hover-elevate"
+                      style="cursor: pointer;"
+                      [title]="'EVENT_DETAILS.CLICK_TO_EDIT_VALIDITY' | translate">
                   <i class="fa fa-circle-check me-1"></i>{{ 'EVENT_DETAILS.PORTAL_ACTIVE_UNTIL' | translate }} {{ event()?.accessLinkExpiresAt | date:'dd/MM/yyyy' }}
+                  <i class="fa fa-pencil ms-1 opacity-75"></i>
                 </span>
                 <span *ngIf="event()?.accessLinkExpiresAt && isClientTokenExpired()" 
-                      class="badge bg-danger-light text-danger border border-danger-subtle rounded-pill px-2 py-0.5 fs-4xs fw-bold animate__animated animate__pulse">
+                      (click)="openValidityModal()"
+                      class="badge bg-danger-light text-danger border border-danger-subtle rounded-pill px-2 py-0.5 fs-4xs fw-bold animate__animated animate__pulse shadow-2xs hover-elevate"
+                      style="cursor: pointer;"
+                      [title]="'EVENT_DETAILS.CLICK_TO_EDIT_VALIDITY' | translate">
                   <i class="fa fa-triangle-exclamation me-1"></i>{{ 'EVENT_DETAILS.PORTAL_EXPIRED_SINCE' | translate }} {{ event()?.accessLinkExpiresAt | date:'dd/MM/yyyy' }}
+                  <i class="fa fa-pencil ms-1 opacity-75"></i>
                 </span>
               </div>
               <p class="text-muted fs-xs mb-0 mt-0.5">{{ 'EVENT_DETAILS.PORTAL_DESC' | translate }}</p>
@@ -115,6 +123,9 @@
               <a [href]="smsShareUrl()" class="btn btn-xs btn-alt-secondary rounded-pill fw-medium px-2 py-0.5 flex-grow-1 d-flex align-items-center justify-content-center shadow-2xs hover-elevate" style="transition: all 0.2s ease; font-size: 0.65rem; line-height: 1.2;">
                 <i class="fa fa-comment-sms me-1 text-secondary" style="font-size: 0.7rem;"></i> SMS
               </a>
+              <button type="button" (click)="openValidityModal()" class="btn btn-xs btn-alt-primary rounded-pill fw-medium px-2 py-0.5 d-flex align-items-center justify-content-center shadow-2xs hover-elevate" style="transition: all 0.2s ease; font-size: 0.65rem; line-height: 1.2;" [title]="'EVENT_DETAILS.CLICK_TO_EDIT_VALIDITY' | translate">
+                <i class="fa fa-clock me-1 text-primary" style="font-size: 0.7rem;"></i> {{ 'EVENT_DETAILS.PARAM_VALIDITY' | translate }}
+              </button>
               <button type="button" (click)="regenerateClientLink()" [disabled]="isRegeneratingToken()" class="btn btn-xs btn-alt-warning rounded-pill fw-medium px-2 py-0.5 d-flex align-items-center justify-content-center shadow-2xs hover-elevate" style="transition: all 0.2s ease; font-size: 0.65rem; line-height: 1.2;" title="Régénérer le lien">
                 <i class="fa fa-rotate me-1 text-warning" [class.fa-spin]="isRegeneratingToken()" style="font-size: 0.7rem;"></i> {{ 'EVENT_DETAILS.REGENERATE' | translate }}
               </button>
@@ -640,4 +651,151 @@
       </div>
     </div>
   </ng-container>
+</div>
+
+<!-- Modal Paramétrage de la validité du Portail Client -->
+<div class="modal fade show d-block" *ngIf="isValidityModalOpen()" tabindex="-1" style="background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); z-index: 1055;" role="dialog">
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 520px;">
+    <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+      
+      <!-- Modal Header -->
+      <div class="modal-header border-bottom px-4 py-3 bg-light">
+        <div class="d-flex align-items-center gap-2">
+          <div class="rounded-circle bg-primary-subtle text-primary p-2 d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;">
+            <i class="fa fa-clock-rotate-left fs-6"></i>
+          </div>
+          <div>
+            <h5 class="modal-title fw-bold fs-sm text-dark mb-0">{{ 'EVENT_DETAILS.VALIDITY_MODAL_TITLE' | translate }}</h5>
+            <small class="text-muted fs-xxs">{{ 'EVENT_DETAILS.VALIDITY_MODAL_SUBTITLE' | translate }}</small>
+          </div>
+        </div>
+        <button type="button" class="btn-close" (click)="closeValidityModal()" aria-label="Close"></button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="modal-body p-4">
+        
+        <!-- Info Banner Event Date -->
+        <div class="p-3 rounded-3 bg-light border mb-3 d-flex justify-content-between align-items-center">
+          <div>
+            <div class="fs-xxs text-muted text-uppercase fw-semibold">{{ 'EVENT_DETAILS.EVENT_DATE' | translate }}</div>
+            <div class="fs-xs fw-bold text-dark mt-0.5">
+              <i class="fa fa-calendar-day text-primary me-1.5"></i>
+              {{ event()?.eventDate | date:'dd/MM/yyyy HH:mm' }}
+            </div>
+          </div>
+          <div class="text-end">
+            <div class="fs-xxs text-muted text-uppercase fw-semibold">{{ 'EVENT_DETAILS.CURRENT_STATUS' | translate }}</div>
+            <span *ngIf="!isClientTokenExpired()" class="badge bg-success-light text-success border border-success-subtle rounded-pill px-2 py-0.5 fs-4xs fw-bold mt-0.5">
+              <i class="fa fa-circle-check me-1"></i>{{ 'EVENT_DETAILS.PORTAL_ACTIVE' | translate }}
+            </span>
+            <span *ngIf="isClientTokenExpired()" class="badge bg-danger-light text-danger border border-danger-subtle rounded-pill px-2 py-0.5 fs-4xs fw-bold mt-0.5">
+              <i class="fa fa-triangle-exclamation me-1"></i>{{ 'EVENT_DETAILS.PORTAL_EXPIRED' | translate }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Mode Toggle (Days vs Specific Date) -->
+        <div class="d-flex rounded-pill bg-light p-1 border mb-3">
+          <button type="button" 
+                  class="btn btn-sm rounded-pill flex-grow-1 fw-bold fs-xs transition-all"
+                  [ngClass]="validityMode() === 'DAYS' ? 'btn-white shadow-xs text-primary' : 'text-muted'"
+                  (click)="validityMode.set('DAYS')">
+            <i class="fa fa-calendar-plus me-1.5"></i>{{ 'EVENT_DETAILS.VALIDITY_MODE_DAYS' | translate }}
+          </button>
+          <button type="button" 
+                  class="btn btn-sm rounded-pill flex-grow-1 fw-bold fs-xs transition-all"
+                  [ngClass]="validityMode() === 'DATE' ? 'btn-white shadow-xs text-primary' : 'text-muted'"
+                  (click)="validityMode.set('DATE')">
+            <i class="fa fa-calendar-check me-1.5"></i>{{ 'EVENT_DETAILS.VALIDITY_MODE_DATE' | translate }}
+          </button>
+        </div>
+
+        <!-- Mode 1: Presets & Custom Days -->
+        <div *ngIf="validityMode() === 'DAYS'">
+          <label class="form-label fs-xs fw-bold text-dark mb-2">{{ 'EVENT_DETAILS.SELECT_PRESET_DURATION' | translate }}</label>
+          <div class="d-flex flex-wrap gap-2 mb-3">
+            <button type="button" 
+                    *ngFor="let days of [7, 15, 30, 60, 90]"
+                    (click)="selectPreset(days)"
+                    class="btn btn-sm rounded-pill fw-medium fs-xs px-3 py-1.5 transition-all"
+                    [ngClass]="selectedPresetDays() === days ? 'btn-primary shadow-xs' : 'btn-outline-secondary border-dashed text-dark'">
+              {{ days }} {{ 'EVENT_DETAILS.DAYS' | translate }}
+              <span *ngIf="days === 7" class="badge bg-white text-primary ms-1 fs-5xs">{{ 'EVENT_DETAILS.DEFAULT' | translate }}</span>
+            </button>
+            <button type="button" 
+                    (click)="selectPreset(-1)"
+                    class="btn btn-sm rounded-pill fw-medium fs-xs px-3 py-1.5 transition-all"
+                    [ngClass]="selectedPresetDays() === -1 ? 'btn-primary shadow-xs' : 'btn-outline-secondary border-dashed text-dark'">
+              <i class="fa fa-sliders me-1"></i>{{ 'EVENT_DETAILS.CUSTOM' | translate }}
+            </button>
+          </div>
+
+          <!-- Custom Days Input -->
+          <div *ngIf="selectedPresetDays() === -1" class="mb-3 animate__animated animate__fadeIn">
+            <label class="form-label fs-xs fw-semibold text-muted">{{ 'EVENT_DETAILS.CUSTOM_DAYS_LABEL' | translate }}</label>
+            <div class="input-group input-group-sm">
+              <input type="number" 
+                     class="form-control form-control-sm rounded-start-pill"
+                     min="1" max="730"
+                     [ngModel]="customDaysInput()" 
+                     (ngModelChange)="onCustomDaysChange($event)">
+              <span class="input-group-text rounded-end-pill fs-xs text-muted">{{ 'EVENT_DETAILS.DAYS_AFTER_EVENT' | translate }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mode 2: Specific Date (Calendar) -->
+        <div *ngIf="validityMode() === 'DATE'" class="animate__animated animate__fadeIn mb-3">
+          <label class="form-label fs-xs fw-bold text-dark mb-1">{{ 'EVENT_DETAILS.CHOOSE_EXPIRY_DATE' | translate }}</label>
+          <div class="input-group input-group-sm">
+            <span class="input-group-text bg-white rounded-start-pill border-end-0 text-muted">
+              <i class="fa fa-calendar-alt"></i>
+            </span>
+            <input type="date" 
+                   class="form-control form-control-sm rounded-end-pill border-start-0 ps-0"
+                   [min]="minExpiryDate()"
+                   [ngModel]="customExpiresAtDate()" 
+                   (ngModelChange)="customExpiresAtDate.set($event)">
+          </div>
+          <small class="text-muted fs-4xs d-block mt-1">
+            {{ 'EVENT_DETAILS.DATE_PICKER_HINT' | translate }}
+          </small>
+        </div>
+
+        <!-- Dynamic Preview Card -->
+        <div class="card border border-primary-subtle bg-primary-subtle bg-opacity-25 rounded-3 p-3">
+          <div class="d-flex align-items-center gap-2 mb-1">
+            <i class="fa fa-sparkles text-primary fs-xs"></i>
+            <span class="fs-xs fw-bold text-primary text-uppercase">{{ 'EVENT_DETAILS.PREVIEW_EXPIRY' | translate }}</span>
+          </div>
+          <div class="fs-sm fw-bold text-dark">
+            {{ previewExpirationDate() | date:'EEEE dd MMMM yyyy' }} à 23:59
+          </div>
+          <div class="fs-xxs text-muted mt-1">
+            {{ 'EVENT_DETAILS.PREVIEW_HINT' | translate }}
+          </div>
+        </div>
+
+        <!-- Success Alert -->
+        <div *ngIf="validitySuccessMessage()" class="alert alert-success py-2 px-3 mt-3 rounded-pill fs-xs d-flex align-items-center gap-2 animate__animated animate__fadeIn">
+          <i class="fa fa-circle-check text-success"></i>
+          <span>{{ validitySuccessMessage() }}</span>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="modal-footer border-top px-4 py-2.5 bg-light d-flex justify-content-between">
+        <button type="button" class="btn btn-sm btn-alt-secondary rounded-pill px-3" (click)="closeValidityModal()" [disabled]="isSavingValidity()">
+          {{ 'COMMON.CANCEL' | translate }}
+        </button>
+        <button type="button" class="btn btn-sm btn-primary rounded-pill px-4 fw-medium shadow-xs" (click)="saveValidity()" [disabled]="isSavingValidity()">
+          <i class="fa me-1.5" [ngClass]="isSavingValidity() ? 'fa-spin fa-spinner' : 'fa-check'"></i>
+          {{ 'EVENT_DETAILS.SAVE_VALIDITY' | translate }}
+        </button>
+      </div>
+
+    </div>
+  </div>
 </div>

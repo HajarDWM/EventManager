@@ -46,6 +46,24 @@ public class EventResource {
         return ResponseEntity.ok(updatedEvent);
     }
 
+    @PutMapping("/{id}/client-link-validity")
+    public ResponseEntity<EventDTO> updateClientLinkValidity(
+            @PathVariable Long id,
+            @RequestBody(required = false) UpdateValidityRequest request) {
+        Integer validityDays = request != null ? request.getValidityDays() : null;
+        java.time.LocalDateTime customExpiresAt = request != null ? request.getCustomExpiresAt() : null;
+        EventDTO updatedEvent = updateEventUseCase.updateClientLinkValidity(id, validityDays, customExpiresAt);
+        return ResponseEntity.ok(updatedEvent);
+    }
+
+    @lombok.Data
+    @lombok.NoArgsConstructor
+    @lombok.AllArgsConstructor
+    public static class UpdateValidityRequest {
+        private Integer validityDays;
+        private java.time.LocalDateTime customExpiresAt;
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteEvent(@PathVariable Long id) {
         deleteEventUseCase.deleteEvent(id);

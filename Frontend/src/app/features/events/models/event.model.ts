@@ -36,4 +36,5 @@ export interface Event {
   tableCapacity?: number;
   tablesCount?: number;
   maskGuestLastName?: boolean;
+  clientPortalValidityDays?: number;
 }

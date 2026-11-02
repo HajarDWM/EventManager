@@ -41,6 +41,7 @@ public class EventPersistenceMapper {
                 .tableCapacity(entity.getTableCapacity() != null ? entity.getTableCapacity() : 10)
                 .tablesCount(entity.getTablesCount())
                 .maskGuestLastName(entity.isMaskGuestLastName())
+                .clientPortalValidityDays(entity.getClientPortalValidityDays() != null ? entity.getClientPortalValidityDays() : 7)
                 .build();
     }
 
@@ -77,6 +78,7 @@ public class EventPersistenceMapper {
                 .tableCapacity(domain.getTableCapacity() != null ? domain.getTableCapacity() : 10)
                 .tablesCount(domain.getTablesCount())
                 .maskGuestLastName(domain.isMaskGuestLastName())
+                .clientPortalValidityDays(domain.getClientPortalValidityDays() != null ? domain.getClientPortalValidityDays() : 7)
                 .build();
     }
 }

@@ -43,6 +43,8 @@ public class Event {
     private Integer tablesCount;
     @Builder.Default
     private boolean maskGuestLastName = false;
+    @Builder.Default
+    private Integer clientPortalValidityDays = 7;
 
     public void setupInvitation(Long templateId, String templateIdStr, String token, String title, LocalDateTime date, String location) {
         setupInvitation(templateId, templateIdStr, token, title, this.invitationSubtitle, date, location, this.parkingLocation);

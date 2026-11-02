@@ -38,7 +38,8 @@ public class EventMapper {
                 .tableShape(dto.getTableShape() != null ? dto.getTableShape() : "ROUND")
                 .tableCapacity(dto.getTableCapacity() != null ? dto.getTableCapacity() : 10)
                 .tablesCount(dto.getTablesCount())
-                .maskGuestLastName(dto.getMaskGuestLastName() != null ? dto.getMaskGuestLastName() : false);
+                .maskGuestLastName(dto.getMaskGuestLastName() != null ? dto.getMaskGuestLastName() : false)
+                .clientPortalValidityDays(dto.getClientPortalValidityDays() != null ? dto.getClientPortalValidityDays() : 7);
 
         if (dto.getStatus() != null) {
             builder.status(EventStatus.valueOf(dto.getStatus()));
@@ -79,6 +80,7 @@ public class EventMapper {
                 .tableCapacity(event.getTableCapacity() != null ? event.getTableCapacity() : 10)
                 .tablesCount(event.getTablesCount())
                 .maskGuestLastName(event.isMaskGuestLastName())
+                .clientPortalValidityDays(event.getClientPortalValidityDays() != null ? event.getClientPortalValidityDays() : 7)
                 .build();
     }
 }

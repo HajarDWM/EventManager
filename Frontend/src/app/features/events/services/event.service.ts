@@ -47,4 +47,8 @@ export class EventService {
       params: { maskGuestLastName }
     });
   }
+
+  public updateClientLinkValidity(eventId: number, data: { validityDays?: number; customExpiresAt?: string }): Observable<Event> {
+    return this.http.put<Event>(`${this.apiUrl}/${eventId}/client-link-validity`, data);
+  }
 }
