@@ -76,4 +76,8 @@ public class Event {
     public void cancelEvent() {
         this.status = EventStatus.CANCELLED;
     }
+
+    public void markAsAwaitingPayment() {
+        this.status = EventStatus.AWAITING_PAYMENT;
+    }
 }

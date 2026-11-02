@@ -51,4 +51,10 @@ export class EventService {
   public updateClientLinkValidity(eventId: number, data: { validityDays?: number; customExpiresAt?: string }): Observable<Event> {
     return this.http.put<Event>(`${this.apiUrl}/${eventId}/client-link-validity`, data);
   }
+
+  public updateEventStatus(eventId: number, status: string): Observable<Event> {
+    return this.http.put<Event>(`${this.apiUrl}/${eventId}/status`, null, {
+      params: { status }
+    });
+  }
 }

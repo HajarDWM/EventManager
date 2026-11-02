@@ -96,6 +96,7 @@
     "ALL_STATUSES": "All statuses",
     "STATUS_PLANNED": "Planned",
     "STATUS_DRAFT": "Draft",
+    "STATUS_AWAITING_PAYMENT": "Awaiting Payment",
     "STATUS_COMPLETED": "Completed",
     "STATUS_CANCELLED": "Cancelled",
     "SORT_DATE_ASC": "Date (Soonest)",

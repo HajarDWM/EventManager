@@ -56,6 +56,14 @@ public class EventResource {
         return ResponseEntity.ok(updatedEvent);
     }
 
+    @PutMapping("/{id}/status")
+    public ResponseEntity<EventDTO> updateEventStatus(
+            @PathVariable Long id,
+            @RequestParam com.example.eventmanager.domain.model.EventStatus status) {
+        EventDTO updatedEvent = updateEventUseCase.updateEventStatus(id, status);
+        return ResponseEntity.ok(updatedEvent);
+    }
+
     @lombok.Data
     @lombok.NoArgsConstructor
     @lombok.AllArgsConstructor

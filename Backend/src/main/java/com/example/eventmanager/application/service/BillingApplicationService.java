@@ -301,6 +301,7 @@ public class BillingApplicationService implements ManageQuoteUseCase, ManageInvo
 
         invoice.addPayment(payment);
         Invoice saved = invoiceRepositoryPort.save(invoice);
+        checkAndSyncEventStatusAfterPayment(invoice.getEventId());
         return invoiceMapper.toDTO(saved);
     }
 
@@ -343,6 +344,27 @@ public class BillingApplicationService implements ManageQuoteUseCase, ManageInvo
         
         invoiceRepositoryPort.save(invoice);
         paymentRepositoryPort.deleteById(paymentId);
+        checkAndSyncEventStatusAfterPayment(eventId);
+    }
+
+    private void checkAndSyncEventStatusAfterPayment(Long eventId) {
+        if (eventId == null) return;
+        try {
+            eventRepositoryPort.findById(eventId).ifPresent(event -> {
+                if (event.getEventDate() != null && LocalDateTime.now().isAfter(event.getEventDate())) {
+                    if (event.getStatus() == EventStatus.AWAITING_PAYMENT || event.getStatus() == EventStatus.PLANNED) {
+                        List<Invoice> invoices = invoiceRepositoryPort.findByEventId(eventId);
+                        boolean allPaid = !invoices.isEmpty() && invoices.stream()
+                                .filter(i -> !InvoiceStatus.CANCELLED.equals(i.getStatus()))
+                                .allMatch(i -> InvoiceStatus.PAID.equals(i.getStatus()));
+                        if (allPaid) {
+                            event.setStatus(EventStatus.COMPLETED);
+                            eventRepositoryPort.save(event);
+                        }
+                    }
+                }
+            });
+        } catch (Exception ignored) {}
     }
 
     @Override

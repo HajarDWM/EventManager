@@ -39,6 +39,21 @@ class EventApplicationServiceTest {
     @Mock
     private CatererRepositoryPort catererRepositoryPort;
 
+    @Mock
+    private com.example.eventmanager.infrastructure.persistence.repository.QuoteRepository quoteRepository;
+
+    @Mock
+    private com.example.eventmanager.infrastructure.persistence.repository.InvoiceRepository invoiceRepository;
+
+    @Mock
+    private com.example.eventmanager.infrastructure.persistence.repository.ClientRepository clientRepository;
+
+    @Mock
+    private com.example.eventmanager.infrastructure.persistence.mapper.ClientPersistenceMapper clientPersistenceMapper;
+
+    @Mock
+    private com.example.eventmanager.infrastructure.persistence.repository.EventRepository eventJpaRepository;
+
     @InjectMocks
     private EventApplicationService eventApplicationService;
 
@@ -64,6 +79,16 @@ class EventApplicationServiceTest {
                 .catererId(1L)
                 .status(EventStatus.DRAFT)
                 .build();
+
+        com.example.eventmanager.infrastructure.persistence.entity.ClientEntity mockClient = 
+                new com.example.eventmanager.infrastructure.persistence.entity.ClientEntity();
+        mockClient.setId(10L);
+        mockClient.setName("Client test");
+        mockClient.setAccessLinkToken("token123");
+        mockClient.setAccessLinkExpiresAt(LocalDateTime.now().plusDays(7));
+        lenient().when(clientRepository.save(any())).thenReturn(mockClient);
+        lenient().when(clientRepository.findById(any())).thenReturn(Optional.of(mockClient));
+        lenient().when(clientPersistenceMapper.toEntity(any())).thenReturn(mockClient);
     }
 
     @Test

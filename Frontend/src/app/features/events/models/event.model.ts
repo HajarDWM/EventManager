@@ -5,7 +5,7 @@ export interface Event {
   location: string;
   locationMapUrl?: string;
   guestCount?: number | null;
-  status?: 'DRAFT' | 'PLANNED' | 'COMPLETED' | 'CANCELLED';
+  status?: 'DRAFT' | 'PLANNED' | 'AWAITING_PAYMENT' | 'COMPLETED' | 'CANCELLED';
   catererId?: number;
   catererName?: string;
   catererEmail?: string;

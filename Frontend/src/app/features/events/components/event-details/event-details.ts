@@ -1082,10 +1082,30 @@ export class EventDetails implements OnInit {
     }
   }
 
+  protected isUpdatingStatus = signal(false);
+
+  protected updateStatus(newStatus: string): void {
+    const currentEvent = this.event();
+    if (!currentEvent || !currentEvent.id || currentEvent.status === newStatus) return;
+
+    this.isUpdatingStatus.set(true);
+    this.eventService.updateEventStatus(currentEvent.id, newStatus).subscribe({
+      next: (updated) => {
+        this.event.set(updated);
+        this.isUpdatingStatus.set(false);
+      },
+      error: (err) => {
+        this.isUpdatingStatus.set(false);
+        console.error('Erreur lors du changement de statut:', err);
+      }
+    });
+  }
+
   protected getStatusBadgeClass(status: string | undefined): string {
     switch (status) {
       case 'DRAFT': return 'bg-warning-light text-black border border-warning-light';
       case 'PLANNED': return 'bg-success-light text-black border border-success-light';
+      case 'AWAITING_PAYMENT': return 'bg-warning text-dark border border-warning fw-semibold shadow-sm';
       case 'COMPLETED': return 'bg-info-light text-black border border-info-light';
       case 'CANCELLED': return 'bg-danger-light text-black border border-danger-light';
       default: return 'bg-body-dark text-black';
@@ -1096,6 +1116,7 @@ export class EventDetails implements OnInit {
     switch (status) {
       case 'DRAFT': return 'Brouillon';
       case 'PLANNED': return 'Planifié';
+      case 'AWAITING_PAYMENT': return 'En attente de solde';
       case 'COMPLETED': return 'Terminé';
       case 'CANCELLED': return 'Annulé';
       default: return 'Inconnu';

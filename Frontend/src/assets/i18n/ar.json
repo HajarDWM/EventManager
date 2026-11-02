@@ -96,6 +96,7 @@
     "ALL_STATUSES": "جميع الحالات",
     "STATUS_PLANNED": "مخطط لها",
     "STATUS_DRAFT": "مسودة",
+    "STATUS_AWAITING_PAYMENT": "في انتظار تسوية الرصيد",
     "STATUS_COMPLETED": "مكتملة",
     "STATUS_CANCELLED": "ملغاة",
     "SORT_DATE_ASC": "التاريخ (الأقرب)",

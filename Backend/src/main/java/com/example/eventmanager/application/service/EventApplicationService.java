@@ -45,6 +45,8 @@ public class EventApplicationService implements CreateEventUseCase, GetEventUseC
     private final com.example.eventmanager.infrastructure.persistence.repository.ClientRepository clientRepository;
     private final com.example.eventmanager.infrastructure.persistence.mapper.ClientPersistenceMapper clientPersistenceMapper;
     private final com.example.eventmanager.infrastructure.persistence.repository.EventRepository eventJpaRepository;
+    private final com.example.eventmanager.infrastructure.persistence.repository.QuoteRepository quoteRepository;
+    private final com.example.eventmanager.infrastructure.persistence.repository.InvoiceRepository invoiceRepository;
 
     @Override
     @Transactional
@@ -362,11 +364,32 @@ public class EventApplicationService implements CreateEventUseCase, GetEventUseC
         eventDTO.setClientName(clientEntity.getName());
         eventDTO.setClientEmail(clientEntity.getEmail());
         eventDTO.setClientPhone(clientEntity.getPhone());
+        enrichFinancesAndApplySmartStatus(event, eventDTO);
         return eventDTO;
+    }
+
+    @Override
+    @Transactional
+    public EventDTO updateEventStatus(Long id, EventStatus status) {
+        Long currentCatererId = securityContextPort.getCurrentCatererId();
+        
+        Event existingEvent = eventRepositoryPort.findById(id)
+                .orElseThrow(() -> new EventNotFoundException(id));
+                
+        com.example.eventmanager.domain.model.Caterer caterer = catererRepositoryPort.findById(currentCatererId).orElse(null);
+        boolean isSuperAdmin = caterer != null && "SUPER_ADMIN".equals(caterer.getRole().name());
+
+        if (!isSuperAdmin && existingEvent.getCatererId() != null && !existingEvent.getCatererId().equals(currentCatererId)) {
+            throw new UnauthorizedAccessException("Vous n'êtes pas autorisé à modifier cet événement.");
+        }
+
+        existingEvent.setStatus(status);
+        eventRepositoryPort.save(existingEvent);
+        return getEventById(id);
     }
     
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public List<EventDTO> getAllEvents(Long catererId) {
         Long currentCatererId = securityContextPort.getCurrentCatererId();
         
@@ -387,9 +410,71 @@ public class EventApplicationService implements CreateEventUseCase, GetEventUseC
                             eventDTO.setClientPhone(clientEntity.getPhone());
                         });
                     }
+                    enrichFinancesAndApplySmartStatus(event, eventDTO);
                     return eventDTO;
                 })
                 .toList();
+    }
+
+    private void enrichFinancesAndApplySmartStatus(Event event, EventDTO dto) {
+        if (quoteRepository == null || invoiceRepository == null || event == null || dto == null) {
+            return;
+        }
+
+        java.util.List<com.example.eventmanager.infrastructure.persistence.entity.QuoteEntity> quotes = 
+                quoteRepository.findByEventId(event.getId());
+        com.example.eventmanager.infrastructure.persistence.entity.QuoteEntity globalQuote = (quotes != null) ? quotes.stream()
+                .filter(q -> (q.getReference() != null && q.getReference().startsWith("QT-GLOBAL-")) 
+                        || "ACCEPTED".equals(q.getStatus()) || "INVOICED".equals(q.getStatus()))
+                .findFirst()
+                .orElse(quotes.isEmpty() ? null : quotes.get(0)) : null;
+
+        double totalContract = 0.0;
+        if (globalQuote != null && globalQuote.getTotalTtc() != null) {
+            totalContract = globalQuote.getTotalTtc().doubleValue();
+        }
+
+        java.util.List<com.example.eventmanager.infrastructure.persistence.entity.InvoiceEntity> invoices = 
+                invoiceRepository.findByEventId(event.getId());
+        if (totalContract == 0.0 && invoices != null && !invoices.isEmpty()) {
+            totalContract = invoices.stream()
+                    .filter(inv -> !"CANCELLED".equals(inv.getStatus()))
+                    .map(com.example.eventmanager.infrastructure.persistence.entity.InvoiceEntity::getTotalTtc)
+                    .filter(java.util.Objects::nonNull)
+                    .mapToDouble(java.math.BigDecimal::doubleValue)
+                    .sum();
+        }
+
+        double depositsPaid = 0.0;
+        if (invoices != null) {
+            depositsPaid = invoices.stream()
+                    .filter(inv -> !"CANCELLED".equals(inv.getStatus()))
+                    .filter(inv -> inv.getPayments() != null)
+                    .flatMap(inv -> inv.getPayments().stream())
+                    .map(com.example.eventmanager.infrastructure.persistence.entity.PaymentEntity::getAmount)
+                    .filter(java.util.Objects::nonNull)
+                    .mapToDouble(java.math.BigDecimal::doubleValue)
+                    .sum();
+        }
+
+        double balanceDue = Math.max(0.0, totalContract - depositsPaid);
+
+        dto.setTotalContractAmount(totalContract);
+        dto.setDepositsPaid(depositsPaid);
+        dto.setBalanceDue(balanceDue);
+
+        // Smart Status Transition (Option 3 Hybride):
+        // Automatically applied if event date has passed and event is in PLANNED or AWAITING_PAYMENT
+        if (event.getEventDate() != null && java.time.LocalDateTime.now().isAfter(event.getEventDate())) {
+            if (event.getStatus() == EventStatus.PLANNED || event.getStatus() == EventStatus.AWAITING_PAYMENT) {
+                EventStatus targetStatus = (balanceDue > 0.001) ? EventStatus.AWAITING_PAYMENT : EventStatus.COMPLETED;
+                if (event.getStatus() != targetStatus) {
+                    event.setStatus(targetStatus);
+                    eventRepositoryPort.save(event);
+                    dto.setStatus(targetStatus.name());
+                }
+            }
+        }
     }
 
     @Override

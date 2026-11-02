@@ -96,6 +96,7 @@
     "ALL_STATUSES": "Tous les statuts",
     "STATUS_PLANNED": "Planifié",
     "STATUS_DRAFT": "Brouillon",
+    "STATUS_AWAITING_PAYMENT": "En attente de solde",
     "STATUS_COMPLETED": "Terminé",
     "STATUS_CANCELLED": "Annulé",
     "SORT_DATE_ASC": "Date (Plus proche)",

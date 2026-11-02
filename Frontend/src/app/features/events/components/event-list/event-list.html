@@ -72,6 +72,7 @@
               [ngModel]="statusFilter()" (ngModelChange)="statusFilter.set($event)">
         <option value="ALL">{{ 'EVENTS.ALL_STATUSES' | translate }}</option>
         <option value="PLANNED">{{ 'EVENTS.STATUS_PLANNED' | translate }}</option>
+        <option value="AWAITING_PAYMENT">{{ 'EVENTS.STATUS_AWAITING_PAYMENT' | translate }}</option>
         <option value="DRAFT">{{ 'EVENTS.STATUS_DRAFT' | translate }}</option>
         <option value="COMPLETED">{{ 'EVENTS.STATUS_COMPLETED' | translate }}</option>
         <option value="CANCELLED">{{ 'EVENTS.STATUS_CANCELLED' | translate }}</option>
@@ -193,6 +194,9 @@
               <span class="badge px-3 py-2 rounded" [ngClass]="getStatusBadgeClass(event.status)">
                 {{ getStatusLabel(event.status) }}
               </span>
+              <div *ngIf="event.status === 'AWAITING_PAYMENT' && (event.balanceDue ?? 0) > 0" class="fs-xs text-danger fw-semibold mt-1">
+                <i class="fa fa-exclamation-circle me-1"></i>{{ event.balanceDue | number:'1.0-0' }} DH
+              </div>
             </td>
             <td class="text-center" (click)="$event.stopPropagation()">
               <div class="d-flex align-items-center justify-content-center gap-1">

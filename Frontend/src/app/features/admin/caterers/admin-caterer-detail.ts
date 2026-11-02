@@ -111,6 +111,7 @@ export class AdminCatererDetail implements OnInit {
     switch (status) {
       case 'DRAFT': return 'bg-warning-light text-warning';
       case 'PLANNED': return 'bg-success-light text-success';
+      case 'AWAITING_PAYMENT': return 'bg-warning text-dark fw-bold border border-warning';
       case 'COMPLETED': return 'bg-info-light text-info';
       case 'CANCELLED': return 'bg-danger-light text-danger';
       default: return 'bg-body-dark text-dark';
@@ -121,6 +122,7 @@ export class AdminCatererDetail implements OnInit {
     switch (status) {
       case 'DRAFT': return 'Brouillon';
       case 'PLANNED': return 'Planifié';
+      case 'AWAITING_PAYMENT': return 'En attente de solde';
       case 'COMPLETED': return 'Terminé';
       case 'CANCELLED': return 'Annulé';
       default: return 'Inconnu';
