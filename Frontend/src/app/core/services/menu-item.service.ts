@@ -19,7 +19,7 @@ export interface MenuItem {
 })
 export class MenuItemService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = 'http://localhost:8080/api';
+  private readonly baseUrl = '/api';
 
   public getMenuItemsByEvent(eventId: number): Observable<MenuItem[]> {
     return this.http.get<MenuItem[]>(`${this.baseUrl}/events/${eventId}/menu-items`);

@@ -18,7 +18,7 @@ export interface EventExportData {
 })
 export class ExportPdfService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = 'http://localhost:8080/api';
+  private readonly baseUrl = '/api';
 
   public getEventExportData(eventId: number): Observable<EventExportData> {
     return this.http.get<EventExportData>(`${this.baseUrl}/events/${eventId}/export-data`);

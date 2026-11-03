@@ -18,7 +18,7 @@ export interface EventTask {
 })
 export class EventTaskService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = 'http://localhost:8080/api';
+  private readonly baseUrl = '/api';
 
   public getTasksByEvent(eventId: number): Observable<EventTask[]> {
     return this.http.get<EventTask[]>(`${this.baseUrl}/events/${eventId}/tasks`);

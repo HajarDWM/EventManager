@@ -683,7 +683,7 @@ export class MenuList implements OnInit {
     this.isUploadingImage.set(true);
     this.menuItemService.uploadMenuImage(file).subscribe({
       next: (res) => {
-        this.imageUrl.set('http://localhost:8080' + res.url);
+        this.imageUrl.set(res.url);
         this.isUploadingImage.set(false);
       },
       error: (err) => {
