@@ -53,23 +53,31 @@ export class CurrencyService {
       return manualPref;
     }
 
-    // 2. Perform Geo-IP lookup
+    // 2. Perform Geo-IP lookup safely without custom headers
     try {
-      const geoData: any = await firstValueFrom(
-        this.http.get('https://ipapi.co/json/')
-      );
-      if (geoData && geoData.country_code && !geoData.error && !geoData.reserved) {
-        const countryCode = geoData.country_code.toUpperCase();
-        this.detectedCountry.set(geoData.country_name || countryCode);
-        const mappedCurrency = this.mapCountryToCurrency(countryCode);
-        
-        this.activeCurrency.set(mappedCurrency);
-        this.isAutoDetected.set(true);
-        localStorage.setItem('detected_currency', mappedCurrency);
-        return mappedCurrency;
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 2000);
+      const res = await fetch('https://ipapi.co/json/', {
+        signal: controller.signal,
+        headers: { 'Accept': 'application/json' }
+      }).catch(() => null);
+      clearTimeout(timeoutId);
+
+      if (res && res.ok) {
+        const geoData = await res.json().catch(() => null);
+        if (geoData && geoData.country_code && !geoData.error && !geoData.reserved) {
+          const countryCode = String(geoData.country_code).toUpperCase();
+          this.detectedCountry.set(geoData.country_name || countryCode);
+          const mappedCurrency = this.mapCountryToCurrency(countryCode);
+          
+          this.activeCurrency.set(mappedCurrency);
+          this.isAutoDetected.set(true);
+          localStorage.setItem('detected_currency', mappedCurrency);
+          return mappedCurrency;
+        }
       }
-    } catch (e) {
-      console.warn('Geo-IP lookup fallback to browser locale/local default:', e);
+    } catch {
+      // Graceful fallback to browser locale
     }
 
     // 3. Fallback to Browser Locale / Timezone

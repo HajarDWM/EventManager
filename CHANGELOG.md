@@ -5,6 +5,19 @@ Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/)
 
 ---
 
+## [v1.1.1] - 2026-11-03
+
+### 🐛 Corrections / Bug Fixes
+- **Affichage de la liste des invités dans la personnalisation d'invitation** : Correction de la condition d'affichage `*ngIf` dans `organiser-invitation-setup.html` et initialisation du token dans `organiser-invitation-setup.ts` pour que la table des invités et le bloc d'envoi s'affichent correctement dès qu'un modèle d'invitation est actif.
+- **Erreur OneUI `classList of null` sur `#page-container`** : Ajout de vérifications de sécurité dans `oneui.app.min.js` pour éviter que le script de template ne plante au chargement initial lorsque le DOM Angular n'a pas encore injecté `#page-container`.
+- **Blocage CORS et fuite de JWT sur `ipapi.co`** : Correction de `auth.interceptor.ts` afin de n'injecter le token `Authorization: Bearer` que sur les endpoints internes de notre API (`/api/`), éliminant ainsi les requêtes CORS preflight non autorisées vers les services tiers.
+- **Requête Geo-IP résiliente dans `currency.service.ts`** : Utilisation de `fetch` avec timeout court (2s) et fallback fluide vers la détection de devise via le locale du navigateur (`detectFromBrowserLocale`).
+
+### 🗄️ Base de données / Migrations
+- **Migration Flyway V36** : Ajout du script `V36__Ensure_invitation_tokens_for_events.sql` pour garantir que tous les événements existants avec un modèle d'invitation disposent d'un `invitation_token` valide.
+
+---
+
 ## [v1.1.0] - 2026-11-03
 
 ### ✨ Nouveautés / Features
@@ -32,3 +45,4 @@ Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/)
 - **Back-office Administrateur** : Gestion des souscriptions, modèles et suivi global de la plateforme.
 - **Sécurité & Authentification** : Authentification JWT, contrôle d'accès basé sur les rôles (ADMIN, CATERER, CLIENT).
 - **Déploiement Docker & Cloud** : Architecture conteneurisée (Frontend Angular, Backend Spring Boot, Base MySQL, PhpMyAdmin) déployée sur VPS avec Nginx.
+

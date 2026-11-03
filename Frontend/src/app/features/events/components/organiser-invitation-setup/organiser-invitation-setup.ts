@@ -1204,9 +1204,9 @@ export class OrganiserInvitationSetup implements OnInit {
         this.invitationDateStr = rawDate.toISOString().split('T')[0];
         this.invitationTimeStr = rawDate.toTimeString().split(' ')[0].substring(0, 5);
         
-        this.invitationToken = evt.invitationToken || '';
-        if (this.invitationToken) {
-          this.updateInvitationLink(this.invitationToken);
+        this.invitationToken = evt.invitationToken || (evt.digitalTemplateId ? `token-${evt.id}` : '');
+        if (this.invitationToken || evt.digitalTemplateId) {
+          this.updateInvitationLink(this.invitationToken || `token-${evt.id}`);
         }
 
         // Find selected template if any

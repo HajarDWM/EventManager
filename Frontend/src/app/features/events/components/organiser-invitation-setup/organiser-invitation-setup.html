@@ -202,7 +202,7 @@
 </div>
 
 <!-- Action-Oriented Sending Section -->
-<div class="block block-rounded shadow-sm border border-light mt-4 animate__animated animate__fadeIn" *ngIf="invitationToken">
+<div class="block block-rounded shadow-sm border border-light mt-4 animate__animated animate__fadeIn" *ngIf="invitationToken || event()?.digitalTemplateId">
   <div class="block-header block-header-default bg-body-light border-bottom border-light">
     <h3 class="block-title fw-bold mb-0">
       <i class="fa fa-paper-plane text-primary me-2"></i>{{ 'INVITATION_SETUP.SEND_INVITATIONS' | translate }}

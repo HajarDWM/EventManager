@@ -11,3 +11,4 @@ Whenever the user requests a deployment to production (e.g., "déployer", "deplo
 6. **Push to GitHub**: `git push origin main --tags`
 7. **Deploy to VPS**: Run `python scripts/deploy_git.py` (with `BypassSandbox: true`).
 8. **Report**: Inform the user of the deployed version, changes list, and live status at `https://em.nexenflow.com`.
+
