@@ -53,34 +53,7 @@ export class CurrencyService {
       return manualPref;
     }
 
-    // 2. Perform Geo-IP lookup safely without custom headers
-    try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 2000);
-      const res = await fetch('https://ipapi.co/json/', {
-        signal: controller.signal,
-        headers: { 'Accept': 'application/json' }
-      }).catch(() => null);
-      clearTimeout(timeoutId);
-
-      if (res && res.ok) {
-        const geoData = await res.json().catch(() => null);
-        if (geoData && geoData.country_code && !geoData.error && !geoData.reserved) {
-          const countryCode = String(geoData.country_code).toUpperCase();
-          this.detectedCountry.set(geoData.country_name || countryCode);
-          const mappedCurrency = this.mapCountryToCurrency(countryCode);
-          
-          this.activeCurrency.set(mappedCurrency);
-          this.isAutoDetected.set(true);
-          localStorage.setItem('detected_currency', mappedCurrency);
-          return mappedCurrency;
-        }
-      }
-    } catch {
-      // Graceful fallback to browser locale
-    }
-
-    // 3. Fallback to Browser Locale / Timezone
+    // 2. Perform fast, local browser locale & timezone detection (100% reliable, zero CORS/network delay)
     const browserCurrency = this.detectFromBrowserLocale();
     this.activeCurrency.set(browserCurrency);
     this.isAutoDetected.set(true);
