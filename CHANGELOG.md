@@ -5,6 +5,19 @@ Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/)
 
 ---
 
+## [v1.1.2] - 2026-11-03
+
+### 🐛 Corrections / Bug Fixes
+- **Généralisation des routes d'API relatives (`/api`)** : Suppression de `http://localhost:8080` codé en dur dans `MenuItemService`, `ClientMenuService`, `EventTaskService`, `ExportPdfService` et `MenuList` pour garantir un fonctionnement parfait en production comme en développement.
+- **Résolution des erreurs 403 Forbidden sur les menus et événements** : Amélioration du filtre `auth.interceptor.ts` afin d'injecter fidèlement le token JWT sur toutes les requêtes d'API internes tout en protégeant les APIs tierces externes.
+- **Élimination du blocage au rendu (Google Fonts)** : Remplacement de l'import synchrone render-blocking dans `index.html` par un chargement asynchrone non-bloquant via `preload` et `media="print" onload="this.media='all'"`, éliminant le délai de chargement initial de 25s lors de connexions ralenties.
+
+### ⚡ Performance & Optimisation
+- **Compression HTTP GZIP Spring Boot** : Activation de `server.compression` pour les types JSON, HTML, CSS et JS dans `application.yml` et `application-prod.yml` afin d'alléger considérablement les payloads d'invitations et de catalogues volumineux.
+- **Proxy de dev pour les médias** : Ajout de la règle de redirection `/uploads` dans `proxy.conf.json` pour la prévisualisation fluide des images de menus en local.
+
+---
+
 ## [v1.1.1] - 2026-11-03
 
 ### 🐛 Corrections / Bug Fixes
