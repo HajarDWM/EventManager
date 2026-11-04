@@ -12,6 +12,8 @@ export interface EventTypeOption {
   icon: string;
   defaultSubtitleFr: string;
   defaultSubtitleAr: string;
+  placeholderTitle?: string;
+  categoryFilter?: string;
 }
 
 @Component({
@@ -30,9 +32,9 @@ export class InvitationExpress implements OnInit {
   public readonly currentStep = signal<1 | 2 | 3>(1);
 
   // Step 1: Form Inputs
-  public eventType = signal<string>('MARIAGE');
+  public eventType = signal<string>('Mariage');
   public title = signal<string>('');
-  public subtitle = signal<string>('');
+  public subtitle = signal<string>('C\'est avec une immense joie que nous vous invitons à célébrer notre union.');
   public eventDate = signal<string>('');
   public eventTime = signal<string>('19:00');
   public location = signal<string>('');
@@ -58,7 +60,7 @@ export class InvitationExpress implements OnInit {
   // General invite link copy state
   public readonly linkCopied = signal<boolean>(false);
 
-  // Event types catalog
+  // Event types catalog & suggestions
   public readonly eventTypes: EventTypeOption[] = [
     {
       id: 'MARIAGE',
@@ -66,49 +68,111 @@ export class InvitationExpress implements OnInit {
       labelAr: 'حفل زفاف',
       icon: 'fa-heart',
       defaultSubtitleFr: 'C\'est avec une immense joie que nous vous invitons à célébrer notre union.',
-      defaultSubtitleAr: 'يتشرف أصحاب الحفل بدعوتكم لحضور حفل الزفاف المبارك.'
+      defaultSubtitleAr: 'يتشرف أصحاب الحفل بدعوتكم لحضور حفل الزفاف المبارك.',
+      placeholderTitle: 'Ex: Mariage de Sarah & Youssef',
+      categoryFilter: 'Tradition'
     },
     {
       id: 'FIANCAILLES',
       labelFr: 'Fiançailles',
       labelAr: 'خطوبة',
       icon: 'fa-ring',
-      defaultSubtitleFr: 'Nous sommes ravis de vous inviter à célébrer nos fiançailles.',
-      defaultSubtitleAr: 'يسعدنا أن تشاركونا فرحة حفل الخطوبة السعيد.'
+      defaultSubtitleFr: 'Nous serions très honorés de votre présence pour célébrer nos fiançailles.',
+      defaultSubtitleAr: 'يسعدنا أن تشاركونا فرحة حفل الخطوبة السعيد.',
+      placeholderTitle: 'Ex: Fiançailles de Sofia & Mehdi',
+      categoryFilter: 'Tradition'
     },
     {
       id: 'HENNE',
       labelFr: 'Henné',
       labelAr: 'ليلة الحناء',
       icon: 'fa-spa',
-      defaultSubtitleFr: 'Venez partager avec nous la magie de la soirée traditionnelle du Henné.',
-      defaultSubtitleAr: 'يسرنا دعوتكم لحضور ليلة الحناء المغربية الأصيلة.'
+      defaultSubtitleFr: 'Venez partager avec nous la joie et la magie de la soirée traditionnelle du Henné.',
+      defaultSubtitleAr: 'يسرنا دعوتكم لحضور ليلة الحناء المغربية الأصيلة.',
+      placeholderTitle: 'Ex: Soirée Henné de Kenza',
+      categoryFilter: 'Tradition'
     },
     {
       id: 'CIRCONCISION',
       labelFr: 'Circoncision',
       labelAr: 'حفل ختان',
       icon: 'fa-crown',
-      defaultSubtitleFr: 'Nous avons l\'honneur de vous inviter à la fête de circoncision de notre fils.',
-      defaultSubtitleAr: 'نتشرف بدعوتكم لمشاركتنا فرحة حفل ختان ابننا العزيز.'
+      defaultSubtitleFr: 'Nous avons l\'honneur et la joie de vous convier à la célébration de circoncision de notre cher fils.',
+      defaultSubtitleAr: 'نتشرف بدعوتكم لمشاركتنا فرحة حفل ختان ابننا العزيز.',
+      placeholderTitle: 'Ex: Circoncision de Rayan',
+      categoryFilter: 'Tradition'
+    },
+    {
+      id: 'SBOU3',
+      labelFr: 'Sbou3 & Aqiqah',
+      labelAr: 'عقيقة وسبوع',
+      icon: 'fa-baby',
+      defaultSubtitleFr: 'C\'est avec un grand bonheur que nous vous invitons à célébrer la naissance de notre enfant (Aqiqah).',
+      defaultSubtitleAr: 'يسرنا دعوتكم لحضور حفل العقيقة والاحتفاء بالمولود الجديد.',
+      placeholderTitle: 'Ex: Aqiqah du petit Amir',
+      categoryFilter: 'Famille'
     },
     {
       id: 'ANNIVERSAIRE',
       labelFr: 'Anniversaire',
       labelAr: 'عيد ميلاد',
       icon: 'fa-cake-candles',
-      defaultSubtitleFr: 'Rejoignez-nous pour célébrer cet anniversaire inoubliable !',
-      defaultSubtitleAr: 'يسعدنا حضوركم للاحتفال بعيد الميلاد وقضاء أوقات ممتعة.'
+      defaultSubtitleFr: 'Rejoignez-nous pour célébrer cet anniversaire inoubliable entourés de nos proches !',
+      defaultSubtitleAr: 'يسعدنا حضوركم للاحتفال بعيد الميلاد وقضاء أوقات ممتعة.',
+      placeholderTitle: 'Ex: Anniversaire de Leila',
+      categoryFilter: 'Famille'
+    },
+    {
+      id: 'DIPLOME',
+      labelFr: 'Remise de Diplôme',
+      labelAr: 'حفل تخرج',
+      icon: 'fa-graduation-cap',
+      defaultSubtitleFr: 'Nous serions ravis de célébrer ensemble cette belle réussite et remise de diplôme.',
+      defaultSubtitleAr: 'يسرنا دعوتكم لمشاركتنا فرحة التخرج والنجاح.',
+      placeholderTitle: 'Ex: Célébration du Diplôme de Docteur d\'Anas',
+      categoryFilter: 'Scolaire'
     },
     {
       id: 'DINER',
-      labelFr: 'Dîner & Soirée',
-      labelAr: 'عشاء واستقبال',
+      labelFr: 'Dîner & Soirée Gala',
+      labelAr: 'عشاء واستقبال فاخر',
       icon: 'fa-martini-glass-citrus',
-      defaultSubtitleFr: 'Vous êtes cordialement invités à notre soirée de réception et de gala.',
-      defaultSubtitleAr: 'نتشرف بدعوتكم لحضور حفل العشاء والاستقبال الخاص.'
+      defaultSubtitleFr: 'Vous êtes cordialement invités à notre dîner de gala et soirée d\'exception.',
+      defaultSubtitleAr: 'نتشرف بدعوتكم لحضور حفل العشاء والاستقبال الخاص.',
+      placeholderTitle: 'Ex: Soirée de Gala Annuelle',
+      categoryFilter: 'Corporate'
+    },
+    {
+      id: 'CONFERENCE',
+      labelFr: 'Conférence & Séminaire',
+      labelAr: 'مؤتمر وندوة',
+      icon: 'fa-microphone-alt',
+      defaultSubtitleFr: 'Nous avons l\'honneur de vous convier à prendre part à notre conférence professionnelle.',
+      defaultSubtitleAr: 'يسعدنا دعوتكم للمشاركة في فعاليات المؤتمر السنوي.',
+      placeholderTitle: 'Ex: Séminaire d\'Entreprise & Forum 2026',
+      categoryFilter: 'Corporate'
+    },
+    {
+      id: 'FAMILLE',
+      labelFr: 'Fête de Famille',
+      labelAr: 'لمة عائلية',
+      icon: 'fa-users',
+      defaultSubtitleFr: 'Un moment précieux de partage et de retrouvailles chaleureuses en famille.',
+      defaultSubtitleAr: 'يسعدنا لم الشمل واجتماع العائلة لقضاء أروع اللحظات.',
+      placeholderTitle: 'Ex: Grande Réunion de Famille Benkirane',
+      categoryFilter: 'Famille'
     }
   ];
+
+  public readonly titlePlaceholder = computed(() => {
+    const cur = (this.eventType() || '').trim().toLowerCase();
+    const match = this.eventTypes.find(opt => 
+      cur === opt.labelFr.toLowerCase() || 
+      cur === opt.id.toLowerCase() || 
+      cur.includes(opt.labelFr.toLowerCase())
+    );
+    return match?.placeholderTitle || 'Ex: Mariage de Sarah & Youssef, Soirée Henné de Kenza...';
+  });
 
   public readonly filteredTemplates = computed(() => {
     const all = this.templates();
@@ -130,10 +194,46 @@ export class InvitationExpress implements OnInit {
   }
 
   public selectEventType(option: EventTypeOption): void {
-    this.eventType.set(option.id);
-    if (!this.subtitle()) {
-      this.subtitle.set(option.defaultSubtitleFr);
+    this.eventType.set(option.labelFr);
+    this.subtitle.set(option.defaultSubtitleFr);
+    if (option.categoryFilter) {
+      this.selectedCategoryFilter.set(option.categoryFilter);
     }
+  }
+
+  public onEventTypeChange(val: string): void {
+    this.eventType.set(val);
+    const low = (val || '').toLowerCase().trim();
+    if (!low) return;
+
+    // Smart detection: propose matching welcome subtitle when typing
+    const match = this.eventTypes.find(opt => 
+      low === opt.labelFr.toLowerCase() ||
+      low === opt.id.toLowerCase() ||
+      low.includes(opt.labelFr.toLowerCase()) ||
+      (opt.id === 'MARIAGE' && (low.includes('mariage') || low.includes('زفاف') || low.includes('عرس'))) ||
+      (opt.id === 'FIANCAILLES' && (low.includes('fianc') || low.includes('خطوب'))) ||
+      (opt.id === 'HENNE' && (low.includes('henn') || low.includes('حناء') || low.includes('حنة'))) ||
+      (opt.id === 'CIRCONCISION' && (low.includes('circonc') || low.includes('tahra') || low.includes('ختان'))) ||
+      (opt.id === 'SBOU3' && (low.includes('sbou') || low.includes('aqiq') || low.includes('naissance') || low.includes('عقيق') || low.includes('سبوع'))) ||
+      (opt.id === 'ANNIVERSAIRE' && (low.includes('anniv') || low.includes('birthday') || low.includes('ميلاد'))) ||
+      (opt.id === 'DIPLOME' && (low.includes('dipl') || low.includes('soutenance') || low.includes('graduat') || low.includes('تخرج'))) ||
+      (opt.id === 'DINER' && (low.includes('din') || low.includes('dîn') || low.includes('gala') || low.includes('عشاء'))) ||
+      (opt.id === 'CONFERENCE' && (low.includes('conf') || low.includes('semin') || low.includes('sémin') || low.includes('مؤتمر') || low.includes('ندوة'))) ||
+      (opt.id === 'FAMILLE' && (low.includes('famill') || low.includes('عائل')))
+    );
+
+    if (match) {
+      this.subtitle.set(match.defaultSubtitleFr);
+      if (match.categoryFilter) {
+        this.selectedCategoryFilter.set(match.categoryFilter);
+      }
+    }
+  }
+
+  public isOptionSelected(opt: EventTypeOption): boolean {
+    const cur = (this.eventType() || '').trim().toLowerCase();
+    return cur === opt.labelFr.toLowerCase() || cur === opt.id.toLowerCase();
   }
 
   public loadTemplates(): void {
