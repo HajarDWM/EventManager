@@ -43,8 +43,34 @@ export class InvitationExpress implements OnInit {
   // Step 2: Templates
   public readonly templates = signal<DigitalTemplate[]>([]);
   public readonly selectedTemplateId = signal<number | null>(null);
-  public readonly selectedCategoryFilter = signal<string>('ALL');
+  public readonly showAllTemplates = signal<boolean>(false);
   public readonly isLoadingTemplates = signal<boolean>(false);
+
+  // Subtitle Autocomplete / Dropdown State (comme Image 2)
+  public readonly isSubtitleDropdownOpen = signal<boolean>(false);
+  public readonly allSubtitles: string[] = [
+    'Le Mariage de',
+    'Les Fiançailles de',
+    'Soirée de Gala',
+    'Dîner d\'Affaires',
+    'Événement d\'Entreprise',
+    'Lancement de Produit',
+    'Conférence & Réception',
+    'L\'Anniversaire de',
+    'La Célébration de Naissance de',
+    'L\'Aqiqah de',
+    'La Circoncision de',
+    'Soirée Henné de',
+    'Célébration de Diplôme de',
+    'Réunion de Famille de',
+    'Invitation d\'Exception'
+  ];
+
+  public readonly filteredSubtitles = computed(() => {
+    const term = (this.subtitle() || '').toLowerCase().trim();
+    if (!term) return this.allSubtitles;
+    return this.allSubtitles.filter(s => s.toLowerCase().includes(term));
+  });
 
   // Step 3: Event Created & Guests Management
   public readonly createdEvent = signal<ExpressInvitationResponse | null>(null);
@@ -174,11 +200,85 @@ export class InvitationExpress implements OnInit {
     return match?.placeholderTitle || 'Ex: Mariage de Sarah & Youssef, Soirée Henné de Kenza...';
   });
 
-  public readonly filteredTemplates = computed(() => {
+  public readonly recommendedTemplates = computed(() => {
     const all = this.templates();
-    const filter = this.selectedCategoryFilter();
-    if (filter === 'ALL') return all;
-    return all.filter(t => t.category?.toLowerCase() === filter.toLowerCase());
+    if (all.length === 0) return [];
+
+    const norm = (str: string) => (str || '')
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .trim();
+
+    const typeStr = norm(this.eventType());
+    const subStr = norm(this.subtitle());
+    const combined = `${typeStr} ${subStr}`;
+
+    let targetSub = '';
+    let targetCat = '';
+
+    if (combined.includes('mariage') || combined.includes('زفاف') || combined.includes('عرس')) {
+      targetSub = 'mariage';
+      targetCat = 'tradition';
+    } else if (combined.includes('fianc') || combined.includes('خطوب')) {
+      targetSub = 'fiancailles';
+      targetCat = 'tradition';
+    } else if (combined.includes('henn') || combined.includes('حناء') || combined.includes('حنة')) {
+      targetSub = 'henne';
+      targetCat = 'tradition';
+    } else if (combined.includes('circonc') || combined.includes('tahra') || combined.includes('ختان')) {
+      targetSub = 'circoncision';
+      targetCat = 'tradition';
+    } else if (combined.includes('sbou') || combined.includes('aqiq') || combined.includes('naissance') || combined.includes('عقيق') || combined.includes('سبوع') || combined.includes('baby shower')) {
+      targetSub = 'baby shower';
+      targetCat = 'famille';
+    } else if (combined.includes('anniv') || combined.includes('birthday') || combined.includes('ميلاد')) {
+      targetSub = 'anniversaire';
+      targetCat = 'famille';
+    } else if (combined.includes('dipl') || combined.includes('soutenance') || combined.includes('تخرج')) {
+      targetSub = 'diplome';
+      targetCat = 'scolaire';
+    } else if (combined.includes('gala') || combined.includes('diner') || combined.includes('affaires') || combined.includes('عشاء') || combined.includes('استقبال')) {
+      targetSub = 'gala';
+      targetCat = 'corporate';
+    } else if (combined.includes('conf') || combined.includes('semin') || combined.includes('مؤتمر') || combined.includes('ندوة')) {
+      targetSub = 'seminaire';
+      targetCat = 'corporate';
+    } else if (combined.includes('famill') || combined.includes('عائل')) {
+      targetSub = 'famille';
+      targetCat = 'famille';
+    }
+
+    let matches: DigitalTemplate[] = [];
+
+    if (targetSub) {
+      matches = all.filter(t => {
+        const tSub = norm(t.subCategory || '');
+        const tTitle = norm(t.title || '');
+        return tSub.includes(targetSub) || targetSub.includes(tSub) || tTitle.includes(targetSub);
+      });
+    }
+
+    if (matches.length === 0 && targetCat) {
+      matches = all.filter(t => norm(t.category || '').includes(targetCat));
+    }
+
+    if (matches.length === 0 && typeStr) {
+      matches = all.filter(t => {
+        const tSub = norm(t.subCategory || '');
+        const tCat = norm(t.category || '');
+        const tTitle = norm(t.title || '');
+        return typeStr.includes(tSub) || tSub.includes(typeStr) || tTitle.includes(typeStr) || tCat.includes(typeStr);
+      });
+    }
+
+    return matches.length > 0 ? matches : all;
+  });
+
+  public readonly recommendedCount = computed(() => this.recommendedTemplates().length);
+
+  public readonly filteredTemplates = computed(() => {
+    return this.showAllTemplates() ? this.templates() : this.recommendedTemplates();
   });
 
   public readonly selectedTemplate = computed(() => {
@@ -196,9 +296,6 @@ export class InvitationExpress implements OnInit {
   public selectEventType(option: EventTypeOption): void {
     this.eventType.set(option.labelFr);
     this.subtitle.set(option.defaultSubtitleFr);
-    if (option.categoryFilter) {
-      this.selectedCategoryFilter.set(option.categoryFilter);
-    }
   }
 
   public onEventTypeChange(val: string): void {
@@ -225,10 +322,38 @@ export class InvitationExpress implements OnInit {
 
     if (match) {
       this.subtitle.set(match.defaultSubtitleFr);
-      if (match.categoryFilter) {
-        this.selectedCategoryFilter.set(match.categoryFilter);
-      }
     }
+  }
+
+  public selectSubtitle(sub: string): void {
+    this.subtitle.set(sub);
+    this.isSubtitleDropdownOpen.set(false);
+
+    // Auto-sync eventType if recognized
+    const low = sub.toLowerCase();
+    if (low.includes('mariage')) this.eventType.set('Mariage');
+    else if (low.includes('fianc')) this.eventType.set('Fiançailles');
+    else if (low.includes('henn')) this.eventType.set('Henné');
+    else if (low.includes('circonc')) this.eventType.set('Circoncision');
+    else if (low.includes('naissance') || low.includes('aqiq')) this.eventType.set('Sbou3 & Aqiqah');
+    else if (low.includes('anniv')) this.eventType.set('Anniversaire');
+    else if (low.includes('dipl')) this.eventType.set('Remise de Diplôme');
+    else if (low.includes('gala') || low.includes('diner') || low.includes('dîner')) this.eventType.set('Dîner & Soirée Gala');
+    else if (low.includes('conf') || low.includes('entreprise')) this.eventType.set('Conférence & Séminaire');
+  }
+
+  public onSubtitleInputChange(val: string): void {
+    this.subtitle.set(val);
+    this.isSubtitleDropdownOpen.set(true);
+  }
+
+  public toggleSubtitleDropdown(event?: MouseEvent): void {
+    if (event) event.preventDefault();
+    this.isSubtitleDropdownOpen.update(v => !v);
+  }
+
+  public onSubtitleBlur(): void {
+    setTimeout(() => this.isSubtitleDropdownOpen.set(false), 200);
   }
 
   public isOptionSelected(opt: EventTypeOption): boolean {
@@ -241,8 +366,9 @@ export class InvitationExpress implements OnInit {
     this.templateService.getTemplates().subscribe({
       next: (list) => {
         this.templates.set(list || []);
-        if (list && list.length > 0 && !this.selectedTemplateId()) {
-          this.selectedTemplateId.set(list[0].id || 1);
+        const available = this.filteredTemplates();
+        if (available.length > 0 && !this.selectedTemplateId()) {
+          this.selectedTemplateId.set(available[0].id || 1);
         }
         this.isLoadingTemplates.set(false);
       },
@@ -263,6 +389,15 @@ export class InvitationExpress implements OnInit {
         return;
       }
       this.submissionError.set('');
+
+      // Auto-select first matching template if current selection is not in list
+      const available = this.filteredTemplates();
+      if (available.length > 0) {
+        const curSelected = this.selectedTemplateId();
+        if (!curSelected || !available.some(t => t.id === curSelected)) {
+          this.selectedTemplateId.set(available[0].id || null);
+        }
+      }
     }
     this.currentStep.set(step);
     window.scrollTo({ top: 0, behavior: 'smooth' });
