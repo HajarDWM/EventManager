@@ -1,0 +1,386 @@
+<div class="express-invitation-container min-vh-100 bg-body-light py-4 py-md-5">
+  <div class="container" style="max-width: 960px;">
+
+    <!-- Top Header / Branding -->
+    <div class="text-center mb-4">
+      <div class="d-inline-flex align-items-center gap-2 mb-2">
+        <span class="badge bg-primary text-white px-3 py-1.5 rounded-pill fs-xs fw-bold shadow-sm">
+          <i class="fa fa-bolt me-1"></i> Mode Express 100% Gratuit
+        </span>
+      </div>
+      <h1 class="h2 fw-bold text-dark mb-1">
+        Créez votre <span class="text-primary">Invitation Digitale</span> en 3 minutes
+      </h1>
+      <p class="text-muted fs-sm mb-0">
+        Remplissez les détails, choisissez votre modèle marocain, et envoyez directement via WhatsApp à chaque invité.
+      </p>
+    </div>
+
+    <!-- Stepper Navigation -->
+    <div class="block block-rounded shadow-sm border border-light mb-4">
+      <div class="block-content p-3">
+        <div class="row g-2 text-center">
+          <div class="col-4">
+            <button type="button" 
+                    class="btn btn-sm w-100 rounded-pill d-flex align-items-center justify-content-center gap-1.5 py-2"
+                    [ngClass]="currentStep() === 1 ? 'btn-primary' : 'btn-alt-secondary'"
+                    (click)="goToStep(1)">
+              <span class="step-num">1</span>
+              <span class="d-none d-sm-inline fw-semibold fs-xs">Mon Événement</span>
+            </button>
+          </div>
+          <div class="col-4">
+            <button type="button" 
+                    class="btn btn-sm w-100 rounded-pill d-flex align-items-center justify-content-center gap-1.5 py-2"
+                    [ngClass]="currentStep() === 2 ? 'btn-primary' : 'btn-alt-secondary'"
+                    (click)="goToStep(2)">
+              <span class="step-num">2</span>
+              <span class="d-none d-sm-inline fw-semibold fs-xs">Mon Modèle</span>
+            </button>
+          </div>
+          <div class="col-4">
+            <button type="button" 
+                    class="btn btn-sm w-100 rounded-pill d-flex align-items-center justify-content-center gap-1.5 py-2"
+                    [ngClass]="currentStep() === 3 ? 'btn-success' : 'btn-alt-secondary'"
+                    [disabled]="!createdEvent()"
+                    (click)="currentStep.set(3)">
+              <span class="step-num"><i class="fab fa-whatsapp"></i></span>
+              <span class="d-none d-sm-inline fw-semibold fs-xs">Invités & WhatsApp</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Global Alert / Error Messages -->
+    <div *ngIf="submissionError()" class="alert alert-danger d-flex align-items-center gap-2 shadow-sm rounded-3 mb-4" role="alert">
+      <i class="fa fa-triangle-exclamation flex-shrink-0"></i>
+      <div class="fs-sm fw-medium">{{ submissionError() }}</div>
+      <button type="button" class="btn-close ms-auto" (click)="submissionError.set('')"></button>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- STEP 1 : INFORMATIONS DE L'ÉVÉNEMENT      -->
+    <!-- ========================================== -->
+    <div *ngIf="currentStep() === 1" class="block block-rounded shadow-sm border border-light overflow-hidden animate__animated animate__fadeIn">
+      <div class="block-header block-header-default bg-white border-bottom p-3">
+        <h3 class="block-title fs-sm fw-bold mb-0">
+          <i class="fa fa-calendar-star text-primary me-2"></i>Étape 1 : Les détails de votre célébration
+        </h3>
+      </div>
+      <div class="block-content p-4">
+        
+        <!-- 1. Type d'Événement -->
+        <label class="form-label fs-sm fw-bold text-dark mb-2">Quel type d'événement organisez-vous ?</label>
+        <div class="row g-2 mb-4">
+          <div class="col-6 col-md-4" *ngFor="let opt of eventTypes">
+            <div class="card event-type-card h-100 p-3 text-center border cursor-pointer transition-all"
+                 [class.active]="eventType() === opt.id"
+                 (click)="selectEventType(opt)">
+              <div class="type-icon mb-2">
+                <i class="fa {{ opt.icon }} fs-4"></i>
+              </div>
+              <div class="fw-bold fs-xs text-dark">{{ opt.labelFr }}</div>
+              <div class="fs-xxs text-muted">{{ opt.labelAr }}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Titre de l'événement -->
+        <div class="mb-3">
+          <label class="form-label fs-sm fw-semibold" for="express-title">
+            Titre de l'événement <span class="text-danger">*</span>
+          </label>
+          <input type="text" id="express-title" class="form-control form-control-alt fs-sm"
+                 placeholder="Ex: Mariage de Sarah & Youssef, Soirée Henné de Kenza..."
+                 [ngModel]="title()" (ngModelChange)="title.set($event)" required>
+          <div class="form-text fs-xxs">Ce titre apparaîtra en grand sur l'invitation digitale de vos invités.</div>
+        </div>
+
+        <!-- 3. Sous-titre ou mots de bienvenue -->
+        <div class="mb-3">
+          <label class="form-label fs-sm fw-semibold" for="express-subtitle">Message ou phrase d'accueil</label>
+          <input type="text" id="express-subtitle" class="form-control form-control-alt fs-sm"
+                 placeholder="Ex: Nous avons la joie de vous convier à notre mariage..."
+                 [ngModel]="subtitle()" (ngModelChange)="subtitle.set($event)">
+        </div>
+
+        <!-- 4. Date & Heure -->
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <label class="form-label fs-sm fw-semibold" for="express-date">Date de l'événement</label>
+            <input type="date" id="express-date" class="form-control form-control-alt fs-sm"
+                   [ngModel]="eventDate()" (ngModelChange)="eventDate.set($event)">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fs-sm fw-semibold" for="express-time">Heure de début</label>
+            <input type="time" id="express-time" class="form-control form-control-alt fs-sm"
+                   [ngModel]="eventTime()" (ngModelChange)="eventTime.set($event)">
+          </div>
+        </div>
+
+        <!-- 5. Lieu & Itinéraire Google Maps -->
+        <div class="row g-3 mb-4">
+          <div class="col-md-6">
+            <label class="form-label fs-sm fw-semibold" for="express-location">Salle des fêtes ou Adresse</label>
+            <input type="text" id="express-location" class="form-control form-control-alt fs-sm"
+                   placeholder="Ex: Palais des Roses, Ain Diab, Casablanca"
+                   [ngModel]="location()" (ngModelChange)="location.set($event)">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fs-sm fw-semibold" for="express-maps">
+              Lien Google Maps GPS <span class="badge bg-secondary-subtle text-secondary rounded-pill fs-4xs">Recommandé</span>
+            </label>
+            <div class="input-group">
+              <span class="input-group-text bg-body-light border-0"><i class="fa fa-map-location-dot text-danger"></i></span>
+              <input type="url" id="express-maps" class="form-control form-control-alt fs-sm"
+                     placeholder="https://maps.app.goo.gl/..."
+                     [ngModel]="locationMapUrl()" (ngModelChange)="locationMapUrl.set($event)">
+            </div>
+            <div class="form-text fs-xxs">Vos invités pourront cliquer sur ce lien pour activer le GPS de leur téléphone.</div>
+          </div>
+        </div>
+
+        <!-- Next button -->
+        <div class="d-flex justify-content-end pt-2 border-top">
+          <button type="button" class="btn btn-primary px-4 py-2 rounded-pill fw-semibold shadow-sm" (click)="goToStep(2)">
+            Continuer : Choisir le modèle <i class="fa fa-arrow-right ms-2"></i>
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- STEP 2 : CHOIX DU MODÈLE (DESIGN)          -->
+    <!-- ========================================== -->
+    <div *ngIf="currentStep() === 2" class="block block-rounded shadow-sm border border-light overflow-hidden animate__animated animate__fadeIn">
+      <div class="block-header block-header-default bg-white border-bottom p-3 d-flex justify-content-between align-items-center">
+        <h3 class="block-title fs-sm fw-bold mb-0">
+          <i class="fa fa-paint-brush text-primary me-2"></i>Étape 2 : Choisissez le design de votre invitation
+        </h3>
+        <span class="badge bg-primary-subtle text-primary rounded-pill px-2.5 py-1 fs-3xs fw-bold">
+          {{ filteredTemplates().length }} modèles disponibles
+        </span>
+      </div>
+      <div class="block-content p-4">
+
+        <!-- Templates Grid -->
+        <div *ngIf="isLoadingTemplates()" class="text-center py-5">
+          <i class="fa fa-spinner fa-spin fa-2x text-primary mb-2"></i>
+          <p class="text-muted fs-sm">Chargement des modèles d'invitations...</p>
+        </div>
+
+        <div *ngIf="!isLoadingTemplates()" class="row g-3 mb-4">
+          <div class="col-md-6 col-lg-4" *ngFor="let t of filteredTemplates()">
+            <div class="card template-card h-100 border cursor-pointer overflow-hidden transition-all shadow-2xs"
+                 [class.selected]="selectedTemplateId() === t.id"
+                 (click)="selectTemplate(t.id!)">
+              
+              <!-- Card Image / Mockup -->
+              <div class="position-relative template-img-wrapper bg-dark text-center" style="height: 180px;">
+                <img *ngIf="t.imageUrl" [src]="t.imageUrl" [alt]="t.title" class="w-100 h-100 object-fit-cover opacity-90">
+                <div *ngIf="!t.imageUrl" class="w-100 h-100 d-flex align-items-center justify-content-center text-white-50">
+                  <i class="fa fa-envelope-open-text fa-3x"></i>
+                </div>
+                
+                <!-- Badge Selected -->
+                <div *ngIf="selectedTemplateId() === t.id" class="position-absolute top-0 end-0 m-2">
+                  <span class="badge bg-success text-white rounded-pill px-2.5 py-1 shadow-sm">
+                    <i class="fa fa-check me-1"></i> Sélectionné
+                  </span>
+                </div>
+
+                <!-- Category badge -->
+                <div class="position-absolute bottom-0 start-0 m-2">
+                  <span class="badge bg-dark bg-opacity-75 text-white rounded-pill px-2 py-0.5 fs-4xs">
+                    {{ t.category }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- Card Details -->
+              <div class="p-3">
+                <h4 class="fs-xs fw-bold text-dark mb-1">{{ t.title }}</h4>
+                <p class="fs-xxs text-muted mb-2 text-truncate-2">{{ t.description || 'Modèle interactif avec musique, animations et RSVP.' }}</p>
+                <div class="d-flex justify-content-between align-items-center">
+                  <button type="button" class="btn btn-xs rounded-pill"
+                          [ngClass]="selectedTemplateId() === t.id ? 'btn-success' : 'btn-alt-primary'">
+                    {{ selectedTemplateId() === t.id ? 'Sélectionné' : 'Choisir ce modèle' }}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer actions -->
+        <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+          <button type="button" class="btn btn-alt-secondary rounded-pill px-3" (click)="goToStep(1)">
+            <i class="fa fa-arrow-left me-1"></i> Retour
+          </button>
+          
+          <button type="button" 
+                  class="btn btn-success px-4 py-2.5 rounded-pill fw-bold shadow-sm d-flex align-items-center gap-2"
+                  [disabled]="isSubmittingEvent() || !selectedTemplateId()"
+                  (click)="submitAndProceedToGuests()">
+            <i class="fa fa-spinner fa-spin" *ngIf="isSubmittingEvent()"></i>
+            <i class="fab fa-whatsapp fs-5" *ngIf="!isSubmittingEvent()"></i>
+            Générer l'Invitation & Passer à WhatsApp
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- STEP 3 : INVITÉS & ENVOI WHATSAPP DIRECT   -->
+    <!-- ========================================== -->
+    <div *ngIf="currentStep() === 3 && createdEvent()" class="animate__animated animate__fadeIn">
+
+      <!-- Celebration Alert Card -->
+      <div class="block block-rounded bg-success-light border border-success-subtle shadow-sm p-4 mb-4 text-center">
+        <div class="rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center shadow-sm mb-2" style="width: 52px; height: 52px;">
+          <i class="fa fa-check fa-lg"></i>
+        </div>
+        <h2 class="h4 fw-bold text-success-dark mb-1">Félicitations ! Votre invitation est prête</h2>
+        <p class="fs-sm text-dark mb-3">
+          Votre événement <strong>« {{ createdEvent()?.title }} »</strong> est généré. Vous pouvez maintenant ajouter vos invités et leur envoyer leur invitation personnalisée sur WhatsApp d'un simple clic.
+        </p>
+
+        <!-- General Invite Link Bar -->
+        <div class="bg-white p-2.5 rounded-pill shadow-sm border mx-auto d-flex align-items-center gap-2" style="max-width: 620px;">
+          <span class="badge bg-secondary-subtle text-secondary rounded-pill px-2.5 py-1 fs-3xs">Lien Général</span>
+          <input type="text" class="form-control form-control-sm border-0 bg-transparent text-primary fw-semibold px-2 fs-xs"
+                 readonly [value]="createdEvent()?.generalInviteLink">
+          <a [routerLink]="createdEvent()?.generalInviteLink" target="_blank" class="btn btn-xs btn-alt-primary rounded-pill px-2.5 py-1.5" title="Aperçu">
+            <i class="fa fa-eye"></i>
+          </a>
+          <button type="button" class="btn btn-xs btn-primary rounded-pill px-3 py-1.5 fw-semibold" (click)="copyGeneralLink()">
+            <i class="fa me-1" [ngClass]="linkCopied() ? 'fa-check' : 'fa-copy'"></i>
+            {{ linkCopied() ? 'Copié !' : 'Copier' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Add Guest Box -->
+      <div class="block block-rounded shadow-sm border border-light mb-4">
+        <div class="block-header block-header-default bg-white border-bottom p-3">
+          <h3 class="block-title fs-sm fw-bold mb-0">
+            <i class="fab fa-whatsapp text-success me-2"></i>Ajouter un invité et envoyer par WhatsApp
+          </h3>
+        </div>
+        <div class="block-content p-4">
+
+          <div *ngIf="guestAddError()" class="alert alert-danger py-2 px-3 fs-xs mb-3 rounded-pill">
+            {{ guestAddError() }}
+          </div>
+
+          <form (ngSubmit)="addGuest()" class="row g-2 align-items-end">
+            <div class="col-md-5">
+              <label class="form-label fs-xs fw-semibold mb-1" for="guest-name">Nom complet de l'invité <span class="text-danger">*</span></label>
+              <input type="text" id="guest-name" class="form-control form-control-alt fs-sm"
+                     placeholder="Ex: Si Mohammed Benani, Khalti Fatima..."
+                     [ngModel]="newGuestName()" (ngModelChange)="newGuestName.set($event)" name="newGuestName" required>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label fs-xs fw-semibold mb-1" for="guest-phone">Numéro WhatsApp</label>
+              <input type="tel" id="guest-phone" class="form-control form-control-alt fs-sm"
+                     placeholder="Ex: 0661234567"
+                     [ngModel]="newGuestPhone()" (ngModelChange)="newGuestPhone.set($event)" name="newGuestPhone">
+            </div>
+            <div class="col-md-3">
+              <button type="submit" class="btn btn-primary w-100 rounded-pill fw-semibold py-2" [disabled]="isAddingGuest()">
+                <i class="fa fa-spinner fa-spin" *ngIf="isAddingGuest()"></i>
+                <i class="fa fa-plus me-1" *ngIf="!isAddingGuest()"></i> Ajouter l'invité
+              </button>
+            </div>
+          </form>
+
+        </div>
+      </div>
+
+      <!-- Guests List Table -->
+      <div class="block block-rounded shadow-sm border border-light">
+        <div class="block-header block-header-default bg-white border-bottom p-3 d-flex justify-content-between align-items-center">
+          <div class="d-flex align-items-center gap-2">
+            <h3 class="block-title fs-sm fw-bold mb-0">Mes Invités</h3>
+            <span class="badge bg-primary text-white rounded-pill px-2.5 py-0.5 fs-4xs">
+              {{ createdEvent()?.guests?.length || 0 }} invité(s)
+            </span>
+          </div>
+          <button type="button" class="btn btn-xs btn-alt-secondary rounded-pill px-2.5" (click)="refreshGuests()" title="Rafraîchir les statuts de présence">
+            <i class="fa fa-rotate me-1"></i> Actualiser réponses
+          </button>
+        </div>
+
+        <div class="block-content p-0">
+          <div *ngIf="!createdEvent()?.guests?.length" class="text-center py-5 text-muted">
+            <i class="fa fa-users-slash fa-2x opacity-50 mb-2"></i>
+            <p class="fs-sm mb-0">Aucun invité ajouté pour le moment. Remplissez le formulaire ci-dessus pour commencer vos envois !</p>
+          </div>
+
+          <div *ngIf="createdEvent()?.guests?.length" class="table-responsive">
+            <table class="table table-sm table-vcenter table-hover mb-0 fs-xs">
+              <thead class="bg-body-light">
+                <tr>
+                  <th class="ps-3 py-2.5">Invité</th>
+                  <th class="py-2.5">WhatsApp</th>
+                  <th class="py-2.5 text-center">Confirmation (RSVP)</th>
+                  <th class="text-end pe-3 py-2.5" style="width: 220px;">Action WhatsApp</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let g of createdEvent()?.guests">
+                  <td class="ps-3 fw-bold text-dark">
+                    {{ g.fullName }}
+                  </td>
+                  <td class="text-muted font-monospace">
+                    {{ g.phone || 'Non renseigné' }}
+                  </td>
+                  <td class="text-center">
+                    <span class="badge rounded-pill px-2 py-0.5 fs-4xs fw-bold"
+                          [ngClass]="{
+                            'bg-success-light text-success border border-success-subtle': g.status === 'CONFIRMED',
+                            'bg-warning-light text-warning-dark border border-warning-subtle': g.status === 'PENDING',
+                            'bg-danger-light text-danger border border-danger-subtle': g.status === 'DECLINED'
+                          }">
+                      {{ g.status === 'CONFIRMED' ? 'Présent ✅' : (g.status === 'DECLINED' ? 'Absent ❌' : 'En attente ⏳') }}
+                    </span>
+                  </td>
+                  <td class="text-end pe-3">
+                    <div class="d-inline-flex align-items-center gap-1.5">
+                      <a [routerLink]="g.rsvpLink" target="_blank" class="btn btn-xs btn-alt-secondary rounded-pill px-2" title="Voir l'invitation">
+                        <i class="fa fa-eye"></i>
+                      </a>
+                      
+                      <!-- Big Green WhatsApp Button -->
+                      <button type="button" 
+                              class="btn btn-xs rounded-pill px-3 py-1 fw-bold shadow-2xs d-inline-flex align-items-center gap-1.5"
+                              [ngClass]="isGuestSent(g) ? 'btn-alt-success text-success' : 'btn-success text-white'"
+                              (click)="openWhatsApp(g)">
+                        <i class="fab fa-whatsapp"></i>
+                        <span>{{ isGuestSent(g) ? 'Renvoyer' : 'Envoyer' }}</span>
+                        <i class="fa fa-check ms-1" *ngIf="isGuestSent(g)"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Restart Option -->
+      <div class="text-center mt-4">
+        <button type="button" class="btn btn-sm btn-alt-secondary rounded-pill px-3" (click)="startNewInvitation()">
+          <i class="fa fa-plus me-1"></i> Créer une autre invitation
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+

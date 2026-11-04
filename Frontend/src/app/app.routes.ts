@@ -56,6 +56,14 @@ export const routes: Routes = [
     component: GuestRsvp
   },
   {
+    path: 'express',
+    loadComponent: () => import('./features/invitation-express/invitation-express').then(m => m.InvitationExpress)
+  },
+  {
+    path: 'creer-invitation',
+    loadComponent: () => import('./features/invitation-express/invitation-express').then(m => m.InvitationExpress)
+  },
+  {
     path: 'template-preview-frame',
     loadComponent: () => import('./features/template-preview-frame/template-preview-frame').then(m => m.TemplatePreviewFrame)
   },
