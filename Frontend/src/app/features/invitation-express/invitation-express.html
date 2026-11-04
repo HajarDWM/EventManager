@@ -117,20 +117,20 @@
           <div class="form-text fs-xxs">Ce titre apparaîtra en grand sur l'invitation digitale de vos invités.</div>
         </div>
 
-        <!-- 3. Sous-titre ou mots de bienvenue (Proposition automatique modifiable) -->
+        <!-- 3. Sous-titre de l'invitation (Proposition automatique modifiable) -->
         <div class="mb-3">
           <div class="d-flex justify-content-between align-items-center mb-1">
             <label class="form-label fs-sm fw-semibold mb-0" for="express-subtitle">
-              Message ou phrase d'accueil
+              Sous-titre de l'invitation
             </label>
             <span class="badge bg-primary-subtle text-primary rounded-pill fs-4xs">
               <i class="fa fa-lightbulb me-1"></i> Proposition automatique modifiable
             </span>
           </div>
-          <textarea id="express-subtitle" rows="2" class="form-control form-control-alt fs-sm"
-                    placeholder="Ex: C'est avec une immense joie que nous vous invitons..."
-                    [ngModel]="subtitle()" (ngModelChange)="subtitle.set($event)"></textarea>
-          <div class="form-text fs-xxs">Ce message accueille vos invités sur la première page de leur invitation digitale. Vous pouvez le modifier ou le personnaliser à votre goût.</div>
+          <input type="text" id="express-subtitle" class="form-control form-control-alt fs-sm"
+                 placeholder="Ex: Le Mariage de, Soirée de Gala, Les Fiançailles de..."
+                 [ngModel]="subtitle()" (ngModelChange)="subtitle.set($event)">
+          <div class="form-text fs-xxs">Ce sous-titre apparaît élégamment juste au-dessus du nom de l'événement sur l'invitation (Ex: « Le Mariage de » suivi de « Sarah & Youssef » ou « Soirée de Gala »).</div>
         </div>
 
         <!-- 4. Date & Heure -->

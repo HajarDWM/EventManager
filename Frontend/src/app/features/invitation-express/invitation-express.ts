@@ -34,7 +34,7 @@ export class InvitationExpress implements OnInit {
   // Step 1: Form Inputs
   public eventType = signal<string>('Mariage');
   public title = signal<string>('');
-  public subtitle = signal<string>('C\'est avec une immense joie que nous vous invitons à célébrer notre union.');
+  public subtitle = signal<string>('Le Mariage de');
   public eventDate = signal<string>('');
   public eventTime = signal<string>('19:00');
   public location = signal<string>('');
@@ -67,9 +67,9 @@ export class InvitationExpress implements OnInit {
       labelFr: 'Mariage',
       labelAr: 'حفل زفاف',
       icon: 'fa-heart',
-      defaultSubtitleFr: 'C\'est avec une immense joie que nous vous invitons à célébrer notre union.',
-      defaultSubtitleAr: 'يتشرف أصحاب الحفل بدعوتكم لحضور حفل الزفاف المبارك.',
-      placeholderTitle: 'Ex: Mariage de Sarah & Youssef',
+      defaultSubtitleFr: 'Le Mariage de',
+      defaultSubtitleAr: 'حفل زفاف',
+      placeholderTitle: 'Ex: Sarah & Youssef',
       categoryFilter: 'Tradition'
     },
     {
@@ -77,9 +77,9 @@ export class InvitationExpress implements OnInit {
       labelFr: 'Fiançailles',
       labelAr: 'خطوبة',
       icon: 'fa-ring',
-      defaultSubtitleFr: 'Nous serions très honorés de votre présence pour célébrer nos fiançailles.',
-      defaultSubtitleAr: 'يسعدنا أن تشاركونا فرحة حفل الخطوبة السعيد.',
-      placeholderTitle: 'Ex: Fiançailles de Sofia & Mehdi',
+      defaultSubtitleFr: 'Les Fiançailles de',
+      defaultSubtitleAr: 'حفل خطوبة',
+      placeholderTitle: 'Ex: Sofia & Mehdi',
       categoryFilter: 'Tradition'
     },
     {
@@ -87,9 +87,9 @@ export class InvitationExpress implements OnInit {
       labelFr: 'Henné',
       labelAr: 'ليلة الحناء',
       icon: 'fa-spa',
-      defaultSubtitleFr: 'Venez partager avec nous la joie et la magie de la soirée traditionnelle du Henné.',
-      defaultSubtitleAr: 'يسرنا دعوتكم لحضور ليلة الحناء المغربية الأصيلة.',
-      placeholderTitle: 'Ex: Soirée Henné de Kenza',
+      defaultSubtitleFr: 'Soirée Henné de',
+      defaultSubtitleAr: 'ليلة حناء',
+      placeholderTitle: 'Ex: Kenza',
       categoryFilter: 'Tradition'
     },
     {
@@ -97,9 +97,9 @@ export class InvitationExpress implements OnInit {
       labelFr: 'Circoncision',
       labelAr: 'حفل ختان',
       icon: 'fa-crown',
-      defaultSubtitleFr: 'Nous avons l\'honneur et la joie de vous convier à la célébration de circoncision de notre cher fils.',
-      defaultSubtitleAr: 'نتشرف بدعوتكم لمشاركتنا فرحة حفل ختان ابننا العزيز.',
-      placeholderTitle: 'Ex: Circoncision de Rayan',
+      defaultSubtitleFr: 'La Célébration de Circoncision de',
+      defaultSubtitleAr: 'حفل ختان مبارك',
+      placeholderTitle: 'Ex: Rayan',
       categoryFilter: 'Tradition'
     },
     {
@@ -107,9 +107,9 @@ export class InvitationExpress implements OnInit {
       labelFr: 'Sbou3 & Aqiqah',
       labelAr: 'عقيقة وسبوع',
       icon: 'fa-baby',
-      defaultSubtitleFr: 'C\'est avec un grand bonheur que nous vous invitons à célébrer la naissance de notre enfant (Aqiqah).',
-      defaultSubtitleAr: 'يسرنا دعوتكم لحضور حفل العقيقة والاحتفاء بالمولود الجديد.',
-      placeholderTitle: 'Ex: Aqiqah du petit Amir',
+      defaultSubtitleFr: 'La Célébration de Naissance de',
+      defaultSubtitleAr: 'حفل عقيقة ومولود مبارك',
+      placeholderTitle: 'Ex: Amir',
       categoryFilter: 'Famille'
     },
     {
@@ -117,9 +117,9 @@ export class InvitationExpress implements OnInit {
       labelFr: 'Anniversaire',
       labelAr: 'عيد ميلاد',
       icon: 'fa-cake-candles',
-      defaultSubtitleFr: 'Rejoignez-nous pour célébrer cet anniversaire inoubliable entourés de nos proches !',
-      defaultSubtitleAr: 'يسعدنا حضوركم للاحتفال بعيد الميلاد وقضاء أوقات ممتعة.',
-      placeholderTitle: 'Ex: Anniversaire de Leila',
+      defaultSubtitleFr: 'L\'Anniversaire de',
+      defaultSubtitleAr: 'عيد ميلاد سعيد',
+      placeholderTitle: 'Ex: Leila',
       categoryFilter: 'Famille'
     },
     {
@@ -127,9 +127,9 @@ export class InvitationExpress implements OnInit {
       labelFr: 'Remise de Diplôme',
       labelAr: 'حفل تخرج',
       icon: 'fa-graduation-cap',
-      defaultSubtitleFr: 'Nous serions ravis de célébrer ensemble cette belle réussite et remise de diplôme.',
-      defaultSubtitleAr: 'يسرنا دعوتكم لمشاركتنا فرحة التخرج والنجاح.',
-      placeholderTitle: 'Ex: Célébration du Diplôme de Docteur d\'Anas',
+      defaultSubtitleFr: 'Célébration de Diplôme de',
+      defaultSubtitleAr: 'حفل تخرج واحتفاء بالنجاح',
+      placeholderTitle: 'Ex: Docteur Anas',
       categoryFilter: 'Scolaire'
     },
     {
@@ -137,9 +137,9 @@ export class InvitationExpress implements OnInit {
       labelFr: 'Dîner & Soirée Gala',
       labelAr: 'عشاء واستقبال فاخر',
       icon: 'fa-martini-glass-citrus',
-      defaultSubtitleFr: 'Vous êtes cordialement invités à notre dîner de gala et soirée d\'exception.',
-      defaultSubtitleAr: 'نتشرف بدعوتكم لحضور حفل العشاء والاستقبال الخاص.',
-      placeholderTitle: 'Ex: Soirée de Gala Annuelle',
+      defaultSubtitleFr: 'Soirée de Gala',
+      defaultSubtitleAr: 'حفل عشاء واستقبال',
+      placeholderTitle: 'Ex: Soirée Annuelle Tech Horizons',
       categoryFilter: 'Corporate'
     },
     {
@@ -147,9 +147,9 @@ export class InvitationExpress implements OnInit {
       labelFr: 'Conférence & Séminaire',
       labelAr: 'مؤتمر وندوة',
       icon: 'fa-microphone-alt',
-      defaultSubtitleFr: 'Nous avons l\'honneur de vous convier à prendre part à notre conférence professionnelle.',
-      defaultSubtitleAr: 'يسعدنا دعوتكم للمشاركة في فعاليات المؤتمر السنوي.',
-      placeholderTitle: 'Ex: Séminaire d\'Entreprise & Forum 2026',
+      defaultSubtitleFr: 'Conférence & Réception',
+      defaultSubtitleAr: 'مؤتمر واستقبال',
+      placeholderTitle: 'Ex: Forum & Séminaire 2026',
       categoryFilter: 'Corporate'
     },
     {
@@ -157,9 +157,9 @@ export class InvitationExpress implements OnInit {
       labelFr: 'Fête de Famille',
       labelAr: 'لمة عائلية',
       icon: 'fa-users',
-      defaultSubtitleFr: 'Un moment précieux de partage et de retrouvailles chaleureuses en famille.',
-      defaultSubtitleAr: 'يسعدنا لم الشمل واجتماع العائلة لقضاء أروع اللحظات.',
-      placeholderTitle: 'Ex: Grande Réunion de Famille Benkirane',
+      defaultSubtitleFr: 'Réunion de Famille de',
+      defaultSubtitleAr: 'لم شمل عائلي',
+      placeholderTitle: 'Ex: Famille Benkirane',
       categoryFilter: 'Famille'
     }
   ];
