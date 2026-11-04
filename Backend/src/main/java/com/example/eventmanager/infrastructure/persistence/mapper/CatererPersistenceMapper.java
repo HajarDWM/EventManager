@@ -53,11 +53,29 @@ public class CatererPersistenceMapper {
                 .password(entity.getPassword())
                 .stripeCustomerId(entity.getStripeCustomerId())
                 .accountStatus(status)
-                .role(entity.getRole() != null ? com.example.eventmanager.domain.model.CatererRole.valueOf(entity.getRole()) : com.example.eventmanager.domain.model.CatererRole.TRAITEUR)
+                .role(parseRole(entity.getRole()))
                 .subscriptionPlan(entity.getSubscriptionPlan() != null ? entity.getSubscriptionPlan() : "FREE")
                 .subscriptionStatus(entity.getSubscriptionStatus() != null ? entity.getSubscriptionStatus() : "ACTIVE")
                 .subscriptionStartDate(entity.getSubscriptionStartDate())
                 .subscriptionEndDate(entity.getSubscriptionEndDate())
                 .build();
+    }
+
+    private com.example.eventmanager.domain.model.CatererRole parseRole(String roleStr) {
+        if (roleStr == null) {
+            return com.example.eventmanager.domain.model.CatererRole.TRAITEUR;
+        }
+        String clean = roleStr.trim().toUpperCase();
+        if ("SUPER_ADMIN".equals(clean) || "ROLE_SUPER_ADMIN".equals(clean) || "ADMIN".equals(clean)) {
+            return com.example.eventmanager.domain.model.CatererRole.SUPER_ADMIN;
+        }
+        if ("TRAITEUR".equals(clean) || "ROLE_CATERER".equals(clean) || "CATERER".equals(clean) || "ORGANIZER".equals(clean)) {
+            return com.example.eventmanager.domain.model.CatererRole.TRAITEUR;
+        }
+        try {
+            return com.example.eventmanager.domain.model.CatererRole.valueOf(clean);
+        } catch (IllegalArgumentException e) {
+            return com.example.eventmanager.domain.model.CatererRole.TRAITEUR;
+        }
     }
 }

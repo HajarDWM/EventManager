@@ -2,6 +2,7 @@ package com.example.eventmanager.application.mapper;
 
 import com.example.eventmanager.application.dto.CatererDTO;
 import com.example.eventmanager.domain.model.Caterer;
+import com.example.eventmanager.domain.model.CatererRole;
 import com.example.eventmanager.domain.model.CatererStatus;
 import org.springframework.stereotype.Component;
 
@@ -53,12 +54,29 @@ public class CatererMapper {
                 .password(dto.getPassword())
                 .stripeCustomerId(dto.getStripeCustomerId())
                 .accountStatus(status)
-                .role(dto.getRole() != null ? com.example.eventmanager.domain.model.CatererRole.valueOf(dto.getRole()) : com.example.eventmanager.domain.model.CatererRole.TRAITEUR)
+                .role(parseRole(dto.getRole()))
                 .subscriptionPlan(dto.getSubscriptionPlan() != null ? dto.getSubscriptionPlan() : "FREE")
                 .subscriptionStatus(dto.getSubscriptionStatus() != null ? dto.getSubscriptionStatus() : "ACTIVE")
                 .subscriptionStartDate(dto.getSubscriptionStartDate())
                 .subscriptionEndDate(dto.getSubscriptionEndDate())
                 .build();
     }
-}
 
+    private CatererRole parseRole(String roleStr) {
+        if (roleStr == null) {
+            return CatererRole.TRAITEUR;
+        }
+        String clean = roleStr.trim().toUpperCase();
+        if ("SUPER_ADMIN".equals(clean) || "ROLE_SUPER_ADMIN".equals(clean) || "ADMIN".equals(clean)) {
+            return CatererRole.SUPER_ADMIN;
+        }
+        if ("TRAITEUR".equals(clean) || "ROLE_CATERER".equals(clean) || "CATERER".equals(clean) || "ORGANIZER".equals(clean)) {
+            return CatererRole.TRAITEUR;
+        }
+        try {
+            return CatererRole.valueOf(clean);
+        } catch (IllegalArgumentException e) {
+            return CatererRole.TRAITEUR;
+        }
+    }
+}
