@@ -359,37 +359,129 @@
 
       <!-- Add Guest Box -->
       <div class="block block-rounded shadow-sm border border-light mb-4">
-        <div class="block-header block-header-default bg-white border-bottom p-3">
+        <div class="block-header block-header-default bg-white border-bottom p-3 d-flex flex-wrap align-items-center justify-content-between gap-2">
           <h3 class="block-title fs-sm fw-bold mb-0">
-            <i class="fab fa-whatsapp text-success me-2"></i>Ajouter un invité et envoyer par WhatsApp
+            <i class="fab fa-whatsapp text-success me-2"></i>Ajouter des invités et envoyer par WhatsApp
           </h3>
-        </div>
-        <div class="block-content p-4">
 
-          <div *ngIf="guestAddError()" class="alert alert-danger py-2 px-3 fs-xs mb-3 rounded-pill">
-            {{ guestAddError() }}
+          <!-- Mode Toggle Tabs (1 par 1 vs Copier-Coller en masse) -->
+          <div class="btn-group p-0.5 bg-body-light rounded-pill border" role="group">
+            <button type="button" class="btn btn-xs rounded-pill px-3 py-1 fw-bold transition-all"
+                    [ngClass]="addGuestMode() === 'single' ? 'btn-primary text-white shadow-2xs' : 'btn-link text-muted'"
+                    (click)="addGuestMode.set('single')">
+              <i class="fa fa-user-plus me-1"></i> 1 par 1
+            </button>
+            <button type="button" class="btn btn-xs rounded-pill px-3 py-1 fw-bold transition-all d-flex align-items-center gap-1.5"
+                    [ngClass]="addGuestMode() === 'bulk' ? 'btn-primary text-white shadow-2xs' : 'btn-link text-muted'"
+                    (click)="addGuestMode.set('bulk')">
+              <i class="fa fa-paste"></i>
+              <span>Copier-Coller en masse</span>
+              <span class="badge rounded-pill px-1.5 py-0.5 fs-4xs"
+                    [ngClass]="addGuestMode() === 'bulk' ? 'bg-success text-white' : 'bg-success-subtle text-success'">
+                Recommandé
+              </span>
+            </button>
+          </div>
+        </div>
+
+        <div class="block-content p-3 p-md-4">
+
+          <!-- MODE 1 : UN PAR UN -->
+          <div *ngIf="addGuestMode() === 'single'" class="animate__animated animate__fadeIn">
+            <div *ngIf="guestAddError()" class="alert alert-danger py-2 px-3 fs-xs mb-3 rounded-pill">
+              {{ guestAddError() }}
+            </div>
+
+            <form (ngSubmit)="addGuest()" class="row g-2 align-items-end">
+              <div class="col-md-5">
+                <label class="form-label fs-xs fw-semibold mb-1" for="guest-name">Nom complet de l'invité <span class="text-danger">*</span></label>
+                <input type="text" id="guest-name" class="form-control form-control-alt fs-sm"
+                       placeholder="Ex: Si Mohammed Benani, Khalti Fatima..."
+                       [ngModel]="newGuestName()" (ngModelChange)="newGuestName.set($event)" name="newGuestName" required>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fs-xs fw-semibold mb-1" for="guest-phone">Numéro WhatsApp <span class="text-danger">*</span></label>
+                <input type="tel" id="guest-phone" class="form-control form-control-alt fs-sm"
+                       placeholder="Ex: 0661234567"
+                       [ngModel]="newGuestPhone()" (ngModelChange)="newGuestPhone.set($event)" name="newGuestPhone" required>
+              </div>
+              <div class="col-md-3">
+                <button type="submit" class="btn btn-primary w-100 rounded-pill fw-semibold py-2" [disabled]="isAddingGuest()">
+                  <i class="fa fa-spinner fa-spin" *ngIf="isAddingGuest()"></i>
+                  <i class="fa fa-plus me-1" *ngIf="!isAddingGuest()"></i> Ajouter l'invité
+                </button>
+              </div>
+            </form>
           </div>
 
-          <form (ngSubmit)="addGuest()" class="row g-2 align-items-end">
-            <div class="col-md-5">
-              <label class="form-label fs-xs fw-semibold mb-1" for="guest-name">Nom complet de l'invité <span class="text-danger">*</span></label>
-              <input type="text" id="guest-name" class="form-control form-control-alt fs-sm"
-                     placeholder="Ex: Si Mohammed Benani, Khalti Fatima..."
-                     [ngModel]="newGuestName()" (ngModelChange)="newGuestName.set($event)" name="newGuestName" required>
-            </div>
-            <div class="col-md-4">
-              <label class="form-label fs-xs fw-semibold mb-1" for="guest-phone">Numéro WhatsApp <span class="text-danger">*</span></label>
-              <input type="tel" id="guest-phone" class="form-control form-control-alt fs-sm"
-                     placeholder="Ex: 0661234567"
-                     [ngModel]="newGuestPhone()" (ngModelChange)="newGuestPhone.set($event)" name="newGuestPhone" required>
-            </div>
-            <div class="col-md-3">
-              <button type="submit" class="btn btn-primary w-100 rounded-pill fw-semibold py-2" [disabled]="isAddingGuest()">
-                <i class="fa fa-spinner fa-spin" *ngIf="isAddingGuest()"></i>
-                <i class="fa fa-plus me-1" *ngIf="!isAddingGuest()"></i> Ajouter l'invité
+          <!-- MODE 2 : COPIER-COLLER EN MASSE (WHATSAPP / NOTES) -->
+          <div *ngIf="addGuestMode() === 'bulk'" class="animate__animated animate__fadeIn">
+            <div class="d-flex flex-wrap justify-content-between align-items-center mb-2 gap-2">
+              <div>
+                <span class="fs-xs fw-bold text-dark">
+                  <i class="fa fa-clipboard-list text-primary me-1"></i> Collez votre liste de contacts ci-dessous :
+                </span>
+                <span class="fs-3xs text-muted d-block">
+                  Supporte les formats : <code>Nom, 06XXXXXXXX</code> ou <code>06XXXXXXXX - Nom</code> (un contact par ligne).
+                </span>
+              </div>
+              <button type="button" class="btn btn-xs btn-alt-secondary rounded-pill px-2.5 py-1" (click)="insertBulkExample()">
+                <i class="fa fa-magic text-warning me-1"></i> Remplir un exemple
               </button>
             </div>
-          </form>
+
+            <textarea class="form-control form-control-alt fs-sm font-monospace mb-2" rows="5"
+                      placeholder="Exemple :&#10;Si Mohammed Benani, 0661234567&#10;Lalla Fatima Zahra, 0662345678&#10;Driss Alami - 0663456789&#10;0664567890 Kenza Tazi"
+                      [ngModel]="bulkText()" (ngModelChange)="bulkText.set($event)"></textarea>
+
+            <!-- Alerts for Bulk import -->
+            <div *ngIf="bulkError()" class="alert alert-danger py-2 px-3 fs-xs rounded-pill mb-2">
+              <i class="fa fa-triangle-exclamation me-1"></i> {{ bulkError() }}
+            </div>
+            <div *ngIf="bulkSuccessMsg()" class="alert alert-success py-2 px-3 fs-xs rounded-pill mb-2">
+              <i class="fa fa-check me-1"></i> {{ bulkSuccessMsg() }}
+            </div>
+
+            <!-- Live Parsing Preview Bar -->
+            <div *ngIf="parsedGuests().length > 0" class="mt-3">
+              <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 p-2.5 rounded-3 bg-body-light border mb-2">
+                <div class="d-flex flex-wrap align-items-center gap-2">
+                  <span class="badge bg-success rounded-pill px-2.5 py-1 fs-3xs fw-bold shadow-2xs">
+                    <i class="fa fa-check-circle me-1"></i> {{ validParsedGuests().length }} invité(s) prêt(s) à être importé(s)
+                  </span>
+                  <span *ngIf="invalidParsedGuests().length > 0" class="badge bg-danger rounded-pill px-2 py-1 fs-4xs">
+                    <i class="fa fa-exclamation-circle me-1"></i> {{ invalidParsedGuests().length }} ligne(s) sans numéro valide
+                  </span>
+                </div>
+                <div class="d-flex gap-2">
+                  <button type="button" class="btn btn-xs btn-alt-secondary rounded-pill px-2.5" (click)="clearBulk()">
+                    Effacer
+                  </button>
+                  <button type="button" class="btn btn-xs btn-primary rounded-pill px-3 py-1.5 fw-bold shadow-sm d-flex align-items-center gap-1.5"
+                          [disabled]="isSubmittingBulk() || validParsedGuests().length === 0"
+                          (click)="importBulkGuests()">
+                    <i class="fa fa-spinner fa-spin" *ngIf="isSubmittingBulk()"></i>
+                    <i class="fa fa-cloud-arrow-up" *ngIf="!isSubmittingBulk()"></i>
+                    <span>Importer les {{ validParsedGuests().length }} invité(s)</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Live Chips of parsed guests -->
+              <div class="p-2.5 rounded-3 bg-white border" style="max-height: 160px; overflow-y: auto;">
+                <div class="d-flex flex-wrap gap-1.5">
+                  <span *ngFor="let p of parsedGuests()" class="badge rounded-pill px-2.5 py-1 text-start"
+                        [ngClass]="p.isValid ? 'bg-body-light text-dark border shadow-2xs' : 'bg-danger-subtle text-danger border border-danger-subtle'">
+                    <i class="fa me-1" [ngClass]="p.isValid ? 'fa-check text-success' : 'fa-triangle-exclamation'"></i>
+                    <strong class="me-1">{{ p.fullName }}</strong>
+                    <span class="font-monospace opacity-75" *ngIf="p.isValid">({{ p.phone }})</span>
+                    <span class="opacity-75" *ngIf="!p.isValid">({{ p.error }})</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+          </div>
 
         </div>
       </div>
@@ -400,12 +492,29 @@
           <div class="d-flex align-items-center gap-2">
             <h3 class="block-title fs-sm fw-bold mb-0">Mes Invités</h3>
             <span class="badge bg-primary text-white rounded-pill px-2.5 py-0.5 fs-4xs">
-              {{ createdEvent()?.guests?.length || 0 }} invité(s)
+              {{ totalGuestsCount() }} invité(s)
             </span>
           </div>
           <button type="button" class="btn btn-xs btn-alt-secondary rounded-pill px-2.5" (click)="refreshGuests()" title="Rafraîchir les statuts de présence">
             <i class="fa fa-rotate me-1"></i> Actualiser réponses
           </button>
+        </div>
+
+        <!-- WhatsApp Sending Progress Bar -->
+        <div *ngIf="totalGuestsCount() > 0" class="p-3 border-bottom bg-body-light">
+          <div class="d-flex justify-content-between align-items-center mb-1.5 fs-xs">
+            <span class="fw-semibold text-dark">
+              <i class="fab fa-whatsapp text-success me-1"></i> Progression des envois WhatsApp :
+            </span>
+            <span class="fw-bold" [ngClass]="sendingProgressPercent() === 100 ? 'text-success' : 'text-primary'">
+              {{ sentGuestsCount() }} / {{ totalGuestsCount() }} envoyé(s) ({{ sendingProgressPercent() }}%)
+            </span>
+          </div>
+          <div class="progress rounded-pill bg-body" style="height: 7px;">
+            <div class="progress-bar rounded-pill bg-success progress-bar-striped progress-bar-animated"
+                 role="progressbar"
+                 [style.width.%]="sendingProgressPercent()"></div>
+          </div>
         </div>
 
         <div class="block-content p-0">

@@ -16,6 +16,14 @@ export interface EventTypeOption {
   categoryFilter?: string;
 }
 
+export interface ParsedGuestItem {
+  fullName: string;
+  phone: string;
+  isValid: boolean;
+  raw: string;
+  error?: string;
+}
+
 @Component({
   selector: 'app-invitation-express',
   standalone: true,
@@ -85,6 +93,81 @@ export class InvitationExpress implements OnInit {
 
   // General invite link copy state
   public readonly linkCopied = signal<boolean>(false);
+
+  // Mode d'ajout des invités : 'single' (1 par 1) ou 'bulk' (Copier-Coller en masse)
+  public readonly addGuestMode = signal<'single' | 'bulk'>('single');
+
+  // Bulk Paste state
+  public readonly bulkText = signal<string>('');
+  public readonly isSubmittingBulk = signal<boolean>(false);
+  public readonly bulkError = signal<string>('');
+  public readonly bulkSuccessMsg = signal<string>('');
+
+  // Live parser for bulk contacts
+  public readonly parsedGuests = computed<ParsedGuestItem[]>(() => {
+    const rawText = this.bulkText();
+    if (!rawText.trim()) return [];
+
+    const lines = rawText.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
+    const items: ParsedGuestItem[] = [];
+
+    for (const line of lines) {
+      // Find a phone sequence (minimum 8 digits, supports +212, 06, 07, spaces, dashes)
+      const phoneMatch = line.match(/(?:\+?[0-9][0-9\s\-().]{7,}[0-9])/);
+
+      if (phoneMatch) {
+        const rawPhone = phoneMatch[0];
+        const digitsOnly = rawPhone.replace(/\D/g, '');
+
+        if (digitsOnly.length >= 8 && digitsOnly.length <= 15) {
+          let name = line.replace(rawPhone, '')
+            .replace(/^[\s,;:\-\|]+|[\s,;:\-\|]+$/g, '')
+            .trim();
+
+          if (!name) {
+            name = 'Invité';
+          }
+
+          let cleanPhone = rawPhone.replace(/[\s\-\(\)\.]/g, '');
+
+          items.push({
+            fullName: name,
+            phone: cleanPhone,
+            isValid: true,
+            raw: line
+          });
+          continue;
+        }
+      }
+
+      items.push({
+        fullName: line,
+        phone: '',
+        isValid: false,
+        raw: line,
+        error: 'Numéro WhatsApp non détecté'
+      });
+    }
+
+    return items;
+  });
+
+  public readonly validParsedGuests = computed(() => this.parsedGuests().filter(g => g.isValid));
+  public readonly invalidParsedGuests = computed(() => this.parsedGuests().filter(g => !g.isValid));
+
+  // Progress metrics for WhatsApp invitations
+  public readonly totalGuestsCount = computed(() => this.createdEvent()?.guests?.length || 0);
+
+  public readonly sentGuestsCount = computed(() => {
+    const guests = this.createdEvent()?.guests || [];
+    return guests.filter(g => this.isGuestSent(g)).length;
+  });
+
+  public readonly sendingProgressPercent = computed(() => {
+    const total = this.totalGuestsCount();
+    if (total === 0) return 0;
+    return Math.round((this.sentGuestsCount() / total) * 100);
+  });
 
   // Event types catalog & suggestions
   public readonly eventTypes: EventTypeOption[] = [
@@ -487,6 +570,62 @@ export class InvitationExpress implements OnInit {
     });
   }
 
+  public insertBulkExample(): void {
+    const example = 
+`Si Mohammed Benani, 0661234567
+Lalla Fatima Zahra, 0662345678
+Driss Alami - 0663456789
+Kenza Tazi: +212664567890
+0665554433 Mehdi Chraibi`;
+    this.bulkText.set(example);
+    this.bulkError.set('');
+    this.bulkSuccessMsg.set('');
+  }
+
+  public clearBulk(): void {
+    this.bulkText.set('');
+    this.bulkError.set('');
+    this.bulkSuccessMsg.set('');
+  }
+
+  public importBulkGuests(): void {
+    const evt = this.createdEvent();
+    if (!evt) return;
+
+    const valids = this.validParsedGuests();
+    if (valids.length === 0) {
+      this.bulkError.set('Aucun invité valide avec numéro WhatsApp n\'a été détecté.');
+      return;
+    }
+
+    this.isSubmittingBulk.set(true);
+    this.bulkError.set('');
+    this.bulkSuccessMsg.set('');
+
+    const payload = valids.map(v => ({ fullName: v.fullName, phone: v.phone }));
+
+    this.expressService.addGuestsBatch(evt.eventId, payload).subscribe({
+      next: (newGuests) => {
+        this.createdEvent.update(current => {
+          if (!current) return current;
+          return {
+            ...current,
+            guests: [...newGuests, ...current.guests]
+          };
+        });
+
+        this.bulkText.set('');
+        this.isSubmittingBulk.set(false);
+        this.bulkSuccessMsg.set(`🎉 Bravo ! ${newGuests.length} invité(s) importé(s) avec succès.`);
+        this.saveSession(this.createdEvent()!);
+      },
+      error: (err) => {
+        this.isSubmittingBulk.set(false);
+        this.bulkError.set(err.error?.message || 'Erreur lors de l\'import en masse des invités.');
+      }
+    });
+  }
+
   public openWhatsApp(guest: ExpressGuestResponse): void {
     guest.isSent = true;
     localStorage.setItem(`express_guest_${guest.id}_sent`, 'true');
@@ -511,8 +650,8 @@ export class InvitationExpress implements OnInit {
       `كيتشرفوا أصحاب الحفل بالدعوة ديالكم لحضور : ${eventTitle}\n` +
       (eventDate ? `📅 التاريخ : ${eventDate}\n` : '') +
       (eventLocation ? `📍 المكان : ${eventLocation}\n\n` : '\n') +
-      `للاطلاع على بطاقة الدعوة الفخمة وتأكيد الحضور أو الاطلاع على موقع القاعة عبر GPS :\n` +
-      `👉 ${fullRsvpUrl}\n\n` +
+      `للاطلاع على بطاقة الدعوة الفخمة وتأكيد الحضور أو موقع القاعة عبر GPS :\n\n` +
+      `${fullRsvpUrl}\n\n` +
       `حضوركم يسعدنا ويشرفنا كثيراً ! ❤️`;
 
     const encoded = encodeURIComponent(message);

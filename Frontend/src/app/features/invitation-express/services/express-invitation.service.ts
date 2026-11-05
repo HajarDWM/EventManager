@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, forkJoin, of, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 export interface ExpressInvitationRequest {
   title: string;
@@ -51,6 +52,28 @@ export class ExpressInvitationService {
 
   public addGuest(eventId: number, guest: { fullName: string; phone: string }): Observable<ExpressGuestResponse> {
     return this.http.post<ExpressGuestResponse>(`${this.baseUrl}/${eventId}/guests`, guest);
+  }
+
+  public addGuestsBatch(eventId: number, guests: { fullName: string; phone: string }[]): Observable<ExpressGuestResponse[]> {
+    if (!guests || guests.length === 0) {
+      return of([]);
+    }
+
+    return this.http.post<ExpressGuestResponse[]>(`${this.baseUrl}/${eventId}/guests/batch`, guests).pipe(
+      catchError(err => {
+        // Fallback transparent si le backend en cours n'a pas encore été redémarré avec le nouvel endpoint /batch
+        const isRouteMissing = err.status === 404 || 
+                               err.status === 500 || 
+                               (typeof err.error === 'string' && err.error.includes('No static resource')) ||
+                               (err.error?.message && err.error.message.includes('No static resource'));
+
+        if (isRouteMissing) {
+          const requests = guests.map(g => this.addGuest(eventId, g));
+          return forkJoin(requests);
+        }
+        return throwError(() => err);
+      })
+    );
   }
 
   public getGuests(eventId: number): Observable<ExpressGuestResponse[]> {

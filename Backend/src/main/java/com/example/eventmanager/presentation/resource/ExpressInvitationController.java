@@ -16,6 +16,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -127,6 +128,40 @@ public class ExpressInvitationController {
         return ResponseEntity.ok(mapGuestToDTO(savedGuest, event));
     }
 
+    @PostMapping("/{eventId}/guests/batch")
+    public ResponseEntity<List<ExpressGuestResponseDTO>> addExpressGuestsBatch(
+            @PathVariable Long eventId,
+            @RequestBody List<ExpressGuestRequestDTO> requests) {
+
+        Event event = eventRepositoryPort.findById(eventId)
+                .orElseThrow(() -> new IllegalArgumentException("Événement introuvable avec l'ID: " + eventId));
+
+        if (requests == null || requests.isEmpty()) {
+            return ResponseEntity.ok(List.of());
+        }
+
+        List<ExpressGuestResponseDTO> savedList = new ArrayList<>();
+        for (ExpressGuestRequestDTO req : requests) {
+            if (req.getPhone() == null || req.getPhone().trim().isBlank()) {
+                continue;
+            }
+
+            String guestToken = UUID.randomUUID().toString().replace("-", "").substring(0, 16);
+            Guest guest = Guest.builder()
+                    .eventId(eventId)
+                    .fullName(req.getFullName() != null && !req.getFullName().trim().isBlank() ? req.getFullName().trim() : "Invité")
+                    .phone(req.getPhone().trim())
+                    .status(GuestStatus.PENDING)
+                    .invitationToken(guestToken)
+                    .build();
+
+            Guest savedGuest = guestRepositoryPort.save(guest);
+            savedList.add(mapGuestToDTO(savedGuest, event));
+        }
+
+        return ResponseEntity.ok(savedList);
+    }
+
     @GetMapping("/{eventId}/guests")
     public ResponseEntity<List<ExpressGuestResponseDTO>> getExpressGuests(@PathVariable Long eventId) {
         Event event = eventRepositoryPort.findById(eventId)
@@ -193,8 +228,8 @@ public class ExpressInvitationController {
                 "كيتشرفوا أصحاب الحفل بالدعوة ديالكم لحضور : %s\n" +
                 "📅 التاريخ : %s\n" +
                 "📍 المكان : %s\n\n" +
-                "للاطلاع على بطاقة الدعوة الفخمة وتأكيد الحضور أو الاطلاع على موقع القاعة عبر GPS :\n" +
-                "👉 %s\n\n" +
+                "للاطلاع على بطاقة الدعوة الفخمة وتأكيد الحضور أو موقع القاعة عبر GPS :\n\n" +
+                "%s\n\n" +
                 "حضوركم يسعدنا ويشرفنا كثيراً ! ❤️",
                 g.getFullName(),
                 event.getTitle(),
