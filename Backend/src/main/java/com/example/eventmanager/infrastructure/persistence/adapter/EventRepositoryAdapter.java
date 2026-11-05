@@ -31,6 +31,12 @@ public class EventRepositoryAdapter implements EventRepositoryPort {
     }
 
     @Override
+    public Optional<Event> findByInvitationToken(String token) {
+        return eventRepository.findByInvitationToken(token)
+                .map(eventPersistenceMapper::toDomain);
+    }
+
+    @Override
     public java.util.List<Event> findAllByCatererId(Long catererId) {
         return eventRepository.findByCatererIdAndArchivedFalse(catererId).stream()
                 .map(eventPersistenceMapper::toDomain)

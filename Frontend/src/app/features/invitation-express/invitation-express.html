@@ -378,10 +378,10 @@
                      [ngModel]="newGuestName()" (ngModelChange)="newGuestName.set($event)" name="newGuestName" required>
             </div>
             <div class="col-md-4">
-              <label class="form-label fs-xs fw-semibold mb-1" for="guest-phone">Numéro WhatsApp</label>
+              <label class="form-label fs-xs fw-semibold mb-1" for="guest-phone">Numéro WhatsApp <span class="text-danger">*</span></label>
               <input type="tel" id="guest-phone" class="form-control form-control-alt fs-sm"
                      placeholder="Ex: 0661234567"
-                     [ngModel]="newGuestPhone()" (ngModelChange)="newGuestPhone.set($event)" name="newGuestPhone">
+                     [ngModel]="newGuestPhone()" (ngModelChange)="newGuestPhone.set($event)" name="newGuestPhone" required>
             </div>
             <div class="col-md-3">
               <button type="submit" class="btn btn-primary w-100 rounded-pill fw-semibold py-2" [disabled]="isAddingGuest()">

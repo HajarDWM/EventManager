@@ -250,6 +250,20 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
   public readonly isCalendarAcceptNoticeOpen = signal(false);
   protected readonly isDeclineModalOpen = signal(false);
   public declineMessage = '';
+  public readonly isAcceptModalOpen = signal(false);
+  public acceptMessage = '';
+  public customGuestName = '';
+
+  public readonly hasConfiguredMenu = computed<boolean>(() => {
+    const items = this.guest()?.menuItems;
+    return !!items && items.length > 0;
+  });
+
+  public isGeneralLinkGuest(): boolean {
+    const g = this.guest();
+    if (!g) return false;
+    return !g.guestId || g.guestId === 0 || g.guestName === "Invité d'Honneur" || !g.guestName;
+  }
   protected readonly isPaymentModalOpen = signal(false);
   protected readonly isProcessingPayment = signal(false);
   protected readonly paymentMethod = signal<'CARD' | 'TRANSFER'>('CARD');
@@ -463,11 +477,50 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
   }
 
   public openDeclineModal(): void {
+    if (this.isGeneralLinkGuest()) {
+      this.customGuestName = '';
+    } else {
+      this.customGuestName = this.guest()?.guestName || '';
+    }
     this.isDeclineModalOpen.set(true);
   }
 
   public closeDeclineModal(): void {
     this.isDeclineModalOpen.set(false);
+  }
+
+  public openAcceptModal(): void {
+    if (this.isGeneralLinkGuest()) {
+      this.customGuestName = '';
+    } else {
+      this.customGuestName = this.guest()?.guestName || '';
+    }
+    this.acceptMessage = '';
+    this.isAcceptModalOpen.set(true);
+  }
+
+  public closeAcceptModal(): void {
+    this.isAcceptModalOpen.set(false);
+  }
+
+  public confirmAcceptDirect(): void {
+    if (this.isGeneralLinkGuest() && this.customGuestName.trim()) {
+      if (this.guest()) {
+        this.guest.update(g => g ? { ...g, guestName: this.customGuestName.trim() } : g);
+      }
+    }
+    this.status.set('CONFIRMED');
+    this.attendanceStatus = true;
+    this.selectedAttendanceChoice.set('CONFIRMED');
+    this.isAcceptModalOpen.set(false);
+    if (this.acceptMessage.trim()) {
+      this.otherAllergies = `Message: ${this.acceptMessage.trim()}`;
+    }
+    if (this.previewMode) {
+      this.isSuccess.set(true);
+      return;
+    }
+    this.submitResponse(true);
   }
 
   public openLocationModal(): void {
@@ -537,7 +590,23 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
     return '';
   }
 
+  public getSavedGuestMessage(): string {
+    if (this.acceptMessage && this.acceptMessage.trim()) {
+      return this.acceptMessage.trim();
+    }
+    const diets = this.guest()?.dietaryRequirements;
+    if (diets && diets.includes('Message:')) {
+      return diets.substring(diets.indexOf('Message:') + 8).trim();
+    }
+    return '';
+  }
+
   public confirmDecline(): void {
+    if (this.isGeneralLinkGuest() && this.customGuestName.trim()) {
+      if (this.guest()) {
+        this.guest.update(g => g ? { ...g, guestName: this.customGuestName.trim() } : g);
+      }
+    }
     this.status.set('DECLINED');
     this.attendanceStatus = false;
     this.selectedAttendanceChoice.set('DECLINED');
@@ -607,20 +676,33 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
   }
 
   public startAcceptWorkflow(): void {
+    if (!this.hasConfiguredMenu()) {
+      this.openAcceptModal();
+      return;
+    }
     this.isDiscoveryMode.set(false);
     this.attendanceStatus = true;
     this.status.set('CONFIRMED');
     this.selectedAttendanceChoice.set('CONFIRMED');
     this.autoSelectSingleChoices();
     this.hasConfirmedMenuChoice.set(this.isIndicativeMenu() || !!(this.starterChoice || this.mealChoice || this.dessertChoice || this.beverageChoice));
-    const firstStep = this.getFirstCourseStep();
-    this.currentRsvpStep.set(firstStep);
-    this.recordMenuStep(this.isIndicativeMenu() ? 'Découverte du menu d\'honneur' : 'Sélection des plats du menu');
+    if (this.isIndicativeMenu()) {
+      this.currentRsvpStep.set(4);
+    } else {
+      const firstStep = this.getFirstCourseStep();
+      this.currentRsvpStep.set(firstStep);
+    }
+    this.recordMenuStep(this.isIndicativeMenu() ? 'Validation présence & régimes' : 'Sélection des plats du menu');
     this.isMenuRsvpOpen.set(true);
     this.saveCurrentRsvpProgress();
   }
 
   public reopenRsvpToAccept(): void {
+    if (!this.hasConfiguredMenu()) {
+      this.isSuccess.set(false);
+      this.openAcceptModal();
+      return;
+    }
     this.isDiscoveryMode.set(false);
     this.isSuccess.set(false);
     this.status.set('CONFIRMED');
@@ -628,7 +710,11 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
     this.selectedAttendanceChoice.set('CONFIRMED');
     this.autoSelectSingleChoices();
     this.hasConfirmedMenuChoice.set(this.isIndicativeMenu() || !!(this.starterChoice || this.mealChoice || this.dessertChoice || this.beverageChoice));
-    this.currentRsvpStep.set(this.getFirstCourseStep());
+    if (this.isIndicativeMenu()) {
+      this.currentRsvpStep.set(4);
+    } else {
+      this.currentRsvpStep.set(this.getFirstCourseStep());
+    }
     this.isMenuRsvpOpen.set(true);
     this.saveCurrentRsvpProgress();
   }
@@ -930,6 +1016,7 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
   });
 
   public getFirstCourseStep(): number {
+    if (this.isIndicativeMenu()) return 0;
     const mode = this.cateringMode();
     if (mode === 'BUFFET') return 0;
     if (this.isMixMode()) {
@@ -1019,7 +1106,11 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
   public getRawSubtitle(): string {
     const subtitle = this.guest()?.invitationSubtitle;
     if (subtitle && subtitle.trim()) {
-      return subtitle.trim();
+      const s = subtitle.trim();
+      if (s.toLowerCase().includes('immense joie') || s.toLowerCase().includes('notre union')) {
+        return 'Le Mariage de';
+      }
+      return s;
     }
     const cat = (this.guest()?.templateCategory || '').toLowerCase();
     const subCat = (this.guest()?.templateSubCategory || '').toLowerCase();
@@ -2226,6 +2317,9 @@ export class GuestRsvp implements OnInit, OnDestroy, OnChanges {
               if (!isNaN(savedStep) && savedStep >= 0 && savedStep <= 5) {
                 this.currentRsvpStep.set(savedStep);
               }
+            }
+            if (this.isIndicativeMenu() && this.currentRsvpStep() >= 1 && this.currentRsvpStep() <= 3) {
+              this.currentRsvpStep.set(this.isDiscoveryMode() ? 0 : 4);
             }
           }
 

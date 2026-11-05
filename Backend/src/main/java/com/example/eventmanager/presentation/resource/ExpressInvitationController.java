@@ -53,13 +53,18 @@ public class ExpressInvitationController {
                 .map(com.example.eventmanager.domain.model.Caterer::getId)
                 .orElse(1L);
 
+        String subtitle = req.getInvitationSubtitle();
+        if (subtitle != null && (subtitle.toLowerCase().contains("immense joie") || subtitle.toLowerCase().contains("notre union"))) {
+            subtitle = "Le Mariage de";
+        }
+
         Event event = Event.builder()
                 .title(req.getTitle() != null && !req.getTitle().isBlank() ? req.getTitle() : "Mon Événement")
                 .eventDate(eventDateTime)
                 .location(req.getLocation() != null ? req.getLocation() : "À définir")
                 .locationMapUrl(req.getLocationMapUrl())
                 .invitationTitle(req.getTitle())
-                .invitationSubtitle(req.getInvitationSubtitle())
+                .invitationSubtitle(subtitle)
                 .invitationDate(eventDateTime)
                 .invitationLocation(req.getLocation())
                 .catererId(defaultCatererId)
@@ -102,6 +107,10 @@ public class ExpressInvitationController {
 
         Event event = eventRepositoryPort.findById(eventId)
                 .orElseThrow(() -> new IllegalArgumentException("Événement introuvable avec l'ID: " + eventId));
+
+        if (req.getPhone() == null || req.getPhone().trim().isBlank()) {
+            throw new IllegalArgumentException("Le numéro WhatsApp est obligatoire pour envoyer l'invitation.");
+        }
 
         String guestToken = UUID.randomUUID().toString().replace("-", "").substring(0, 16);
 

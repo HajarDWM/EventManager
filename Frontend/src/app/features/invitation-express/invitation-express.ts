@@ -452,6 +452,15 @@ export class InvitationExpress implements OnInit {
       this.guestAddError.set('Veuillez renseigner le nom de l\'invité.');
       return;
     }
+    if (!phone) {
+      this.guestAddError.set('Le numéro WhatsApp est obligatoire pour envoyer l\'invitation.');
+      return;
+    }
+    const cleanDigits = phone.replace(/[^0-9]/g, '');
+    if (cleanDigits.length < 8) {
+      this.guestAddError.set('Veuillez renseigner un numéro WhatsApp valide (ex: 0661234567).');
+      return;
+    }
     if (!evt) return;
 
     this.isAddingGuest.set(true);
@@ -554,7 +563,11 @@ export class InvitationExpress implements OnInit {
           this.title.set(parsed.title || '');
           this.location.set(parsed.location || '');
           this.locationMapUrl.set(parsed.locationMapUrl || '');
-          this.subtitle.set(parsed.invitationSubtitle || '');
+          let sub = parsed.invitationSubtitle || '';
+          if (sub.includes('immense joie') || sub.includes('notre union')) {
+            sub = 'Le Mariage de';
+          }
+          this.subtitle.set(sub);
           if (parsed.digitalTemplateId) {
             this.selectedTemplateId.set(parsed.digitalTemplateId);
           }

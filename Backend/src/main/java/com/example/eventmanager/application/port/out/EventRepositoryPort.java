@@ -8,6 +8,7 @@ import java.util.Optional;
 public interface EventRepositoryPort {
     Event save(Event event);
     Optional<Event> findById(Long id);
+    Optional<Event> findByInvitationToken(String token);
     List<Event> findAllByCatererId(Long catererId);
     void deleteById(Long id);
     List<Event> findAll();

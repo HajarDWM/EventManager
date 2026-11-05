@@ -25,15 +25,29 @@ public class PublicRsvpController {
 
     @GetMapping("/{token}")
     public ResponseEntity<PublicRsvpDTO> getPublicRsvpDetail(@PathVariable String token) {
-        Guest guest = guestRepositoryPort.findByInvitationToken(token)
-                .orElseThrow(() -> new IllegalArgumentException("Lien d'invitation invalide ou introuvable."));
+        java.util.Optional<Guest> guestOpt = guestRepositoryPort.findByInvitationToken(token);
+        Guest guest;
+        Event event;
 
-        if (guest.getInvitationExpiry() != null && java.time.LocalDateTime.now().isAfter(guest.getInvitationExpiry())) {
-            throw new IllegalArgumentException("Ce lien d'invitation a expiré.");
+        if (guestOpt.isPresent()) {
+            guest = guestOpt.get();
+            if (guest.getInvitationExpiry() != null && java.time.LocalDateTime.now().isAfter(guest.getInvitationExpiry())) {
+                throw new IllegalArgumentException("Ce lien d'invitation a expiré.");
+            }
+            event = eventRepositoryPort.findById(guest.getEventId())
+                    .orElseThrow(() -> new IllegalArgumentException("Événement non trouvé avec l'id : " + guest.getEventId()));
+        } else {
+            // Support general invitation links that use event invitation token
+            event = eventRepositoryPort.findByInvitationToken(token)
+                    .orElseThrow(() -> new IllegalArgumentException("Lien d'invitation invalide ou introuvable."));
+            guest = Guest.builder()
+                    .id(0L)
+                    .eventId(event.getId())
+                    .fullName("Invité d'Honneur")
+                    .status(GuestStatus.PENDING)
+                    .invitationToken(token)
+                    .build();
         }
-
-        Event event = eventRepositoryPort.findById(guest.getEventId())
-                .orElseThrow(() -> new IllegalArgumentException("Événement non trouvé avec l'id : " + guest.getEventId()));
 
         java.util.List<com.example.eventmanager.application.dto.MenuItemDTO> menuItems = menuItemRepositoryPort.findByEventId(event.getId())
                 .stream()
@@ -171,12 +185,29 @@ public class PublicRsvpController {
             @PathVariable String token,
             @RequestBody PublicRsvpDTO rsvpDTO) {
 
-        Guest guest = guestRepositoryPort.findByInvitationToken(token)
-                .orElseThrow(() -> new IllegalArgumentException("Lien d'invitation invalide ou introuvable."));
+        java.util.Optional<Guest> guestOpt = guestRepositoryPort.findByInvitationToken(token);
+        Guest guest;
+        Event event;
 
-
-        Event event = eventRepositoryPort.findById(guest.getEventId())
-                .orElseThrow(() -> new IllegalArgumentException("Événement non trouvé avec l'id : " + guest.getEventId()));
+        if (guestOpt.isPresent()) {
+            guest = guestOpt.get();
+            event = eventRepositoryPort.findById(guest.getEventId())
+                    .orElseThrow(() -> new IllegalArgumentException("Événement non trouvé avec l'id : " + guest.getEventId()));
+        } else {
+            event = eventRepositoryPort.findByInvitationToken(token)
+                    .orElseThrow(() -> new IllegalArgumentException("Lien d'invitation invalide ou introuvable."));
+            String guestName = (rsvpDTO.getGuestName() != null && !rsvpDTO.getGuestName().isBlank())
+                    ? rsvpDTO.getGuestName()
+                    : "Invité d'Honneur";
+            guest = Guest.builder()
+                    .eventId(event.getId())
+                    .fullName(guestName)
+                    .email(rsvpDTO.getGuestEmail())
+                    .phone(rsvpDTO.getGuestPhone())
+                    .invitationToken(java.util.UUID.randomUUID().toString().replace("-", "").substring(0, 16))
+                    .status(GuestStatus.PENDING)
+                    .build();
+        }
 
         GuestStatus statusVal = guest.getStatus();
         if (rsvpDTO.getGuestStatus() != null) {
@@ -184,9 +215,9 @@ public class PublicRsvpController {
         }
 
         guest.updateDetails(
-                guest.getFullName(),
-                guest.getEmail(),
-                guest.getPhone(),
+                (rsvpDTO.getGuestName() != null && !rsvpDTO.getGuestName().isBlank()) ? rsvpDTO.getGuestName() : guest.getFullName(),
+                (rsvpDTO.getGuestEmail() != null && !rsvpDTO.getGuestEmail().isBlank()) ? rsvpDTO.getGuestEmail() : guest.getEmail(),
+                (rsvpDTO.getGuestPhone() != null && !rsvpDTO.getGuestPhone().isBlank()) ? rsvpDTO.getGuestPhone() : guest.getPhone(),
                 statusVal,
                 guest.getTableNumber(),
                 rsvpDTO.getDietaryRequirements(),
