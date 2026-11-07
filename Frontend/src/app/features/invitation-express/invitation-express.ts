@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, computed, inject } from '@angular/core';
+import { Component, OnInit, signal, computed, inject, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
@@ -24,6 +24,23 @@ export interface ParsedGuestItem {
   error?: string;
 }
 
+export interface StoredExpressInvitation {
+  eventId: number;
+  eventToken?: string;
+  title: string;
+  eventType?: string;
+  subtitle?: string;
+  eventDate?: string;
+  eventTime?: string;
+  location?: string;
+  locationMapUrl?: string;
+  digitalTemplateId?: number;
+  templateTitle?: string;
+  generalInviteLink: string;
+  guestsCount?: number;
+  createdAt?: string;
+}
+
 @Component({
   selector: 'app-invitation-express',
   standalone: true,
@@ -41,6 +58,7 @@ export class InvitationExpress implements OnInit {
 
   // Step 1: Form Inputs
   public eventType = signal<string>('Mariage');
+  public readonly isEventTypeDropdownOpen = signal<boolean>(false);
   public title = signal<string>('');
   public subtitle = signal<string>('Le Mariage de');
   public eventDate = signal<string>('');
@@ -82,6 +100,8 @@ export class InvitationExpress implements OnInit {
 
   // Step 3: Event Created & Guests Management
   public readonly createdEvent = signal<ExpressInvitationResponse | null>(null);
+  public readonly myInvitations = signal<StoredExpressInvitation[]>([]);
+  public readonly isMyInvitationsModalOpen = signal<boolean>(false);
   public readonly isSubmittingEvent = signal<boolean>(false);
   public readonly submissionError = signal<string>('');
 
@@ -168,6 +188,59 @@ export class InvitationExpress implements OnInit {
     if (total === 0) return 0;
     return Math.round((this.sentGuestsCount() / total) * 100);
   });
+
+  // Mobile detection for dynamic pagination and layout
+  public readonly isMobile = signal<boolean>(typeof window !== 'undefined' ? window.innerWidth < 576 : false);
+
+  @HostListener('window:resize')
+  public onWindowResize(): void {
+    if (typeof window !== 'undefined') {
+      this.isMobile.set(window.innerWidth < 576);
+    }
+  }
+
+  // Pagination for Guests List (3 on mobile, 5 on desktop)
+  public readonly guestPage = signal<number>(1);
+  public readonly guestPageSize = computed<number>(() => this.isMobile() ? 3 : 5);
+
+  public readonly totalGuestPages = computed(() => {
+    const total = this.totalGuestsCount();
+    return Math.max(1, Math.ceil(total / this.guestPageSize()));
+  });
+
+  public readonly paginatedGuests = computed(() => {
+    const guests = this.createdEvent()?.guests || [];
+    const page = this.guestPage();
+    const size = this.guestPageSize();
+    const start = (page - 1) * size;
+    return guests.slice(start, start + size);
+  });
+
+  public readonly guestPageRange = computed(() => {
+    const total = this.totalGuestsCount();
+    if (total === 0) return '0';
+    const start = (this.guestPage() - 1) * this.guestPageSize() + 1;
+    const end = Math.min(this.guestPage() * this.guestPageSize(), total);
+    return `${start} - ${end}`;
+  });
+
+  public nextGuestPage(): void {
+    if (this.guestPage() < this.totalGuestPages()) {
+      this.guestPage.update(p => p + 1);
+    }
+  }
+
+  public prevGuestPage(): void {
+    if (this.guestPage() > 1) {
+      this.guestPage.update(p => p - 1);
+    }
+  }
+
+  public setGuestPage(page: number): void {
+    if (page >= 1 && page <= this.totalGuestPages()) {
+      this.guestPage.set(page);
+    }
+  }
 
   // Event types catalog & suggestions
   public readonly eventTypes: EventTypeOption[] = [
@@ -272,6 +345,16 @@ export class InvitationExpress implements OnInit {
       categoryFilter: 'Famille'
     }
   ];
+
+  public readonly filteredEventTypes = computed(() => {
+    const term = (this.eventType() || '').toLowerCase().trim();
+    if (!term) return this.eventTypes;
+    return this.eventTypes.filter(opt => 
+      opt.labelFr.toLowerCase().includes(term) || 
+      opt.labelAr.includes(term) ||
+      opt.id.toLowerCase().includes(term)
+    );
+  });
 
   public readonly titlePlaceholder = computed(() => {
     const cur = (this.eventType() || '').trim().toLowerCase();
@@ -379,6 +462,21 @@ export class InvitationExpress implements OnInit {
   public selectEventType(option: EventTypeOption): void {
     this.eventType.set(option.labelFr);
     this.subtitle.set(option.defaultSubtitleFr);
+    this.isEventTypeDropdownOpen.set(false);
+  }
+
+  public onEventTypeInputChange(val: string): void {
+    this.onEventTypeChange(val);
+    this.isEventTypeDropdownOpen.set(true);
+  }
+
+  public toggleEventTypeDropdown(event?: MouseEvent): void {
+    if (event) event.preventDefault();
+    this.isEventTypeDropdownOpen.update(v => !v);
+  }
+
+  public onEventTypeBlur(): void {
+    setTimeout(() => this.isEventTypeDropdownOpen.set(false), 200);
   }
 
   public onEventTypeChange(val: string): void {
@@ -471,6 +569,10 @@ export class InvitationExpress implements OnInit {
         this.submissionError.set('Veuillez renseigner le nom de l\'événement.');
         return;
       }
+      if (!this.eventDate()) {
+        this.submissionError.set('Veuillez sélectionner la date de votre événement.');
+        return;
+      }
       this.submissionError.set('');
 
       // Auto-select first matching template if current selection is not in list
@@ -492,6 +594,11 @@ export class InvitationExpress implements OnInit {
       this.submissionError.set('Veuillez renseigner le nom de l\'événement.');
       return;
     }
+    if (!this.eventDate()) {
+      this.currentStep.set(1);
+      this.submissionError.set('Veuillez sélectionner la date de votre événement.');
+      return;
+    }
     if (!this.selectedTemplateId()) {
       this.currentStep.set(2);
       this.submissionError.set('Veuillez sélectionner un modèle d\'invitation.');
@@ -503,7 +610,7 @@ export class InvitationExpress implements OnInit {
 
     const formattedDate = this.eventDate() ? `${this.eventDate()}T${this.eventTime() || '19:00'}:00` : '';
 
-    this.expressService.createInvitation({
+    const payload = {
       title: this.title().trim(),
       eventType: this.eventType(),
       eventDate: formattedDate,
@@ -511,19 +618,48 @@ export class InvitationExpress implements OnInit {
       locationMapUrl: this.locationMapUrl().trim(),
       invitationSubtitle: this.subtitle().trim(),
       digitalTemplateId: this.selectedTemplateId()!
-    }).subscribe({
-      next: (res) => {
-        this.createdEvent.set(res);
-        this.isSubmittingEvent.set(false);
-        this.saveSession(res);
-        this.currentStep.set(3);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      },
-      error: (err) => {
-        this.isSubmittingEvent.set(false);
-        this.submissionError.set(err.error?.message || 'Erreur lors de la création de l\'invitation.');
-      }
-    });
+    };
+
+    const existing = this.createdEvent();
+
+    if (existing && existing.eventId) {
+      this.expressService.updateInvitation(existing.eventId, payload).subscribe({
+        next: (res) => {
+          const guests = (res.guests && res.guests.length > 0) ? res.guests : (existing.guests || []);
+          const updated: ExpressInvitationResponse = {
+            ...existing,
+            ...res,
+            eventToken: res.eventToken || existing.eventToken,
+            generalInviteLink: res.generalInviteLink || existing.generalInviteLink,
+            templateTitle: res.templateTitle || existing.templateTitle,
+            guests
+          };
+          this.createdEvent.set(updated);
+          this.isSubmittingEvent.set(false);
+          this.saveSession(updated);
+          this.currentStep.set(3);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        },
+        error: (err) => {
+          this.isSubmittingEvent.set(false);
+          this.submissionError.set(err.error?.message || 'Erreur lors de la mise à jour de l\'invitation.');
+        }
+      });
+    } else {
+      this.expressService.createInvitation(payload).subscribe({
+        next: (res) => {
+          this.createdEvent.set(res);
+          this.isSubmittingEvent.set(false);
+          this.saveSession(res);
+          this.currentStep.set(3);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        },
+        error: (err) => {
+          this.isSubmittingEvent.set(false);
+          this.submissionError.set(err.error?.message || 'Erreur lors de la création de l\'invitation.');
+        }
+      });
+    }
   }
 
   public addGuest(): void {
@@ -560,6 +696,7 @@ export class InvitationExpress implements OnInit {
         });
         this.newGuestName.set('');
         this.newGuestPhone.set('');
+        this.guestPage.set(1);
         this.isAddingGuest.set(false);
         this.saveSession(this.createdEvent()!);
       },
@@ -615,6 +752,7 @@ Kenza Tazi: +212664567890
         });
 
         this.bulkText.set('');
+        this.guestPage.set(1);
         this.isSubmittingBulk.set(false);
         this.bulkSuccessMsg.set(`🎉 Bravo ! ${newGuests.length} invité(s) importé(s) avec succès.`);
         this.saveSession(this.createdEvent()!);
@@ -686,43 +824,230 @@ Kenza Tazi: +212664567890
     });
   }
 
+  private loadMyInvitationsFromStorage(): StoredExpressInvitation[] {
+    try {
+      const stored = localStorage.getItem('express_my_invitations');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed)) return parsed;
+      }
+    } catch {}
+    return [];
+  }
+
   private saveSession(eventData: ExpressInvitationResponse): void {
     try {
       localStorage.setItem('express_invitation_session', JSON.stringify(eventData));
+
+      const list = this.loadMyInvitationsFromStorage();
+      const existingIdx = list.findIndex(x => x.eventId === eventData.eventId);
+
+      const item: StoredExpressInvitation = {
+        eventId: eventData.eventId,
+        eventToken: eventData.eventToken,
+        title: eventData.title,
+        eventType: this.eventType(),
+        subtitle: this.subtitle() || eventData.invitationSubtitle,
+        eventDate: eventData.eventDate || this.eventDate(),
+        eventTime: this.eventTime(),
+        location: eventData.location || this.location(),
+        locationMapUrl: eventData.locationMapUrl || this.locationMapUrl(),
+        digitalTemplateId: eventData.digitalTemplateId || this.selectedTemplateId() || 1,
+        templateTitle: eventData.templateTitle || '',
+        generalInviteLink: eventData.generalInviteLink,
+        guestsCount: eventData.guests?.length || 0,
+        createdAt: existingIdx >= 0 && list[existingIdx].createdAt ? list[existingIdx].createdAt : new Date().toISOString()
+      };
+
+      if (existingIdx >= 0) {
+        list[existingIdx] = { ...list[existingIdx], ...item };
+      } else {
+        list.unshift(item);
+      }
+
+      localStorage.setItem('express_my_invitations', JSON.stringify(list));
+      this.myInvitations.set(list);
     } catch {}
   }
 
   private restoreSessionIfAny(): void {
     try {
+      const myInvList = this.loadMyInvitationsFromStorage();
+
       const stored = localStorage.getItem('express_invitation_session');
       if (stored) {
         const parsed = JSON.parse(stored);
         if (parsed && parsed.eventId) {
           this.createdEvent.set(parsed);
-          this.title.set(parsed.title || '');
-          this.location.set(parsed.location || '');
-          this.locationMapUrl.set(parsed.locationMapUrl || '');
-          let sub = parsed.invitationSubtitle || '';
-          if (sub.includes('immense joie') || sub.includes('notre union')) {
-            sub = 'Le Mariage de';
-          }
-          this.subtitle.set(sub);
           if (parsed.digitalTemplateId) {
             this.selectedTemplateId.set(parsed.digitalTemplateId);
           }
+          if (parsed.title) this.title.set(parsed.title);
+          if (parsed.invitationSubtitle) this.subtitle.set(parsed.invitationSubtitle);
+          if (parsed.location) this.location.set(parsed.location);
+          if (parsed.locationMapUrl) this.locationMapUrl.set(parsed.locationMapUrl);
+          if (parsed.eventDate) {
+            const parts = parsed.eventDate.split('T');
+            this.eventDate.set(parts[0]);
+            if (parts[1]) {
+              this.eventTime.set(parts[1].substring(0, 5));
+            }
+          }
+
+          const found = myInvList.find(x => x.eventId === parsed.eventId);
+          if (found) {
+            if (found.eventType) this.eventType.set(found.eventType);
+            if (found.subtitle) this.subtitle.set(found.subtitle);
+            if (found.eventDate) this.eventDate.set(found.eventDate);
+            if (found.eventTime) this.eventTime.set(found.eventTime);
+          }
+
+          // If not in myInvList yet, add it
+          if (!myInvList.some(x => x.eventId === parsed.eventId)) {
+            const initialItem: StoredExpressInvitation = {
+              eventId: parsed.eventId,
+              eventToken: parsed.eventToken || '',
+              title: parsed.title,
+              eventType: this.eventType() || 'Mariage',
+              subtitle: parsed.invitationSubtitle,
+              eventDate: this.eventDate() || parsed.eventDate,
+              eventTime: this.eventTime() || '19:00',
+              location: parsed.location,
+              locationMapUrl: parsed.locationMapUrl,
+              digitalTemplateId: parsed.digitalTemplateId || 1,
+              templateTitle: parsed.templateTitle || '',
+              generalInviteLink: parsed.generalInviteLink,
+              guestsCount: parsed.guests?.length || 0,
+              createdAt: new Date().toISOString()
+            };
+            myInvList.unshift(initialItem);
+            localStorage.setItem('express_my_invitations', JSON.stringify(myInvList));
+          }
         }
       }
+
+      this.myInvitations.set(myInvList);
     } catch {}
   }
 
+  public openMyInvitationsModal(): void {
+    this.isMyInvitationsModalOpen.set(true);
+  }
+
+  public selectInvitationFromModal(inv: StoredExpressInvitation): void {
+    this.isMyInvitationsModalOpen.set(false);
+    this.expressService.getGuests(inv.eventId).subscribe({
+      next: (guests) => {
+        const fullEvent: ExpressInvitationResponse = {
+          eventId: inv.eventId,
+          eventToken: inv.eventToken || '',
+          title: inv.title,
+          eventDate: inv.eventDate || '',
+          location: inv.location || '',
+          locationMapUrl: inv.locationMapUrl || '',
+          invitationSubtitle: inv.subtitle || '',
+          digitalTemplateId: inv.digitalTemplateId || 1,
+          templateTitle: inv.templateTitle || 'Modèle Personnalisé',
+          generalInviteLink: inv.generalInviteLink,
+          guests: guests || []
+        };
+        this.createdEvent.set(fullEvent);
+        if (inv.eventType) this.eventType.set(inv.eventType);
+        if (inv.subtitle) this.subtitle.set(inv.subtitle);
+        this.title.set(inv.title || '');
+        if (inv.eventDate) this.eventDate.set(inv.eventDate);
+        if (inv.eventTime) this.eventTime.set(inv.eventTime);
+        if (inv.location) this.location.set(inv.location);
+        if (inv.locationMapUrl) this.locationMapUrl.set(inv.locationMapUrl);
+        if (inv.digitalTemplateId) this.selectedTemplateId.set(inv.digitalTemplateId);
+        this.saveSession(fullEvent);
+        this.currentStep.set(3);
+      },
+      error: () => {
+        const fullEvent: ExpressInvitationResponse = {
+          eventId: inv.eventId,
+          eventToken: inv.eventToken || '',
+          title: inv.title,
+          eventDate: inv.eventDate || '',
+          location: inv.location || '',
+          locationMapUrl: inv.locationMapUrl || '',
+          invitationSubtitle: inv.subtitle || '',
+          digitalTemplateId: inv.digitalTemplateId || 1,
+          templateTitle: inv.templateTitle || 'Modèle Personnalisé',
+          generalInviteLink: inv.generalInviteLink,
+          guests: []
+        };
+        this.createdEvent.set(fullEvent);
+        if (inv.eventType) this.eventType.set(inv.eventType);
+        if (inv.subtitle) this.subtitle.set(inv.subtitle);
+        this.title.set(inv.title || '');
+        if (inv.eventDate) this.eventDate.set(inv.eventDate);
+        if (inv.eventTime) this.eventTime.set(inv.eventTime);
+        if (inv.location) this.location.set(inv.location);
+        if (inv.locationMapUrl) this.locationMapUrl.set(inv.locationMapUrl);
+        if (inv.digitalTemplateId) this.selectedTemplateId.set(inv.digitalTemplateId);
+        this.saveSession(fullEvent);
+        this.currentStep.set(3);
+      }
+    });
+  }
+
+  public deleteInvitationFromModal(inv: StoredExpressInvitation, event: MouseEvent): void {
+    event.stopPropagation();
+    if (confirm(`Voulez-vous supprimer « ${inv.title} » de votre historique sur cet appareil ?`)) {
+      const updated = this.myInvitations().filter(x => x.eventId !== inv.eventId);
+      this.myInvitations.set(updated);
+      localStorage.setItem('express_my_invitations', JSON.stringify(updated));
+
+      if (this.createdEvent()?.eventId === inv.eventId) {
+        if (updated.length > 0) {
+          this.selectInvitationFromModal(updated[0]);
+        } else {
+          localStorage.removeItem('express_invitation_session');
+          this.createdEvent.set(null);
+          this.title.set('');
+          this.location.set('');
+          this.locationMapUrl.set('');
+          this.subtitle.set('');
+          this.eventDate.set('');
+          this.currentStep.set(1);
+        }
+      }
+    }
+  }
+
+  public createNewFromModal(): void {
+    this.isMyInvitationsModalOpen.set(false);
+    this.startNewInvitation();
+  }
+
+  public resumeActiveEvent(): void {
+    if (this.currentStep() !== 3) {
+      this.submitAndProceedToGuests();
+    } else {
+      this.currentStep.set(3);
+    }
+  }
+
   public startNewInvitation(): void {
-    if (confirm('Voulez-vous créer une toute nouvelle invitation ?')) {
-      localStorage.removeItem('express_invitation_session');
+    if (this.createdEvent()) {
+      if (confirm('Voulez-vous créer une nouvelle invitation ? Votre invitation actuelle restera sauvegardée dans « Mes invitations ».')) {
+        localStorage.removeItem('express_invitation_session');
+        this.createdEvent.set(null);
+        this.title.set('');
+        this.location.set('');
+        this.locationMapUrl.set('');
+        this.subtitle.set('');
+        this.eventDate.set('');
+        this.currentStep.set(1);
+      }
+    } else {
       this.createdEvent.set(null);
       this.title.set('');
       this.location.set('');
       this.locationMapUrl.set('');
       this.subtitle.set('');
+      this.eventDate.set('');
       this.currentStep.set(1);
     }
   }

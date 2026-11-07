@@ -101,6 +101,90 @@ public class ExpressInvitationController {
         return ResponseEntity.ok(response);
     }
 
+    @RequestMapping(value = "/{eventId}", method = {RequestMethod.PUT, RequestMethod.POST})
+    public ResponseEntity<ExpressInvitationResponseDTO> updateExpressInvitation(
+            @PathVariable Long eventId,
+            @RequestBody ExpressInvitationRequestDTO req) {
+
+        Event event = eventRepositoryPort.findById(eventId)
+                .orElseThrow(() -> new IllegalArgumentException("Événement introuvable avec l'ID: " + eventId));
+
+        if (req.getTitle() != null && !req.getTitle().isBlank()) {
+            event.setTitle(req.getTitle().trim());
+            event.setInvitationTitle(req.getTitle().trim());
+        }
+
+        if (req.getEventDate() != null && !req.getEventDate().isBlank()) {
+            try {
+                LocalDateTime dt = LocalDateTime.parse(req.getEventDate());
+                event.setEventDate(dt);
+                event.setInvitationDate(dt);
+            } catch (Exception ignored) {
+                try {
+                    LocalDateTime dt = LocalDateTime.parse(req.getEventDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+                    event.setEventDate(dt);
+                    event.setInvitationDate(dt);
+                } catch (Exception ignored2) {
+                    try {
+                        LocalDateTime dt = java.time.LocalDate.parse(req.getEventDate()).atTime(18, 0);
+                        event.setEventDate(dt);
+                        event.setInvitationDate(dt);
+                    } catch (Exception ignored3) {}
+                }
+            }
+        }
+
+        if (req.getLocation() != null) {
+            event.setLocation(req.getLocation().trim());
+            event.setInvitationLocation(req.getLocation().trim());
+        }
+
+        if (req.getLocationMapUrl() != null) {
+            event.setLocationMapUrl(req.getLocationMapUrl().trim());
+        }
+
+        if (req.getInvitationSubtitle() != null) {
+            String subtitle = req.getInvitationSubtitle().trim();
+            if (subtitle.toLowerCase().contains("immense joie") || subtitle.toLowerCase().contains("notre union")) {
+                subtitle = "Le Mariage de";
+            }
+            event.setInvitationSubtitle(subtitle);
+        }
+
+        if (req.getDigitalTemplateId() != null) {
+            event.setDigitalTemplateId(req.getDigitalTemplateId());
+        }
+
+        Event savedEvent = eventRepositoryPort.save(event);
+
+        List<ExpressGuestResponseDTO> guests = guestRepositoryPort.findByEventId(savedEvent.getId()).stream()
+                .map(g -> mapGuestToDTO(g, savedEvent))
+                .toList();
+
+        String templateTitle = "Modèle Standard";
+        if (savedEvent.getDigitalTemplateId() != null) {
+            templateTitle = templateRepository.findById(savedEvent.getDigitalTemplateId())
+                    .map(com.example.eventmanager.infrastructure.persistence.entity.DigitalInvitationTemplateEntity::getTitle)
+                    .orElse("Modèle Standard");
+        }
+
+        ExpressInvitationResponseDTO response = ExpressInvitationResponseDTO.builder()
+                .eventId(savedEvent.getId())
+                .eventToken(savedEvent.getInvitationToken())
+                .title(savedEvent.getTitle())
+                .eventDate(savedEvent.getEventDate().toString())
+                .location(savedEvent.getLocation())
+                .locationMapUrl(savedEvent.getLocationMapUrl())
+                .invitationSubtitle(savedEvent.getInvitationSubtitle())
+                .digitalTemplateId(savedEvent.getDigitalTemplateId())
+                .templateTitle(templateTitle)
+                .generalInviteLink("/rsvp/" + savedEvent.getInvitationToken())
+                .guests(guests)
+                .build();
+
+        return ResponseEntity.ok(response);
+    }
+
     @PostMapping("/{eventId}/guests")
     public ResponseEntity<ExpressGuestResponseDTO> addExpressGuest(
             @PathVariable Long eventId,
