@@ -2,6 +2,7 @@ import { Component, OnInit, signal, computed, inject, HostListener } from '@angu
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ExpressInvitationService, ExpressGuestResponse, ExpressInvitationResponse } from './services/express-invitation.service';
 import { TemplateService, DigitalTemplate } from '../../core/services/template.service';
 
@@ -52,6 +53,7 @@ export class InvitationExpress implements OnInit {
   private readonly expressService = inject(ExpressInvitationService);
   private readonly templateService = inject(TemplateService);
   private readonly router = inject(Router);
+  private readonly sanitizer = inject(DomSanitizer);
 
   // Stepper: 1 = Informations, 2 = Choix du modèle, 3 = Invités & WhatsApp
   public readonly currentStep = signal<1 | 2 | 3>(1);
@@ -65,12 +67,118 @@ export class InvitationExpress implements OnInit {
   public eventTime = signal<string>('19:00');
   public location = signal<string>('');
   public locationMapUrl = signal<string>('');
+  public readonly minDate: string = new Date().toISOString().split('T')[0];
 
-  // Step 2: Templates
+  // Step 2: Templates & Interactive Preview Modal
   public readonly templates = signal<DigitalTemplate[]>([]);
   public readonly selectedTemplateId = signal<number | null>(null);
   public readonly showAllTemplates = signal<boolean>(false);
   public readonly isLoadingTemplates = signal<boolean>(false);
+  public readonly isPreviewModalOpen = signal<boolean>(false);
+  public readonly previewTemplate = signal<DigitalTemplate | null>(null);
+  public readonly previewDevice = signal<'MOBILE' | 'DESKTOP'>('MOBILE');
+
+  public readonly modalPreviewIframeUrl = computed<SafeResourceUrl | null>(() => {
+    const tpl = this.previewTemplate();
+    if (!tpl || !tpl.id) return null;
+    const url = `/template-preview-frame?templateId=${tpl.id}&ts=${Date.now()}`;
+    return this.sanitizer.bypassSecurityTrustResourceUrl(url);
+  });
+
+  public openTemplatePreview(t: DigitalTemplate, event?: MouseEvent): void {
+    if (event) event.stopPropagation();
+    this.previewTemplate.set(t);
+
+    let combinedDate = new Date().toISOString();
+    if (this.eventDate()) {
+      try {
+        const timePart = this.eventTime() || '19:00';
+        combinedDate = new Date(`${this.eventDate()}T${timePart}:00`).toISOString();
+      } catch (e) {}
+    }
+
+    const previewData = {
+      guestId: 0,
+      guestName: 'Cher(e) Invité(e)',
+      guestEmail: 'invite@example.com',
+      guestPhone: '+212 600 000 000',
+      guestStatus: 'PENDING',
+      tableNumber: 'Table d\'Honneur',
+      dietaryRequirements: '',
+      eventId: this.createdEvent()?.eventId || 0,
+      eventTitle: this.title() || t.title || 'Notre Célébration',
+      eventDate: combinedDate,
+      eventLocation: this.location() || 'Casablanca, Maroc',
+      locationMapUrl: this.locationMapUrl() || undefined,
+      digitalTemplateId: t.id,
+      templateId: t.templateKey || (t.id === 1 ? 'fleurs-de-coton' : (t.id === 2 ? 'or-et-velours' : (t.id === 3 ? 'corporate-professional' : 'fleurs-de-coton'))),
+      templateTitle: t.title,
+      templateCategory: t.category,
+      decorativeFrame: t.decorativeFrame || 'gold-border',
+      accentColor: t.accentColor || '#d4af37',
+      backgroundColor: t.backgroundColor || '#0f172a',
+      templateBackgroundImageUrl: t.backgroundImageUrl || t.imageUrl || undefined,
+      templateBackgroundImageDesktopUrl: t.backgroundImageDesktopUrl || t.backgroundImageUrl || t.imageUrl || undefined,
+      primaryFont: t.primaryFont || 'Cinzel',
+      primaryFontSize: t.primaryFontSize || '2.8rem',
+      secondaryFont: t.secondaryFont || 'Playfair Display',
+      secondaryFontSize: t.secondaryFontSize || '0.9rem',
+      secondaryFontColor: t.secondaryFontColor || '#e0e0e0',
+      templateMusicUrl: t.musicUrl || '/assets/music/gala-ambient.mp3',
+      openingAnimation: t.openingAnimation || 'none',
+      visualParticles: t.visualParticles && t.visualParticles !== 'none' ? t.visualParticles : 'confetti',
+      backgroundMotion: t.backgroundMotion || 'ken-burns',
+      contentEntrance: t.contentEntrance || 'staggered-royal',
+      invitationTitle: this.title() || t.title || 'Notre Célébration',
+      invitationSubtitle: this.subtitle() || t.subCategory || 'Invitation Officielle',
+      invitationDate: combinedDate,
+      invitationLocation: this.location() || 'Casablanca, Maroc',
+      parkingLocation: 'Parking VIP disponible',
+      paymentStatus: 'UNPAID',
+      paidAmount: 0
+    };
+
+    sessionStorage.setItem('active_template_preview_data', JSON.stringify(previewData));
+
+    this.previewDevice.set('MOBILE');
+    this.isPreviewModalOpen.set(true);
+  }
+
+  public closeTemplatePreview(): void {
+    this.isPreviewModalOpen.set(false);
+    this.previewTemplate.set(null);
+  }
+
+  public chooseTemplateFromPreview(): void {
+    const tpl = this.previewTemplate();
+    if (tpl && tpl.id) {
+      this.selectTemplate(tpl.id);
+    }
+    this.closeTemplatePreview();
+  }
+
+  public setPreviewDevice(dev: 'MOBILE' | 'DESKTOP'): void {
+    this.previewDevice.set(dev);
+  }
+
+  @HostListener('window:message', ['$event'])
+  public onIframeMessage(event: MessageEvent): void {
+    if (event.data?.type === 'PREVIEW_FRAME_READY') {
+      const cached = sessionStorage.getItem('active_template_preview_data');
+      if (cached) {
+        try {
+          const parsed = JSON.parse(cached);
+          const iframes = document.querySelectorAll('iframe');
+          iframes.forEach(f => {
+            f.contentWindow?.postMessage({
+              type: 'UPDATE_INVITATION_PREVIEW',
+              payload: parsed
+            }, '*');
+          });
+        } catch (e) {}
+      }
+    }
+  }
 
   // Subtitle Autocomplete / Dropdown State (comme Image 2)
   public readonly isSubtitleDropdownOpen = signal<boolean>(false);
@@ -199,17 +307,28 @@ export class InvitationExpress implements OnInit {
     }
   }
 
-  // Pagination for Guests List (3 on mobile, 5 on desktop)
+  // Pagination & Search for Guests List (3 on mobile, 5 on desktop)
   public readonly guestPage = signal<number>(1);
   public readonly guestPageSize = computed<number>(() => this.isMobile() ? 3 : 5);
+  public readonly guestSearchTerm = signal<string>('');
+
+  public readonly filteredGuests = computed(() => {
+    const list = this.createdEvent()?.guests || [];
+    const term = this.guestSearchTerm().toLowerCase().trim();
+    if (!term) return list;
+    return list.filter(g => 
+      (g.fullName && g.fullName.toLowerCase().includes(term)) ||
+      (g.phone && g.phone.includes(term))
+    );
+  });
 
   public readonly totalGuestPages = computed(() => {
-    const total = this.totalGuestsCount();
+    const total = this.filteredGuests().length;
     return Math.max(1, Math.ceil(total / this.guestPageSize()));
   });
 
   public readonly paginatedGuests = computed(() => {
-    const guests = this.createdEvent()?.guests || [];
+    const guests = this.filteredGuests();
     const page = this.guestPage();
     const size = this.guestPageSize();
     const start = (page - 1) * size;
@@ -217,12 +336,17 @@ export class InvitationExpress implements OnInit {
   });
 
   public readonly guestPageRange = computed(() => {
-    const total = this.totalGuestsCount();
+    const total = this.filteredGuests().length;
     if (total === 0) return '0';
     const start = (this.guestPage() - 1) * this.guestPageSize() + 1;
     const end = Math.min(this.guestPage() * this.guestPageSize(), total);
     return `${start} - ${end}`;
   });
+
+  public onGuestSearchChange(term: string): void {
+    this.guestSearchTerm.set(term);
+    this.guestPage.set(1);
+  }
 
   public nextGuestPage(): void {
     if (this.guestPage() < this.totalGuestPages()) {
@@ -811,6 +935,71 @@ Kenza Tazi: +212664567890
       this.linkCopied.set(true);
       setTimeout(() => this.linkCopied.set(false), 3000);
     });
+  }
+
+  public shareGeneralLinkWhatsApp(): void {
+    const evt = this.createdEvent();
+    if (!evt) return;
+
+    const fullUrl = window.location.origin + evt.generalInviteLink;
+    const eventTitle = evt.title || 'notre événement';
+    const eventDate = evt.eventDate ? new Date(evt.eventDate).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '';
+    const eventLocation = evt.location || '';
+
+    const message = `✨ السلام عليكم جميعاً،\n\n` +
+      `يسعدنا ويشرفنا كثيراً دعوتكم لحضور : ${eventTitle}\n` +
+      (eventDate ? `📅 التاريخ : ${eventDate}\n` : '') +
+      (eventLocation ? `📍 المكان : ${eventLocation}\n\n` : '\n') +
+      `للاطلاع على بطاقة الدعوة الرقمية الفخمة وتأكيد الحضور أو موقع القاعة عبر GPS :\n\n` +
+      `${fullUrl}\n\n` +
+      `حضوركم يسعدنا ويشرفنا كثيراً ! ❤️`;
+
+    const encoded = encodeURIComponent(message);
+    const waUrl = `https://api.whatsapp.com/send?text=${encoded}`;
+    window.open(waUrl, '_blank');
+  }
+
+  public isDeletingGuest = signal<number | null>(null);
+
+  public deleteGuest(guest: ExpressGuestResponse): void {
+    const evt = this.createdEvent();
+    if (!evt) return;
+
+    if (!confirm(`Voulez-vous vraiment supprimer « ${guest.fullName} » de votre liste d'invités ?`)) {
+      return;
+    }
+
+    this.isDeletingGuest.set(guest.id);
+
+    this.expressService.deleteGuest(evt.eventId, guest.id).subscribe({
+      next: () => {
+        this.finishGuestDeletion(guest.id);
+      },
+      error: () => {
+        this.finishGuestDeletion(guest.id);
+      }
+    });
+  }
+
+  private finishGuestDeletion(guestId: number): void {
+    this.isDeletingGuest.set(null);
+    this.createdEvent.update(curr => {
+      if (!curr) return null;
+      const updatedGuests = (curr.guests || []).filter(g => g.id !== guestId);
+      return {
+        ...curr,
+        guests: updatedGuests
+      };
+    });
+
+    const evt = this.createdEvent();
+    if (evt) {
+      this.saveSession(evt);
+    }
+
+    if (this.guestPage() > this.totalGuestPages()) {
+      this.guestPage.set(Math.max(1, this.totalGuestPages()));
+    }
   }
 
   public refreshGuests(): void {

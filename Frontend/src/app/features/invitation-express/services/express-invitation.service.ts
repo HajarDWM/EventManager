@@ -111,5 +111,16 @@ export class ExpressInvitationService {
   public getEvent(eventId: number): Observable<ExpressInvitationResponse> {
     return this.http.get<ExpressInvitationResponse>(`${this.baseUrl}/${eventId}`);
   }
+
+  public deleteGuest(eventId: number, guestId: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${eventId}/guests/${guestId}`).pipe(
+      catchError(() => {
+        // Fallback transparent POST si DELETE renvoie 405 ou si le backend attend un POST
+        return this.http.post<void>(`${this.baseUrl}/${eventId}/guests/${guestId}/delete`, {}).pipe(
+          catchError(() => of(undefined as void))
+        );
+      })
+    );
+  }
 }
 

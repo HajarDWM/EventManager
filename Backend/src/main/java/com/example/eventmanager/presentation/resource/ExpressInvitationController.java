@@ -258,6 +258,20 @@ public class ExpressInvitationController {
         return ResponseEntity.ok(list);
     }
 
+    @RequestMapping(value = {"/{eventId}/guests/{guestId}", "/{eventId}/guests/{guestId}/delete"}, method = {RequestMethod.DELETE, RequestMethod.POST})
+    public ResponseEntity<Void> deleteExpressGuest(
+            @PathVariable Long eventId,
+            @PathVariable Long guestId) {
+
+        guestRepositoryPort.findById(guestId).ifPresent(g -> {
+            if (g.getEventId().equals(eventId)) {
+                guestRepositoryPort.deleteById(guestId);
+            }
+        });
+
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping("/{eventId}")
     public ResponseEntity<ExpressInvitationResponseDTO> getExpressEvent(@PathVariable Long eventId) {
         Event event = eventRepositoryPort.findById(eventId)
