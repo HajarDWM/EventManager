@@ -76,10 +76,6 @@
         <span *ngIf="!createdEvent()">Vous avez <strong>{{ myInvitations().length }}</strong> invitation(s) sauvegardée(s)</span>
       </div>
       <div class="d-flex align-items-center gap-1">
-        <button *ngIf="createdEvent() && currentStep() !== 3" type="button" class="btn btn-xs btn-primary rounded-pill px-2.5 py-0.5 fs-4xs fw-bold" (click)="resumeActiveEvent()">
-          <span>Continuer</span>
-          <i class="fa fa-arrow-right ms-1"></i>
-        </button>
         <button *ngIf="createdEvent() && currentStep() === 3" type="button" class="btn btn-xs btn-alt-primary rounded-pill px-2.5 py-0.5 fs-4xs fw-bold" (click)="goToStep(1)">
           <i class="fa fa-pencil me-1"></i> Modifier
         </button>
@@ -161,7 +157,7 @@
           <!-- Sous-titre de l'invitation (Dropdown / Autocomplete) -->
           <div class="col-md-6 position-relative">
             <label class="form-label fs-xs fw-bold text-dark mb-1" for="express-subtitle">
-              <i class="fa fa-tag text-primary me-1"></i> Sous-titre (Subtitle)
+              <i class="fa fa-tag text-primary me-1"></i> Sous-titre <span class="text-muted fw-normal fs-4xs">(au-dessus du nom)</span>
             </label>
 
             <div class="input-group">
@@ -197,18 +193,16 @@
                 <i class="fa fa-check text-primary fs-xs" *ngIf="subtitle() === s"></i>
               </div>
             </div>
-            <div class="form-text fs-4xs text-muted mb-0 d-none d-sm-block">Apparaît juste au-dessus du nom sur l'invitation digitale.</div>
           </div>
 
           <!-- Titre de l'événement -->
           <div class="col-md-6">
             <label class="form-label fs-xs fw-bold text-dark mb-1" for="express-title">
-              Titre de l'événement <span class="text-danger">*</span>
+              Titre de l'événement <span class="text-danger">*</span> <span class="text-muted fw-normal fs-4xs">(nom principal)</span>
             </label>
             <input type="text" id="express-title" class="form-control form-control-alt fs-sm"
                    [placeholder]="titlePlaceholder()"
                    [ngModel]="title()" (ngModelChange)="title.set($event)" required>
-            <div class="form-text fs-4xs text-muted mb-0 d-none d-sm-block">Apparaît en grand sur l'invitation (Ex: Saida & Mohammed).</div>
           </div>
         </div>
 
@@ -319,8 +313,8 @@
           </button>
         </div>
 
-        <!-- Templates Grid (2-col grid on mobile, 3-col on desktop) -->
-        <div *ngIf="!isLoadingTemplates()" class="row g-2 g-sm-2.5 mb-2.5 mb-sm-3 templates-grid">
+        <!-- Templates Grid (2-col grid on mobile, 3-col on desktop, centered when few items) -->
+        <div *ngIf="!isLoadingTemplates()" class="row g-2 g-sm-2.5 mb-2.5 mb-sm-3 templates-grid justify-content-center">
           <div class="col-6 col-sm-6 col-lg-4 template-col" *ngFor="let t of filteredTemplates()">
             <div class="card template-card h-100 border cursor-pointer overflow-hidden transition-all shadow-2xs"
                  [class.selected]="selectedTemplateId() === t.id"
@@ -340,13 +334,6 @@
                   </span>
                 </div>
 
-                <!-- Eye Quick Preview Icon on Image -->
-                <button type="button" class="btn btn-xs btn-dark bg-opacity-75 text-white rounded-circle position-absolute top-0 start-0 m-1.5 p-0 d-inline-flex align-items-center justify-content-center shadow-sm"
-                        style="width: 26px; height: 26px; z-index: 2;"
-                        (click)="openTemplatePreview(t, $event)" title="Voir l'aperçu complet">
-                  <i class="fa fa-eye fs-4xs"></i>
-                </button>
-
                 <!-- Category badge -->
                 <div class="position-absolute bottom-0 start-0 m-1.5">
                   <span class="badge bg-dark bg-opacity-75 text-white rounded-pill px-2 py-0.5 fs-4xs">
@@ -360,15 +347,23 @@
                 <h4 class="fs-xs fw-bold text-dark mb-0.5 text-truncate">{{ t.title }}</h4>
                 <p class="fs-3xs text-muted mb-2 text-truncate-2" style="min-height: 28px;">{{ t.description || 'Modèle interactif avec musique, animations et RSVP.' }}</p>
                 <div class="d-flex justify-content-between align-items-center gap-1.5">
-                  <button type="button" class="btn btn-xs rounded-pill px-2.5 py-1 fw-bold flex-grow-1 text-truncate"
-                          [ngClass]="selectedTemplateId() === t.id ? 'btn-success text-white' : 'btn-alt-primary'">
-                    {{ selectedTemplateId() === t.id ? '✓ Sélectionné' : 'Choisir' }}
-                  </button>
-                  <button type="button" class="btn btn-xs btn-alt-secondary rounded-pill px-2 py-1 fw-bold d-inline-flex align-items-center gap-1 shadow-2xs flex-shrink-0"
-                          (click)="openTemplatePreview(t, $event)" title="Aperçu interactif démo">
-                    <i class="fa fa-eye text-primary"></i>
-                    <span class="fs-4xs">Aperçu</span>
-                  </button>
+                  <ng-container *ngIf="selectedTemplateId() === t.id">
+                    <button type="button" class="btn btn-xs btn-alt-success text-success rounded-pill px-3 py-1 fw-bold w-100 d-inline-flex align-items-center justify-content-center gap-1.5 shadow-2xs"
+                            (click)="openTemplatePreview(t, $event)" title="Voir l'aperçu complet">
+                      <i class="fa fa-eye"></i>
+                      <span class="fs-4xs">Voir l'aperçu</span>
+                    </button>
+                  </ng-container>
+                  <ng-container *ngIf="selectedTemplateId() !== t.id">
+                    <button type="button" class="btn btn-xs btn-alt-primary rounded-pill px-2.5 py-1 fw-bold flex-grow-1 text-truncate">
+                      Choisir
+                    </button>
+                    <button type="button" class="btn btn-xs btn-alt-secondary rounded-pill px-2 py-1 fw-bold d-inline-flex align-items-center gap-1 shadow-2xs flex-shrink-0"
+                            (click)="openTemplatePreview(t, $event)" title="Aperçu interactif démo">
+                      <i class="fa fa-eye text-primary"></i>
+                      <span class="fs-4xs">Aperçu</span>
+                    </button>
+                  </ng-container>
                 </div>
               </div>
             </div>
@@ -399,78 +394,145 @@
     <!-- ========================================== -->
     <div *ngIf="currentStep() === 3 && createdEvent()" class="animate__animated animate__fadeIn">
 
-      <!-- Add Guest Box -->
-      <div class="block block-rounded shadow-sm border border-light mb-3">
-        <div class="block-header block-header-default bg-white border-bottom p-2.5 p-sm-3 d-flex flex-wrap align-items-center justify-content-between gap-2">
-          <h3 class="block-title fs-sm fw-bold mb-0">
-            <i class="fab fa-whatsapp text-success me-2"></i>Ajouter des invités et envoyer par WhatsApp
-          </h3>
+      <!-- Step 3 Segmented Mode Tabs (Mes Invités vs Lien Public) -->
+      <div class="d-flex justify-content-center mb-2.5 mb-sm-3">
+        <div class="btn-group p-1 bg-white rounded-pill border shadow-2xs" role="group">
+          <button type="button" 
+                  class="btn btn-xs rounded-pill px-3 py-1.5 fw-bold transition-all d-inline-flex align-items-center gap-1.5"
+                  [ngClass]="step3Tab() === 'guests' ? 'btn-primary text-white shadow-2xs' : 'btn-link text-muted'"
+                  (click)="step3Tab.set('guests')">
+            <i class="fa fa-users"></i>
+            <span>Mes Invités & Suivi RSVP</span>
+            <span class="badge rounded-pill ms-0.5 fs-5xs" [ngClass]="step3Tab() === 'guests' ? 'bg-white text-primary' : 'bg-primary-subtle text-primary'">
+              {{ totalGuestsCount() }}
+            </span>
+          </button>
+          <button type="button" 
+                  class="btn btn-xs rounded-pill px-3 py-1.5 fw-bold transition-all d-inline-flex align-items-center gap-1.5"
+                  [ngClass]="step3Tab() === 'public' ? 'btn-success text-white shadow-2xs' : 'btn-link text-muted'"
+                  (click)="step3Tab.set('public')">
+            <i class="fab fa-whatsapp"></i>
+            <span>Lien Public (Statuts & Groupes)</span>
+          </button>
+        </div>
+      </div>
 
-          <!-- Mode Toggle Tabs (1 par 1 vs Copier-Coller en masse) -->
-          <div class="btn-group p-0.5 bg-body-light rounded-pill border" role="group">
-            <button type="button" class="btn btn-xs rounded-pill px-2.5 py-1 fw-bold transition-all text-nowrap"
-                    [ngClass]="addGuestMode() === 'single' ? 'btn-primary text-white shadow-2xs' : 'btn-link text-muted'"
-                    (click)="addGuestMode.set('single')">
-              <i class="fa fa-user-plus me-1"></i> 1 par 1
-            </button>
-            <button type="button" class="btn btn-xs rounded-pill px-2.5 py-1 fw-bold transition-all d-flex align-items-center gap-1 text-nowrap"
-                    [ngClass]="addGuestMode() === 'bulk' ? 'btn-primary text-white shadow-2xs' : 'btn-link text-muted'"
-                    (click)="addGuestMode.set('bulk')">
-              <i class="fa fa-paste"></i>
-              <span class="d-none d-sm-inline">Copier-Coller en masse</span>
-              <span class="d-inline d-sm-none">En masse</span>
-              <span class="badge rounded-pill px-1.5 py-0.2 fs-4xs"
-                    [ngClass]="addGuestMode() === 'bulk' ? 'bg-success text-white' : 'bg-success-subtle text-success'">
-                <span class="d-none d-sm-inline">Recommandé</span>
-                <span class="d-inline d-sm-none">⚡</span>
+      <!-- ============================================================== -->
+      <!-- VUE 1 : LIEN PUBLIC POUR STATUTS WHATSAPP & GROUPES            -->
+      <!-- ============================================================== -->
+      <div *ngIf="step3Tab() === 'public'" class="block block-rounded shadow-sm border border-success-subtle mb-3 bg-white overflow-hidden animate__animated animate__fadeIn">
+        <div class="p-3 p-sm-4 text-center" style="background: linear-gradient(180deg, rgba(16, 185, 129, 0.05) 0%, rgba(255, 255, 255, 1) 100%);">
+          <div class="rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center mb-2 shadow-sm" style="width: 48px; height: 48px;">
+            <i class="fab fa-whatsapp fs-4"></i>
+          </div>
+          <h3 class="h5 fw-bold text-dark mb-1">Partagez votre Invitation sur WhatsApp</h3>
+          <p class="text-muted fs-xs mb-3 max-w-500 mx-auto">
+            Diffusez ce lien sur vos statuts WhatsApp ou vos groupes de famille et amis. Vos convives pourront ouvrir l'invitation et confirmer leur présence directement.
+          </p>
+
+          <div class="bg-body-light p-2 rounded-4 border max-w-550 mx-auto mb-3 shadow-2xs">
+            <div class="input-group">
+              <span class="input-group-text bg-white border-0 text-muted fs-xs">
+                <i class="fa fa-link"></i>
               </span>
+              <input type="text" class="form-control form-control-sm border-0 bg-white fs-xs font-monospace text-primary fw-semibold"
+                     readonly [value]="createdEvent()?.generalInviteLink"
+                     (click)="$any($event.target).select()" title="Cliquez pour sélectionner">
+              <button type="button" class="btn btn-sm btn-alt-secondary" (click)="copyGeneralLink()">
+                <i class="fa" [ngClass]="linkCopied() ? 'fa-check text-success' : 'fa-copy'"></i>
+                <span class="ms-1">{{ linkCopied() ? 'Copié !' : 'Copier' }}</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-center gap-2">
+            <button type="button" class="btn btn-success rounded-pill px-4 py-2 fw-bold shadow-sm d-inline-flex align-items-center gap-2"
+                    (click)="shareGeneralLinkWhatsApp()">
+              <i class="fab fa-whatsapp fs-5"></i>
+              <span>Partager sur WhatsApp maintenant</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================================== -->
+      <!-- VUE 2 : MES INVITÉS & GESTION RSVP (Avec Tiroir Accordéon)     -->
+      <!-- ============================================================== -->
+      <div *ngIf="step3Tab() === 'guests'" class="block block-rounded shadow-sm border border-light mb-3 overflow-hidden animate__animated animate__fadeIn">
+        
+        <!-- Header with Title, Count and [+ Ajouter des invités ▾] Toggle -->
+        <div class="block-header block-header-default bg-white border-bottom p-2 p-sm-2.5 d-flex justify-content-between align-items-center flex-wrap gap-2">
+          <div class="d-flex align-items-center gap-2">
+            <h3 class="block-title fs-xs fw-bold mb-0 text-nowrap d-flex align-items-center gap-1.5">
+              <i class="fa fa-users text-primary"></i>
+              <span>Mes Invités</span>
+            </h3>
+            <span class="badge bg-primary text-white rounded-pill px-2 py-0.5 fs-4xs">
+              {{ totalGuestsCount() }}
+            </span>
+          </div>
+
+          <div class="d-flex align-items-center gap-1.5">
+            <!-- Toggle Add Guest Drawer -->
+            <button type="button" 
+                    class="btn btn-xs rounded-pill px-2.5 py-1 fw-bold d-inline-flex align-items-center gap-1.5 transition-all shadow-2xs"
+                    [ngClass]="isAddGuestFormVisible() ? 'btn-alt-secondary text-dark' : 'btn-primary text-white'"
+                    (click)="toggleAddGuestForm()">
+              <i class="fa" [ngClass]="isAddGuestFormVisible() ? 'fa-times' : 'fa-plus'"></i>
+              <span>{{ isAddGuestFormVisible() ? 'Fermer l\'ajout' : '+ Ajouter des invités' }}</span>
+            </button>
+
+            <!-- Refresh Answers -->
+            <button type="button" class="btn btn-xs btn-alt-secondary rounded-pill px-2 py-1" (click)="refreshGuests()" title="Rafraîchir les statuts de présence">
+              <i class="fa fa-rotate"></i>
             </button>
           </div>
         </div>
 
-        <!-- Lien Public pour WhatsApp Status / Groupes -->
-        <div class="p-2 px-2.5 px-sm-3 bg-body-light border-bottom d-flex flex-wrap align-items-center justify-content-between gap-1.5">
-          <div class="d-flex align-items-center gap-1.5 fs-xs">
-            <i class="fa fa-share-nodes text-primary"></i>
-            <span class="fw-semibold text-dark">Lien public général :</span>
-            <span class="fs-4xs text-muted d-none d-sm-inline">(Pour vos statuts WhatsApp et groupes)</span>
+        <!-- COLLAPSIBLE ACCORDION : FORMULAIRE D'AJOUT (1 par 1 & En Masse) -->
+        <div *ngIf="isAddGuestFormVisible()" class="bg-body-light border-bottom p-2.5 p-sm-3 animate__animated animate__fadeIn">
+          
+          <!-- Mode Tabs (1 par 1 vs Copier-Coller en masse) -->
+          <div class="d-flex align-items-center justify-content-between mb-2">
+            <span class="fs-4xs fw-bold text-muted text-uppercase letter-spacing-1">Méthode d'ajout :</span>
+            <div class="btn-group p-0.5 bg-white rounded-pill border shadow-2xs" role="group">
+              <button type="button" class="btn btn-xs rounded-pill px-2.5 py-0.5 fw-bold transition-all text-nowrap"
+                      [ngClass]="addGuestMode() === 'single' ? 'btn-primary text-white shadow-2xs' : 'btn-link text-muted'"
+                      (click)="addGuestMode.set('single')">
+                <i class="fa fa-user-plus me-1"></i> 1 par 1
+              </button>
+              <button type="button" class="btn btn-xs rounded-pill px-2.5 py-0.5 fw-bold transition-all d-flex align-items-center gap-1 text-nowrap"
+                      [ngClass]="addGuestMode() === 'bulk' ? 'btn-primary text-white shadow-2xs' : 'btn-link text-muted'"
+                      (click)="addGuestMode.set('bulk')">
+                <i class="fa fa-paste"></i>
+                <span>En masse</span>
+                <span class="badge rounded-pill px-1.5 py-0.2 fs-5xs"
+                      [ngClass]="addGuestMode() === 'bulk' ? 'bg-success text-white' : 'bg-success-subtle text-success'">⚡</span>
+              </button>
+            </div>
           </div>
-          <div class="bg-white p-0.5 ps-2.5 rounded-pill border shadow-2xs d-inline-flex align-items-center gap-1.5">
-            <span class="badge bg-secondary-subtle text-secondary rounded-pill px-1.5 py-0.5 fs-4xs">Public</span>
-            <input type="text" class="form-control form-control-sm border-0 bg-transparent text-primary fw-semibold px-1 fs-3xs"
-                   style="width: 170px;" readonly [value]="createdEvent()?.generalInviteLink"
-                   (click)="$any($event.target).select()" title="Cliquez pour sélectionner">
-            <button type="button" class="btn btn-xs btn-success text-white rounded-pill px-3 py-1 fw-bold fs-4xs d-inline-flex align-items-center gap-1 shadow-2xs"
-                    (click)="shareGeneralLinkWhatsApp()" title="Partager sur WhatsApp (Statut ou Groupes)">
-              <i class="fab fa-whatsapp"></i>
-              <span>Partager sur WhatsApp</span>
-            </button>
-          </div>
-        </div>
-
-        <div class="block-content p-3">
 
           <!-- MODE 1 : UN PAR UN -->
           <div *ngIf="addGuestMode() === 'single'" class="animate__animated animate__fadeIn">
-            <div *ngIf="guestAddError()" class="alert alert-danger py-1.5 px-3 fs-xs mb-2.5 rounded-pill">
+            <div *ngIf="guestAddError()" class="alert alert-danger py-1.5 px-3 fs-xs mb-2 rounded-pill">
               {{ guestAddError() }}
             </div>
 
             <form (ngSubmit)="addGuest()" class="row g-1.5 g-sm-2 align-items-end">
               <div class="col-12 col-sm-5">
-                <label class="form-label fs-xs fw-semibold mb-1" for="guest-name">Nom complet de l'invité <span class="text-danger">*</span></label>
-                <input type="text" id="guest-name" class="form-control form-control-alt fs-sm"
+                <label class="form-label fs-4xs fw-bold text-dark mb-1" for="guest-name">Nom complet <span class="text-danger">*</span></label>
+                <input type="text" id="guest-name" class="form-control form-control-sm form-control-alt fs-xs"
                        placeholder="Ex: Si Mohammed Benani, Khalti Fatima..."
                        [ngModel]="newGuestName()" (ngModelChange)="newGuestName.set($event)" name="newGuestName" required>
               </div>
               <div class="col-7 col-sm-4">
-                <label class="form-label fs-xs fw-semibold mb-1" for="guest-phone">Numéro WhatsApp <span class="text-danger">*</span></label>
-                <input type="tel" id="guest-phone" class="form-control form-control-alt fs-sm"
+                <label class="form-label fs-4xs fw-bold text-dark mb-1" for="guest-phone">Numéro WhatsApp <span class="text-danger">*</span></label>
+                <input type="tel" id="guest-phone" class="form-control form-control-sm form-control-alt fs-xs"
                        placeholder="0661234567"
                        [ngModel]="newGuestPhone()" (ngModelChange)="newGuestPhone.set($event)" name="newGuestPhone" required>
               </div>
               <div class="col-5 col-sm-3">
-                <button type="submit" class="btn btn-primary w-100 rounded-pill fw-semibold py-1.5 fs-xs" [disabled]="isAddingGuest()">
+                <button type="submit" class="btn btn-sm btn-primary w-100 rounded-pill fw-semibold py-1 fs-xs" [disabled]="isAddingGuest()">
                   <i class="fa fa-spinner fa-spin" *ngIf="isAddingGuest()"></i>
                   <i class="fa fa-plus me-1" *ngIf="!isAddingGuest()"></i> Ajouter
                 </button>
@@ -489,8 +551,8 @@
               </span>
             </div>
 
-            <textarea class="form-control form-control-alt fs-sm font-monospace mb-2" rows="4"
-                      placeholder="Exemple :&#10;Si Mohammed Benani, 0661234567&#10;Lalla Fatima Zahra, 0662345678&#10;Driss Alami - 0663456789&#10;0664567890 Kenza Tazi"
+            <textarea class="form-control form-control-alt fs-sm font-monospace mb-2" rows="3"
+                      placeholder="Exemple :&#10;Si Mohammed Benani, 0661234567&#10;Lalla Fatima Zahra, 0662345678&#10;Driss Alami - 0663456789"
                       [ngModel]="bulkText()" (ngModelChange)="bulkText.set($event)"></textarea>
 
             <!-- Alerts for Bulk import -->
@@ -503,7 +565,7 @@
 
             <!-- Live Parsing Preview Bar -->
             <div *ngIf="parsedGuests().length > 0" class="mt-2">
-              <div class="d-flex flex-wrap align-items-center justify-content-between gap-1.5 p-2 rounded-3 bg-body-light border mb-2">
+              <div class="d-flex flex-wrap align-items-center justify-content-between gap-1.5 p-2 rounded-3 bg-white border mb-2 shadow-2xs">
                 <div class="d-flex flex-wrap align-items-center gap-1.5">
                   <span class="badge bg-success rounded-pill px-2.5 py-1 fs-3xs fw-bold shadow-2xs">
                     <i class="fa fa-check-circle me-1"></i> {{ validParsedGuests().length }} invité(s) détecté(s)
@@ -526,8 +588,8 @@
                 </div>
               </div>
 
-              <!-- Live Chips of parsed guests (Compact 120px max-height) -->
-              <div class="p-2 rounded-3 bg-white border" style="max-height: 120px; overflow-y: auto;">
+              <!-- Live Chips of parsed guests -->
+              <div class="p-2 rounded-3 bg-white border" style="max-height: 100px; overflow-y: auto;">
                 <div class="d-flex flex-wrap gap-1">
                   <span *ngFor="let p of parsedGuests()" class="badge rounded-pill px-2 py-0.5 text-start"
                         [ngClass]="p.isValid ? 'bg-body-light text-dark border shadow-2xs' : 'bg-danger-subtle text-danger border border-danger-subtle'">
@@ -542,23 +604,6 @@
 
           </div>
 
-        </div>
-      </div>
-
-      <!-- Guests List Table -->
-      <div class="block block-rounded shadow-sm border border-light">
-        <div class="block-header block-header-default bg-white border-bottom p-2 p-sm-2.5 d-flex justify-content-between align-items-center">
-          <div class="d-flex align-items-center gap-1.5">
-            <h3 class="block-title fs-xs fw-bold mb-0 text-nowrap">Mes Invités</h3>
-            <span class="badge bg-primary text-white rounded-pill px-2 py-0.5 fs-4xs">
-              {{ totalGuestsCount() }}
-            </span>
-          </div>
-          <button type="button" class="btn btn-xs btn-alt-secondary rounded-pill px-2.5 py-1 text-nowrap" (click)="refreshGuests()" title="Rafraîchir les statuts de présence">
-            <i class="fa fa-rotate me-1"></i>
-            <span class="d-none d-sm-inline">Actualiser réponses</span>
-            <span class="d-inline d-sm-none">Actualiser</span>
-          </button>
         </div>
 
         <!-- WhatsApp Sending Progress Bar (Compact 6px) -->
@@ -625,9 +670,15 @@
               </thead>
               <tbody>
                 <tr *ngFor="let g of paginatedGuests()">
-                  <td class="ps-2.5 ps-sm-3 fw-bold text-dark py-1.5">
-                    <div class="text-truncate" style="max-width: 130px;">{{ g.fullName }}</div>
-                    <div class="text-muted font-monospace fs-4xs d-inline-block d-sm-none">{{ g.phone }}</div>
+                  <td class="ps-2.5 ps-sm-3 py-1.5">
+                    <a [routerLink]="g.rsvpLink" target="_blank" 
+                       class="text-dark fw-bold text-decoration-none hover-primary d-inline-flex align-items-center gap-1 text-truncate" 
+                       style="max-width: 140px;" 
+                       title="Cliquer pour voir l'invitation personnalisée">
+                      <span>{{ g.fullName }}</span>
+                      <i class="fa fa-arrow-up-right-from-square fs-5xs text-muted opacity-75"></i>
+                    </a>
+                    <div class="text-muted font-monospace fs-4xs d-block d-sm-none">{{ g.phone }}</div>
                   </td>
                   <td class="text-muted font-monospace py-1.5 fs-4xs d-none d-sm-table-cell">
                     {{ g.phone || 'Non renseigné' }}
@@ -642,15 +693,11 @@
                       {{ g.status === 'CONFIRMED' ? 'Présent ✅' : (g.status === 'DECLINED' ? 'Absent ❌' : 'En attente ⏳') }}
                     </span>
                   </td>
-                  <td class="text-end pe-2.5 pe-sm-3 py-1.5">
-                    <div class="d-inline-flex align-items-center gap-1">
-                      <a [routerLink]="g.rsvpLink" target="_blank" class="btn btn-xs btn-alt-secondary rounded-pill px-1.5 py-1" title="Voir l'invitation">
-                        <i class="fa fa-eye fs-4xs"></i>
-                      </a>
-                      
+                  <td class="text-end pe-2.5 pe-sm-3 py-1.5" style="width: 125px;">
+                    <div class="d-inline-flex align-items-center gap-1.5">
                       <!-- Compact WhatsApp Button -->
                       <button type="button" 
-                              class="btn btn-xs rounded-pill px-2 py-1 fw-bold shadow-2xs d-inline-flex align-items-center gap-1 fs-4xs"
+                              class="btn btn-xs rounded-pill px-2.5 py-1 fw-bold shadow-2xs d-inline-flex align-items-center gap-1 fs-4xs"
                               [ngClass]="isGuestSent(g) ? 'btn-alt-success text-success' : 'btn-success text-white'"
                               (click)="openWhatsApp(g)">
                         <i class="fab fa-whatsapp"></i>
@@ -658,9 +705,9 @@
                         <i class="fa fa-check" *ngIf="isGuestSent(g)"></i>
                       </button>
 
-                      <!-- Delete Guest Button -->
+                      <!-- Delete Guest Button (Discreet gray icon, hover red) -->
                       <button type="button" 
-                              class="btn btn-xs btn-alt-danger rounded-circle p-0 d-inline-flex align-items-center justify-content-center shadow-2xs"
+                              class="btn btn-xs btn-link text-muted hover-danger rounded-circle p-0 d-inline-flex align-items-center justify-content-center text-decoration-none"
                               style="width: 22px; height: 22px;"
                               [disabled]="isDeletingGuest() === g.id"
                               (click)="deleteGuest(g)"
@@ -701,10 +748,11 @@
         </div>
       </div>
 
-    <!-- Bottom Restart Option -->
+    <!-- Bottom Restart Option (Subtle secondary link to avoid accidental clicks) -->
     <div class="text-center mt-3 mb-2" *ngIf="currentStep() === 3">
-      <button type="button" class="btn btn-xs btn-alt-secondary rounded-pill px-3 py-1.5" (click)="startNewInvitation()">
-        <i class="fa fa-plus me-1"></i> Créer une autre invitation
+      <button type="button" class="btn btn-link text-muted fs-xs text-decoration-none hover-dark d-inline-flex align-items-center gap-1.5 p-1" (click)="startNewInvitation()">
+        <i class="fa fa-plus-circle fs-4xs"></i>
+        <span>Créer une autre invitation pour un nouvel événement</span>
       </button>
     </div>
 

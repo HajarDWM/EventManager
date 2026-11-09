@@ -222,6 +222,17 @@ export class InvitationExpress implements OnInit {
   // General invite link copy state
   public readonly linkCopied = signal<boolean>(false);
 
+  // Step 3 View Mode: 'guests' (Tableau nominatif) vs 'public' (Lien public WhatsApp)
+  public readonly step3Tab = signal<'guests' | 'public'>('guests');
+
+  // Accordion drawer for adding guests
+  public readonly isAddGuestFormOpen = signal<boolean>(false);
+  public readonly isAddGuestFormVisible = computed(() => this.isAddGuestFormOpen() || this.totalGuestsCount() === 0);
+
+  public toggleAddGuestForm(): void {
+    this.isAddGuestFormOpen.update(v => !v);
+  }
+
   // Mode d'ajout des invités : 'single' (1 par 1) ou 'bulk' (Copier-Coller en masse)
   public readonly addGuestMode = signal<'single' | 'bulk'>('single');
 
