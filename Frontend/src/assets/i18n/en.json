@@ -1360,5 +1360,80 @@
       "STATUS_PENDING": "Pending",
       "STATUS_FAILED": "Failed"
     }
+  },
+  "LANDING": {
+    "NAV": {
+      "TEMPLATES": "Invitation Templates",
+      "HOW_IT_WORKS": "How It Works",
+      "PRO_SPACE": "Caterer & Pro Area",
+      "PRICING": "Pro Pricing",
+      "PRO_LOGIN": "Pro Login",
+      "CREATE_INVITATION": "Create Invitation",
+      "DASHBOARD": "My Dashboard"
+    },
+    "HERO": {
+      "BADGE": "100% Free for your guests • No sign-up required",
+      "TITLE_1": "Create your",
+      "TITLE_GRADIENT": "Digital Invitation",
+      "TITLE_2": "in 3 minutes & share it on WhatsApp",
+      "SUBTITLE": "Say goodbye to costly, slow paper cards. Treat your guests to a luxury interactive experience with music, Google Maps directions, and real-time RSVP tracking.",
+      "CTA_BTN": "Create my Free Invitation",
+      "TRUST_1": "No account required",
+      "TRUST_2": "Zero apps to install",
+      "TRUST_3": "Instant WhatsApp sharing"
+    },
+    "TEMPLATES": {
+      "BADGE": "100% Moroccan Designs",
+      "TITLE": "Exceptional Invitation Templates for Every Celebration",
+      "DESC": "Royal weddings, Henna nights, baby showers, or corporate galas: offer your guests a premium interactive digital experience.",
+      "CUSTOMIZE_BTN": "Customize this template",
+      "CARD_1_TITLE": "Royal Gala Party",
+      "CARD_1_DESC": "Royal gold and deep black palette with elegant calligraphy for grand weddings and prestigious galas.",
+      "CARD_2_TITLE": "Cotton Flowers",
+      "CARD_2_DESC": "Floral soft cream and dusty rose gold. A romantic and refined aesthetic for engagements and henna nights.",
+      "CARD_3_TITLE": "Emerald Elegance",
+      "CARD_3_DESC": "Inspired by Andalusian zellige and emerald greens. Ideal for Aqiqah and traditional family receptions."
+    },
+    "STEPS": {
+      "BADGE": "Simple & Fast",
+      "TITLE": "How does it work in 3 quick steps?",
+      "DESC": "Zero technical hassle. Your WhatsApp invitation is ready in under 3 minutes flat.",
+      "STEP_1_NUM": "01",
+      "STEP_1_TITLE": "Event Details",
+      "STEP_1_DESC": "Title, date, time, venue or city of your celebration.",
+      "STEP_2_NUM": "02",
+      "STEP_2_TITLE": "Pick a Template",
+      "STEP_2_DESC": "Refined Moroccan design with music and RSVP tracking.",
+      "STEP_3_NUM": "03",
+      "STEP_3_TITLE": "Share via WhatsApp",
+      "STEP_3_DESC": "Instant sending and real-time guest RSVP tracking."
+    },
+    "PRO": {
+      "BADGE": "Professionals & Caterers Area",
+      "TITLE": "Are you a Caterer or Event Planner?",
+      "DESC": "Manage all your events from one unified dashboard: meal formula management (Buffet & Table Service), guest seating, deposit tracking, and compliant billing.",
+      "FEAT_1": "Meal formulas & guest management",
+      "FEAT_2": "Table seating & dietary requirements",
+      "FEAT_3": "Client deposits & balance tracking",
+      "FEAT_4": "Comprehensive analytics & event history",
+      "CTA_BTN": "Create Organizer Account",
+      "PRICING_LINK": "View Plans & Pricing",
+      "SNIPPET_TITLE": "Active Catering Event",
+      "SNIPPET_SUBTITLE": "Gala Evening • 150 Guests",
+      "SNIPPET_LIVE": "LIVE",
+      "SNIPPET_CONFIRMED": "Confirmed",
+      "SNIPPET_MENU": "Formula",
+      "SNIPPET_MENU_VAL": "Mixed",
+      "SNIPPET_DEPOSIT": "Deposit",
+      "ALREADY_PARTNER": "Already a catering partner?",
+      "LOGIN_LINK": "Log in"
+    },
+    "FOOTER": {
+      "COPYRIGHT_SUB": "• Event & Digital Invitations Platform Morocco",
+      "CREATE_INVITATION": "Create an Invitation",
+      "PRO_PLANS": "Pro Subscriptions",
+      "ORGANISER_LOGIN": "Organizer Login",
+      "REGISTER": "Register"
+    }
   }
 }

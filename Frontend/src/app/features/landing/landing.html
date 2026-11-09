@@ -17,49 +17,74 @@
       <!-- Clean Navigation Links (Anti-Slop: No Emojis, No Icons) -->
       <nav class="d-none d-lg-flex align-items-center gap-4">
         <a class="nav-link-custom cursor-pointer" (click)="scrollToSection('templates-section')">
-          Modèles d'Invitations
+          {{ 'LANDING.NAV.TEMPLATES' | translate }}
         </a>
         <a class="nav-link-custom cursor-pointer" (click)="scrollToSection('how-it-works')">
-          Comment ça marche
+          {{ 'LANDING.NAV.HOW_IT_WORKS' | translate }}
         </a>
         <a class="nav-link-custom cursor-pointer" (click)="scrollToSection('pro-section')">
-          Espace Traiteur & Pro
+          {{ 'LANDING.NAV.PRO_SPACE' | translate }}
         </a>
         <a class="nav-link-custom" routerLink="/pricing">
-          Tarifs Pro
+          {{ 'LANDING.NAV.PRICING' | translate }}
         </a>
       </nav>
 
-      <!-- Right Action CTA -->
-      <div class="d-flex align-items-center gap-3">
-        <!-- Language Switcher Pill -->
-        <div class="lang-switch-pill d-inline-flex align-items-center p-1 rounded-pill bg-white shadow-2xs border">
-          <button type="button" class="btn btn-xs rounded-pill px-2.5 py-0.5 fw-bold"
-                  [ngClass]="isCurrentLang('fr') ? 'btn-primary text-white' : 'text-muted border-0 bg-transparent'"
-                  (click)="switchLanguage('fr')">FR</button>
-          <button type="button" class="btn btn-xs rounded-pill px-2.5 py-0.5 fw-bold"
-                  [ngClass]="isCurrentLang('ar') ? 'btn-primary text-white' : 'text-muted border-0 bg-transparent'"
-                  (click)="switchLanguage('ar')">العربية</button>
-        </div>
-
+      <!-- Right Action CTAs & Language Switcher at Far-Right ("f jenb") -->
+      <div class="d-flex align-items-center gap-2.5">
         <!-- Authenticated State -->
         @if (authService.isAuthenticated()) {
           <a routerLink="/events" class="btn btn-sm btn-primary rounded-pill px-3.5 py-1.5 fw-bold shadow-2xs d-flex align-items-center gap-1.5">
             <i class="fa fa-gauge"></i>
-            <span>Mon Tableau de bord</span>
+            <span>{{ 'LANDING.NAV.DASHBOARD' | translate }}</span>
           </a>
         } @else {
           <!-- Discrete Pro Link -->
           <a routerLink="/login" class="nav-link-pro-login text-decoration-none d-none d-sm-inline-block">
-            Connexion Pro
+            {{ 'LANDING.NAV.PRO_LOGIN' | translate }}
           </a>
 
           <!-- Single Main Header CTA -->
           <a routerLink="/express" class="btn btn-sm btn-success rounded-pill px-3.5 py-1.5 fw-bold shadow-2xs d-flex align-items-center gap-1.5">
             <i class="fa fa-bolt text-warning"></i>
-            <span>Créer une Invitation</span>
+            <span>{{ 'LANDING.NAV.CREATE_INVITATION' | translate }}</span>
           </a>
         }
+
+        <!-- Elegant Minimalist Language Dropdown at Far-Right ("f jenb") -->
+        <div class="position-relative ms-1 d-inline-block lang-dropdown-container">
+          <button type="button" 
+                  class="btn btn-sm btn-lang-switcher rounded-pill px-2.5 py-1 d-flex align-items-center gap-1.5"
+                  [class.active]="isLangDropdownOpen()"
+                  (click)="toggleLangDropdown($event)"
+                  title="Changer de langue / Change language / تغيير اللغة">
+            <span class="fs-xs">{{ currentLanguage.flag }}</span>
+            <span class="fs-xs fw-bold">{{ currentLanguage.short }}</span>
+            <i class="fa fa-chevron-down fs-4xs text-muted transition-transform" 
+               [class.rotate-180]="isLangDropdownOpen()"></i>
+          </button>
+
+          <!-- Dropdown Menu with FR, AR, EN -->
+          @if (isLangDropdownOpen()) {
+            <div class="lang-dropdown-menu rounded-3 py-1 bg-white border animate__animated animate__fadeIn">
+              @for (lang of languages; track lang.code) {
+                <button type="button" 
+                        class="dropdown-item d-flex align-items-center justify-content-between px-3 py-2 fs-xs"
+                        [class.active-lang]="translationService.currentLang() === lang.code"
+                        (click)="selectLanguage(lang.code, $event)">
+                  <span class="d-flex align-items-center gap-2">
+                    <span class="fs-sm">{{ lang.flag }}</span>
+                    <span class="fw-semibold text-dark">{{ lang.label }}</span>
+                  </span>
+                  @if (translationService.currentLang() === lang.code) {
+                    <i class="fa fa-check text-primary fs-3xs"></i>
+                  }
+                </button>
+              }
+            </div>
+          }
+        </div>
+
       </div>
 
     </div>
@@ -77,24 +102,24 @@
         <!-- Clean Micro-Badge -->
         <div class="d-inline-flex align-items-center gap-2 px-3.5 py-1 rounded-pill bg-white shadow-2xs border border-success-subtle mb-3.5">
           <span class="badge-status-dot"></span>
-          <span class="fs-xs fw-bold text-dark">100% Gratuit pour vos invités • Sans inscription</span>
+          <span class="fs-xs fw-bold text-dark">{{ 'LANDING.HERO.BADGE' | translate }}</span>
         </div>
 
         <!-- Hero Headline -->
         <h1 class="hero-title fw-black mb-3.5">
-          Créez votre <span class="text-gradient-gold">Invitation Digitale</span> en 3 minutes & partagez-la sur WhatsApp
+          {{ 'LANDING.HERO.TITLE_1' | translate }} <span class="text-gradient-gold">{{ 'LANDING.HERO.TITLE_GRADIENT' | translate }}</span> {{ 'LANDING.HERO.TITLE_2' | translate }}
         </h1>
 
         <!-- High-Contrast Subtitle (WCAG AAA) -->
         <p class="hero-subtitle mb-4 mx-auto">
-          Envoyez des invitations interactives avec musique marocaine, plan d'accès Google Maps et confirmation RSVP en temps réel. Zéro papier, zéro application à télécharger.
+          {{ 'LANDING.HERO.SUBTITLE' | translate }}
         </p>
 
         <!-- Single Primary CTA -->
         <div class="d-flex justify-content-center mb-4">
-          <a routerLink="/express" class="btn-cta-hero d-inline-flex align-items-center gap-2.5">
+          <a routerLink="/express" class="btn btn-lg btn-success rounded-pill px-4 py-3 fw-bold shadow-md hero-cta-btn d-inline-flex align-items-center gap-2">
             <i class="fa fa-bolt text-warning fs-5"></i>
-            <span>Créer mon Invitation Gratuite</span>
+            <span>{{ 'LANDING.HERO.CTA_BTN' | translate }}</span>
             <i class="fa fa-arrow-right ms-1"></i>
           </a>
         </div>
@@ -103,15 +128,15 @@
         <div class="d-flex flex-wrap justify-content-center align-items-center gap-3 gap-sm-4 fs-xs text-muted pt-2 border-top border-light max-w-650 mx-auto">
           <div class="d-flex align-items-center gap-1.5">
             <i class="fa fa-check text-success"></i>
-            <span>Aucune inscription requise</span>
+            <span>{{ 'LANDING.HERO.TRUST_1' | translate }}</span>
           </div>
           <div class="d-flex align-items-center gap-1.5">
             <i class="fa fa-check text-success"></i>
-            <span>Zéro application à installer</span>
+            <span>{{ 'LANDING.HERO.TRUST_2' | translate }}</span>
           </div>
           <div class="d-flex align-items-center gap-1.5">
             <i class="fa fa-check text-success"></i>
-            <span>Partage instantané WhatsApp</span>
+            <span>{{ 'LANDING.HERO.TRUST_3' | translate }}</span>
           </div>
         </div>
 
@@ -127,20 +152,20 @@
       
       <div class="text-center max-w-700 mx-auto mb-5">
         <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-1 fs-3xs fw-bold mb-2">
-          Designs 100% Marocains
+          {{ 'LANDING.TEMPLATES.BADGE' | translate }}
         </span>
         <h2 class="h2 fw-bold text-dark mb-2">
-          Des Modèles d'Invitations Conçus pour Vos Fêtes
+          {{ 'LANDING.TEMPLATES.TITLE' | translate }}
         </h2>
         <p class="section-desc mb-0">
-          Chaque modèle intègre une ambiance marocaine raffinée, typographies royales, carte d'accès et confirmations en direct.
+          {{ 'LANDING.TEMPLATES.DESC' | translate }}
         </p>
       </div>
 
       <!-- Templates Grid using Modern Angular @for -->
       <div class="row g-4">
         @for (t of featuredTemplates(); track t.id) {
-          <div class="col-md-6 col-lg-3">
+          <div class="col-md-6 col-lg-4">
             <div class="template-showcase-card h-100 rounded-4 overflow-hidden shadow-2xs border bg-body-light d-flex flex-column">
               
               <!-- Thumbnail Visual Header -->
@@ -154,21 +179,21 @@
                 <div class="py-3">
                   <i class="fa fa-sparkles text-warning fs-1 mb-2 d-block opacity-75"></i>
                   <div class="fs-xs fw-bold text-uppercase letter-spacing-1 text-warning">{{ t.category }}</div>
-                  <h4 class="h5 fw-bold text-white mb-0 mt-1">{{ t.title }}</h4>
+                  <h4 class="h5 fw-bold text-white mb-0 mt-1">{{ t.titleKey | translate }}</h4>
                 </div>
               </div>
 
               <!-- Card Body -->
               <div class="p-3.5 d-flex flex-column justify-content-between flex-grow-1 bg-white">
                 <p class="fs-xs text-muted mb-3 flex-grow-1">
-                  {{ t.description }}
+                  {{ t.descKey | translate }}
                 </p>
 
                 <div class="pt-2 border-top">
                   <a [routerLink]="['/express']" [queryParams]="{ templateId: t.id }" 
                      class="btn btn-sm btn-alt-primary rounded-pill w-100 fw-bold d-flex align-items-center justify-content-center gap-1.5 template-action-btn">
                     <i class="fa fa-magic"></i>
-                    <span>Personnaliser ce modèle</span>
+                    <span>{{ 'LANDING.TEMPLATES.CUSTOMIZE_BTN' | translate }}</span>
                   </a>
                 </div>
               </div>
@@ -189,13 +214,13 @@
       
       <div class="text-center max-w-700 mx-auto mb-4">
         <span class="badge bg-success-subtle text-success rounded-pill px-3 py-1 fs-3xs fw-bold mb-2">
-          Simple & Immédiat
+          {{ 'LANDING.STEPS.BADGE' | translate }}
         </span>
         <h2 class="h2 fw-bold text-dark mb-1">
-          Comment ça marche en 3 étapes ?
+          {{ 'LANDING.STEPS.TITLE' | translate }}
         </h2>
         <p class="section-desc mb-0">
-          Zéro complication technique. Votre invitation WhatsApp est prête en moins de 3 minutes chrono.
+          {{ 'LANDING.STEPS.DESC' | translate }}
         </p>
       </div>
 
@@ -209,9 +234,9 @@
                 <div>
                   <h4 class="fs-sm fw-bold text-dark mb-1 d-flex align-items-center gap-1.5">
                     <i class="fa text-primary fs-xs" [ngClass]="s.icon"></i>
-                    <span>{{ s.title }}</span>
+                    <span>{{ s.titleKey | translate }}</span>
                   </h4>
-                  <p class="fs-xs text-muted mb-0">{{ s.desc }}</p>
+                  <p class="fs-xs text-muted mb-0">{{ s.descKey | translate }}</p>
                 </div>
               </div>
             </div>
@@ -233,31 +258,31 @@
         <!-- Left: Value Proposition -->
         <div class="col-lg-7">
           <span class="badge rounded-pill px-3 py-1 fs-3xs fw-bold mb-2" style="background: rgba(212, 175, 55, 0.2); color: #f5d77f; border: 1px solid rgba(212, 175, 55, 0.4);">
-            Espace Professionnels & Traiteurs
+            {{ 'LANDING.PRO.BADGE' | translate }}
           </span>
           <h2 class="h1 fw-bold text-white mb-3">
-            Vous êtes Traiteur ou Planificateur d'Événements ?
+            {{ 'LANDING.PRO.TITLE' | translate }}
           </h2>
           <p class="text-white-50 fs-sm mb-4">
-            Pilotez l'ensemble de vos prestations sur un seul tableau de bord : gestion des formules repas (Buffet & Service à Table), répartition des convives, acomptes et facturation conforme.
+            {{ 'LANDING.PRO.DESC' | translate }}
           </p>
 
           <div class="row g-3 mb-4 fs-xs">
             <div class="col-sm-6 d-flex align-items-center gap-2">
               <i class="fa fa-utensils text-warning"></i>
-              <span>Gestion des formules menus & convives</span>
+              <span>{{ 'LANDING.PRO.FEAT_1' | translate }}</span>
             </div>
             <div class="col-sm-6 d-flex align-items-center gap-2">
               <i class="fa fa-users text-warning"></i>
-              <span>Gestion des tables & régimes alimentaires</span>
+              <span>{{ 'LANDING.PRO.FEAT_2' | translate }}</span>
             </div>
             <div class="col-sm-6 d-flex align-items-center gap-2">
               <i class="fa fa-file-invoice-dollar text-warning"></i>
-              <span>Suivi des acomptes & soldes clients</span>
+              <span>{{ 'LANDING.PRO.FEAT_3' | translate }}</span>
             </div>
             <div class="col-sm-6 d-flex align-items-center gap-2">
               <i class="fa fa-chart-line text-warning"></i>
-              <span>Statistiques & historique complet</span>
+              <span>{{ 'LANDING.PRO.FEAT_4' | translate }}</span>
             </div>
           </div>
 
@@ -265,10 +290,10 @@
           <div class="d-flex flex-wrap align-items-center gap-3">
             <a routerLink="/register" class="btn btn-primary rounded-pill px-4 py-2.5 fw-bold shadow-sm d-flex align-items-center gap-2">
               <i class="fa fa-user-plus"></i>
-              <span>Créer un Compte Organisateur</span>
+              <span>{{ 'LANDING.PRO.CTA_BTN' | translate }}</span>
             </a>
             <a routerLink="/pricing" class="btn btn-link text-white-50 text-decoration-none fs-xs fw-semibold hover-white">
-              Voir les Forfaits & Abonnements <i class="fa fa-arrow-right ms-1"></i>
+              {{ 'LANDING.PRO.PRICING_LINK' | translate }} <i class="fa fa-arrow-right ms-1"></i>
             </a>
           </div>
         </div>
@@ -284,30 +309,30 @@
                   <i class="fa fa-check fs-4xs"></i>
                 </span>
                 <div>
-                  <div class="fs-xs fw-bold text-white">Prestation Traiteur Active</div>
-                  <div class="fs-5xs text-white-50">Soirée de Gala • 150 Convives</div>
+                  <div class="fs-xs fw-bold text-white">{{ 'LANDING.PRO.SNIPPET_TITLE' | translate }}</div>
+                  <div class="fs-5xs text-white-50">{{ 'LANDING.PRO.SNIPPET_SUBTITLE' | translate }}</div>
                 </div>
               </div>
-              <span class="badge bg-primary text-white rounded-pill px-2 py-0.5 fs-5xs">EN DIRECT</span>
+              <span class="badge bg-primary text-white rounded-pill px-2 py-0.5 fs-5xs">{{ 'LANDING.PRO.SNIPPET_LIVE' | translate }}</span>
             </div>
 
             <!-- Mini Metrics Row -->
             <div class="row g-2 mb-3 text-center">
               <div class="col-4">
                 <div class="p-2 rounded-2 bg-dark bg-opacity-50 border border-secondary">
-                  <div class="fs-5xs text-white-50">Confirmés</div>
+                  <div class="fs-5xs text-white-50">{{ 'LANDING.PRO.SNIPPET_CONFIRMED' | translate }}</div>
                   <div class="fs-xs fw-bold text-success">124</div>
                 </div>
               </div>
               <div class="col-4">
                 <div class="p-2 rounded-2 bg-dark bg-opacity-50 border border-secondary">
-                  <div class="fs-5xs text-white-50">Formule</div>
-                  <div class="fs-xs fw-bold text-warning">Mixte</div>
+                  <div class="fs-5xs text-white-50">{{ 'LANDING.PRO.SNIPPET_MENU' | translate }}</div>
+                  <div class="fs-xs fw-bold text-warning">{{ 'LANDING.PRO.SNIPPET_MENU_VAL' | translate }}</div>
                 </div>
               </div>
               <div class="col-4">
                 <div class="p-2 rounded-2 bg-dark bg-opacity-50 border border-secondary">
-                  <div class="fs-5xs text-white-50">Acompte</div>
+                  <div class="fs-5xs text-white-50">{{ 'LANDING.PRO.SNIPPET_DEPOSIT' | translate }}</div>
                   <div class="fs-xs fw-bold text-primary">100%</div>
                 </div>
               </div>
@@ -315,9 +340,9 @@
 
             <!-- Discrete Login Redirection -->
             <div class="pt-2 border-top border-secondary text-center">
-              <span class="fs-xs text-white-50">Déjà partenaire traiteur ?</span>
+              <span class="fs-xs text-white-50">{{ 'LANDING.PRO.ALREADY_PARTNER' | translate }}</span>
               <a routerLink="/login" class="fs-xs text-warning fw-bold text-decoration-none ms-1 hover-underline">
-                Se connecter <i class="fa fa-sign-in-alt ms-0.5"></i>
+                {{ 'LANDING.PRO.LOGIN_LINK' | translate }} <i class="fa fa-sign-in-alt ms-0.5"></i>
               </a>
             </div>
 
@@ -337,16 +362,16 @@
       <div class="d-flex align-items-center gap-2 text-white">
         <span class="fw-bold">EventManager</span>
         <span>&copy; 2026</span>
-        <span>• Plateforme d'Événements & Invitations Maroc</span>
+        <span>{{ 'LANDING.FOOTER.COPYRIGHT_SUB' | translate }}</span>
       </div>
 
       <div class="d-flex flex-wrap align-items-center gap-3">
         <a routerLink="/express" class="text-muted text-decoration-none hover-white">
-          <i class="fa fa-bolt text-warning me-1"></i> Créer une Invitation
+          <i class="fa fa-bolt text-warning me-1"></i> {{ 'LANDING.FOOTER.CREATE_INVITATION' | translate }}
         </a>
-        <a routerLink="/pricing" class="text-muted text-decoration-none hover-white">Abonnements Pro</a>
-        <a routerLink="/login" class="text-muted text-decoration-none hover-white">Connexion Organisateur</a>
-        <a routerLink="/register" class="text-muted text-decoration-none hover-white">Inscription</a>
+        <a routerLink="/pricing" class="text-muted text-decoration-none hover-white">{{ 'LANDING.FOOTER.PRO_PLANS' | translate }}</a>
+        <a routerLink="/login" class="text-muted text-decoration-none hover-white">{{ 'LANDING.FOOTER.ORGANISER_LOGIN' | translate }}</a>
+        <a routerLink="/register" class="text-muted text-decoration-none hover-white">{{ 'LANDING.FOOTER.REGISTER' | translate }}</a>
       </div>
 
     </div>

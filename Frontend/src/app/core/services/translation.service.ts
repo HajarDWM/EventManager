@@ -27,12 +27,23 @@ export class TranslationService {
   }
 
   /**
-   * Checks whether the given or current route is a guest RSVP or preview route
+   * Checks whether the given or current route is a public consumer/landing/express/rsvp route
+   */
+  public isPublicRoute(customUrl?: string): boolean {
+    if (typeof window === 'undefined') return true;
+    const rawUrl = customUrl || (this.router?.url ?? window.location.pathname) || '';
+    const url = rawUrl.split('?')[0].split('#')[0];
+    if (url === '' || url === '/' || url === '/express' || url === '/creer-invitation' || url === '/pricing') {
+      return true;
+    }
+    return url.startsWith('/rsvp') || url.includes('/rsvp/') || url.includes('template-preview');
+  }
+
+  /**
+   * Alias for backward compatibility across guest/template components
    */
   public isRsvpRoute(customUrl?: string): boolean {
-    if (typeof window === 'undefined') return false;
-    const url = customUrl || (this.router?.url ?? window.location.pathname) || '';
-    return url.startsWith('/rsvp') || url.includes('/rsvp/') || url.includes('template-preview');
+    return this.isPublicRoute(customUrl);
   }
 
   /**
@@ -61,9 +72,9 @@ export class TranslationService {
   }
 
   private handleRouteChange(url: string): void {
-    const isRsvp = this.isRsvpRoute(url);
+    const isPublic = this.isPublicRoute(url);
 
-    if (!isRsvp) {
+    if (!isPublic) {
       // In Admin / Organizer: Arabic is strictly forbidden! Interface must be 100% LTR
       if (typeof document !== 'undefined') {
         document.documentElement.dir = 'ltr';
@@ -73,7 +84,7 @@ export class TranslationService {
         this.loadLanguage(adminLang).subscribe();
       }
     } else {
-      // In Guest RSVP: if language is Arabic, ensure RTL direction is active
+      // In Public pages (Landing, Guest RSVP, Express): full AR/FR/EN support
       if (typeof document !== 'undefined') {
         document.documentElement.dir = this.currentLang() === 'ar' ? 'rtl' : 'ltr';
         document.documentElement.lang = this.currentLang();
@@ -83,11 +94,11 @@ export class TranslationService {
 
   /**
    * Intelligently detects initial language:
-   * - On Guest RSVP: Supports AR, FR, EN
+   * - On Public / RSVP / Landing: Supports AR, FR, EN
    * - On Admin / Organizer: Strictly restricted to FR and EN with clean LTR
    */
   private detectInitialLanguage(): SupportedLanguage {
-    const isRsvp = this.isRsvpRoute();
+    const isPublic = this.isPublicRoute();
 
     try {
       if (typeof window !== 'undefined' && window.location && window.location.search) {
@@ -96,20 +107,20 @@ export class TranslationService {
         if (urlLang === 'en' || urlLang === 'fr') {
           return urlLang;
         }
-        if (urlLang === 'ar' && isRsvp) {
+        if (urlLang === 'ar' && isPublic) {
           return 'ar';
         }
       }
 
       if (typeof localStorage !== 'undefined') {
-        if (isRsvp) {
+        if (isPublic) {
+          const savedApp = localStorage.getItem('app_lang') as SupportedLanguage;
+          if (savedApp === 'en' || savedApp === 'fr' || savedApp === 'ar') {
+            return savedApp;
+          }
           const savedRsvp = localStorage.getItem('rsvp_lang') as SupportedLanguage;
           if (savedRsvp === 'en' || savedRsvp === 'fr' || savedRsvp === 'ar') {
             return savedRsvp;
-          }
-          const savedGeneral = localStorage.getItem('app_lang') as SupportedLanguage;
-          if (savedGeneral === 'en' || savedGeneral === 'fr' || savedGeneral === 'ar') {
-            return savedGeneral;
           }
         } else {
           const savedAdmin = localStorage.getItem('admin_lang') as SupportedLanguage;
@@ -121,7 +132,7 @@ export class TranslationService {
 
       if (typeof navigator !== 'undefined') {
         const browserLang = (navigator.language || (navigator as any).userLanguage || '').toLowerCase();
-        if (isRsvp && browserLang.startsWith('ar')) {
+        if (isPublic && browserLang.startsWith('ar')) {
           return 'ar';
         }
         if (browserLang.startsWith('en')) {
@@ -138,11 +149,11 @@ export class TranslationService {
    * Loads language JSON file and updates translationsMap
    */
   public loadLanguage(lang: SupportedLanguage): Observable<Record<string, any>> {
-    const isRsvp = this.isRsvpRoute();
+    const isPublic = this.isPublicRoute();
     let targetLang: SupportedLanguage = lang;
 
-    // Disallow Arabic on non-RSVP routes (Organizer/Admin)
-    if (!isRsvp && targetLang === 'ar') {
+    // Disallow Arabic only on restricted Organizer/Admin routes
+    if (!isPublic && targetLang === 'ar') {
       targetLang = this.getSavedAdminLanguage();
     }
 
@@ -154,7 +165,7 @@ export class TranslationService {
         this.isLoaded.set(true);
 
         if (typeof localStorage !== 'undefined') {
-          if (isRsvp) {
+          if (isPublic) {
             localStorage.setItem('rsvp_lang', targetLang);
           } else {
             localStorage.setItem('admin_lang', targetLang);
@@ -164,7 +175,7 @@ export class TranslationService {
 
         if (typeof document !== 'undefined') {
           document.documentElement.lang = targetLang;
-          document.documentElement.dir = (isRsvp && targetLang === 'ar') ? 'rtl' : 'ltr';
+          document.documentElement.dir = (isPublic && targetLang === 'ar') ? 'rtl' : 'ltr';
         }
       }),
       catchError((err) => {
@@ -178,16 +189,16 @@ export class TranslationService {
    * Change current application language
    */
   public setLanguage(lang: SupportedLanguage): void {
-    const isRsvp = this.isRsvpRoute();
+    const isPublic = this.isPublicRoute();
     let targetLang: SupportedLanguage = lang;
 
-    if (!isRsvp && targetLang === 'ar') {
+    if (!isPublic && targetLang === 'ar') {
       targetLang = this.getSavedAdminLanguage();
     }
 
     if (this.currentLang() === targetLang && this.isLoaded()) {
       if (typeof document !== 'undefined') {
-        document.documentElement.dir = (isRsvp && targetLang === 'ar') ? 'rtl' : 'ltr';
+        document.documentElement.dir = (isPublic && targetLang === 'ar') ? 'rtl' : 'ltr';
         document.documentElement.lang = targetLang;
       }
       return;

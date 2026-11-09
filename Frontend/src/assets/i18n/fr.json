@@ -1369,5 +1369,80 @@
       "STATUS_PENDING": "En attente",
       "STATUS_FAILED": "Échec"
     }
+  },
+  "LANDING": {
+    "NAV": {
+      "TEMPLATES": "Modèles d'Invitations",
+      "HOW_IT_WORKS": "Comment ça marche",
+      "PRO_SPACE": "Espace Traiteur & Pro",
+      "PRICING": "Tarifs Pro",
+      "PRO_LOGIN": "Connexion Pro",
+      "CREATE_INVITATION": "Créer une Invitation",
+      "DASHBOARD": "Mon Tableau de bord"
+    },
+    "HERO": {
+      "BADGE": "100% Gratuit pour vos invités • Sans inscription",
+      "TITLE_1": "Créez votre",
+      "TITLE_GRADIENT": "Invitation Digitale",
+      "TITLE_2": "en 3 minutes & partagez-la sur WhatsApp",
+      "SUBTITLE": "Fini les cartons papier coûteux et lents à distribuer. Offrez à vos invités une expérience interactive de luxe avec musique, itinéraire Google Maps et confirmation RSVP en temps réel.",
+      "CTA_BTN": "Créer mon Invitation Gratuite",
+      "TRUST_1": "Aucune inscription requise",
+      "TRUST_2": "Zéro application à installer",
+      "TRUST_3": "Envoi instantané par WhatsApp"
+    },
+    "TEMPLATES": {
+      "BADGE": "Designs 100% Marocains",
+      "TITLE": "Des Modèles d'Invitations d'Exception pour Chaque Moment",
+      "DESC": "Mariages royaux, célébrations du Henné, naissances ou soirées de gala : offrez à vos convives une expérience interactive haut de gamme.",
+      "CUSTOMIZE_BTN": "Personnaliser ce modèle",
+      "CARD_1_TITLE": "Launch Party Royal",
+      "CARD_1_DESC": "Palette or royal et noir profond. Typographie calligraphique pour mariages majestueux et grands galas.",
+      "CARD_2_TITLE": "Fleurs de Coton",
+      "CARD_2_DESC": "Douceur florale crème et or rose poudré. Ambiance romantique et raffinée pour fiançailles et hennés.",
+      "CARD_3_TITLE": "Élégance Émeraude",
+      "CARD_3_DESC": "Inspiration zellige andalou et vert émeraude. Parfait pour baptêmes, aqiqah et réceptions traditionnelles."
+    },
+    "STEPS": {
+      "BADGE": "Simple & Immédiat",
+      "TITLE": "Comment ça marche en 3 étapes ?",
+      "DESC": "Zéro complication technique. Votre invitation WhatsApp est prête en moins de 3 minutes chrono.",
+      "STEP_1_NUM": "01",
+      "STEP_1_TITLE": "Détails de l'événement",
+      "STEP_1_DESC": "Titre, date, heure et salle ou ville de votre fête.",
+      "STEP_2_NUM": "02",
+      "STEP_2_TITLE": "Choix du modèle",
+      "STEP_2_DESC": "Design marocain raffiné avec musique et RSVP.",
+      "STEP_3_NUM": "03",
+      "STEP_3_TITLE": "Partage WhatsApp",
+      "STEP_3_DESC": "Envoi instantané et suivi des réponses en direct."
+    },
+    "PRO": {
+      "BADGE": "Espace Professionnels & Traiteurs",
+      "TITLE": "Vous êtes Traiteur ou Planificateur d'Événements ?",
+      "DESC": "Pilotez l'ensemble de vos prestations sur un seul tableau de bord : gestion des formules repas (Buffet & Service à Table), répartition des convives, acomptes et facturation conforme.",
+      "FEAT_1": "Gestion des formules repas & convives",
+      "FEAT_2": "Gestion des tables & régimes alimentaires",
+      "FEAT_3": "Suivi des acomptes & soldes clients",
+      "FEAT_4": "Statistiques & historique complet",
+      "CTA_BTN": "Créer un Compte Organisateur",
+      "PRICING_LINK": "Voir les Forfaits & Abonnements",
+      "SNIPPET_TITLE": "Prestation Traiteur Active",
+      "SNIPPET_SUBTITLE": "Soirée de Gala • 150 Convives",
+      "SNIPPET_LIVE": "EN DIRECT",
+      "SNIPPET_CONFIRMED": "Confirmés",
+      "SNIPPET_MENU": "Formule",
+      "SNIPPET_MENU_VAL": "Mixte",
+      "SNIPPET_DEPOSIT": "Acompte",
+      "ALREADY_PARTNER": "Déjà partenaire traiteur ?",
+      "LOGIN_LINK": "Se connecter"
+    },
+    "FOOTER": {
+      "COPYRIGHT_SUB": "• Plateforme d'Événements & Invitations Maroc",
+      "CREATE_INVITATION": "Créer une Invitation",
+      "PRO_PLANS": "Abonnements Pro",
+      "ORGANISER_LOGIN": "Connexion Organisateur",
+      "REGISTER": "Inscription"
+    }
   }
 }
