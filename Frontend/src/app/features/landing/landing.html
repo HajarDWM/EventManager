@@ -168,31 +168,40 @@
           <div class="col-md-6 col-lg-4">
             <div class="template-showcase-card h-100 rounded-4 overflow-hidden shadow-2xs border bg-body-light d-flex flex-column">
               
-              <!-- Thumbnail Visual Header -->
-              <div class="template-card-thumb position-relative d-flex align-items-center justify-content-center text-center p-4"
-                   [style.background]="'radial-gradient(circle at center, #1e293b 0%, #0b1120 100%)'">
-                <span class="badge position-absolute top-0 end-0 m-2.5 rounded-pill px-2 py-1 fs-4xs fw-bold shadow-2xs"
-                      style="background: rgba(212, 175, 55, 0.2); color: #f5d77f; border: 1px solid rgba(212, 175, 55, 0.4);">
-                  {{ t.badge }}
-                </span>
+              <!-- Real Template Image Visual Header (Like In-App Mockup) -->
+              <div class="template-card-thumb position-relative overflow-hidden">
+                <img [src]="t.imageUrl" [alt]="t.titleKey | translate" class="template-thumb-img w-100 h-100 object-fit-cover" loading="lazy">
+                
+                <!-- Elegant Glass Gradient Overlay -->
+                <div class="template-card-overlay p-3 d-flex flex-column justify-content-between">
+                  <!-- Top Badge (Translated) -->
+                  <div class="d-flex justify-content-between align-items-start">
+                    <span class="badge rounded-pill px-2.5 py-1 fs-4xs fw-bold shadow-sm"
+                          style="background: rgba(15, 23, 42, 0.75); color: #f5d77f; border: 1px solid rgba(212, 175, 55, 0.45); backdrop-filter: blur(4px);">
+                      {{ t.badgeKey | translate }}
+                    </span>
+                  </div>
 
-                <div class="py-3">
-                  <i class="fa fa-sparkles text-warning fs-1 mb-2 d-block opacity-75"></i>
-                  <div class="fs-xs fw-bold text-uppercase letter-spacing-1 text-warning">{{ t.category }}</div>
-                  <h4 class="h5 fw-bold text-white mb-0 mt-1">{{ t.titleKey | translate }}</h4>
+                  <!-- Bottom Category & Title (Translated) -->
+                  <div>
+                    <span class="badge bg-dark bg-opacity-75 text-warning text-uppercase letter-spacing-1 px-2 py-0.5 rounded-pill fs-5xs fw-bold mb-1 border border-warning-subtle">
+                      {{ t.categoryKey | translate }}
+                    </span>
+                    <h4 class="h5 fw-bold text-white mb-0 drop-shadow-sm">{{ t.titleKey | translate }}</h4>
+                  </div>
                 </div>
               </div>
 
               <!-- Card Body -->
               <div class="p-3.5 d-flex flex-column justify-content-between flex-grow-1 bg-white">
-                <p class="fs-xs text-muted mb-3 flex-grow-1">
+                <p class="template-desc-text mb-3 flex-grow-1">
                   {{ t.descKey | translate }}
                 </p>
 
                 <div class="pt-2 border-top">
                   <a [routerLink]="['/express']" [queryParams]="{ templateId: t.id }" 
                      class="btn btn-sm btn-alt-primary rounded-pill w-100 fw-bold d-flex align-items-center justify-content-center gap-1.5 template-action-btn">
-                    <i class="fa fa-magic"></i>
+                    <i class="fa fa-magic fs-xs"></i>
                     <span>{{ 'LANDING.TEMPLATES.CUSTOMIZE_BTN' | translate }}</span>
                   </a>
                 </div>

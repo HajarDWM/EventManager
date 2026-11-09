@@ -218,11 +218,16 @@
 .template-showcase-card {
   transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, border-color 0.3s ease;
   border-color: #e2e8f0;
+  background: #ffffff;
 
   &:hover {
     transform: translateY(-6px);
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08) !important;
     border-color: rgba(212, 175, 55, 0.45) !important;
+
+    .template-thumb-img {
+      transform: scale(1.06);
+    }
 
     .template-action-btn {
       background: #2563eb !important;
@@ -237,7 +242,32 @@
   }
 
   .template-card-thumb {
-    min-height: 180px;
+    height: 190px;
+    background: #0f172a;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .template-thumb-img {
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .template-card-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(15, 23, 42, 0.25) 0%, rgba(15, 23, 42, 0.88) 100%);
+    z-index: 1;
+  }
+
+  .drop-shadow-sm {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  }
+
+  .template-desc-text {
+    color: #475569;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    min-height: 52px;
   }
 
   .template-action-btn {

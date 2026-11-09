@@ -8,8 +8,8 @@ import { TranslatePipe } from '../../core/pipes/translate.pipe';
 interface FeaturedTemplate {
   id: number;
   titleKey: string;
-  category: string;
-  badge: string;
+  categoryKey: string;
+  badgeKey: string;
   imageUrl: string;
   accentColor: string;
   descKey: string;
@@ -80,27 +80,27 @@ export class Landing implements OnInit {
     {
       id: 2,
       titleKey: 'LANDING.TEMPLATES.CARD_1_TITLE',
-      category: 'Soirée de Gala & Corporate',
-      badge: 'Tendance 2026',
-      imageUrl: '/assets/media/templates/launch-party-royal.jpg',
+      categoryKey: 'LANDING.TEMPLATES.CARD_1_CATEGORY',
+      badgeKey: 'LANDING.TEMPLATES.CARD_1_BADGE',
+      imageUrl: 'https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&w=600&q=80',
       accentColor: '#d4af37',
       descKey: 'LANDING.TEMPLATES.CARD_1_DESC'
     },
     {
       id: 1,
       titleKey: 'LANDING.TEMPLATES.CARD_2_TITLE',
-      category: 'Mariage & Célébration',
-      badge: 'Le Plus Populaire',
-      imageUrl: '/assets/media/templates/fleurs-de-coton.jpg',
+      categoryKey: 'LANDING.TEMPLATES.CARD_2_CATEGORY',
+      badgeKey: 'LANDING.TEMPLATES.CARD_2_BADGE',
+      imageUrl: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=600&q=80',
       accentColor: '#c5a85c',
       descKey: 'LANDING.TEMPLATES.CARD_2_DESC'
     },
     {
       id: 3,
       titleKey: 'LANDING.TEMPLATES.CARD_3_TITLE',
-      category: 'Prestige Traditionnel',
-      badge: 'Henné & Mariage',
-      imageUrl: '/assets/media/templates/or-et-velours.jpg',
+      categoryKey: 'LANDING.TEMPLATES.CARD_3_CATEGORY',
+      badgeKey: 'LANDING.TEMPLATES.CARD_3_BADGE',
+      imageUrl: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=600&q=80',
       accentColor: '#eab308',
       descKey: 'LANDING.TEMPLATES.CARD_3_DESC'
     }
