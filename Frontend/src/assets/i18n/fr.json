@@ -1447,5 +1447,97 @@
       "COPYRIGHT_SUB": "• Tous droits réservés",
       "BACK_TO_TOP": "Haut de page"
     }
+  },
+  "EXPRESS": {
+    "HEADER": {
+      "BACK_TO_HOME": "Retour à l'accueil",
+      "BADGE_FREE": "Mode Express 100% Gratuit",
+      "TITLE": "Créez votre",
+      "TITLE_HIGHLIGHT": "Invitation Digitale",
+      "TITLE_END": "en 3 minutes",
+      "SUBTITLE": "Remplissez les détails, choisissez votre modèle marocain, et envoyez directement via WhatsApp à chaque invité."
+    },
+    "STEPPER": {
+      "STEP_1": "Événement",
+      "STEP_2": "Modèle",
+      "STEP_3": "Invités & WhatsApp"
+    },
+    "TOOLBAR": {
+      "ACTIVE_INVITATION": "Invitation active :",
+      "EDIT": "Modifier",
+      "MY_INVITATIONS": "Mes invitations",
+      "NEW": "Nouveau"
+    },
+    "STEP1": {
+      "TITLE": "Type & Nom de l'événement",
+      "TYPE_LABEL": "Type d'événement ou célébration",
+      "TYPE_PLACEHOLDER": "Tapez ou choisissez (Ex: Mariage, Dîner, Fête...)",
+      "SUBTITLE_LABEL": "Sous-titre",
+      "SUBTITLE_HINT": "au-dessus du nom",
+      "SUBTITLE_PLACEHOLDER": "Ex: Le Mariage de, Soirée de Gala...",
+      "TITLE_LABEL": "Titre de l'événement",
+      "TITLE_HINT": "nom principal",
+      "DATE_LABEL": "Date de l'événement",
+      "TIME_LABEL": "Heure de début",
+      "LOCATION_LABEL": "Salle des fêtes ou Adresse",
+      "LOCATION_PLACEHOLDER": "Ex: Pavillon des Rêves, Casablanca",
+      "MAPS_LABEL": "Lien Google Maps GPS",
+      "DATE_HINT": "La date et l'heure peuvent être modifiées ultérieurement.",
+      "LOCATION_HINT": "Indiquez l'adresse ou le nom de la salle pour vos invités.",
+      "BTN_NEXT": "Continuer",
+      "BTN_SAVE_CHANGES": "Enregistrer les modifications"
+    },
+    "STEP2": {
+      "TITLE": "Choisissez votre Modèle d'Invitation",
+      "ALL_TEMPLATES": "Tous les modèles",
+      "SELECTED": "Sélectionné",
+      "CHOOSE": "Choisir",
+      "VIEW_PREVIEW": "Voir l'aperçu",
+      "BTN_BACK": "Retour aux Détails",
+      "BTN_NEXT": "Valider & Passer aux Invités"
+    },
+    "STEP3": {
+      "TAB_GUESTS": "Mes Invités & Suivi RSVP",
+      "TAB_PUBLIC": "Lien Public (Statuts & Groupes)",
+      "BTN_ADD_GUESTS": "Ajouter des invités",
+      "BTN_CLOSE_ADD": "Fermer l'ajout",
+      "METHOD_LABEL": "Méthode d'ajout :",
+      "MODE_SINGLE": "1 par 1",
+      "MODE_BULK": "En masse",
+      "INPUT_NAME_LABEL": "Nom complet de l'invité",
+      "INPUT_NAME_PLACEHOLDER": "Ex: Karim Benjelloun",
+      "INPUT_PHONE_LABEL": "Numéro WhatsApp",
+      "INPUT_PHONE_PLACEHOLDER": "06XXXXXXXX ou +2126...",
+      "BTN_ADD_ONE": "Ajouter l'invité",
+      "BULK_PASTE_TITLE": "Copier-Coller votre liste de contacts :",
+      "BULK_PASTE_HINT": "Une ligne par invité (Nom: Téléphone ou Nom - Téléphone)",
+      "BTN_IMPORT_BULK": "Importer les invités",
+      "WA_PROGRESS": "Progression des envois WhatsApp :",
+      "SENT_LABEL": "envoyé(s)",
+      "SEARCH_PLACEHOLDER": "Rechercher nom ou n°...",
+      "RESULTS_COUNT": "résultat(s)",
+      "FILTER_ALL": "Tous",
+      "FILTER_PENDING": "En attente",
+      "FILTER_SENT": "Envoyé",
+      "EMPTY_NO_GUESTS": "Aucun invité ajouté pour le moment. Remplissez le formulaire ci-dessus pour commencer vos envois !",
+      "EMPTY_SEARCH": "Aucun invité ne correspond à",
+      "ALL_SENT_SUCCESS": "Tous les invités ont déjà reçu leur invitation WhatsApp ! 🎉",
+      "NONE_SENT_YET": "Aucune invitation WhatsApp n'a encore été envoyée.",
+      "RESET_FILTERS": "Réinitialiser les filtres",
+      "TH_GUEST": "Invité",
+      "TH_WHATSAPP": "WhatsApp",
+      "TH_STATUS": "Statut",
+      "TH_ACTION": "Action WhatsApp",
+      "STATUS_CONFIRMED": "Présent ✅",
+      "STATUS_DECLINED": "Absent ❌",
+      "STATUS_PENDING": "En attente ⏳",
+      "BTN_SEND": "Envoyer",
+      "BTN_RESEND": "Renvoyer",
+      "PUBLIC_LINK_TITLE": "Lien Public pour Statuts & Groupes",
+      "PUBLIC_LINK_DESC": "Partagez ce lien sur vos statuts WhatsApp, stories Instagram ou groupes familiaux pour permettre à tous de confirmer leur présence.",
+      "BTN_COPY_LINK": "Copier le lien",
+      "LINK_COPIED": "Lien copié !",
+      "BTN_SHARE_WHATSAPP": "Partager sur WhatsApp"
+    }
   }
 }

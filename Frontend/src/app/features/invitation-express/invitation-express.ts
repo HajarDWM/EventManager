@@ -5,15 +5,21 @@ import { RouterModule, Router } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ExpressInvitationService, ExpressGuestResponse, ExpressInvitationResponse } from './services/express-invitation.service';
 import { TemplateService, DigitalTemplate } from '../../core/services/template.service';
+import { TranslationService, SupportedLanguage } from '../../core/services/translation.service';
+import { TranslatePipe } from '../../core/pipes/translate.pipe';
 
 export interface EventTypeOption {
   id: string;
   labelFr: string;
   labelAr: string;
+  labelEn: string;
   icon: string;
   defaultSubtitleFr: string;
   defaultSubtitleAr: string;
+  defaultSubtitleEn: string;
   placeholderTitle?: string;
+  placeholderTitleAr?: string;
+  placeholderTitleEn?: string;
   categoryFilter?: string;
 }
 
@@ -45,7 +51,7 @@ export interface StoredExpressInvitation {
 @Component({
   selector: 'app-invitation-express',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, TranslatePipe],
   templateUrl: './invitation-express.html',
   styleUrls: ['./invitation-express.scss']
 })
@@ -54,6 +60,60 @@ export class InvitationExpress implements OnInit {
   private readonly templateService = inject(TemplateService);
   private readonly router = inject(Router);
   private readonly sanitizer = inject(DomSanitizer);
+  public readonly translationService = inject(TranslationService);
+
+  // Language Switcher State
+  public readonly isLangDropdownOpen = signal<boolean>(false);
+  public readonly languages: { code: SupportedLanguage; label: string; short: string; flag: string }[] = [
+    { code: 'fr', label: 'Français', short: 'FR', flag: '🇫🇷' },
+    { code: 'ar', label: 'العربية', short: 'AR', flag: '🇲🇦' },
+    { code: 'en', label: 'English', short: 'EN', flag: '🇬🇧' }
+  ];
+
+  public get currentLanguage(): { code: SupportedLanguage; label: string; short: string; flag: string } {
+    const active = this.translationService.currentLang();
+    return this.languages.find(l => l.code === active) || this.languages[0];
+  }
+
+  public toggleLangDropdown(event?: Event): void {
+    if (event) event.stopPropagation();
+    this.isLangDropdownOpen.update(v => !v);
+  }
+
+  public readonly selectedEventTypeOption = signal<EventTypeOption | null>(null);
+
+  public getEventTypeLabel(opt: EventTypeOption, langOverride?: SupportedLanguage): string {
+    const lang = langOverride || this.translationService.currentLang();
+    if (lang === 'ar') return opt.labelAr;
+    if (lang === 'en') return opt.labelEn || opt.labelFr;
+    return opt.labelFr;
+  }
+
+  public getEventTypeSubtitle(opt: EventTypeOption, langOverride?: SupportedLanguage): string {
+    const lang = langOverride || this.translationService.currentLang();
+    if (lang === 'ar') return opt.defaultSubtitleAr;
+    if (lang === 'en') return opt.defaultSubtitleEn || opt.defaultSubtitleFr;
+    return opt.defaultSubtitleFr;
+  }
+
+  public selectLanguage(code: SupportedLanguage, event?: Event): void {
+    if (event) event.stopPropagation();
+    this.translationService.setLanguage(code);
+    this.isLangDropdownOpen.set(false);
+
+    const opt = this.selectedEventTypeOption() || this.eventTypes[0];
+    if (opt) {
+      this.selectedEventTypeOption.set(opt);
+      this.eventType.set(this.getEventTypeLabel(opt, code));
+      this.subtitle.set(this.getEventTypeSubtitle(opt, code));
+    }
+  }
+
+  @HostListener('document:click')
+  public onDocumentClick(): void {
+    this.isLangDropdownOpen.set(false);
+    this.isSubtitleDropdownOpen.set(false);
+  }
 
   // Stepper: 1 = Informations, 2 = Choix du modèle, 3 = Invités & WhatsApp
   public readonly currentStep = signal<1 | 2 | 3>(1);
@@ -180,9 +240,9 @@ export class InvitationExpress implements OnInit {
     }
   }
 
-  // Subtitle Autocomplete / Dropdown State (comme Image 2)
+  // Subtitle Autocomplete / Dropdown State (Multilingue FR / AR / EN)
   public readonly isSubtitleDropdownOpen = signal<boolean>(false);
-  public readonly allSubtitles: string[] = [
+  public readonly allSubtitlesFr: string[] = [
     'Le Mariage de',
     'Les Fiançailles de',
     'Soirée de Gala',
@@ -200,10 +260,54 @@ export class InvitationExpress implements OnInit {
     'Invitation d\'Exception'
   ];
 
+  public readonly allSubtitlesAr: string[] = [
+    'حفل زفاف',
+    'حفل خطوبة',
+    'حفل عشاء وسهرة فاخرة',
+    'عشاء عمل',
+    'مناسبة خاصة بالشركة',
+    'إطلاق منتج جديد',
+    'مؤتمر واستقبال',
+    'عيد ميلاد سعيد',
+    'استقبال مولود جديد',
+    'عقيقة مباركة',
+    'حفل ختان مبارك',
+    'ليلة حناء مباركة',
+    'حفل تخرج واحتفاء بالنجاح',
+    'لم شمل عائلي',
+    'دعوة خاصة واستثنائية'
+  ];
+
+  public readonly allSubtitlesEn: string[] = [
+    'The Wedding of',
+    'The Engagement of',
+    'Gala Evening',
+    'Business Dinner',
+    'Corporate Event',
+    'Product Launch',
+    'Conference & Reception',
+    'The Birthday of',
+    'Birth Celebration of',
+    'The Aqiqah of',
+    'The Circumcision of',
+    'Henna Night of',
+    'Graduation Celebration of',
+    'Family Reunion of',
+    'Special Invitation'
+  ];
+
+  public readonly allSubtitles = computed<string[]>(() => {
+    const lang = this.translationService.currentLang();
+    if (lang === 'ar') return this.allSubtitlesAr;
+    if (lang === 'en') return this.allSubtitlesEn;
+    return this.allSubtitlesFr;
+  });
+
   public readonly filteredSubtitles = computed(() => {
     const term = (this.subtitle() || '').toLowerCase().trim();
-    if (!term) return this.allSubtitles;
-    return this.allSubtitles.filter(s => s.toLowerCase().includes(term));
+    const list = this.allSubtitles();
+    if (!term) return list;
+    return list.filter(s => s.toLowerCase().includes(term));
   });
 
   // Step 3: Event Created & Guests Management
@@ -322,9 +426,33 @@ export class InvitationExpress implements OnInit {
   public readonly guestPage = signal<number>(1);
   public readonly guestPageSize = computed<number>(() => this.isMobile() ? 3 : 5);
   public readonly guestSearchTerm = signal<string>('');
+  public readonly guestFilterStatus = signal<'ALL' | 'PENDING' | 'SENT'>('ALL');
+
+  public readonly pendingGuestsCount = computed<number>(() => {
+    return Math.max(0, this.totalGuestsCount() - this.sentGuestsCount());
+  });
+
+  public setGuestFilterStatus(status: 'ALL' | 'PENDING' | 'SENT'): void {
+    this.guestFilterStatus.set(status);
+    this.guestPage.set(1);
+  }
+
+  public resetGuestFilters(): void {
+    this.guestSearchTerm.set('');
+    this.guestFilterStatus.set('ALL');
+    this.guestPage.set(1);
+  }
 
   public readonly filteredGuests = computed(() => {
-    const list = this.createdEvent()?.guests || [];
+    let list = this.createdEvent()?.guests || [];
+    const filter = this.guestFilterStatus();
+    
+    if (filter === 'SENT') {
+      list = list.filter(g => this.isGuestSent(g));
+    } else if (filter === 'PENDING') {
+      list = list.filter(g => !this.isGuestSent(g));
+    }
+
     const term = this.guestSearchTerm().toLowerCase().trim();
     if (!term) return list;
     return list.filter(g => 
@@ -383,100 +511,140 @@ export class InvitationExpress implements OnInit {
       id: 'MARIAGE',
       labelFr: 'Mariage',
       labelAr: 'حفل زفاف',
+      labelEn: 'Wedding',
       icon: 'fa-heart',
       defaultSubtitleFr: 'Le Mariage de',
       defaultSubtitleAr: 'حفل زفاف',
+      defaultSubtitleEn: 'The Wedding of',
       placeholderTitle: 'Ex: Sarah & Youssef',
+      placeholderTitleAr: 'مثال: سارة ويوسف',
+      placeholderTitleEn: 'e.g., Sarah & Youssef',
       categoryFilter: 'Tradition'
     },
     {
       id: 'FIANCAILLES',
       labelFr: 'Fiançailles',
       labelAr: 'خطوبة',
+      labelEn: 'Engagement',
       icon: 'fa-ring',
       defaultSubtitleFr: 'Les Fiançailles de',
       defaultSubtitleAr: 'حفل خطوبة',
+      defaultSubtitleEn: 'The Engagement of',
       placeholderTitle: 'Ex: Sofia & Mehdi',
+      placeholderTitleAr: 'مثال: صوفيا ومهدي',
+      placeholderTitleEn: 'e.g., Sofia & Mehdi',
       categoryFilter: 'Tradition'
     },
     {
       id: 'HENNE',
       labelFr: 'Henné',
       labelAr: 'ليلة الحناء',
+      labelEn: 'Henna Night',
       icon: 'fa-spa',
       defaultSubtitleFr: 'Soirée Henné de',
       defaultSubtitleAr: 'ليلة حناء',
+      defaultSubtitleEn: 'Henna Night of',
       placeholderTitle: 'Ex: Kenza',
+      placeholderTitleAr: 'مثال: كنزة',
+      placeholderTitleEn: 'e.g., Kenza',
       categoryFilter: 'Tradition'
     },
     {
       id: 'CIRCONCISION',
       labelFr: 'Circoncision',
       labelAr: 'حفل ختان',
+      labelEn: 'Circumcision',
       icon: 'fa-crown',
       defaultSubtitleFr: 'La Célébration de Circoncision de',
       defaultSubtitleAr: 'حفل ختان مبارك',
+      defaultSubtitleEn: 'Circumcision Celebration of',
       placeholderTitle: 'Ex: Rayan',
+      placeholderTitleAr: 'مثال: ريان',
+      placeholderTitleEn: 'e.g., Rayan',
       categoryFilter: 'Tradition'
     },
     {
       id: 'SBOU3',
       labelFr: 'Sbou3 & Aqiqah',
       labelAr: 'عقيقة وسبوع',
+      labelEn: 'Baby Shower & Aqiqah',
       icon: 'fa-baby',
       defaultSubtitleFr: 'La Célébration de Naissance de',
       defaultSubtitleAr: 'حفل عقيقة ومولود مبارك',
+      defaultSubtitleEn: 'Birth Celebration of',
       placeholderTitle: 'Ex: Amir',
+      placeholderTitleAr: 'مثال: أمير',
+      placeholderTitleEn: 'e.g., Amir',
       categoryFilter: 'Famille'
     },
     {
       id: 'ANNIVERSAIRE',
       labelFr: 'Anniversaire',
       labelAr: 'عيد ميلاد',
+      labelEn: 'Birthday',
       icon: 'fa-cake-candles',
       defaultSubtitleFr: 'L\'Anniversaire de',
       defaultSubtitleAr: 'عيد ميلاد سعيد',
+      defaultSubtitleEn: 'The Birthday of',
       placeholderTitle: 'Ex: Leila',
+      placeholderTitleAr: 'مثال: ليلى',
+      placeholderTitleEn: 'e.g., Leila',
       categoryFilter: 'Famille'
     },
     {
       id: 'DIPLOME',
       labelFr: 'Remise de Diplôme',
       labelAr: 'حفل تخرج',
+      labelEn: 'Graduation',
       icon: 'fa-graduation-cap',
       defaultSubtitleFr: 'Célébration de Diplôme de',
       defaultSubtitleAr: 'حفل تخرج واحتفاء بالنجاح',
+      defaultSubtitleEn: 'Graduation Celebration of',
       placeholderTitle: 'Ex: Docteur Anas',
+      placeholderTitleAr: 'مثال: الدكتور أنس',
+      placeholderTitleEn: 'e.g., Dr. Anas',
       categoryFilter: 'Scolaire'
     },
     {
       id: 'DINER',
       labelFr: 'Dîner & Soirée Gala',
       labelAr: 'عشاء واستقبال فاخر',
+      labelEn: 'Dinner & Gala Evening',
       icon: 'fa-martini-glass-citrus',
       defaultSubtitleFr: 'Soirée de Gala',
-      defaultSubtitleAr: 'حفل عشاء واستقبال',
+      defaultSubtitleAr: 'حفل عشاء وسهرة فاخرة',
+      defaultSubtitleEn: 'Gala Evening',
       placeholderTitle: 'Ex: Soirée Annuelle Tech Horizons',
+      placeholderTitleAr: 'مثال: السهرة السنوية آفاق التكنولوجيا',
+      placeholderTitleEn: 'e.g., Annual Tech Horizons Gala',
       categoryFilter: 'Corporate'
     },
     {
       id: 'CONFERENCE',
       labelFr: 'Conférence & Séminaire',
       labelAr: 'مؤتمر وندوة',
+      labelEn: 'Conference & Seminar',
       icon: 'fa-microphone-alt',
       defaultSubtitleFr: 'Conférence & Réception',
       defaultSubtitleAr: 'مؤتمر واستقبال',
+      defaultSubtitleEn: 'Conference & Reception',
       placeholderTitle: 'Ex: Forum & Séminaire 2026',
+      placeholderTitleAr: 'مثال: منتدى 2026',
+      placeholderTitleEn: 'e.g., Forum 2026',
       categoryFilter: 'Corporate'
     },
     {
       id: 'FAMILLE',
       labelFr: 'Fête de Famille',
       labelAr: 'لمة عائلية',
+      labelEn: 'Family Gathering',
       icon: 'fa-users',
       defaultSubtitleFr: 'Réunion de Famille de',
       defaultSubtitleAr: 'لم شمل عائلي',
+      defaultSubtitleEn: 'Family Reunion of',
       placeholderTitle: 'Ex: Famille Benkirane',
+      placeholderTitleAr: 'مثال: عائلة بنكيران',
+      placeholderTitleEn: 'e.g., Benkirane Family',
       categoryFilter: 'Famille'
     }
   ];
@@ -487,18 +655,20 @@ export class InvitationExpress implements OnInit {
     return this.eventTypes.filter(opt => 
       opt.labelFr.toLowerCase().includes(term) || 
       opt.labelAr.includes(term) ||
+      (opt.labelEn && opt.labelEn.toLowerCase().includes(term)) ||
       opt.id.toLowerCase().includes(term)
     );
   });
 
   public readonly titlePlaceholder = computed(() => {
-    const cur = (this.eventType() || '').trim().toLowerCase();
-    const match = this.eventTypes.find(opt => 
-      cur === opt.labelFr.toLowerCase() || 
-      cur === opt.id.toLowerCase() || 
-      cur.includes(opt.labelFr.toLowerCase())
-    );
-    return match?.placeholderTitle || 'Ex: Mariage de Sarah & Youssef, Soirée Henné de Kenza...';
+    const opt = this.selectedEventTypeOption();
+    const lang = this.translationService.currentLang();
+    if (opt) {
+      if (lang === 'ar') return opt.placeholderTitleAr || 'مثال: سارة ويوسف';
+      if (lang === 'en') return opt.placeholderTitleEn || 'e.g., Sarah & Youssef';
+      return opt.placeholderTitle || 'Ex: Sarah & Youssef';
+    }
+    return lang === 'ar' ? 'مثال: حفل زفاف سارة ويوسف' : (lang === 'en' ? 'e.g., Sarah & Youssef Wedding' : 'Ex: Mariage de Sarah & Youssef');
   });
 
   public readonly recommendedTemplates = computed(() => {
@@ -595,8 +765,9 @@ export class InvitationExpress implements OnInit {
   }
 
   public selectEventType(option: EventTypeOption): void {
-    this.eventType.set(option.labelFr);
-    this.subtitle.set(option.defaultSubtitleFr);
+    this.selectedEventTypeOption.set(option);
+    this.eventType.set(this.getEventTypeLabel(option));
+    this.subtitle.set(this.getEventTypeSubtitle(option));
     this.isEventTypeDropdownOpen.set(false);
   }
 
@@ -622,22 +793,26 @@ export class InvitationExpress implements OnInit {
     // Smart detection: propose matching welcome subtitle when typing
     const match = this.eventTypes.find(opt => 
       low === opt.labelFr.toLowerCase() ||
+      low === opt.labelAr.toLowerCase() ||
+      low === (opt.labelEn || '').toLowerCase() ||
       low === opt.id.toLowerCase() ||
       low.includes(opt.labelFr.toLowerCase()) ||
-      (opt.id === 'MARIAGE' && (low.includes('mariage') || low.includes('زفاف') || low.includes('عرس'))) ||
-      (opt.id === 'FIANCAILLES' && (low.includes('fianc') || low.includes('خطوب'))) ||
+      low.includes(opt.labelAr) ||
+      (opt.id === 'MARIAGE' && (low.includes('mariage') || low.includes('زفاف') || low.includes('عرس') || low.includes('wedding'))) ||
+      (opt.id === 'FIANCAILLES' && (low.includes('fianc') || low.includes('خطوب') || low.includes('engagement'))) ||
       (opt.id === 'HENNE' && (low.includes('henn') || low.includes('حناء') || low.includes('حنة'))) ||
-      (opt.id === 'CIRCONCISION' && (low.includes('circonc') || low.includes('tahra') || low.includes('ختان'))) ||
-      (opt.id === 'SBOU3' && (low.includes('sbou') || low.includes('aqiq') || low.includes('naissance') || low.includes('عقيق') || low.includes('سبوع'))) ||
+      (opt.id === 'CIRCONCISION' && (low.includes('circonc') || low.includes('tahra') || low.includes('ختان') || low.includes('circumcision'))) ||
+      (opt.id === 'SBOU3' && (low.includes('sbou') || low.includes('aqiq') || low.includes('naissance') || low.includes('عقيق') || low.includes('سبوع') || low.includes('shower'))) ||
       (opt.id === 'ANNIVERSAIRE' && (low.includes('anniv') || low.includes('birthday') || low.includes('ميلاد'))) ||
       (opt.id === 'DIPLOME' && (low.includes('dipl') || low.includes('soutenance') || low.includes('graduat') || low.includes('تخرج'))) ||
       (opt.id === 'DINER' && (low.includes('din') || low.includes('dîn') || low.includes('gala') || low.includes('عشاء'))) ||
       (opt.id === 'CONFERENCE' && (low.includes('conf') || low.includes('semin') || low.includes('sémin') || low.includes('مؤتمر') || low.includes('ندوة'))) ||
-      (opt.id === 'FAMILLE' && (low.includes('famill') || low.includes('عائل')))
+      (opt.id === 'FAMILLE' && (low.includes('famill') || low.includes('عائل') || low.includes('family')))
     );
 
     if (match) {
-      this.subtitle.set(match.defaultSubtitleFr);
+      this.selectedEventTypeOption.set(match);
+      this.subtitle.set(this.getEventTypeSubtitle(match));
     }
   }
 
@@ -673,8 +848,12 @@ export class InvitationExpress implements OnInit {
   }
 
   public isOptionSelected(opt: EventTypeOption): boolean {
+    if (this.selectedEventTypeOption()?.id === opt.id) return true;
     const cur = (this.eventType() || '').trim().toLowerCase();
-    return cur === opt.labelFr.toLowerCase() || cur === opt.id.toLowerCase();
+    return cur === opt.labelFr.toLowerCase() || 
+           cur === opt.labelAr.toLowerCase() || 
+           cur === (opt.labelEn || '').toLowerCase() || 
+           cur === opt.id.toLowerCase();
   }
 
   public loadTemplates(): void {
@@ -902,6 +1081,7 @@ Kenza Tazi: +212664567890
   public openWhatsApp(guest: ExpressGuestResponse): void {
     guest.isSent = true;
     localStorage.setItem(`express_guest_${guest.id}_sent`, 'true');
+    this.createdEvent.update(evt => evt ? { ...evt, guests: [...evt.guests] } : null);
     
     const origin = window.location.origin;
     const rsvpToken = guest.invitationToken || guest.rsvpLink?.replace('/rsvp/', '') || '';

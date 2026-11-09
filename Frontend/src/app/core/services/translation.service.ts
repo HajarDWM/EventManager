@@ -196,12 +196,15 @@ export class TranslationService {
       targetLang = this.getSavedAdminLanguage();
     }
 
+    // Immediately update language signal and DOM direction to avoid any UI lag or race conditions
+    this.currentLang.set(targetLang);
+    if (typeof document !== 'undefined') {
+      document.documentElement.dir = (isPublic && targetLang === 'ar') ? 'rtl' : 'ltr';
+      document.documentElement.lang = targetLang;
+    }
+
     if (this.currentLang() === targetLang && this.isLoaded()) {
-      if (typeof document !== 'undefined') {
-        document.documentElement.dir = (isPublic && targetLang === 'ar') ? 'rtl' : 'ltr';
-        document.documentElement.lang = targetLang;
-      }
-      return;
+      // Reload dictionary
     }
     this.loadLanguage(targetLang).subscribe();
   }

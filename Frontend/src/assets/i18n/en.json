@@ -1438,5 +1438,97 @@
       "COPYRIGHT_SUB": "• All rights reserved",
       "BACK_TO_TOP": "Back to top"
     }
+  },
+  "EXPRESS": {
+    "HEADER": {
+      "BACK_TO_HOME": "Back to Home",
+      "BADGE_FREE": "100% Free Express Mode",
+      "TITLE": "Create your",
+      "TITLE_HIGHLIGHT": "Digital Invitation",
+      "TITLE_END": "in 3 minutes",
+      "SUBTITLE": "Fill in the details, choose your Moroccan template, and send directly via WhatsApp to each guest."
+    },
+    "STEPPER": {
+      "STEP_1": "Event",
+      "STEP_2": "Template",
+      "STEP_3": "Guests & WhatsApp"
+    },
+    "TOOLBAR": {
+      "ACTIVE_INVITATION": "Active invitation:",
+      "EDIT": "Edit",
+      "MY_INVITATIONS": "My invitations",
+      "NEW": "New"
+    },
+    "STEP1": {
+      "TITLE": "Event Type & Name",
+      "TYPE_LABEL": "Event Type or Celebration",
+      "TYPE_PLACEHOLDER": "Type or choose (e.g., Wedding, Gala, Party...)",
+      "SUBTITLE_LABEL": "Subtitle",
+      "SUBTITLE_HINT": "above the name",
+      "SUBTITLE_PLACEHOLDER": "e.g., The Wedding of, Gala Evening...",
+      "TITLE_LABEL": "Event Title",
+      "TITLE_HINT": "main name",
+      "DATE_LABEL": "Event Date",
+      "TIME_LABEL": "Start Time",
+      "LOCATION_LABEL": "Venue Hall or Address",
+      "LOCATION_PLACEHOLDER": "e.g., Rose Palace Hall, Casablanca",
+      "MAPS_LABEL": "Google Maps GPS Link",
+      "DATE_HINT": "Date and time can be modified later.",
+      "LOCATION_HINT": "Specify the address or venue name for your guests.",
+      "BTN_NEXT": "Continue",
+      "BTN_SAVE_CHANGES": "Save Changes"
+    },
+    "STEP2": {
+      "TITLE": "Choose your Invitation Template",
+      "ALL_TEMPLATES": "All Templates",
+      "SELECTED": "Selected",
+      "CHOOSE": "Choose",
+      "VIEW_PREVIEW": "Preview",
+      "BTN_BACK": "Back to Details",
+      "BTN_NEXT": "Confirm & Proceed to Guests"
+    },
+    "STEP3": {
+      "TAB_GUESTS": "My Guests & RSVP Tracking",
+      "TAB_PUBLIC": "Public Link (Statuses & Groups)",
+      "BTN_ADD_GUESTS": "Add Guests",
+      "BTN_CLOSE_ADD": "Close",
+      "METHOD_LABEL": "Add Method:",
+      "MODE_SINGLE": "One by One",
+      "MODE_BULK": "Bulk Paste",
+      "INPUT_NAME_LABEL": "Guest Full Name",
+      "INPUT_NAME_PLACEHOLDER": "e.g., Karim Benjelloun",
+      "INPUT_PHONE_LABEL": "WhatsApp Number",
+      "INPUT_PHONE_PLACEHOLDER": "06XXXXXXXX or +2126...",
+      "BTN_ADD_ONE": "Add Guest",
+      "BULK_PASTE_TITLE": "Copy & paste your contacts list:",
+      "BULK_PASTE_HINT": "One line per guest (Name: Phone or Name - Phone)",
+      "BTN_IMPORT_BULK": "Import Guests",
+      "WA_PROGRESS": "WhatsApp Delivery Progress:",
+      "SENT_LABEL": "sent",
+      "SEARCH_PLACEHOLDER": "Search name or phone...",
+      "RESULTS_COUNT": "result(s)",
+      "FILTER_ALL": "All",
+      "FILTER_PENDING": "Pending",
+      "FILTER_SENT": "Sent",
+      "EMPTY_NO_GUESTS": "No guests added yet. Fill in the form above to start sending your invitations!",
+      "EMPTY_SEARCH": "No guests match",
+      "ALL_SENT_SUCCESS": "All guests have already received their WhatsApp invitation! 🎉",
+      "NONE_SENT_YET": "No WhatsApp invitations sent yet.",
+      "RESET_FILTERS": "Reset Filters",
+      "TH_GUEST": "Guest",
+      "TH_WHATSAPP": "WhatsApp",
+      "TH_STATUS": "Status",
+      "TH_ACTION": "WhatsApp Action",
+      "STATUS_CONFIRMED": "Attending ✅",
+      "STATUS_DECLINED": "Declined ❌",
+      "STATUS_PENDING": "Pending ⏳",
+      "BTN_SEND": "Send",
+      "BTN_RESEND": "Resend",
+      "PUBLIC_LINK_TITLE": "Public Link for Statuses & Groups",
+      "PUBLIC_LINK_DESC": "Share this link on your WhatsApp statuses, Instagram stories, or family groups to allow everyone to RSVP.",
+      "BTN_COPY_LINK": "Copy Link",
+      "LINK_COPIED": "Link copied!",
+      "BTN_SHARE_WHATSAPP": "Share on WhatsApp"
+    }
   }
 }

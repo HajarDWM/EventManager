@@ -963,5 +963,97 @@
       "COPYRIGHT_SUB": "• جميع الحقوق محفوظة",
       "BACK_TO_TOP": "إلى الأعلى"
     }
+  },
+  "EXPRESS": {
+    "HEADER": {
+      "BACK_TO_HOME": "العودة للرئيسية",
+      "BADGE_FREE": "وضع إكسبريس مجاني 100%",
+      "TITLE": "أنشئ",
+      "TITLE_HIGHLIGHT": "دعوتك الرقمية",
+      "TITLE_END": "في 3 دقائق",
+      "SUBTITLE": "املأ التفاصيل، اختر النموذج المغربي المناسب، وأرسل الدعوة مباشرة عبر واتساب لكل مدعو."
+    },
+    "STEPPER": {
+      "STEP_1": "المناسبة",
+      "STEP_2": "النموذج",
+      "STEP_3": "المدعوون والواتساب"
+    },
+    "TOOLBAR": {
+      "ACTIVE_INVITATION": "الدعوة الحالية :",
+      "EDIT": "تعديل",
+      "MY_INVITATIONS": "دعواتي",
+      "NEW": "جديد"
+    },
+    "STEP1": {
+      "TITLE": "نوع واسم المناسبة",
+      "TYPE_LABEL": "نوع المناسبة أو الاحتفال",
+      "TYPE_PLACEHOLDER": "اكتب أو اختر (مثال: حفل زفاف، عشاء، خطوبة...)",
+      "SUBTITLE_LABEL": "العنوان التمهيدي",
+      "SUBTITLE_HINT": "أعلى الاسم",
+      "SUBTITLE_PLACEHOLDER": "مثال: حفل زفاف، سهرة فاخرة...",
+      "TITLE_LABEL": "عنوان الدعوة",
+      "TITLE_HINT": "الاسم الرئيسي",
+      "DATE_LABEL": "تاريخ المناسبة",
+      "TIME_LABEL": "وقت البداية",
+      "LOCATION_LABEL": "قاعة الحفلات أو العنوان",
+      "LOCATION_PLACEHOLDER": "مثال: قاعة قصر الورود، الدار البيضاء",
+      "MAPS_LABEL": "رابط خريطة Google Maps",
+      "DATE_HINT": "يمكنك تعديل التاريخ والوقت لاحقاً.",
+      "LOCATION_HINT": "حدد عنوان أو اسم القاعة لتسهيل وصول ضيوفك.",
+      "BTN_NEXT": "متابعة",
+      "BTN_SAVE_CHANGES": "حفظ التعديلات"
+    },
+    "STEP2": {
+      "TITLE": "اختر نموذج الدعوة",
+      "ALL_TEMPLATES": "جميع النماذج",
+      "SELECTED": "تم الاختيار",
+      "CHOOSE": "اختيار",
+      "VIEW_PREVIEW": "معاينة",
+      "BTN_BACK": "العودة للتفاصيل",
+      "BTN_NEXT": "تأكيد والانتقال للمدعوين"
+    },
+    "STEP3": {
+      "TAB_GUESTS": "قائمة المدعوين وتأكيد الحضور",
+      "TAB_PUBLIC": "رابط عام (للحالات والمجموعات)",
+      "BTN_ADD_GUESTS": "إضافة مدعوين",
+      "BTN_CLOSE_ADD": "إغلاق الإضافة",
+      "METHOD_LABEL": "طريقة الإضافة :",
+      "MODE_SINGLE": "واحد بواحد",
+      "MODE_BULK": "دفعة واحدة",
+      "INPUT_NAME_LABEL": "الاسم الكامل للمدعو",
+      "INPUT_NAME_PLACEHOLDER": "مثال: كريم بنجلون",
+      "INPUT_PHONE_LABEL": "رقم الواتساب",
+      "INPUT_PHONE_PLACEHOLDER": "06XXXXXXXX أو +2126...",
+      "BTN_ADD_ONE": "إضافة المدعو",
+      "BULK_PASTE_TITLE": "انسخ والصق قائمة الأرقام والأسماء :",
+      "BULK_PASTE_HINT": "سطر لكل مدعو (الاسم: رقم الهاتف أو الاسم - رقم الهاتف)",
+      "BTN_IMPORT_BULK": "استيراد المدعوين",
+      "WA_PROGRESS": "تقدم إرسال الدعوات عبر واتساب :",
+      "SENT_LABEL": "تم إرسالها",
+      "SEARCH_PLACEHOLDER": "بحث بالاسم أو الرقم...",
+      "RESULTS_COUNT": "نتيجة",
+      "FILTER_ALL": "الكل",
+      "FILTER_PENDING": "في الانتظار",
+      "FILTER_SENT": "تم الإرسال",
+      "EMPTY_NO_GUESTS": "لم تتم إضافة أي مدعو حتى الآن. املأ النموذج أعلاه لبدء إرسال دعواتك!",
+      "EMPTY_SEARCH": "لا توجد نتائج مطابقة لـ",
+      "ALL_SENT_SUCCESS": "تم إرسال الدعوة لجميع المدعوين بنجاح! 🎉",
+      "NONE_SENT_YET": "لم يتم إرسال أي دعوة عبر واتساب بعد.",
+      "RESET_FILTERS": "إعادة تعيين الفلاتر",
+      "TH_GUEST": "المدعو",
+      "TH_WHATSAPP": "واتساب",
+      "TH_STATUS": "حالة الحضور",
+      "TH_ACTION": "إرسال واتساب",
+      "STATUS_CONFIRMED": "حاضر ✅",
+      "STATUS_DECLINED": "معتذر ❌",
+      "STATUS_PENDING": "في الانتظار ⏳",
+      "BTN_SEND": "إرسال",
+      "BTN_RESEND": "إعادة إرسال",
+      "PUBLIC_LINK_TITLE": "الرابط العام للحالات والمجموعات",
+      "PUBLIC_LINK_DESC": "شارك هذا الرابط في حالة واتساب أو ستوري إنستغرام أو مجموعات العائلة ليتمكن الجميع من تأكيد الحضور.",
+      "BTN_COPY_LINK": "نسخ الرابط",
+      "LINK_COPIED": "تم نسخ الرابط!",
+      "BTN_SHARE_WHATSAPP": "مشاركة عبر واتساب"
+    }
   }
 }

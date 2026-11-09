@@ -1,95 +1,145 @@
-<div class="express-invitation-container min-vh-100 bg-body-light py-3 py-md-4">
+<div class="express-invitation-container min-vh-100 bg-body-light py-2 py-md-3" [dir]="translationService.isRtl() ? 'rtl' : 'ltr'">
   <div class="container" style="max-width: 880px;">
+
+    <!-- Top Navigation Bar : Logo Return Link (Left) & Language Selector (Right) -->
+    <header class="d-flex align-items-center justify-content-between mb-2 mb-sm-3 py-1">
+      <!-- Left: Logo / Back Link to Landing -->
+      <a routerLink="/" class="d-inline-flex align-items-center gap-2 text-decoration-none text-dark hover-primary" [title]="'EXPRESS.HEADER.BACK_TO_HOME' | translate">
+        <div class="brand-crest shadow-2xs d-flex align-items-center justify-content-center rounded-circle bg-white border" style="width: 32px; height: 32px;">
+          <i class="fa fa-gem text-warning fs-xs"></i>
+        </div>
+        <span class="fs-sm fw-bold">Event<span class="text-primary">Manager</span></span>
+      </a>
+
+      <!-- Right: Language Switcher Dropdown (FR / AR / EN) -->
+      <div class="position-relative d-inline-block lang-dropdown-container">
+        <button type="button" 
+                class="btn btn-sm btn-lang-switcher rounded-pill px-2.5 py-1 d-flex align-items-center gap-1.5 shadow-2xs"
+                [class.active]="isLangDropdownOpen()"
+                (click)="toggleLangDropdown($event)"
+                title="Changer de langue / Translate / تغيير اللغة">
+          <i class="fa fa-globe text-primary fs-xs"></i>
+          <span class="fs-xs fw-bold text-dark">{{ currentLanguage.short }}</span>
+          <i class="fa fa-chevron-down fs-5xs text-muted transition-transform" 
+             [class.rotate-180]="isLangDropdownOpen()"></i>
+        </button>
+
+        <!-- Dropdown Menu -->
+        @if (isLangDropdownOpen()) {
+          <div class="lang-dropdown-menu rounded-3 py-1 bg-white border shadow-sm animate__animated animate__fadeIn">
+            @for (lang of languages; track lang.code) {
+              <button type="button" 
+                      class="dropdown-item d-flex align-items-center justify-content-between px-3 py-1.5 fs-xs w-100"
+                      [class.active-lang]="translationService.currentLang() === lang.code"
+                      (click)="selectLanguage(lang.code, $event)">
+                <span class="d-flex align-items-center gap-2">
+                  <span class="badge rounded-pill bg-light text-primary border px-1.5 py-0.5 fs-5xs fw-bold">{{ lang.short }}</span>
+                  <span class="fw-semibold text-dark">{{ lang.label }}</span>
+                </span>
+                @if (translationService.currentLang() === lang.code) {
+                  <i class="fa fa-check text-primary fs-4xs"></i>
+                }
+              </button>
+            }
+          </div>
+        }
+      </div>
+    </header>
 
     <!-- Top Header / Branding (Compact OneUI 5 Style) -->
     <div class="top-header text-center mb-2 mb-sm-3">
       <div class="d-inline-flex align-items-center gap-1.5 mb-1.5">
         <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2.5 py-1 rounded-pill fs-3xs fw-bold">
-          <i class="fa fa-bolt me-1 text-primary"></i> Mode Express 100% Gratuit
+          <i class="fa fa-bolt me-1 text-primary"></i> {{ 'EXPRESS.HEADER.BADGE_FREE' | translate }}
         </span>
       </div>
       <h1 class="h3 fw-bold text-dark mb-1">
-        Créez votre <span class="text-primary">Invitation Digitale</span> en 3 minutes
+        {{ 'EXPRESS.HEADER.TITLE' | translate }} <span class="text-primary">{{ 'EXPRESS.HEADER.TITLE_HIGHLIGHT' | translate }}</span> {{ 'EXPRESS.HEADER.TITLE_END' | translate }}
       </h1>
       <p class="text-muted fs-xs mb-0">
-        Remplissez les détails, choisissez votre modèle marocain, et envoyez directement via WhatsApp à chaque invité.
+        {{ 'EXPRESS.HEADER.SUBTITLE' | translate }}
       </p>
     </div>
 
     <!-- Stepper Navigation (OneUI 5 Form Wizard Navigation) -->
-    <div class="wizard-nav block block-rounded shadow-sm border border-light mb-2 mb-sm-3">
-      <div class="block-content p-1.5 p-sm-2.5">
-        <div class="nav nav-pills nav-justified gap-1 gap-sm-2">
+    <!-- Stepper Navigation (Ligne 1) & Active Event Sub-bar (Ligne 2) -->
+    <div class="wizard-nav block block-rounded shadow-sm border border-light mb-2.5 bg-white overflow-hidden">
+      <div class="p-2 p-sm-2.5">
+        
+        <!-- Ligne 1 : Stepper Pleine Largeur (Événement ➔ Modèle ➔ Invités & WhatsApp) -->
+        <div class="nav nav-pills nav-justified gap-1 gap-sm-2" [class.mb-2]="createdEvent() || myInvitations().length > 0">
           <div class="nav-item">
             <button type="button" 
-                    class="nav-link rounded-pill py-1 py-sm-1.5 px-1.5 px-sm-3 d-flex align-items-center justify-content-center gap-1 gap-sm-1.5 text-truncate"
+                    class="nav-link rounded-pill py-1 py-sm-1.5 px-2 px-sm-3 d-flex align-items-center justify-content-center gap-1.5 fs-xs fw-bold text-truncate w-100"
                     [ngClass]="currentStep() === 1 ? 'active shadow-sm' : (currentStep() > 1 ? 'btn-alt-success text-success' : 'btn-alt-secondary text-muted')"
                     (click)="goToStep(1)">
               <span class="step-num">
                 <i class="fa fa-check" *ngIf="currentStep() > 1"></i>
                 <span *ngIf="currentStep() <= 1">1</span>
               </span>
-              <span class="fs-xs fw-bold">Événement</span>
+              <span>{{ 'EXPRESS.STEPPER.STEP_1' | translate }}</span>
             </button>
           </div>
+
           <div class="nav-item">
             <button type="button" 
-                    class="nav-link rounded-pill py-1 py-sm-1.5 px-1.5 px-sm-3 d-flex align-items-center justify-content-center gap-1 gap-sm-1.5 text-truncate"
+                    class="nav-link rounded-pill py-1 py-sm-1.5 px-2 px-sm-3 d-flex align-items-center justify-content-center gap-1.5 fs-xs fw-bold text-truncate w-100"
                     [ngClass]="currentStep() === 2 ? 'active shadow-sm' : (currentStep() > 2 ? 'btn-alt-success text-success' : 'btn-alt-secondary text-muted')"
                     (click)="goToStep(2)">
               <span class="step-num">
                 <i class="fa fa-check" *ngIf="currentStep() > 2"></i>
                 <span *ngIf="currentStep() <= 2">2</span>
               </span>
-              <span class="fs-xs fw-bold">Modèle</span>
+              <span>{{ 'EXPRESS.STEPPER.STEP_2' | translate }}</span>
             </button>
           </div>
+
           <div class="nav-item">
             <button type="button" 
-                    class="nav-link rounded-pill py-1 py-sm-1.5 px-1.5 px-sm-3 d-flex align-items-center justify-content-center gap-1 gap-sm-1.5 text-truncate"
+                    class="nav-link rounded-pill py-1 py-sm-1.5 px-2 px-sm-3 d-flex align-items-center justify-content-center gap-1.5 fs-xs fw-bold text-truncate w-100"
                     [ngClass]="currentStep() === 3 ? 'active bg-success text-white shadow-sm' : 'btn-alt-secondary text-muted'"
                     [disabled]="!createdEvent()"
                     (click)="currentStep.set(3)">
               <span class="step-num">
                 <i class="fab fa-whatsapp"></i>
               </span>
-              <span class="fs-xs fw-bold">Invités & WhatsApp</span>
+              <span>{{ 'EXPRESS.STEPPER.STEP_3' | translate }}</span>
             </button>
           </div>
         </div>
-      </div>
-    </div>
 
-    <!-- Global Alert / Error Messages -->
-    <div *ngIf="submissionError()" class="alert alert-danger d-flex align-items-center gap-2 shadow-sm rounded-3 mb-2.5 py-1.5 px-3 fs-xs" role="alert">
-      <i class="fa fa-triangle-exclamation flex-shrink-0"></i>
-      <div class="fw-medium">{{ submissionError() }}</div>
-      <button type="button" class="btn-close ms-auto" (click)="submissionError.set('')"></button>
-    </div>
+        <!-- Ligne 2 : Sub-bar / Toolbar Compacte (Invitation active + Actions) -->
+        <div class="pt-2 border-top d-flex align-items-center justify-content-between flex-wrap gap-2 fs-xs" *ngIf="createdEvent() || myInvitations().length > 0">
+          <!-- Gauche : Statut de l'invitation active -->
+          <div class="d-flex align-items-center gap-1.5">
+            <span *ngIf="createdEvent()" class="d-inline-flex align-items-center gap-1.5 text-dark fs-4xs">
+              <i class="fa fa-circle-check text-success"></i>
+              <span class="text-muted">{{ 'EXPRESS.TOOLBAR.ACTIVE_INVITATION' | translate }}</span>
+              <strong class="text-dark bg-body-light px-2 py-0.5 rounded-pill border">« {{ createdEvent()?.title }} »</strong>
+            </span>
+            <span *ngIf="!createdEvent()" class="text-muted fs-4xs">
+              <i class="fa fa-folder-open text-primary me-1"></i>{{ myInvitations().length }} invitation(s) sauvegardée(s)
+            </span>
+          </div>
 
-    <!-- Active Event Reminder (Visible across all 3 steps whenever an event is active or saved) -->
-    <div *ngIf="createdEvent() || myInvitations().length > 0" class="alert alert-info py-1.5 px-3 fs-xs rounded-pill d-flex flex-wrap align-items-center justify-content-between gap-1 mb-2 mb-sm-2.5 shadow-2xs">
-      <div class="d-flex align-items-center gap-1.5">
-        <i class="fa fa-circle-check text-success" *ngIf="createdEvent()"></i>
-        <i class="fa fa-folder-open text-primary" *ngIf="!createdEvent()"></i>
-        <span *ngIf="createdEvent()">Invitation active : <strong>« {{ createdEvent()?.title }} »</strong></span>
-        <span *ngIf="!createdEvent()">Vous avez <strong>{{ myInvitations().length }}</strong> invitation(s) sauvegardée(s)</span>
-      </div>
-      <div class="d-flex align-items-center gap-1">
-        <button *ngIf="createdEvent() && currentStep() === 3" type="button" class="btn btn-xs btn-alt-primary rounded-pill px-2.5 py-0.5 fs-4xs fw-bold" (click)="goToStep(1)">
-          <i class="fa fa-pencil me-1"></i> Modifier
-        </button>
+          <!-- Droite : Mes Invitations + Nouveau -->
+          <div class="d-flex align-items-center gap-1.5">
+            <button *ngIf="myInvitations().length > 0" type="button" 
+                    class="btn btn-xs btn-alt-secondary rounded-pill px-2.5 py-0.5 fs-4xs fw-bold d-inline-flex align-items-center gap-1 shadow-2xs" 
+                    (click)="openMyInvitationsModal()" [title]="'EXPRESS.TOOLBAR.MY_INVITATIONS' | translate">
+              <i class="fa fa-folder-open text-primary"></i>
+              <span>{{ 'EXPRESS.TOOLBAR.MY_INVITATIONS' | translate }}</span>
+              <span class="badge bg-primary text-white rounded-pill px-1.5 py-0.2 fs-5xs">{{ myInvitations().length }}</span>
+            </button>
 
-        <!-- Button Mes invitations -->
-        <button *ngIf="myInvitations().length > 0" type="button" class="btn btn-xs btn-alt-primary rounded-pill px-2.5 py-0.5 fs-4xs fw-bold d-inline-flex align-items-center gap-1" (click)="openMyInvitationsModal()" title="Voir toutes mes invitations">
-          <i class="fa fa-folder-open text-primary"></i>
-          <span>Mes invitations</span>
-          <span class="badge bg-primary text-white rounded-pill px-1.5 py-0.2 fs-5xs ms-0.5">{{ myInvitations().length }}</span>
-        </button>
+            <button type="button" class="btn btn-xs btn-link text-muted hover-dark text-decoration-none rounded-pill px-1.5 py-0.5 fs-4xs d-inline-flex align-items-center gap-1" 
+                    (click)="startNewInvitation()" [title]="'EXPRESS.TOOLBAR.NEW' | translate">
+              <i class="fa fa-plus fs-5xs"></i>
+              <span>{{ 'EXPRESS.TOOLBAR.NEW' | translate }}</span>
+            </button>
+          </div>
+        </div>
 
-        <button type="button" class="btn btn-xs btn-alt-secondary rounded-pill px-2 py-0.5 fs-4xs" (click)="startNewInvitation()">
-          Nouveau
-        </button>
       </div>
     </div>
 
@@ -99,7 +149,7 @@
     <div *ngIf="currentStep() === 1" class="block block-rounded shadow-sm border border-light overflow-hidden animate__animated animate__fadeIn">
       <div class="block-header block-header-default bg-white border-bottom p-2 p-sm-3">
         <h3 class="block-title fs-sm fw-bold mb-0">
-          <i class="fa fa-calendar-star text-primary me-2"></i>Étape 1 : Les détails de votre célébration
+          <i class="fa fa-calendar-star text-primary me-2"></i>{{ 'EXPRESS.STEP1.TITLE' | translate }}
         </h3>
       </div>
       <div class="block-content p-2.5 p-sm-3.5">
@@ -107,7 +157,7 @@
         <!-- 1. Type d'Événement (Autosuggestion / Autocomplete + Saisie libre) -->
         <div class="mb-2 mb-sm-2.5 position-relative">
           <label class="form-label fs-xs fw-bold text-dark mb-1" for="express-event-type">
-            <i class="fa fa-wand-magic-sparkles text-primary me-1"></i> Type d'événement ou célébration <span class="text-danger">*</span>
+            <i class="fa fa-wand-magic-sparkles text-primary me-1"></i> {{ 'EXPRESS.STEP1.TYPE_LABEL' | translate }} <span class="text-danger">*</span>
           </label>
 
           <div class="input-group input-group-sm shadow-2xs">
@@ -116,7 +166,7 @@
             </span>
             <input type="text" id="express-event-type" class="form-control form-control-alt fs-sm"
                    autocomplete="off"
-                   placeholder="Tapez ou choisissez (Ex: Mariage, Dîner, Fête...)"
+                   [placeholder]="'EXPRESS.STEP1.TYPE_PLACEHOLDER' | translate"
                    [ngModel]="eventType()"
                    (ngModelChange)="onEventTypeInputChange($event)"
                    (focus)="isEventTypeDropdownOpen.set(true)"
@@ -134,7 +184,7 @@
                class="position-absolute w-100 bg-white border border-light shadow-lg rounded-3 mt-1 py-1"
                style="max-height: 220px; overflow-y: auto; z-index: 1060;">
             <div *ngIf="filteredEventTypes().length === 0" class="px-3 py-1.5 text-muted fs-xs italic border-bottom">
-              <i class="fa fa-check text-success me-1"></i> Utiliser « <strong>{{ eventType() }}</strong> » (Type personnalisé)
+              <i class="fa fa-check text-success me-1"></i> Utiliser « <strong>{{ eventType() }}</strong> »
             </div>
             <div *ngFor="let opt of filteredEventTypes()" 
                  class="px-3 py-1.5 fs-sm text-dark d-flex align-items-center justify-content-between cursor-pointer"
@@ -144,8 +194,8 @@
                  (mousedown)="selectEventType(opt); $event.preventDefault()">
               <div class="d-flex align-items-center gap-2">
                 <i class="fa {{ opt.icon }} text-primary fs-xs" style="width: 16px;"></i>
-                <span>{{ opt.labelFr }}</span>
-                <span class="opacity-75 fs-4xs text-muted">({{ opt.labelAr }})</span>
+                <span>{{ getEventTypeLabel(opt) }}</span>
+                <span class="opacity-75 fs-4xs text-muted" *ngIf="translationService.currentLang() !== 'ar'">({{ opt.labelAr }})</span>
               </div>
               <i class="fa fa-check text-primary fs-xs" *ngIf="isOptionSelected(opt)"></i>
             </div>
@@ -157,13 +207,13 @@
           <!-- Sous-titre de l'invitation (Dropdown / Autocomplete) -->
           <div class="col-md-6 position-relative">
             <label class="form-label fs-xs fw-bold text-dark mb-1" for="express-subtitle">
-              <i class="fa fa-tag text-primary me-1"></i> Sous-titre <span class="text-muted fw-normal fs-4xs">(au-dessus du nom)</span>
+              <i class="fa fa-tag text-primary me-1"></i> {{ 'EXPRESS.STEP1.SUBTITLE_LABEL' | translate }} <span class="text-muted fw-normal fs-4xs">({{ 'EXPRESS.STEP1.SUBTITLE_HINT' | translate }})</span>
             </label>
 
             <div class="input-group">
               <input type="text" id="express-subtitle" class="form-control form-control-alt fs-sm"
                      autocomplete="off"
-                     placeholder="Ex: Le Mariage de, Soirée de Gala..."
+                     [placeholder]="'EXPRESS.STEP1.SUBTITLE_PLACEHOLDER' | translate"
                      [ngModel]="subtitle()"
                      (ngModelChange)="onSubtitleInputChange($event)"
                      (focus)="isSubtitleDropdownOpen.set(true)"
@@ -198,7 +248,7 @@
           <!-- Titre de l'événement -->
           <div class="col-md-6">
             <label class="form-label fs-xs fw-bold text-dark mb-1" for="express-title">
-              Titre de l'événement <span class="text-danger">*</span> <span class="text-muted fw-normal fs-4xs">(nom principal)</span>
+              {{ 'EXPRESS.STEP1.TITLE_LABEL' | translate }} <span class="text-danger">*</span> <span class="text-muted fw-normal fs-4xs">({{ 'EXPRESS.STEP1.TITLE_HINT' | translate }})</span>
             </label>
             <input type="text" id="express-title" class="form-control form-control-alt fs-sm"
                    [placeholder]="titlePlaceholder()"
@@ -210,7 +260,7 @@
         <div class="row g-2 g-sm-2.5 mb-2 mb-sm-2.5">
           <div class="col-7 col-md-6">
             <label class="form-label fs-xs fw-semibold mb-1" for="express-date">
-              <i class="far fa-calendar me-1 text-primary"></i> Date de l'événement <span class="text-danger">*</span>
+              <i class="far fa-calendar me-1 text-primary"></i> {{ 'EXPRESS.STEP1.DATE_LABEL' | translate }} <span class="text-danger">*</span>
             </label>
             <input type="date" id="express-date" class="form-control form-control-alt fs-sm"
                    [min]="minDate"
@@ -218,7 +268,7 @@
           </div>
           <div class="col-5 col-md-6">
             <label class="form-label fs-xs fw-semibold mb-1" for="express-time">
-              <i class="far fa-clock me-1 text-primary"></i> Heure de début
+              <i class="far fa-clock me-1 text-primary"></i> {{ 'EXPRESS.STEP1.TIME_LABEL' | translate }}
             </label>
             <input type="time" id="express-time" class="form-control form-control-alt fs-sm"
                    [ngModel]="eventTime()" (ngModelChange)="eventTime.set($event)">
@@ -229,15 +279,15 @@
         <div class="row g-2 g-sm-2.5 mb-2 mb-sm-3">
           <div class="col-md-6">
             <label class="form-label fs-xs fw-semibold mb-1" for="express-location">
-              <i class="fa fa-location-dot me-1 text-primary"></i> Salle des fêtes ou Adresse
+              <i class="fa fa-location-dot me-1 text-primary"></i> {{ 'EXPRESS.STEP1.LOCATION_LABEL' | translate }}
             </label>
             <input type="text" id="express-location" class="form-control form-control-alt fs-sm"
-                   placeholder="Ex: Pavillon des Rêves, Casablanca"
+                   [placeholder]="'EXPRESS.STEP1.LOCATION_PLACEHOLDER' | translate"
                    [ngModel]="location()" (ngModelChange)="location.set($event)">
           </div>
           <div class="col-md-6">
             <label class="form-label fs-xs fw-semibold mb-1" for="express-maps">
-              <i class="fa fa-map-location-dot me-1 text-danger"></i> Lien Google Maps GPS
+              <i class="fa fa-map-location-dot me-1 text-danger"></i> {{ 'EXPRESS.STEP1.MAPS_LABEL' | translate }}
             </label>
             <div class="input-group">
               <span class="input-group-text bg-body-light border-0 py-1"><i class="fa fa-link text-muted fs-xs"></i></span>
@@ -251,7 +301,7 @@
         <!-- Next button (Clean compact footer) -->
         <div class="d-flex justify-content-end pt-2 pt-sm-2.5 border-top">
           <button type="button" class="btn btn-primary px-3.5 px-sm-4 py-1.5 py-sm-2 rounded-pill fw-bold shadow-sm d-flex align-items-center gap-1.5" (click)="goToStep(2)">
-            <span>Continuer</span>
+            <span>{{ 'EXPRESS.STEP1.BTN_NEXT' | translate }}</span>
             <i class="fa fa-arrow-right fs-xs"></i>
           </button>
         </div>
@@ -266,7 +316,7 @@
       <div class="block-header block-header-default bg-white border-bottom p-2.5 p-sm-3 d-flex flex-wrap justify-content-between align-items-center gap-2">
         <div>
           <h3 class="block-title fs-sm fw-bold mb-0">
-            <i class="fa fa-paint-brush text-primary me-2"></i>Étape 2 : Choisissez le design de votre invitation
+            <i class="fa fa-paint-brush text-primary me-2"></i>{{ 'EXPRESS.STEP2.TITLE' | translate }}
           </h3>
           <div class="fs-4xs text-muted mt-0.5" *ngIf="!showAllTemplates()">
             Designs suggérés pour : <strong class="text-primary">{{ eventType() }}</strong>
@@ -289,7 +339,7 @@
                     class="btn btn-xs rounded-pill px-2.5 py-1 fw-bold transition-all"
                     [ngClass]="showAllTemplates() ? 'btn-primary text-white shadow-2xs' : 'btn-link text-muted'"
                     (click)="showAllTemplates.set(true)">
-              Tous ({{ templates().length }})
+              {{ 'EXPRESS.STEP2.ALL_TEMPLATES' | translate }} ({{ templates().length }})
             </button>
           </div>
         </div>
@@ -330,7 +380,7 @@
                 <!-- Badge Selected -->
                 <div *ngIf="selectedTemplateId() === t.id" class="position-absolute top-0 end-0 m-1.5">
                   <span class="badge bg-success text-white rounded-pill px-2 py-0.5 fs-4xs shadow-sm">
-                    <i class="fa fa-check me-0.5"></i> Sélectionné
+                    <i class="fa fa-check me-0.5"></i> {{ 'EXPRESS.STEP2.SELECTED' | translate }}
                   </span>
                 </div>
 
@@ -351,17 +401,17 @@
                     <button type="button" class="btn btn-xs btn-alt-success text-success rounded-pill px-3 py-1 fw-bold w-100 d-inline-flex align-items-center justify-content-center gap-1.5 shadow-2xs"
                             (click)="openTemplatePreview(t, $event)" title="Voir l'aperçu complet">
                       <i class="fa fa-eye"></i>
-                      <span class="fs-4xs">Voir l'aperçu</span>
+                      <span class="fs-4xs">{{ 'EXPRESS.STEP2.VIEW_PREVIEW' | translate }}</span>
                     </button>
                   </ng-container>
                   <ng-container *ngIf="selectedTemplateId() !== t.id">
                     <button type="button" class="btn btn-xs btn-alt-primary rounded-pill px-2.5 py-1 fw-bold flex-grow-1 text-truncate">
-                      Choisir
+                      {{ 'EXPRESS.STEP2.CHOOSE' | translate }}
                     </button>
                     <button type="button" class="btn btn-xs btn-alt-secondary rounded-pill px-2 py-1 fw-bold d-inline-flex align-items-center gap-1 shadow-2xs flex-shrink-0"
                             (click)="openTemplatePreview(t, $event)" title="Aperçu interactif démo">
                       <i class="fa fa-eye text-primary"></i>
-                      <span class="fs-4xs">Aperçu</span>
+                      <span class="fs-4xs">{{ 'EXPRESS.STEP2.VIEW_PREVIEW' | translate }}</span>
                     </button>
                   </ng-container>
                 </div>
@@ -373,7 +423,7 @@
         <!-- Footer actions -->
         <div class="d-flex justify-content-between align-items-center pt-2.5 border-top">
           <button type="button" class="btn btn-sm btn-alt-secondary rounded-pill px-3" (click)="goToStep(1)">
-            <i class="fa fa-arrow-left me-1"></i> Retour
+            <i class="fa fa-arrow-left me-1"></i> {{ 'EXPRESS.STEP2.BTN_BACK' | translate }}
           </button>
           
           <button type="button" 
@@ -381,7 +431,7 @@
                   [disabled]="isSubmittingEvent() || !selectedTemplateId()"
                   (click)="submitAndProceedToGuests()">
             <i class="fa fa-spinner fa-spin" *ngIf="isSubmittingEvent()"></i>
-            <span>Continuer</span>
+            <span>{{ 'EXPRESS.STEP2.BTN_NEXT' | translate }}</span>
             <i class="fa fa-arrow-right fs-xs" *ngIf="!isSubmittingEvent()"></i>
           </button>
         </div>
@@ -394,40 +444,57 @@
     <!-- ========================================== -->
     <div *ngIf="currentStep() === 3 && createdEvent()" class="animate__animated animate__fadeIn">
 
-      <!-- Step 3 Segmented Mode Tabs (Mes Invités vs Lien Public) -->
-      <div class="d-flex justify-content-center mb-2.5 mb-sm-3">
-        <div class="btn-group p-1 bg-white rounded-pill border shadow-2xs" role="group">
-          <button type="button" 
-                  class="btn btn-xs rounded-pill px-3 py-1.5 fw-bold transition-all d-inline-flex align-items-center gap-1.5"
-                  [ngClass]="step3Tab() === 'guests' ? 'btn-primary text-white shadow-2xs' : 'btn-link text-muted'"
-                  (click)="step3Tab.set('guests')">
-            <i class="fa fa-users"></i>
-            <span>Mes Invités & Suivi RSVP</span>
-            <span class="badge rounded-pill ms-0.5 fs-5xs" [ngClass]="step3Tab() === 'guests' ? 'bg-white text-primary' : 'bg-primary-subtle text-primary'">
-              {{ totalGuestsCount() }}
-            </span>
-          </button>
-          <button type="button" 
-                  class="btn btn-xs rounded-pill px-3 py-1.5 fw-bold transition-all d-inline-flex align-items-center gap-1.5"
-                  [ngClass]="step3Tab() === 'public' ? 'btn-success text-white shadow-2xs' : 'btn-link text-muted'"
-                  (click)="step3Tab.set('public')">
-            <i class="fab fa-whatsapp"></i>
-            <span>Lien Public (Statuts & Groupes)</span>
-          </button>
-        </div>
-      </div>
+      <!-- MAIN STEP 3 CONTAINER CARD (Embedded Header Tabs, Zero Floating Bars!) -->
+      <div class="block block-rounded shadow-sm border border-light mb-3 overflow-hidden">
+        
+        <!-- Tabbed Header directly on Card -->
+        <div class="block-header bg-white border-bottom p-1.5 p-sm-2 d-flex flex-wrap align-items-center justify-content-between gap-2">
+          
+          <!-- Mode Tabs (Embedded Directly on the Block Header) -->
+          <div class="nav nav-pills gap-1">
+            <button type="button" 
+                    class="nav-link rounded-pill py-1 px-2.5 px-sm-3 fs-xs fw-bold d-inline-flex align-items-center gap-1.5 transition-all"
+                    [ngClass]="step3Tab() === 'guests' ? 'active shadow-2xs' : 'btn-alt-secondary text-dark'"
+                    (click)="step3Tab.set('guests')">
+              <i class="fa fa-users"></i>
+              <span>{{ 'EXPRESS.STEP3.TAB_GUESTS' | translate }}</span>
+              <span class="badge rounded-pill ms-0.5 fs-5xs" [ngClass]="step3Tab() === 'guests' ? 'bg-white text-primary' : 'bg-primary text-white'">
+                {{ totalGuestsCount() }}
+              </span>
+            </button>
+            <button type="button" 
+                    class="nav-link rounded-pill py-1 px-2.5 px-sm-3 fs-xs fw-bold d-inline-flex align-items-center gap-1.5 transition-all"
+                    [ngClass]="step3Tab() === 'public' ? 'active bg-success text-white shadow-2xs' : 'btn-alt-secondary text-dark'"
+                    (click)="step3Tab.set('public')">
+              <i class="fab fa-whatsapp"></i>
+              <span>{{ 'EXPRESS.STEP3.TAB_PUBLIC' | translate }}</span>
+            </button>
+          </div>
 
-      <!-- ============================================================== -->
-      <!-- VUE 1 : LIEN PUBLIC POUR STATUTS WHATSAPP & GROUPES            -->
-      <!-- ============================================================== -->
-      <div *ngIf="step3Tab() === 'public'" class="block block-rounded shadow-sm border border-success-subtle mb-3 bg-white overflow-hidden animate__animated animate__fadeIn">
-        <div class="p-3 p-sm-4 text-center" style="background: linear-gradient(180deg, rgba(16, 185, 129, 0.05) 0%, rgba(255, 255, 255, 1) 100%);">
+          <!-- Quick Actions on Header Right (when in guests tab) -->
+          <div *ngIf="step3Tab() === 'guests'" class="d-flex align-items-center gap-1.5">
+            <!-- Toggle Add Guest Drawer (Compact & clean, no double plus) -->
+            <button type="button" 
+                    class="btn btn-xs rounded-pill px-2 py-0.5 fs-4xs fw-bold d-inline-flex align-items-center gap-1 transition-all shadow-2xs"
+                    [ngClass]="isAddGuestFormVisible() ? 'btn-alt-secondary text-dark' : 'btn-primary text-white'"
+                    (click)="toggleAddGuestForm()">
+              <i class="fa" [ngClass]="isAddGuestFormVisible() ? 'fa-times' : 'fa-plus'"></i>
+              <span>{{ (isAddGuestFormVisible() ? 'EXPRESS.STEP3.BTN_CLOSE_ADD' : 'EXPRESS.STEP3.BTN_ADD_GUESTS') | translate }}</span>
+            </button>
+          </div>
+
+        </div>
+
+        <!-- ============================================================== -->
+        <!-- TAB 1 : LIEN PUBLIC POUR STATUTS WHATSAPP & GROUPES            -->
+        <!-- ============================================================== -->
+        <div *ngIf="step3Tab() === 'public'" class="p-3 p-sm-4 text-center animate__animated animate__fadeIn" style="background: linear-gradient(180deg, rgba(16, 185, 129, 0.05) 0%, rgba(255, 255, 255, 1) 100%);">
           <div class="rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center mb-2 shadow-sm" style="width: 48px; height: 48px;">
             <i class="fab fa-whatsapp fs-4"></i>
           </div>
-          <h3 class="h5 fw-bold text-dark mb-1">Partagez votre Invitation sur WhatsApp</h3>
+          <h3 class="h5 fw-bold text-dark mb-1">{{ 'EXPRESS.STEP3.PUBLIC_LINK_TITLE' | translate }}</h3>
           <p class="text-muted fs-xs mb-3 max-w-500 mx-auto">
-            Diffusez ce lien sur vos statuts WhatsApp ou vos groupes de famille et amis. Vos convives pourront ouvrir l'invitation et confirmer leur présence directement.
+            {{ 'EXPRESS.STEP3.PUBLIC_LINK_DESC' | translate }}
           </p>
 
           <div class="bg-body-light p-2 rounded-4 border max-w-550 mx-auto mb-3 shadow-2xs">
@@ -437,10 +504,10 @@
               </span>
               <input type="text" class="form-control form-control-sm border-0 bg-white fs-xs font-monospace text-primary fw-semibold"
                      readonly [value]="createdEvent()?.generalInviteLink"
-                     (click)="$any($event.target).select()" title="Cliquez pour sélectionner">
+                     (click)="$any($event.target).select()">
               <button type="button" class="btn btn-sm btn-alt-secondary" (click)="copyGeneralLink()">
                 <i class="fa" [ngClass]="linkCopied() ? 'fa-check text-success' : 'fa-copy'"></i>
-                <span class="ms-1">{{ linkCopied() ? 'Copié !' : 'Copier' }}</span>
+                <span class="ms-1">{{ (linkCopied() ? 'EXPRESS.STEP3.LINK_COPIED' : 'EXPRESS.STEP3.BTN_COPY_LINK') | translate }}</span>
               </button>
             </div>
           </div>
@@ -449,45 +516,15 @@
             <button type="button" class="btn btn-success rounded-pill px-4 py-2 fw-bold shadow-sm d-inline-flex align-items-center gap-2"
                     (click)="shareGeneralLinkWhatsApp()">
               <i class="fab fa-whatsapp fs-5"></i>
-              <span>Partager sur WhatsApp maintenant</span>
+              <span>{{ 'EXPRESS.STEP3.BTN_SHARE_WHATSAPP' | translate }}</span>
             </button>
           </div>
         </div>
-      </div>
 
-      <!-- ============================================================== -->
-      <!-- VUE 2 : MES INVITÉS & GESTION RSVP (Avec Tiroir Accordéon)     -->
-      <!-- ============================================================== -->
-      <div *ngIf="step3Tab() === 'guests'" class="block block-rounded shadow-sm border border-light mb-3 overflow-hidden animate__animated animate__fadeIn">
-        
-        <!-- Header with Title, Count and [+ Ajouter des invités ▾] Toggle -->
-        <div class="block-header block-header-default bg-white border-bottom p-2 p-sm-2.5 d-flex justify-content-between align-items-center flex-wrap gap-2">
-          <div class="d-flex align-items-center gap-2">
-            <h3 class="block-title fs-xs fw-bold mb-0 text-nowrap d-flex align-items-center gap-1.5">
-              <i class="fa fa-users text-primary"></i>
-              <span>Mes Invités</span>
-            </h3>
-            <span class="badge bg-primary text-white rounded-pill px-2 py-0.5 fs-4xs">
-              {{ totalGuestsCount() }}
-            </span>
-          </div>
-
-          <div class="d-flex align-items-center gap-1.5">
-            <!-- Toggle Add Guest Drawer -->
-            <button type="button" 
-                    class="btn btn-xs rounded-pill px-2.5 py-1 fw-bold d-inline-flex align-items-center gap-1.5 transition-all shadow-2xs"
-                    [ngClass]="isAddGuestFormVisible() ? 'btn-alt-secondary text-dark' : 'btn-primary text-white'"
-                    (click)="toggleAddGuestForm()">
-              <i class="fa" [ngClass]="isAddGuestFormVisible() ? 'fa-times' : 'fa-plus'"></i>
-              <span>{{ isAddGuestFormVisible() ? 'Fermer l\'ajout' : '+ Ajouter des invités' }}</span>
-            </button>
-
-            <!-- Refresh Answers -->
-            <button type="button" class="btn btn-xs btn-alt-secondary rounded-pill px-2 py-1" (click)="refreshGuests()" title="Rafraîchir les statuts de présence">
-              <i class="fa fa-rotate"></i>
-            </button>
-          </div>
-        </div>
+        <!-- ============================================================== -->
+        <!-- TAB 2 : MES INVITÉS & GESTION RSVP                            -->
+        <!-- ============================================================== -->
+        <div *ngIf="step3Tab() === 'guests'" class="animate__animated animate__fadeIn">
 
         <!-- COLLAPSIBLE ACCORDION : FORMULAIRE D'AJOUT (1 par 1 & En Masse) -->
         <div *ngIf="isAddGuestFormVisible()" class="bg-body-light border-bottom p-2.5 p-sm-3 animate__animated animate__fadeIn">
@@ -495,18 +532,19 @@
           <!-- Mode Tabs (1 par 1 vs Copier-Coller en masse) -->
           <div class="d-flex align-items-center justify-content-between mb-2">
             <span class="fs-4xs fw-bold text-muted text-uppercase letter-spacing-1">Méthode d'ajout :</span>
-            <div class="btn-group p-0.5 bg-white rounded-pill border shadow-2xs" role="group">
-              <button type="button" class="btn btn-xs rounded-pill px-2.5 py-0.5 fw-bold transition-all text-nowrap"
-                      [ngClass]="addGuestMode() === 'single' ? 'btn-primary text-white shadow-2xs' : 'btn-link text-muted'"
+            <div class="mode-toggle-pills shadow-2xs" role="group">
+              <button type="button" class="btn-toggle-mode"
+                      [ngClass]="addGuestMode() === 'single' ? 'bg-primary text-white shadow-2xs' : 'text-muted hover-dark'"
                       (click)="addGuestMode.set('single')">
-                <i class="fa fa-user-plus me-1"></i> 1 par 1
+                <i class="fa fa-user-plus"></i>
+                <span>1 par 1</span>
               </button>
-              <button type="button" class="btn btn-xs rounded-pill px-2.5 py-0.5 fw-bold transition-all d-flex align-items-center gap-1 text-nowrap"
-                      [ngClass]="addGuestMode() === 'bulk' ? 'btn-primary text-white shadow-2xs' : 'btn-link text-muted'"
+              <button type="button" class="btn-toggle-mode"
+                      [ngClass]="addGuestMode() === 'bulk' ? 'bg-primary text-white shadow-2xs' : 'text-muted hover-dark'"
                       (click)="addGuestMode.set('bulk')">
                 <i class="fa fa-paste"></i>
                 <span>En masse</span>
-                <span class="badge rounded-pill px-1.5 py-0.2 fs-5xs"
+                <span class="badge rounded-pill"
                       [ngClass]="addGuestMode() === 'bulk' ? 'bg-success text-white' : 'bg-success-subtle text-success'">⚡</span>
               </button>
             </div>
@@ -520,21 +558,21 @@
 
             <form (ngSubmit)="addGuest()" class="row g-1.5 g-sm-2 align-items-end">
               <div class="col-12 col-sm-5">
-                <label class="form-label fs-4xs fw-bold text-dark mb-1" for="guest-name">Nom complet <span class="text-danger">*</span></label>
+                <label class="form-label fs-4xs fw-bold text-dark mb-1" for="guest-name">{{ 'EXPRESS.STEP3.INPUT_NAME_LABEL' | translate }} <span class="text-danger">*</span></label>
                 <input type="text" id="guest-name" class="form-control form-control-sm form-control-alt fs-xs"
-                       placeholder="Ex: Si Mohammed Benani, Khalti Fatima..."
+                       [placeholder]="'EXPRESS.STEP3.INPUT_NAME_PLACEHOLDER' | translate"
                        [ngModel]="newGuestName()" (ngModelChange)="newGuestName.set($event)" name="newGuestName" required>
               </div>
               <div class="col-7 col-sm-4">
-                <label class="form-label fs-4xs fw-bold text-dark mb-1" for="guest-phone">Numéro WhatsApp <span class="text-danger">*</span></label>
+                <label class="form-label fs-4xs fw-bold text-dark mb-1" for="guest-phone">{{ 'EXPRESS.STEP3.INPUT_PHONE_LABEL' | translate }} <span class="text-danger">*</span></label>
                 <input type="tel" id="guest-phone" class="form-control form-control-sm form-control-alt fs-xs"
-                       placeholder="0661234567"
+                       [placeholder]="'EXPRESS.STEP3.INPUT_PHONE_PLACEHOLDER' | translate"
                        [ngModel]="newGuestPhone()" (ngModelChange)="newGuestPhone.set($event)" name="newGuestPhone" required>
               </div>
               <div class="col-5 col-sm-3">
                 <button type="submit" class="btn btn-sm btn-primary w-100 rounded-pill fw-semibold py-1 fs-xs" [disabled]="isAddingGuest()">
                   <i class="fa fa-spinner fa-spin" *ngIf="isAddingGuest()"></i>
-                  <i class="fa fa-plus me-1" *ngIf="!isAddingGuest()"></i> Ajouter
+                  <i class="fa fa-plus me-1" *ngIf="!isAddingGuest()"></i> {{ 'EXPRESS.STEP3.BTN_ADD_ONE' | translate }}
                 </button>
               </div>
             </form>
@@ -544,10 +582,10 @@
           <div *ngIf="addGuestMode() === 'bulk'" class="animate__animated animate__fadeIn">
             <div class="mb-1.5">
               <span class="fs-xs fw-bold text-dark">
-                <i class="fa fa-clipboard-list text-primary me-1"></i> Collez votre liste de contacts ci-dessous :
+                <i class="fa fa-clipboard-list text-primary me-1"></i> {{ 'EXPRESS.STEP3.BULK_PASTE_TITLE' | translate }}
               </span>
               <span class="fs-4xs text-muted d-block">
-                Supporte les formats : <code>Nom, 06XXXXXXXX</code> ou <code>06XXXXXXXX - Nom</code> (un contact par ligne).
+                {{ 'EXPRESS.STEP3.BULK_PASTE_HINT' | translate }}
               </span>
             </div>
 
@@ -610,10 +648,10 @@
         <div *ngIf="totalGuestsCount() > 0" class="p-2.5 border-bottom bg-body-light">
           <div class="d-flex justify-content-between align-items-center mb-1 fs-xs">
             <span class="fw-semibold text-dark">
-              <i class="fab fa-whatsapp text-success me-1"></i> Progression des envois WhatsApp :
+              <i class="fab fa-whatsapp text-success me-1"></i> {{ 'EXPRESS.STEP3.WA_PROGRESS' | translate }}
             </span>
             <span class="fw-bold fs-xs" [ngClass]="sendingProgressPercent() === 100 ? 'text-success' : 'text-primary'">
-              {{ sentGuestsCount() }} / {{ totalGuestsCount() }} envoyé(s) ({{ sendingProgressPercent() }}%)
+              {{ sentGuestsCount() }} / {{ totalGuestsCount() }} {{ 'EXPRESS.STEP3.SENT_LABEL' | translate }} ({{ sendingProgressPercent() }}%)
             </span>
           </div>
           <div class="progress rounded-pill bg-body" style="height: 6px;">
@@ -623,14 +661,14 @@
           </div>
         </div>
 
-        <!-- Search Bar when guests exist -->
-        <div *ngIf="totalGuestsCount() > 0" class="p-1.5 px-2.5 px-sm-3 bg-white border-bottom d-flex align-items-center justify-content-between gap-2">
-          <div class="input-group input-group-sm rounded-pill shadow-2xs border overflow-hidden" style="max-width: 260px;">
+        <!-- Search & Status Filter Bar when guests exist -->
+        <div *ngIf="totalGuestsCount() > 0" class="p-1.5 px-2.5 px-sm-3 bg-white border-bottom d-flex align-items-center justify-content-between flex-wrap gap-2">
+          <div class="input-group input-group-sm rounded-pill shadow-2xs border overflow-hidden" style="max-width: 230px;">
             <span class="input-group-text bg-transparent border-0 pe-1 text-muted fs-4xs">
               <i class="fa fa-search"></i>
             </span>
             <input type="text" class="form-control form-control-sm border-0 ps-1 fs-3xs"
-                   placeholder="Rechercher nom ou n°..."
+                   [placeholder]="'EXPRESS.STEP3.SEARCH_PLACEHOLDER' | translate"
                    [ngModel]="guestSearchTerm()"
                    (ngModelChange)="onGuestSearchChange($event)">
             <button *ngIf="guestSearchTerm()" type="button" class="btn btn-link btn-xs text-muted p-0 pe-2 text-decoration-none" (click)="onGuestSearchChange('')">
@@ -638,23 +676,51 @@
             </button>
           </div>
 
-          <div class="fs-4xs text-muted text-nowrap" *ngIf="guestSearchTerm()">
-            {{ filteredGuests().length }} résultat(s)
+          <!-- Micro Status Filter Segmented Control (Tous / En attente / Envoyé) -->
+          <div class="d-flex align-items-center gap-2 ms-auto flex-wrap">
+            <div class="status-filter-pills shadow-2xs" role="group">
+              <button type="button" class="btn-status-filter"
+                      [class.active]="guestFilterStatus() === 'ALL'"
+                      (click)="setGuestFilterStatus('ALL')">
+                <span>{{ 'EXPRESS.STEP3.FILTER_ALL' | translate }}</span>
+                <span class="filter-count">{{ totalGuestsCount() }}</span>
+              </button>
+              <button type="button" class="btn-status-filter"
+                      [class.active]="guestFilterStatus() === 'PENDING'"
+                      (click)="setGuestFilterStatus('PENDING')">
+                <i class="fa fa-clock text-warning-dark" *ngIf="guestFilterStatus() === 'PENDING'"></i>
+                <span>{{ 'EXPRESS.STEP3.FILTER_PENDING' | translate }}</span>
+                <span class="filter-count">{{ pendingGuestsCount() }}</span>
+              </button>
+              <button type="button" class="btn-status-filter"
+                      [class.active]="guestFilterStatus() === 'SENT'"
+                      (click)="setGuestFilterStatus('SENT')">
+                <i class="fab fa-whatsapp text-success" *ngIf="guestFilterStatus() === 'SENT'"></i>
+                <span>{{ 'EXPRESS.STEP3.FILTER_SENT' | translate }}</span>
+                <span class="filter-count">{{ sentGuestsCount() }}</span>
+              </button>
+            </div>
+            
+            <span class="fs-4xs text-muted d-none d-md-inline" *ngIf="guestSearchTerm()">
+              ({{ filteredGuests().length }} {{ 'EXPRESS.STEP3.RESULTS_COUNT' | translate }})
+            </span>
           </div>
         </div>
 
         <div class="block-content p-0">
           <div *ngIf="!createdEvent()?.guests?.length" class="text-center py-4 text-muted">
             <i class="fa fa-users-slash fa-2x opacity-50 mb-1.5"></i>
-            <p class="fs-xs mb-0">Aucun invité ajouté pour le moment. Remplissez le formulaire ci-dessus pour commencer vos envois !</p>
+            <p class="fs-xs mb-0">{{ 'EXPRESS.STEP3.EMPTY_NO_GUESTS' | translate }}</p>
           </div>
 
           <!-- Empty search filter state -->
           <div *ngIf="createdEvent()?.guests?.length && filteredGuests().length === 0" class="text-center py-4 text-muted">
             <i class="fa fa-user-xmark fa-2x opacity-50 mb-1.5"></i>
-            <p class="fs-xs mb-1">Aucun invité ne correspond à « <strong>{{ guestSearchTerm() }}</strong> ».</p>
-            <button type="button" class="btn btn-xs btn-alt-secondary rounded-pill px-3 py-1" (click)="onGuestSearchChange('')">
-              Effacer la recherche
+            <p class="fs-xs mb-1" *ngIf="guestSearchTerm()">{{ 'EXPRESS.STEP3.EMPTY_SEARCH' | translate }} « <strong>{{ guestSearchTerm() }}</strong> ».</p>
+            <p class="fs-xs mb-1" *ngIf="!guestSearchTerm() && guestFilterStatus() === 'PENDING'">{{ 'EXPRESS.STEP3.ALL_SENT_SUCCESS' | translate }}</p>
+            <p class="fs-xs mb-1" *ngIf="!guestSearchTerm() && guestFilterStatus() === 'SENT'">{{ 'EXPRESS.STEP3.NONE_SENT_YET' | translate }}</p>
+            <button type="button" class="btn btn-xs btn-alt-secondary rounded-pill px-3 py-1" (click)="resetGuestFilters()">
+              {{ 'EXPRESS.STEP3.RESET_FILTERS' | translate }}
             </button>
           </div>
 
@@ -662,10 +728,10 @@
             <table class="table table-sm table-vcenter table-hover mb-0 fs-xs">
               <thead class="bg-body-light">
                 <tr>
-                  <th class="ps-2.5 ps-sm-3 py-1.5">Invité</th>
-                  <th class="py-1.5 d-none d-sm-table-cell">WhatsApp</th>
-                  <th class="py-1.5 text-center">Statut</th>
-                  <th class="text-end pe-2.5 pe-sm-3 py-1.5" style="width: 140px;">Action WhatsApp</th>
+                  <th class="ps-2.5 ps-sm-3 py-1.5">{{ 'EXPRESS.STEP3.TH_GUEST' | translate }}</th>
+                  <th class="py-1.5 d-none d-sm-table-cell">{{ 'EXPRESS.STEP3.TH_WHATSAPP' | translate }}</th>
+                  <th class="py-1.5 text-center">{{ 'EXPRESS.STEP3.TH_STATUS' | translate }}</th>
+                  <th class="text-end pe-2.5 pe-sm-3 py-1.5" style="width: 140px;">{{ 'EXPRESS.STEP3.TH_ACTION' | translate }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -690,7 +756,7 @@
                             'bg-warning-light text-warning-dark border border-warning-subtle': g.status === 'PENDING',
                             'bg-danger-light text-danger border border-danger-subtle': g.status === 'DECLINED'
                           }">
-                      {{ g.status === 'CONFIRMED' ? 'Présent ✅' : (g.status === 'DECLINED' ? 'Absent ❌' : 'En attente ⏳') }}
+                      {{ g.status === 'CONFIRMED' ? ('EXPRESS.STEP3.STATUS_CONFIRMED' | translate) : (g.status === 'DECLINED' ? ('EXPRESS.STEP3.STATUS_DECLINED' | translate) : ('EXPRESS.STEP3.STATUS_PENDING' | translate)) }}
                     </span>
                   </td>
                   <td class="text-end pe-2.5 pe-sm-3 py-1.5" style="width: 125px;">
@@ -701,7 +767,7 @@
                               [ngClass]="isGuestSent(g) ? 'btn-alt-success text-success' : 'btn-success text-white'"
                               (click)="openWhatsApp(g)">
                         <i class="fab fa-whatsapp"></i>
-                        <span>{{ isGuestSent(g) ? 'Renvoyer' : 'Envoyer' }}</span>
+                        <span>{{ (isGuestSent(g) ? 'EXPRESS.STEP3.BTN_RESEND' : 'EXPRESS.STEP3.BTN_SEND') | translate }}</span>
                         <i class="fa fa-check" *ngIf="isGuestSent(g)"></i>
                       </button>
 
@@ -722,10 +788,10 @@
             </table>
           </div>
 
-          <!-- Pagination Bar (When > 5 guests or when multiple pages exist) -->
-          <div *ngIf="totalGuestsCount() > guestPageSize()" class="p-2 px-3 border-top bg-body-light d-flex flex-wrap align-items-center justify-content-between gap-1.5">
+          <!-- Pagination Bar (When filtered guests exceed page size) -->
+          <div *ngIf="filteredGuests().length > guestPageSize()" class="p-2 px-3 border-top bg-body-light d-flex flex-wrap align-items-center justify-content-between gap-1.5">
             <span class="fs-4xs text-muted">
-              Affichage <strong>{{ guestPageRange() }}</strong> sur <strong>{{ totalGuestsCount() }}</strong>
+              Affichage <strong>{{ guestPageRange() }}</strong> sur <strong>{{ filteredGuests().length }}</strong>
             </span>
             <div class="d-flex align-items-center gap-1">
               <button type="button" class="btn btn-xs btn-alt-secondary rounded-pill px-2 py-0.5 fs-4xs"
@@ -747,6 +813,7 @@
           </div>
         </div>
       </div>
+    </div>
 
     <!-- Bottom Restart Option (Subtle secondary link to avoid accidental clicks) -->
     <div class="text-center mt-3 mb-2" *ngIf="currentStep() === 3">
