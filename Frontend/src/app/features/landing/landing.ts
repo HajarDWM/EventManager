@@ -92,3 +92,4 @@ export class Landing implements OnInit {
     return this.translationService.currentLang() === lang;
   }
 }
+
