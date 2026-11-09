@@ -1374,7 +1374,7 @@
     "NAV": {
       "TEMPLATES": "Modèles d'Invitations",
       "HOW_IT_WORKS": "Comment ça marche",
-      "PRO_SPACE": "Espace Traiteur & Pro",
+      "PRO_SPACE": "Espace Organisateur & Pro",
       "PRICING": "Tarifs Pro",
       "PRO_LOGIN": "Connexion Pro",
       "CREATE_INVITATION": "Créer une Invitation",
@@ -1424,8 +1424,8 @@
       "STEP_3_DESC": "Envoi instantané et suivi des réponses en direct."
     },
     "PRO": {
-      "BADGE": "Espace Professionnels & Traiteurs",
-      "TITLE": "Vous êtes Traiteur ou Planificateur d'Événements ?",
+      "BADGE": "Espace Organisateurs & Professionnels",
+      "TITLE": "Vous êtes Organisateur ou Planificateur d'Événements ?",
       "DESC": "Pilotez l'ensemble de vos prestations sur un seul tableau de bord : gestion des formules repas (Buffet & Service à Table), répartition des convives, acomptes et facturation conforme.",
       "FEAT_1": "Gestion des formules repas & convives",
       "FEAT_2": "Gestion des tables & régimes alimentaires",
@@ -1433,14 +1433,14 @@
       "FEAT_4": "Statistiques & historique complet",
       "CTA_BTN": "Créer un Compte Organisateur",
       "PRICING_LINK": "Voir les Forfaits & Abonnements",
-      "SNIPPET_TITLE": "Prestation Traiteur Active",
+      "SNIPPET_TITLE": "Événement en Cours",
       "SNIPPET_SUBTITLE": "Soirée de Gala • 150 Convives",
       "SNIPPET_LIVE": "EN DIRECT",
       "SNIPPET_CONFIRMED": "Confirmés",
       "SNIPPET_MENU": "Formule",
       "SNIPPET_MENU_VAL": "Mixte",
       "SNIPPET_DEPOSIT": "Acompte",
-      "ALREADY_PARTNER": "Déjà partenaire traiteur ?",
+      "ALREADY_PARTNER": "Déjà partenaire organisateur ?",
       "LOGIN_LINK": "Se connecter"
     },
     "FOOTER": {

@@ -1365,7 +1365,7 @@
     "NAV": {
       "TEMPLATES": "Invitation Templates",
       "HOW_IT_WORKS": "How It Works",
-      "PRO_SPACE": "Caterer & Pro Area",
+      "PRO_SPACE": "Organizer & Pro Area",
       "PRICING": "Pro Pricing",
       "PRO_LOGIN": "Pro Login",
       "CREATE_INVITATION": "Create Invitation",
@@ -1415,8 +1415,8 @@
       "STEP_3_DESC": "Instant sending and real-time guest RSVP tracking."
     },
     "PRO": {
-      "BADGE": "Professionals & Caterers Area",
-      "TITLE": "Are you a Caterer or Event Planner?",
+      "BADGE": "Organizers & Professionals Area",
+      "TITLE": "Are you an Event Organizer or Planner?",
       "DESC": "Manage all your events from one unified dashboard: meal formula management (Buffet & Table Service), guest seating, deposit tracking, and compliant billing.",
       "FEAT_1": "Meal formulas & guest management",
       "FEAT_2": "Table seating & dietary requirements",
@@ -1424,14 +1424,14 @@
       "FEAT_4": "Comprehensive analytics & event history",
       "CTA_BTN": "Create Organizer Account",
       "PRICING_LINK": "View Plans & Pricing",
-      "SNIPPET_TITLE": "Active Catering Event",
+      "SNIPPET_TITLE": "Active Event Organization",
       "SNIPPET_SUBTITLE": "Gala Evening • 150 Guests",
       "SNIPPET_LIVE": "LIVE",
       "SNIPPET_CONFIRMED": "Confirmed",
       "SNIPPET_MENU": "Formula",
       "SNIPPET_MENU_VAL": "Mixed",
       "SNIPPET_DEPOSIT": "Deposit",
-      "ALREADY_PARTNER": "Already a catering partner?",
+      "ALREADY_PARTNER": "Already registered as an organizer?",
       "LOGIN_LINK": "Log in"
     },
     "FOOTER": {
