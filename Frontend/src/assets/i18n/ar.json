@@ -960,11 +960,8 @@
       "LOGIN_LINK": "تسجيل الدخول"
     },
     "FOOTER": {
-      "COPYRIGHT_SUB": "• منصة تنظيم الحفلات والدعوات الرقمية بالمغرب",
-      "CREATE_INVITATION": "إنشاء دعوة",
-      "PRO_PLANS": "باقات المنظمين",
-      "ORGANISER_LOGIN": "دخول المنظمين",
-      "REGISTER": "تسجيل حساب"
+      "COPYRIGHT_SUB": "• جميع الحقوق محفوظة",
+      "BACK_TO_TOP": "إلى الأعلى"
     }
   }
 }

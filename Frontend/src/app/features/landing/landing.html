@@ -355,25 +355,21 @@
   </section>
 
   <!-- ========================================================================= -->
-  <!-- 6. FOOTER -->
+  <!-- 6. FOOTER (Ultra-Clean & Minimalist, No Redundant Links) -->
   <!-- ========================================================================= -->
   <footer class="landing-footer py-4 bg-dark text-white border-top border-secondary">
-    <div class="container d-flex flex-column flex-md-row align-items-center justify-content-between gap-3 fs-xs text-muted">
+    <div class="container d-flex flex-column flex-sm-row align-items-center justify-content-between gap-3 fs-xs text-muted">
       
       <div class="d-flex align-items-center gap-2 text-white">
         <span class="fw-bold">EventManager</span>
         <span>&copy; 2026</span>
-        <span>{{ 'LANDING.FOOTER.COPYRIGHT_SUB' | translate }}</span>
+        <span class="text-white-50">{{ 'LANDING.FOOTER.COPYRIGHT_SUB' | translate }}</span>
       </div>
 
-      <div class="d-flex flex-wrap align-items-center gap-3">
-        <a routerLink="/express" class="text-muted text-decoration-none hover-white">
-          <i class="fa fa-bolt text-warning me-1"></i> {{ 'LANDING.FOOTER.CREATE_INVITATION' | translate }}
-        </a>
-        <a routerLink="/pricing" class="text-muted text-decoration-none hover-white">{{ 'LANDING.FOOTER.PRO_PLANS' | translate }}</a>
-        <a routerLink="/login" class="text-muted text-decoration-none hover-white">{{ 'LANDING.FOOTER.ORGANISER_LOGIN' | translate }}</a>
-        <a routerLink="/register" class="text-muted text-decoration-none hover-white">{{ 'LANDING.FOOTER.REGISTER' | translate }}</a>
-      </div>
+      <button type="button" (click)="scrollToTop()" class="btn btn-sm btn-link text-white-50 text-decoration-none hover-white d-flex align-items-center gap-1.5 p-0">
+        <span>{{ 'LANDING.FOOTER.BACK_TO_TOP' | translate }}</span>
+        <i class="fa fa-arrow-up fs-4xs"></i>
+      </button>
 
     </div>
   </footer>

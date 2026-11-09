@@ -1435,11 +1435,8 @@
       "LOGIN_LINK": "Log in"
     },
     "FOOTER": {
-      "COPYRIGHT_SUB": "• Event & Digital Invitations Platform Morocco",
-      "CREATE_INVITATION": "Create an Invitation",
-      "PRO_PLANS": "Pro Subscriptions",
-      "ORGANISER_LOGIN": "Organizer Login",
-      "REGISTER": "Register"
+      "COPYRIGHT_SUB": "• All rights reserved",
+      "BACK_TO_TOP": "Back to top"
     }
   }
 }

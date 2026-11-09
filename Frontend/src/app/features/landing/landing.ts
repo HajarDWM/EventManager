@@ -142,4 +142,10 @@ export class Landing implements OnInit {
       }
     }
   }
+
+  public scrollToTop(): void {
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
 }

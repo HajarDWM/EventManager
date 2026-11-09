@@ -1444,11 +1444,8 @@
       "LOGIN_LINK": "Se connecter"
     },
     "FOOTER": {
-      "COPYRIGHT_SUB": "• Plateforme d'Événements & Invitations Maroc",
-      "CREATE_INVITATION": "Créer une Invitation",
-      "PRO_PLANS": "Abonnements Pro",
-      "ORGANISER_LOGIN": "Connexion Organisateur",
-      "REGISTER": "Inscription"
+      "COPYRIGHT_SUB": "• Tous droits réservés",
+      "BACK_TO_TOP": "Haut de page"
     }
   }
 }
