@@ -1,0 +1,427 @@
+<div class="landing-page-wrapper">
+
+  <!-- ========================================================================= -->
+  <!-- 1. STICKY NAVBAR -->
+  <!-- ========================================================================= -->
+  <header class="landing-header" [class.header-scrolled]="isScrolled()">
+    <div class="container d-flex align-items-center justify-content-between">
+      
+      <!-- Logo -->
+      <a class="navbar-brand d-flex align-items-center gap-2 text-decoration-none" routerLink="/">
+        <div class="brand-crest shadow-sm">
+          <i class="fa fa-gem text-warning"></i>
+        </div>
+        <span class="brand-name fs-4 fw-bold">Event<span class="text-primary">Manager</span></span>
+      </a>
+
+      <!-- Navigation Links (Desktop) -->
+      <nav class="d-none d-lg-flex align-items-center gap-4">
+        <a class="nav-link-custom cursor-pointer" (click)="scrollToSection('templates-section')">
+          <i class="fa fa-envelope-open-text me-1 text-primary"></i> Modèles d'Invitations
+        </a>
+        <a class="nav-link-custom cursor-pointer" (click)="scrollToSection('how-it-works')">
+          <i class="fa fa-wand-magic-sparkles me-1 text-primary"></i> Comment ça marche
+        </a>
+        <a class="nav-link-custom cursor-pointer" (click)="scrollToSection('pro-section')">
+          <i class="fa fa-briefcase me-1 text-primary"></i> Espace Traiteur & Pro
+        </a>
+        <a class="nav-link-custom" routerLink="/pricing">
+          <i class="fa fa-crown me-1 text-warning"></i> Tarifs Pro
+        </a>
+      </nav>
+
+      <!-- Right Action CTA -->
+      <div class="d-flex align-items-center gap-2">
+        <!-- Language Switcher Pill -->
+        <div class="lang-switch-pill d-inline-flex align-items-center p-1 rounded-pill bg-white shadow-2xs border">
+          <button type="button" class="btn btn-xs rounded-pill px-2 py-0.5 fw-bold"
+                  [ngClass]="isCurrentLang('fr') ? 'btn-primary text-white' : 'text-muted border-0 bg-transparent'"
+                  (click)="switchLanguage('fr')">FR</button>
+          <button type="button" class="btn btn-xs rounded-pill px-2 py-0.5 fw-bold"
+                  [ngClass]="isCurrentLang('ar') ? 'btn-primary text-white' : 'text-muted border-0 bg-transparent'"
+                  (click)="switchLanguage('ar')">العربية</button>
+        </div>
+
+        <!-- Authenticated State -->
+        <a *ngIf="authService.isAuthenticated()" routerLink="/events" class="btn btn-sm btn-primary rounded-pill px-3 py-1.5 fw-bold shadow-2xs d-flex align-items-center gap-1.5">
+          <i class="fa fa-gauge"></i>
+          <span>Mon Tableau de bord</span>
+        </a>
+
+        <!-- Public Guest State -->
+        <ng-container *ngIf="!authService.isAuthenticated()">
+          <a routerLink="/login" class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1.5 fw-semibold d-none d-sm-inline-flex align-items-center gap-1">
+            <i class="fa fa-sign-in-alt opacity-75"></i>
+            <span>Connexion Pro</span>
+          </a>
+
+          <!-- Main Hero Hook Button -->
+          <a routerLink="/express" class="btn btn-sm btn-success rounded-pill px-3.5 py-1.5 fw-bold shadow-sm d-flex align-items-center gap-1.5 express-header-btn">
+            <i class="fa fa-bolt text-warning"></i>
+            <span>Créer Invitation</span>
+            <span class="badge bg-white text-success rounded-pill px-1.5 py-0.2 fs-5xs fw-bold">Gratuit</span>
+          </a>
+        </ng-container>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ========================================================================= -->
+  <!-- 2. HERO SECTION -->
+  <!-- ========================================================================= -->
+  <section class="hero-section position-relative overflow-hidden">
+    <div class="hero-backdrop-glow"></div>
+    <div class="container position-relative z-2">
+      <div class="row align-items-center gy-5">
+        
+        <!-- Left Content -->
+        <div class="col-lg-7 text-center text-lg-start">
+          <!-- Moroccan Badge -->
+          <div class="d-inline-flex align-items-center gap-2 px-3 py-1.5 rounded-pill bg-white shadow-2xs border border-warning-subtle mb-3">
+            <span class="badge-morocco-flag">🇲🇦</span>
+            <span class="fs-xs fw-bold text-dark">Plateforme Événementielle N°1 au Maroc</span>
+            <span class="badge bg-success-subtle text-success rounded-pill px-2 py-0.5 fs-4xs fw-bold">100% Gratuit</span>
+          </div>
+
+          <!-- Main Title -->
+          <h1 class="hero-title fw-black mb-3">
+            Créez votre <span class="text-gradient-gold">Invitation Digitale</span> en 3 minutes & partagez-la sur WhatsApp
+          </h1>
+
+          <!-- Subtitle -->
+          <p class="hero-subtitle text-muted mb-4 fs-base">
+            Fini les cartons papier coûteux et lents à distribuer. Offrez à vos invités une expérience interactive de luxe avec musique, itinéraire Google Maps et confirmation RSVP en temps réel.
+          </p>
+
+          <!-- Action Buttons (High Contrast & Clear Funnel) -->
+          <div class="d-flex flex-column flex-sm-row align-items-center justify-content-center justify-content-lg-start gap-3 mb-4">
+            <!-- 1. The Express Hook (Primary CTA) -->
+            <a routerLink="/express" class="btn btn-lg btn-success rounded-pill px-4 py-3 fw-bold shadow-lg d-flex align-items-center gap-2 hero-cta-btn">
+              <i class="fa fa-bolt text-warning fs-5"></i>
+              <span class="fs-sm fs-sm-base">Créer une Invitation Gratuite</span>
+              <i class="fa fa-arrow-right ms-1"></i>
+            </a>
+
+            <!-- 2. The Professional Organizer Link (Secondary) -->
+            <a routerLink="/login" class="btn btn-lg btn-outline-primary rounded-pill px-4 py-3 fw-semibold d-flex align-items-center gap-2">
+              <i class="fa fa-briefcase"></i>
+              <span class="fs-sm fs-sm-base">Vous êtes Traiteur / Pro ?</span>
+            </a>
+          </div>
+
+          <!-- Trust Badges -->
+          <div class="d-flex flex-wrap justify-content-center justify-content-lg-start align-items-center gap-3 fs-xs text-muted pt-2 border-top border-light">
+            <div class="d-flex align-items-center gap-1.5">
+              <i class="fa fa-check-circle text-success"></i>
+              <span>Aucune inscription requise</span>
+            </div>
+            <div class="d-flex align-items-center gap-1.5">
+              <i class="fa fa-check-circle text-success"></i>
+              <span>Zéro application à installer</span>
+            </div>
+            <div class="d-flex align-items-center gap-1.5">
+              <i class="fa fa-check-circle text-success"></i>
+              <span>Envoi instantané par WhatsApp</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Visual Showcase (Phone Mockup with Invitation) -->
+        <div class="col-lg-5 d-flex justify-content-center">
+          <div class="hero-mockup-wrapper position-relative">
+            
+            <!-- Floating Badge Top-Right: RSVP Live -->
+            <div class="floating-stat-card card-rsvp-live shadow-lg">
+              <div class="d-flex align-items-center gap-2">
+                <span class="pulse-indicator"></span>
+                <div>
+                  <div class="fs-4xs fw-bold text-muted text-uppercase">Réponses en direct</div>
+                  <div class="fs-xs fw-black text-dark">85 Invités Confirmés ✅</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Floating Badge Bottom-Left: WhatsApp Instant -->
+            <div class="floating-stat-card card-whatsapp shadow-lg">
+              <div class="d-flex align-items-center gap-2">
+                <i class="fab fa-whatsapp text-success fs-3"></i>
+                <div>
+                  <div class="fs-4xs fw-bold text-muted text-uppercase">Partage facile</div>
+                  <div class="fs-xs fw-black text-dark">Envoi en 1 clic 📲</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Smartphone Frame -->
+            <div class="hero-phone-mockup shadow-2xl">
+              <div class="phone-speaker"></div>
+              <div class="phone-screen">
+                <div class="mockup-invitation-card">
+                  <div class="mockup-header-tag text-warning text-uppercase fs-5xs fw-bold letter-spacing-1">
+                    Soirée de Gala & Mariage
+                  </div>
+                  <h3 class="mockup-title fs-sm fw-black text-white my-1">
+                    Lila & Amine
+                  </h3>
+                  <div class="mockup-salutation fs-4xs text-white-50 mb-2">
+                    « Nous serions infiniment honorés de vous compter parmi nous »
+                  </div>
+                  <div class="mockup-details-box d-flex justify-content-center gap-2 my-2">
+                    <div class="mockup-pill p-1 px-2 rounded-3 border border-warning-subtle text-white text-center">
+                      <div class="fs-5xs text-warning fw-bold">SAMEDI</div>
+                      <div class="fs-xs fw-black text-warning">24</div>
+                      <div class="fs-5xs text-white-50">OCTOBRE</div>
+                    </div>
+                    <div class="mockup-pill p-1 px-2 rounded-3 border border-warning-subtle text-white text-center">
+                      <div class="fs-5xs text-warning fw-bold">RÉCEPTION</div>
+                      <div class="fs-xs fw-black text-warning">Palais</div>
+                      <div class="fs-5xs text-white-50">Casablanca</div>
+                    </div>
+                  </div>
+                  <!-- Mini RSVP Buttons Mockup -->
+                  <div class="d-flex justify-content-center gap-1.5 mt-2">
+                    <span class="btn btn-xs rounded-pill px-2 py-0.5 fw-bold" style="background: #d4af37; color: #000; font-size: 0.6rem;">
+                      ✓ Confirmer
+                    </span>
+                    <span class="btn btn-xs btn-outline-light rounded-pill px-2 py-0.5 fw-bold" style="font-size: 0.6rem;">
+                      ✕ Décliner
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- 3. TEMPLATES SHOWCASE -->
+  <!-- ========================================================================= -->
+  <section id="templates-section" class="templates-section py-5 bg-white border-top border-bottom">
+    <div class="container py-4">
+      
+      <div class="text-center max-w-700 mx-auto mb-5">
+        <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-1 fs-3xs fw-bold mb-2">
+          Designs 100% Marocains
+        </span>
+        <h2 class="h2 fw-bold text-dark mb-2">
+          Des Modèles d'Invitations d'Exception pour Chaque Moment
+        </h2>
+        <p class="text-muted fs-sm mb-0">
+          Chaque modèle est soigné dans les moindres détails avec musique d'ambiance marocaine, typographies royales et animations immersives.
+        </p>
+      </div>
+
+      <!-- Templates Grid -->
+      <div class="row g-4">
+        <div class="col-md-6 col-lg-3" *ngFor="let t of featuredTemplates()">
+          <div class="template-showcase-card h-100 rounded-4 overflow-hidden shadow-2xs border transition-all bg-body-light d-flex flex-column">
+            
+            <!-- Thumbnail Visual Header -->
+            <div class="template-card-thumb position-relative d-flex align-items-center justify-content-center text-center p-4"
+                 [style.background]="'radial-gradient(circle at center, #1e293b 0%, #0b1120 100%)'">
+              <span class="badge position-absolute top-0 end-0 m-2.5 rounded-pill px-2 py-1 fs-4xs fw-bold shadow-2xs"
+                    style="background: rgba(212, 175, 55, 0.2); color: #f5d77f; border: 1px solid rgba(212, 175, 55, 0.4);">
+                {{ t.badge }}
+              </span>
+
+              <div class="py-3">
+                <i class="fa fa-sparkles text-warning fs-1 mb-2 d-block opacity-75"></i>
+                <div class="fs-xs fw-bold text-uppercase letter-spacing-1 text-warning">{{ t.category }}</div>
+                <h4 class="h5 fw-bold text-white mb-0 mt-1">{{ t.title }}</h4>
+              </div>
+            </div>
+
+            <!-- Card Body -->
+            <div class="p-3 d-flex flex-column justify-content-between flex-grow-1 bg-white">
+              <p class="fs-xs text-muted mb-3 flex-grow-1">
+                {{ t.description }}
+              </p>
+
+              <div class="pt-2 border-top">
+                <a routerLink="/express" class="btn btn-sm btn-alt-primary rounded-pill w-100 fw-bold d-flex align-items-center justify-content-center gap-1.5">
+                  <i class="fa fa-magic"></i>
+                  <span>Personnaliser ce modèle</span>
+                </a>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Express Action Banner -->
+      <div class="text-center mt-5">
+        <a routerLink="/express" class="btn btn-lg btn-success rounded-pill px-5 py-3 fw-bold shadow-md d-inline-flex align-items-center gap-2">
+          <i class="fa fa-bolt text-warning"></i>
+          <span>Créer mon Invitation Maintenant (C'est 100% Gratuit)</span>
+          <i class="fa fa-arrow-right ms-1"></i>
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- 4. HOW IT WORKS (3 SIMPLE STEPS) -->
+  <!-- ========================================================================= -->
+  <section id="how-it-works" class="py-5 bg-body-light">
+    <div class="container py-4">
+      
+      <div class="text-center max-w-700 mx-auto mb-5">
+        <span class="badge bg-success-subtle text-success rounded-pill px-3 py-1 fs-3xs fw-bold mb-2">
+          Facile & Ultra-Rapide
+        </span>
+        <h2 class="h2 fw-bold text-dark mb-2">
+          Comment ça marche en 3 étapes simples ?
+        </h2>
+        <p class="text-muted fs-sm mb-0">
+          Pas besoin de compétences techniques. Votre invitation WhatsApp est prête en moins de 3 minutes chrono.
+        </p>
+      </div>
+
+      <div class="row g-4 text-center">
+        <!-- Step 1 -->
+        <div class="col-md-4">
+          <div class="step-process-card p-4 rounded-4 bg-white shadow-2xs border h-100">
+            <div class="step-num-bubble bg-primary-subtle text-primary mx-auto mb-3">1</div>
+            <h4 class="h5 fw-bold text-dark mb-2">Renseignez vos détails</h4>
+            <p class="fs-xs text-muted mb-0">
+              Indiquez le titre de l'événement, la date, l'heure et la localisation (salle ou ville).
+            </p>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="col-md-4">
+          <div class="step-process-card p-4 rounded-4 bg-white shadow-2xs border h-100">
+            <div class="step-num-bubble bg-warning-subtle text-warning mx-auto mb-3">2</div>
+            <h4 class="h5 fw-bold text-dark mb-2">Choisissez votre modèle</h4>
+            <p class="fs-xs text-muted mb-0">
+              Visualisez le rendu en direct sur smartphone ou PC, avec musique marocaine et animations.
+            </p>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="col-md-4">
+          <div class="step-process-card p-4 rounded-4 bg-white shadow-2xs border h-100">
+            <div class="step-num-bubble bg-success-subtle text-success mx-auto mb-3">3</div>
+            <h4 class="h5 fw-bold text-dark mb-2">Envoyez sur WhatsApp</h4>
+            <p class="fs-xs text-muted mb-0">
+              Partagez le lien à vos invités par message individuel ou sur vos groupes. Suivez les confirmations en temps réel.
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- 5. PRO & CATERER SECTION (B2B) -->
+  <!-- ========================================================================= -->
+  <section id="pro-section" class="py-5 bg-dark text-white position-relative overflow-hidden"
+           style="background: linear-gradient(135deg, #0b1120 0%, #1e293b 100%) !important;">
+    <div class="container py-4 position-relative z-2">
+      <div class="row align-items-center gy-4">
+        
+        <div class="col-lg-7">
+          <span class="badge rounded-pill px-3 py-1 fs-3xs fw-bold mb-2" style="background: rgba(212, 175, 55, 0.2); color: #f5d77f; border: 1px solid rgba(212, 175, 55, 0.4);">
+            Espace Professionnels & Traiteurs
+          </span>
+          <h2 class="h1 fw-bold text-white mb-3">
+            Vous êtes Traiteur ou Planificateur d'Événements ?
+          </h2>
+          <p class="text-white-50 fs-sm mb-4">
+            Passez au niveau supérieur. Gérez l'ensemble de vos prestations sur un seul tableau de bord : choix des menus (Buffet & Service à Table), répartition des tables, suivi des acomptes, et facturation conforme.
+          </p>
+
+          <div class="row g-3 mb-4 fs-xs">
+            <div class="col-sm-6 d-flex align-items-center gap-2">
+              <i class="fa fa-utensils text-warning"></i>
+              <span>Gestion des formules menus & convives</span>
+            </div>
+            <div class="col-sm-6 d-flex align-items-center gap-2">
+              <i class="fa fa-users text-warning"></i>
+              <span>Gestion des tables & régimes alimentaires</span>
+            </div>
+            <div class="col-sm-6 d-flex align-items-center gap-2">
+              <i class="fa fa-file-invoice-dollar text-warning"></i>
+              <span>Suivi des acomptes & soldes clients</span>
+            </div>
+            <div class="col-sm-6 d-flex align-items-center gap-2">
+              <i class="fa fa-chart-line text-warning"></i>
+              <span>Statistiques & historique complet</span>
+            </div>
+          </div>
+
+          <div class="d-flex flex-wrap align-items-center gap-3">
+            <a routerLink="/register" class="btn btn-primary rounded-pill px-4 py-2.5 fw-bold shadow-sm d-flex align-items-center gap-2">
+              <i class="fa fa-user-plus"></i>
+              <span>Créer un Compte Organisateur</span>
+            </a>
+            <a routerLink="/pricing" class="btn btn-outline-light rounded-pill px-4 py-2.5 fw-semibold">
+              <span>Voir les Forfaits & Abonnements</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="col-lg-5 text-center">
+          <div class="p-4 rounded-4 border border-secondary shadow-2xl text-start" style="background: rgba(255, 255, 255, 0.04); backdrop-filter: blur(10px);">
+            <div class="d-flex align-items-center justify-content-between pb-3 border-bottom border-secondary mb-3">
+              <div class="d-flex align-items-center gap-2">
+                <i class="fa fa-shield-halved text-success fs-4"></i>
+                <div>
+                  <div class="fs-xs fw-bold text-white">Espace Sécurisé Pro</div>
+                  <div class="fs-4xs text-white-50">Gestion B2B Confidentielle</div>
+                </div>
+              </div>
+              <span class="badge bg-primary text-white rounded-pill px-2 py-0.5 fs-5xs">PRO</span>
+            </div>
+
+            <p class="fs-xs text-white-50 mb-3">
+              Déjà inscrit comme traiteur ou organisateur ? Accédez immédiatement à votre tableau de bord et à vos prestations actives.
+            </p>
+
+            <a routerLink="/login" class="btn btn-alt-secondary rounded-pill w-100 fw-bold d-flex align-items-center justify-content-center gap-2">
+              <i class="fa fa-sign-in-alt"></i>
+              <span>Accéder à mon Espace Organisateur</span>
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- 6. FOOTER -->
+  <!-- ========================================================================= -->
+  <footer class="landing-footer py-4 bg-dark text-white border-top border-secondary">
+    <div class="container d-flex flex-column flex-md-row align-items-center justify-content-between gap-3 fs-xs text-muted">
+      
+      <div class="d-flex align-items-center gap-2 text-white">
+        <span class="fw-bold">EventManager</span>
+        <span>&copy; 2026</span>
+        <span>• Fait avec passion au Maroc 🇲🇦</span>
+      </div>
+
+      <div class="d-flex flex-wrap align-items-center gap-3">
+        <a routerLink="/express" class="text-muted text-decoration-none hover-white">
+          <i class="fa fa-bolt text-warning me-1"></i> Créer une Invitation
+        </a>
+        <a routerLink="/pricing" class="text-muted text-decoration-none hover-white">Abonnements Pro</a>
+        <a routerLink="/login" class="text-muted text-decoration-none hover-white">Connexion Organisateur</a>
+        <a routerLink="/register" class="text-muted text-decoration-none hover-white">Inscription</a>
+      </div>
+
+    </div>
+  </footer>
+
+</div>

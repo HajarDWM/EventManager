@@ -1,0 +1,263 @@
+.landing-page-wrapper {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  color: #1e293b;
+  background-color: #f8fafc;
+  overflow-x: hidden;
+}
+
+/* 1. Header Sticky */
+.landing-header {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1040;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+  padding: 12px 0;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+
+  &.header-scrolled {
+    padding: 8px 0;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    background: rgba(255, 255, 255, 0.95);
+  }
+
+  .brand-crest {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: #0f172a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(212, 175, 55, 0.4);
+  }
+
+  .brand-name {
+    color: #0f172a;
+    letter-spacing: -0.5px;
+  }
+
+  .nav-link-custom {
+    color: #475569;
+    text-decoration: none;
+    font-size: 0.88rem;
+    font-weight: 600;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: #2563eb;
+    }
+  }
+
+  .express-header-btn {
+    animation: pulseSubtle 3s infinite;
+  }
+}
+
+@keyframes pulseSubtle {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 2px 6px rgba(16, 185, 129, 0.2);
+  }
+  50% {
+    transform: scale(1.02);
+    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);
+  }
+}
+
+/* 2. Hero Section */
+.hero-section {
+  padding: 60px 0 80px;
+  background: radial-gradient(circle at top right, rgba(37, 99, 235, 0.05) 0%, rgba(248, 250, 252, 1) 70%);
+
+  @media (min-width: 992px) {
+    padding: 80px 0 100px;
+  }
+
+  .hero-backdrop-glow {
+    position: absolute;
+    top: -100px;
+    right: -100px;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(212, 175, 55, 0.12) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .badge-morocco-flag {
+    font-size: 1.1rem;
+    line-height: 1;
+  }
+
+  .hero-title {
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    line-height: 1.15;
+    color: #0f172a;
+    letter-spacing: -1px;
+  }
+
+  .text-gradient-gold {
+    background: linear-gradient(135deg, #b45309 0%, #d4af37 50%, #92400e 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .hero-subtitle {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    max-width: 580px;
+  }
+
+  .hero-cta-btn {
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px rgba(16, 185, 129, 0.35) !important;
+    }
+  }
+}
+
+/* Hero Phone Mockup Visual */
+.hero-mockup-wrapper {
+  position: relative;
+  width: 320px;
+  max-width: 100%;
+
+  .floating-stat-card {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    border-radius: 16px;
+    padding: 10px 14px;
+    z-index: 10;
+    animation: floatSmooth 6s ease-in-out infinite alternate;
+
+    &.card-rsvp-live {
+      top: 40px;
+      right: -30px;
+    }
+
+    &.card-whatsapp {
+      bottom: 50px;
+      left: -35px;
+      animation-delay: -3s;
+    }
+
+    @media (max-width: 576px) {
+      display: none;
+    }
+  }
+
+  .pulse-indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #10b981;
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.25);
+    display: inline-block;
+  }
+
+  .hero-phone-mockup {
+    width: 290px;
+    height: 520px;
+    margin: 0 auto;
+    background: #000;
+    border-radius: 44px;
+    border: 8px solid #1e293b;
+    padding: 12px 8px;
+    position: relative;
+    box-shadow: 0 25px 60px rgba(15, 23, 42, 0.35);
+
+    .phone-speaker {
+      width: 50px;
+      height: 4px;
+      background: #334155;
+      border-radius: 4px;
+      margin: 4px auto 10px;
+    }
+
+    .phone-screen {
+      width: 100%;
+      height: calc(100% - 20px);
+      border-radius: 32px;
+      background: radial-gradient(circle at center, #1e293b 0%, #0b1120 100%);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px 12px;
+    }
+
+    .mockup-invitation-card {
+      width: 100%;
+      border: 1.5px solid rgba(212, 175, 55, 0.4);
+      border-radius: 20px;
+      padding: 16px 10px;
+      text-align: center;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(8px);
+    }
+
+    .mockup-pill {
+      background: rgba(255, 255, 255, 0.05);
+      min-width: 80px;
+    }
+  }
+}
+
+@keyframes floatSmooth {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-10px); }
+}
+
+/* 3. Templates Showcase */
+.template-showcase-card {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.1) !important;
+  }
+
+  .template-card-thumb {
+    min-height: 180px;
+  }
+}
+
+/* 4. Process Steps */
+.step-process-card {
+  transition: transform 0.25s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+  }
+
+  .step-num-bubble {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    font-size: 1.3rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+/* Utilities */
+.letter-spacing-1 {
+  letter-spacing: 1px;
+}
+.cursor-pointer {
+  cursor: pointer;
+}
+.hover-white:hover {
+  color: #fff !important;
+}

@@ -38,6 +38,11 @@ import { ClientProfile } from './features/client-profile/client-profile';
 
 export const routes: Routes = [
   {
+    path: '',
+    loadComponent: () => import('./features/landing/landing').then(m => m.Landing),
+    pathMatch: 'full'
+  },
+  {
     path: 'login',
     component: Login,
     canActivate: [guestGuard]
