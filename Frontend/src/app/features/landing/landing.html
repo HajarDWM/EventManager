@@ -1,7 +1,7 @@
 <div class="landing-page-wrapper">
 
   <!-- ========================================================================= -->
-  <!-- 1. STICKY NAVBAR (Minimal, Clean & Confident — No Icon Clutter) -->
+  <!-- 1. STICKY NAVBAR (Clean, Minimalist & Focused) -->
   <!-- ========================================================================= -->
   <header class="landing-header" [class.header-scrolled]="isScrolled()">
     <div class="container d-flex align-items-center justify-content-between">
@@ -14,7 +14,7 @@
         <span class="brand-name fs-4 fw-bold">Event<span class="text-primary">Manager</span></span>
       </a>
 
-      <!-- Clean Navigation Links (No Icons / Anti-Slop) -->
+      <!-- Clean Navigation Links (Anti-Slop: No Emojis, No Icons) -->
       <nav class="d-none d-lg-flex align-items-center gap-4">
         <a class="nav-link-custom cursor-pointer" (click)="scrollToSection('templates-section')">
           Modèles d'Invitations
@@ -31,7 +31,7 @@
       </nav>
 
       <!-- Right Action CTA -->
-      <div class="d-flex align-items-center gap-2.5">
+      <div class="d-flex align-items-center gap-3">
         <!-- Language Switcher Pill -->
         <div class="lang-switch-pill d-inline-flex align-items-center p-1 rounded-pill bg-white shadow-2xs border">
           <button type="button" class="btn btn-xs rounded-pill px-2.5 py-0.5 fw-bold"
@@ -43,30 +43,30 @@
         </div>
 
         <!-- Authenticated State -->
-        <a *ngIf="authService.isAuthenticated()" routerLink="/events" class="btn btn-sm btn-primary rounded-pill px-3.5 py-1.5 fw-bold shadow-2xs d-flex align-items-center gap-1.5">
-          <i class="fa fa-gauge"></i>
-          <span>Mon Tableau de bord</span>
-        </a>
-
-        <!-- Guest State -->
-        <ng-container *ngIf="!authService.isAuthenticated()">
-          <a routerLink="/login" class="btn btn-sm btn-link text-muted text-decoration-none fw-semibold d-none d-sm-inline-flex align-items-center px-2">
+        @if (authService.isAuthenticated()) {
+          <a routerLink="/events" class="btn btn-sm btn-primary rounded-pill px-3.5 py-1.5 fw-bold shadow-2xs d-flex align-items-center gap-1.5">
+            <i class="fa fa-gauge"></i>
+            <span>Mon Tableau de bord</span>
+          </a>
+        } @else {
+          <!-- Discrete Pro Link -->
+          <a routerLink="/login" class="nav-link-pro-login text-decoration-none d-none d-sm-inline-block">
             Connexion Pro
           </a>
 
           <!-- Single Main Header CTA -->
           <a routerLink="/express" class="btn btn-sm btn-success rounded-pill px-3.5 py-1.5 fw-bold shadow-2xs d-flex align-items-center gap-1.5">
             <i class="fa fa-bolt text-warning"></i>
-            <span>Créer Invitation</span>
+            <span>Créer une Invitation</span>
           </a>
-        </ng-container>
+        }
       </div>
 
     </div>
   </header>
 
   <!-- ========================================================================= -->
-  <!-- 2. HERO SECTION (Focused, Centered & High-Converting — No Mockup Clutter) -->
+  <!-- 2. HERO SECTION (Uncompromised Focus & Maximum Conversion) -->
   <!-- ========================================================================= -->
   <section class="hero-section position-relative overflow-hidden text-center">
     <div class="hero-backdrop-glow"></div>
@@ -74,32 +74,32 @@
     <div class="container position-relative z-2">
       <div class="max-w-850 mx-auto">
         
-        <!-- Single Clean Micro-Badge (Anti-Slop: No 'MA' glitch, no repetitive buzzwords) -->
-        <div class="d-inline-flex align-items-center gap-2 px-3.5 py-1 rounded-pill bg-white shadow-2xs border border-success-subtle mb-3.5 animate__animated animate__fadeIn">
+        <!-- Clean Micro-Badge -->
+        <div class="d-inline-flex align-items-center gap-2 px-3.5 py-1 rounded-pill bg-white shadow-2xs border border-success-subtle mb-3.5">
           <span class="badge-status-dot"></span>
           <span class="fs-xs fw-bold text-dark">100% Gratuit pour vos invités • Sans inscription</span>
         </div>
 
         <!-- Hero Headline -->
-        <h1 class="hero-title fw-black mb-3.5 animate__animated animate__fadeIn">
+        <h1 class="hero-title fw-black mb-3.5">
           Créez votre <span class="text-gradient-gold">Invitation Digitale</span> en 3 minutes & partagez-la sur WhatsApp
         </h1>
 
-        <!-- High-Contrast Subtitle (Accessible WCAG AAA text color #334155) -->
-        <p class="hero-subtitle mb-4 mx-auto animate__animated animate__fadeIn">
-          Envoyez des invitations interactives de prestige avec musique marocaine, itinéraire Google Maps et confirmation RSVP en temps réel. Zéro papier, zéro application à télécharger.
+        <!-- High-Contrast Subtitle (WCAG AAA) -->
+        <p class="hero-subtitle mb-4 mx-auto">
+          Envoyez des invitations interactives avec musique marocaine, plan d'accès Google Maps et confirmation RSVP en temps réel. Zéro papier, zéro application à télécharger.
         </p>
 
-        <!-- Single Primary CTA (Uncompromised Focus) -->
-        <div class="d-flex justify-content-center mb-4 animate__animated animate__fadeIn">
-          <a routerLink="/express" class="btn btn-lg btn-success rounded-pill px-5 py-3 fw-bold shadow-lg d-inline-flex align-items-center gap-2.5 hero-cta-btn">
+        <!-- Single Primary CTA -->
+        <div class="d-flex justify-content-center mb-4">
+          <a routerLink="/express" class="btn-cta-hero d-inline-flex align-items-center gap-2.5">
             <i class="fa fa-bolt text-warning fs-5"></i>
-            <span class="fs-base">Créer mon Invitation Gratuite</span>
+            <span>Créer mon Invitation Gratuite</span>
             <i class="fa fa-arrow-right ms-1"></i>
           </a>
         </div>
 
-        <!-- Clean Trust Line (Centered & Legible) -->
+        <!-- Clean Trust Line -->
         <div class="d-flex flex-wrap justify-content-center align-items-center gap-3 gap-sm-4 fs-xs text-muted pt-2 border-top border-light max-w-650 mx-auto">
           <div class="d-flex align-items-center gap-1.5">
             <i class="fa fa-check text-success"></i>
@@ -120,7 +120,7 @@
   </section>
 
   <!-- ========================================================================= -->
-  <!-- 3. TEMPLATES SHOWCASE -->
+  <!-- 3. TEMPLATES SHOWCASE (Clean & Interactive, No Redundant Bottom Button) -->
   <!-- ========================================================================= -->
   <section id="templates-section" class="templates-section py-5 bg-white border-top border-bottom">
     <div class="container py-4">
@@ -137,67 +137,61 @@
         </p>
       </div>
 
-      <!-- Templates Grid -->
+      <!-- Templates Grid using Modern Angular @for -->
       <div class="row g-4">
-        <div class="col-md-6 col-lg-3" *ngFor="let t of featuredTemplates()">
-          <div class="template-showcase-card h-100 rounded-4 overflow-hidden shadow-2xs border bg-body-light d-flex flex-column">
-            
-            <!-- Thumbnail Visual Header -->
-            <div class="template-card-thumb position-relative d-flex align-items-center justify-content-center text-center p-4"
-                 [style.background]="'radial-gradient(circle at center, #1e293b 0%, #0b1120 100%)'">
-              <span class="badge position-absolute top-0 end-0 m-2.5 rounded-pill px-2 py-1 fs-4xs fw-bold shadow-2xs"
-                    style="background: rgba(212, 175, 55, 0.2); color: #f5d77f; border: 1px solid rgba(212, 175, 55, 0.4);">
-                {{ t.badge }}
-              </span>
+        @for (t of featuredTemplates(); track t.id) {
+          <div class="col-md-6 col-lg-3">
+            <div class="template-showcase-card h-100 rounded-4 overflow-hidden shadow-2xs border bg-body-light d-flex flex-column">
+              
+              <!-- Thumbnail Visual Header -->
+              <div class="template-card-thumb position-relative d-flex align-items-center justify-content-center text-center p-4"
+                   [style.background]="'radial-gradient(circle at center, #1e293b 0%, #0b1120 100%)'">
+                <span class="badge position-absolute top-0 end-0 m-2.5 rounded-pill px-2 py-1 fs-4xs fw-bold shadow-2xs"
+                      style="background: rgba(212, 175, 55, 0.2); color: #f5d77f; border: 1px solid rgba(212, 175, 55, 0.4);">
+                  {{ t.badge }}
+                </span>
 
-              <div class="py-3">
-                <i class="fa fa-sparkles text-warning fs-1 mb-2 d-block opacity-75"></i>
-                <div class="fs-xs fw-bold text-uppercase letter-spacing-1 text-warning">{{ t.category }}</div>
-                <h4 class="h5 fw-bold text-white mb-0 mt-1">{{ t.title }}</h4>
+                <div class="py-3">
+                  <i class="fa fa-sparkles text-warning fs-1 mb-2 d-block opacity-75"></i>
+                  <div class="fs-xs fw-bold text-uppercase letter-spacing-1 text-warning">{{ t.category }}</div>
+                  <h4 class="h5 fw-bold text-white mb-0 mt-1">{{ t.title }}</h4>
+                </div>
               </div>
-            </div>
 
-            <!-- Card Body -->
-            <div class="p-3.5 d-flex flex-column justify-content-between flex-grow-1 bg-white">
-              <p class="fs-xs text-muted mb-3 flex-grow-1">
-                {{ t.description }}
-              </p>
+              <!-- Card Body -->
+              <div class="p-3.5 d-flex flex-column justify-content-between flex-grow-1 bg-white">
+                <p class="fs-xs text-muted mb-3 flex-grow-1">
+                  {{ t.description }}
+                </p>
 
-              <div class="pt-2 border-top">
-                <a routerLink="/express" class="btn btn-sm btn-alt-primary rounded-pill w-100 fw-bold d-flex align-items-center justify-content-center gap-1.5 template-action-btn">
-                  <i class="fa fa-magic"></i>
-                  <span>Personnaliser ce modèle</span>
-                </a>
+                <div class="pt-2 border-top">
+                  <a [routerLink]="['/express']" [queryParams]="{ templateId: t.id }" 
+                     class="btn btn-sm btn-alt-primary rounded-pill w-100 fw-bold d-flex align-items-center justify-content-center gap-1.5 template-action-btn">
+                    <i class="fa fa-magic"></i>
+                    <span>Personnaliser ce modèle</span>
+                  </a>
+                </div>
               </div>
-            </div>
 
+            </div>
           </div>
-        </div>
-      </div>
-
-      <!-- Bottom Express Action Banner -->
-      <div class="text-center mt-5">
-        <a routerLink="/express" class="btn btn-lg btn-success rounded-pill px-5 py-3 fw-bold shadow-md d-inline-flex align-items-center gap-2 hero-cta-btn">
-          <i class="fa fa-bolt text-warning"></i>
-          <span>Créer mon Invitation Maintenant (100% Gratuit)</span>
-          <i class="fa fa-arrow-right ms-1"></i>
-        </a>
+        }
       </div>
 
     </div>
   </section>
 
   <!-- ========================================================================= -->
-  <!-- 4. HOW IT WORKS (3 SIMPLE STEPS) -->
+  <!-- 4. HOW IT WORKS (Compact Horizontal Stepper — 50% Less Vertical Scroll) -->
   <!-- ========================================================================= -->
   <section id="how-it-works" class="py-5 bg-body-light">
     <div class="container py-4">
       
-      <div class="text-center max-w-700 mx-auto mb-5">
+      <div class="text-center max-w-700 mx-auto mb-4">
         <span class="badge bg-success-subtle text-success rounded-pill px-3 py-1 fs-3xs fw-bold mb-2">
           Simple & Immédiat
         </span>
-        <h2 class="h2 fw-bold text-dark mb-2">
+        <h2 class="h2 fw-bold text-dark mb-1">
           Comment ça marche en 3 étapes ?
         </h2>
         <p class="section-desc mb-0">
@@ -205,38 +199,23 @@
         </p>
       </div>
 
-      <div class="row g-4 text-center">
-        <!-- Step 1 -->
-        <div class="col-md-4">
-          <div class="step-process-card p-4 rounded-4 bg-white shadow-2xs border h-100">
-            <div class="step-num-bubble bg-primary-subtle text-primary mx-auto mb-3">1</div>
-            <h4 class="h5 fw-bold text-dark mb-2">Renseignez vos détails</h4>
-            <p class="fs-xs text-muted mb-0">
-              Indiquez le titre de l'événement, la date, l'heure et la localisation (salle ou ville).
-            </p>
-          </div>
-        </div>
-
-        <!-- Step 2 -->
-        <div class="col-md-4">
-          <div class="step-process-card p-4 rounded-4 bg-white shadow-2xs border h-100">
-            <div class="step-num-bubble bg-warning-subtle text-warning mx-auto mb-3">2</div>
-            <h4 class="h5 fw-bold text-dark mb-2">Choisissez votre modèle</h4>
-            <p class="fs-xs text-muted mb-0">
-              Visualisez le rendu en direct sur smartphone ou PC, avec musique marocaine et animations.
-            </p>
-          </div>
-        </div>
-
-        <!-- Step 3 -->
-        <div class="col-md-4">
-          <div class="step-process-card p-4 rounded-4 bg-white shadow-2xs border h-100">
-            <div class="step-num-bubble bg-success-subtle text-success mx-auto mb-3">3</div>
-            <h4 class="h5 fw-bold text-dark mb-2">Envoyez sur WhatsApp</h4>
-            <p class="fs-xs text-muted mb-0">
-              Partagez le lien à vos invités en 1 clic. Suivez les confirmations de présence en temps réel.
-            </p>
-          </div>
+      <!-- Modern Compact Stepper Row -->
+      <div class="stepper-horizontal-row py-3">
+        <div class="row g-3 g-lg-4">
+          @for (s of steps(); track s.num) {
+            <div class="col-md-4">
+              <div class="stepper-step-box p-3.5 rounded-3 bg-white border shadow-2xs d-flex align-items-start gap-3 h-100">
+                <div class="stepper-step-num flex-shrink-0">{{ s.num }}</div>
+                <div>
+                  <h4 class="fs-sm fw-bold text-dark mb-1 d-flex align-items-center gap-1.5">
+                    <i class="fa text-primary fs-xs" [ngClass]="s.icon"></i>
+                    <span>{{ s.title }}</span>
+                  </h4>
+                  <p class="fs-xs text-muted mb-0">{{ s.desc }}</p>
+                </div>
+              </div>
+            </div>
+          }
         </div>
       </div>
 
@@ -244,13 +223,14 @@
   </section>
 
   <!-- ========================================================================= -->
-  <!-- 5. PRO & CATERER SECTION (B2B) -->
+  <!-- 5. PRO & CATERER SECTION (Clear B2B Hierarchy & Concrete Interface Snippet) -->
   <!-- ========================================================================= -->
   <section id="pro-section" class="py-5 bg-dark text-white position-relative overflow-hidden"
            style="background: linear-gradient(135deg, #0b1120 0%, #1e293b 100%) !important;">
     <div class="container py-4 position-relative z-2">
       <div class="row align-items-center gy-4">
         
+        <!-- Left: Value Proposition -->
         <div class="col-lg-7">
           <span class="badge rounded-pill px-3 py-1 fs-3xs fw-bold mb-2" style="background: rgba(212, 175, 55, 0.2); color: #f5d77f; border: 1px solid rgba(212, 175, 55, 0.4);">
             Espace Professionnels & Traiteurs
@@ -259,7 +239,7 @@
             Vous êtes Traiteur ou Planificateur d'Événements ?
           </h2>
           <p class="text-white-50 fs-sm mb-4">
-            Pilotez l'ensemble de vos prestations sur un seul tableau de bord : gestion des formules repas (Buffet & Service à Table), répartition des convives, acomptes et facturation.
+            Pilotez l'ensemble de vos prestations sur un seul tableau de bord : gestion des formules repas (Buffet & Service à Table), répartition des convives, acomptes et facturation conforme.
           </p>
 
           <div class="row g-3 mb-4 fs-xs">
@@ -281,38 +261,66 @@
             </div>
           </div>
 
+          <!-- Single Clear B2B CTA + Text Pricing Link -->
           <div class="d-flex flex-wrap align-items-center gap-3">
             <a routerLink="/register" class="btn btn-primary rounded-pill px-4 py-2.5 fw-bold shadow-sm d-flex align-items-center gap-2">
               <i class="fa fa-user-plus"></i>
               <span>Créer un Compte Organisateur</span>
             </a>
-            <a routerLink="/pricing" class="btn btn-outline-light rounded-pill px-4 py-2.5 fw-semibold">
-              <span>Voir les Forfaits & Abonnements</span>
+            <a routerLink="/pricing" class="btn btn-link text-white-50 text-decoration-none fs-xs fw-semibold hover-white">
+              Voir les Forfaits & Abonnements <i class="fa fa-arrow-right ms-1"></i>
             </a>
           </div>
         </div>
 
-        <div class="col-lg-5 text-center">
-          <div class="p-4 rounded-4 border border-secondary shadow-2xl text-start" style="background: rgba(255, 255, 255, 0.04); backdrop-filter: blur(10px);">
+        <!-- Right: Concrete B2B Dashboard Snippet (Real Product Demonstration) -->
+        <div class="col-lg-5">
+          <div class="p-4 rounded-4 border border-secondary shadow-2xl" style="background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(12px);">
+            
+            <!-- Snippet Header -->
             <div class="d-flex align-items-center justify-content-between pb-3 border-bottom border-secondary mb-3">
               <div class="d-flex align-items-center gap-2">
-                <i class="fa fa-shield-halved text-success fs-4"></i>
+                <span class="rounded-circle bg-success-subtle text-success d-flex align-items-center justify-content-center" style="width: 28px; height: 28px;">
+                  <i class="fa fa-check fs-4xs"></i>
+                </span>
                 <div>
-                  <div class="fs-xs fw-bold text-white">Espace Sécurisé Pro</div>
-                  <div class="fs-4xs text-white-50">Gestion B2B Confidentielle</div>
+                  <div class="fs-xs fw-bold text-white">Prestation Traiteur Active</div>
+                  <div class="fs-5xs text-white-50">Soirée de Gala • 150 Convives</div>
                 </div>
               </div>
-              <span class="badge bg-primary text-white rounded-pill px-2 py-0.5 fs-5xs">PRO</span>
+              <span class="badge bg-primary text-white rounded-pill px-2 py-0.5 fs-5xs">EN DIRECT</span>
             </div>
 
-            <p class="fs-xs text-white-50 mb-3">
-              Déjà inscrit comme traiteur ou organisateur ? Accédez immédiatement à votre tableau de bord et à vos prestations actives.
-            </p>
+            <!-- Mini Metrics Row -->
+            <div class="row g-2 mb-3 text-center">
+              <div class="col-4">
+                <div class="p-2 rounded-2 bg-dark bg-opacity-50 border border-secondary">
+                  <div class="fs-5xs text-white-50">Confirmés</div>
+                  <div class="fs-xs fw-bold text-success">124</div>
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="p-2 rounded-2 bg-dark bg-opacity-50 border border-secondary">
+                  <div class="fs-5xs text-white-50">Formule</div>
+                  <div class="fs-xs fw-bold text-warning">Mixte</div>
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="p-2 rounded-2 bg-dark bg-opacity-50 border border-secondary">
+                  <div class="fs-5xs text-white-50">Acompte</div>
+                  <div class="fs-xs fw-bold text-primary">100%</div>
+                </div>
+              </div>
+            </div>
 
-            <a routerLink="/login" class="btn btn-alt-secondary rounded-pill w-100 fw-bold d-flex align-items-center justify-content-center gap-2">
-              <i class="fa fa-sign-in-alt"></i>
-              <span>Accéder à mon Espace Organisateur</span>
-            </a>
+            <!-- Discrete Login Redirection -->
+            <div class="pt-2 border-top border-secondary text-center">
+              <span class="fs-xs text-white-50">Déjà partenaire traiteur ?</span>
+              <a routerLink="/login" class="fs-xs text-warning fw-bold text-decoration-none ms-1 hover-underline">
+                Se connecter <i class="fa fa-sign-in-alt ms-0.5"></i>
+              </a>
+            </div>
+
           </div>
         </div>
 
@@ -329,7 +337,7 @@
       <div class="d-flex align-items-center gap-2 text-white">
         <span class="fw-bold">EventManager</span>
         <span>&copy; 2026</span>
-        <span>• Plateforme d'Événements & Invitations</span>
+        <span>• Plateforme d'Événements & Invitations Maroc</span>
       </div>
 
       <div class="d-flex flex-wrap align-items-center gap-3">

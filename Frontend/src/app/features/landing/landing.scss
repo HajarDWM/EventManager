@@ -52,6 +52,20 @@
       color: #2563eb;
     }
   }
+
+  .nav-link-pro-login {
+    color: #64748b;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 9999px;
+    transition: all 0.2s ease;
+
+    &:hover {
+      color: #0f172a;
+      background-color: #f1f5f9;
+    }
+  }
 }
 
 /* 2. Hero Section (Centered, Majestic & Focused) */
@@ -151,24 +165,32 @@
   }
 }
 
-/* 4. Process Steps */
-.step-process-card {
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+/* 4. Process Steps (Compact Horizontal Stepper) */
+.stepper-horizontal-row {
+  .stepper-step-box {
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    border-color: #e2e8f0;
 
-  &:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.05) !important;
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01) !important;
+      border-color: #cbd5e1;
+    }
   }
 
-  .step-num-bubble {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    font-size: 1.3rem;
+  .stepper-step-num {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: #eff6ff;
+    color: #2563eb;
+    font-family: monospace, sans-serif;
+    font-size: 1.15rem;
     font-weight: 800;
     display: flex;
     align-items: center;
     justify-content: center;
+    border: 1px solid rgba(37, 99, 235, 0.15);
   }
 }
 
@@ -195,4 +217,7 @@
 }
 .hover-white:hover {
   color: #fff !important;
+}
+.hover-underline:hover {
+  text-decoration: underline !important;
 }

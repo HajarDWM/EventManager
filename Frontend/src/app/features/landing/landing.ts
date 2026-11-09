@@ -14,6 +14,13 @@ interface FeaturedTemplate {
   description: string;
 }
 
+interface StepItem {
+  num: string;
+  title: string;
+  desc: string;
+  icon: string;
+}
+
 @Component({
   selector: 'app-landing',
   standalone: true,
@@ -27,6 +34,27 @@ export class Landing implements OnInit {
   protected readonly translationService = inject(TranslationService);
 
   public readonly isScrolled = signal<boolean>(false);
+
+  public readonly steps = signal<StepItem[]>([
+    {
+      num: '01',
+      title: 'Détails de l\'événement',
+      desc: 'Titre, date, heure et salle ou ville de votre fête.',
+      icon: 'fa-calendar-check'
+    },
+    {
+      num: '02',
+      title: 'Choix du modèle',
+      desc: 'Design marocain raffiné avec musique et RSVP.',
+      icon: 'fa-wand-magic-sparkles'
+    },
+    {
+      num: '03',
+      title: 'Partage WhatsApp',
+      desc: 'Envoi instantané et suivi des réponses en direct.',
+      icon: 'fa-paper-plane'
+    }
+  ]);
 
   public readonly featuredTemplates = signal<FeaturedTemplate[]>([
     {
@@ -70,7 +98,7 @@ export class Landing implements OnInit {
   ngOnInit(): void {
     if (typeof window !== 'undefined') {
       window.addEventListener('scroll', () => {
-        this.isScrolled.set(window.scrollY > 40);
+        this.isScrolled.set(window.scrollY > 30);
       });
     }
   }
@@ -92,4 +120,3 @@ export class Landing implements OnInit {
     return this.translationService.currentLang() === lang;
   }
 }
-
