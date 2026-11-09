@@ -82,7 +82,7 @@ export class Landing implements OnInit {
       titleKey: 'LANDING.TEMPLATES.CARD_1_TITLE',
       categoryKey: 'LANDING.TEMPLATES.CARD_1_CATEGORY',
       badgeKey: 'LANDING.TEMPLATES.CARD_1_BADGE',
-      imageUrl: 'https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&w=600&q=80',
+      imageUrl: '/assets/images/templates/launch-party-royal.jpg',
       accentColor: '#d4af37',
       descKey: 'LANDING.TEMPLATES.CARD_1_DESC'
     },
@@ -91,7 +91,7 @@ export class Landing implements OnInit {
       titleKey: 'LANDING.TEMPLATES.CARD_2_TITLE',
       categoryKey: 'LANDING.TEMPLATES.CARD_2_CATEGORY',
       badgeKey: 'LANDING.TEMPLATES.CARD_2_BADGE',
-      imageUrl: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=600&q=80',
+      imageUrl: '/assets/images/templates/fleurs-de-coton.jpg',
       accentColor: '#c5a85c',
       descKey: 'LANDING.TEMPLATES.CARD_2_DESC'
     },
@@ -100,7 +100,7 @@ export class Landing implements OnInit {
       titleKey: 'LANDING.TEMPLATES.CARD_3_TITLE',
       categoryKey: 'LANDING.TEMPLATES.CARD_3_CATEGORY',
       badgeKey: 'LANDING.TEMPLATES.CARD_3_BADGE',
-      imageUrl: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=600&q=80',
+      imageUrl: '/assets/images/templates/celebration-henne.png',
       accentColor: '#eab308',
       descKey: 'LANDING.TEMPLATES.CARD_3_DESC'
     }
