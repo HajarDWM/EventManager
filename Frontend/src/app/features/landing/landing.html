@@ -29,18 +29,10 @@
 
       <!-- Right Action CTAs & Language Switcher at Far-Right ("f jenb") -->
       <div class="d-flex align-items-center gap-2">
-        <!-- Discrete Pro or Dashboard Link -->
-        @if (authService.isAuthenticated()) {
-          <a routerLink="/events" class="nav-link-pro-login text-decoration-none d-none d-sm-inline-flex align-items-center gap-1.5">
-            <i class="fa fa-gauge text-muted fs-xs"></i>
-            <span>{{ 'LANDING.NAV.DASHBOARD' | translate }}</span>
-          </a>
-        } @else {
-          <!-- Discrete Pro Link -->
-          <a routerLink="/login" class="nav-link-pro-login text-decoration-none d-none d-sm-inline-block">
-            {{ 'LANDING.NAV.PRO_LOGIN' | translate }}
-          </a>
-        }
+        <!-- Discrete Pro Link (Routes to /events if already logged in, or /login if guest) -->
+        <a [routerLink]="authService.isAuthenticated() ? '/events' : '/login'" class="nav-link-pro-login text-decoration-none d-none d-sm-inline-block">
+          {{ 'LANDING.NAV.PRO_LOGIN' | translate }}
+        </a>
 
         <!-- Single Main Header CTA (Always Visible Green Button) -->
         <a routerLink="/express" class="btn btn-sm btn-success rounded-pill px-3.5 py-1.5 fw-bold shadow-2xs d-flex align-items-center gap-1.5">
