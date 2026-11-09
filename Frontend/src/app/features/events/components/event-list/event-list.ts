@@ -88,6 +88,57 @@ export class EventList implements OnInit {
     return list;
   });
 
+  // Pagination State (10 items per page)
+  protected readonly currentPage = signal<number>(1);
+  protected readonly pageSize = signal<number>(10);
+
+  protected readonly totalPages = computed<number>(() => {
+    const total = this.filteredEvents().length;
+    return Math.max(1, Math.ceil(total / this.pageSize()));
+  });
+
+  protected readonly paginatedEvents = computed<Event[]>(() => {
+    const list = this.filteredEvents();
+    const page = this.currentPage();
+    const size = this.pageSize();
+    const start = (page - 1) * size;
+    return list.slice(start, start + size);
+  });
+
+  protected readonly pageRangeStart = computed<number>(() => {
+    const total = this.filteredEvents().length;
+    if (total === 0) return 0;
+    return (this.currentPage() - 1) * this.pageSize() + 1;
+  });
+
+  protected readonly pageRangeEnd = computed<number>(() => {
+    const total = this.filteredEvents().length;
+    return Math.min(this.currentPage() * this.pageSize(), total);
+  });
+
+  protected readonly pageNumbers = computed<number[]>(() => {
+    const total = this.totalPages();
+    const current = this.currentPage();
+    const pages: number[] = [];
+    if (total <= 5) {
+      for (let i = 1; i <= total; i++) pages.push(i);
+    } else {
+      let start = Math.max(1, current - 2);
+      let end = Math.min(total, current + 2);
+      if (current <= 3) {
+        start = 1;
+        end = 5;
+      } else if (current >= total - 2) {
+        start = total - 4;
+        end = total;
+      }
+      for (let i = start; i <= end; i++) {
+        pages.push(i);
+      }
+    }
+    return pages;
+  });
+
   public ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
       const paramCatererId = params['catererId'] ? Number(params['catererId']) : null;
@@ -140,10 +191,44 @@ export class EventList implements OnInit {
     });
   }
 
+  protected onSearchChange(term: string): void {
+    this.searchTerm.set(term);
+    this.currentPage.set(1);
+  }
+
+  protected onStatusChange(status: string): void {
+    this.statusFilter.set(status);
+    this.currentPage.set(1);
+  }
+
+  protected onSortChange(sort: string): void {
+    this.sortBy.set(sort);
+    this.currentPage.set(1);
+  }
+
+  protected prevPage(): void {
+    if (this.currentPage() > 1) {
+      this.currentPage.update(p => p - 1);
+    }
+  }
+
+  protected nextPage(): void {
+    if (this.currentPage() < this.totalPages()) {
+      this.currentPage.update(p => p + 1);
+    }
+  }
+
+  protected setPage(page: number): void {
+    if (page >= 1 && page <= this.totalPages()) {
+      this.currentPage.set(page);
+    }
+  }
+
   protected resetFilters(): void {
     this.searchTerm.set('');
     this.statusFilter.set('ALL');
     this.sortBy.set('date-asc');
+    this.currentPage.set(1);
   }
 
   protected getStatusBadgeClass(status: string | undefined): string {
@@ -202,6 +287,9 @@ export class EventList implements OnInit {
         next: () => {
           this.events.update(list => list.filter(e => e.id !== id));
           this.updateQuotaStats();
+          if (this.currentPage() > this.totalPages()) {
+            this.currentPage.set(Math.max(1, this.totalPages()));
+          }
         },
         error: (err) => {
           this.errorMessage.set('Une erreur est survenue lors de la suppression.');

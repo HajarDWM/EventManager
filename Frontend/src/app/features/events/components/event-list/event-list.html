@@ -62,14 +62,14 @@
         </span>
         <input type="text" class="form-control border-0 bg-body-light fs-sm"
                [placeholder]="'EVENTS.SEARCH_PLACEHOLDER' | translate"
-               [ngModel]="searchTerm()" (ngModelChange)="searchTerm.set($event)">
+               [ngModel]="searchTerm()" (ngModelChange)="onSearchChange($event)">
       </div>
     </div>
 
     <!-- Status Filter -->
     <div class="col-md-3">
       <select class="form-select border-0 bg-body-light fs-sm"
-              [ngModel]="statusFilter()" (ngModelChange)="statusFilter.set($event)">
+              [ngModel]="statusFilter()" (ngModelChange)="onStatusChange($event)">
         <option value="ALL">{{ 'EVENTS.ALL_STATUSES' | translate }}</option>
         <option value="PLANNED">{{ 'EVENTS.STATUS_PLANNED' | translate }}</option>
         <option value="AWAITING_PAYMENT">{{ 'EVENTS.STATUS_AWAITING_PAYMENT' | translate }}</option>
@@ -82,7 +82,7 @@
     <!-- Sort By -->
     <div class="col-md-3">
       <select class="form-select border-0 bg-body-light fs-sm"
-              [ngModel]="sortBy()" (ngModelChange)="sortBy.set($event)">
+              [ngModel]="sortBy()" (ngModelChange)="onSortChange($event)">
         <option value="date-asc">{{ 'EVENTS.SORT_DATE_ASC' | translate }}</option>
         <option value="date-desc">{{ 'EVENTS.SORT_DATE_DESC' | translate }}</option>
         <option value="guests-desc">{{ 'EVENTS.SORT_GUESTS_DESC' | translate }}</option>
@@ -148,7 +148,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let event of filteredEvents()" [routerLink]="['/events', event.id]" style="cursor: pointer;">
+          <tr *ngFor="let event of paginatedEvents()" [routerLink]="['/events', event.id]" style="cursor: pointer;">
             <td>
               <div class="fw-semibold text-primary">
                 {{ event.title }}
@@ -211,6 +211,66 @@
           </tr>
         </tbody>
       </table>
+    </div>
+  </div>
+
+  <!-- Pagination Block Footer -->
+  <div class="block-content block-content-full bg-body-light border-top border-light d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2 py-2 px-3"
+       *ngIf="!isLoading() && filteredEvents().length > 0">
+    <div class="fs-sm text-muted">
+      {{ 'COMMON.SHOWING_RANGE' | translate:{ start: pageRangeStart(), end: pageRangeEnd(), total: filteredEvents().length } }}
+    </div>
+
+    <div class="d-flex align-items-center gap-1" *ngIf="totalPages() > 1">
+      <!-- Previous Page -->
+      <button type="button" class="btn btn-sm btn-alt-secondary"
+              [disabled]="currentPage() === 1"
+              (click)="prevPage()"
+              [title]="'COMMON.PREVIOUS' | translate">
+        <i class="fa fa-chevron-left me-1"></i> {{ 'COMMON.PREVIOUS' | translate }}
+      </button>
+
+      <!-- Page Numbers Desktop -->
+      <div class="d-none d-md-flex align-items-center gap-1 mx-1">
+        <button *ngIf="pageNumbers()[0] > 1"
+                type="button"
+                class="btn btn-sm btn-alt-secondary"
+                (click)="setPage(1)">
+          1
+        </button>
+        <span *ngIf="pageNumbers()[0] > 2" class="text-muted px-1">...</span>
+
+        <ng-container *ngFor="let p of pageNumbers()">
+          <button type="button"
+                  class="btn btn-sm"
+                  [class.btn-primary]="currentPage() === p"
+                  [class.btn-alt-secondary]="currentPage() !== p"
+                  (click)="setPage(p)">
+            {{ p }}
+          </button>
+        </ng-container>
+
+        <span *ngIf="pageNumbers()[pageNumbers().length - 1] < totalPages() - 1" class="text-muted px-1">...</span>
+        <button *ngIf="pageNumbers()[pageNumbers().length - 1] < totalPages()"
+                type="button"
+                class="btn btn-sm btn-alt-secondary"
+                (click)="setPage(totalPages())">
+          {{ totalPages() }}
+        </button>
+      </div>
+
+      <!-- Mobile Page Indicator -->
+      <span class="d-md-none badge bg-white text-dark border px-2 py-1 fs-xs">
+        {{ currentPage() }} / {{ totalPages() }}
+      </span>
+
+      <!-- Next Page -->
+      <button type="button" class="btn btn-sm btn-alt-secondary"
+              [disabled]="currentPage() >= totalPages()"
+              (click)="nextPage()"
+              [title]="'COMMON.NEXT' | translate">
+        {{ 'COMMON.NEXT' | translate }} <i class="fa fa-chevron-right ms-1"></i>
+      </button>
     </div>
   </div>
 </div>

@@ -39,6 +39,7 @@
     "VIEW_ALL": "View all",
     "NOT_SPECIFIED": "Not specified",
     "PAGE_OF": "Page {{ current }} / {{ total }}",
+    "SHOWING_RANGE": "Showing {{ start }} to {{ end }} of {{ total }}",
     "LINK": "Link",
     "PREVIEW": "Preview",
     "DESCRIPTION": "Description"

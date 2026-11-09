@@ -63,7 +63,7 @@ export class Layout implements OnInit {
     if (window.innerWidth < 992) {
       this.isSidebarMobileOpen.update(v => !v);
     } else {
-      this.isSidebarOpen.update(v => !v);
+      this.isSidebarMini.update(v => !v);
     }
   }
 

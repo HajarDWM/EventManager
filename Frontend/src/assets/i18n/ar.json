@@ -39,6 +39,7 @@
     "VIEW_ALL": "عرض الكل",
     "NOT_SPECIFIED": "غير محدد",
     "PAGE_OF": "صفحة {{ current }} من {{ total }}",
+    "SHOWING_RANGE": "عرض من {{ start }} إلى {{ end }} من أصل {{ total }}",
     "LINK": "رابط",
     "PREVIEW": "معاينة",
     "DESCRIPTION": "الوصف"
