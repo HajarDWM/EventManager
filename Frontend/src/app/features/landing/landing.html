@@ -31,11 +31,11 @@
       </nav>
 
       <!-- Right Action CTAs & Language Switcher at Far-Right ("f jenb") -->
-      <div class="d-flex align-items-center gap-2.5">
-        <!-- Authenticated State -->
+      <div class="d-flex align-items-center gap-2">
+        <!-- Discrete Pro or Dashboard Link -->
         @if (authService.isAuthenticated()) {
-          <a routerLink="/events" class="btn btn-sm btn-primary rounded-pill px-3.5 py-1.5 fw-bold shadow-2xs d-flex align-items-center gap-1.5">
-            <i class="fa fa-gauge"></i>
+          <a routerLink="/events" class="nav-link-pro-login text-decoration-none d-none d-sm-inline-flex align-items-center gap-1.5">
+            <i class="fa fa-gauge text-muted fs-xs"></i>
             <span>{{ 'LANDING.NAV.DASHBOARD' | translate }}</span>
           </a>
         } @else {
@@ -43,23 +43,26 @@
           <a routerLink="/login" class="nav-link-pro-login text-decoration-none d-none d-sm-inline-block">
             {{ 'LANDING.NAV.PRO_LOGIN' | translate }}
           </a>
-
-          <!-- Single Main Header CTA -->
-          <a routerLink="/express" class="btn btn-sm btn-success rounded-pill px-3.5 py-1.5 fw-bold shadow-2xs d-flex align-items-center gap-1.5">
-            <i class="fa fa-bolt text-warning"></i>
-            <span>{{ 'LANDING.NAV.CREATE_INVITATION' | translate }}</span>
-          </a>
         }
 
-        <!-- Elegant Minimalist Language Dropdown at Far-Right ("f jenb") -->
-        <div class="position-relative ms-1 d-inline-block lang-dropdown-container">
+        <!-- Single Main Header CTA (Always Visible Green Button) -->
+        <a routerLink="/express" class="btn btn-sm btn-success rounded-pill px-3.5 py-1.5 fw-bold shadow-2xs d-flex align-items-center gap-1.5">
+          <i class="fa fa-bolt text-warning"></i>
+          <span>{{ 'LANDING.NAV.CREATE_INVITATION' | translate }}</span>
+        </a>
+
+        <!-- Vertical Divider to push Language Selector to the far-right ("khahazli") -->
+        <div class="vr mx-1 opacity-25 d-none d-sm-block" style="height: 22px;"></div>
+
+        <!-- Language Switcher Button with Translation Globe Icon ("bayna dyal traduir") -->
+        <div class="position-relative d-inline-block lang-dropdown-container">
           <button type="button" 
-                  class="btn btn-sm btn-lang-switcher rounded-pill px-2.5 py-1 d-flex align-items-center gap-1.5"
+                  class="btn btn-sm btn-lang-switcher rounded-pill px-2.5 py-1.5 d-flex align-items-center gap-1.5"
                   [class.active]="isLangDropdownOpen()"
                   (click)="toggleLangDropdown($event)"
-                  title="Changer de langue / Change language / تغيير اللغة">
-            <span class="fs-xs">{{ currentLanguage.flag }}</span>
-            <span class="fs-xs fw-bold">{{ currentLanguage.short }}</span>
+                  title="Changer de langue / Translate / تغيير اللغة">
+            <i class="fa fa-globe text-primary fs-xs"></i>
+            <span class="fs-xs fw-bold text-dark">{{ currentLanguage.short }}</span>
             <i class="fa fa-chevron-down fs-4xs text-muted transition-transform" 
                [class.rotate-180]="isLangDropdownOpen()"></i>
           </button>
@@ -73,7 +76,7 @@
                         [class.active-lang]="translationService.currentLang() === lang.code"
                         (click)="selectLanguage(lang.code, $event)">
                   <span class="d-flex align-items-center gap-2">
-                    <span class="fs-sm">{{ lang.flag }}</span>
+                    <span class="badge rounded-pill bg-light text-primary border px-1.5 py-0.5 fs-5xs fw-bold">{{ lang.short }}</span>
                     <span class="fw-semibold text-dark">{{ lang.label }}</span>
                   </span>
                   @if (translationService.currentLang() === lang.code) {
