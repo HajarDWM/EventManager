@@ -4,10 +4,10 @@
   <!-- 1. STICKY NAVBAR (Clean, Minimalist & Focused) -->
   <!-- ========================================================================= -->
   <header class="landing-header" [class.header-scrolled]="isScrolled()">
-    <div class="container d-flex align-items-center justify-content-between">
+    <div class="container-fluid px-3 px-sm-4 px-xl-5 max-w-1350 mx-auto d-flex align-items-center justify-content-between">
       
       <!-- Brand Logo -->
-      <a class="navbar-brand d-flex align-items-center gap-2 text-decoration-none" routerLink="/">
+      <a class="navbar-brand d-flex align-items-center gap-2 text-decoration-none me-3 me-xl-5 flex-shrink-0" routerLink="/">
         <div class="brand-crest shadow-2xs">
           <i class="fa fa-gem text-warning"></i>
         </div>
@@ -15,7 +15,7 @@
       </a>
 
       <!-- Clean Navigation Links (Anti-Slop: No Emojis, No Icons) -->
-      <nav class="d-none d-lg-flex align-items-center gap-4">
+      <nav class="d-none d-lg-flex align-items-center gap-2 gap-xl-4 mx-auto">
         <a class="nav-link-custom cursor-pointer" (click)="scrollToSection('templates-section')">
           {{ 'LANDING.NAV.TEMPLATES' | translate }}
         </a>
@@ -28,14 +28,14 @@
       </nav>
 
       <!-- Right Action CTAs & Language Switcher at Far-Right ("f jenb") -->
-      <div class="d-flex align-items-center gap-2">
+      <div class="d-flex align-items-center gap-2 flex-shrink-0 ms-2 ms-xl-4">
         <!-- Discrete Pro Link (Routes to /events if already logged in, or /login if guest) - Desktop only -->
         <a [routerLink]="authService.isAuthenticated() ? '/events' : '/login'" class="nav-link-pro-login text-decoration-none d-none d-lg-inline-block">
           {{ (authService.isAuthenticated() ? 'LANDING.NAV.DASHBOARD' : 'LANDING.NAV.PRO_LOGIN') | translate }}
         </a>
 
         <!-- Main Header CTA (Always Visible on Desktop, Moved into Hamburger Menu on Mobile for Clean Spacing) -->
-        <a routerLink="/express" class="btn btn-sm btn-success rounded-pill px-3.5 py-1.5 fw-bold shadow-2xs d-none d-lg-inline-flex align-items-center gap-1.5 text-nowrap">
+        <a routerLink="/express" class="btn btn-sm btn-success rounded-pill px-3 py-1.5 fw-bold shadow-2xs d-none d-lg-inline-flex align-items-center gap-1.5 text-nowrap fs-xs">
           <i class="fa fa-bolt text-warning fs-xs"></i>
           <span>{{ 'LANDING.NAV.CREATE_INVITATION' | translate }}</span>
         </a>

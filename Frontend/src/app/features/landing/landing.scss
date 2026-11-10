@@ -36,31 +36,38 @@
     align-items: center;
     justify-content: center;
     border: 1px solid rgba(212, 175, 55, 0.4);
+    flex-shrink: 0;
   }
 
   .brand-name {
     color: #0f172a;
     letter-spacing: -0.5px;
+    white-space: nowrap;
   }
 
   .nav-link-custom {
     color: #475569;
     text-decoration: none;
-    font-size: 0.9rem;
+    font-size: 0.82rem;
     font-weight: 600;
-    transition: color 0.2s ease;
+    white-space: nowrap;
+    padding: 5px 8px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
 
     &:hover {
       color: #2563eb;
+      background-color: rgba(37, 99, 235, 0.05);
     }
   }
 
   .nav-link-pro-login {
     color: #64748b;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     font-weight: 600;
-    padding: 6px 12px;
+    padding: 5px 10px;
     border-radius: 9999px;
+    white-space: nowrap;
     transition: all 0.2s ease;
 
     &:hover {
@@ -377,6 +384,9 @@ section[id],
   color: #334155;
   font-size: 0.95rem;
   line-height: 1.5;
+}
+.max-w-1350 {
+  max-width: 1350px;
 }
 .max-w-850 {
   max-width: 850px;
