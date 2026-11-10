@@ -237,5 +237,69 @@
   }
 }
 
+/* ==========================================================================
+   Smart Dynamic Sidebar Mini Push (Hover Expand without Covering Content)
+   ========================================================================== */
+@media (min-width: 992px) {
+  #page-container.sidebar-mini.sidebar-o {
+    padding-left: 60px;
+    transition: padding-left 0.28s cubic-bezier(0.16, 1, 0.3, 1), padding-right 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+
+    #page-header {
+      left: 60px;
+      transition: left 0.28s cubic-bezier(0.16, 1, 0.3, 1), right 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    #sidebar {
+      transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* When hovered (via Angular class or CSS :has), push content to 250px so table is NEVER covered! */
+    &.sidebar-expanded-hover,
+    &:has(#sidebar:hover) {
+      padding-left: 250px !important;
+
+      #page-header {
+        left: 250px !important;
+      }
+
+      #sidebar {
+        transform: translateX(0) !important;
+
+        .content-side,
+        .content-header {
+          transform: translateX(0) !important;
+        }
+
+        .smini-hide {
+          opacity: 1 !important;
+        }
+      }
+    }
+  }
+
+  /* RTL Support for Arabic */
+  [dir="rtl"] #page-container.sidebar-mini.sidebar-o {
+    padding-left: 0 !important;
+    padding-right: 60px;
+
+    #page-header {
+      left: 0 !important;
+      right: 60px;
+    }
+
+    &.sidebar-expanded-hover,
+    &:has(#sidebar:hover) {
+      padding-right: 250px !important;
+      padding-left: 0 !important;
+
+      #page-header {
+        right: 250px !important;
+        left: 0 !important;
+      }
+    }
+  }
+}
+
 
 

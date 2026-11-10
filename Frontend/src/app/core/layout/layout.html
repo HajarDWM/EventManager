@@ -2,6 +2,7 @@
   'sidebar-o': isSidebarOpen(),
   'sidebar-o-xs': isSidebarMobileOpen(),
   'sidebar-mini': isSidebarMini(),
+  'sidebar-expanded-hover': isSidebarMini() && isSidebarHovered(),
   'sidebar-dark': true,
   'enable-page-overlay': true,
   'side-scroll': true,
@@ -9,7 +10,9 @@
   'main-content-narrow': true
 }">
   <!-- Sidebar -->
-  <nav id="sidebar" aria-label="Main Navigation">
+  <nav id="sidebar" aria-label="Main Navigation"
+       (mouseenter)="onSidebarHover(true)"
+       (mouseleave)="onSidebarHover(false)">
     <!-- Side Header -->
     <div class="content-header">
       <!-- Logo -->
@@ -117,8 +120,8 @@
     <div class="content-header">
       <!-- Left Section -->
       <div class="d-flex align-items-center gap-2">
-        <!-- Toggle Sidebar Button -->
-        <button type="button" class="btn btn-sm btn-alt-secondary" (click)="toggleSidebar()">
+        <!-- Toggle Sidebar Button (Visible on mobile screens only) -->
+        <button type="button" class="btn btn-sm btn-alt-secondary d-lg-none" (click)="toggleSidebar()">
           <i class="fa fa-fw fa-bars"></i>
         </button>
       </div>

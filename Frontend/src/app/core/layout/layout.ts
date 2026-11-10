@@ -20,7 +20,8 @@ export class Layout implements OnInit {
   // Signaux réactifs pour contrôler le layout
   protected readonly isSidebarOpen = signal(true);
   protected readonly isSidebarMobileOpen = signal(false);
-  protected readonly isSidebarMini = signal(false);
+  protected readonly isSidebarMini = signal(true);
+  protected readonly isSidebarHovered = signal(false);
   protected readonly isUserDropdownOpen = signal(false);
 
   // Informations utilisateur réelles du traiteur connecté
@@ -57,6 +58,12 @@ export class Layout implements OnInit {
         this.userBusinessName.set('Mon Compte Organisateur');
       }
     });
+  }
+
+  protected onSidebarHover(hovered: boolean): void {
+    if (this.isSidebarMini()) {
+      this.isSidebarHovered.set(hovered);
+    }
   }
 
   protected toggleSidebar(): void {
