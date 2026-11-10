@@ -403,7 +403,32 @@
     "FAMILY": "مناسبات عائلية واجتماعية",
     "CORPORATE": "مناسبات مهنية وشركات",
     "SEASONAL_SOCIAL": "مناسبات موسمية وحفلات",
-    "SCOLAIRE": "مناسبات تعليمية وجامعية"
+    "SCOLAIRE": "مناسبات تعليمية وجامعية",
+    "TITLE_Launch Party Royal": "حفل إطلاق ملكي فاخر",
+    "TITLE_Bohème Floral & Romantique": "بوهيمي زهري ورومانسي",
+    "TITLE_Prestige & Réussite Académique": "برستيج ونجاح أكاديمي",
+    "TITLE_Or & Velours": "ذهب ومخمل راقٍ",
+    "TITLE_Fleurs de Coton": "زهور القطن الناعمة",
+    "TITLE_Corporate Professional": "احترافي للمؤسسات",
+    "TITLE_Luxury Minimal": "فخامة عصرية بسيطة",
+    "TITLE_Élégance Épurée": "أناقة ناعمة",
+    "TITLE_Élégance Minimaliste": "أناقة عصرية بسيطة",
+    "TITLE_Royal & Classique": "ملكي وكلاسيكي",
+    "TITLE_Fiançailles Royales & Dorées": "خطوبة ملكية مذهبة",
+    "TITLE_Fiançailles Royales": "خطوبة ملكية",
+    "TITLE_Fiançailles Royales & Or": "خطوبة ملكية وذهب",
+    "TITLE_Célébration Tahara & Émeraude": "احتفال طهارة زمردي",
+    "TITLE_Célébration Tahara": "احتفال الطهارة",
+    "TITLE_Romantic & Floral": "رومانسي وزهري",
+    "TITLE_Traditionnel / Beldi": "تقليدي / بلدي مغربي",
+    "TITLE_Romance Florale": "رومانسية الزهور",
+    "TITLE_Henné": "احتفال الحناء",
+    "TITLE_Henné & Coutumes": "حناء وتقاليد أصيلة",
+    "TITLE_Douceur Pastel & Ciel Doré": "باستيل ناعم وسماء ذهبية",
+    "TITLE_Innovation & Lancement Exclusif": "ابتكار وإطلاق حصري",
+    "TITLE_Gala Étincelant du Réveillon": "حفل رأس السنة المتألق",
+    "TITLE_Bienfaisance & Cœur d'Or": "حفل خيري بقلب ذهبي",
+    "TITLE_Séminaire Impérial": "ندوة إمبريالية مهنية"
   },
   "INVITATION_SETUP": {
     "TITLE": "تخصيص الدعوة الرقمية",
@@ -1006,7 +1031,14 @@
     },
     "STEP2": {
       "TITLE": "اختر نموذج الدعوة",
+      "RECOMMENDED": "المقترحة",
       "ALL_TEMPLATES": "جميع النماذج",
+      "SUGGESTED_FOR": "تصاميم مقترحة لـ :",
+      "ALL_COLLECTION_SUBTITLE": "عرض كافة التشكيلة المغربية المتوفرة",
+      "LOADING_TEMPLATES": "جاري تحميل نماذج الدعوات...",
+      "NO_TEMPLATES_FOUND": "لم يتم العثور على أي نموذج مخصص لـ « {{ type }} »",
+      "EXPLORE_ALL": "اكتشف كافة نماذج الدعوات المتوفرة لدينا.",
+      "BTN_VIEW_ALL": "عرض كل النماذج ({{ count }})",
       "SELECTED": "تم الاختيار",
       "CHOOSE": "اختيار",
       "VIEW_PREVIEW": "معاينة",
@@ -1019,8 +1051,8 @@
       "BTN_ADD_GUESTS": "إضافة مدعوين",
       "BTN_CLOSE_ADD": "إغلاق الإضافة",
       "METHOD_LABEL": "طريقة الإضافة :",
-      "MODE_SINGLE": "واحد بواحد",
-      "MODE_BULK": "دفعة واحدة",
+      "MODE_SINGLE": "إضافة فردية",
+      "MODE_BULK": "إضافة جماعية",
       "INPUT_NAME_LABEL": "الاسم الكامل للمدعو",
       "INPUT_NAME_PLACEHOLDER": "مثال: كريم بنجلون",
       "INPUT_PHONE_LABEL": "رقم الواتساب",
@@ -1054,7 +1086,27 @@
       "PUBLIC_LINK_DESC": "شارك هذا الرابط في حالة واتساب أو ستوري إنستغرام أو مجموعات العائلة ليتمكن الجميع من تأكيد الحضور.",
       "BTN_COPY_LINK": "نسخ الرابط",
       "LINK_COPIED": "تم نسخ الرابط!",
-      "BTN_SHARE_WHATSAPP": "مشاركة عبر واتساب"
+      "BTN_SHARE_WHATSAPP": "مشاركة عبر واتساب",
+      "BTN_CREATE_ANOTHER": "إنشاء دعوة أخرى لمناسبة جديدة",
+      "BULK_DETECTED": "تم التعرف على {{ count }} مدعو",
+      "BULK_INVALID": "{{ count }} سطر بدون رقم هاتف",
+      "BTN_CLEAR": "مسح",
+      "BTN_IMPORT_COUNT": "استيراد {{ count }} مدعو"
+    },
+    "MODAL_INVITATIONS": {
+      "TITLE": "دعواتي إكسبريس ({{ count }})",
+      "EMPTY": "ليس لديك أي دعوة مسجلة بعد.",
+      "CURRENT_BADGE": "الحالية",
+      "GUESTS_COUNT": "مدعو",
+      "BTN_OPENED": "مفتوحة",
+      "BTN_OPEN": "فتح",
+      "TOOLTIP_DELETE": "حذف من هذا الجهاز",
+      "BTN_CREATE_NEW": "إنشاء دعوة أخرى"
+    },
+    "MODAL_PREVIEW": {
+      "BTN_CHOOSE": "اختيار هذا النموذج",
+      "FORMAT_MOBILE": "عرض الهاتف",
+      "FORMAT_PC": "عرض الحاسوب"
     }
   }
 }

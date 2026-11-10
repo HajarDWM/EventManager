@@ -302,7 +302,7 @@
         <div class="d-flex justify-content-end pt-2 pt-sm-2.5 border-top">
           <button type="button" class="btn btn-primary px-3.5 px-sm-4 py-1.5 py-sm-2 rounded-pill fw-bold shadow-sm d-flex align-items-center gap-1.5" (click)="goToStep(2)">
             <span>{{ 'EXPRESS.STEP1.BTN_NEXT' | translate }}</span>
-            <i class="fa fa-arrow-right fs-xs"></i>
+            <i class="fa fs-xs" [ngClass]="translationService.isRtl() ? 'fa-arrow-left' : 'fa-arrow-right'"></i>
           </button>
         </div>
 
@@ -319,10 +319,10 @@
             <i class="fa fa-paint-brush text-primary me-2"></i>{{ 'EXPRESS.STEP2.TITLE' | translate }}
           </h3>
           <div class="fs-4xs text-muted mt-0.5" *ngIf="!showAllTemplates()">
-            Designs suggérés pour : <strong class="text-primary">{{ eventType() }}</strong>
+            {{ 'EXPRESS.STEP2.SUGGESTED_FOR' | translate }} <strong class="text-primary">{{ eventType() }}</strong>
           </div>
           <div class="fs-4xs text-muted mt-0.5" *ngIf="showAllTemplates()">
-            Affichage de l'ensemble de notre collection marocaine
+            {{ 'EXPRESS.STEP2.ALL_COLLECTION_SUBTITLE' | translate }}
           </div>
         </div>
 
@@ -333,7 +333,7 @@
                     class="btn btn-xs rounded-pill px-2.5 py-1 fw-bold transition-all"
                     [ngClass]="!showAllTemplates() ? 'btn-primary text-white shadow-2xs' : 'btn-link text-muted'"
                     (click)="showAllTemplates.set(false)">
-              <i class="fa fa-wand-magic-sparkles me-1"></i> Recommandés ({{ recommendedCount() }})
+              <i class="fa fa-wand-magic-sparkles me-1"></i> {{ 'EXPRESS.STEP2.RECOMMENDED' | translate }} ({{ recommendedCount() }})
             </button>
             <button type="button" 
                     class="btn btn-xs rounded-pill px-2.5 py-1 fw-bold transition-all"
@@ -350,16 +350,16 @@
         <!-- Templates Grid Loading -->
         <div *ngIf="isLoadingTemplates()" class="text-center py-4">
           <i class="fa fa-spinner fa-spin fa-2x text-primary mb-2"></i>
-          <p class="text-muted fs-xs mb-0">Chargement des modèles d'invitations...</p>
+          <p class="text-muted fs-xs mb-0">{{ 'EXPRESS.STEP2.LOADING_TEMPLATES' | translate }}</p>
         </div>
 
         <!-- Empty state fallback -->
         <div *ngIf="!isLoadingTemplates() && filteredTemplates().length === 0" class="text-center py-4">
           <i class="fa fa-palette fa-2x text-muted opacity-50 mb-2"></i>
-          <p class="fs-sm text-dark fw-semibold mb-1">Aucun modèle spécifique trouvé pour « {{ eventType() }} »</p>
-          <p class="fs-xs text-muted mb-2">Découvrez l'ensemble de notre collection de modèles d'invitations.</p>
+          <p class="fs-sm text-dark fw-semibold mb-1">{{ 'EXPRESS.STEP2.NO_TEMPLATES_FOUND' | translate:{ type: eventType() } }}</p>
+          <p class="fs-xs text-muted mb-2">{{ 'EXPRESS.STEP2.EXPLORE_ALL' | translate }}</p>
           <button type="button" class="btn btn-xs btn-primary rounded-pill px-3 py-1.5" (click)="showAllTemplates.set(true)">
-            Voir tous les modèles ({{ templates().length }})
+            {{ 'EXPRESS.STEP2.BTN_VIEW_ALL' | translate:{ count: templates().length } }}
           </button>
         </div>
 
@@ -372,7 +372,7 @@
               
               <!-- Card Image / Mockup (Compact 140px height desktop, 95px mobile) -->
               <div class="position-relative template-img-wrapper bg-dark text-center" style="height: 140px;">
-                <img *ngIf="t.imageUrl" [src]="t.imageUrl" [alt]="t.title" class="w-100 h-100 object-fit-cover opacity-90">
+                <img *ngIf="t.imageUrl" [src]="t.imageUrl" [alt]="getTemplateTitle(t.title)" class="w-100 h-100 object-fit-cover opacity-90">
                 <div *ngIf="!t.imageUrl" class="w-100 h-100 d-flex align-items-center justify-content-center text-white-50">
                   <i class="fa fa-envelope-open-text fa-2x"></i>
                 </div>
@@ -387,15 +387,15 @@
                 <!-- Category badge -->
                 <div class="position-absolute bottom-0 start-0 m-1.5">
                   <span class="badge bg-dark bg-opacity-75 text-white rounded-pill px-2 py-0.5 fs-4xs">
-                    {{ t.category }}
+                    {{ getCategoryLabel(t.category) }}
                   </span>
                 </div>
               </div>
 
               <!-- Card Details -->
               <div class="p-2 p-sm-2.5">
-                <h4 class="fs-xs fw-bold text-dark mb-0.5 text-truncate">{{ t.title }}</h4>
-                <p class="fs-3xs text-muted mb-2 text-truncate-2" style="min-height: 28px;">{{ t.description || 'Modèle interactif avec musique, animations et RSVP.' }}</p>
+                <h4 class="fs-xs fw-bold text-dark mb-0.5 text-truncate">{{ getTemplateTitle(t.title) }}</h4>
+                <p class="fs-3xs text-muted mb-2 text-truncate-2" style="min-height: 28px;">{{ getTemplateDescription(t.description, t.title) }}</p>
                 <div class="d-flex justify-content-between align-items-center gap-1.5">
                   <ng-container *ngIf="selectedTemplateId() === t.id">
                     <button type="button" class="btn btn-xs btn-alt-success text-success rounded-pill px-3 py-1 fw-bold w-100 d-inline-flex align-items-center justify-content-center gap-1.5 shadow-2xs"
@@ -422,8 +422,9 @@
 
         <!-- Footer actions -->
         <div class="d-flex justify-content-between align-items-center pt-2.5 border-top">
-          <button type="button" class="btn btn-sm btn-alt-secondary rounded-pill px-3" (click)="goToStep(1)">
-            <i class="fa fa-arrow-left me-1"></i> {{ 'EXPRESS.STEP2.BTN_BACK' | translate }}
+          <button type="button" class="btn btn-sm btn-alt-secondary rounded-pill px-3 d-inline-flex align-items-center gap-1.5" (click)="goToStep(1)">
+            <i class="fa" [ngClass]="translationService.isRtl() ? 'fa-arrow-right' : 'fa-arrow-left'"></i>
+            <span>{{ 'EXPRESS.STEP2.BTN_BACK' | translate }}</span>
           </button>
           
           <button type="button" 
@@ -432,7 +433,7 @@
                   (click)="submitAndProceedToGuests()">
             <i class="fa fa-spinner fa-spin" *ngIf="isSubmittingEvent()"></i>
             <span>{{ 'EXPRESS.STEP2.BTN_NEXT' | translate }}</span>
-            <i class="fa fa-arrow-right fs-xs" *ngIf="!isSubmittingEvent()"></i>
+            <i class="fa fs-xs" [ngClass]="translationService.isRtl() ? 'fa-arrow-left' : 'fa-arrow-right'" *ngIf="!isSubmittingEvent()"></i>
           </button>
         </div>
 
@@ -531,19 +532,19 @@
           
           <!-- Mode Tabs (1 par 1 vs Copier-Coller en masse) -->
           <div class="d-flex align-items-center justify-content-between mb-2">
-            <span class="fs-4xs fw-bold text-muted text-uppercase letter-spacing-1">Méthode d'ajout :</span>
+            <span class="fs-4xs fw-bold text-muted text-uppercase letter-spacing-1">{{ 'EXPRESS.STEP3.METHOD_LABEL' | translate }}</span>
             <div class="mode-toggle-pills shadow-2xs" role="group">
               <button type="button" class="btn-toggle-mode"
                       [ngClass]="addGuestMode() === 'single' ? 'bg-primary text-white shadow-2xs' : 'text-muted hover-dark'"
                       (click)="addGuestMode.set('single')">
                 <i class="fa fa-user-plus"></i>
-                <span>1 par 1</span>
+                <span>{{ 'EXPRESS.STEP3.MODE_SINGLE' | translate }}</span>
               </button>
               <button type="button" class="btn-toggle-mode"
                       [ngClass]="addGuestMode() === 'bulk' ? 'bg-primary text-white shadow-2xs' : 'text-muted hover-dark'"
                       (click)="addGuestMode.set('bulk')">
                 <i class="fa fa-paste"></i>
-                <span>En masse</span>
+                <span>{{ 'EXPRESS.STEP3.MODE_BULK' | translate }}</span>
                 <span class="badge rounded-pill"
                       [ngClass]="addGuestMode() === 'bulk' ? 'bg-success text-white' : 'bg-success-subtle text-success'">⚡</span>
               </button>
@@ -606,22 +607,22 @@
               <div class="d-flex flex-wrap align-items-center justify-content-between gap-1.5 p-2 rounded-3 bg-white border mb-2 shadow-2xs">
                 <div class="d-flex flex-wrap align-items-center gap-1.5">
                   <span class="badge bg-success rounded-pill px-2.5 py-1 fs-3xs fw-bold shadow-2xs">
-                    <i class="fa fa-check-circle me-1"></i> {{ validParsedGuests().length }} invité(s) détecté(s)
+                    <i class="fa fa-check-circle me-1"></i> {{ 'EXPRESS.STEP3.BULK_DETECTED' | translate:{ count: validParsedGuests().length } }}
                   </span>
                   <span *ngIf="invalidParsedGuests().length > 0" class="badge bg-danger rounded-pill px-2 py-0.5 fs-4xs">
-                    <i class="fa fa-exclamation-circle me-1"></i> {{ invalidParsedGuests().length }} ligne(s) sans numéro
+                    <i class="fa fa-exclamation-circle me-1"></i> {{ 'EXPRESS.STEP3.BULK_INVALID' | translate:{ count: invalidParsedGuests().length } }}
                   </span>
                 </div>
                 <div class="d-flex gap-1.5">
                   <button type="button" class="btn btn-xs btn-alt-secondary rounded-pill px-2" (click)="clearBulk()">
-                    Effacer
+                    {{ 'EXPRESS.STEP3.BTN_CLEAR' | translate }}
                   </button>
                   <button type="button" class="btn btn-xs btn-primary rounded-pill px-3 py-1 fw-bold shadow-sm d-flex align-items-center gap-1.5"
                           [disabled]="isSubmittingBulk() || validParsedGuests().length === 0"
                           (click)="importBulkGuests()">
                     <i class="fa fa-spinner fa-spin" *ngIf="isSubmittingBulk()"></i>
                     <i class="fa fa-cloud-arrow-up" *ngIf="!isSubmittingBulk()"></i>
-                    <span>Importer {{ validParsedGuests().length }} invité(s)</span>
+                    <span>{{ 'EXPRESS.STEP3.BTN_IMPORT_COUNT' | translate:{ count: validParsedGuests().length } }}</span>
                   </button>
                 </div>
               </div>
@@ -791,13 +792,13 @@
           <!-- Pagination Bar (When filtered guests exceed page size) -->
           <div *ngIf="filteredGuests().length > guestPageSize()" class="p-2 px-3 border-top bg-body-light d-flex flex-wrap align-items-center justify-content-between gap-1.5">
             <span class="fs-4xs text-muted">
-              Affichage <strong>{{ guestPageRange() }}</strong> sur <strong>{{ filteredGuests().length }}</strong>
+              {{ 'COMMON.SHOWING_RANGE' | translate:{ start: guestPageRangeStart(), end: guestPageRangeEnd(), total: filteredGuests().length } }}
             </span>
             <div class="d-flex align-items-center gap-1">
               <button type="button" class="btn btn-xs btn-alt-secondary rounded-pill px-2 py-0.5 fs-4xs"
                       [disabled]="guestPage() === 1"
                       (click)="prevGuestPage()">
-                <i class="fa fa-chevron-left me-0.5"></i> Précédent
+                <i class="fa" [ngClass]="translationService.isRtl() ? 'fa-chevron-right ms-0.5' : 'fa-chevron-left me-0.5'"></i> {{ 'COMMON.PREVIOUS' | translate }}
               </button>
 
               <span class="badge bg-white text-dark border px-2 py-1 fs-4xs rounded-pill shadow-2xs">
@@ -807,7 +808,7 @@
               <button type="button" class="btn btn-xs btn-alt-secondary rounded-pill px-2 py-0.5 fs-4xs"
                       [disabled]="guestPage() >= totalGuestPages()"
                       (click)="nextGuestPage()">
-                Suivant <i class="fa fa-chevron-right ms-0.5"></i>
+                {{ 'COMMON.NEXT' | translate }} <i class="fa" [ngClass]="translationService.isRtl() ? 'fa-chevron-left me-0.5' : 'fa-chevron-right ms-0.5'"></i>
               </button>
             </div>
           </div>
@@ -819,7 +820,7 @@
     <div class="text-center mt-3 mb-2" *ngIf="currentStep() === 3">
       <button type="button" class="btn btn-link text-muted fs-xs text-decoration-none hover-dark d-inline-flex align-items-center gap-1.5 p-1" (click)="startNewInvitation()">
         <i class="fa fa-plus-circle fs-4xs"></i>
-        <span>Créer une autre invitation pour un nouvel événement</span>
+        <span>{{ 'EXPRESS.STEP3.BTN_CREATE_ANOTHER' | translate }}</span>
       </button>
     </div>
 
@@ -831,15 +832,15 @@
       <div class="modal-content border-0 shadow-lg rounded-3 overflow-hidden">
         <div class="modal-header bg-white py-2.5 px-3 border-bottom d-flex align-items-center justify-content-between">
           <h5 class="modal-title fs-sm fw-bold mb-0 text-dark d-flex align-items-center gap-1.5">
-            <i class="fa fa-folder-open text-primary"></i> Mes Invitations Express ({{ myInvitations().length }})
+            <i class="fa fa-folder-open text-primary"></i> {{ 'EXPRESS.MODAL_INVITATIONS.TITLE' | translate:{ count: myInvitations().length } }}
           </h5>
-          <button type="button" class="btn-close" (click)="isMyInvitationsModalOpen.set(false)"></button>
+          <button type="button" class="btn-close" (click)="isMyInvitationsModalOpen.set(false)" [attr.aria-label]="'COMMON.CLOSE' | translate"></button>
         </div>
 
         <div class="modal-body p-2.5 p-sm-3 bg-body-light" style="max-height: 380px; overflow-y: auto;">
           <div *ngIf="myInvitations().length === 0" class="text-center py-4 text-muted">
             <i class="fa fa-envelope-open fa-2x opacity-50 mb-1.5"></i>
-            <p class="fs-xs mb-0">Vous n'avez pas encore d'invitation enregistrée.</p>
+            <p class="fs-xs mb-0">{{ 'EXPRESS.MODAL_INVITATIONS.EMPTY' | translate }}</p>
           </div>
 
           <div class="d-flex flex-column gap-2" *ngIf="myInvitations().length > 0">
@@ -857,13 +858,13 @@
                     <div class="fw-bold text-dark fs-xs mb-0.5 d-flex align-items-center gap-1.5">
                       <span>{{ inv.title }}</span>
                       <span *ngIf="createdEvent()?.eventId === inv.eventId" class="badge bg-success-subtle text-success rounded-pill px-1.5 py-0.2 fs-5xs fw-bold">
-                        Actuelle
+                        {{ 'EXPRESS.MODAL_INVITATIONS.CURRENT_BADGE' | translate }}
                       </span>
                     </div>
                     <div class="fs-4xs text-muted d-flex flex-wrap align-items-center gap-2">
                       <span *ngIf="inv.eventType"><i class="fa fa-tag me-0.5"></i> {{ inv.eventType }}</span>
                       <span *ngIf="inv.eventDate"><i class="far fa-calendar me-0.5"></i> {{ inv.eventDate }}</span>
-                      <span><i class="fa fa-users me-0.5"></i> {{ inv.guestsCount || 0 }} invité(s)</span>
+                      <span><i class="fa fa-users me-0.5"></i> {{ inv.guestsCount || 0 }} {{ 'EXPRESS.MODAL_INVITATIONS.GUESTS_COUNT' | translate }}</span>
                     </div>
                   </div>
                 </div>
@@ -871,10 +872,10 @@
                 <div class="d-flex align-items-center gap-1 flex-shrink-0">
                   <button type="button" class="btn btn-xs rounded-pill px-2.5 py-1 fw-bold fs-4xs"
                           [ngClass]="createdEvent()?.eventId === inv.eventId ? 'btn-primary' : 'btn-alt-primary'">
-                    {{ createdEvent()?.eventId === inv.eventId ? 'Ouverte' : 'Ouvrir' }}
+                    {{ (createdEvent()?.eventId === inv.eventId ? 'EXPRESS.MODAL_INVITATIONS.BTN_OPENED' : 'EXPRESS.MODAL_INVITATIONS.BTN_OPEN') | translate }}
                   </button>
                   <button type="button" class="btn btn-xs btn-alt-danger rounded-circle p-0 d-flex align-items-center justify-content-center" style="width: 24px; height: 24px;"
-                          (click)="deleteInvitationFromModal(inv, $event)" title="Supprimer de l'appareil">
+                          (click)="deleteInvitationFromModal(inv, $event)" [title]="'EXPRESS.MODAL_INVITATIONS.TOOLTIP_DELETE' | translate">
                     <i class="fa fa-trash fs-4xs"></i>
                   </button>
                 </div>
@@ -885,10 +886,10 @@
 
         <div class="modal-footer bg-white py-2 px-3 border-top d-flex justify-content-between align-items-center">
           <button type="button" class="btn btn-xs btn-primary rounded-pill px-3 py-1 fw-bold fs-xs" (click)="createNewFromModal()">
-            <i class="fa fa-plus me-1"></i> Créer une autre invitation
+            <i class="fa fa-plus me-1"></i> {{ 'EXPRESS.MODAL_INVITATIONS.BTN_CREATE_NEW' | translate }}
           </button>
           <button type="button" class="btn btn-xs btn-alt-secondary rounded-pill px-3 py-1 fs-xs" (click)="isMyInvitationsModalOpen.set(false)">
-            Fermer
+            {{ 'COMMON.CLOSE' | translate }}
           </button>
         </div>
       </div>
@@ -912,7 +913,7 @@
                 <i class="fa fa-eye" style="font-size: 0.8rem;"></i>
               </span>
               <span class="fs-sm fw-bold text-dark text-truncate d-block" style="max-width: 240px;">
-                {{ previewTemplate()?.title }}
+                {{ getTemplateTitle(previewTemplate()?.title) }}
               </span>
             </div>
 
@@ -920,9 +921,9 @@
               <button type="button" class="btn btn-sm btn-success rounded-pill px-3 py-1 fs-xs fw-bold shadow-2xs d-flex align-items-center gap-1.5"
                       (click)="chooseTemplateFromPreview()">
                 <i class="fa fa-check"></i>
-                <span>Choisir ce modèle</span>
+                <span>{{ 'EXPRESS.MODAL_PREVIEW.BTN_CHOOSE' | translate }}</span>
               </button>
-              <button type="button" class="btn-close" (click)="closeTemplatePreview()" aria-label="Fermer"></button>
+              <button type="button" class="btn-close" (click)="closeTemplatePreview()" [attr.aria-label]="'COMMON.CLOSE' | translate"></button>
             </div>
           </div>
 
@@ -935,7 +936,7 @@
                       (click)="setPreviewDevice('MOBILE')"
                       title="Format Smartphone">
                 <i class="fa fa-mobile-screen fs-xs"></i>
-                <span class="fs-4xs fw-semibold">Format Mobile</span>
+                <span class="fs-4xs fw-semibold">{{ 'EXPRESS.MODAL_PREVIEW.FORMAT_MOBILE' | translate }}</span>
               </button>
               <button type="button" 
                       class="btn btn-xs rounded-pill px-3 py-1 d-flex align-items-center gap-1.5 transition" 
@@ -943,7 +944,7 @@
                       (click)="setPreviewDevice('DESKTOP')"
                       title="Format Ordinateur">
                 <i class="fa fa-laptop fs-xs"></i>
-                <span class="fs-4xs fw-semibold">Format PC</span>
+                <span class="fs-4xs fw-semibold">{{ 'EXPRESS.MODAL_PREVIEW.FORMAT_PC' | translate }}</span>
               </button>
             </div>
           </div>

@@ -452,6 +452,7 @@
     "TITLE_Corporate Professional": "Corporate Professional",
     "TITLE_Luxury Minimal": "Luxury Minimal",
     "TITLE_Élégance Épurée": "Refined Elegance",
+    "TITLE_Élégance Minimaliste": "Minimalist Elegance",
     "TITLE_Royal & Classique": "Royal & Classic",
     "TITLE_Fiançailles Royales & Dorées": "Royal & Golden Engagement",
     "TITLE_Fiançailles Royales": "Royal Engagement",
@@ -1481,7 +1482,14 @@
     },
     "STEP2": {
       "TITLE": "Choose your Invitation Template",
+      "RECOMMENDED": "Recommended",
       "ALL_TEMPLATES": "All Templates",
+      "SUGGESTED_FOR": "Suggested designs for:",
+      "ALL_COLLECTION_SUBTITLE": "Showing our full Moroccan collection",
+      "LOADING_TEMPLATES": "Loading invitation templates...",
+      "NO_TEMPLATES_FOUND": "No specific template found for « {{ type }} »",
+      "EXPLORE_ALL": "Discover our entire invitation template collection.",
+      "BTN_VIEW_ALL": "View all templates ({{ count }})",
       "SELECTED": "Selected",
       "CHOOSE": "Choose",
       "VIEW_PREVIEW": "Preview",
@@ -1529,7 +1537,27 @@
       "PUBLIC_LINK_DESC": "Share this link on your WhatsApp statuses, Instagram stories, or family groups to allow everyone to RSVP.",
       "BTN_COPY_LINK": "Copy Link",
       "LINK_COPIED": "Link copied!",
-      "BTN_SHARE_WHATSAPP": "Share on WhatsApp"
+      "BTN_SHARE_WHATSAPP": "Share on WhatsApp",
+      "BTN_CREATE_ANOTHER": "Create another invitation for a new event",
+      "BULK_DETECTED": "{{ count }} guest(s) detected",
+      "BULK_INVALID": "{{ count }} line(s) missing phone",
+      "BTN_CLEAR": "Clear",
+      "BTN_IMPORT_COUNT": "Import {{ count }} guest(s)"
+    },
+    "MODAL_INVITATIONS": {
+      "TITLE": "My Express Invitations ({{ count }})",
+      "EMPTY": "You don't have any saved invitations yet.",
+      "CURRENT_BADGE": "Current",
+      "GUESTS_COUNT": "guest(s)",
+      "BTN_OPENED": "Opened",
+      "BTN_OPEN": "Open",
+      "TOOLTIP_DELETE": "Delete from device",
+      "BTN_CREATE_NEW": "Create another invitation"
+    },
+    "MODAL_PREVIEW": {
+      "BTN_CHOOSE": "Choose this template",
+      "FORMAT_MOBILE": "Mobile view",
+      "FORMAT_PC": "PC view"
     }
   }
 }

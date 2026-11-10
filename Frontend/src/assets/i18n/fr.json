@@ -453,6 +453,7 @@
     "TITLE_Corporate Professional": "Corporate Professional",
     "TITLE_Luxury Minimal": "Luxury Minimal",
     "TITLE_Élégance Épurée": "Élégance Épurée",
+    "TITLE_Élégance Minimaliste": "Élégance Minimaliste",
     "TITLE_Royal & Classique": "Royal & Classique",
     "TITLE_Fiançailles Royales & Dorées": "Fiançailles Royales & Dorées",
     "TITLE_Fiançailles Royales": "Fiançailles Royales",
@@ -1490,7 +1491,14 @@
     },
     "STEP2": {
       "TITLE": "Choisissez votre Modèle d'Invitation",
+      "RECOMMENDED": "Recommandés",
       "ALL_TEMPLATES": "Tous les modèles",
+      "SUGGESTED_FOR": "Designs suggérés pour :",
+      "ALL_COLLECTION_SUBTITLE": "Affichage de l'ensemble de notre collection marocaine",
+      "LOADING_TEMPLATES": "Chargement des modèles d'invitations...",
+      "NO_TEMPLATES_FOUND": "Aucun modèle spécifique trouvé pour « {{ type }} »",
+      "EXPLORE_ALL": "Découvrez l'ensemble de notre collection de modèles d'invitations.",
+      "BTN_VIEW_ALL": "Voir tous les modèles ({{ count }})",
       "SELECTED": "Sélectionné",
       "CHOOSE": "Choisir",
       "VIEW_PREVIEW": "Voir l'aperçu",
@@ -1538,7 +1546,27 @@
       "PUBLIC_LINK_DESC": "Partagez ce lien sur vos statuts WhatsApp, stories Instagram ou groupes familiaux pour permettre à tous de confirmer leur présence.",
       "BTN_COPY_LINK": "Copier le lien",
       "LINK_COPIED": "Lien copié !",
-      "BTN_SHARE_WHATSAPP": "Partager sur WhatsApp"
+      "BTN_SHARE_WHATSAPP": "Partager sur WhatsApp",
+      "BTN_CREATE_ANOTHER": "Créer une autre invitation pour un nouvel événement",
+      "BULK_DETECTED": "{{ count }} invité(s) détecté(s)",
+      "BULK_INVALID": "{{ count }} ligne(s) sans numéro",
+      "BTN_CLEAR": "Effacer",
+      "BTN_IMPORT_COUNT": "Importer {{ count }} invité(s)"
+    },
+    "MODAL_INVITATIONS": {
+      "TITLE": "Mes Invitations Express ({{ count }})",
+      "EMPTY": "Vous n'avez pas encore d'invitation enregistrée.",
+      "CURRENT_BADGE": "Actuelle",
+      "GUESTS_COUNT": "invité(s)",
+      "BTN_OPENED": "Ouverte",
+      "BTN_OPEN": "Ouvrir",
+      "TOOLTIP_DELETE": "Supprimer de l'appareil",
+      "BTN_CREATE_NEW": "Créer une autre invitation"
+    },
+    "MODAL_PREVIEW": {
+      "BTN_CHOOSE": "Choisir ce modèle",
+      "FORMAT_MOBILE": "Format Mobile",
+      "FORMAT_PC": "Format PC"
     }
   }
 }

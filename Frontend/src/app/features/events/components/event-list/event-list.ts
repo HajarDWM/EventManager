@@ -5,6 +5,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { EventService } from '../../services/event.service';
 import { Event } from '../../models/event.model';
 import { CatererService } from '../../../../core/services/caterer.service';
+import { TranslationService } from '../../../../core/services/translation.service';
 import { TranslatePipe } from '../../../../core/pipes/translate.pipe';
 
 @Component({
@@ -16,8 +17,11 @@ import { TranslatePipe } from '../../../../core/pipes/translate.pipe';
 export class EventList implements OnInit {
   private readonly eventService = inject(EventService);
   private readonly catererService = inject(CatererService);
+  private readonly translationService = inject(TranslationService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
+
+  public readonly isRtl = this.translationService.isRtl;
 
   protected readonly events = signal<Event[]>([]);
   protected readonly isLoading = signal(false);

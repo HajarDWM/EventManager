@@ -96,6 +96,147 @@ export class InvitationExpress implements OnInit {
     return opt.defaultSubtitleFr;
   }
 
+  public getCategoryLabel(category: string | undefined): string {
+    if (!category) return '';
+    const lang = this.translationService.currentLang();
+    if (lang === 'ar') {
+      if (category.includes('Tradition') || category.includes('Culture')) return 'احتفالات تقليدية وثقافية';
+      if (category.includes('Famille') || category.includes('Fête')) return 'مناسبات وحفلات عائلية';
+      if (category.includes('Corporate') || category.includes('Pro')) return 'فعاليات مهنية ومؤسساتية';
+      return category;
+    }
+    if (lang === 'en') {
+      if (category.includes('Tradition') || category.includes('Culture')) return 'Traditional & Cultural Celebrations';
+      if (category.includes('Famille') || category.includes('Fête')) return 'Family Events & Parties';
+      if (category.includes('Corporate') || category.includes('Pro')) return 'Corporate & Professional Events';
+      return category;
+    }
+    return category;
+  }
+
+  public getTemplateTitle(title: string | undefined): string {
+    if (!title) return '';
+    const key = `TAXONOMY.TITLE_${title}`;
+    const translated = this.translationService.translate(key);
+    if (translated && translated !== key) {
+      return translated;
+    }
+    const lang = this.translationService.currentLang();
+    if (lang === 'ar') {
+      const lower = title.toLowerCase();
+      if (lower.includes('séminaire') || lower.includes('seminaire')) return 'ندوة إمبريالية مهنية';
+      if (lower.includes('or & velours') || lower.includes('velours')) return 'ذهب ومخمل راقٍ';
+      if (lower.includes('royal & classique') || lower.includes('classique')) return 'ملكي وكلاسيكي';
+      if (lower.includes('bohème') || lower.includes('boheme')) return 'بوهيمي زهري ورومانسي';
+      if (lower.includes('minimaliste') || lower.includes('épurée') || lower.includes('epuree')) return 'أناقة عصرية بسيطة';
+      if (lower.includes('launch party') || lower.includes('lancement')) return 'حفل إطلاق ملكي فاخر';
+      if (lower.includes('coton')) return 'زهور القطن الناعمة';
+      if (lower.includes('fiançailles') || lower.includes('fiancailles')) return 'خطوبة ملكية مذهبة';
+      if (lower.includes('tahara') || lower.includes('émeraude') || lower.includes('emeraude')) return 'احتفال طهارة زمردي';
+      if (lower.includes('pastel') || lower.includes('douceur')) return 'باستيل ناعم وسماء ذهبية';
+      if (lower.includes('diplôme') || lower.includes('diplome')) return 'برستيج ونجاح أكاديمي';
+      if (lower.includes('réveillon') || lower.includes('reveillon')) return 'حفل رأس السنة المتألق';
+      if (lower.includes('bienfaisance') || lower.includes('caritatif')) return 'حفل خيري بقلب ذهبي';
+      if (lower.includes('beldi') || lower.includes('traditionnel')) return 'تقليدي / بلدي مغربي';
+      if (lower.includes('romance') || lower.includes('floral')) return 'رومانسي وزهري';
+      return title;
+    }
+    if (lang === 'en') {
+      const lower = title.toLowerCase();
+      if (lower.includes('séminaire') || lower.includes('seminaire')) return 'Imperial Seminar';
+      if (lower.includes('or & velours') || lower.includes('velours')) return 'Gold & Velvet';
+      if (lower.includes('royal & classique')) return 'Royal & Classic';
+      if (lower.includes('bohème') || lower.includes('boheme')) return 'Floral & Romantic Bohemian';
+      if (lower.includes('minimaliste') || lower.includes('épurée')) return 'Minimalist Elegance';
+      if (lower.includes('launch party') || lower.includes('lancement')) return 'Launch Party Royal';
+      return title;
+    }
+    return title;
+  }
+
+  public getTemplateDescription(desc: string | undefined, title?: string): string {
+    const lang = this.translationService.currentLang();
+    if (lang === 'fr') {
+      return desc || 'Modèle interactif avec musique, animations et RSVP.';
+    }
+
+    const t = (title || '').toLowerCase();
+    const d = (desc || '').toLowerCase();
+
+    if (lang === 'ar') {
+      if (t.includes('séminaire') || d.includes('séminaire') || d.includes('conférence') || d.includes('conférences')) {
+        return 'بطاقة دعوة احترافية وأنيقة للندوات والمؤتمرات والحفلات الرسمية.';
+      }
+      if (t.includes('or & velours') || d.includes('dorures géométriques') || d.includes('velours')) {
+        return 'تصميم فاخر بزخارف ذهبية هندسية وخطوط عربية ولاتينية راقية.';
+      }
+      if (t.includes('royal & classique') || d.includes('tons noirs et dorés') || d.includes('somptueux')) {
+        return 'دعوة ملكية باذخة باللونين الأسود والذهبي مع لمسات زخرفية ساحرة.';
+      }
+      if (t.includes('bohème') || t.includes('boheme') || d.includes('botaniques') || d.includes('poudrés')) {
+        return 'طابع رومانسي دافئ بألوان هادئة ورسومات نباتية طبيعية مبهجة.';
+      }
+      if (t.includes('minimaliste') || d.includes('contemporain et épuré') || d.includes('lignes fines')) {
+        return 'دعوة عصرية ناعمة بخطوط رفيعة وتباين أنيق للمناسبات الراقية.';
+      }
+      if (t.includes('launch party') || d.includes('noirs profonds') || d.includes('lancement')) {
+        return 'تصميم فخم باللون الأسود ولمسات ذهبية، مثالي لحفلات الإطلاق والافتتاح.';
+      }
+      if (t.includes('coton') || d.includes('coton') || d.includes('poétique')) {
+        return 'دعوة شاعرية ناعمة برسومات زهرية خفيفة وألوان قطنية هادئة.';
+      }
+      if (t.includes('fiançailles') || d.includes('fiançailles') || d.includes('champagne')) {
+        return 'تصميم متلألئ بلون الشمبانيا الذهبي مع نقوش أرابيسك ملكية لخطوبة لا تُنسى.';
+      }
+      if (t.includes('tahara') || d.includes('tahara') || d.includes('circoncision')) {
+        return 'دعوة فخمة وأصيلة باللون الأخضر الزمردي والزخارف الذهبية لحفل الطهارة.';
+      }
+      if (t.includes('pastel') || d.includes('nouveau-né') || d.includes('baby shower')) {
+        return 'أجواء دافئة ورقيقة بألوان الباستيل الناعمة للاحتفال بقدوم المولود الجديد.';
+      }
+      if (t.includes('diplôme') || d.includes('académique') || d.includes('diplôme')) {
+        return 'تصميم أكاديمي مميز بخطوط أنيقة للاحتفال بالتخرج والنجاح الدراسي.';
+      }
+      if (t.includes('réveillon') || d.includes('nouvelle année') || d.includes('paillettes')) {
+        return 'أجواء احتفالية براقة وتطريزات ذهبية للاحتفال بالعام الجديد بأناقة.';
+      }
+      if (t.includes('bienfaisance') || d.includes('charité') || d.includes('mécénat')) {
+        return 'طابع راقٍ وهادئ لحفلات العشاء الخيرية وحملات جمع التبرعات والمبادرات الإنسانية.';
+      }
+      if (t.includes('beldi') || t.includes('traditionnel')) {
+        return 'دعوة مغربية أصيلة بنقوش تقليدية مذهبة وتطريزات بلدية فخمة.';
+      }
+      if (t.includes('romance') || t.includes('floral')) {
+        return 'تنسيق رومانسي مفعم بالنعومة مع بتلات الورد الرقيقة لمناسبات الحب والزفاف.';
+      }
+      return 'نموذج تفاعلي متكامل مع موسيقى، مؤثرات حركية، وتأكيد الحضور (RSVP).';
+    }
+
+    if (lang === 'en') {
+      if (t.includes('séminaire') || d.includes('conférence') || d.includes('conférences')) {
+        return 'A sleek professional invitation for conferences and galas.';
+      }
+      if (t.includes('or & velours') || d.includes('velours')) {
+        return 'A luxurious design with geometric gilding and elegant typography.';
+      }
+      if (t.includes('royal & classique') || d.includes('somptueux')) {
+        return 'A sumptuous invitation in black and gold tones with floral details.';
+      }
+      if (t.includes('bohème') || d.includes('botaniques')) {
+        return 'A warm bohemian theme with powdery tones and botanical illustrations.';
+      }
+      if (t.includes('minimaliste') || d.includes('contemporain')) {
+        return 'A contemporary sleek invitation with fine lines and modern contrast.';
+      }
+      if (t.includes('launch party') || d.includes('noirs profonds')) {
+        return 'A luxury design in deep black with gold details, ideal for launch parties.';
+      }
+      return 'Interactive template with music, animations, and RSVP confirmation.';
+    }
+
+    return desc || 'Modèle interactif avec musique, animations et RSVP.';
+  }
+
   public selectLanguage(code: SupportedLanguage, event?: Event): void {
     if (event) event.stopPropagation();
     this.translationService.setLanguage(code);
@@ -480,6 +621,17 @@ export class InvitationExpress implements OnInit {
     const start = (this.guestPage() - 1) * this.guestPageSize() + 1;
     const end = Math.min(this.guestPage() * this.guestPageSize(), total);
     return `${start} - ${end}`;
+  });
+
+  public readonly guestPageRangeStart = computed(() => {
+    const total = this.filteredGuests().length;
+    if (total === 0) return 0;
+    return (this.guestPage() - 1) * this.guestPageSize() + 1;
+  });
+
+  public readonly guestPageRangeEnd = computed(() => {
+    const total = this.filteredGuests().length;
+    return Math.min(this.guestPage() * this.guestPageSize(), total);
   });
 
   public onGuestSearchChange(term: string): void {
