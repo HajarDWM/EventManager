@@ -11,7 +11,7 @@
         <div class="brand-crest shadow-2xs">
           <i class="fa fa-gem text-warning"></i>
         </div>
-        <span class="brand-name fs-4 fw-bold">Event<span class="text-primary">Manager</span></span>
+        <span class="brand-name fs-5 fs-sm-4 fw-bold">Event<span class="text-primary">Manager</span></span>
       </a>
 
       <!-- Clean Navigation Links (Anti-Slop: No Emojis, No Icons) -->
@@ -29,21 +29,21 @@
 
       <!-- Right Action CTAs & Language Switcher at Far-Right ("f jenb") -->
       <div class="d-flex align-items-center gap-2">
-        <!-- Discrete Pro Link (Routes to /events if already logged in, or /login if guest) -->
-        <a [routerLink]="authService.isAuthenticated() ? '/events' : '/login'" class="nav-link-pro-login text-decoration-none d-none d-sm-inline-block">
-          {{ 'LANDING.NAV.PRO_LOGIN' | translate }}
+        <!-- Discrete Pro Link (Routes to /events if already logged in, or /login if guest) - Desktop only -->
+        <a [routerLink]="authService.isAuthenticated() ? '/events' : '/login'" class="nav-link-pro-login text-decoration-none d-none d-lg-inline-block">
+          {{ (authService.isAuthenticated() ? 'LANDING.NAV.DASHBOARD' : 'LANDING.NAV.PRO_LOGIN') | translate }}
         </a>
 
-        <!-- Single Main Header CTA (Always Visible Green Button) -->
-        <a routerLink="/express" class="btn btn-sm btn-success rounded-pill px-3.5 py-1.5 fw-bold shadow-2xs d-flex align-items-center gap-1.5">
-          <i class="fa fa-bolt text-warning"></i>
+        <!-- Main Header CTA (Always Visible on Desktop, Moved into Hamburger Menu on Mobile for Clean Spacing) -->
+        <a routerLink="/express" class="btn btn-sm btn-success rounded-pill px-3.5 py-1.5 fw-bold shadow-2xs d-none d-lg-inline-flex align-items-center gap-1.5 text-nowrap">
+          <i class="fa fa-bolt text-warning fs-xs"></i>
           <span>{{ 'LANDING.NAV.CREATE_INVITATION' | translate }}</span>
         </a>
 
-        <!-- Vertical Divider to push Language Selector to the far-right ("khahazli") -->
-        <div class="vr mx-1 opacity-25 d-none d-sm-block" style="height: 22px;"></div>
+        <!-- Vertical Divider (Desktop only) -->
+        <div class="vr mx-1 opacity-25 d-none d-lg-block" style="height: 22px;"></div>
 
-        <!-- Language Switcher Button with Translation Globe Icon ("bayna dyal traduir") -->
+        <!-- Language Switcher Button with Translation Globe Icon -->
         <div class="position-relative d-inline-block lang-dropdown-container">
           <button type="button" 
                   class="btn btn-sm btn-lang-switcher rounded-pill px-2.5 py-1.5 d-flex align-items-center gap-1.5"
@@ -77,9 +77,60 @@
           }
         </div>
 
+        <!-- Mobile Hamburger Toggle Button (Clean & Modern) -->
+        <button type="button" 
+                class="btn btn-sm btn-mobile-hamburger d-lg-none shadow-2xs"
+                [class.active]="isMobileMenuOpen()"
+                (click)="toggleMobileMenu($event)"
+                aria-label="Toggle Navigation">
+          <i class="fa" [ngClass]="isMobileMenuOpen() ? 'fa-xmark fs-sm' : 'fa-bars fs-xs'"></i>
+        </button>
+
       </div>
 
     </div>
+
+    <!-- Mobile Collapsible Navigation Menu Drawer (Compact & Streamlined) -->
+    @if (isMobileMenuOpen()) {
+      <div class="landing-mobile-menu border-top bg-white shadow-lg animate__animated animate__fadeInDown d-lg-none"
+           (click)="$event.stopPropagation()">
+        <div class="container py-2.5 d-flex flex-column gap-1">
+          <!-- Navigation Links (Clean Minimal Typography, No Bulky Icons, Compact) -->
+          <button type="button" class="mobile-nav-link btn btn-link text-decoration-none text-start py-1.5 px-2.5"
+                  (click)="scrollToSection('templates-section'); closeMobileMenu()">
+            <span class="fw-semibold text-dark fs-sm">{{ 'LANDING.NAV.TEMPLATES' | translate }}</span>
+          </button>
+          <button type="button" class="mobile-nav-link btn btn-link text-decoration-none text-start py-1.5 px-2.5"
+                  (click)="scrollToSection('how-it-works'); closeMobileMenu()">
+            <span class="fw-semibold text-dark fs-sm">{{ 'LANDING.NAV.HOW_IT_WORKS' | translate }}</span>
+          </button>
+          <button type="button" class="mobile-nav-link btn btn-link text-decoration-none text-start py-1.5 px-2.5"
+                  (click)="scrollToSection('pro-section'); closeMobileMenu()">
+            <span class="fw-semibold text-dark fs-sm">{{ 'LANDING.NAV.PRO_SPACE' | translate }}</span>
+          </button>
+
+          <div class="border-top my-1 opacity-25"></div>
+
+          <!-- Dual CTAs Side-by-Side (Equal 50%/50% Width & Matching Height) -->
+          <div class="d-flex align-items-center gap-2 pt-1">
+            <!-- CTA 1: Create Invitation (Green) -->
+            <a routerLink="/express" (click)="closeMobileMenu()"
+               class="btn btn-sm btn-success rounded-pill py-2 px-2 fw-bold d-flex align-items-center justify-content-center gap-1 shadow-2xs text-decoration-none flex-fill text-nowrap fs-xs">
+              <i class="fa fa-bolt text-warning fs-xs"></i>
+              <span class="text-truncate">{{ 'LANDING.NAV.CREATE_INVITATION' | translate }}</span>
+            </a>
+
+            <!-- CTA 2: Pro Login / Dashboard (Alt Primary) -->
+            <a [routerLink]="authService.isAuthenticated() ? '/events' : '/login'" (click)="closeMobileMenu()"
+               class="btn btn-sm btn-alt-primary rounded-pill py-2 px-2 fw-semibold d-flex align-items-center justify-content-center gap-1 shadow-2xs text-decoration-none flex-fill text-nowrap fs-xs">
+              <i class="fa" [ngClass]="authService.isAuthenticated() ? 'fa-table-columns' : 'fa-arrow-right-to-bracket'"></i>
+              <span class="text-truncate">{{ (authService.isAuthenticated() ? 'LANDING.NAV.DASHBOARD' : 'LANDING.NAV.PRO_LOGIN') | translate }}</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    }
+
   </header>
 
   <!-- ========================================================================= -->
