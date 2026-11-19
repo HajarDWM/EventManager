@@ -5,6 +5,7 @@ import { AuthService } from '../auth/services/auth.service';
 import { CatererService, CatererProfile } from '../services/caterer.service';
 import { LanguageSwitcher } from '../../shared/components/language-switcher/language-switcher';
 import { TranslatePipe } from '../pipes/translate.pipe';
+import { APP_VERSION } from '../constants/version.constant';
 
 @Component({
   selector: 'app-layout',
@@ -16,6 +17,8 @@ import { TranslatePipe } from '../pipes/translate.pipe';
 export class Layout implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly catererService = inject(CatererService);
+
+  protected readonly appVersion = APP_VERSION;
 
   // Signaux réactifs pour contrôler le layout
   protected readonly isSidebarOpen = signal(true);

@@ -4,6 +4,7 @@ import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../core/auth/services/auth.service';
 import { TranslationService, SupportedLanguage } from '../../core/services/translation.service';
 import { TranslatePipe } from '../../core/pipes/translate.pipe';
+import { APP_VERSION } from '../../core/constants/version.constant';
 
 interface FeaturedTemplate {
   id: number;
@@ -40,6 +41,7 @@ export class Landing implements OnInit {
   protected readonly router = inject(Router);
   protected readonly authService = inject(AuthService);
   protected readonly translationService = inject(TranslationService);
+  public readonly appVersion = APP_VERSION;
 
   public readonly isScrolled = signal<boolean>(false);
   public readonly isLangDropdownOpen = signal<boolean>(false);

@@ -21,7 +21,7 @@ WORKDIR /app
 RUN mkdir -p /app/uploads/menu /app/uploads/templates
 
 # Copy packaged jar artifact from builder stage
-COPY --from=builder /build/target/EventManager-0.0.1-SNAPSHOT.jar app.jar
+COPY --from=builder /build/target/EventManager-*.jar app.jar
 
 EXPOSE 8080
 

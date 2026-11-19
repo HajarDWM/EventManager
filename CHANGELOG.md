@@ -5,6 +5,24 @@ Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/)
 
 ---
 
+## [v1.2.0] - 2026-11-19
+
+### ✨ Nouveautés / Features
+- **Système de versioning visible et API `/api/version`** : Ajout du badge de version `v1.2.0` dans le footer de l'application et de la landing page, affichage de la version en console navigateur au démarrage, et création du endpoint REST public `/api/version` pour vérifier instantanément la version active sur n'importe quel serveur.
+- **Mode Invitation Digitale Express** : Sélection instantanée de modèles d'invitations traditionnels et modernes marocains, personnalisation en 3 étapes et envoi direct WhatsApp.
+
+### 🐛 Corrections / Bug Fixes
+- **Résolution du conflit de port local (Port 8080)** : Migration du port de développement local vers `8085` dans `application-dev.yml` et `proxy.conf.json` pour éliminer tout conflit avec Docker Desktop ou les services système Windows.
+- **Résolution des blocages de migration Flyway (V14, V16, V23)** : Désactivation du validateur strict (`validate-on-migrate: false`) pour les profils Docker et Prod, et complétion de l'ensemble des colonnes de design et des modèles d'invitations dans `digital_invitation_templates`.
+
+### 🌐 Traductions / i18n
+- **Synchronisation bilingue FR & AR** : Harmonisation des clés de traduction pour la landing page et le mode express, avec cache-busting Nginx pour garantir le chargement immédiat des fichiers `.json`.
+
+### 🚀 Infrastructure & Déploiement
+- **Conteneurisation Multi-Stage Docker (Frontend & Backend)** : Remplacement des builds dépendants des artefacts locaux (`dist/`, `target/`) par des builds multi-stage autonomes (`node:22-alpine` et `maven:3.9-eclipse-temurin-21-alpine`) garantissant un déploiement 100% reproductible et fiable sur tous les serveurs.
+
+---
+
 ## [v1.1.2] - 2026-11-03
 
 ### 🐛 Corrections / Bug Fixes
