@@ -1,15 +1,16 @@
 # Multi-stage build for Angular Frontend (Builds bundle from source inside Docker)
-FROM node:22-alpine AS builder
+FROM node:22-slim AS builder
 
 WORKDIR /app
 
 ENV NODE_OPTIONS="--dns-result-order=ipv4first"
 
-# Install dependencies with retry and timeout tolerance
+# Install dependencies with retry and maxsockets tolerance to prevent ECONNRESET
 COPY package*.json ./
-RUN npm config set fetch-retry-maxtimeout 120000 && \
-    npm config set fetch-retries 5 && \
-    npm ci --prefer-offline --no-audit
+RUN npm config set fetch-retry-maxtimeout 180000 && \
+    npm config set fetch-retry-mintimeout 20000 && \
+    npm config set fetch-retries 10 && \
+    npm ci --no-audit --maxsockets 5
 
 # Copy source files and compile production bundle
 COPY . .
