@@ -840,34 +840,34 @@ export class InvitationExpress implements OnInit {
     let targetSub = '';
     let targetCat = '';
 
-    if (combined.includes('mariage') || combined.includes('زفاف') || combined.includes('عرس')) {
+    if (combined.includes('mariage') || combined.includes('زفاف') || combined.includes('عرس') || combined.includes('wedding')) {
       targetSub = 'mariage';
       targetCat = 'tradition';
-    } else if (combined.includes('fianc') || combined.includes('خطوب')) {
+    } else if (combined.includes('fianc') || combined.includes('خطوب') || combined.includes('engagement')) {
       targetSub = 'fiancailles';
       targetCat = 'tradition';
     } else if (combined.includes('henn') || combined.includes('حناء') || combined.includes('حنة')) {
       targetSub = 'henne';
       targetCat = 'tradition';
-    } else if (combined.includes('circonc') || combined.includes('tahra') || combined.includes('ختان')) {
+    } else if (combined.includes('circonc') || combined.includes('tahra') || combined.includes('ختان') || combined.includes('circumcision')) {
       targetSub = 'circoncision';
       targetCat = 'tradition';
-    } else if (combined.includes('sbou') || combined.includes('aqiq') || combined.includes('naissance') || combined.includes('عقيق') || combined.includes('سبوع') || combined.includes('baby shower')) {
+    } else if (combined.includes('sbou') || combined.includes('aqiq') || combined.includes('naissance') || combined.includes('عقيق') || combined.includes('سبوع') || combined.includes('baby shower') || combined.includes('newborn') || combined.includes('birth')) {
       targetSub = 'baby shower';
       targetCat = 'famille';
     } else if (combined.includes('anniv') || combined.includes('birthday') || combined.includes('ميلاد')) {
       targetSub = 'anniversaire';
       targetCat = 'famille';
-    } else if (combined.includes('dipl') || combined.includes('soutenance') || combined.includes('تخرج')) {
+    } else if (combined.includes('dipl') || combined.includes('soutenance') || combined.includes('تخرج') || combined.includes('graduat')) {
       targetSub = 'diplome';
       targetCat = 'scolaire';
-    } else if (combined.includes('gala') || combined.includes('diner') || combined.includes('affaires') || combined.includes('عشاء') || combined.includes('استقبال')) {
+    } else if (combined.includes('gala') || combined.includes('diner') || combined.includes('affaires') || combined.includes('عشاء') || combined.includes('استقبال') || combined.includes('dinner')) {
       targetSub = 'gala';
       targetCat = 'corporate';
-    } else if (combined.includes('conf') || combined.includes('semin') || combined.includes('مؤتمر') || combined.includes('ندوة')) {
+    } else if (combined.includes('conf') || combined.includes('semin') || combined.includes('مؤتمر') || combined.includes('ندوة') || combined.includes('conference')) {
       targetSub = 'seminaire';
       targetCat = 'corporate';
-    } else if (combined.includes('famill') || combined.includes('عائل')) {
+    } else if (combined.includes('famill') || combined.includes('عائل') || combined.includes('family')) {
       targetSub = 'famille';
       targetCat = 'famille';
     }
