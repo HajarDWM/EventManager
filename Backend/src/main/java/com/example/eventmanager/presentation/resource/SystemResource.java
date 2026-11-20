@@ -30,3 +30,4 @@ public class SystemResource {
         return ResponseEntity.ok(versionInfo);
     }
 }
+

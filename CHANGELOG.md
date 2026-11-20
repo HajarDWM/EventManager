@@ -5,6 +5,20 @@ Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/)
 
 ---
 
+## [v1.2.1] - 2026-11-20
+
+### 🐛 Corrections / Bug Fixes
+- **Filtrage des modèles recommandés en anglais (Mode Express)** : Correction de la logique de filtrage dans `invitation-express.ts` pour inclure les mots-clés anglais (`wedding`, `engagement`, `circumcision`, `graduation`, `conference`, `family`). Le basculement de langue vers l'anglais affiche désormais exactement les modèles d'invitation recommandés sans afficher par erreur l'intégralité du catalogue.
+
+### ⚡ Performance & Optimisation
+- **Build et déploiement Frontend ultra-rapide (2 secondes)** : Intégration du bundle de production pré-compilé dans l'image Nginx, éliminant les 25 minutes de téléchargement et de compilation `npm ci` dans les environnements contraints en bande passante.
+- **Résolution des timeouts réseau et erreurs ECONNRESET** : Optimisation des sockets de téléchargement (`--maxsockets 5`) et des tolérances de retries pour les builds conteneurisés.
+
+### 🛠️ Outils & Scripts de Déploiement
+- **Scripts d'inspection et de déploiement direct Staging** : Ajout de `scripts/deploy_direct.py`, `scripts/deploy_staging.py` et `scripts/vm_analyse.py` pour diagnostiquer et déployer instantanément via réseau local SSH/SFTP.
+
+---
+
 ## [v1.2.0] - 2026-11-19
 
 ### ✨ Nouveautés / Features

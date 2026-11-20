@@ -3,6 +3,7 @@
 .env.*
 *.env
 server-config.json
+server-config*.json
 deploy.config.json
 PASSWORDS.md
 certbot/
