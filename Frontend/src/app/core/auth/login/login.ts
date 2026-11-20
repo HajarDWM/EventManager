@@ -5,6 +5,7 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { CatererService } from '../../services/caterer.service';
 import { TranslatePipe } from '../../pipes/translate.pipe';
+import { APP_VERSION } from '../../constants/version.constant';
 
 @Component({
   selector: 'app-login',
@@ -17,6 +18,7 @@ export class Login {
   private readonly router = inject(Router);
   private readonly catererService = inject(CatererService);
 
+  protected readonly appVersion = APP_VERSION;
   protected readonly email = signal('');
   protected readonly password = signal('');
   protected readonly errorMessage = signal('');

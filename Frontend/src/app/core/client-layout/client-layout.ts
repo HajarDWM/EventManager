@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { ClientAuthService } from '../auth/services/client-auth.service';
 import { LanguageSwitcher } from '../../shared/components/language-switcher/language-switcher';
 import { TranslatePipe } from '../pipes/translate.pipe';
+import { APP_VERSION } from '../constants/version.constant';
 
 @Component({
   selector: 'app-client-layout',
@@ -14,6 +15,7 @@ import { TranslatePipe } from '../pipes/translate.pipe';
 })
 export class ClientLayout implements OnInit {
   private readonly clientAuthService = inject(ClientAuthService);
+  public readonly appVersion = APP_VERSION;
   public events = this.clientAuthService.clientEvents;
 
   ngOnInit() {

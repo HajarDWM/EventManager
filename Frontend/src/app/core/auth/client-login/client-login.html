@@ -1,7 +1,7 @@
 <div class="client-login-container">
   <div class="login-card">
     <div class="logo-area">
-      <h1>{{ 'AUTH.CLIENT_PORTAL_TITLE' | translate }}</h1>
+      <h1>{{ 'AUTH.CLIENT_PORTAL_TITLE' | translate }} <span class="badge bg-primary-subtle text-primary fs-xs align-middle ms-1">{{ appVersion }}</span></h1>
       <p class="subtitle">{{ 'AUTH.CLIENT_PORTAL_SUBTITLE' | translate }}</p>
     </div>
 
@@ -39,6 +39,9 @@
     
     <div class="footer-links">
       <p>{{ 'AUTH.ARE_YOU_ORGANIZER' | translate }} <a routerLink="/login">{{ 'AUTH.ORGANIZER_SIGNIN_LINK' | translate }}</a></p>
+      <div class="fs-xs text-muted text-center mt-2">
+        EventManager &copy; 2026 • <span class="badge bg-secondary-subtle text-secondary px-2 py-0.5 rounded-pill">{{ appVersion }}</span>
+      </div>
     </div>
   </div>
 </div>

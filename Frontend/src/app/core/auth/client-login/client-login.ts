@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { ClientAuthService } from '../services/client-auth.service';
 import { TranslatePipe } from '../../pipes/translate.pipe';
+import { APP_VERSION } from '../../constants/version.constant';
 
 @Component({
   selector: 'app-client-login',
@@ -17,6 +18,7 @@ export class ClientLogin {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
 
+  public readonly appVersion = APP_VERSION;
   public accessLinkToken = signal('');
   public isLoading = signal(false);
   public errorMessage = signal('');

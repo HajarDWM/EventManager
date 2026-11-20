@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { TranslatePipe } from '../../pipes/translate.pipe';
+import { APP_VERSION } from '../../constants/version.constant';
 
 @Component({
   selector: 'app-register',
@@ -15,6 +16,7 @@ export class Register {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
 
+  protected readonly appVersion = APP_VERSION;
   protected readonly businessName = signal('');
   protected readonly email = signal('');
   protected readonly password = signal('');
