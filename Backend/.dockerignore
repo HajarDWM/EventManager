@@ -1,4 +1,5 @@
-target
+target/*
+!target/EventManager-*.jar
 .mvn
 .git
 .idea

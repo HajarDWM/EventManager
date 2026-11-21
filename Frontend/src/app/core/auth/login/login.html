@@ -1,69 +1,76 @@
-<div class="hero-static d-flex align-items-center bg-body-extra-light">
-  <div class="content">
-    <div class="row justify-content-center push">
-      <div class="col-md-8 col-lg-6 col-xl-4">
-        <!-- Sign In Block -->
-        <div class="block block-rounded mb-0 shadow-sm border border-light">
-          <div class="block-header block-header-default bg-body-light border-bottom border-light">
-            <h3 class="block-title">{{ 'AUTH.LOGIN_TITLE' | translate }}</h3>
-            <div class="block-options">
-              <a class="btn-block-option" routerLink="/register" [attr.title]="'AUTH.CREATE_ACCOUNT_TOOLTIP' | translate">
-                <i class="fa fa-user-plus"></i> {{ 'AUTH.CREATE_ACCOUNT_LINK' | translate }}
-              </a>
-            </div>
-          </div>
-          <div class="block-content">
-            <div class="p-sm-3 px-lg-4 py-lg-4">
-              <h1 class="h2 mb-1 text-center">Event<span class="text-primary">Manager</span></h1>
-              <p class="fw-medium text-muted text-center mb-4">
-                {{ 'AUTH.ORGANIZER_LOGIN_SUBTITLE' | translate }}
-              </p>
-
-              <!-- Error Alert -->
-              <div class="alert alert-danger d-flex align-items-center gap-2" role="alert" *ngIf="errorMessage()">
-                <i class="fa fa-exclamation-circle"></i>
-                <div class="fs-sm fw-medium">{{ errorMessage() }}</div>
+<div class="bg-image" style="background-image: url('assets/oneui/media/photos/photo28@2x.jpg'); background-position: center center;">
+  <div class="hero-static d-flex align-items-center" style="min-height: 100vh; background: linear-gradient(135deg, rgba(15, 23, 42, 0.88) 0%, rgba(30, 27, 75, 0.82) 50%, rgba(15, 23, 42, 0.92) 100%); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);">
+    <div class="content">
+      <div class="row justify-content-center push">
+        <div class="col-md-8 col-lg-6 col-xl-4">
+          <!-- Sign In Block -->
+          <div class="block block-rounded mb-0 shadow-lg border-0" style="background: rgba(255, 255, 255, 0.98); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.2); overflow: hidden;">
+            <div class="block-header block-header-default bg-body-light border-bottom border-light">
+              <h3 class="block-title fw-semibold">{{ 'AUTH.LOGIN_TITLE' | translate }}</h3>
+              <div class="block-options">
+                <a class="btn-block-option" routerLink="/register" [attr.title]="'AUTH.CREATE_ACCOUNT_TOOLTIP' | translate">
+                  <i class="fa fa-user-plus"></i> {{ 'AUTH.CREATE_ACCOUNT_LINK' | translate }}
+                </a>
               </div>
+            </div>
+            <div class="block-content">
+              <div class="p-sm-3 px-lg-4 py-lg-4">
+                <div class="text-center mb-4">
+                  <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-primary-subtle text-primary mb-2 shadow-sm" style="width: 56px; height: 56px;">
+                    <i class="fa fa-champagne-glasses fa-lg"></i>
+                  </div>
+                  <h1 class="h2 mb-1">Event<span class="text-primary">Manager</span></h1>
+                  <p class="fw-medium text-muted mb-0">
+                    {{ 'AUTH.ORGANIZER_LOGIN_SUBTITLE' | translate }}
+                  </p>
+                </div>
 
-              <!-- Sign In Form -->
-              <form (ngSubmit)="onSubmit()">
-                <div class="py-2">
-                  <div class="mb-4">
-                    <label class="form-label fs-sm fw-semibold" for="login-email">{{ 'AUTH.EMAIL_LABEL' | translate }}</label>
-                    <input type="email" class="form-control form-control-alt form-control-lg fs-sm"
-                           id="login-email" name="login-email" placeholder="caterer@example.com"
-                           [ngModel]="email()" (ngModelChange)="email.set($event)" required>
-                  </div>
-                  <div class="mb-4">
-                    <label class="form-label fs-sm fw-semibold" for="login-password">{{ 'AUTH.PASSWORD_LABEL' | translate }}</label>
-                    <input type="password" class="form-control form-control-alt form-control-lg fs-sm"
-                           id="login-password" name="login-password" placeholder="••••••••"
-                           [ngModel]="password()" (ngModelChange)="password.set($event)" required>
-                  </div>
+                <!-- Error Alert -->
+                <div class="alert alert-danger d-flex align-items-center gap-2" role="alert" *ngIf="errorMessage()">
+                  <i class="fa fa-exclamation-circle"></i>
+                  <div class="fs-sm fw-medium">{{ errorMessage() }}</div>
                 </div>
-                
-                <div class="row mb-4">
-                  <div class="col-12">
-                    <button type="submit" class="btn w-100 btn-alt-primary py-2" [disabled]="isLoading()">
-                      <span *ngIf="!isLoading()">
-                        <i class="fa fa-fw fa-sign-in-alt me-1 opacity-50"></i> {{ 'AUTH.SIGN_IN_BTN' | translate }}
-                      </span>
-                      <span *ngIf="isLoading()">
-                        <i class="fa fa-fw fa-circle-notch fa-spin me-1"></i> {{ 'AUTH.SIGNING_IN' | translate }}
-                      </span>
-                    </button>
+
+                <!-- Sign In Form -->
+                <form (ngSubmit)="onSubmit()">
+                  <div class="py-2">
+                    <div class="mb-4">
+                      <label class="form-label fs-sm fw-semibold" for="login-email">{{ 'AUTH.EMAIL_LABEL' | translate }}</label>
+                      <input type="email" class="form-control form-control-alt form-control-lg fs-sm"
+                             id="login-email" name="login-email" placeholder="caterer@example.com"
+                             [ngModel]="email()" (ngModelChange)="email.set($event)" required>
+                    </div>
+                    <div class="mb-4">
+                      <label class="form-label fs-sm fw-semibold" for="login-password">{{ 'AUTH.PASSWORD_LABEL' | translate }}</label>
+                      <input type="password" class="form-control form-control-alt form-control-lg fs-sm"
+                             id="login-password" name="login-password" placeholder="••••••••"
+                             [ngModel]="password()" (ngModelChange)="password.set($event)" required>
+                    </div>
                   </div>
-                </div>
-              </form>
-              <!-- END Sign In Form -->
+                  
+                  <div class="row mb-4">
+                    <div class="col-12">
+                      <button type="submit" class="btn w-100 btn-alt-primary py-2 fw-semibold" [disabled]="isLoading()">
+                        <span *ngIf="!isLoading()">
+                          <i class="fa fa-fw fa-sign-in-alt me-1 opacity-50"></i> {{ 'AUTH.SIGN_IN_BTN' | translate }}
+                        </span>
+                        <span *ngIf="isLoading()">
+                          <i class="fa fa-fw fa-circle-notch fa-spin me-1"></i> {{ 'AUTH.SIGNING_IN' | translate }}
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+                </form>
+                <!-- END Sign In Form -->
+              </div>
             </div>
           </div>
+          <!-- END Sign In Block -->
         </div>
-        <!-- END Sign In Block -->
       </div>
-    </div>
-    <div class="fs-sm text-muted text-center mt-3">
-      <strong>EventManager</strong> &copy; 2026 • <span class="badge bg-primary-subtle text-primary fw-semibold px-2 py-0.5 rounded-pill">{{ appVersion }}</span>
+      <div class="fs-sm text-center mt-3" style="color: rgba(255, 255, 255, 0.85);">
+        <strong class="text-white">EventManager</strong> &copy; 2026 • <span class="badge fw-semibold px-2 py-0.5 rounded-pill" style="background: rgba(255, 255, 255, 0.18); color: #fff; border: 1px solid rgba(255, 255, 255, 0.25); backdrop-filter: blur(4px);">{{ appVersion }}</span>
+      </div>
     </div>
   </div>
 </div>
